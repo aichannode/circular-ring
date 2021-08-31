@@ -175,29 +175,28 @@ android {
         }
     }
     flavorDimensions "environment"
-        productFlavors {
-            dev {
-                dimension "environment"
-                applicationIdSuffix ".dev"
-                versionNameSuffix "-dev"
-                manifestPlaceholders = [
-                    appName: "App Dev",
-                ]
-            }
-            demo {
-                dimension "environment"
-                applicationIdSuffix ".demo"
-                versionNameSuffix "-demo"
-                manifestPlaceholders = [
-                    appName: "App Demo",
-                ]
-            }
-            prod {
-                dimension "environment"
-                manifestPlaceholders = [
-                    appName: "App",
-                ]
-            }
+    productFlavors {
+        dev {
+            dimension "environment"
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-dev"
+            manifestPlaceholders = [
+                appName: "App Dev",
+            ]
+        }
+        demo {
+            dimension "environment"
+            applicationIdSuffix ".demo"
+            versionNameSuffix "-demo"
+            manifestPlaceholders = [
+                appName: "App Demo",
+            ]
+        }
+        prod {
+            dimension "environment"
+            manifestPlaceholders = [
+                appName: "App",
+            ]
         }
     }
 

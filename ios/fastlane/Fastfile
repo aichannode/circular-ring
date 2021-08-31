@@ -15,6 +15,9 @@
 
 default_platform(:ios)
 
+APPCENTER_APP_PREFIX = "Circular-iOS-"
+APPCENTER_OWNER = "BeTomorrow"
+
 platform :ios do
   desc "Initial setup"
   lane :setup do
@@ -37,8 +40,10 @@ platform :ios do
   lane :dev do
     init_appstore_api_session()
     increment_build_number(build_number: number_of_commits)
+    update_registered_devices("Dev")
     match(type: "adhoc", app_identifier: "com.circular.circular.dev", force_for_new_devices: true)
     build("Dev")
+    appcenter("Dev", true)
   end
 
   desc "Build demo version"
@@ -70,4 +75,44 @@ end
 
 def build(flavor)
   build_app(scheme: "app-#{flavor}", configuration: "Release", output_name: "app-#{flavor}-release.ipa")
+end
+
+def update_registered_devices(flavor)
+  appcenter_fetch_devices(
+    owner_name: "#{APPCENTER_OWNER}",
+    app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
+    destinations: "Collaborators,AppDistributionGroup",
+    devices_file: "devices.txt"
+  )
+
+  register_devices(
+    devices_file: "./devices.txt"
+  )
+end
+
+def appcenter(flavor, notify)
+  appcenter_upload(
+    app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
+    owner_name: "#{APPCENTER_OWNER}",
+    destinations: "Collaborators,AppDistributionGroup",
+    destination_type: "group",
+    ipa: "./app-#{flavor}-release.ipa",
+    release_notes: changelog(flavor),
+    notify_testers: notify
+  )
+end
+
+def changelog(flavor)
+  begin
+    result = appcenter_fetch_version_number(
+      app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
+      owner_name: "#{APPCENTER_OWNER}")
+    commits_count = number_of_commits - Integer(result["build_number"])
+    commits_count = commits_count >= 1 ? commits_count : 1
+  rescue
+    commits_count = 1
+  end
+  changelog_from_git_commits(commits_count: commits_count)
+  changelog = lane_context[SharedValues::FL_CHANGELOG]
+  return "#{git_branch} :\n\n#{changelog}"
 end
