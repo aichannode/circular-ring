@@ -129,8 +129,8 @@ android {
         applicationId "com.circular.circular"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode project.hasProperty("versionCode") ? project.property("versionCode") as Integer : 1
+        versionName project.hasProperty("versionName") ? project.property("versionName") as String : "1.0.0"
     }
     splits {
         abi {
@@ -147,6 +147,20 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            file("../signing.properties").with { propFile ->
+                if (propFile.canRead()) {
+                    def properties = new Properties()
+                    properties.load(new FileInputStream(propFile))
+                    storeFile file(properties['keystorePath'])
+                    storePassword properties['keystorePassword']
+                    keyAlias properties['keyAlias']
+                    keyPassword properties['keyPassword']
+                } else {
+                    println 'Unable to read signing.properties'
+                }
+            }
+        }
     }
     buildTypes {
         debug {
@@ -158,6 +172,32 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+    flavorDimensions "environment"
+        productFlavors {
+            dev {
+                dimension "environment"
+                applicationIdSuffix ".dev"
+                versionNameSuffix "-dev"
+                manifestPlaceholders = [
+                    appName: "App Dev",
+                ]
+            }
+            demo {
+                dimension "environment"
+                applicationIdSuffix ".demo"
+                versionNameSuffix "-demo"
+                manifestPlaceholders = [
+                    appName: "App Demo",
+                ]
+            }
+            prod {
+                dimension "environment"
+                manifestPlaceholders = [
+                    appName: "App",
+                ]
+            }
         }
     }
 

@@ -1,0 +1,122 @@
+image: betomorrow/ci-android:29
+
+stages:
+  - check
+  - build
+
+variables:
+  LC_ALL: "en_US.UTF-8"
+  LANG: "en_US.UTF-8"
+
+before_script:
+  - mkdir -p `pwd`/.gradle
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+
+# Common
+
+check:
+  stage: check
+  image: betomorrow/ci-node:12_v1
+  script:
+    - npm ci --progress=false
+    - npm run postinstall
+    - npm run tsc
+    - npm run lint
+    - npm run test -- --ci
+  only:
+    - merge_requests
+    - branches
+
+# Android
+
+android:build:dev:
+  extends: .build-android
+  variables:
+    ENV: dev
+  only:
+    - master
+
+android:build:demo:
+  extends: .build-android
+  variables:
+    ENV: demo
+  only:
+    - demo
+
+android:build:prod:
+  extends: .build-android
+  variables:
+    ENV: prod
+  only:
+    - prod
+
+.build-android:
+  stage: build
+  image: betomorrow/ci-android:29_v1
+  environment:
+    name: ${ENV}
+  tags:
+    - react-native
+    - android
+  before_script:
+    - mkdir -p `pwd`/.gradle
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - mkdir artifacts
+  script:
+    - mkdir artifacts
+    - npm ci --progress=false
+    - npx jetifier
+    - cd android
+    # Export Signing Config
+    - cat ${RELEASE_KEYSTORE_BASE64} | base64 -d > circular.release.keystore
+    - echo "keystorePath=../circular.release.keystore" > signing.properties
+    - echo "keystorePassword=$RELEASE_KEYSTORE_PASSWORD" >> signing.properties
+    - echo "keyAlias=$RELEASE_KEY_ALIAS" >> signing.properties
+    - echo "keyPassword=$RELEASE_KEY_PASSWORD" >> signing.properties
+    # Export Google Api KeY
+    - cat ${GOOGLE_API_KEY_BASE64} | base64 -d > googleApiKey.json
+    # Build
+    - bundle install
+    - bundle exec fastlane ${ENV}
+
+#   IOS
+
+ios:build:dev:
+  extends: .build-ios
+  variables:
+    ENV: dev
+  only:
+    - master
+
+ios:build:demo:
+  extends: .build-ios
+  variables:
+    ENV: demo
+  only:
+    - demo
+
+ios:build:prod:
+  extends: .build-ios
+  variables:
+    ENV: prod
+  only:
+    - prod
+
+.build-ios:
+  stage: build
+  environment:
+    name: ${ENV}
+  variables:
+    LC_ALL: "en_US.UTF-8"
+    LANG: "en_US.UTF-8"
+  tags:
+    - react-native
+    - ios-11
+    - latest
+  script:
+    - npm ci --progress=false
+    - cd ios
+    - bundle install --path ~/.gem
+    - bundle exec pod install --repo-update
+    - chmod og-rw ${GITLAB_VTIPS_SSH_KEY}
+    - GIT_SSH_COMMAND="ssh -i ${GITLAB_CIRCULAR_SSH_KEY}" bundle exec fastlane ${ENV}
