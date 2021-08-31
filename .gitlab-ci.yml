@@ -74,7 +74,7 @@ android:build:prod:
     - echo "keyAlias=$RELEASE_KEY_ALIAS" >> signing.properties
     - echo "keyPassword=$RELEASE_KEY_PASSWORD" >> signing.properties
     # Export Google Api KeY
-    - cat ${GOOGLE_API_KEY_BASE64} | base64 -d > googleApiKey.json
+    # - cat ${GOOGLE_API_KEY_BASE64} | base64 -d > googleApiKey.json
     # Build
     - bundle install
     - bundle exec fastlane ${ENV}
@@ -118,5 +118,5 @@ ios:build:prod:
     - cd ios
     - bundle install --path ~/.gem
     - bundle exec pod install --repo-update
-    - chmod og-rw ${GITLAB_VTIPS_SSH_KEY}
-    - GIT_SSH_COMMAND="ssh -i ${GITLAB_CIRCULAR_SSH_KEY}" bundle exec fastlane ${ENV}
+    - chmod og-rw ${SSH_PRIVATE_KEY}
+    - GIT_SSH_COMMAND="ssh -i ${SSH_PRIVATE_KEY}" bundle exec fastlane ${ENV}
