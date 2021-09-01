@@ -5,8 +5,9 @@ import { useServices } from "@core/services";
 import styled from "styled-components/native";
 import { useEffect } from "react";
 
-interface PairingScreenProps {}
-export const PairingScreen: React.FC<PairingScreenProps> = ({}) => {
+// interface PairingScreenProps {}
+
+export const PairingScreen: React.FC/*<PairingScreenProps>*/ = ({}) => {
 	const { bluetoothService } = useServices();
 
 	const bluetoothState = useObservable(bluetoothService.state);

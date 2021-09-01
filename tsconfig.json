@@ -4,6 +4,7 @@
 		"noFallthroughCasesInSwitch": true,
 		"noUnusedLocals": true,
 		"sourceMap": true,
+		"noEmit": true,
 		"target": "esnext",
 		"lib": ["ES6"],
 		"module": "CommonJS",

@@ -10,7 +10,7 @@ export const services = {
 
 export type Services = typeof services;
 export const ServicesContext = createContext<Services | null>(null);
-export const ServicesProvider: React.FC<{}> = ({ children }) => {
+export const ServicesProvider: React.FC = ({ children }) => {
 	return <ServicesContext.Provider value={services}>{children}</ServicesContext.Provider>;
 };
 

@@ -19,10 +19,9 @@ check:
   image: betomorrow/ci-node:12_v1
   script:
     - npm ci --progress=false
-    - npm run postinstall
     - npm run tsc
     - npm run lint
-    - npm run test -- --ci
+    # - npm run test -- --ci  # none for now
   only:
     - merge_requests
     - branches
