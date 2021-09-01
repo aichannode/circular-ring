@@ -1,6 +1,7 @@
 stages:
   - check
-  - build
+  - android
+  - ios
 
 variables:
   LC_ALL: "en_US.UTF-8"
@@ -48,7 +49,7 @@ android:build:prod:
     - prod
 
 .build-android:
-  stage: build
+  stage: android
   image: betomorrow/ci-android:29_v1
   environment:
     name: ${ENV}
@@ -99,7 +100,7 @@ ios:build:prod:
     - prod
 
 .build-ios:
-  stage: build
+  stage: ios
   environment:
     name: ${ENV}
   variables:

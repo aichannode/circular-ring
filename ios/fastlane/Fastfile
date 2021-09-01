@@ -83,7 +83,7 @@ def update_registered_devices(flavor)
   appcenter_fetch_devices(
     owner_name: "#{APPCENTER_OWNER}",
     app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
-    destinations: "Collaborators,AppDistributionGroup",
+    destinations: "Collaborators,Circular",
     devices_file: "devices.txt"
   )
 
@@ -96,7 +96,7 @@ def appcenter(flavor, notify)
   appcenter_upload(
     app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
     owner_name: "#{APPCENTER_OWNER}",
-    destinations: "Collaborators,AppDistributionGroup",
+    destinations: "Collaborators,Circular",
     destination_type: "group",
     ipa: "./app-#{flavor}-release.ipa",
     release_notes: changelog(flavor),

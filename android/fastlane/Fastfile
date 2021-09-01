@@ -55,7 +55,7 @@ def appcenter(flavor, notify)
   appcenter_upload(
     app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
     owner_name: "#{APPCENTER_OWNER}",
-    destinations: "Collaborators,AppDistributionGroup",
+    destinations: "Collaborators,Circular",
     destination_type: "group",
     apk: "./app/build/outputs/apk/#{flavor}/release/app-#{flavor}-release.apk",
     release_notes: changelog(flavor),
