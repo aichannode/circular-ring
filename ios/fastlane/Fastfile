@@ -52,6 +52,7 @@ platform :ios do
     increment_build_number(build_number: number_of_commits)
     match(type: "adhoc", app_identifier: "com.circular.circular.demo", force_for_new_devices: true)
     build("Demo")
+    appcenter("Demo", true)
   end
 
   desc "Build prod version"
@@ -61,6 +62,7 @@ platform :ios do
     match(type: "adhoc", app_identifier: "com.circular.circular", force_for_new_devices: true)
     match(type: "appstore", app_identifier: "com.circular.circular", readonly: true)
     build("Prod")
+    appcenter("Prod", true)
   end
 end
 
