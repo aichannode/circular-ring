@@ -19,6 +19,15 @@ APPCENTER_APP_PREFIX = "Circular-iOS-"
 APPCENTER_OWNER = "BeTomorrow"
 
 platform :ios do
+
+  before_all do |lane, options|
+    setup_keychain()
+  end
+
+  after_all do |lane, options|
+    teardown_keychain()
+  end
+
   desc "Initial setup"
   lane :setup do
     produce(app_name: 'App Dev', app_identifier: 'com.circular.circular.dev', skip_itc: true)
@@ -41,7 +50,7 @@ platform :ios do
     init_appstore_api_session()
     increment_build_number(build_number: number_of_commits)
     update_registered_devices("Dev")
-    match(type: "adhoc", app_identifier: "com.circular.circular.dev", force_for_new_devices: true)
+    match(keychain_name: "#{KEYCHAIN_NAME}", keychain_password: "#{KEYCHAIN_PASSWORD}", type: "adhoc", app_identifier: "com.circular.circular.dev", force_for_new_devices: true)
     build("Dev")
     appcenter("Dev", true)
   end
@@ -49,8 +58,9 @@ platform :ios do
   desc "Build demo version"
   lane :demo do
     init_appstore_api_session()
+    update_registered_devices("Demo")
     increment_build_number(build_number: number_of_commits)
-    match(type: "adhoc", app_identifier: "com.circular.circular.demo", force_for_new_devices: true)
+    match(keychain_name: "#{KEYCHAIN_NAME}", keychain_password: "#{KEYCHAIN_PASSWORD}", type: "adhoc", app_identifier: "com.circular.circular.demo", force_for_new_devices: true)
     build("Demo")
     appcenter("Demo", true)
   end
@@ -59,11 +69,29 @@ platform :ios do
   lane :prod do
     init_appstore_api_session()
     increment_build_number(build_number: number_of_commits)
-    match(type: "adhoc", app_identifier: "com.circular.circular", force_for_new_devices: true)
-    match(type: "appstore", app_identifier: "com.circular.circular", readonly: true)
+    match(keychain_name: "#{KEYCHAIN_NAME}", keychain_password: "#{KEYCHAIN_PASSWORD}", type: "adhoc", app_identifier: "com.circular.circular", force_for_new_devices: true)
+    match(keychain_name: "#{KEYCHAIN_NAME}", keychain_password: "#{KEYCHAIN_PASSWORD}", type: "appstore", app_identifier: "com.circular.circular", readonly: true)
     build("Prod")
     appcenter("Prod", true)
   end
+end
+
+KEYCHAIN_NAME = SecureRandom.alphanumeric(15)
+KEYCHAIN_PASSWORD = SecureRandom.base64(10)
+
+def setup_keychain()
+  create_keychain(
+      name: "#{KEYCHAIN_NAME}",
+      password: "#{KEYCHAIN_PASSWORD}",
+      unlock: true,
+      timeout: 7200,
+      lock_when_sleeps: true,
+      lock_after_timeout: true
+  )
+end
+
+def teardown_keychain()
+  delete_keychain(name: "#{KEYCHAIN_NAME}")
 end
 
 def init_appstore_api_session
