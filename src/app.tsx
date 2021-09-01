@@ -1,9 +1,10 @@
-import { PairingScreen } from "@ui/pairingScreen/pairingScreen";
+import { NavigationContainer } from "@react-navigation/native";
 import React from "react";
 import { IntlProvider } from "react-intl";
 import { LogBox } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import { ServicesProvider } from "./core/services";
+import { RootNavigator } from "./rootNavigator";
 import { translations } from "./wordings";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
@@ -14,7 +15,9 @@ export const App = () => {
 	return (
 		<IntlProvider locale={locale} messages={translations[locale]}>
 			<ServicesProvider>
-				<PairingScreen />
+				<NavigationContainer>
+					<RootNavigator />
+				</NavigationContainer>
 			</ServicesProvider>
 		</IntlProvider>
 	);
