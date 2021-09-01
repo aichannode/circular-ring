@@ -71,7 +71,7 @@ android:build:prod:
     - echo "keyAlias=$RELEASE_KEY_ALIAS" >> signing.properties
     - echo "keyPassword=$RELEASE_KEY_PASSWORD" >> signing.properties
     # Export Google Api KeY
-    # - cat ${GOOGLE_API_KEY_BASE64} | base64 -d > googleApiKey.json
+    - cat ${GOOGLE_API_KEY_BASE64} | base64 -d > googleApiKey.json
     # Build
     - bundle install
     - bundle exec fastlane ${ENV}

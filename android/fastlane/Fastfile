@@ -35,6 +35,7 @@ platform :android do
   lane :prod do
     build("prod")
     appcenter("prod", true)
+    upload_to_play_store(track: "internal", release_status: "draft")
   end
 end
 
