@@ -45,8 +45,8 @@
 		84BF9A5A82E95F034C567B97 /* Pods-Circular-CircularTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-CircularTests.release.xcconfig"; path = "Target Support Files/Pods-Circular-CircularTests/Pods-Circular-CircularTests.release.xcconfig"; sourceTree = "<group>"; };
 		866A0195F4B97E5A5823553E /* libPods-Circular-dev.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Circular-dev.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		93315436EAA44F9F488F6CA3 /* Pods-Circular-dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-dev.release.xcconfig"; path = "Target Support Files/Pods-Circular-dev/Pods-Circular-dev.release.xcconfig"; sourceTree = "<group>"; };
-		A1001E7726DE38D1000C80A0 /* Circular-dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Circular-dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A1001E8A26DE38EA000C80A0 /* Circular-demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Circular-demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1001E7726DE38D1000C80A0 /* Circular-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Circular-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1001E8A26DE38EA000C80A0 /* Circular-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Circular-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E799CF41366C0846A415A241 /* libPods-Circular-demo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Circular-demo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F1D53695F6EBD0C3077766E9 /* Pods-Circular-prod.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-prod.release.xcconfig"; path = "Target Support Files/Pods-Circular-prod/Pods-Circular-prod.release.xcconfig"; sourceTree = "<group>"; };
@@ -166,8 +166,8 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* Circular.app */,
-				A1001E7726DE38D1000C80A0 /* Circular-dev.app */,
-				A1001E8A26DE38EA000C80A0 /* Circular-demo.app */,
+				A1001E7726DE38D1000C80A0 /* Circular-Dev.app */,
+				A1001E8A26DE38EA000C80A0 /* Circular-Demo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -175,9 +175,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* Circular-prod */ = {
+		13B07F861A680F5B00A75B9A /* Circular-Prod */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Circular-prod" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Circular-Prod" */;
 			buildPhases = (
 				228E6C3E1DFF1D6B6663BB6E /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
@@ -192,14 +192,14 @@
 			);
 			dependencies = (
 			);
-			name = "Circular-prod";
+			name = "Circular-Prod";
 			productName = Circular;
 			productReference = 13B07F961A680F5B00A75B9A /* Circular.app */;
 			productType = "com.apple.product-type.application";
 		};
-		A1001E6626DE38D1000C80A0 /* Circular-dev */ = {
+		A1001E6626DE38D1000C80A0 /* Circular-Dev */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A1001E7426DE38D1000C80A0 /* Build configuration list for PBXNativeTarget "Circular-dev" */;
+			buildConfigurationList = A1001E7426DE38D1000C80A0 /* Build configuration list for PBXNativeTarget "Circular-Dev" */;
 			buildPhases = (
 				A1001E6726DE38D1000C80A0 /* [CP] Check Pods Manifest.lock */,
 				A1001E6826DE38D1000C80A0 /* Start Packager */,
@@ -214,14 +214,14 @@
 			);
 			dependencies = (
 			);
-			name = "Circular-dev";
+			name = "Circular-Dev";
 			productName = Circular;
-			productReference = A1001E7726DE38D1000C80A0 /* Circular-dev.app */;
+			productReference = A1001E7726DE38D1000C80A0 /* Circular-Dev.app */;
 			productType = "com.apple.product-type.application";
 		};
-		A1001E7926DE38EA000C80A0 /* Circular-demo */ = {
+		A1001E7926DE38EA000C80A0 /* Circular-Demo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A1001E8726DE38EA000C80A0 /* Build configuration list for PBXNativeTarget "Circular-demo" */;
+			buildConfigurationList = A1001E8726DE38EA000C80A0 /* Build configuration list for PBXNativeTarget "Circular-Demo" */;
 			buildPhases = (
 				A1001E7A26DE38EA000C80A0 /* [CP] Check Pods Manifest.lock */,
 				A1001E7B26DE38EA000C80A0 /* Start Packager */,
@@ -236,9 +236,9 @@
 			);
 			dependencies = (
 			);
-			name = "Circular-demo";
+			name = "Circular-Demo";
 			productName = Circular;
-			productReference = A1001E8A26DE38EA000C80A0 /* Circular-demo.app */;
+			productReference = A1001E8A26DE38EA000C80A0 /* Circular-Demo.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -267,9 +267,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* Circular-prod */,
-				A1001E6626DE38D1000C80A0 /* Circular-dev */,
-				A1001E7926DE38EA000C80A0 /* Circular-demo */,
+				13B07F861A680F5B00A75B9A /* Circular-Prod */,
+				A1001E6626DE38D1000C80A0 /* Circular-Dev */,
+				A1001E7926DE38EA000C80A0 /* Circular-Demo */,
 			);
 		};
 /* End PBXProject section */
@@ -905,7 +905,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Circular-prod" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Circular-Prod" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -923,7 +923,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A1001E7426DE38D1000C80A0 /* Build configuration list for PBXNativeTarget "Circular-dev" */ = {
+		A1001E7426DE38D1000C80A0 /* Build configuration list for PBXNativeTarget "Circular-Dev" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1001E7526DE38D1000C80A0 /* Debug */,
@@ -932,7 +932,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A1001E8726DE38EA000C80A0 /* Build configuration list for PBXNativeTarget "Circular-demo" */ = {
+		A1001E8726DE38EA000C80A0 /* Build configuration list for PBXNativeTarget "Circular-Demo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1001E8826DE38EA000C80A0 /* Debug */,

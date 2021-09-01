@@ -105,7 +105,7 @@ def init_appstore_api_session
 end
 
 def build(flavor)
-  build_app(scheme: "app-#{flavor}", configuration: "Release", output_name: "app-#{flavor}-release.ipa")
+  build_app(scheme: "Circular-#{flavor}", configuration: "Release", output_name: "app-#{flavor}-release.ipa")
 end
 
 def update_registered_devices(flavor)

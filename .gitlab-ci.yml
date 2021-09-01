@@ -1,6 +1,6 @@
 stages:
   - check
-  - android
+  #- android
   - ios
 
 variables:
