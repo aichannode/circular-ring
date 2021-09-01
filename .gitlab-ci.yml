@@ -62,7 +62,6 @@ android:build:prod:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - mkdir artifacts
   script:
-    - mkdir artifacts
     - npm ci --progress=false
     - npx jetifier
     - cd android
