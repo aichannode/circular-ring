@@ -1,0 +1,24 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUnusedLocals": true,
+		"sourceMap": true,
+		"target": "esnext",
+		"lib": ["ES6"],
+		"module": "CommonJS",
+		"moduleResolution": "node",
+		"jsx": "react-native",
+		"allowSyntheticDefaultImports": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"baseUrl": ".",
+		"paths": {
+			"@assets/*": ["assets/*"],
+			"@wordings": ["wordings"],
+			"@core/*": ["src/core/*"],
+			"@domain/*": ["src/domain/*"],
+			"@ui/*": ["src/ui/*"]
+		}
+	}
+}

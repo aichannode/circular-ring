@@ -1,27 +1,24 @@
+import { PairingScreen } from "@ui/pairingScreen/pairingScreen";
 import React from "react";
 import { IntlProvider } from "react-intl";
-import { Text } from "react-native";
+import { LogBox } from "react-native";
 import * as RNLocalize from "react-native-localize";
-import styled from "styled-components/native";
+import { ServicesProvider } from "./core/services";
 import { translations } from "./wordings";
 
+LogBox.ignoreLogs(["new NativeEventEmitter()"]);
+
 export const App = () => {
-	const locale = getPreferredLangageCode(Object.keys(translations));
+	const locale = getPreferredLangageCode(Object.keys(translations)) as "en";
 
 	return (
 		<IntlProvider locale={locale} messages={translations[locale]}>
-			<Container>
-				<Text>Circular Ring</Text>
-			</Container>
+			<ServicesProvider>
+				<PairingScreen />
+			</ServicesProvider>
 		</IntlProvider>
 	);
 };
-
-const Container = styled.View`
-	flex: 1;
-	align-items: center;
-	justify-content: center;
-`;
 
 const defaultLanguageCode = "en";
 
