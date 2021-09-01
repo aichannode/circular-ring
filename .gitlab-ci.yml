@@ -1,5 +1,3 @@
-image: betomorrow/ci-android:29
-
 stages:
   - check
   - build
