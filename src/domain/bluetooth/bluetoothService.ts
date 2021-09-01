@@ -2,6 +2,7 @@ import { delay } from "@core/utils";
 import { observable } from "micro-observables";
 import { PermissionsAndroid, Platform } from "react-native";
 import { BleManager, State } from "react-native-ble-plx";
+import { Buffer } from "buffer";
 
 const enableBluetoothTimeout = 5000;
 
@@ -58,17 +59,37 @@ export class BluetoothService {
 	}
 
 	async scan() {
-		this._manager.startDeviceScan(null, null, (error, device) => {
-			if (error) {
-				device?.manufacturerData;
-				this.log("Error", error);
-				return;
+		this.log("SCAN STARTED");
+		this._manager.startDeviceScan(
+			[
+				"6E400001-B5A3-F393-E0A9-E50E24DCCA9E",
+				"6E400002-B5A3-F393-E0A9-E50E24DCCA9E",
+				"6E400003-B5A3-F393-E0A9-E50E24DCCA9E",
+			],
+			null,
+			(error, device) => {
+				if (error) {
+					device?.manufacturerData;
+					this.log("Error", error);
+					return;
+				}
+
+				this.log("Scanned device", device?.name);
 			}
-			this.log("Scanned device", device);
-		});
+		);
+	}
+
+	stopScan() {
+		this._manager.stopDeviceScan();
+		this.log("SCAN STOPPED");
 	}
 
 	log(...args: unknown[]) {
 		console.log("📶 [BLE]", ...args);
 	}
 }
+
+const base64ToHex = (str: any) => {
+	const decoded = Buffer.from(str, "base64").toString("hex");
+	return decoded;
+};

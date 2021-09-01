@@ -21,6 +21,7 @@ export const PairingScreen: React.FC/*<PairingScreenProps>*/ = ({}) => {
 		<Container>
 			<Text onPress={() => bluetoothService.enable()}>{bluetoothState}</Text>
 			{bluetoothEnabled && <Text onPress={() => bluetoothService.scan()}>SCAN</Text>}
+			{bluetoothEnabled && <Text onPress={() => bluetoothService.stopScan()}>STOP</Text>}
 		</Container>
 	);
 };
