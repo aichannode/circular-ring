@@ -15,15 +15,15 @@ def shared_pods
   use_flipper!
 end
 
-target 'Circular-dev' do
+target 'Circular-Dev' do
   shared_pods
 end
 
-target 'Circular-demo' do
+target 'Circular-Demo' do
   shared_pods
 end
 
-target 'Circular-prod' do
+target 'Circular-Prod' do
   shared_pods
 end
 
