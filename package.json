@@ -4,8 +4,8 @@
 	"private": true,
 	"scripts": {
 		"upgrade-wording": "sync-wording --upgrade",
-		"android": "react-native run-android",
-		"ios": "react-native run-ios",
+		"android": "react-native run-android --variant='DevDebug' --appIdSuffix=dev",
+		"ios": "react-native run-ios --scheme 'Circular-dev'",
 		"start": "react-native start",
 		"test": "jest",
 		"lint": "eslint ."

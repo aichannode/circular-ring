@@ -1,0 +1,120 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+APPCENTER_APP_PREFIX = "Circular-iOS-"
+APPCENTER_OWNER = "BeTomorrow"
+
+platform :ios do
+  desc "Initial setup"
+  lane :setup do
+    produce(app_name: 'App Dev', app_identifier: 'com.circular.circular.dev', skip_itc: true)
+    produce(app_name: 'App Demo', app_identifier: 'com.circular.circular.demo', skip_itc: true)
+    produce(app_name: 'App', app_identifier: 'com.circular.circular', skip_itc: true)
+    match(type: "development", app_identifier: "com.circular.circular.dev", force_for_new_devices: true)
+    match(type: "adhoc", app_identifier: "com.circular.circular.dev", force_for_new_devices: true)
+    match(type: "adhoc", app_identifier: "com.circular.circular.demo", force_for_new_devices: true)
+    match(type: "adhoc", app_identifier: "com.circular.circular", force_for_new_devices: true)
+    match(type: "appstore", app_identifier: "com.circular.circular")
+  end
+
+  desc "Setup dev environment"
+  lane :setup_dev do
+    match(type: "development", app_identifier: "com.circular.circular.dev", force_for_new_devices: true)
+  end
+
+  desc "Build dev version"
+  lane :dev do
+    init_appstore_api_session()
+    increment_build_number(build_number: number_of_commits)
+    update_registered_devices("Dev")
+    match(type: "adhoc", app_identifier: "com.circular.circular.dev", force_for_new_devices: true)
+    build("Dev")
+    appcenter("Dev", true)
+  end
+
+  desc "Build demo version"
+  lane :demo do
+    init_appstore_api_session()
+    increment_build_number(build_number: number_of_commits)
+    match(type: "adhoc", app_identifier: "com.circular.circular.demo", force_for_new_devices: true)
+    build("Demo")
+    appcenter("Demo", true)
+  end
+
+  desc "Build prod version"
+  lane :prod do
+    init_appstore_api_session()
+    increment_build_number(build_number: number_of_commits)
+    match(type: "adhoc", app_identifier: "com.circular.circular", force_for_new_devices: true)
+    match(type: "appstore", app_identifier: "com.circular.circular", readonly: true)
+    build("Prod")
+    appcenter("Prod", true)
+  end
+end
+
+def init_appstore_api_session
+  app_store_connect_api_key(
+    key_id: ENV["APPSTORE_API_KEY_ID"],
+    issuer_id: ENV["APPSTORE_API_ISSUER_ID"],
+    key_content: ENV["APPSTORE_API_KEY"],
+    in_house: false
+  )
+end
+
+def build(flavor)
+  build_app(scheme: "app-#{flavor}", configuration: "Release", output_name: "app-#{flavor}-release.ipa")
+end
+
+def update_registered_devices(flavor)
+  appcenter_fetch_devices(
+    owner_name: "#{APPCENTER_OWNER}",
+    app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
+    destinations: "Collaborators,AppDistributionGroup",
+    devices_file: "devices.txt"
+  )
+
+  register_devices(
+    devices_file: "./devices.txt"
+  )
+end
+
+def appcenter(flavor, notify)
+  appcenter_upload(
+    app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
+    owner_name: "#{APPCENTER_OWNER}",
+    destinations: "Collaborators,AppDistributionGroup",
+    destination_type: "group",
+    ipa: "./app-#{flavor}-release.ipa",
+    release_notes: changelog(flavor),
+    notify_testers: notify
+  )
+end
+
+def changelog(flavor)
+  begin
+    result = appcenter_fetch_version_number(
+      app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
+      owner_name: "#{APPCENTER_OWNER}")
+    commits_count = number_of_commits - Integer(result["build_number"])
+    commits_count = commits_count >= 1 ? commits_count : 1
+  rescue
+    commits_count = 1
+  end
+  changelog_from_git_commits(commits_count: commits_count)
+  changelog = lane_context[SharedValues::FL_CHANGELOG]
+  return "#{git_branch} :\n\n#{changelog}"
+end

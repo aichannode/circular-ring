@@ -7,27 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* CircularTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* CircularTests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		947F10D32317ADB1804FB703 /* libPods-Circular-CircularTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E8E94DC265C6EFE1A4A454A /* libPods-Circular-CircularTests.a */; };
+		A1001E6A26DE38D1000C80A0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
+		A1001E6B26DE38D1000C80A0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		A1001E6D26DE38D1000C80A0 /* libPods-Circular.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AA21D86AA79C5AA2613F24A /* libPods-Circular.a */; };
+		A1001E6F26DE38D1000C80A0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		A1001E7026DE38D1000C80A0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		A1001E7D26DE38EA000C80A0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
+		A1001E7E26DE38EA000C80A0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		A1001E8026DE38EA000C80A0 /* libPods-Circular.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AA21D86AA79C5AA2613F24A /* libPods-Circular.a */; };
+		A1001E8226DE38EA000C80A0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		A1001E8326DE38EA000C80A0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		AFD793617EC2AF8E1DB1803B /* libPods-Circular.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AA21D86AA79C5AA2613F24A /* libPods-Circular.a */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		00E356F41AD99517003FC87E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = Circular;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		00E356EE1AD99517003FC87E /* CircularTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CircularTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* CircularTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CircularTests.m; sourceTree = "<group>"; };
 		0612AA9EE3167772BDE12A74 /* Pods-Circular.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular.release.xcconfig"; path = "Target Support Files/Pods-Circular/Pods-Circular.release.xcconfig"; sourceTree = "<group>"; };
@@ -43,23 +40,33 @@
 		7E8E94DC265C6EFE1A4A454A /* libPods-Circular-CircularTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Circular-CircularTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Circular/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		84BF9A5A82E95F034C567B97 /* Pods-Circular-CircularTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-CircularTests.release.xcconfig"; path = "Target Support Files/Pods-Circular-CircularTests/Pods-Circular-CircularTests.release.xcconfig"; sourceTree = "<group>"; };
+		A1001E7726DE38D1000C80A0 /* Circular-dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Circular-dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1001E8A26DE38EA000C80A0 /* Circular-demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Circular-demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		00E356EB1AD99517003FC87E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				947F10D32317ADB1804FB703 /* libPods-Circular-CircularTests.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				AFD793617EC2AF8E1DB1803B /* libPods-Circular.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1001E6C26DE38D1000C80A0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1001E6D26DE38D1000C80A0 /* libPods-Circular.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1001E7F26DE38EA000C80A0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1001E8026DE38EA000C80A0 /* libPods-Circular.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,7 +150,8 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* Circular.app */,
-				00E356EE1AD99517003FC87E /* CircularTests.xctest */,
+				A1001E7726DE38D1000C80A0 /* Circular-dev.app */,
+				A1001E8A26DE38EA000C80A0 /* Circular-demo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -151,30 +159,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* CircularTests */ = {
+		13B07F861A680F5B00A75B9A /* Circular-prod */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "CircularTests" */;
-			buildPhases = (
-				4197A6D485FE2B430334C33B /* [CP] Check Pods Manifest.lock */,
-				00E356EA1AD99517003FC87E /* Sources */,
-				00E356EB1AD99517003FC87E /* Frameworks */,
-				00E356EC1AD99517003FC87E /* Resources */,
-				AB7DF442A9885CE8AC70D66F /* [CP] Embed Pods Frameworks */,
-				09B9B08219F92459D51D0063 /* [CP] Copy Pods Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				00E356F51AD99517003FC87E /* PBXTargetDependency */,
-			);
-			name = CircularTests;
-			productName = CircularTests;
-			productReference = 00E356EE1AD99517003FC87E /* CircularTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		13B07F861A680F5B00A75B9A /* Circular */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Circular" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Circular-prod" */;
 			buildPhases = (
 				228E6C3E1DFF1D6B6663BB6E /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
@@ -189,9 +176,53 @@
 			);
 			dependencies = (
 			);
-			name = Circular;
+			name = "Circular-prod";
 			productName = Circular;
 			productReference = 13B07F961A680F5B00A75B9A /* Circular.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A1001E6626DE38D1000C80A0 /* Circular-dev */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1001E7426DE38D1000C80A0 /* Build configuration list for PBXNativeTarget "Circular-dev" */;
+			buildPhases = (
+				A1001E6726DE38D1000C80A0 /* [CP] Check Pods Manifest.lock */,
+				A1001E6826DE38D1000C80A0 /* Start Packager */,
+				A1001E6926DE38D1000C80A0 /* Sources */,
+				A1001E6C26DE38D1000C80A0 /* Frameworks */,
+				A1001E6E26DE38D1000C80A0 /* Resources */,
+				A1001E7126DE38D1000C80A0 /* Bundle React Native code and images */,
+				A1001E7226DE38D1000C80A0 /* [CP] Embed Pods Frameworks */,
+				A1001E7326DE38D1000C80A0 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Circular-dev";
+			productName = Circular;
+			productReference = A1001E7726DE38D1000C80A0 /* Circular-dev.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A1001E7926DE38EA000C80A0 /* Circular-demo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1001E8726DE38EA000C80A0 /* Build configuration list for PBXNativeTarget "Circular-demo" */;
+			buildPhases = (
+				A1001E7A26DE38EA000C80A0 /* [CP] Check Pods Manifest.lock */,
+				A1001E7B26DE38EA000C80A0 /* Start Packager */,
+				A1001E7C26DE38EA000C80A0 /* Sources */,
+				A1001E7F26DE38EA000C80A0 /* Frameworks */,
+				A1001E8126DE38EA000C80A0 /* Resources */,
+				A1001E8426DE38EA000C80A0 /* Bundle React Native code and images */,
+				A1001E8526DE38EA000C80A0 /* [CP] Embed Pods Frameworks */,
+				A1001E8626DE38EA000C80A0 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Circular-demo";
+			productName = Circular;
+			productReference = A1001E8A26DE38EA000C80A0 /* Circular-demo.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -202,10 +233,6 @@
 			attributes = {
 				LastUpgradeCheck = 1210;
 				TargetAttributes = {
-					00E356ED1AD99517003FC87E = {
-						CreatedOnToolsVersion = 6.2;
-						TestTargetID = 13B07F861A680F5B00A75B9A;
-					};
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1120;
 					};
@@ -224,26 +251,38 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* Circular */,
-				00E356ED1AD99517003FC87E /* CircularTests */,
+				13B07F861A680F5B00A75B9A /* Circular-prod */,
+				A1001E6626DE38D1000C80A0 /* Circular-dev */,
+				A1001E7926DE38EA000C80A0 /* Circular-demo */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		00E356EC1AD99517003FC87E /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		13B07F8E1A680F5B00A75B9A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1001E6E26DE38D1000C80A0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1001E6F26DE38D1000C80A0 /* LaunchScreen.storyboard in Resources */,
+				A1001E7026DE38D1000C80A0 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1001E8126DE38EA000C80A0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1001E8226DE38EA000C80A0 /* LaunchScreen.storyboard in Resources */,
+				A1001E8326DE38EA000C80A0 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,23 +302,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
-		};
-		09B9B08219F92459D51D0063 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Circular-CircularTests/Pods-Circular-CircularTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Circular-CircularTests/Pods-Circular-CircularTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Circular-CircularTests/Pods-Circular-CircularTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		228E6C3E1DFF1D6B6663BB6E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -303,28 +325,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4197A6D485FE2B430334C33B /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Circular-CircularTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		8F4821DB1AC795BC67509627 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -342,21 +342,182 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Circular/Pods-Circular-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		AB7DF442A9885CE8AC70D66F /* [CP] Embed Pods Frameworks */ = {
+		A1001E6726DE38D1000C80A0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Circular-CircularTests/Pods-Circular-CircularTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Embed Pods Frameworks";
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Circular-CircularTests/Pods-Circular-CircularTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Circular-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Circular-CircularTests/Pods-Circular-CircularTests-frameworks.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A1001E6826DE38D1000C80A0 /* Start Packager */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Start Packager";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		A1001E7126DE38D1000C80A0 /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
+		};
+		A1001E7226DE38D1000C80A0 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular/Pods-Circular-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular/Pods-Circular-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Circular/Pods-Circular-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A1001E7326DE38D1000C80A0 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular/Pods-Circular-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular/Pods-Circular-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Circular/Pods-Circular-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A1001E7A26DE38EA000C80A0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Circular-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A1001E7B26DE38EA000C80A0 /* Start Packager */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Start Packager";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		A1001E8426DE38EA000C80A0 /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
+		};
+		A1001E8526DE38EA000C80A0 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular/Pods-Circular-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular/Pods-Circular-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Circular/Pods-Circular-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A1001E8626DE38EA000C80A0 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular/Pods-Circular-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular/Pods-Circular-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Circular/Pods-Circular-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FA55A5ECF796E6A828AC2E08 /* [CP] Copy Pods Resources */ = {
@@ -398,14 +559,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		00E356EA1AD99517003FC87E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				00E356F31AD99517003FC87E /* CircularTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		13B07F871A680F5B00A75B9A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -415,77 +568,37 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A1001E6926DE38D1000C80A0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1001E6A26DE38D1000C80A0 /* AppDelegate.m in Sources */,
+				A1001E6B26DE38D1000C80A0 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1001E7C26DE38EA000C80A0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1001E7D26DE38EA000C80A0 /* AppDelegate.m in Sources */,
+				A1001E7E26DE38EA000C80A0 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* Circular */;
-			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		00E356F61AD99517003FC87E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 401553CA7C3B14EEABD56279 /* Pods-Circular-CircularTests.debug.xcconfig */;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = CircularTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lc++",
-					"$(inherited)",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Circular.app/Circular";
-			};
-			name = Debug;
-		};
-		00E356F71AD99517003FC87E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84BF9A5A82E95F034C567B97 /* Pods-Circular-CircularTests.release.xcconfig */;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COPY_PHASE_STRIP = NO;
-				INFOPLIST_FILE = CircularTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lc++",
-					"$(inherited)",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Circular.app/Circular";
-			};
-			name = Release;
-		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 15EC973760FEDD152D9E3EC0 /* Pods-Circular.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = WGW7T2NP8M;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Circular/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -497,9 +610,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular;
 				PRODUCT_NAME = Circular;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.circular.circular";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -512,9 +625,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = WGW7T2NP8M;
 				INFOPLIST_FILE = Circular/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -525,9 +639,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular;
 				PRODUCT_NAME = Circular;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.circular.circular";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -656,19 +770,126 @@
 			};
 			name = Release;
 		};
+		A1001E7526DE38D1000C80A0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 15EC973760FEDD152D9E3EC0 /* Pods-Circular.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WGW7T2NP8M;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = Circular/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular.dev;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development com.circular.circular.dev";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		A1001E7626DE38D1000C80A0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0612AA9EE3167772BDE12A74 /* Pods-Circular.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WGW7T2NP8M;
+				INFOPLIST_FILE = Circular/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular.dev;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development com.circular.circular.dev";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		A1001E8826DE38EA000C80A0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 15EC973760FEDD152D9E3EC0 /* Pods-Circular.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WGW7T2NP8M;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = Circular/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular.demo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.circular.circular.demo";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		A1001E8926DE38EA000C80A0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0612AA9EE3167772BDE12A74 /* Pods-Circular.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WGW7T2NP8M;
+				INFOPLIST_FILE = Circular/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular.demo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.circular.circular.demo";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "CircularTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				00E356F61AD99517003FC87E /* Debug */,
-				00E356F71AD99517003FC87E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Circular" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Circular-prod" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -682,6 +903,24 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1001E7426DE38D1000C80A0 /* Build configuration list for PBXNativeTarget "Circular-dev" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1001E7526DE38D1000C80A0 /* Debug */,
+				A1001E7626DE38D1000C80A0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1001E8726DE38EA000C80A0 /* Build configuration list for PBXNativeTarget "Circular-demo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1001E8826DE38EA000C80A0 /* Debug */,
+				A1001E8926DE38EA000C80A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
