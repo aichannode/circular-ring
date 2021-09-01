@@ -31,16 +31,7 @@ export class BluetoothService {
 			}
 		} else {
 			// Permissions ?
-			if (
-				"granted" !==
-				(await PermissionsAndroid.request("android.permission.ACCESS_FINE_LOCATION", {
-					title: "Permission Localisation Bluetooth",
-					message: "Requirement for Bluetooth",
-					buttonNeutral: "Later",
-					buttonNegative: "Cancel",
-					buttonPositive: "OK",
-				}))
-			) {
+			if ("granted" !== (await PermissionsAndroid.request("android.permission.ACCESS_FINE_LOCATION"))) {
 				this.log("Unauthorized");
 				throw Error("Unauthorized");
 			}

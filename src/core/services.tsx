@@ -1,11 +1,14 @@
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { createContext, useContext } from "react";
 import React from "react";
+import { DeviceService } from "@domain/device/deviceService";
 
 const bluetoothService = new BluetoothService();
+const deviceService = new DeviceService(bluetoothService);
 
 export const services = {
 	bluetoothService,
+	deviceService,
 };
 
 export type Services = typeof services;
