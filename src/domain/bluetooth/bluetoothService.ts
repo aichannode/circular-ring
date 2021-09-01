@@ -2,7 +2,6 @@ import { delay } from "@core/utils";
 import { observable } from "micro-observables";
 import { PermissionsAndroid, Platform } from "react-native";
 import { BleManager, State } from "react-native-ble-plx";
-import { Buffer } from "buffer";
 
 const enableBluetoothTimeout = 5000;
 
@@ -88,8 +87,3 @@ export class BluetoothService {
 		console.log("📶 [BLE]", ...args);
 	}
 }
-
-const base64ToHex = (str: any) => {
-	const decoded = Buffer.from(str, "base64").toString("hex");
-	return decoded;
-};
