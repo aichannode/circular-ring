@@ -181,7 +181,7 @@ android {
             applicationIdSuffix ".dev"
             versionNameSuffix "-dev"
             manifestPlaceholders = [
-                appName: "App Dev",
+                appName: "Circular Dev",
             ]
         }
         demo {
@@ -189,13 +189,13 @@ android {
             applicationIdSuffix ".demo"
             versionNameSuffix "-demo"
             manifestPlaceholders = [
-                appName: "App Demo",
+                appName: "Circular Demo",
             ]
         }
         prod {
             dimension "environment"
             manifestPlaceholders = [
-                appName: "App",
+                appName: "Circular",
             ]
         }
     }
@@ -223,6 +223,7 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
