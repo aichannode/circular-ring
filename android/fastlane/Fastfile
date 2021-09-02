@@ -34,7 +34,7 @@ platform :android do
   desc "Build prod version"
   lane :prod do
     build("prod")
-    upload_to_play_store(track: "alpha")
+    upload_to_play_store(track: "alpha", release_status: "draft")
   end
 end
 
