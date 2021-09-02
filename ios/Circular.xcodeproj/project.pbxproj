@@ -628,7 +628,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular;
 				PRODUCT_NAME = Circular;
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.circular.circular";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.circular.circular";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -657,7 +657,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular;
 				PRODUCT_NAME = Circular;
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.circular.circular";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.circular.circular";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
