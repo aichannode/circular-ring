@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { PairingState } from "@domain/device/deviceService";
+import { DeviceBondState } from "@domain/device/deviceService";
 import { useDevices, usePairingState } from "@domain/device/hooks";
 import { NavigationProp } from "@react-navigation/native";
 import { PrimaryButton } from "@ui/components/buttons";
@@ -27,10 +27,13 @@ export const RingSetupScreen: React.FC<RingSetupScreenProps> = () => {
 	}, []);
 
 	useEffect(() => {
-		if (pairingState === PairingState.ENABLED) {
+		if (pairingState === DeviceBondState.ENABLED) {
 			deviceService.startScan();
 		} else {
 			deviceService.stopScan();
+		}
+		if (pairingState === DeviceBondState.FINISHED) {
+			deviceService.getBattery().then((battery) => console.log("BATTERY IS", battery));
 		}
 	}, [pairingState]);
 
@@ -38,7 +41,7 @@ export const RingSetupScreen: React.FC<RingSetupScreenProps> = () => {
 		<Container>
 			{(() => {
 				switch (pairingState) {
-					case PairingState.DISABLED:
+					case DeviceBondState.DISABLED:
 						return (
 							<>
 								<Message>{format("setup.scan.disabled.message")}</Message>
@@ -53,7 +56,7 @@ export const RingSetupScreen: React.FC<RingSetupScreenProps> = () => {
 								)}
 							</>
 						);
-					default:
+					case DeviceBondState.ENABLED:
 						return (
 							<>
 								<PrimaryText>{format("setup.scan.enabled.title")}</PrimaryText>
@@ -61,12 +64,16 @@ export const RingSetupScreen: React.FC<RingSetupScreenProps> = () => {
 								<Message>{format("setup.scan.enabled.message")}</Message>
 								<Divider />
 								{devices.map((device) => (
-									<DeviceWrapper key={device}>
-										<PrimaryText>{device}</PrimaryText>
+									<DeviceWrapper key={device.id} onPress={() => deviceService.connect(device)}>
+										<PrimaryText>{device.name}</PrimaryText>
 									</DeviceWrapper>
 								))}
 							</>
 						);
+					case DeviceBondState.ON_PROGRESS:
+						return <Message>{format("setup.connection.pending")}</Message>;
+					case DeviceBondState.FINISHED:
+						return <Message>{format("setup.connection.success")}</Message>;
 				}
 			})()}
 		</Container>

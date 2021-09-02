@@ -3,5 +3,7 @@
   "setup.scan.disabled.message": "To proceed, please enable the bluetooth on you phone",
   "setup.scan.disabled.enable": "Enable bluetooth",
   "setup.scan.enabled.title": "Press for 10 seconds",
-  "setup.scan.enabled.message": "Press your ring’s button for <strong>10 seconds</strong> until it appears in the list. Your ring will vibrate once for each second you press it and a distinctive vibration will signal that you can release."
+  "setup.scan.enabled.message": "Press your ring’s button for <strong>10 seconds</strong> until it appears in the list. Your ring will vibrate once for each second you press it and a distinctive vibration will signal that you can release.",
+  "setup.connection.pending": "Setting up, this might take up to one minute.",
+  "setup.connection.success": "Success !"
 }

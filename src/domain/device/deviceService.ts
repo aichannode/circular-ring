@@ -1,40 +1,57 @@
+import { base64decode, base64encode } from "@core/utils";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { observable, Observable } from "micro-observables";
-import { State } from "react-native-ble-plx";
+import { Device, State } from "react-native-ble-plx";
 
-export enum PairingState {
+export enum DeviceBondState {
 	DISABLED,
 	ENABLED,
 	SCANNING,
 	ON_PROGRESS,
 	FINISHED,
 }
+export enum DeviceConnectionState {
+	DISCONNECTED,
+	CONNECTING,
+	CONNECTED,
+}
 
-const ringServicesUUIDs = [
-	"6E400001-B5A3-F393-E0A9-E50E24DCCA9E",
-	"6E400002-B5A3-F393-E0A9-E50E24DCCA9E",
-	"6E400003-B5A3-F393-E0A9-E50E24DCCA9E",
-];
+const NUServiceUUID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
+const RXCharacteristicUUID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
+const TXCharacteristicUUID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
+
 export class DeviceService {
-	readonly pairingState: Observable<PairingState>;
-	private _devices = observable(new Map<string, string>());
+	private _devices = observable(new Map<string, Device>());
+	private _connectedDevice = observable<Device | null>(null);
+	private _connectionState = observable(DeviceConnectionState.DISCONNECTED);
 
 	devices = this._devices.select((devicesMap) => [...devicesMap.values()]);
 
+	readonly bondState: Observable<DeviceBondState>;
+
 	constructor(private readonly bluetoothService: BluetoothService) {
-		this.pairingState = Observable.select([this.bluetoothService.state], (bleState) => {
-			if (bleState === State.PoweredOff) {
-				return PairingState.DISABLED;
+		this.bondState = Observable.select(
+			[this.bluetoothService.state, this._connectionState],
+			(bleState, connectionState) => {
+				if (bleState === State.PoweredOff) {
+					return DeviceBondState.DISABLED;
+				}
+				if (connectionState === DeviceConnectionState.DISCONNECTED) {
+					return DeviceBondState.ENABLED;
+				}
+				if (connectionState === DeviceConnectionState.CONNECTING) {
+					return DeviceBondState.ON_PROGRESS;
+				}
+				return DeviceBondState.FINISHED;
 			}
-			return PairingState.ENABLED;
-		});
+		);
 	}
 
 	async startScan() {
 		await this.bluetoothService.enable();
 		this.log("SCAN STARTED");
 		const manager = this.bluetoothService.manager;
-		manager.startDeviceScan(ringServicesUUIDs, null, (error, device) => {
+		manager.startDeviceScan([NUServiceUUID], null, (error, device) => {
 			if (error) {
 				this.log("Error", error);
 				return;
@@ -45,7 +62,7 @@ export class DeviceService {
 			}
 			const currentDevices = this._devices.get();
 			if (!currentDevices.has(device.id)) {
-				this._devices.set(new Map(currentDevices).set(device.id, device.name ?? "unknown"));
+				this._devices.set(new Map(currentDevices).set(device.id, device));
 				this.log("New device", device?.name);
 			}
 		});
@@ -55,6 +72,55 @@ export class DeviceService {
 		const manager = this.bluetoothService.manager;
 		manager.stopDeviceScan();
 		this.log("SCAN STOPPED");
+	}
+
+	async connect(device: Device) {
+		try {
+			this.log("Connecting to device", device.name);
+			this._connectionState.set(DeviceConnectionState.CONNECTING);
+			await device.connect({ timeout: 20000 });
+			this.log("Connection successful to device", device.name);
+			await device.discoverAllServicesAndCharacteristics();
+			this.log("Services discovered for device", device.name);
+			this._connectedDevice.set(device);
+			this._connectionState.set(DeviceConnectionState.CONNECTED);
+		} catch (e) {
+			this.log("Error connecting to device", e);
+			this._connectionState.set(DeviceConnectionState.DISCONNECTED);
+		}
+	}
+
+	getBattery() {
+		return this.sendMessage("BAT");
+	}
+
+	async sendMessage(message: string) {
+		const device = this._connectedDevice.get();
+		if (!device) {
+			this.log("Error : no device connected");
+			return;
+		}
+
+		const responsePromise = new Promise<string>((resolve, reject) => {
+			const subs = device.monitorCharacteristicForService(NUServiceUUID, TXCharacteristicUUID, (err, charac) => {
+				if (err) {
+					reject(err);
+				} else if (!charac) {
+					reject("Empty Characteristic");
+				} else {
+					resolve(base64decode(charac.value ?? ""));
+				}
+				subs.remove();
+			});
+		});
+
+		await device.writeCharacteristicWithoutResponseForService(
+			NUServiceUUID,
+			RXCharacteristicUUID,
+			base64encode(message)
+		);
+
+		return await responsePromise;
 	}
 
 	log(...args: unknown[]) {
