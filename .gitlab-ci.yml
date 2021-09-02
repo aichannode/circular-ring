@@ -1,6 +1,6 @@
 stages:
   - check
-  #- android
+  - android
   - ios
 
 variables:
@@ -27,55 +27,55 @@ check:
 
 # Android
 
-#android:build:dev:
-#  extends: .build-android
-#  variables:
-#    ENV: dev
-#  only:
-#    - master
-#
-#android:build:demo:
-#  extends: .build-android
-#  variables:
-#    ENV: demo
-#  only:
-#    - demo
-#
-#android:build:prod:
-#  extends: .build-android
-#  variables:
-#    ENV: prod
-#  only:
-#    - prod
-#
-#.build-android:
-#  stage: android
-#  image: betomorrow/ci-android:29_v1
-#  environment:
-#    name: ${ENV}
-#  tags:
-#    - react-native
-#    - android
-#  before_script:
-#    - mkdir -p `pwd`/.gradle
-#    - export GRADLE_USER_HOME=`pwd`/.gradle
-#    - mkdir artifacts
-#  script:
-#    - npm ci --progress=false
-#    - npx jetifier
-#    - cd android
-#    # Export Signing Config
-#    - cat ${RELEASE_KEYSTORE_BASE64} | base64 -d > circular.release.keystore
-#    - echo "keystorePath=../circular.release.keystore" > signing.properties
-#    - echo "keystorePassword=$RELEASE_KEYSTORE_PASSWORD" >> signing.properties
-#    - echo "keyAlias=$RELEASE_KEY_ALIAS" >> signing.properties
-#    - echo "keyPassword=$RELEASE_KEY_PASSWORD" >> signing.properties
-#    # Export Google Api KeY
-#    - cat ${GOOGLE_API_KEY_BASE64} | base64 -d > googleApiKey.json
-#    # Build
-#    - bundle install
-#    - bundle exec fastlane ${ENV}
-#
+android:build:dev:
+  extends: .build-android
+  variables:
+    ENV: dev
+  only:
+    - master
+
+android:build:demo:
+  extends: .build-android
+  variables:
+    ENV: demo
+  only:
+    - demo
+
+android:build:prod:
+  extends: .build-android
+  variables:
+    ENV: prod
+  only:
+    - prod
+
+.build-android:
+  stage: android
+  image: betomorrow/ci-android:29_v1
+  environment:
+    name: ${ENV}
+  tags:
+    - react-native
+    - android
+  before_script:
+    - mkdir -p `pwd`/.gradle
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - mkdir artifacts
+  script:
+    - npm ci --progress=false
+    - npx jetifier
+    - cd android
+    # Export Signing Config
+    - cat ${RELEASE_KEYSTORE_BASE64} | base64 -d > circular.release.keystore
+    - echo "keystorePath=../circular.release.keystore" > signing.properties
+    - echo "keystorePassword=$RELEASE_KEYSTORE_PASSWORD" >> signing.properties
+    - echo "keyAlias=$RELEASE_KEY_ALIAS" >> signing.properties
+    - echo "keyPassword=$RELEASE_KEY_PASSWORD" >> signing.properties
+    # Export Google Api KeY
+    - cat ${GOOGLE_API_KEY_BASE64} | base64 -d > googleApiKey.json
+    # Build
+    - bundle install
+    - bundle exec fastlane ${ENV}
+
 #   IOS
 
 ios:build:dev:
