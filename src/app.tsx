@@ -1,9 +1,10 @@
 import { NavigationContainer } from "@react-navigation/native";
-import React from "react";
+import React, { useState } from "react";
+import { useEffect } from "react";
 import { IntlProvider } from "react-intl";
 import { LogBox } from "react-native";
 import * as RNLocalize from "react-native-localize";
-import { ServicesProvider } from "./core/services";
+import { initializeServices, ServicesProvider } from "./core/services";
 import { RootNavigator } from "./rootNavigator";
 import { translations } from "./wordings";
 
@@ -11,8 +12,13 @@ LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 
 export const App = () => {
 	const locale = getPreferredLangageCode(Object.keys(translations)) as "en";
+	const [initialized, setInitialized] = useState(false);
 
-	return (
+	useEffect(() => {
+		initializeServices().then(() => setInitialized(true));
+	}, []);
+
+	return initialized ? (
 		<IntlProvider locale={locale} messages={translations[locale]}>
 			<ServicesProvider>
 				<NavigationContainer>
@@ -20,7 +26,7 @@ export const App = () => {
 				</NavigationContainer>
 			</ServicesProvider>
 		</IntlProvider>
-	);
+	) : null;
 };
 
 const defaultLanguageCode = "en";

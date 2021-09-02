@@ -11,3 +11,11 @@ export function base64decode(str: string): string {
 export function base64encode(str: string): string {
 	return Buffer.from(str).toString("base64");
 }
+
+export function timedPromise<T>(promise: Promise<T>, timeout: number) {
+	const timeoutPromise = delay(timeout).then(() => {
+		throw Error("Timeout");
+	});
+
+	return Promise.race([promise, timeoutPromise]);
+}

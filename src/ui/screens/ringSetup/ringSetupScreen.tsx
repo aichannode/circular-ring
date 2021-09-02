@@ -23,10 +23,6 @@ export const RingSetupScreen: React.FC<RingSetupScreenProps> = () => {
 	const devices = useDevices();
 
 	useEffect(() => {
-		bluetoothService.init();
-	}, []);
-
-	useEffect(() => {
 		if (pairingState === DeviceBondState.ENABLED) {
 			deviceService.startScan();
 		} else {
