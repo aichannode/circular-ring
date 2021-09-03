@@ -8,26 +8,36 @@ import { CircularAuthService } from "@domain/auth/circularAuthService";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 
 export class ApiService {
-  private logger: Logger = getLogger("ApiService");
-  private readonly instance: AxiosInstance;
+	private logger: Logger = getLogger("ApiService");
+	private readonly instance: AxiosInstance;
 
-  constructor(private readonly authService: CircularAuthService) {
-    this.instance = axios.create();
-    this.instance.defaults.headers = { "x-api-version": "1.0" };
-    addRequestInterceptor(this.instance, addBaseUrlInterceptor);
-    addRequestInterceptor(this.instance, addAuthorizationInterceptor(this.authService));
-    addResponseInterceptor(this.instance, logResponseInterceptor(this.logger));
-  }
+	private _authService: CircularAuthService | undefined = undefined;
 
-  get<T = unknown, R = AxiosResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R> {
-    return this.instance.get(url, config);
-  }
+	constructor() {
+		this.instance = axios.create();
+		this.instance.defaults.headers = { "x-api-version": "1.0" };
+		addRequestInterceptor(this.instance, addBaseUrlInterceptor);
+		addResponseInterceptor(this.instance, logResponseInterceptor(this.logger));
+	}
 
-  post<T = unknown, R = AxiosResponse<T>>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<R> {
-    return this.instance.post(url, data, config);
-  }
+	init(circularAuthService: CircularAuthService) {
+		if (!this._authService) {
+			this._authService = circularAuthService;
+			addRequestInterceptor(this.instance, addAuthorizationInterceptor(this._authService));
+		} else {
+			this.logger.warn("Trying to initialize service twice");
+		}
+	}
 
-  delete<T = unknown, R = AxiosResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R> {
-    return this.instance.delete(url, config);
-  }
+	get<T = unknown, R = AxiosResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R> {
+		return this.instance.get(url, config);
+	}
+
+	post<T = unknown, R = AxiosResponse<T>>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<R> {
+		return this.instance.post(url, data, config);
+	}
+
+	delete<T = unknown, R = AxiosResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R> {
+		return this.instance.delete(url, config);
+	}
 }

@@ -19,6 +19,12 @@ export const RingSetupScreen: React.FC<RingSetupScreenProps> = () => {
 
 	const pairingState = usePairingState();
 
+	const { userService } = useServices();
+
+	useEffect(() => {
+		userService.loginWithEmail("test@betomorrow.com", "fail");
+	}, []);
+
 	useEffect(() => {
 		bluetoothService.init();
 	}, []);
