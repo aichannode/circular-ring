@@ -1,4 +1,5 @@
 import { useServices } from "@core/services";
+import { delay } from "@core/utils";
 import { DeviceBondState } from "@domain/device/deviceService";
 import { useDevices, usePairingState } from "@domain/device/hooks";
 import { NavigationProp } from "@react-navigation/native";
@@ -17,7 +18,7 @@ interface RingSetupScreenProps {
 }
 export const RingSetupScreen: React.FC<RingSetupScreenProps> = () => {
 	const { format } = useI18n();
-	const { bluetoothService, deviceService } = useServices();
+	const { bluetoothService, deviceService, ringService } = useServices();
 
 	const pairingState = usePairingState();
 	const devices = useDevices();
@@ -29,9 +30,11 @@ export const RingSetupScreen: React.FC<RingSetupScreenProps> = () => {
 			deviceService.stopScan();
 		}
 		if (pairingState === DeviceBondState.FINISHED) {
-			deviceService.getBattery().then((battery) => console.log("BATTERY IS", battery));
+			ringService.listenBattery();
 		}
 	}, [pairingState]);
+
+	const setupUserRing = async () => delay(2000); // Mock before having user signup and network layer
 
 	return (
 		<Container>
@@ -60,7 +63,13 @@ export const RingSetupScreen: React.FC<RingSetupScreenProps> = () => {
 								<Message>{format("setup.scan.enabled.message")}</Message>
 								<Divider />
 								{devices.map((device) => (
-									<DeviceWrapper key={device.id} onPress={() => deviceService.connect(device)}>
+									<DeviceWrapper
+										key={device.id}
+										onPress={async () => {
+											await deviceService.connect(device);
+											await setupUserRing();
+										}}
+									>
 										<PrimaryText>{device.name}</PrimaryText>
 									</DeviceWrapper>
 								))}

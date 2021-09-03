@@ -3,15 +3,18 @@ import { createContext, useContext } from "react";
 import React from "react";
 import { DeviceService } from "@domain/device/deviceService";
 import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
+import { RingService } from "@domain/ring/ringService";
 
 const favoriteDeviceStorage = new FavoriteDeviceStorage();
 
 const bluetoothService = new BluetoothService();
 const deviceService = new DeviceService(bluetoothService, favoriteDeviceStorage);
+const ringService = new RingService(deviceService);
 
 export const services = {
 	bluetoothService,
 	deviceService,
+	ringService,
 };
 
 export type Services = typeof services;
@@ -29,5 +32,13 @@ export function useServices(): Services {
 }
 
 export function initializeServices() {
-	return Promise.all(Object.values(services).map((service) => service.init()));
+	return Promise.all(
+		Object.values(services)
+			.map((service) => {
+				if ("init" in service) {
+					return service.init();
+				}
+			})
+			.filter(Boolean)
+	);
 }

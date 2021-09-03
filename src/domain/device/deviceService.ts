@@ -1,7 +1,7 @@
 import { base64decode, base64encode, timedPromise } from "@core/utils";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { observable, Observable } from "micro-observables";
-import { Device, State } from "react-native-ble-plx";
+import { BleError, Device, State } from "react-native-ble-plx";
 import { StoredDevice } from "./device";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 
@@ -139,11 +139,28 @@ export class DeviceService {
 		return timedPromise(scanPromise, findDeviceTimeout);
 	}
 
-	getBattery() {
-		return this.sendMessage("BAT");
+	async listen(message: string, cb: (error: BleError | null, response?: string) => void) {
+		const device = this._connectedDevice.get();
+		if (!device) {
+			this.log("Error : no device connected");
+			return;
+		}
+		device.monitorCharacteristicForService(NUServiceUUID, TXCharacteristicUUID, (err, charac) => {
+			if (err) {
+				cb(err);
+			} else {
+				cb(null, base64decode(charac?.value ?? ""));
+			}
+		});
+
+		await device.writeCharacteristicWithoutResponseForService(
+			NUServiceUUID,
+			RXCharacteristicUUID,
+			base64encode(message)
+		);
 	}
 
-	async sendMessage(message: string) {
+	async getResponse(message: string) {
 		const device = this._connectedDevice.get();
 		if (!device) {
 			this.log("Error : no device connected");
