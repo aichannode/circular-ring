@@ -10,8 +10,12 @@ export class UserService {
 	constructor(private readonly circularAuthService: CircularAuthService) {}
 
 	async loginWithEmail(email: string, password: string): Promise<void> {
-		await this.circularAuthService.loginWithEmail(email, password);
-		this.retrieveUser();
+		try {
+			await this.circularAuthService.loginWithEmail(email, password);
+			this.retrieveUser();
+		} catch (e) {
+			// TODO : handle error correctly
+		}
 	}
 
 	logout() {
