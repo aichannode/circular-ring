@@ -63,6 +63,7 @@ android:build:prod:
   script:
     - npm ci --progress=false
     - npx jetifier
+    - bash ./scripts/copy-env.sh ${ENV}
     - cd android
     # Export Signing Config
     - cat ${RELEASE_KEYSTORE_BASE64} | base64 -d > circular.release.keystore
@@ -112,6 +113,7 @@ ios:build:prod:
     - latest
   script:
     - npm ci --progress=false
+    - bash ./scripts/copy-env.sh ${ENV}
     - cd ios
     - bundle install --path ~/.gem
     - bundle exec pod install --repo-update
