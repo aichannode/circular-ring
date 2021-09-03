@@ -108,7 +108,7 @@ ios:build:prod:
     LANG: "en_US.UTF-8"
   tags:
     - react-native
-    - ios-11
+    - ios-12.2
     - latest
   script:
     - npm ci --progress=false
