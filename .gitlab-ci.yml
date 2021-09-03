@@ -108,7 +108,8 @@ ios:build:prod:
     LANG: "en_US.UTF-8"
   tags:
     - react-native
-    - ios-12.2
+    # - ios-12.2
+    - bigsur-test
     - latest
   script:
     - npm ci --progress=false
