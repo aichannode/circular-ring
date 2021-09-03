@@ -7,9 +7,10 @@ export const ScrollScreen: React.FunctionComponent<ScrollViewProps> = (props) =>
 		<ScrollView
 			alwaysBounceVertical={false}
 			keyboardShouldPersistTaps={"handled"}
-			{...props}
 			contentContainerStyle={[contentContainerStyle, props.contentContainerStyle]}
-		/>
+		>
+			<Content {...props}></Content>
+		</ScrollView>
 	);
 };
 
@@ -17,10 +18,14 @@ const ScrollView = styled.ScrollView`
 	flex: 1;
 `;
 
+const Content = styled.View`
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+`;
+
 const contentContainerStyle = {
 	flexGrow: 1,
-	alignItems: "center",
-	justifyContent: "center",
 	paddingLeft: 66,
 	paddingRight: 66,
 };
