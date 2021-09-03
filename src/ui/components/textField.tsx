@@ -1,11 +1,12 @@
 import { colors } from "@ui/styles/colors";
-import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { StyleProp, TextInput, TouchableWithoutFeedback, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
 interface TextFieldProps {
 	title?: string;
 	placeholder?: string;
+	value: string;
 	onValueChanged?: (value: string) => void;
 	maxLength?: number;
 	inputRef?: (input: TextInput | null) => void;
@@ -22,7 +23,6 @@ export interface TextFieldRef {
 
 export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFieldProps, ref) => {
 	const inputRef = useRef<TextInput | null>(null);
-	const [inputValue, setInputValue] = useState("");
 
 	const [isSecure, setSecure] = useState(!!props.canBeSecure);
 
@@ -32,28 +32,18 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFi
 		},
 	}));
 
-	const onTextChanged = useCallback(
-		(text: string) => {
-			setInputValue(text);
-			if (props.onValueChanged) {
-				props.onValueChanged(text);
-			}
-		},
-		[props]
-	);
-
 	return (
 		<Container style={props.style}>
 			{props.title ? <Title>{props.title}</Title> : null}
 			<InputView isError={props.isError ? props.isError : false}>
 				<Field
 					ref={inputRef}
-					onChangeText={onTextChanged}
+					onChangeText={props.onValueChanged}
 					onSubmitEditing={props.onSubmit}
 					placeholderTextColor={colors.textPrimary}
 					multiline={false}
 					maxLength={props.maxLength}
-					value={inputValue}
+					value={props.value}
 					blurOnSubmit={props.blurOnSubmit}
 					placeholder={props.placeholder}
 					secureTextEntry={isSecure}

@@ -18,10 +18,9 @@ export const LoginScreen = () => {
 
 	const performLogin = useCallback(async () => {
 		if (email.length > 0 && password.length >= 4) {
-			console.log(`Perform login with : ${email} - ${password}`);
 			await userService.loginWithEmail(email, password);
 		}
-	}, []);
+	}, [email, password]);
 
 	return (
 		<ScrollScreen>
@@ -29,6 +28,7 @@ export const LoginScreen = () => {
 			<InputField
 				title={format("login.email.title")}
 				placeholder={format("login.email.placeholder")}
+				value={email}
 				onValueChanged={setEmail}
 				blurOnSubmit={false}
 				onSubmit={() => passwordFieldRef.current?.focus()}
@@ -38,6 +38,7 @@ export const LoginScreen = () => {
 				title={format("login.password.title")}
 				placeholder={format("login.password.placeholder")}
 				canBeSecure
+				value={password}
 				onValueChanged={setPassword}
 				blurOnSubmit={true}
 			/>

@@ -27,4 +27,8 @@ export class CircularAuthService {
 	async getToken(): Promise<string | undefined> {
 		return this._accessToken?.access_token;
 	}
+
+	logout() {
+		this._accessToken = undefined;
+	}
 }
