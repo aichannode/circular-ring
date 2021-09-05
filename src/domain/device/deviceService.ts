@@ -1,13 +1,14 @@
 import { base64decode, base64encode, timedPromise } from "@core/utils";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { observable, Observable } from "micro-observables";
-import { BleError, Device, State } from "react-native-ble-plx";
+import { BleError, Device, ScanMode, State } from "react-native-ble-plx";
 import { StoredDevice } from "./device";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 
 export enum DeviceBondState {
 	DISABLED,
 	ENABLED,
+	SEARCHING,
 	SCANNING,
 	ON_PROGRESS,
 	FINISHED,
@@ -28,6 +29,8 @@ export class DeviceService {
 	private _devices = observable(new Map<string, Device>());
 	private _connectedDevice = observable<Device | null>(null);
 	private _connectionState = observable(DeviceConnectionState.DISCONNECTED);
+	private _scanning = observable(false);
+	private _lookingForDevice = observable(false);
 
 	private _favoriteDevice: StoredDevice | null = null;
 
@@ -40,16 +43,19 @@ export class DeviceService {
 		private readonly favoriteDeviceStorage: FavoriteDeviceStorage
 	) {
 		this.bondState = Observable.select(
-			[this.bluetoothService.state, this._connectionState],
-			(bleState, connectionState) => {
+			[this.bluetoothService.state, this._connectionState, this._scanning, this._lookingForDevice],
+			(bleState, connectionState, scanning, looking) => {
 				if (bleState === State.PoweredOff) {
 					return DeviceBondState.DISABLED;
 				}
+				if (scanning) {
+					return DeviceBondState.SCANNING;
+				}
+				if (connectionState === DeviceConnectionState.CONNECTING || looking) {
+					return DeviceBondState.ON_PROGRESS;
+				}
 				if (connectionState === DeviceConnectionState.DISCONNECTED) {
 					return DeviceBondState.ENABLED;
-				}
-				if (connectionState === DeviceConnectionState.CONNECTING) {
-					return DeviceBondState.ON_PROGRESS;
 				}
 				return DeviceBondState.FINISHED;
 			}
@@ -64,12 +70,18 @@ export class DeviceService {
 	}
 
 	async startScan() {
+		if (this.bondState.get() === DeviceBondState.SCANNING) {
+			this.log("Cannot scan: Already scanning");
+			return;
+		}
 		await this.bluetoothService.enable();
-		this.log("SCAN STARTED");
 		const manager = this.bluetoothService.manager;
+		this.log("SCAN STARTED");
+		this._scanning.set(true);
 		manager.startDeviceScan([NUServiceUUID], null, (error, device) => {
 			if (error) {
 				this.log("Error", error);
+				this.stopScan();
 				return;
 			}
 			if (!device) {
@@ -88,6 +100,7 @@ export class DeviceService {
 		const manager = this.bluetoothService.manager;
 		manager.stopDeviceScan();
 		this.log("SCAN STOPPED");
+		this._scanning.set(false);
 	}
 
 	async connect(device: Device) {
@@ -110,35 +123,52 @@ export class DeviceService {
 		} catch (e) {
 			this.log("Error connecting to device", e);
 			this._connectionState.set(DeviceConnectionState.DISCONNECTED);
+			throw e;
 		}
 	}
 
 	async connectDevice(name: string) {
 		this.log("Trying to autoconnect to", name);
+		this._lookingForDevice.set(true);
 		const manager = this.bluetoothService.manager;
-		const connectedDevices = await manager.connectedDevices([NUServiceUUID]);
-		if (connectedDevices.length > 0) {
-			const alreadyConnectedDevice = connectedDevices[0];
-			this.log("Already connected to", alreadyConnectedDevice.name);
-			this._connectedDevice.set(alreadyConnectedDevice);
-			this._connectionState.set(DeviceConnectionState.CONNECTED);
+		try {
+			const connectedDevices = await manager.connectedDevices([NUServiceUUID]);
+			this.log(
+				"Connected devices:",
+				connectedDevices.map((d) => d.name)
+			);
+			if (connectedDevices.length > 0) {
+				const alreadyConnectedDevice = connectedDevices[0];
+				this.log("Already connected to", alreadyConnectedDevice.name);
+				this._connectedDevice.set(alreadyConnectedDevice);
+				this._connectionState.set(DeviceConnectionState.CONNECTED);
+			}
+			const device = await this.findDevice(name);
+			return this.connect(device);
+		} finally {
+			this._lookingForDevice.set(false);
 		}
-		const device = await this.findDevice(name);
-		return this.connect(device);
 	}
 
 	async findDevice(name: string): Promise<Device> {
 		const manager = this.bluetoothService.manager;
 
 		const scanPromise = new Promise<Device>((resolve, reject) => {
-			manager.startDeviceScan([NUServiceUUID], null, (error, device) => {
+			if (this.bondState.get() === DeviceBondState.SCANNING) {
+				this.log("Cannot find device: Already scanning");
+				reject("Already Scanning");
+			}
+			this.log("Scanning to autoconnect to", name);
+			this._scanning.set(true);
+			manager.startDeviceScan([NUServiceUUID], { scanMode: ScanMode.LowLatency }, (error, device) => {
 				if (error) {
+					this.log("Err during scan", error);
 					reject(error);
 				} else if (device) {
 					this.log(`Discovered device named ${device.name} with id ${device.id}`);
 					if (device.name === name) {
+						this.stopScan();
 						resolve(device);
-						manager.stopDeviceScan();
 					}
 				}
 			});

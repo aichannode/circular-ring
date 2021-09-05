@@ -21,9 +21,11 @@ export const RingSetupScreen: React.FC = () => {
 
 	useEffect(() => {
 		if (pairingState === DeviceBondState.ENABLED) {
+			console.log("GO");
+
 			deviceService.startScan();
 		} else {
-			deviceService.stopScan();
+			// deviceService.stopScan();
 		}
 		if (pairingState === DeviceBondState.FINISHED) {
 			ringService.listenBattery();
@@ -62,6 +64,7 @@ export const RingSetupScreen: React.FC = () => {
 									<DeviceWrapper
 										key={device.id}
 										onPress={async () => {
+											deviceService.stopScan();
 											await deviceService.connect(device);
 											await setupUserRing();
 										}}
