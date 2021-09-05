@@ -2,7 +2,6 @@ import { useServices } from "@core/services";
 import { delay } from "@core/utils";
 import { DeviceBondState } from "@domain/device/deviceService";
 import { useDevices, usePairingState } from "@domain/device/hooks";
-import { NavigationProp } from "@react-navigation/native";
 import { PrimaryButton } from "@ui/components/buttons";
 import { Divider } from "@ui/components/divider";
 import { PrimaryText, SecondaryText } from "@ui/components/text";
@@ -13,10 +12,7 @@ import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import styled from "styled-components/native";
 
-interface RingSetupScreenProps {
-	navigation: NavigationProp<{ [k: string]: unknown }>;
-}
-export const RingSetupScreen: React.FC<RingSetupScreenProps> = () => {
+export const RingSetupScreen: React.FC = () => {
 	const { format } = useI18n();
 	const { bluetoothService, deviceService, ringService } = useServices();
 

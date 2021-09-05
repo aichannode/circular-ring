@@ -12,5 +12,6 @@
   "login.password.title": "Password",
   "login.password.placeholder": "Tap to write",
   "login.login_button": "Confirm",
-  "header.my_ring": "My Ring"
+  "header.my_ring": "My Ring",
+  "ring.battery.label": "BATTERY"
 }

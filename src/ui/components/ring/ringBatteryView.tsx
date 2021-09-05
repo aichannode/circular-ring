@@ -1,26 +1,24 @@
 import { useRingBattery } from "@domain/ring/hooks";
+import { useI18n } from "@ui/i18n";
 import React from "react";
-import { StyleProp, Text, ViewStyle } from "react-native";
+import { StyleProp, ViewStyle } from "react-native";
 import { Circle, Defs, LinearGradient, Stop, Svg } from "react-native-svg";
 import styled from "styled-components/native";
-
-// const circleSize = 28;
-// const circleRadius = circleSize / 2;
-// const perimeter = 2 * Math.PI * circleRadius;
-// const strokeWidth = 3;
-// const svgSize = circleSize + 4;
-// const center = svgSize / 2;
-const strokeWidth = 3;
+import { SecondaryText } from "../text";
 
 interface RingBatteryViewProps {
 	style?: StyleProp<ViewStyle>;
 	size: number;
+	detailed?: boolean;
 }
-export const RingBatteryView: React.FC<RingBatteryViewProps> = ({ style, size }) => {
+export const RingBatteryView: React.FC<RingBatteryViewProps> = ({ style, size, detailed }) => {
+	const strokeWidth = Math.round(size / 9);
 	const svgSize = size + strokeWidth;
 	const center = svgSize / 2;
 	const circleRadius = size / 2;
 	const perimeter = 2 * Math.PI * circleRadius;
+	const fontSize = Math.round(size / (detailed ? 4 : 2.5));
+	const { format } = useI18n();
 
 	const ringBattery = useRingBattery();
 
@@ -39,6 +37,7 @@ export const RingBatteryView: React.FC<RingBatteryViewProps> = ({ style, size })
 					strokeDasharray={`${perimeter}`}
 					strokeDashoffset={`${perimeter - (ringBattery.charge / 100) * perimeter}`}
 					strokeWidth={`${strokeWidth}`}
+					strokeLinecap="round"
 					cx={`${center}`}
 					cy={`${center}`}
 					r={circleRadius}
@@ -46,7 +45,11 @@ export const RingBatteryView: React.FC<RingBatteryViewProps> = ({ style, size })
 				/>
 			</Svg>
 			<CenterView>
-				<BatteryValue>{ringBattery?.charge ?? "?"}</BatteryValue>
+				<BatteryValue style={{ fontSize }}>
+					{ringBattery?.charge ?? "?"}
+					{detailed && "%"}
+				</BatteryValue>
+				{detailed && <SecondaryText>{format("ring.battery.label")}</SecondaryText>}
 			</CenterView>
 		</Container>
 	) : null;
@@ -66,4 +69,5 @@ const CenterView = styled.View`
 	bottom: 0;
 	align-items: center;
 	justify-content: center;
+	flex-direction: column;
 `;
