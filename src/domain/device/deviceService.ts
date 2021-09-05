@@ -115,6 +115,14 @@ export class DeviceService {
 
 	async connectDevice(name: string) {
 		this.log("Trying to autoconnect to", name);
+		const manager = this.bluetoothService.manager;
+		const connectedDevices = await manager.connectedDevices([NUServiceUUID]);
+		if (connectedDevices.length > 0) {
+			const alreadyConnectedDevice = connectedDevices[0];
+			this.log("Already connected to", alreadyConnectedDevice.name);
+			this._connectedDevice.set(alreadyConnectedDevice);
+			this._connectionState.set(DeviceConnectionState.CONNECTED);
+		}
 		const device = await this.findDevice(name);
 		return this.connect(device);
 	}

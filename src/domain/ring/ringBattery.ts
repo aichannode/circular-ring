@@ -8,6 +8,7 @@ export enum RingBatteryStatus {
 export interface RingBattery {
 	charge: number;
 	status: RingBatteryStatus;
+	listening?: boolean;
 }
 
 const statusFromCodes = {
@@ -18,7 +19,7 @@ const statusFromCodes = {
 } as const;
 
 export function deserializeBattery(battery: string): RingBattery {
-	const batteryMessageRegex = /BAT(\d\d0?)\/(0[0|1|2|3])/;
+	const batteryMessageRegex = /BAT(\d\d\d?)\/(0[0|1|2|3])/;
 	const matches = battery.match(batteryMessageRegex);
 
 	if (!matches) {

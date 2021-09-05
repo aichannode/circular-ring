@@ -7,6 +7,7 @@ import * as RNLocalize from "react-native-localize";
 import { initializeServices, ServicesProvider } from "./core/services";
 import { RootNavigator } from "./rootNavigator";
 import { translations } from "./wordings";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 
@@ -20,11 +21,13 @@ export const App = () => {
 
 	return initialized ? (
 		<IntlProvider locale={locale} messages={translations[locale]}>
-			<ServicesProvider>
-				<NavigationContainer>
-					<RootNavigator />
-				</NavigationContainer>
-			</ServicesProvider>
+			<SafeAreaProvider>
+				<ServicesProvider>
+					<NavigationContainer>
+						<RootNavigator />
+					</NavigationContainer>
+				</ServicesProvider>
+			</SafeAreaProvider>
 		</IntlProvider>
 	) : null;
 };

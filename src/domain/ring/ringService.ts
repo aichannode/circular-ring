@@ -5,6 +5,8 @@ import { deserializeBattery, RingBattery } from "./ringBattery";
 export class RingService {
 	private _ringBattery = observable<RingBattery | null>(null);
 
+	ringBattery = this._ringBattery.readOnly();
+
 	constructor(private readonly deviceService: DeviceService) {
 		this._ringBattery.subscribe((v) => {
 			this.log(v?.charge, v?.status);
