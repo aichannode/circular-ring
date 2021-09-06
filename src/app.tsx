@@ -1,33 +1,44 @@
 import { useSentry } from "@core/logger/hooks/useSentry";
 import { NavigationContainer } from "@react-navigation/native";
-import React, { useEffect } from "react";
+import { RootNavigator } from "@ui/navigation/rootNavigator";
+import React, { useEffect, useState } from "react";
 import { IntlProvider } from "react-intl";
 import { LogBox } from "react-native";
 import * as RNLocalize from "react-native-localize";
-import { ServicesProvider } from "./core/services";
-import { RootNavigator } from "@ui/navigation/rootNavigator";
+import { initializeServices, ServicesProvider } from "@core/services";
 import { translations } from "./wordings";
 import SplashScreen from "react-native-splash-screen";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 
+// @refresh reset
 export const App = () => {
 	const locale = getPreferredLangageCode(Object.keys(translations)) as "en";
+	const [initialized, setInitialized] = useState(false);
 	useSentry();
 
 	useEffect(() => {
 		SplashScreen.hide();
 	}, []);
 
-	return (
+	useEffect(() => {
+		initializeServices().then(() => {
+			setInitialized(true);
+		});
+	}, []);
+
+	return initialized ? (
 		<IntlProvider locale={locale} messages={translations[locale]}>
-			<ServicesProvider>
-				<NavigationContainer>
-					<RootNavigator />
-				</NavigationContainer>
-			</ServicesProvider>
+			<SafeAreaProvider>
+				<ServicesProvider>
+					<NavigationContainer>
+						<RootNavigator />
+					</NavigationContainer>
+				</ServicesProvider>
+			</SafeAreaProvider>
 		</IntlProvider>
-	);
+	) : null;
 };
 
 const defaultLanguageCode = "en";

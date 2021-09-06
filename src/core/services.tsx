@@ -5,21 +5,25 @@ import { UserService } from "@domain/user/userService";
 import { createContext, useContext } from "react";
 import React from "react";
 import { DeviceService } from "@domain/device/deviceService";
+import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
+import { RingService } from "@domain/ring/ringService";
+
+const favoriteDeviceStorage = new FavoriteDeviceStorage();
 
 const apiService = new ApiService();
 
 const bluetoothService = new BluetoothService();
-const deviceService = new DeviceService(bluetoothService);
+const deviceService = new DeviceService(bluetoothService, favoriteDeviceStorage);
+const ringService = new RingService(deviceService);
 
 const circularAuthService = new CircularAuthService(apiService);
-circularAuthService.init();
-
 const userService = new UserService(circularAuthService, apiService);
 
 export const services = {
 	bluetoothService,
 	deviceService,
 	userService,
+	ringService,
 };
 
 export type Services = typeof services;
@@ -34,4 +38,16 @@ export function useServices(): Services {
 		throw Error("ServiceContext not defined");
 	}
 	return services;
+}
+
+export function initializeServices() {
+	return Promise.all(
+		Object.values(services)
+			.map((service) => {
+				if ("init" in service) {
+					return service.init();
+				}
+			})
+			.filter(Boolean)
+	);
 }
