@@ -29,8 +29,8 @@ export class UserService {
 			const userDto = result.data;
 			this._user.set(new UserImpl(userDto));
 		} catch (error) {
-			this.logger.warn("Get user failed: " + error);
-			// TODO : handle error correctly
+			this.logger.warn("Get user failed: " + JSON.stringify(error));
+			throw error;
 		}
 	}
 }

@@ -22,9 +22,8 @@ export class CircularAuthService {
 			const result = await this.apiService.post<AccessToken>("/auth/login", { email, password });
 			this._accessToken = result.data;
 			this._accessTokenDate = Date.now();
-			this.logger.debug("Login Succeeded (token: " + this._accessToken + ")");
 		} catch (error) {
-			this.logger.warn("Login failed: " + error);
+			this.logger.warn("Login failed: " + JSON.stringify(error));
 			throw error;
 		}
 	}
@@ -47,7 +46,7 @@ export class CircularAuthService {
 				this._accessToken = result.data;
 				this._accessTokenDate = Date.now();
 			} catch (error) {
-				this.logger.warn("Refresh token failed: " + error);
+				this.logger.warn("Refresh token failed: " + JSON.stringify(error));
 			}
 		}
 	}

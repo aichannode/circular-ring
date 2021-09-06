@@ -7,15 +7,15 @@ const enableBluetoothTimeout = 5000;
 
 export class BluetoothService {
 	private _state = observable<State>(State.Unknown);
-	private _manager: BleManager = new BleManager();
+	manager: BleManager = new BleManager();
 
 	readonly state = this._state.readOnly();
 	readonly enabled = this._state.select((state) => state === State.PoweredOn);
 	readonly ready = this._state.select((state) => state !== State.Unknown && state !== State.Resetting);
 
 	async init() {
-		this._state.set(await this._manager.state());
-		this._manager.onStateChange((state) => this._state.set(state));
+		this._state.set(await this.manager.state());
+		this.manager.onStateChange((state) => this._state.set(state));
 	}
 
 	async enable() {
@@ -30,7 +30,6 @@ export class BluetoothService {
 				throw Error("CannotEnableBluetoothOnIOS");
 			}
 		} else {
-			// Permissions ?
 			if ("granted" !== (await PermissionsAndroid.request("android.permission.ACCESS_FINE_LOCATION"))) {
 				this.log("Unauthorized");
 				throw Error("Unauthorized");
@@ -41,37 +40,11 @@ export class BluetoothService {
 				const timeoutPromise = delay(enableBluetoothTimeout).then(() => {
 					throw Error("Timeout");
 				});
-				this._manager.enable();
+				this.manager.enable();
 				await Promise.race([enablePromise, timeoutPromise]);
 			}
 		}
 		this.log("ENABLED");
-	}
-
-	async scan() {
-		this.log("SCAN STARTED");
-		this._manager.startDeviceScan(
-			[
-				"6E400001-B5A3-F393-E0A9-E50E24DCCA9E",
-				"6E400002-B5A3-F393-E0A9-E50E24DCCA9E",
-				"6E400003-B5A3-F393-E0A9-E50E24DCCA9E",
-			],
-			null,
-			(error, device) => {
-				if (error) {
-					device?.manufacturerData;
-					this.log("Error", error);
-					return;
-				}
-
-				this.log("Scanned device", device?.name);
-			}
-		);
-	}
-
-	stopScan() {
-		this._manager.stopDeviceScan();
-		this.log("SCAN STOPPED");
 	}
 
 	log(...args: unknown[]) {
