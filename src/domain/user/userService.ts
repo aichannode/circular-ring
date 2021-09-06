@@ -1,21 +1,21 @@
+import { ApiService } from "@core/api/apiService";
+import { getLogger } from "@core/logger/logger";
 import { CircularAuthService } from "@domain/auth/circularAuthService";
-import { User } from "@domain/user/user";
+import { User, UserImpl } from "@domain/user/user";
+import { UserDto } from "@domain/user/userDto";
 import { observable } from "micro-observables";
 
 export class UserService {
-	private _user = observable<User | undefined>(undefined);
+	private readonly logger = getLogger("UserService");
 
+	private _user = observable<User | undefined>(undefined);
 	readonly user = this._user.readOnly();
 
-	constructor(private readonly circularAuthService: CircularAuthService) {}
+	constructor(private readonly circularAuthService: CircularAuthService, private readonly apiService: ApiService) {}
 
 	async loginWithEmail(email: string, password: string): Promise<void> {
-		try {
-			await this.circularAuthService.loginWithEmail(email, password);
-			this.retrieveUser();
-		} catch (e) {
-			// TODO : handle error correctly
-		}
+		await this.circularAuthService.loginWithEmail(email, password);
+		await this.retrieveUser();
 	}
 
 	logout() {
@@ -23,7 +23,14 @@ export class UserService {
 		this._user.set(undefined);
 	}
 
-	private retrieveUser() {
-		// TODO
+	private async retrieveUser() {
+		try {
+			const result = await this.apiService.get<UserDto>("/user/profile");
+			const userDto = result.data;
+			this._user.set(new UserImpl(userDto));
+		} catch (error) {
+			this.logger.warn("Get user failed: " + error);
+			// TODO : handle error correctly
+		}
 	}
 }

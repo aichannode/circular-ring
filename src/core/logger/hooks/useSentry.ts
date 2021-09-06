@@ -9,7 +9,6 @@ export function useSentry() {
 				dsn: Config.SENTRY_DSN,
 				enableAutoSessionTracking: true,
 			});
-			console.log("Sentry initialized");
 		}
 	}, []);
 }

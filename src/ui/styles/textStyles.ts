@@ -8,6 +8,12 @@ export const textStyles = {
 		color: ${colors.textPrimary};
 	`,
 
+	errorMessage: css`
+		font-size: 14px;
+		font-weight: bold;
+		color: ${colors.primary};
+	`,
+
 	primary: css`
 		font-size: 16px;
 		color: ${colors.textPrimary};

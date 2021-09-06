@@ -11,5 +11,9 @@
   "login.email.placeholder": "Tap to write",
   "login.password.title": "Password",
   "login.password.placeholder": "Tap to write",
-  "login.login_button": "Confirm"
+  "login.login_button": "Confirm",
+  "login.error.invalid_credentials": "The email or password is invalid",
+  "login.error.default": "An error occurred.\nPlease try again later",
+  "header.my_ring": "My Ring",
+  "ring.battery.label": "BATTERY"
 }

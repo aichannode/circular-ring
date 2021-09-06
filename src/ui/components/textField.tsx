@@ -75,6 +75,7 @@ const InputView = styled.View<{ isError: boolean }>`
 	border-bottom-width: 1px;
 	width: 100%;
 	padding: 0;
+	height: 30px;
 `;
 
 const Field = styled.TextInput`
