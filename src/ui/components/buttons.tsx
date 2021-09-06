@@ -26,6 +26,18 @@ export const PrimaryButton: React.FC<CircularButtonProps> = ({ onPress, style, c
 	);
 };
 
+export const SecondaryButton: React.FC<CircularButtonProps> = ({ onPress, style, children }) => {
+	return (
+		<Pressable onPress={onPress} style={style}>
+			{({ pressed }) => (
+				<SecondaryContent pressed={pressed}>
+					<SecondaryButtonText>{children}</SecondaryButtonText>
+				</SecondaryContent>
+			)}
+		</Pressable>
+	);
+};
+
 export const PrimaryBigButton: React.FC<CircularButtonProps> = ({ onPress, style, children }) => {
 	return (
 		<Pressable onPress={onPress} style={style}>
@@ -45,9 +57,11 @@ export const PrimaryBigButton: React.FC<CircularButtonProps> = ({ onPress, style
 export const SecondaryBigButton: React.FC<CircularButtonProps> = ({ onPress, style, children }) => {
 	return (
 		<Pressable onPress={onPress} style={style}>
-			<SecondaryBigContent>
-				<GrayButtonText>{children}</GrayButtonText>
-			</SecondaryBigContent>
+			{({ pressed }) => (
+				<SecondaryBigContent pressed={pressed}>
+					<GrayButtonText>{children}</GrayButtonText>
+				</SecondaryBigContent>
+			)}
 		</Pressable>
 	);
 };
@@ -55,6 +69,10 @@ export const SecondaryBigButton: React.FC<CircularButtonProps> = ({ onPress, sty
 const PrimaryButtonText = styled.Text`
 	${textStyles.primary};
 	color: ${colors.white};
+`;
+
+const SecondaryButtonText = styled.Text`
+	${textStyles.primary};
 `;
 
 const PrimaryBigButtonText = styled.Text`
@@ -72,6 +90,13 @@ const PrimaryContent = styled(LinearGradient)`
 	border-radius: 18px;
 `;
 
+const SecondaryContent = styled.View<{ pressed: boolean }>`
+	padding: 9px 22px;
+	border-radius: 18px;
+	border-color: ${colors.textPrimary};
+	border-width: 1px;
+`;
+
 const PrimaryBigContent = styled(LinearGradient)`
 	flex-direction: row;
 	align-items: center;
@@ -81,12 +106,12 @@ const PrimaryBigContent = styled(LinearGradient)`
 	border-radius: 28px;
 `;
 
-const SecondaryBigContent = styled.View`
+const SecondaryBigContent = styled.View<{ pressed: boolean }>`
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
 	width: 100%;
 	height: 56px;
 	border-radius: 28px;
-	background-color: ${colors.lightGray};
+	background-color: ${({ pressed }) => (pressed ? colors.gray : colors.lightGray)};
 `;

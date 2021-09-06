@@ -1,7 +1,7 @@
 import { useAccountLinked } from "@domain/device/hooks";
 import { useUser } from "@domain/user/hooks/useUser";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { LoginOrRegisterScreen } from "@ui/screens/loginOrRegister/loginOrRegisterScreen";
+import { LoginOrSignUpScreen } from "@ui/screens/loginOrRegister/loginOrSignUpScreen";
 import { MyRingBattery } from "@ui/components/navigation/myRingBattery";
 import { Routes } from "@ui/navigation/routes";
 import { useI18n } from "@ui/i18n";
@@ -9,6 +9,7 @@ import { HomeScreen } from "@ui/screens/home/homeScreen";
 import { LoginScreen } from "@ui/screens/login/loginScreen";
 import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
 import { RingSetupScreen } from "@ui/screens/ringSetup/ringSetupScreen";
+import { SignUpScreen } from "@ui/screens/signup/signUpScreen";
 import React from "react";
 import { Text } from "react-native";
 
@@ -41,8 +42,9 @@ export const RootNavigator: React.FC = () => {
 		)
 	) : (
 		<SetupStack.Navigator screenOptions={{ headerShown: false }}>
-			<SetupStack.Screen name={Routes.LoginOrRegister} component={LoginOrRegisterScreen} />
+			<SetupStack.Screen name={Routes.LoginOrSignUp} component={LoginOrSignUpScreen} />
 			<SetupStack.Screen name={Routes.Login} component={LoginScreen} />
+			<SetupStack.Screen name={Routes.SignUp} component={SignUpScreen} />
 		</SetupStack.Navigator>
 	);
 };

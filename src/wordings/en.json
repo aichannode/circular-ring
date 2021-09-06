@@ -17,5 +17,17 @@
   "header.my_ring": "My Ring",
   "ring.battery.label": "BATTERY",
   "signin_signup.signin": "Sign in",
-  "signin_signup.signup": "Sign up"
+  "signin_signup.signup": "Sign up",
+  "signup.title": "Sign up",
+  "signup.subtitle": "Account information",
+  "signup.email.title": "Email",
+  "signup.email.placeholder": "Tap to write",
+  "signup.password.title": "Password",
+  "signup.password.placeholder": "Tap to write",
+  "signup.confirm_password.title": "Confirm password",
+  "signup.confirm_password.placeholder": "Tap to write",
+  "signup.button.confirm": "Confirm",
+  "signup.button.login": "Sign in",
+  "signup.terms.link_prefix": "By signing up, you agree to Circular’s",
+  "signup.terms.link": "terms and conditions."
 }

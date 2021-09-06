@@ -4,7 +4,7 @@ import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import React, { useCallback } from "react";
 import styled from "styled-components/native";
 
-export const LoginOrRegisterScreen = () => {
+export const LoginOrSignUpScreen = () => {
 	const { format } = useI18n();
 
 	const { navigate } = useRoutesNavigation();
@@ -14,7 +14,7 @@ export const LoginOrRegisterScreen = () => {
 	}, []);
 
 	const goToSignUp = useCallback(() => {
-		// TODO
+		navigate(Routes.SignUp);
 	}, []);
 
 	return (
