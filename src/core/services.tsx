@@ -14,7 +14,7 @@ const deviceService = new DeviceService(bluetoothService);
 const circularAuthService = new CircularAuthService(apiService);
 circularAuthService.init();
 
-const userService = new UserService(circularAuthService);
+const userService = new UserService(circularAuthService, apiService);
 
 export const services = {
 	bluetoothService,
