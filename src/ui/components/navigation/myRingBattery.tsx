@@ -1,8 +1,8 @@
 import { useI18n } from "@ui/i18n";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import React from "react";
 import styled from "styled-components/native";
 import { RingBatteryView } from "../ring/ringBatteryView";
-import { Routes, useRoutesNavigation } from "./routes";
 
 export const MyRingBattery: React.FC = () => {
 	const { format } = useI18n();

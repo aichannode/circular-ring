@@ -1,7 +1,7 @@
 import { useServices } from "@core/services";
 import { delay } from "@core/utils";
-import { DeviceBondState } from "@domain/device/deviceService";
-import { useDevices, usePairingState } from "@domain/device/hooks";
+import { DeviceSetupState } from "@domain/device/deviceService";
+import { useScannedDevices, useSetupState } from "@domain/device/hooks";
 import { PrimaryButton } from "@ui/components/buttons";
 import { Divider } from "@ui/components/divider";
 import { PrimaryText, SecondaryText } from "@ui/components/text";
@@ -14,31 +14,24 @@ import styled from "styled-components/native";
 
 export const RingSetupScreen: React.FC = () => {
 	const { format } = useI18n();
-	const { bluetoothService, deviceService, ringService } = useServices();
+	const { bluetoothService, deviceService } = useServices();
 
-	const pairingState = usePairingState();
-	const devices = useDevices();
+	const setupState = useSetupState();
+	const devices = useScannedDevices();
 
 	useEffect(() => {
-		if (pairingState === DeviceBondState.ENABLED) {
-			console.log("GO");
-
+		if (setupState === DeviceSetupState.READY_TO_SCAN) {
 			deviceService.startScan();
-		} else {
-			// deviceService.stopScan();
 		}
-		if (pairingState === DeviceBondState.FINISHED) {
-			ringService.listenBattery();
-		}
-	}, [pairingState]);
+	}, [setupState]);
 
 	const setupUserRing = async () => delay(2000); // Mock before having user signup and network layer
 
 	return (
 		<Container>
 			{(() => {
-				switch (pairingState) {
-					case DeviceBondState.DISABLED:
+				switch (setupState) {
+					case DeviceSetupState.DISABLED:
 						return (
 							<>
 								<Message>{format("setup.scan.disabled.message")}</Message>
@@ -53,7 +46,7 @@ export const RingSetupScreen: React.FC = () => {
 								)}
 							</>
 						);
-					case DeviceBondState.ENABLED:
+					case DeviceSetupState.SCANNING:
 						return (
 							<>
 								<PrimaryText>{format("setup.scan.enabled.title")}</PrimaryText>
@@ -74,10 +67,8 @@ export const RingSetupScreen: React.FC = () => {
 								))}
 							</>
 						);
-					case DeviceBondState.ON_PROGRESS:
+					case DeviceSetupState.CONNECTING:
 						return <Message>{format("setup.connection.pending")}</Message>;
-					case DeviceBondState.FINISHED:
-						return <Message>{format("setup.connection.success")}</Message>;
 				}
 			})()}
 		</Container>

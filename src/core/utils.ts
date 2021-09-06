@@ -1,4 +1,5 @@
 import { Buffer } from "buffer";
+import { Observable } from "micro-observables";
 
 export function delay(timeout: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -18,4 +19,13 @@ export function timedPromise<T>(promise: Promise<T>, timeout: number) {
 	});
 
 	return Promise.race([promise, timeoutPromise]);
+}
+
+export function observableToPromise<T>(obs: Observable<T>): Promise<T> {
+	return new Promise((resolve) => {
+		const unsubscribe = obs.subscribe((val) => {
+			resolve(val);
+			unsubscribe();
+		});
+	});
 }

@@ -13,6 +13,10 @@ export class RingService {
 		});
 	}
 
+	async init() {
+		this.listenBattery();
+	}
+
 	listenBattery() {
 		this.deviceService.listen("BAT", (err, value) => {
 			if (err) {

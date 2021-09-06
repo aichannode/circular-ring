@@ -11,12 +11,15 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 
+// @refresh reset
 export const App = () => {
 	const locale = getPreferredLangageCode(Object.keys(translations)) as "en";
 	const [initialized, setInitialized] = useState(false);
 
 	useEffect(() => {
-		initializeServices().then(() => setInitialized(true));
+		initializeServices().then(() => {
+			setInitialized(true);
+		});
 	}, []);
 
 	return initialized ? (
