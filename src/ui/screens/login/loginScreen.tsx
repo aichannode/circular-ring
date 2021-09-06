@@ -25,8 +25,7 @@ export const LoginScreen = () => {
 			setErrorMessage("");
 			try {
 				await userService.loginWithEmail(email, password);
-			} catch (error) {
-				console.log("ERROR : " + error);
+			} catch (error: any) {
 				if (error.statusCode === 401) {
 					setErrorMessage(format("login.error.invalid_credentials"));
 				} else {
