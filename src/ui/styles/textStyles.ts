@@ -14,8 +14,13 @@ export const textStyles = {
 		color: ${colors.primary};
 	`,
 
+	bigButton: css`
+		font-size: 17px;
+		color: ${colors.textPrimary};
+	`,
+
 	primary: css`
-		font-size: 16px;
+		font-size: 15px;
 		color: ${colors.textPrimary};
 	`,
 	secondary: css`
