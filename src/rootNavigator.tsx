@@ -17,7 +17,7 @@ const MainStack = createNativeStackNavigator();
 export const RootNavigator: React.FC = () => {
 	const accountLinked = useAccountLinked();
 	const { format } = useI18n();
-	const isAuthenticated = useUser() !== undefined;
+	const isAuthenticated = !!useUser();
 
 	return isAuthenticated ? (
 		accountLinked ? (

@@ -32,9 +32,7 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFi
 		},
 	}));
 
-	const eyeIcon = isSecure
-		? require("../../assets/images/visibility.png")
-		: require("../../assets/images/visibility.png");
+	const eyeIcon = isSecure ? require("../../assets/images/eye_strike.png") : require("../../assets/images/eye.png");
 
 	return (
 		<Container style={props.style}>
