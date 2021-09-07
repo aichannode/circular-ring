@@ -32,6 +32,10 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFi
 		},
 	}));
 
+	const eyeIcon = isSecure
+		? require("../../assets/images/visibility.png")
+		: require("../../assets/images/visibility.png");
+
 	return (
 		<Container style={props.style}>
 			{props.title ? <Title>{props.title}</Title> : null}
@@ -51,7 +55,7 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFi
 				{!!props.canBeSecure && (
 					<TouchableWithoutFeedback onPress={() => setSecure(!isSecure)}>
 						<SecureIconContainer>
-							<Eye open={!isSecure} />
+							<Eye source={eyeIcon} />
 						</SecureIconContainer>
 					</TouchableWithoutFeedback>
 				)}
@@ -96,8 +100,8 @@ const SecureIconContainer = styled.View`
 	justify-content: center;
 `;
 
-const Eye = styled.View<{ open: boolean }>`
+const Eye = styled.Image`
 	width: 24px;
 	height: 24px;
-	background-color: ${({ open }) => (open ? "green" : "red")};
+	resize-mode: center;
 `;

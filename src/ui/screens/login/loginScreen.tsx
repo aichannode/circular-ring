@@ -37,6 +37,7 @@ export const LoginScreen = () => {
 
 	return (
 		<ScrollScreen>
+			<Logo source={require("../../../assets/images/circularOffcial.png")} />
 			<Title>{format("login.title")}</Title>
 			<ErrorMessage>{errorMessage}</ErrorMessage>
 			<InputField
@@ -63,9 +64,13 @@ export const LoginScreen = () => {
 	);
 };
 
+const Logo = styled.Image`
+	margin-top: 70px;
+	margin-bottom: 70px;
+`;
+
 const Title = styled.Text`
 	${textStyles.titleMedium};
-	margin-top: 100px;
 	margin-bottom: 30px;
 `;
 
