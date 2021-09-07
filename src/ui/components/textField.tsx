@@ -24,6 +24,7 @@ interface TextFieldProps {
 	keyboardType?: KeyboardTypeOptions;
 	returnKeyType?: ReturnKeyTypeOptions;
 	style?: StyleProp<ViewStyle>;
+	keyboardType?: string;
 }
 
 export interface TextFieldRef {
@@ -60,6 +61,7 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFi
 					placeholder={props.placeholder}
 					returnKeyType={props.returnKeyType}
 					secureTextEntry={isSecure}
+					keyboardType={props.keyboardType}
 				/>
 				{!!props.canBeSecure && (
 					<TouchableWithoutFeedback onPress={() => setSecure(!isSecure)}>

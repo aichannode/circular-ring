@@ -42,7 +42,7 @@ export const RootNavigator: React.FC = () => {
 	) : (
 		<SetupStack.Navigator screenOptions={{ headerShown: false }}>
 			<SetupStack.Screen name={Routes.Login} component={LoginScreen} />
-			<SetupStack.Screen name={Routes.FogotPassword} component={ForgotPasswordScreen} />
+			<SetupStack.Screen name={Routes.ForgotPassword} component={ForgotPasswordScreen} />
 		</SetupStack.Navigator>
 	);
 };

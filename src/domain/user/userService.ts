@@ -28,10 +28,16 @@ export class UserService {
 		// await this.authService.signUpEmail(email, password);
 	}
 
+	async resetPassword(email: string): Promise<void> {
+		const isEmailValid = await this.circularAuthService.checkEmail(email);
+		if (isEmailValid) {
+			await this.circularAuthService.resetPassword(email);
+		}
+	}
+
 	async logout() {
 		await this.authService.logout();
 		this._user.set(null);
-		await this.userStorage.remove();
 	}
 
 	// private async retrieveUser() {

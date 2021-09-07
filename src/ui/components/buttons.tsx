@@ -25,12 +25,38 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({ onPress, style, ch
 	);
 };
 
+export const SecondaryButton: React.FC<PrimaryButtonProps> = ({ onPress, style, children }) => {
+	return (
+		<Pressable onPress={onPress} style={[secondaryButton, style]}>
+			<SecondaryContent>
+				<ButtonTextSecondary>{children}</ButtonTextSecondary>
+			</SecondaryContent>
+		</Pressable>
+	);
+};
+
 const ButtonText = styled.Text`
 	${textStyles.primary};
 	color: ${colors.white};
+`;
+
+const ButtonTextSecondary = styled.Text`
+	${textStyles.primary};
+	color: ${colors.charcoalGrey};
 `;
 
 const Content = styled(LinearGradient)`
 	padding: 9px 22px;
 	border-radius: 18px;
 `;
+
+const SecondaryContent = styled.View`
+	padding: 9px 22px;
+	border-radius: 18px;
+	border-width: 1px;
+`;
+
+const secondaryButton = {
+	backgroundColor: "transparent",
+	borderColor: colors.charcoalGrey,
+};

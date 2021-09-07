@@ -1,14 +1,17 @@
 import { useServices } from "@core/services";
-import { PrimaryButton } from "@ui/components/buttons";
+import { useNavigation } from "@react-navigation/native";
+import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { TextField } from "@ui/components/textField";
 import { useI18n } from "@ui/i18n";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback, useRef, useState } from "react";
-import { Keyboard, TextInput } from "react-native";
+import { Keyboard, Text, TextInput } from "react-native";
 import styled from "styled-components/native";
 
 export const LoginScreen = () => {
+	const navigation = useRoutesNavigation();
 	const { format } = useI18n();
 	const { userService } = useServices();
 
@@ -60,8 +63,14 @@ export const LoginScreen = () => {
 				blurOnSubmit={true}
 			/>
 			<ButtonContainer>
+				<SecondaryButton onPress={() => console.log("click on sign up btn")}>
+					{format("signin_signup.signup")}
+				</SecondaryButton>
 				<PrimaryButton onPress={performLogin}>{format("login.login_button")}</PrimaryButton>
 			</ButtonContainer>
+			<ForgotButton onPress={() => navigation.navigate(Routes.ForgotPassword, { email })}>
+				<Text>{format("forgot_password.question")}</Text>
+			</ForgotButton>
 		</ScrollScreen>
 	);
 };
@@ -87,9 +96,14 @@ const InputField = styled(TextField)`
 `;
 
 const ButtonContainer = styled.View`
-	flex: 1;
 	flex-direction: row;
-	justify-content: space-between;
+	justify-content: space-around;
 	margin-top: 80px;
 	margin-bottom: 40px;
+	margin-horizontal: 10px;
+`;
+
+const ForgotButton = styled.TouchableOpacity`
+	background-color: transparent;
+	align-items: center;
 `;
