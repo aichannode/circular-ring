@@ -34,14 +34,13 @@ platform :android do
   desc "Build prod version"
   lane :prod do
     build("prod")
-    appcenter("prod", true)
-    upload_to_play_store(track: "internal", release_status: "draft")
+    upload_to_play_store(track: "alpha", release_status: "draft")
   end
 end
 
 def build(flavor)
   gradle(
-    task: "assemble",
+    task: flavor === "prod" ? "bundle" : "assemble",
     build_type: "Release",
     flavor: flavor.capitalize,
     properties: {
