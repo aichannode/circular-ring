@@ -1,6 +1,7 @@
 import { ApiService } from "@core/api/apiService";
 import { getLogger } from "@core/logger/logger";
 import { AccessToken } from "@domain/auth/accessToken";
+import { AccessTokenStorage } from "@domain/auth/accessTokenStorage";
 
 const SEC_TO_MILLISEC = 1000;
 const REFRESH_TOKEN_MARGIN = 60 * 10 * SEC_TO_MILLISEC; // 10 min
@@ -8,20 +9,22 @@ const REFRESH_TOKEN_MARGIN = 60 * 10 * SEC_TO_MILLISEC; // 10 min
 export class CircularAuthService {
 	private readonly logger = getLogger("CircularAuthService");
 
-	private _accessToken: AccessToken | undefined = undefined;
-	private _accessTokenDate: number | undefined = undefined;
+	private _accessToken: AccessToken | null = null;
+	private _accessTokenDate: number | null = null;
 
-	constructor(private readonly apiService: ApiService) {}
+	constructor(private readonly apiService: ApiService, private readonly accessTokenStorage: AccessTokenStorage) {}
 
-	init() {
+	async init() {
 		this.apiService.init(this);
+		const tokenData = await this.accessTokenStorage.load();
+		this._accessToken = tokenData[0];
+		this._accessTokenDate = tokenData[1];
 	}
 
 	async loginWithEmail(email: string, password: string): Promise<void> {
 		try {
 			const result = await this.apiService.post<AccessToken>("/auth/login", { email, password });
-			this._accessToken = result.data;
-			this._accessTokenDate = Date.now();
+			this.registerToken(result.data);
 		} catch (error) {
 			this.logger.warn("Login failed: " + JSON.stringify(error));
 			throw error;
@@ -43,15 +46,23 @@ export class CircularAuthService {
 				const result = await this.apiService.post<AccessToken>("/auth/refresh_token", {
 					refreshToken: this._accessToken?.refresh_token,
 				});
-				this._accessToken = result.data;
-				this._accessTokenDate = Date.now();
+				await this.registerToken(result.data);
 			} catch (error) {
 				this.logger.warn("Refresh token failed: " + JSON.stringify(error));
 			}
 		}
 	}
 
-	logout() {
-		this._accessToken = undefined;
+	private async registerToken(token: AccessToken) {
+		this._accessToken = token;
+		this._accessTokenDate = Date.now();
+		await this.accessTokenStorage.save(this._accessToken, this._accessTokenDate);
+	}
+
+	async logout() {
+		await this.apiService.get("/auth/logout");
+		this._accessToken = null;
+		this._accessTokenDate = Date.now();
+		await this.accessTokenStorage.remove();
 	}
 }
