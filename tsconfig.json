@@ -15,7 +15,7 @@
 		"skipLibCheck": true,
 		"baseUrl": ".",
 		"paths": {
-			"@assets/*": ["assets/*"],
+			"@assets/*": ["src/assets/*"],
 			"@wordings": ["wordings"],
 			"@core/*": ["src/core/*"],
 			"@domain/*": ["src/domain/*"],

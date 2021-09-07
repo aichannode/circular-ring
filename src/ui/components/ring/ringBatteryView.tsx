@@ -1,7 +1,8 @@
 import { useRingBattery } from "@domain/ring/hooks";
+import { RingBatteryStatus } from "@domain/ring/ringBattery";
 import { useI18n } from "@ui/i18n";
 import React from "react";
-import { StyleProp, ViewStyle } from "react-native";
+import { Image, StyleProp, ViewStyle } from "react-native";
 import { Circle, Defs, LinearGradient, Stop, Svg } from "react-native-svg";
 import styled from "styled-components/native";
 import { SecondaryText } from "../text";
@@ -45,10 +46,15 @@ export const RingBatteryView: React.FC<RingBatteryViewProps> = ({ style, size, d
 				/>
 			</Svg>
 			<CenterView>
-				<BatteryValue style={{ fontSize }}>
-					{ringBattery?.charge ?? "?"}
-					{detailed && "%"}
-				</BatteryValue>
+				{ringBattery.status === RingBatteryStatus.CHARGING && !detailed ? (
+					<Image source={require("@assets/images/charging.png")} width={fontSize} height={fontSize} />
+				) : (
+					<BatteryValue style={{ fontSize }}>
+						{ringBattery?.charge ?? "?"}
+						{detailed && "%"}
+					</BatteryValue>
+				)}
+
 				{detailed && <SecondaryText>{format("ring.battery.label")}</SecondaryText>}
 			</CenterView>
 		</Container>
