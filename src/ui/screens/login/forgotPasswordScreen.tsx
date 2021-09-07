@@ -31,7 +31,7 @@ export const ForgotPasswordScreen: React.FC = () => {
 		<>
 			<ScrollScreen contentContainerStyle={contentStyle}>
 				<Logo source={require("@assets/images/circularOffcial.png")} />
-				<HeaderImage source={require("@assets/images/forgotPasswordZen.png")} />
+				<HeaderImage source={require("@assets/images/forgotPasswordZen.jpg")} />
 				<Title>{format("forgot_password.reset.title")}</Title>
 				{error ? (
 					<ErrorMessage>{format("forgot_password.reset.email.error")}</ErrorMessage>
