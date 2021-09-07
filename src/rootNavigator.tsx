@@ -7,7 +7,7 @@ import { HomeScreen } from "@ui/screens/home/homeScreen";
 import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
 import { RingSetupScreen } from "@ui/screens/ringSetup/ringSetupScreen";
 import React from "react";
-import { Text } from "react-native";
+import { Image } from "react-native";
 
 const SetupStack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
@@ -18,7 +18,11 @@ export const RootNavigator: React.FC = () => {
 
 	return accountLinked ? (
 		<MainStack.Navigator screenOptions={{ headerRight: () => <MyRingBattery />, headerTitleAlign: "center" }}>
-			<MainStack.Screen name={Routes.Home} component={HomeScreen} options={{ headerTitle: () => <Text>LOGO</Text> }} />
+			<MainStack.Screen
+				name={Routes.Home}
+				component={HomeScreen}
+				options={{ headerTitle: () => <Image source={require("@assets/images/logoHeader.png")} /> }}
+			/>
 			<MainStack.Screen
 				name={Routes.MyRing}
 				component={MyRingScreen}
