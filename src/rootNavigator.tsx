@@ -6,6 +6,7 @@ import { Routes } from "@ui/navigation/routes";
 import { useI18n } from "@ui/i18n";
 import { HomeScreen } from "@ui/screens/home/homeScreen";
 import { LoginScreen } from "@ui/screens/login/loginScreen";
+import { ForgotPasswordScreen } from "@ui/screens/login/forgotPasswordScreen";
 import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
 import { RingSetupScreen } from "@ui/screens/ringSetup/ringSetupScreen";
 import React from "react";
@@ -41,6 +42,7 @@ export const RootNavigator: React.FC = () => {
 	) : (
 		<SetupStack.Navigator screenOptions={{ headerShown: false }}>
 			<SetupStack.Screen name={Routes.Login} component={LoginScreen} />
+			<SetupStack.Screen name={Routes.FogotPassword} component={ForgotPasswordScreen} />
 		</SetupStack.Navigator>
 	);
 };

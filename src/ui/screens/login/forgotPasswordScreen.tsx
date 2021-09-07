@@ -1,39 +1,26 @@
-import React, { useMemo } from "react";
-import { StyleSheet, View } from "react-native";
-import BottomSheet, { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import React from "react";
+import { Image } from "react-native";
+import { colors } from "@ui/styles/colors";
+import { ScrollScreen } from "@ui/components/scrollScreen";
+import styled from "styled-components/native";
 
-export const RingSetupScreen: React.FC = () => {
-	const snapPoints = useMemo(() => ["25%"], []);
-
+export const ForgotPasswordScreen: React.FC = () => {
 	return (
-		<View style={styles.container}>
-			<BottomSheet snapPoints={snapPoints}>
-				<View style={styles.contentContainer}>
-					<BottomSheetTextInput value="Awesome 🎉" style={styles.textInput} />{" "}
-				</View>
-			</BottomSheet>
-		</View>
+		<ScrollScreen>
+			<Container>
+				<HeaderImage source={require("@assets/images/forgotPasswordZen.png")} />
+			</Container>
+		</ScrollScreen>
 	);
 };
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		padding: 24,
-		backgroundColor: "grey",
-	},
-	textInput: {
-		alignSelf: "stretch",
-		marginHorizontal: 12,
-		marginBottom: 12,
-		padding: 12,
-		borderRadius: 12,
-		backgroundColor: "grey",
-		color: "white",
-		textAlign: "center",
-	},
-	contentContainer: {
-		flex: 1,
-		alignItems: "center",
-	},
-});
+const Container = styled.View`
+	flex: 1;
+	align-items: center;
+	padding: 50px;
+	background-color: ${colors.white};
+`;
+
+const HeaderImage = styled.Image`
+	flex: 1;
+`;
