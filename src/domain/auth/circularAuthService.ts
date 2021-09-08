@@ -23,11 +23,8 @@ export class CircularAuthService {
 
 	async loginWithEmail(email: string, password: string): Promise<void> {
 		try {
-			this.logger.debug("Authenticating");
 			const result = await this.apiService.post<AccessToken>("/auth/login", { email, password });
-			this.logger.debug("Did authenticate > register token");
 			await this.registerToken(result.data);
-			this.logger.debug("Did register token");
 		} catch (error) {
 			this.logger.warn("Login failed: " + JSON.stringify(error));
 			throw error;

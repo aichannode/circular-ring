@@ -23,11 +23,8 @@ export class UserService {
 	}
 
 	async loginWithEmail(email: string, password: string): Promise<void> {
-		this.logger.debug("Start login with : " + email + " / " + password);
 		await this.circularAuthService.loginWithEmail(email, password);
-		this.logger.debug("Did Auth successfully => retrieve user");
 		await this.retrieveUser();
-		this.logger.debug("retrieve user OK");
 	}
 
 	async logout() {

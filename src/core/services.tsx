@@ -45,6 +45,7 @@ export function useServices(): Services {
 }
 
 export function initializeServices() {
+	apiService.init(circularAuthService);
 	return Promise.all(
 		Object.values(services)
 			.map((service) => {
