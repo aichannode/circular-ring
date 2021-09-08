@@ -3,7 +3,6 @@ import { AccessTokenStorage } from "@domain/auth/accessTokenStorage";
 import { CircularAuthApi } from "@domain/auth/circularAuthApi";
 import { CircularAuthService } from "@domain/auth/circularAuthService";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
-import { UserApi } from "@domain/user/userApi";
 import { UserService } from "@domain/user/userService";
 import { UserStorage } from "@domain/user/userStorage";
 import { createContext, useContext } from "react";
@@ -24,8 +23,8 @@ const ringService = new RingService(deviceService);
 
 const circularAuthApi = new CircularAuthApi(apiService);
 const circularAuthService = new CircularAuthService(circularAuthApi, accessTokenStorage);
-const userApi = new UserApi(apiService);
-const userService = new UserService(circularAuthService, userApi, userStorage);
+// const userApi = new UserApi(apiService);
+const userService = new UserService(circularAuthService, /*userApi, */ userStorage);
 
 export const services = {
 	circularAuthService,
