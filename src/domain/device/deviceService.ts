@@ -245,8 +245,54 @@ export class DeviceService {
 		return () => this.onMessageReceived.remove(listener);
 	}
 
+	async write(message: string) {
+		const device = this._connectedDevice.get();
+		if (!device) {
+			this.log("Error : no device connected");
+			return;
+		}
+		this.log("Writing...");
+		await device.writeCharacteristicWithoutResponseForService(
+			NUServiceUUID,
+			RXCharacteristicUUID,
+			base64encode(message)
+		);
+	}
+
+	async getResponse(message: string, returnChannel: string) {
+		const device = this._connectedDevice.get();
+		if (!device) {
+			this.log("Error : no device connected");
+			return;
+		}
+		const monitoring = this._monitoring.get() || (await observableToPromise(this._monitoring));
+		if (!monitoring) {
+			this.log("Error, not monitoring");
+			throw "Not monitoring";
+		}
+
+		const responsePromise = new Promise<string>((resolve) => {
+			const listener = (output: string) => {
+				if (output.startsWith(returnChannel)) {
+					resolve(output);
+					this.onMessageReceived.remove(listener);
+				}
+			};
+			this.onMessageReceived.add(listener);
+		});
+
+		await device.writeCharacteristicWithoutResponseForService(
+			NUServiceUUID,
+			RXCharacteristicUUID,
+			base64encode(message)
+		);
+
+		return await responsePromise;
+	}
+
 	private async startMonitoring() {
 		const device = this._connectedDevice.get() ?? (await observableToPromise(this._connectedDevice));
+
 		if (!device) {
 			this.log("Error : no device connected");
 			return;
@@ -265,50 +311,6 @@ export class DeviceService {
 		this._monitoring.set(true);
 
 		return subscription;
-	}
-
-	async write(message: string) {
-		const device = this._connectedDevice.get();
-		if (!device) {
-			this.log("Error : no device connected");
-			return;
-		}
-		this.log("Writing...");
-		await device.writeCharacteristicWithoutResponseForService(
-			NUServiceUUID,
-			RXCharacteristicUUID,
-			base64encode(message)
-		);
-	}
-
-	async getResponse(message: string) {
-		// TODO REWRITE THIS
-		const device = this._connectedDevice.get();
-		if (!device) {
-			this.log("Error : no device connected");
-			return;
-		}
-
-		const responsePromise = new Promise<string>((resolve, reject) => {
-			const subs = device.monitorCharacteristicForService(NUServiceUUID, TXCharacteristicUUID, (err, charac) => {
-				if (err) {
-					reject(err);
-				} else if (!charac) {
-					reject("Empty Characteristic");
-				} else {
-					resolve(base64decode(charac.value ?? ""));
-				}
-				subs.remove();
-			});
-		});
-
-		await device.writeCharacteristicWithoutResponseForService(
-			NUServiceUUID,
-			RXCharacteristicUUID,
-			base64encode(message)
-		);
-
-		return await responsePromise;
 	}
 
 	log(...args: unknown[]) {
