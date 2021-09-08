@@ -10,7 +10,7 @@ export class CircularAuthApi {
 	}
 
 	async refreshToken(refreshToken: string): Promise<AccessToken> {
-		const result = await this.apiService.post<AccessToken>("/auth/refresh_token", { refreshToken });
+		const result = await this.apiService.post<AccessToken>("/auth/refresh-token", { refreshToken });
 		return result.data;
 	}
 

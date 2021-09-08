@@ -21,12 +21,6 @@ export const RingSetupScreen: React.FC = () => {
 	const setupState = useSetupState();
 	const devices = useScannedDevices();
 
-	const { userService } = useServices();
-
-	useEffect(() => {
-		userService.loginWithEmail("test@betomorrow.com", "fail");
-	}, []);
-
 	useEffect(() => {
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
 			deviceService.startScan();
