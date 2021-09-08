@@ -2,14 +2,18 @@ import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { TextField } from "@ui/components/textField";
 import { useI18n } from "@ui/i18n";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
+import { isEmail } from "@ui/utils/emailUtils";
+import { isCorrectPassword } from "@ui/utils/passwordUtils";
 import React, { useCallback, useRef, useState } from "react";
 import { Pressable, TextInput } from "react-native";
 import styled from "styled-components/native";
 
-export const SignUpScreen = () => {
+export const SignUpEmailScreen = () => {
 	const { format } = useI18n();
+	const { navigate } = useRoutesNavigation();
 
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -17,22 +21,41 @@ export const SignUpScreen = () => {
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const confirmPasswordFieldRef = useRef<TextInput | null>(null);
 
-	// const [errorMessage, setErrorMessage] = useState<string>("");
+	const [errorMessage, setErrorMessage] = useState<string>("");
 
 	const performSignUp = useCallback(() => {
-		// TODO
+		setErrorMessage("");
+		if (email.length === 0 || password.length === 0) {
+			setErrorMessage(format("signup.error.empty_field"));
+		} else if (!isEmail(email)) {
+			setErrorMessage(format("signup.error.email_format"));
+		} else if (!isCorrectPassword(password)) {
+			setErrorMessage(format("signup.error.password_format"));
+		} else if (password !== confirmPassword) {
+			setErrorMessage(format("signup.error.password_confirm"));
+		} else {
+			navigate(Routes.SignUpPersonalInfo, {
+				signUpData: { email, password, country: "", timezone: "", firstName: "", lastName: "" },
+			});
+		}
 	}, [email, password, confirmPassword]);
 
 	return (
 		<ScrollScreen>
+			<Logo source={require("../../../assets/images/circularOffcial.png")} />
 			<Title>{format("signup.title")}</Title>
-			<Subtitle>{format("signup.subtitle")}</Subtitle>
-			{/*<ErrorMessage>{errorMessage}</ErrorMessage>*/}
+			{errorMessage.length > 0 ? (
+				<ErrorMessage>{errorMessage}</ErrorMessage>
+			) : (
+				<Subtitle>{format("signup.subtitle")}</Subtitle>
+			)}
 			<InputField
 				title={format("signup.email.title")}
 				placeholder={format("signup.email.placeholder")}
 				value={email}
 				onValueChanged={setEmail}
+				keyboardType={"email-address"}
+				returnKeyType={"next"}
 				blurOnSubmit={false}
 				onSubmit={() => passwordFieldRef.current?.focus()}
 			/>
@@ -43,6 +66,7 @@ export const SignUpScreen = () => {
 				canBeSecure
 				value={password}
 				onValueChanged={setPassword}
+				returnKeyType={"next"}
 				onSubmit={() => confirmPasswordFieldRef.current?.focus()}
 			/>
 			<InputField
@@ -73,24 +97,27 @@ export const SignUpScreen = () => {
 	);
 };
 
+const Logo = styled.Image`
+	margin-top: 70px;
+	margin-bottom: 50px;
+`;
+
 const Title = styled.Text`
 	${textStyles.titleMedium};
-	margin-top: 64px;
 	margin-bottom: 14px;
 `;
 
 const Subtitle = styled.Text`
-	${textStyles.titleMedium};
-	font-size: 15px;
-	color: ${colors.textPlaceholder};
-	margin-bottom: 36px;
+	${textStyles.subtitleMedium};
+	margin-bottom: 20px;
+	text-align: center;
 `;
 
-// const ErrorMessage = styled.Text`
-// 	${textStyles.errorMessage};
-// 	margin-bottom: 20px;
-// 	text-align: center;
-// `;
+const ErrorMessage = styled.Text`
+	${textStyles.errorMessage};
+	margin-bottom: 20px;
+	text-align: center;
+`;
 
 const InputField = styled(TextField)`
 	margin-bottom: 40px;
@@ -100,8 +127,8 @@ const ButtonContainer = styled.View`
 	flex: 1;
 	flex-direction: row;
 	justify-content: space-between;
-	margin-top: 50px;
-	margin-bottom: 40px;
+	margin-top: 20px;
+	margin-bottom: 25px;
 `;
 
 const LoginButton = styled(SecondaryButton)`

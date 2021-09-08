@@ -14,7 +14,7 @@ export const LoginOrSignUpScreen = () => {
 	}, []);
 
 	const goToSignUp = useCallback(() => {
-		navigate(Routes.SignUp);
+		navigate(Routes.SignUpEmail);
 	}, []);
 
 	return (

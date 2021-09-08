@@ -40,4 +40,7 @@ export class UserService {
 	// 		throw error;
 	// 	}
 	// }
+	async signUpWithEmail(email: string, password: string) {
+		await this.circularAuthService.signupWithEmail(email, password);
+	}
 }

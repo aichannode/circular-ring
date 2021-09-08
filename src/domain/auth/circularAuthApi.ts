@@ -4,6 +4,10 @@ import { AccessToken } from "@domain/auth/accessToken";
 export class CircularAuthApi {
 	constructor(private readonly apiService: ApiService) {}
 
+	async singUpWithEmail(email: string, password: string) {
+		// const result = await this.apiService.post("/auth/signup", {});
+	}
+
 	async loginEmail(email: string, password: string): Promise<AccessToken> {
 		const result = await this.apiService.post<AccessToken>("/auth/login", { email, password });
 		return result.data;

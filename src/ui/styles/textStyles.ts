@@ -8,6 +8,12 @@ export const textStyles = {
 		color: ${colors.textPrimary};
 	`,
 
+	subtitleMedium: css`
+		font-size: 14px;
+		font-weight: bold;
+		color: ${colors.textPlaceholder};
+	`,
+
 	errorMessage: css`
 		font-size: 14px;
 		font-weight: bold;

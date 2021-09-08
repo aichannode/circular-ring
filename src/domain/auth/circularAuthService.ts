@@ -68,4 +68,8 @@ export class CircularAuthService {
 		this._accessTokenDate = null;
 		await this.accessTokenStorage.remove();
 	}
+
+	async signupWithEmail(email: string, password: string) {
+		await this.authApi.singUpWithEmail(email, password);
+	}
 }
