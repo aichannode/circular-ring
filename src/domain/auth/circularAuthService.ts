@@ -1,7 +1,8 @@
-import { ApiService } from "@core/api/apiService";
 import { getLogger } from "@core/logger/logger";
 import { AccessToken } from "@domain/auth/accessToken";
 import { AccessTokenStorage } from "@domain/auth/accessTokenStorage";
+import { CircularAuthApi } from "@domain/auth/circularAuthApi";
+import { observable } from "micro-observables";
 
 const SEC_TO_MILLISEC = 1000;
 const REFRESH_TOKEN_MARGIN = 60 * 10 * SEC_TO_MILLISEC; // 10 min
@@ -9,22 +10,23 @@ const REFRESH_TOKEN_MARGIN = 60 * 10 * SEC_TO_MILLISEC; // 10 min
 export class CircularAuthService {
 	private readonly logger = getLogger("CircularAuthService");
 
-	private _accessToken: AccessToken | null = null;
+	private _accessToken = observable<AccessToken | null>(null);
 	private _accessTokenDate: number | null = null;
 
-	constructor(private readonly apiService: ApiService, private readonly accessTokenStorage: AccessTokenStorage) {}
+	accessToken = this._accessToken.readOnly();
+
+	constructor(private readonly authApi: CircularAuthApi, private readonly accessTokenStorage: AccessTokenStorage) {}
 
 	async init() {
-		this.apiService.init(this);
 		const tokenData = await this.accessTokenStorage.load();
-		this._accessToken = tokenData[0];
+		this._accessToken.set(tokenData[0]);
 		this._accessTokenDate = tokenData[1];
 	}
 
 	async loginWithEmail(email: string, password: string): Promise<void> {
 		try {
-			const result = await this.apiService.post<AccessToken>("/auth/login", { email, password });
-			this.registerToken(result.data);
+			const token = await this.authApi.loginEmail(email, password);
+			await this.registerToken(token);
 		} catch (error) {
 			this.logger.warn("Login failed: " + JSON.stringify(error));
 			throw error;
@@ -32,21 +34,22 @@ export class CircularAuthService {
 	}
 
 	async getToken(): Promise<string | undefined> {
-		if (this._accessToken && this._accessTokenDate) {
-			if (Date.now() > this._accessTokenDate + this._accessToken.expires_in * SEC_TO_MILLISEC - REFRESH_TOKEN_MARGIN) {
+		const token = this._accessToken.get();
+		if (token && this._accessTokenDate) {
+			if (Date.now() > this._accessTokenDate + token.expires_in * SEC_TO_MILLISEC - REFRESH_TOKEN_MARGIN) {
+				this.logger.debug("Refreshing token...");
 				await this.refreshToken();
 			}
-			return this._accessToken.access_token;
+			return this._accessToken.get()?.access_token;
 		}
 	}
 
 	private async refreshToken(): Promise<void> {
-		if (this._accessToken) {
+		const currentToken = this._accessToken.get();
+		if (currentToken) {
 			try {
-				const result = await this.apiService.post<AccessToken>("/auth/refresh_token", {
-					refreshToken: this._accessToken?.refresh_token,
-				});
-				await this.registerToken(result.data);
+				const newToken = await this.authApi.refreshToken(currentToken.refresh_token);
+				await this.registerToken(newToken);
 			} catch (error) {
 				this.logger.warn("Refresh token failed: " + JSON.stringify(error));
 			}
@@ -54,15 +57,15 @@ export class CircularAuthService {
 	}
 
 	private async registerToken(token: AccessToken) {
-		this._accessToken = token;
+		this._accessToken.set(token);
 		this._accessTokenDate = Date.now();
-		await this.accessTokenStorage.save(this._accessToken, this._accessTokenDate);
+		await this.accessTokenStorage.save(token, this._accessTokenDate);
 	}
 
 	async logout() {
-		await this.apiService.get("/auth/logout");
-		this._accessToken = null;
-		this._accessTokenDate = Date.now();
+		await this.authApi.logout();
+		this._accessToken.set(null);
+		this._accessTokenDate = null;
 		await this.accessTokenStorage.remove();
 	}
 }

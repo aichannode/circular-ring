@@ -4,12 +4,14 @@ import { DeviceSetupState } from "@domain/device/deviceService";
 import { useScannedDevices, useSetupState } from "@domain/device/hooks";
 import { PrimaryButton } from "@ui/components/buttons";
 import { Divider } from "@ui/components/divider";
+import { Stack } from "@ui/components/layout";
+import { Spinner } from "@ui/components/spinner";
 import { PrimaryText, SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import React, { useEffect } from "react";
-import { Platform } from "react-native";
+import { Image, Platform } from "react-native";
 import styled from "styled-components/native";
 
 export const RingSetupScreen: React.FC = () => {
@@ -19,12 +21,6 @@ export const RingSetupScreen: React.FC = () => {
 	const setupState = useSetupState();
 	const devices = useScannedDevices();
 
-	const { userService } = useServices();
-
-	useEffect(() => {
-		userService.loginWithEmail("test@betomorrow.com", "fail");
-	}, []);
-
 	useEffect(() => {
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
 			deviceService.startScan();
@@ -32,6 +28,7 @@ export const RingSetupScreen: React.FC = () => {
 	}, [setupState]);
 
 	const setupUserRing = async () => delay(2000); // Mock before having user signup and network layer
+	const isConnecting = setupState === DeviceSetupState.CONNECTING;
 
 	return (
 		<Container>
@@ -53,28 +50,43 @@ export const RingSetupScreen: React.FC = () => {
 							</>
 						);
 					case DeviceSetupState.SCANNING:
+					case DeviceSetupState.CONNECTING:
 						return (
 							<>
-								<PrimaryText>{format("setup.scan.enabled.title")}</PrimaryText>
-								{/* Image */}
-								<Message>{format("setup.scan.enabled.message")}</Message>
-								<Divider />
-								{devices.map((device) => (
-									<DeviceWrapper
-										key={device.id}
-										onPress={async () => {
-											deviceService.stopScan();
-											await deviceService.connect(device);
-											await setupUserRing();
-										}}
-									>
-										<PrimaryText>{device.name}</PrimaryText>
-									</DeviceWrapper>
-								))}
+								<Instructions hidden={isConnecting}>
+									<Image source={require("@assets/images/clock.png")} />
+									<InstructionsText>{format("setup.scan.enabled.title")}</InstructionsText>
+								</Instructions>
+								<Stack align="center">
+									<Image source={require("@assets/images/ringShadow.png")} style={{ position: "absolute" }} />
+									<InstructionsArrow source={require("@assets/images/arrowDown.png")} hidden={isConnecting} />
+									<Image source={require("@assets/images/ringBig.png")} />
+									<Message>
+										{isConnecting ? format("setup.connection.pending") : format("setup.scan.enabled.message")}
+									</Message>
+								</Stack>
+								{isConnecting ? (
+									<Spinner />
+								) : (
+									<>
+										<Divider />
+										{devices.map((device) => (
+											<DeviceWrapper
+												key={device.id}
+												onPress={async () => {
+													deviceService.stopScan();
+													await deviceService.connect(device);
+													await setupUserRing();
+												}}
+											>
+												<Image source={require("@assets/images/ring.png")} />
+												<DeviceName>{device.name}</DeviceName>
+											</DeviceWrapper>
+										))}
+									</>
+								)}
 							</>
 						);
-					case DeviceSetupState.CONNECTING:
-						return <Message>{format("setup.connection.pending")}</Message>;
 				}
 			})()}
 		</Container>
@@ -89,13 +101,38 @@ const Container = styled.View`
 `;
 
 const Message = styled(SecondaryText)`
-	max-width: 230px;
-	margin-vertical: 40px;
+	margin-top: 80px;
+	margin-bottom: 40px;
+	text-align: center;
 `;
 
 const DeviceWrapper = styled.Pressable`
 	${whiteCardStyle};
+	flex-direction: row;
+	align-items: center;
 	margin-top: 20px;
 	align-self: stretch;
 	padding: 10px 14px;
+`;
+
+const Instructions = styled.View<{ hidden?: boolean }>`
+	${({ hidden }) => hidden && "opacity: 0"};
+	flex-direction: row;
+	align-items: center;
+	margin-bottom: 10px;
+`;
+
+const InstructionsText = styled(SecondaryText)`
+	margin-left: 5px;
+	font-weight: 500;
+	color: ${colors.primary};
+`;
+
+const DeviceName = styled(PrimaryText)`
+	font-weight: 500;
+	margin-left: 10px;
+`;
+
+const InstructionsArrow = styled.Image<{ hidden?: boolean }>`
+	${({ hidden }) => hidden && "opacity: 0"};
 `;

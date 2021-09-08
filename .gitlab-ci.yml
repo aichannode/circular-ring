@@ -108,9 +108,10 @@ ios:build:prod:
     LC_ALL: "en_US.UTF-8"
     LANG: "en_US.UTF-8"
   tags:
-    - react-native
-    - ios-11
-    - latest
+    #- react-native
+    #- ios-12.2
+    - bigsur-test
+    #- latest
   script:
     - npm ci --progress=false
     - bash ./scripts/copy-env.sh ${ENV}

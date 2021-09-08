@@ -1,9 +1,10 @@
 import { useRingBattery } from "@domain/ring/hooks";
+import { RingBatteryStatus } from "@domain/ring/ringBattery";
 import { useI18n } from "@ui/i18n";
 import React from "react";
-import { StyleProp, ViewStyle } from "react-native";
-import { Circle, Defs, LinearGradient, Stop, Svg } from "react-native-svg";
+import { Image, StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
+import { ChunkedCircle, CircleGradient } from "../shapes/chunkedCircle";
 import { SecondaryText } from "../text";
 
 interface RingBatteryViewProps {
@@ -13,10 +14,6 @@ interface RingBatteryViewProps {
 }
 export const RingBatteryView: React.FC<RingBatteryViewProps> = ({ style, size, detailed }) => {
 	const strokeWidth = Math.round(size / 9);
-	const svgSize = size + strokeWidth;
-	const center = svgSize / 2;
-	const circleRadius = size / 2;
-	const perimeter = 2 * Math.PI * circleRadius;
 	const fontSize = Math.round(size / (detailed ? 4 : 2.5));
 	const { format } = useI18n();
 
@@ -24,31 +21,23 @@ export const RingBatteryView: React.FC<RingBatteryViewProps> = ({ style, size, d
 
 	return ringBattery ? (
 		<Container style={style}>
-			<Svg width={`${svgSize}`} height={`${svgSize}`}>
-				<Defs>
-					<LinearGradient id="ring-gradient" x1="0" y1="0" x2="1" y2="1">
-						<Stop offset="0" stopColor="#fd8081" stopOpacity="1" />
-						<Stop offset="1" stopColor="#ac7cd6" stopOpacity="1" />
-					</LinearGradient>
-				</Defs>
-				<Circle
-					rotation={-90}
-					origin={[center, center]}
-					strokeDasharray={`${perimeter}`}
-					strokeDashoffset={`${perimeter - (ringBattery.charge / 100) * perimeter}`}
-					strokeWidth={`${strokeWidth}`}
-					strokeLinecap="round"
-					cx={`${center}`}
-					cy={`${center}`}
-					r={circleRadius}
-					stroke="url(#ring-gradient)"
-				/>
-			</Svg>
+			<ChunkedCircle
+				size={size}
+				strokeWidth={strokeWidth}
+				gradient={CircleGradient.PURPLE}
+				pathRatio={ringBattery.charge / 100}
+			/>
+
 			<CenterView>
-				<BatteryValue style={{ fontSize }}>
-					{ringBattery?.charge ?? "?"}
-					{detailed && "%"}
-				</BatteryValue>
+				{ringBattery.status === RingBatteryStatus.CHARGING && !detailed ? (
+					<Image source={require("@assets/images/charging.png")} width={fontSize} height={fontSize} />
+				) : (
+					<BatteryValue style={{ fontSize }}>
+						{ringBattery?.charge ?? "?"}
+						{detailed && "%"}
+					</BatteryValue>
+				)}
+
 				{detailed && <SecondaryText>{format("ring.battery.label")}</SecondaryText>}
 			</CenterView>
 		</Container>

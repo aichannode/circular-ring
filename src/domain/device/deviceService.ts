@@ -17,6 +17,13 @@ export enum DeviceSetupState {
 	READY_TO_SCAN = "READY_TO_SCAN",
 	SCANNING = "SCANNING",
 }
+export enum DeviceAutoConnectState {
+	DISABLED = "DISABLED",
+	DISCONNECTED = "DISCONNECTED",
+	SEARCHING = "SEARCHING",
+	CONNECTING = "CONNECTING",
+	CONNECTED = "CONNECTED",
+}
 
 const NUServiceUUID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
 const RXCharacteristicUUID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
@@ -36,6 +43,7 @@ export class DeviceService {
 	scannedDevices = this._scannedDevices.select((devicesMap) => [...devicesMap.values()]);
 
 	readonly setupState: Observable<DeviceSetupState>;
+	readonly autoConnectState: Observable<DeviceAutoConnectState>;
 
 	constructor(
 		private readonly bluetoothService: BluetoothService,
@@ -58,6 +66,25 @@ export class DeviceService {
 					return DeviceSetupState.SCANNING;
 				}
 				return DeviceSetupState.READY_TO_SCAN;
+			}
+		);
+
+		this.autoConnectState = Observable.select(
+			[this.bluetoothService.state, this._connectionState, this._lookingForDevice],
+			(bleState, connectionState, looking) => {
+				if (bleState === State.PoweredOff) {
+					return DeviceAutoConnectState.DISABLED;
+				}
+				if (connectionState === DeviceConnectionState.CONNECTED) {
+					return DeviceAutoConnectState.CONNECTED;
+				}
+				if (connectionState === DeviceConnectionState.CONNECTING) {
+					return DeviceAutoConnectState.CONNECTING;
+				}
+				if (looking) {
+					return DeviceAutoConnectState.SEARCHING;
+				}
+				return DeviceAutoConnectState.DISCONNECTED;
 			}
 		);
 	}

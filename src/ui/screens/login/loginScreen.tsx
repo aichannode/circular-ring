@@ -45,6 +45,8 @@ export const LoginScreen = () => {
 				placeholder={format("login.email.placeholder")}
 				value={email}
 				onValueChanged={setEmail}
+				keyboardType={"email-address"}
+				returnKeyType={"next"}
 				blurOnSubmit={false}
 				onSubmit={() => passwordFieldRef.current?.focus()}
 			/>

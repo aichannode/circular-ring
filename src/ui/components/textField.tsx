@@ -1,6 +1,13 @@
 import { colors } from "@ui/styles/colors";
 import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { StyleProp, TextInput, TouchableWithoutFeedback, ViewStyle } from "react-native";
+import {
+	KeyboardTypeOptions,
+	ReturnKeyTypeOptions,
+	StyleProp,
+	TextInput,
+	TouchableWithoutFeedback,
+	ViewStyle,
+} from "react-native";
 import styled from "styled-components/native";
 
 interface TextFieldProps {
@@ -14,6 +21,8 @@ interface TextFieldProps {
 	blurOnSubmit?: boolean;
 	isError?: boolean;
 	canBeSecure?: boolean;
+	keyboardType?: KeyboardTypeOptions;
+	returnKeyType?: ReturnKeyTypeOptions;
 	style?: StyleProp<ViewStyle>;
 }
 
@@ -32,9 +41,7 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFi
 		},
 	}));
 
-	const eyeIcon = isSecure
-		? require("../../assets/images/visibility.png")
-		: require("../../assets/images/visibility.png");
+	const eyeIcon = isSecure ? require("../../assets/images/eye_strike.png") : require("../../assets/images/eye.png");
 
 	return (
 		<Container style={props.style}>
@@ -48,8 +55,10 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFi
 					multiline={false}
 					maxLength={props.maxLength}
 					value={props.value}
+					keyboardType={props.keyboardType}
 					blurOnSubmit={props.blurOnSubmit}
 					placeholder={props.placeholder}
+					returnKeyType={props.returnKeyType}
 					secureTextEntry={isSecure}
 				/>
 				{!!props.canBeSecure && (

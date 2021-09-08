@@ -1,5 +1,6 @@
 import { ApiService } from "@core/api/apiService";
 import { AccessTokenStorage } from "@domain/auth/accessTokenStorage";
+import { CircularAuthApi } from "@domain/auth/circularAuthApi";
 import { CircularAuthService } from "@domain/auth/circularAuthService";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { UserService } from "@domain/user/userService";
@@ -20,10 +21,13 @@ const bluetoothService = new BluetoothService();
 const deviceService = new DeviceService(bluetoothService, favoriteDeviceStorage);
 const ringService = new RingService(deviceService);
 
-const circularAuthService = new CircularAuthService(apiService, accessTokenStorage);
-const userService = new UserService(circularAuthService, apiService, userStorage);
+const circularAuthApi = new CircularAuthApi(apiService);
+const circularAuthService = new CircularAuthService(circularAuthApi, accessTokenStorage);
+// const userApi = new UserApi(apiService);
+const userService = new UserService(circularAuthService, /*userApi, */ userStorage);
 
 export const services = {
+	circularAuthService,
 	bluetoothService,
 	deviceService,
 	userService,
@@ -45,6 +49,7 @@ export function useServices(): Services {
 }
 
 export function initializeServices() {
+	apiService.init(circularAuthService);
 	return Promise.all(
 		Object.values(services)
 			.map((service) => {

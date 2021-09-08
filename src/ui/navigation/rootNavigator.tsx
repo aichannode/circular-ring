@@ -1,5 +1,5 @@
+import { useAuth } from "@domain/auth/hooks/useAuth";
 import { useAccountLinked } from "@domain/device/hooks";
-import { useUser } from "@domain/user/hooks/useUser";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { LoginOrSignUpScreen } from "@ui/screens/loginOrRegister/loginOrSignUpScreen";
 import { MyRingBattery } from "@ui/components/navigation/myRingBattery";
@@ -11,7 +11,7 @@ import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
 import { RingSetupScreen } from "@ui/screens/ringSetup/ringSetupScreen";
 import { SignUpScreen } from "@ui/screens/signup/signUpScreen";
 import React from "react";
-import { Text } from "react-native";
+import { Image } from "react-native";
 
 const SetupStack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
@@ -19,7 +19,7 @@ const MainStack = createNativeStackNavigator();
 export const RootNavigator: React.FC = () => {
 	const accountLinked = useAccountLinked();
 	const { format } = useI18n();
-	const isAuthenticated = useUser() !== undefined;
+	const isAuthenticated = useAuth();
 
 	return isAuthenticated ? (
 		accountLinked ? (
@@ -27,7 +27,7 @@ export const RootNavigator: React.FC = () => {
 				<MainStack.Screen
 					name={Routes.Home}
 					component={HomeScreen}
-					options={{ headerTitle: () => <Text>LOGO</Text> }}
+					options={{ headerTitle: () => <Image source={require("@assets/images/logoHeader.png")} /> }}
 				/>
 				<MainStack.Screen
 					name={Routes.MyRing}
