@@ -5,6 +5,7 @@ export class RingApi {
 
 	async sendData(rawData: string) {
 		// return this.apiService.post(``, rawData);
+		console.log("Fake Sending data...", rawData.length);
 		return delay(3000);
 	}
 }

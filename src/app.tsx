@@ -1,13 +1,12 @@
 import { NavigationContainer } from "@react-navigation/native";
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { IntlProvider } from "react-intl";
 import { LogBox } from "react-native";
 import * as RNLocalize from "react-native-localize";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { initializeServices, ServicesProvider } from "./core/services";
 import { RootNavigator } from "./rootNavigator";
 import { translations } from "./wordings";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 

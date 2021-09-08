@@ -34,6 +34,7 @@ export class RingService {
 
 	async init() {
 		this.listenBattery();
+		this.syncData();
 	}
 
 	listenBattery() {
@@ -51,6 +52,7 @@ export class RingService {
 			if (waitingData) {
 				this.log("Waiting data has to be sent, length:", waitingData.length);
 			}
+			this.log("Retrieving data...");
 			const allData = await new Promise<string>(async (resolve) => {
 				let data = waitingData ?? "";
 
@@ -72,13 +74,16 @@ export class RingService {
 			try {
 				// Api call
 				if (allData !== ringDataEOF) {
+					this.log("Sending data to server...");
 					await this.ringApi.sendData(allData);
+					this.log("Successfully sent data...");
 					setTimeout(() => this._syncState.set(SyncState.NONE), syncFinishedTimeout);
 				}
 				this.ringDataStorage.clear();
 				this._syncState.set(allData !== ringDataEOF ? SyncState.SUCCESS : SyncState.NONE);
 			} catch (e) {
-				this.ringDataStorage.push(allData);
+				this.log("An error occured during save. Storing data, length:", allData.length);
+				this.ringDataStorage.save(allData);
 				throw e;
 			}
 		} catch (e) {
