@@ -30,14 +30,17 @@ export class ApiService {
 	}
 
 	get<T = unknown, R = AxiosResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R> {
+		this.logger.debug("[GET] " + url);
 		return this.instance.get(url, config);
 	}
 
 	post<T = unknown, R = AxiosResponse<T>>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<R> {
+		this.logger.debug("[POST] " + url);
 		return this.instance.post(url, data, config);
 	}
 
 	delete<T = unknown, R = AxiosResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R> {
+		this.logger.debug("[DELETE] " + url);
 		return this.instance.delete(url, config);
 	}
 }
