@@ -13,6 +13,6 @@ export const Divider: React.FC<DividerProps> = ({ width = 150, style }) => {
 
 const Container = styled.View<{ width: number }>`
 	width: ${({ width }) => width}px;
-	height: 2px;
+	height: 1px;
 	background-color: ${colors.gray};
 `;

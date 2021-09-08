@@ -23,8 +23,11 @@ export class CircularAuthService {
 
 	async loginWithEmail(email: string, password: string): Promise<void> {
 		try {
+			this.logger.debug("Authenticating");
 			const result = await this.apiService.post<AccessToken>("/auth/login", { email, password });
-			this.registerToken(result.data);
+			this.logger.debug("Did authenticate > register token");
+			await this.registerToken(result.data);
+			this.logger.debug("Did register token");
 		} catch (error) {
 			this.logger.warn("Login failed: " + JSON.stringify(error));
 			throw error;
@@ -34,6 +37,7 @@ export class CircularAuthService {
 	async getToken(): Promise<string | undefined> {
 		if (this._accessToken && this._accessTokenDate) {
 			if (Date.now() > this._accessTokenDate + this._accessToken.expires_in * SEC_TO_MILLISEC - REFRESH_TOKEN_MARGIN) {
+				this.logger.debug("Refreshing token...");
 				await this.refreshToken();
 			}
 			return this._accessToken.access_token;

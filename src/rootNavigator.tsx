@@ -9,7 +9,7 @@ import { LoginScreen } from "@ui/screens/login/loginScreen";
 import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
 import { RingSetupScreen } from "@ui/screens/ringSetup/ringSetupScreen";
 import React from "react";
-import { Text } from "react-native";
+import { Image } from "react-native";
 
 const SetupStack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
@@ -25,7 +25,7 @@ export const RootNavigator: React.FC = () => {
 				<MainStack.Screen
 					name={Routes.Home}
 					component={HomeScreen}
-					options={{ headerTitle: () => <Text>LOGO</Text> }}
+					options={{ headerTitle: () => <Image source={require("@assets/images/logoHeader.png")} /> }}
 				/>
 				<MainStack.Screen
 					name={Routes.MyRing}

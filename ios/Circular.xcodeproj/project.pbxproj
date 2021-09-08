@@ -10,6 +10,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		648568BC675B7E94F37D4735 /* libPods-Circular-Demo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7962DC37FC768F5504EF1D3B /* libPods-Circular-Demo.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		A1001E6A26DE38D1000C80A0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		A1001E6B26DE38D1000C80A0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -19,9 +20,8 @@
 		A1001E7E26DE38EA000C80A0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		A1001E8226DE38EA000C80A0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		A1001E8326DE38EA000C80A0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		D34E94FD7B81C32878B49ADB /* libPods-Circular-Demo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 59B61B1F9876411DCA8878C4 /* libPods-Circular-Demo.a */; };
-		E5C7D7FEB8C6D05455F89749 /* libPods-Circular-Dev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 442F307F2177B4CF7A35B555 /* libPods-Circular-Dev.a */; };
-		F29369D6B7D3F0D88CC39731 /* libPods-Circular-Prod.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BD12C4F25850358F7D3393A /* libPods-Circular-Prod.a */; };
+		A352061DA8161BE1A14411EE /* libPods-Circular-Prod.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BCEFF6B7A287074A63905E4 /* libPods-Circular-Prod.a */; };
+		DC53EF3D2BDCD98F1EBECC91 /* libPods-Circular-Dev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D3EF23D8656A0C33BDAD3E30 /* libPods-Circular-Dev.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,7 +29,8 @@
 		00E356F21AD99517003FC87E /* CircularTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CircularTests.m; sourceTree = "<group>"; };
 		0612AA9EE3167772BDE12A74 /* Pods-Circular.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular.release.xcconfig"; path = "Target Support Files/Pods-Circular/Pods-Circular.release.xcconfig"; sourceTree = "<group>"; };
 		07D2F47E74C63AF2ABBA708B /* Pods-Circular-demo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-demo.release.xcconfig"; path = "Target Support Files/Pods-Circular-demo/Pods-Circular-demo.release.xcconfig"; sourceTree = "<group>"; };
-		0BD12C4F25850358F7D3393A /* libPods-Circular-Prod.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Circular-Prod.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0AA771B18F97E9288434422C /* Pods-Circular-Demo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Demo.debug.xcconfig"; path = "Target Support Files/Pods-Circular-Demo/Pods-Circular-Demo.debug.xcconfig"; sourceTree = "<group>"; };
+		0BCEFF6B7A287074A63905E4 /* libPods-Circular-Prod.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Circular-Prod.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* Circular.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Circular.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Circular/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Circular/AppDelegate.m; sourceTree = "<group>"; };
@@ -38,23 +39,22 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Circular/main.m; sourceTree = "<group>"; };
 		15EC973760FEDD152D9E3EC0 /* Pods-Circular.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular.debug.xcconfig"; path = "Target Support Files/Pods-Circular/Pods-Circular.debug.xcconfig"; sourceTree = "<group>"; };
 		401553CA7C3B14EEABD56279 /* Pods-Circular-CircularTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-CircularTests.debug.xcconfig"; path = "Target Support Files/Pods-Circular-CircularTests/Pods-Circular-CircularTests.debug.xcconfig"; sourceTree = "<group>"; };
-		442F307F2177B4CF7A35B555 /* libPods-Circular-Dev.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Circular-Dev.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		55ED3B59FD3AA3C760D02A51 /* Pods-Circular-Dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Dev.debug.xcconfig"; path = "Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev.debug.xcconfig"; sourceTree = "<group>"; };
-		59B61B1F9876411DCA8878C4 /* libPods-Circular-Demo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Circular-Demo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B1B67D059A9BB4770B75175 /* Pods-Circular-demo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-demo.debug.xcconfig"; path = "Target Support Files/Pods-Circular-demo/Pods-Circular-demo.debug.xcconfig"; sourceTree = "<group>"; };
-		6CE15965BF723EF7A766BDBD /* Pods-Circular-Demo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Demo.release.xcconfig"; path = "Target Support Files/Pods-Circular-Demo/Pods-Circular-Demo.release.xcconfig"; sourceTree = "<group>"; };
+		60E998A8227DFFF57DBABC73 /* Pods-Circular-Dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Dev.release.xcconfig"; path = "Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev.release.xcconfig"; sourceTree = "<group>"; };
 		716C2637A5C1D32B9769DC11 /* Pods-Circular-dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-dev.debug.xcconfig"; path = "Target Support Files/Pods-Circular-dev/Pods-Circular-dev.debug.xcconfig"; sourceTree = "<group>"; };
-		78A292F35A61209D75577926 /* Pods-Circular-Demo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Demo.debug.xcconfig"; path = "Target Support Files/Pods-Circular-Demo/Pods-Circular-Demo.debug.xcconfig"; sourceTree = "<group>"; };
+		7962DC37FC768F5504EF1D3B /* libPods-Circular-Demo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Circular-Demo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E8E94DC265C6EFE1A4A454A /* libPods-Circular-CircularTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Circular-CircularTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Circular/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		84BF9A5A82E95F034C567B97 /* Pods-Circular-CircularTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-CircularTests.release.xcconfig"; path = "Target Support Files/Pods-Circular-CircularTests/Pods-Circular-CircularTests.release.xcconfig"; sourceTree = "<group>"; };
 		93315436EAA44F9F488F6CA3 /* Pods-Circular-dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-dev.release.xcconfig"; path = "Target Support Files/Pods-Circular-dev/Pods-Circular-dev.release.xcconfig"; sourceTree = "<group>"; };
-		944A7E39A3F15E5F66953AE2 /* Pods-Circular-Prod.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Prod.release.xcconfig"; path = "Target Support Files/Pods-Circular-Prod/Pods-Circular-Prod.release.xcconfig"; sourceTree = "<group>"; };
 		A1001E7726DE38D1000C80A0 /* Circular-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Circular-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1001E8A26DE38EA000C80A0 /* Circular-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Circular-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		C0FDE496069156D54836DC9D /* Pods-Circular-Prod.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Prod.debug.xcconfig"; path = "Target Support Files/Pods-Circular-Prod/Pods-Circular-Prod.debug.xcconfig"; sourceTree = "<group>"; };
+		A3001A3CC01AC578E76FDF3A /* Pods-Circular-Dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Dev.debug.xcconfig"; path = "Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev.debug.xcconfig"; sourceTree = "<group>"; };
+		A45368EF2D3F2DAC6F66F4B3 /* Pods-Circular-Prod.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Prod.debug.xcconfig"; path = "Target Support Files/Pods-Circular-Prod/Pods-Circular-Prod.debug.xcconfig"; sourceTree = "<group>"; };
+		BF7220EA162540DC70CCC95B /* Pods-Circular-Prod.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Prod.release.xcconfig"; path = "Target Support Files/Pods-Circular-Prod/Pods-Circular-Prod.release.xcconfig"; sourceTree = "<group>"; };
+		D2878D47C1C620E0DB167A40 /* Pods-Circular-Demo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Demo.release.xcconfig"; path = "Target Support Files/Pods-Circular-Demo/Pods-Circular-Demo.release.xcconfig"; sourceTree = "<group>"; };
+		D3EF23D8656A0C33BDAD3E30 /* libPods-Circular-Dev.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Circular-Dev.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		EEF0113B7A6F7A19C05A43AA /* Pods-Circular-Dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Dev.release.xcconfig"; path = "Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev.release.xcconfig"; sourceTree = "<group>"; };
 		F1D53695F6EBD0C3077766E9 /* Pods-Circular-prod.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-prod.release.xcconfig"; path = "Target Support Files/Pods-Circular-prod/Pods-Circular-prod.release.xcconfig"; sourceTree = "<group>"; };
 		FF4E6405DE0119FBEE52A701 /* Pods-Circular-prod.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-prod.debug.xcconfig"; path = "Target Support Files/Pods-Circular-prod/Pods-Circular-prod.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -64,7 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F29369D6B7D3F0D88CC39731 /* libPods-Circular-Prod.a in Frameworks */,
+				A352061DA8161BE1A14411EE /* libPods-Circular-Prod.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,7 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E5C7D7FEB8C6D05455F89749 /* libPods-Circular-Dev.a in Frameworks */,
+				DC53EF3D2BDCD98F1EBECC91 /* libPods-Circular-Dev.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -80,7 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D34E94FD7B81C32878B49ADB /* libPods-Circular-Demo.a in Frameworks */,
+				648568BC675B7E94F37D4735 /* libPods-Circular-Demo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,9 +122,9 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				7E8E94DC265C6EFE1A4A454A /* libPods-Circular-CircularTests.a */,
-				59B61B1F9876411DCA8878C4 /* libPods-Circular-Demo.a */,
-				442F307F2177B4CF7A35B555 /* libPods-Circular-Dev.a */,
-				0BD12C4F25850358F7D3393A /* libPods-Circular-Prod.a */,
+				7962DC37FC768F5504EF1D3B /* libPods-Circular-Demo.a */,
+				D3EF23D8656A0C33BDAD3E30 /* libPods-Circular-Dev.a */,
+				0BCEFF6B7A287074A63905E4 /* libPods-Circular-Prod.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -142,12 +142,12 @@
 				93315436EAA44F9F488F6CA3 /* Pods-Circular-dev.release.xcconfig */,
 				FF4E6405DE0119FBEE52A701 /* Pods-Circular-prod.debug.xcconfig */,
 				F1D53695F6EBD0C3077766E9 /* Pods-Circular-prod.release.xcconfig */,
-				78A292F35A61209D75577926 /* Pods-Circular-Demo.debug.xcconfig */,
-				6CE15965BF723EF7A766BDBD /* Pods-Circular-Demo.release.xcconfig */,
-				55ED3B59FD3AA3C760D02A51 /* Pods-Circular-Dev.debug.xcconfig */,
-				EEF0113B7A6F7A19C05A43AA /* Pods-Circular-Dev.release.xcconfig */,
-				C0FDE496069156D54836DC9D /* Pods-Circular-Prod.debug.xcconfig */,
-				944A7E39A3F15E5F66953AE2 /* Pods-Circular-Prod.release.xcconfig */,
+				0AA771B18F97E9288434422C /* Pods-Circular-Demo.debug.xcconfig */,
+				D2878D47C1C620E0DB167A40 /* Pods-Circular-Demo.release.xcconfig */,
+				A3001A3CC01AC578E76FDF3A /* Pods-Circular-Dev.debug.xcconfig */,
+				60E998A8227DFFF57DBABC73 /* Pods-Circular-Dev.release.xcconfig */,
+				A45368EF2D3F2DAC6F66F4B3 /* Pods-Circular-Prod.debug.xcconfig */,
+				BF7220EA162540DC70CCC95B /* Pods-Circular-Prod.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -619,7 +619,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C0FDE496069156D54836DC9D /* Pods-Circular-Prod.debug.xcconfig */;
+			baseConfigurationReference = A45368EF2D3F2DAC6F66F4B3 /* Pods-Circular-Prod.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -649,7 +649,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 944A7E39A3F15E5F66953AE2 /* Pods-Circular-Prod.release.xcconfig */;
+			baseConfigurationReference = BF7220EA162540DC70CCC95B /* Pods-Circular-Prod.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -708,7 +708,8 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
+				EXCLUDED_ARCHS = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -773,7 +774,8 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
+				EXCLUDED_ARCHS = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -800,7 +802,7 @@
 		};
 		A1001E7526DE38D1000C80A0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 55ED3B59FD3AA3C760D02A51 /* Pods-Circular-Dev.debug.xcconfig */;
+			baseConfigurationReference = A3001A3CC01AC578E76FDF3A /* Pods-Circular-Dev.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -830,11 +832,11 @@
 		};
 		A1001E7626DE38D1000C80A0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EEF0113B7A6F7A19C05A43AA /* Pods-Circular-Dev.release.xcconfig */;
+			baseConfigurationReference = 60E998A8227DFFF57DBABC73 /* Pods-Circular-Dev.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = WGW7T2NP8M;
@@ -850,7 +852,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.circular.circular.dev";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.circular.circular.dev";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -858,7 +860,7 @@
 		};
 		A1001E8826DE38EA000C80A0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 78A292F35A61209D75577926 /* Pods-Circular-Demo.debug.xcconfig */;
+			baseConfigurationReference = 0AA771B18F97E9288434422C /* Pods-Circular-Demo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -888,7 +890,7 @@
 		};
 		A1001E8926DE38EA000C80A0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6CE15965BF723EF7A766BDBD /* Pods-Circular-Demo.release.xcconfig */;
+			baseConfigurationReference = D2878D47C1C620E0DB167A40 /* Pods-Circular-Demo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
