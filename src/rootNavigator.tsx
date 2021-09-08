@@ -1,5 +1,5 @@
+import { useAuth } from "@domain/auth/hooks/useAuth";
 import { useAccountLinked } from "@domain/device/hooks";
-import { useUser } from "@domain/user/hooks/useUser";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { MyRingBattery } from "@ui/components/navigation/myRingBattery";
 import { Routes } from "@ui/navigation/routes";
@@ -17,7 +17,7 @@ const MainStack = createNativeStackNavigator();
 export const RootNavigator: React.FC = () => {
 	const accountLinked = useAccountLinked();
 	const { format } = useI18n();
-	const isAuthenticated = !!useUser();
+	const isAuthenticated = useAuth();
 
 	return isAuthenticated ? (
 		accountLinked ? (

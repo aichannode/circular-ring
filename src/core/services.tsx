@@ -28,6 +28,7 @@ const userApi = new UserApi(apiService);
 const userService = new UserService(circularAuthService, userApi, userStorage);
 
 export const services = {
+	circularAuthService,
 	bluetoothService,
 	deviceService,
 	userService,
