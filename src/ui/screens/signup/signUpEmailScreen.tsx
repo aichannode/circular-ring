@@ -67,6 +67,7 @@ export const SignUpEmailScreen = () => {
 				value={password}
 				onValueChanged={setPassword}
 				returnKeyType={"next"}
+				blurOnSubmit={false}
 				onSubmit={() => confirmPasswordFieldRef.current?.focus()}
 			/>
 			<InputField
@@ -103,12 +104,12 @@ const Logo = styled.Image`
 `;
 
 const Title = styled.Text`
-	${textStyles.titleMedium};
+	${textStyles.mediumTitle};
 	margin-bottom: 14px;
 `;
 
 const Subtitle = styled.Text`
-	${textStyles.subtitleMedium};
+	${textStyles.subtitle};
 	margin-bottom: 20px;
 	text-align: center;
 `;

@@ -2,13 +2,19 @@ import { css } from "styled-components/native";
 import { colors } from "./colors";
 
 export const textStyles = {
-	titleMedium: css`
+	bigTitle: css`
+		font-size: 20px;
+		font-weight: 500;
+		color: ${colors.textPrimary};
+	`,
+
+	mediumTitle: css`
 		font-size: 18px;
 		font-weight: 500;
 		color: ${colors.textPrimary};
 	`,
 
-	subtitleMedium: css`
+	subtitle: css`
 		font-size: 14px;
 		font-weight: bold;
 		color: ${colors.textPlaceholder};

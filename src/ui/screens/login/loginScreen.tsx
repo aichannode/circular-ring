@@ -72,7 +72,7 @@ const Logo = styled.Image`
 `;
 
 const Title = styled.Text`
-	${textStyles.titleMedium};
+	${textStyles.mediumTitle};
 	margin-bottom: 30px;
 `;
 
