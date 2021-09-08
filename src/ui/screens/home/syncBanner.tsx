@@ -19,7 +19,7 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({ style }) => {
 	const { format } = useI18n();
 	const { ringService } = useServices();
 
-	if (syncState === SyncState.NONE) {
+	if (syncState === SyncState.NONE || syncState === SyncState.PREPARING) {
 		return null;
 	}
 	return (

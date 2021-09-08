@@ -1,13 +1,16 @@
+import { Channel } from "@domain/device/channels";
 import { DeviceService } from "@domain/device/deviceService";
 import { observable } from "micro-observables";
 import { RingApi } from "./ringApi";
 import { deserializeBattery, RingBattery } from "./ringBattery";
+import { ringDataEOF } from "./ringData";
 import { RingDataStorage } from "./ringDataStorage";
 
 const syncFinishedTimeout = 3000;
 
 export enum SyncState {
 	NONE = "NONE",
+	PREPARING = "PREPARING",
 	SYNCING = "SYNCING",
 	ERROR = "ERROR",
 	SUCCESS = "SUCCESS",
@@ -34,10 +37,7 @@ export class RingService {
 	}
 
 	listenBattery() {
-		this.deviceService.listen("BAT", (err, value) => {
-			if (err) {
-				throw err;
-			}
+		return this.deviceService.listen(Channel.BATTERY, (value) => {
 			if (value) {
 				this._ringBattery.set(deserializeBattery(value));
 			}
@@ -46,35 +46,37 @@ export class RingService {
 
 	async syncData() {
 		try {
-			this._syncState.set(SyncState.SYNCING);
+			this._syncState.set(SyncState.PREPARING);
 			const waitingData = await this.ringDataStorage.load();
 			if (waitingData) {
 				this.log("Waiting data has to be sent, length:", waitingData.length);
 			}
-			const allData = await new Promise<string>(async (resolve, reject) => {
+			const allData = await new Promise<string>(async (resolve) => {
 				let data = waitingData ?? "";
-				const subscription = await this.deviceService.listen("FBC", (err, value) => {
-					if (err) {
-						subscription?.remove();
-						reject(err);
-						return;
+
+				const unsubscribe = await this.deviceService.listen(Channel.DATA, (value) => {
+					this.log("FBC value", value);
+					data += value;
+					if (data !== ringDataEOF) {
+						// There has been data since start
+						this._syncState.set(SyncState.SYNCING);
+					} else {
+						this.log("Nothing to sync");
 					}
-					if (value) {
-						data += value;
-						if (value === "FBCEOS") {
-							subscription?.remove();
-							resolve(data);
-						}
-						this.log("FBC value", value);
+					if (value === ringDataEOF) {
+						unsubscribe();
+						resolve(data);
 					}
 				});
 			});
 			try {
 				// Api call
-				await this.ringApi.sendData(allData);
+				if (allData !== ringDataEOF) {
+					await this.ringApi.sendData(allData);
+					setTimeout(() => this._syncState.set(SyncState.NONE), syncFinishedTimeout);
+				}
 				this.ringDataStorage.clear();
-				this._syncState.set(SyncState.SUCCESS);
-				setTimeout(() => this._syncState.set(SyncState.NONE), syncFinishedTimeout);
+				this._syncState.set(allData !== ringDataEOF ? SyncState.SUCCESS : SyncState.NONE);
 			} catch (e) {
 				this.ringDataStorage.push(allData);
 				throw e;

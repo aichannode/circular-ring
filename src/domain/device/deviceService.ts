@@ -1,7 +1,9 @@
 import { base64decode, base64encode, observableToPromise, timedPromise } from "@core/utils";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { observable, Observable } from "micro-observables";
-import { BleError, Device, ScanMode, State } from "react-native-ble-plx";
+import { Signal } from "micro-signals";
+import { Device, ScanMode, State } from "react-native-ble-plx";
+import { Channel } from "./channels";
 import { StoredDevice } from "./device";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 
@@ -37,6 +39,7 @@ export class DeviceService {
 	private _connectionState = observable(DeviceConnectionState.DISCONNECTED);
 	private _scanning = observable(false);
 	private _lookingForDevice = observable(false);
+	private _monitoring = observable(false);
 
 	private _favoriteDevice = observable<StoredDevice | null>(null);
 
@@ -44,6 +47,8 @@ export class DeviceService {
 
 	readonly setupState: Observable<DeviceSetupState>;
 	readonly autoConnectState: Observable<DeviceAutoConnectState>;
+
+	private onMessageReceived = new Signal<string>();
 
 	constructor(
 		private readonly bluetoothService: BluetoothService,
@@ -95,6 +100,7 @@ export class DeviceService {
 
 		if (loadedDevice) {
 			this.autoConnectDevice(loadedDevice.name);
+			this.startMonitoring();
 		}
 	}
 
@@ -208,33 +214,75 @@ export class DeviceService {
 		return timedPromise(scanPromise, findDeviceTimeout);
 	}
 
-	async listen(message: string, cb: (error: BleError | null, response?: string) => void) {
+	async listen(channel: Channel, cb: (response: string) => void) {
+		const device = this._connectedDevice.get() ?? (await observableToPromise(this._connectedDevice));
+		const monitoring = this._monitoring.get() || (await observableToPromise(this._monitoring));
+		if (!device) {
+			this.log("Error : no device connected");
+			throw "No Device";
+		}
+		if (!monitoring) {
+			this.log("Error, not monitoring");
+			throw "Not monitoring";
+		}
+
+		this.log("Listening to", channel);
+
+		const listener = (output: string) => {
+			if (output.startsWith(channel)) {
+				cb(output);
+			}
+		};
+
+		this.onMessageReceived.add(listener);
+
+		await device.writeCharacteristicWithoutResponseForService(
+			NUServiceUUID,
+			RXCharacteristicUUID,
+			base64encode(channel)
+		);
+
+		return () => this.onMessageReceived.remove(listener);
+	}
+
+	private async startMonitoring() {
 		const device = this._connectedDevice.get() ?? (await observableToPromise(this._connectedDevice));
 		if (!device) {
 			this.log("Error : no device connected");
 			return;
 		}
+		this.log("START MONITORING");
 		const subscription = device.monitorCharacteristicForService(NUServiceUUID, TXCharacteristicUUID, (err, charac) => {
 			if (err) {
-				cb(err);
+				this._monitoring.set(false);
+				this.log("ERROR DURING MONITORING", err);
+				subscription.remove();
 			} else {
 				const decodedOutput = base64decode(charac?.value ?? "");
-				if (decodedOutput.startsWith(message)) {
-					cb(null, decodedOutput);
-				}
+				this.onMessageReceived.dispatch(decodedOutput);
 			}
 		});
+		this._monitoring.set(true);
 
+		return subscription;
+	}
+
+	async write(message: string) {
+		const device = this._connectedDevice.get();
+		if (!device) {
+			this.log("Error : no device connected");
+			return;
+		}
+		this.log("Writing...");
 		await device.writeCharacteristicWithoutResponseForService(
 			NUServiceUUID,
 			RXCharacteristicUUID,
 			base64encode(message)
 		);
-
-		return subscription;
 	}
 
 	async getResponse(message: string) {
+		// TODO REWRITE THIS
 		const device = this._connectedDevice.get();
 		if (!device) {
 			this.log("Error : no device connected");
