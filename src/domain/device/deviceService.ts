@@ -214,11 +214,14 @@ export class DeviceService {
 			this.log("Error : no device connected");
 			return;
 		}
-		device.monitorCharacteristicForService(NUServiceUUID, TXCharacteristicUUID, (err, charac) => {
+		const subscription = device.monitorCharacteristicForService(NUServiceUUID, TXCharacteristicUUID, (err, charac) => {
 			if (err) {
 				cb(err);
 			} else {
-				cb(null, base64decode(charac?.value ?? ""));
+				const decodedOutput = base64decode(charac?.value ?? "");
+				if (decodedOutput.startsWith(message)) {
+					cb(null, decodedOutput);
+				}
 			}
 		});
 
@@ -227,6 +230,8 @@ export class DeviceService {
 			RXCharacteristicUUID,
 			base64encode(message)
 		);
+
+		return subscription;
 	}
 
 	async getResponse(message: string) {
