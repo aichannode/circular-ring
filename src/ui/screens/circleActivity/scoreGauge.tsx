@@ -1,4 +1,4 @@
-import { ScoreQuality, ScoreUnit } from "@domain/circleActivity/circleActivityData";
+import { getScoreQuality, ScoreQuality, ScoreUnit } from "@domain/circleActivity/circleActivityData";
 import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors, qualityColors } from "@ui/styles/colors";
@@ -24,8 +24,8 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 	optimalThreshold = 0.9,
 	style,
 }) => {
-	const scoreQuality: ScoreQuality =
-		value > optimalThreshold ? ScoreQuality.OPTIMAL : value > goodThreshold ? ScoreQuality.GOOD : ScoreQuality.POOR;
+	const scoreQuality = getScoreQuality(value, goodThreshold, optimalThreshold);
+
 	const { formatScoreQuality } = useI18n();
 
 	return (

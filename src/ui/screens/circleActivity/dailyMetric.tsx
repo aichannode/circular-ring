@@ -1,0 +1,63 @@
+import { getScoreQuality, ScoreQuality } from "@domain/circleActivity/circleActivityData";
+import { Grow } from "@ui/components/layout";
+import { SecondaryText } from "@ui/components/text";
+import { colors, qualityColors } from "@ui/styles/colors";
+import React from "react";
+import { StyleProp, ViewStyle } from "react-native";
+import styled from "styled-components/native";
+
+interface DailyMetricProps {
+	icon: number;
+	label: string;
+	value: number;
+	goodThreshold?: number;
+	optimalThreshold?: number;
+	style?: StyleProp<ViewStyle>;
+}
+export const DailyMetric: React.FC<DailyMetricProps> = ({
+	icon,
+	label,
+	value,
+	goodThreshold,
+	optimalThreshold,
+	style,
+}) => {
+	const scoreQuality =
+		goodThreshold && optimalThreshold ? getScoreQuality(value, goodThreshold, optimalThreshold) : undefined;
+
+	return (
+		<Container style={style}>
+			<MetricIcon source={icon} />
+			<SecondaryText>{label}</SecondaryText>
+			<Grow />
+			{!!scoreQuality && <QualityIndicator quality={scoreQuality} />}
+			<Metric>{value}</Metric>
+		</Container>
+	);
+};
+
+const Container = styled.View`
+	flex-direction: row;
+	align-items: center;
+	background-color: ${colors.white};
+	padding: 20px 25px;
+`;
+
+// TODO Remove when Row merged
+const MetricIcon = styled.Image`
+	margin-right: 20px;
+`;
+
+const QualityIndicator = styled.View<{ quality: ScoreQuality }>`
+	width: 10px;
+	height: 10px;
+	border-radius: 5px;
+	background-color: ${({ quality }) => qualityColors[quality]};
+	margin-right: 15px;
+`;
+
+const Metric = styled.Text`
+	color: ${colors.textPrimary};
+	font-size: 25px;
+	font-weight: bold;
+`;
