@@ -9,6 +9,7 @@ import {
 	CognitoUserSession,
 } from "amazon-cognito-identity-js";
 import { observable } from "micro-observables";
+import Config from "react-native-config";
 
 export class CognitoAuthService implements AuthService {
 	private readonly logger = getLogger("CognitoAuthService");
@@ -18,15 +19,29 @@ export class CognitoAuthService implements AuthService {
 	private _accessToken = observable<CognitoAccessToken | null>(null);
 	accessToken = this._accessToken.readOnly();
 
+	private _cognitoUser: CognitoUser | null = null;
+
 	constructor() {
 		const poolData = {
-			UserPoolId: "eu-west-1_wqGFSoIpl",
-			ClientId: "1j2lma7e0tdjvib3qjvtt3usfq",
+			UserPoolId: Config.COGNITO_USER_POOL_ID,
+			ClientId: Config.COGNITO_CLIENT_ID,
 		};
 		this._userPool = new CognitoUserPool(poolData);
-	}
 
-	private _cognitoUser: CognitoUser | null = null;
+		// @ts-ignore
+		this._userPool.storage.sync((err, result) => {
+			if (!err && result === "SUCCESS") {
+				this._cognitoUser = this._userPool.getCurrentUser();
+				if (this._cognitoUser) {
+					this._cognitoUser.getSession((error: Error | null, session: CognitoUserSession | null) => {
+						if (!error && session) {
+							this._accessToken.set(session.getAccessToken());
+						}
+					});
+				}
+			}
+		});
+	}
 
 	async signUpEmail(email: string, password: string): Promise<void> {
 		return new Promise((resolve, reject) => {
@@ -56,9 +71,7 @@ export class CognitoAuthService implements AuthService {
 	}
 
 	async loginEmail(email: string, password: string): Promise<void> {
-		this.logger.debug("Creating Promise");
 		return new Promise((resolve, reject) => {
-			this.logger.debug("Starting Login");
 			const authenticationDetails = new AuthenticationDetails({
 				Username: email,
 				Password: password,
@@ -69,17 +82,14 @@ export class CognitoAuthService implements AuthService {
 				Pool: this._userPool,
 			};
 			const cognitoUser = new CognitoUser(userData);
-			this.logger.debug("Authenticating user");
 			cognitoUser.authenticateUser(authenticationDetails, {
 				onSuccess: (result) => {
-					this.logger.debug("Authentication succeeded");
 					this._accessToken.set(result.getAccessToken());
 					resolve();
 				},
 
 				onFailure: (err) => {
-					this.logger.debug("Authentication failed");
-					this.logger.warn(err.message || JSON.stringify(err));
+					this.logger.warn("Authentication failed : " + (err.message || JSON.stringify(err)));
 					reject(err);
 				},
 			});
@@ -98,8 +108,8 @@ export class CognitoAuthService implements AuthService {
 		return this.accessToken.get()?.getJwtToken();
 	}
 
-	private async refreshToken() {
-		return new Promise<void>((resolve, reject) => {
+	private async refreshToken(): Promise<void> {
+		return new Promise((resolve, reject) => {
 			if (this._cognitoUser) {
 				this._cognitoUser.getSession((error: Error | null, session: CognitoUserSession | null) => {
 					if (error) {
