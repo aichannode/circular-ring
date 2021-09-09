@@ -54,7 +54,7 @@ export class CognitoAuthService implements AuthService {
 				})
 			);
 
-			this._userPool.signUp(email, password, attributeList, /*null*/ [], (err, result) => {
+			this._userPool.signUp(email, password, attributeList, [], (err, result) => {
 				if (err) {
 					this.logger.warn(JSON.stringify(err));
 					reject(err);
