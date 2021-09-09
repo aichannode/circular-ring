@@ -5,6 +5,7 @@ import { ChunkedCircle } from "./shapes/chunkedCircle";
 interface SpinnerProps {
 	size?: number;
 }
+
 // @refresh reset
 export const Spinner: React.FC<SpinnerProps> = ({ size = 52 }) => {
 	const t = useRef(new Animated.Value(0)).current;

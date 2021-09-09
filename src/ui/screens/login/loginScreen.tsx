@@ -1,6 +1,7 @@
 import { useServices } from "@core/services";
 import { PrimaryButton } from "@ui/components/buttons";
 import { ScrollScreen } from "@ui/components/scrollScreen";
+import { Spinner } from "@ui/components/spinner";
 import { TextField } from "@ui/components/textField";
 import { useI18n } from "@ui/i18n";
 import { textStyles } from "@ui/styles/textStyles";
@@ -19,14 +20,19 @@ export const LoginScreen = () => {
 
 	const [errorMessage, setErrorMessage] = useState<string>("");
 
+	const [isLoading, setLoading] = useState(false);
+
 	const performLogin = useCallback(async () => {
 		if (email.length > 0 && password.length >= 4) {
 			Keyboard.dismiss();
 			setErrorMessage("");
+			setLoading(true);
 			try {
 				await userService.loginWithEmail(email, password);
-			} catch (error: any) {
-				if (error.statusCode === 401) {
+				setLoading(false);
+			} catch ({ code }) {
+				setLoading(false);
+				if (code === "NotAuthorizedException") {
 					setErrorMessage(format("login.error.invalid_credentials"));
 				} else {
 					setErrorMessage(format("login.error.default"));
@@ -60,7 +66,11 @@ export const LoginScreen = () => {
 				blurOnSubmit={true}
 			/>
 			<ButtonContainer>
-				<PrimaryButton onPress={performLogin}>{format("login.login_button")}</PrimaryButton>
+				{isLoading ? (
+					<Spinner size={24} />
+				) : (
+					<PrimaryButton onPress={performLogin}>{format("login.login_button")}</PrimaryButton>
+				)}
 			</ButtonContainer>
 		</ScrollScreen>
 	);
