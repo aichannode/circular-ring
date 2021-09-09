@@ -1,3 +1,4 @@
+import { useLogger } from "@core/logger/hooks/useLogger";
 import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { ScrollScreen } from "@ui/components/scrollScreen";
@@ -9,11 +10,13 @@ import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import { isEmail } from "@ui/utils/emailUtils";
 import { isCorrectPassword } from "@ui/utils/passwordUtils";
+import { openURL } from "@ui/utils/urlUtils";
 import React, { useCallback, useRef, useState } from "react";
 import { Pressable, TextInput } from "react-native";
 import styled from "styled-components/native";
 
 export const SignUpEmailScreen = () => {
+	const logger = useLogger("SignUpEmailScreen");
 	const { format } = useI18n();
 	const { userService } = useServices();
 	const { navigate } = useRoutesNavigation();
@@ -38,8 +41,9 @@ export const SignUpEmailScreen = () => {
 			await userService.signUpWithEmail(email, password);
 			setLoading(false);
 		} catch (error) {
+			logger.warn("Error : " + JSON.stringify(error));
 			setLoading(false);
-			setErrorMessage(format("login.error.invalid_credentials"));
+			setErrorMessage(format("signup.error.default"));
 		}
 	}, []);
 
@@ -111,8 +115,7 @@ export const SignUpEmailScreen = () => {
 				{format("signup.terms.link_prefix")}
 				<Pressable
 					onPress={() => {
-						// TODO
-						// openURL("")
+						openURL("https://www.circular.xyz/en/terms-of-use");
 					}}
 				>
 					<TermsLink>{format("signup.terms.link")}</TermsLink>
@@ -149,7 +152,6 @@ const InputField = styled(TextField)`
 `;
 
 const ButtonContainer = styled.View`
-	flex: 1;
 	flex-direction: row;
 	justify-content: space-between;
 	margin-top: 20px;
