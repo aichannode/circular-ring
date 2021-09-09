@@ -9,7 +9,7 @@ inhibit_all_warnings!
 def shared_pods
   config = use_native_modules!
 
-  use_react_native!(:path => config["reactnativepath"])
+  use_react_native!(:path => config["reactNativePath"])
 
   # enables flipper.
   #
