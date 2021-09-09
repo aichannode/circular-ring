@@ -97,7 +97,6 @@ const InputField = styled(TextField)`
 `;
 
 const ButtonContainer = styled.View`
-	flex: 1;
 	flex-direction: row;
 	justify-content: space-between;
 	margin-top: 80px;
