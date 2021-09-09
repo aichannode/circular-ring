@@ -4,14 +4,14 @@ import { addBaseUrlInterceptor } from "@core/api/interceptors/addBaseUrlIntercep
 import { addRequestInterceptor, addResponseInterceptor } from "@core/api/interceptors/interceptor";
 import { logResponseInterceptor } from "@core/api/interceptors/logResponseInterceptor";
 import { getLogger } from "@core/logger/logger";
-import { CircularAuthService } from "@domain/auth/circularAuthService";
+import { AuthService } from "@domain/auth/authService";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 
 export class ApiService {
 	private logger: Logger = getLogger("ApiService");
 	private readonly instance: AxiosInstance;
 
-	private _authService: CircularAuthService | undefined = undefined;
+	private _authService: AuthService | undefined = undefined;
 
 	constructor() {
 		this.instance = axios.create();
@@ -20,9 +20,9 @@ export class ApiService {
 		addResponseInterceptor(this.instance, logResponseInterceptor(this.logger));
 	}
 
-	init(circularAuthService: CircularAuthService) {
+	init(authService: AuthService) {
 		if (!this._authService) {
-			this._authService = circularAuthService;
+			this._authService = authService;
 			addRequestInterceptor(this.instance, addAuthorizationInterceptor(this._authService));
 		} else {
 			this.logger.warn("Trying to initialize service twice");

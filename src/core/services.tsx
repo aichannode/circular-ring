@@ -1,8 +1,6 @@
 import { ApiService } from "@core/api/apiService";
-import { AccessTokenStorage } from "@domain/auth/accessTokenStorage";
-import { CircularAuthApi } from "@domain/auth/circularAuthApi";
-import { CircularAuthService } from "@domain/auth/circularAuthService";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
+import { CognitoAuthService } from "@domain/auth/cognito-auth/cognitoAuthService";
 import { UserService } from "@domain/user/userService";
 import { UserStorage } from "@domain/user/userStorage";
 import { createContext, useContext } from "react";
@@ -11,7 +9,6 @@ import { DeviceService } from "@domain/device/deviceService";
 import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
 import { RingService } from "@domain/ring/ringService";
 
-const accessTokenStorage = new AccessTokenStorage();
 const userStorage = new UserStorage();
 const favoriteDeviceStorage = new FavoriteDeviceStorage();
 
@@ -21,13 +18,14 @@ const bluetoothService = new BluetoothService();
 const deviceService = new DeviceService(bluetoothService, favoriteDeviceStorage);
 const ringService = new RingService(deviceService);
 
-const circularAuthApi = new CircularAuthApi(apiService);
-const circularAuthService = new CircularAuthService(circularAuthApi, accessTokenStorage);
+const cognitoAuthService = new CognitoAuthService();
+
 // const userApi = new UserApi(apiService);
-const userService = new UserService(circularAuthService, /*userApi, */ userStorage);
+// const userService = new UserService(circularAuthService, /*userApi, */ userStorage);
+const userService = new UserService(cognitoAuthService, /*userApi, */ userStorage);
 
 export const services = {
-	circularAuthService,
+	cognitoAuthService,
 	bluetoothService,
 	deviceService,
 	userService,
@@ -49,7 +47,7 @@ export function useServices(): Services {
 }
 
 export function initializeServices() {
-	apiService.init(circularAuthService);
+	apiService.init(cognitoAuthService);
 	return Promise.all(
 		Object.values(services)
 			.map((service) => {

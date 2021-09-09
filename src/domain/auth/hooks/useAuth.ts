@@ -1,4 +1,4 @@
 import { useServices } from "@core/services";
 import { useObservable } from "micro-observables";
 
-export const useAuth = () => !!useObservable(useServices().circularAuthService.accessToken);
+export const useAuth = () => !!useObservable(useServices().cognitoAuthService.accessToken);

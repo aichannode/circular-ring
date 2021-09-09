@@ -1,16 +1,17 @@
-import { CircularAuthService } from "@domain/auth/circularAuthService";
+import { getLogger } from "@core/logger/logger";
+import { AuthService } from "@domain/auth/authService";
 import { User } from "@domain/user/user";
 import { UserStorage } from "@domain/user/userStorage";
 import { observable } from "micro-observables";
 
 export class UserService {
-	// private readonly logger = getLogger("UserService");
+	private readonly logger = getLogger("UserService");
 
 	private _user = observable<User | null>(null);
 	readonly user = this._user.readOnly();
 
 	constructor(
-		private readonly circularAuthService: CircularAuthService,
+		private readonly authService: AuthService,
 		// private readonly userApi: UserApi,
 		private readonly userStorage: UserStorage
 	) {}
@@ -20,12 +21,15 @@ export class UserService {
 	}
 
 	async loginWithEmail(email: string, password: string): Promise<void> {
-		await this.circularAuthService.loginWithEmail(email, password);
+		this.logger.debug("Calling authService");
+		await this.authService.loginEmail(email, password);
 		// await this.retrieveUser();
+
+		// await this.authService.signUpEmail(email, password);
 	}
 
 	async logout() {
-		await this.circularAuthService.logout();
+		await this.authService.logout();
 		this._user.set(null);
 		await this.userStorage.remove();
 	}

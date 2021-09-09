@@ -1,5 +1,5 @@
 import { Storage } from "@core/storage";
-import { AccessToken } from "@domain/auth/accessToken";
+import { AccessToken } from "@domain/auth/circular-auth/accessToken";
 
 const accessTokenStorageKey = "@accessToken";
 const accessTokenDateStorageKey = "@accessTokenDate";

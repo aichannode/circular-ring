@@ -1,13 +1,14 @@
 import { getLogger } from "@core/logger/logger";
-import { AccessToken } from "@domain/auth/accessToken";
-import { AccessTokenStorage } from "@domain/auth/accessTokenStorage";
-import { CircularAuthApi } from "@domain/auth/circularAuthApi";
+import { AuthService } from "@domain/auth/authService";
+import { AccessToken } from "@domain/auth/circular-auth/accessToken";
+import { AccessTokenStorage } from "@domain/auth/circular-auth/accessTokenStorage";
+import { CircularAuthApi } from "@domain/auth/circular-auth/circularAuthApi";
 import { observable } from "micro-observables";
 
 const SEC_TO_MILLISEC = 1000;
 const REFRESH_TOKEN_MARGIN = 60 * 10 * SEC_TO_MILLISEC; // 10 min
 
-export class CircularAuthService {
+export class CircularAuthService implements AuthService {
 	private readonly logger = getLogger("CircularAuthService");
 
 	private _accessToken = observable<AccessToken | null>(null);
@@ -17,13 +18,17 @@ export class CircularAuthService {
 
 	constructor(private readonly authApi: CircularAuthApi, private readonly accessTokenStorage: AccessTokenStorage) {}
 
+	signUpEmail(email: string, password: string): Promise<void> {
+		throw new Error("Method not implemented.");
+	}
+
 	async init() {
 		const tokenData = await this.accessTokenStorage.load();
 		this._accessToken.set(tokenData[0]);
 		this._accessTokenDate = tokenData[1];
 	}
 
-	async loginWithEmail(email: string, password: string): Promise<void> {
+	async loginEmail(email: string, password: string): Promise<void> {
 		try {
 			const token = await this.authApi.loginEmail(email, password);
 			await this.registerToken(token);
