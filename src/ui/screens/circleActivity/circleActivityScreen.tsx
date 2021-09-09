@@ -1,8 +1,9 @@
 import { useI18n } from "@ui/i18n";
-import React from "react";
+import React, { useState } from "react";
 import { ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { DailyMetric } from "./dailyMetric";
+import { GaugeDescription } from "./gaugeDescription";
 import { useDailyData } from "./hooks";
 import { ScoreGauge } from "./scoreGauge";
 import { ScreenSection } from "./screenSection";
@@ -10,6 +11,7 @@ import { ScreenSection } from "./screenSection";
 export const CircleActivityScreen: React.FC = () => {
 	const dailyData = useDailyData();
 	const { format } = useI18n();
+	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 
 	const metricsData = [
 		{
@@ -54,56 +56,64 @@ export const CircleActivityScreen: React.FC = () => {
 
 	const scoreDetailsData = [
 		{
-			label: format("score.details.recovery"),
+			label: format("score.details.recovery.label"),
+			description: format("score.details.recovery.description"),
 			value: 0,
 			rate: 0.5,
 			unit: "qualitative",
 		},
 		{
-			label: format("score.details.wake_up"),
-
+			label: format("score.details.wake_up.label"),
+			description: format("score.details.wake_up.description"),
 			value: 96,
 			rate: 0.96,
 			unit: "%",
 		},
 		{
-			label: format("score.details.breathing"),
+			label: format("score.details.breathing.label"),
+			description: format("score.details.breathing.description"),
 			value: 14.3,
 			rate: 0.55,
 			unit: "rpm",
 		},
 		{
-			label: format("score.details.hrv"),
+			label: format("score.details.hrv.label"),
+			description: format("score.details.hrv.description"),
 			value: 68,
 			rate: 0.7,
 			unit: "ms",
 		},
 		{
-			label: format("score.details.resting_heart_rate"),
+			label: format("score.details.resting_heart_rate.label"),
+			description: format("score.details.resting_heart_rate.description"),
 			value: 62,
 			rate: 0.3,
 			unit: "bpm",
 		},
 		{
-			label: format("score.details.temperature"),
+			label: format("score.details.temperature.label"),
+			description: format("score.details.temperature.description"),
 			value: 0.5,
 			rate: 0.81,
 			unit: "°C",
 		},
 		{
-			label: format("score.details.sleep_quality"),
+			label: format("score.details.sleep_quality.label"),
+			description: format("score.details.sleep_quality.description"),
 			value: 0.83,
 			rate: 0.83,
 			unit: "%",
 		},
 		{
-			label: format("score.details.sleep_balance"),
+			label: format("score.details.sleep_balance.label"),
+			description: format("score.details.sleep_balance.description"),
 			value: 0,
 			rate: 0.9,
 			unit: "qualitative",
 		},
 		{
-			label: format("score.details.activity_volume"),
+			label: format("score.details.activity_volume.label"),
+			description: format("score.details.activity_volume.description"),
 			value: 0,
 			rate: 0.8,
 			unit: "qualitative",
@@ -121,8 +131,13 @@ export const CircleActivityScreen: React.FC = () => {
 					<MargedMetrics key={data.label} {...data} />
 				))}
 				<MargedSection title={format("activity.score.details")} />
-				{scoreDetailsData.map((data) => (
-					<MargedGauge key={data.label} {...data} />
+				{scoreDetailsData.map(({ description, label, ...data }, index) => (
+					<React.Fragment key={label}>
+						<MargedGauge {...data} label={label} onPress={() => setFocusedGauge(index)} />
+						{focusedGauge === index && (
+							<MargedGaugeDescription label={label} description={description} onClose={() => setFocusedGauge(null)} />
+						)}
+					</React.Fragment>
 				))}
 			</ScrollView>
 		</Container>
@@ -144,4 +159,8 @@ const MargedGauge = styled(ScoreGauge)`
 `;
 const MargedSection = styled(ScreenSection)`
 	margin-vertical: 25px;
+`;
+const MargedGaugeDescription = styled(GaugeDescription)`
+	margin-bottom: 10px;
+	margin-horizontal: 20px;
 `;

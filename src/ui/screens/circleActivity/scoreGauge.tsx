@@ -15,6 +15,7 @@ interface ScoreGaugeProps {
 	goodThreshold?: number;
 	optimalThreshold?: number;
 	style?: StyleProp<ViewStyle>;
+	onPress?: () => void;
 }
 
 export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
@@ -25,13 +26,14 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 	goodThreshold = 0.8,
 	optimalThreshold = 0.9,
 	style,
+	onPress,
 }) => {
 	const scoreQuality = getScoreQuality(rate, goodThreshold, optimalThreshold);
 
 	const { formatScoreQuality } = useI18n();
 
 	return (
-		<Container style={style}>
+		<Container style={style} onPress={onPress}>
 			<Topside>
 				<SecondaryText>{label}</SecondaryText>
 				<SecondaryText>{unit === "qualitative" ? formatScoreQuality(scoreQuality) : `${value}${unit}`}</SecondaryText>
@@ -43,7 +45,7 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 	);
 };
 
-const Container = styled.View`
+const Container = styled.Pressable`
 	${whiteCardStyle};
 	border-radius: 5px;
 	padding: 20px 25px;
