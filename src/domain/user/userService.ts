@@ -25,6 +25,7 @@ export class UserService {
 		await this.authService.loginEmail(email, password);
 		// await this.retrieveUser();
 
+		// TODO : remove once signUp implemented
 		// await this.authService.signUpEmail(email, password);
 	}
 
