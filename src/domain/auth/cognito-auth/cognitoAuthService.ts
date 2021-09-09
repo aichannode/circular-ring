@@ -11,6 +11,8 @@ import {
 import { observable } from "micro-observables";
 import Config from "react-native-config";
 
+const SEC_TO_MILLISEC = 1000;
+
 export class CognitoAuthService implements AuthService {
 	private readonly logger = getLogger("CognitoAuthService");
 
@@ -98,11 +100,7 @@ export class CognitoAuthService implements AuthService {
 
 	async getToken(): Promise<string | undefined> {
 		const token = this.accessToken.get();
-		if (token) {
-			this.logger.debug("Token - IssuedAt   : " + token.getIssuedAt());
-			this.logger.debug("Token - Expiration : " + token.getExpiration());
-		}
-		if (token && token.getIssuedAt() > Date.now()) {
+		if (token && token.getExpiration() * SEC_TO_MILLISEC > Date.now()) {
 			await this.refreshToken();
 		}
 		return this.accessToken.get()?.getJwtToken();
