@@ -22,4 +22,9 @@ export const textStyles = {
 		font-size: 14px;
 		color: ${colors.textSecondary};
 	`,
+	title: css`
+		font-size: 18px;
+		font-weight: 500;
+		color: ${colors.textPrimary};
+	`,
 } as const;

@@ -60,6 +60,8 @@
   "home.sync.error": "Sync failed",
   "home.sync.success": "Sync success",
   "home.sync.retry": "Retry",
+  "home.circles.title": "My Circles",
+  "home.circles.activity.label": "Activity analysis",
   "activity.score.daily_metrics": "Daily metrics",
   "activity.score.details": "Energy score details",
   "score.quality.poor": "Poor",

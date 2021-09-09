@@ -10,6 +10,8 @@ import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
 import { RingService } from "@domain/ring/ringService";
 import { RingDataStorage } from "@domain/ring/ringDataStorage";
 import { RingApi } from "@domain/ring/ringApi";
+import { CircleActivityService } from "@ui/screens/circleActivity/circleActivityService";
+import { CircleActivityApi } from "@ui/screens/circleActivity/circleActivityApi";
 
 const userStorage = new UserStorage();
 const favoriteDeviceStorage = new FavoriteDeviceStorage();
@@ -18,10 +20,12 @@ const ringDataStorage = new RingDataStorage();
 const ringApi = new RingApi();
 
 const apiService = new ApiService();
+const circleActivityApi = new CircleActivityApi();
 
 const bluetoothService = new BluetoothService();
 const deviceService = new DeviceService(bluetoothService, favoriteDeviceStorage);
 const ringService = new RingService(deviceService, ringDataStorage, ringApi);
+const circleActivityService = new CircleActivityService(circleActivityApi);
 
 const cognitoAuthService = new CognitoAuthService();
 
@@ -35,6 +39,7 @@ export const services = {
 	deviceService,
 	userService,
 	ringService,
+	circleActivityService,
 };
 
 export type Services = typeof services;
