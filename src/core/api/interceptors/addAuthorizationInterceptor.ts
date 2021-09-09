@@ -1,15 +1,15 @@
 import { Interceptor } from "@core/api/interceptors/interceptor";
-import { CircularAuthService } from "@domain/auth/circularAuthService";
+import { AuthService } from "@domain/auth/authService";
 import { AxiosRequestConfig } from "axios";
 
-export const addAuthorizationInterceptor: (circularAuthService: CircularAuthService) => Interceptor<AxiosRequestConfig> = (
-  authenticationService,
+export const addAuthorizationInterceptor: (authService: AuthService) => Interceptor<AxiosRequestConfig> = (
+	authenticationService
 ) => ({
-  onFulfilled: async (config) => {
-    const token = await authenticationService.getToken();
-    return {
-      ...config,
-      headers: token ? { ...config.headers, Authorization: `Bearer ${token}` } : config.headers,
-    };
-  },
+	onFulfilled: async (config) => {
+		const token = await authenticationService.getToken();
+		return {
+			...config,
+			headers: token ? { ...config.headers, Authorization: `Bearer ${token}` } : config.headers,
+		};
+	},
 });
