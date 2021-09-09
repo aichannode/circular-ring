@@ -2,11 +2,13 @@ import { useAuth } from "@domain/auth/hooks/useAuth";
 import { useAccountLinked } from "@domain/device/hooks";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { MyRingBattery } from "@ui/components/navigation/myRingBattery";
-import { Routes } from "@ui/navigation/routes";
 import { useI18n } from "@ui/i18n";
+import { Routes } from "@ui/navigation/routes";
 import { HomeScreen } from "@ui/screens/home/homeScreen";
-import { LoginScreen } from "@ui/screens/login/loginScreen";
 import { ForgotPasswordScreen } from "@ui/screens/login/forgotPasswordScreen";
+import { LoginScreen } from "@ui/screens/login/loginScreen";
+import { NewPasswordScreen } from "@ui/screens/login/newPasswordScreen";
+import { ResetTokenScreen } from "@ui/screens/login/resetTokenScreen";
 import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
 import { RingSetupScreen } from "@ui/screens/ringSetup/ringSetupScreen";
 import React from "react";
@@ -43,6 +45,8 @@ export const RootNavigator: React.FC = () => {
 		<SetupStack.Navigator screenOptions={{ headerShown: false }}>
 			<SetupStack.Screen name={Routes.Login} component={LoginScreen} />
 			<SetupStack.Screen name={Routes.ForgotPassword} component={ForgotPasswordScreen} />
+			<SetupStack.Screen name={Routes.ResetToken} component={ResetTokenScreen} />
+			<SetupStack.Screen name={Routes.NewPassword} component={NewPasswordScreen} />
 		</SetupStack.Navigator>
 	);
 };

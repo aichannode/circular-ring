@@ -1,57 +1,55 @@
 import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { ScrollScreen } from "@ui/components/scrollScreen";
-import { TextField } from "@ui/components/textField";
+import { SixDigitInput } from "@ui/components/sixDigitInput";
 import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useState } from "react";
 import styled from "styled-components/native";
 
-export const ForgotPasswordScreen: React.FC = () => {
+export const ResetTokenScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
-	const route = useAppRoute<Routes.ForgotPassword>();
+	const route = useAppRoute<Routes.ResetCode>();
 	const { userService } = useServices();
 
 	const { format } = useI18n();
 
-	const [email, setEmail] = useState(route.params?.email ?? "");
-	const [error, setError] = useState(false);
+	const email = route.params.email;
 
-	const resetPassword = async () => {
+	const [error, setError] = useState(false);
+	const [errorMessage, setErrorMessage] = useState(format("forgot_password.reset.code.error"));
+	const [resend, setResend] = useState(false);
+
+	const resendCode = async () => {
 		try {
 			await userService.resetPassword(email);
-			navigation.navigate(Routes.ResetToken, { email });
+			setResend(true);
 		} catch (error) {
+			setResend(false);
 			setError(true);
+			setErrorMessage("login.error.default");
 		}
 	};
 
 	return (
-		<>
-			<ScrollScreen contentContainerStyle={contentStyle}>
-				<Logo source={require("@assets/images/circularOffcial.png")} />
-				<HeaderImage source={require("@assets/images/forgotPasswordZen.jpg")} />
-				<Title>{format("forgot_password.reset.title")}</Title>
-				{error ? (
-					<ErrorMessage>{format("forgot_password.reset.email.error")}</ErrorMessage>
-				) : (
-					<Description>{format("forgot_password.reset.description")}</Description>
-				)}
-
-				<InputField
-					placeholder={format("forgot_password.reset.email.placeholder")}
-					value={email}
-					onValueChanged={setEmail}
-					blurOnSubmit={true}
-					keyboardType={"email-address"}
-				/>
-				<ButtonContainer>
-					<SecondaryButton onPress={() => navigation.goBack()}>{format("global.back")}</SecondaryButton>
-					<PrimaryButton onPress={() => resetPassword()}>{format("global.next")}</PrimaryButton>
-				</ButtonContainer>
-			</ScrollScreen>
-		</>
+		<ScrollScreen contentContainerStyle={contentStyle}>
+			<Logo source={require("@assets/images/circularOffcial.png")} />
+			<HeaderImage source={require("@assets/images/forgotPasswordZen.jpg")} />
+			<Title>{format("forgot_password.reset.title")}</Title>
+			{error ? (
+				<ErrorMessage>{errorMessage}</ErrorMessage>
+			) : resend ? (
+				<Description>{format("forgot_password.reset.code.resend_description")}</Description>
+			) : (
+				<Description>{format("forgot_password.reset.code.description", { email })}</Description>
+			)}
+			<SixDigitInputField onSubmit={() => navigation.navigate(Routes.NewPassword, { email })} />
+			<ButtonContainer>
+				<SecondaryButton onPress={() => navigation.goBack()}>{format("global.back")}</SecondaryButton>
+				<PrimaryButton onPress={() => resendCode()}>{format("forgot_password.reset.code.resend_button")}</PrimaryButton>
+			</ButtonContainer>
+		</ScrollScreen>
 	);
 };
 
@@ -95,9 +93,7 @@ const ErrorMessage = styled.Text`
 	text-align: center;
 `;
 
-const InputField = styled(TextField)`
-	flex-grow: 1;
-	justify-content: center;
+const SixDigitInputField = styled(SixDigitInput)`
 	margin-bottom: 20px;
 	padding-left: 66px;
 	padding-right: 66px;

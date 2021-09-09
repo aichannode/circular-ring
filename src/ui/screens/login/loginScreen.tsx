@@ -1,5 +1,4 @@
 import { useServices } from "@core/services";
-import { useNavigation } from "@react-navigation/native";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { TextField } from "@ui/components/textField";
@@ -52,6 +51,7 @@ export const LoginScreen = () => {
 				returnKeyType={"next"}
 				blurOnSubmit={false}
 				onSubmit={() => passwordFieldRef.current?.focus()}
+				keyboardType={"email-address"}
 			/>
 			<InputField
 				ref={passwordFieldRef}
@@ -78,17 +78,20 @@ export const LoginScreen = () => {
 const Logo = styled.Image`
 	margin-top: 70px;
 	margin-bottom: 70px;
+	align-self: center;
 `;
 
 const Title = styled.Text`
 	${textStyles.titleMedium};
 	margin-bottom: 30px;
+	align-self: center;
 `;
 
 const ErrorMessage = styled.Text`
 	${textStyles.errorMessage};
 	margin-bottom: 20px;
 	text-align: center;
+	align-self: center;
 `;
 
 const InputField = styled(TextField)`

@@ -5,6 +5,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 export enum Routes {
 	Login = "Login",
 	ForgotPassword = "ForgotPassword",
+	ResetToken = "ResetCode",
+	NewPassword = "NewPassword",
 	Home = "Home",
 	MyRing = "MyRing",
 	Pairing = "Pairing",
@@ -13,6 +15,8 @@ export enum Routes {
 export type AppRoutesParams = {
 	[Routes.Login]: undefined;
 	[Routes.ForgotPassword]: { email: string };
+	[Routes.ResetToken]: { email: string };
+	[Routes.NewPassword]: { email: string };
 	[Routes.Home]: undefined;
 	[Routes.MyRing]: undefined;
 	[Routes.Pairing]: undefined;
