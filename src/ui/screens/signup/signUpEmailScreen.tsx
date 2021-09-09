@@ -1,5 +1,7 @@
+import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { ScrollScreen } from "@ui/components/scrollScreen";
+import { Spinner } from "@ui/components/spinner";
 import { TextField } from "@ui/components/textField";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
@@ -13,6 +15,7 @@ import styled from "styled-components/native";
 
 export const SignUpEmailScreen = () => {
 	const { format } = useI18n();
+	const { userService } = useServices();
 	const { navigate } = useRoutesNavigation();
 
 	const [email, setEmail] = useState("");
@@ -23,7 +26,24 @@ export const SignUpEmailScreen = () => {
 
 	const [errorMessage, setErrorMessage] = useState<string>("");
 
-	const performSignUp = useCallback(() => {
+	const [isLoading, setLoading] = useState(false);
+
+	const goToLoginScreen = useCallback(() => {
+		navigate(Routes.Login);
+	}, []);
+
+	const performSignUp = useCallback(async (email: string, password: string) => {
+		setLoading(true);
+		try {
+			await userService.signUpWithEmail(email, password);
+			setLoading(false);
+		} catch (error) {
+			setLoading(false);
+			setErrorMessage(format("login.error.invalid_credentials"));
+		}
+	}, []);
+
+	const checkAndSignUp = useCallback(async () => {
 		setErrorMessage("");
 		if (email.length === 0 || password.length === 0) {
 			setErrorMessage(format("signup.error.empty_field"));
@@ -34,9 +54,7 @@ export const SignUpEmailScreen = () => {
 		} else if (password !== confirmPassword) {
 			setErrorMessage(format("signup.error.password_confirm"));
 		} else {
-			navigate(Routes.SignUpPersonalInfo, {
-				signUpData: { email, password, country: "", timezone: "", firstName: "", lastName: "" },
-			});
+			await performSignUp(email, password);
 		}
 	}, [email, password, confirmPassword]);
 
@@ -80,8 +98,14 @@ export const SignUpEmailScreen = () => {
 				blurOnSubmit={true}
 			/>
 			<ButtonContainer>
-				<LoginButton onPress={performSignUp}>{format("signup.button.login")}</LoginButton>
-				<ConfirmButton onPress={performSignUp}>{format("signup.button.confirm")}</ConfirmButton>
+				{isLoading ? (
+					<Spinner size={24} />
+				) : (
+					<>
+						<LoginButton onPress={goToLoginScreen}>{format("signup.button.login")}</LoginButton>
+						<ConfirmButton onPress={checkAndSignUp}>{format("signup.button.confirm")}</ConfirmButton>
+					</>
+				)}
 			</ButtonContainer>
 			<TermsAndConditions>
 				{format("signup.terms.link_prefix")}
