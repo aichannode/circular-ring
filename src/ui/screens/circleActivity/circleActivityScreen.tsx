@@ -50,52 +50,62 @@ export const CircleActivityScreen: React.FC = () => {
 			label: format("metric.hr_max"),
 			value: 123,
 		},
-	];
+	] as const;
 
 	const scoreDetailsData = [
 		{
 			label: format("score.details.recovery"),
-			value: 0.45,
+			value: 0,
+			rate: 0.5,
 			unit: "qualitative",
 		},
 		{
 			label: format("score.details.wake_up"),
-			value: 0.96,
+
+			value: 96,
+			rate: 0.96,
 			unit: "%",
 		},
 		{
 			label: format("score.details.breathing"),
-			value: 0.5,
+			value: 14.3,
+			rate: 0.55,
 			unit: "rpm",
 		},
 		{
 			label: format("score.details.hrv"),
-			value: 0.3,
+			value: 68,
+			rate: 0.7,
 			unit: "ms",
 		},
 		{
 			label: format("score.details.resting_heart_rate"),
-			value: 0.8,
+			value: 62,
+			rate: 0.3,
 			unit: "bpm",
 		},
 		{
 			label: format("score.details.temperature"),
 			value: 0.5,
+			rate: 0.81,
 			unit: "°C",
 		},
 		{
 			label: format("score.details.sleep_quality"),
-			value: 0.22,
+			value: 0.83,
+			rate: 0.83,
 			unit: "%",
 		},
 		{
 			label: format("score.details.sleep_balance"),
-			value: 0.35,
+			value: 0,
+			rate: 0.9,
 			unit: "qualitative",
 		},
 		{
 			label: format("score.details.activity_volume"),
-			value: 0.8,
+			value: 0,
+			rate: 0.8,
 			unit: "qualitative",
 		},
 	] as const;
