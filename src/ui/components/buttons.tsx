@@ -8,18 +8,19 @@ import styled from "styled-components/native";
 interface CircularButtonProps {
 	style?: StyleProp<ViewStyle>;
 	onPress: () => void;
+	light?: boolean;
 }
-
-export const PrimaryButton: React.FC<CircularButtonProps> = ({ onPress, style, children }) => {
+export const PrimaryButton: React.FC<CircularButtonProps> = ({ onPress, style, light, children }) => {
 	return (
 		<Pressable onPress={onPress} style={style}>
 			{({ pressed }) => (
 				<PrimaryContent
+					light={light}
 					start={{ x: 0, y: 1 }}
 					end={{ x: 1, y: 0.5 }}
 					colors={pressed ? ["#f97444", "#f44a59"] : ["#f44a59", "#f97444"]}
 				>
-					<PrimaryButtonText>{children}</PrimaryButtonText>
+					<PrimaryButtonText light={light}>{children}</PrimaryButtonText>
 				</PrimaryContent>
 			)}
 		</Pressable>
@@ -66,9 +67,10 @@ export const SecondaryBigButton: React.FC<CircularButtonProps> = ({ onPress, sty
 	);
 };
 
-const PrimaryButtonText = styled.Text`
+const PrimaryButtonText = styled.Text<{ light?: boolean }>`
 	${textStyles.primary};
 	color: ${colors.white};
+	${({ light }) => light && "font-size: 11px"};
 `;
 
 const SecondaryButtonText = styled.Text`
@@ -85,8 +87,8 @@ const GrayButtonText = styled.Text`
 	color: ${colors.textPrimary};
 `;
 
-const PrimaryContent = styled(LinearGradient)`
-	padding: 9px 22px;
+const PrimaryContent = styled(LinearGradient)<{ light?: boolean }>`
+	padding: ${({ light }) => (light ? "4px 16px" : "9px 22px")};
 	border-radius: 18px;
 `;
 

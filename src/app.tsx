@@ -6,9 +6,9 @@ import { IntlProvider } from "react-intl";
 import { LogBox } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import { initializeServices, ServicesProvider } from "@core/services";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { translations } from "./wordings";
 import SplashScreen from "react-native-splash-screen";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 
@@ -19,12 +19,9 @@ export const App = () => {
 	useSentry();
 
 	useEffect(() => {
-		SplashScreen.hide();
-	}, []);
-
-	useEffect(() => {
 		initializeServices().then(() => {
 			setInitialized(true);
+			SplashScreen.hide();
 		});
 	}, []);
 
