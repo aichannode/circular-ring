@@ -103,7 +103,12 @@ def init_appstore_api_session
 end
 
 def build(flavor)
-  build_app(scheme: "Circular-#{flavor}", configuration: "Release", output_name: "app-#{flavor}-release.ipa")
+  build_app(
+    scheme: "Circular-#{flavor}",
+    configuration: "Release",
+    output_name: "app-#{flavor}-release.ipa",
+    export_method: flavor === "prod" ? "app-store" : "ad-hoc"
+  )
 end
 
 def update_registered_devices(flavor)
