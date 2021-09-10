@@ -10,9 +10,7 @@
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
     <application
       android:name=".MainApplication"
-      android:label="${appName}"
       android:icon="@mipmap/ic_launcher"
-      android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
       <activity

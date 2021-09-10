@@ -1,12 +1,14 @@
+import { useSentry } from "@core/logger/hooks/useSentry";
 import { NavigationContainer } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { IntlProvider } from "react-intl";
 import { LogBox } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { initializeServices, ServicesProvider } from "./core/services";
+import { initializeServices, ServicesProvider } from "@core/services";
 import { RootNavigator } from "./rootNavigator";
 import { translations } from "./wordings";
+import SplashScreen from "react-native-splash-screen";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 
@@ -14,10 +16,12 @@ LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 export const App = () => {
 	const locale = getPreferredLangageCode(Object.keys(translations)) as "en";
 	const [initialized, setInitialized] = useState(false);
+	useSentry();
 
 	useEffect(() => {
 		initializeServices().then(() => {
 			setInitialized(true);
+			SplashScreen.hide();
 		});
 	}, []);
 
