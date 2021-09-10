@@ -23,8 +23,7 @@ export const MyRingBattery: React.FC = () => {
 			return <Spinner size={24} />;
 		case DeviceAutoConnectState.CONNECTED:
 			return (
-				// TODO REMOVE
-				<Container onPress={() => navigation.navigate(Routes.Activity)}>
+				<Container onPress={() => navigation.navigate(Routes.MyRing)}>
 					<MyRingText>{format("header.my_ring")}</MyRingText>
 					<RingBatteryView size={28} />
 				</Container>

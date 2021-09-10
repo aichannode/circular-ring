@@ -1,6 +1,7 @@
 import { NavigationProp } from "@react-navigation/native";
 import React from "react";
 import styled from "styled-components/native";
+import { CirclesBanner } from "./circlesBanner";
 import { SyncBanner } from "./syncBanner";
 
 interface HomeScreenProps {
@@ -9,6 +10,7 @@ interface HomeScreenProps {
 export const HomeScreen: React.FC<HomeScreenProps> = ({}) => {
 	return (
 		<Container>
+			<CirclesBanner />
 			<MargedSyncBanner />
 		</Container>
 	);
