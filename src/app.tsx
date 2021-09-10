@@ -19,12 +19,9 @@ export const App = () => {
 	useSentry();
 
 	useEffect(() => {
-		SplashScreen.hide();
-	}, []);
-
-	useEffect(() => {
 		initializeServices().then(() => {
 			setInitialized(true);
+			SplashScreen.hide();
 		});
 	}, []);
 
