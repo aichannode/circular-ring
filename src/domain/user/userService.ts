@@ -49,4 +49,8 @@ export class UserService {
 	async signUpWithEmail(email: string, password: string) {
 		await this.authService.signUpEmail(email, password);
 	}
+
+	get currentUserEmail() {
+		return /*this._currentUser.email ||*/ this.authService.userEmail;
+	}
 }

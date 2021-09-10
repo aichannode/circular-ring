@@ -5,6 +5,7 @@ export enum Routes {
 	LoginOrSignUp = "LoginOrSignUp",
 	Login = "Login",
 	SignUpEmail = "SignUpEmail",
+	SignUpConfirmationCode = "SignUpConfirmationCode",
 	Home = "Home",
 	MyRing = "MyRing",
 	Pairing = "Pairing",
@@ -14,6 +15,7 @@ export type AppRoutesParams = {
 	[Routes.LoginOrSignUp]: undefined;
 	[Routes.Login]: undefined;
 	[Routes.SignUpEmail]: undefined;
+	[Routes.SignUpConfirmationCode]: undefined;
 	[Routes.Home]: undefined;
 	[Routes.MyRing]: undefined;
 	[Routes.Pairing]: undefined;

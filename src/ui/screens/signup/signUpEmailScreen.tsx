@@ -40,6 +40,7 @@ export const SignUpEmailScreen = () => {
 		try {
 			await userService.signUpWithEmail(email, password);
 			setLoading(false);
+			navigate(Routes.SignUpConfirmationCode);
 		} catch (error) {
 			logger.warn("Error : " + JSON.stringify(error));
 			setLoading(false);
