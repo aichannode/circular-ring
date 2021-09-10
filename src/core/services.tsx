@@ -8,15 +8,20 @@ import React from "react";
 import { DeviceService } from "@domain/device/deviceService";
 import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
 import { RingService } from "@domain/ring/ringService";
+import { RingDataStorage } from "@domain/ring/ringDataStorage";
+import { RingApi } from "@domain/ring/ringApi";
 
 const userStorage = new UserStorage();
 const favoriteDeviceStorage = new FavoriteDeviceStorage();
+const ringDataStorage = new RingDataStorage();
+
+const ringApi = new RingApi();
 
 const apiService = new ApiService();
 
 const bluetoothService = new BluetoothService();
 const deviceService = new DeviceService(bluetoothService, favoriteDeviceStorage);
-const ringService = new RingService(deviceService);
+const ringService = new RingService(deviceService, ringDataStorage, ringApi);
 
 const cognitoAuthService = new CognitoAuthService();
 
