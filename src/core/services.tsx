@@ -10,8 +10,8 @@ import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
 import { RingService } from "@domain/ring/ringService";
 import { RingDataStorage } from "@domain/ring/ringDataStorage";
 import { RingApi } from "@domain/ring/ringApi";
-import { CircleActivityService } from "@ui/screens/circleActivity/circleActivityService";
-import { CircleActivityApi } from "@ui/screens/circleActivity/circleActivityApi";
+import { CircleActivityApi } from "@domain/circleActivity/circleActivityApi";
+import { CircleActivityService } from "@domain/circleActivity/circleActivityService";
 
 const userStorage = new UserStorage();
 const favoriteDeviceStorage = new FavoriteDeviceStorage();

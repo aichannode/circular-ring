@@ -2,6 +2,7 @@ import { getScoreQuality, ScoreQuality } from "@domain/circleActivity/circleActi
 import { Grow } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { colors, qualityColors } from "@ui/styles/colors";
+import { whiteCardStyle } from "@ui/styles/containerStyles";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
@@ -37,13 +38,12 @@ export const DailyMetric: React.FC<DailyMetricProps> = ({
 };
 
 const Container = styled.View`
+	${whiteCardStyle};
 	flex-direction: row;
 	align-items: center;
-	background-color: ${colors.white};
 	padding: 20px 25px;
 `;
 
-// TODO Remove when Row merged
 const MetricIcon = styled.Image`
 	margin-right: 20px;
 `;
@@ -53,7 +53,7 @@ const QualityIndicator = styled.View<{ quality: ScoreQuality }>`
 	height: 10px;
 	border-radius: 5px;
 	background-color: ${({ quality }) => qualityColors[quality]};
-	margin-right: 15px;
+	margin-right: 6px;
 `;
 
 const Metric = styled.Text`

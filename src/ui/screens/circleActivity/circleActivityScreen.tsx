@@ -1,10 +1,11 @@
+import { useDailyData } from "@domain/circleActivity/hooks";
+import { Stack } from "@ui/components/layout";
 import { useI18n } from "@ui/i18n";
 import React, { useState } from "react";
 import { ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { DailyMetric } from "./dailyMetric";
 import { GaugeDescription } from "./gaugeDescription";
-import { useDailyData } from "./hooks";
 import { ScoreGauge } from "./scoreGauge";
 import { ScreenSection } from "./screenSection";
 
@@ -123,22 +124,40 @@ export const CircleActivityScreen: React.FC = () => {
 	if (!dailyData) {
 		return null;
 	}
+
 	return (
 		<Container>
 			<ScrollView>
-				<MargedSection title={format("activity.score.daily_metrics")} />
-				{metricsData.map((data) => (
-					<MargedMetrics key={data.label} {...data} />
-				))}
-				<MargedSection title={format("activity.score.details")} />
-				{scoreDetailsData.map(({ description, label, ...data }, index) => (
-					<React.Fragment key={label}>
-						<MargedGauge {...data} label={label} onPress={() => setFocusedGauge(index)} />
-						{focusedGauge === index && (
-							<MargedGaugeDescription label={label} description={description} onClose={() => setFocusedGauge(null)} />
-						)}
-					</React.Fragment>
-				))}
+				<ScreenSection title={format("activity.score.daily_metrics")} />
+				<ElementStack gap={10}>
+					{metricsData.map((data) => (
+						<DailyMetric key={data.label} {...data} />
+					))}
+				</ElementStack>
+				<ScreenSection title={format("activity.score.details")} />
+				<ElementStack gap={10}>
+					{
+						scoreDetailsData
+							.map(
+								({ description, label, ...data }, index) =>
+									// <React.Fragment key={label}>
+									[
+										<ScoreGauge key={label} {...data} label={label} onPress={() => setFocusedGauge(index)} />,
+										focusedGauge === index && (
+											<GaugeDescription
+												key={label + "description"}
+												label={label}
+												description={description}
+												onClose={() => setFocusedGauge(null)}
+											/>
+										),
+									]
+								// </React.Fragment>
+							)
+							.flatMap((x) => x)
+							.filter(Boolean) as JSX.Element[]
+					}
+				</ElementStack>
 			</ScrollView>
 		</Container>
 	);
@@ -148,19 +167,6 @@ const Container = styled.View`
 	flex: 1;
 `;
 
-// TODO Use Stack when merged
-const MargedMetrics = styled(DailyMetric)`
-	margin-bottom: 10px;
-	margin-horizontal: 20px;
-`;
-const MargedGauge = styled(ScoreGauge)`
-	margin-bottom: 10px;
-	margin-horizontal: 20px;
-`;
-const MargedSection = styled(ScreenSection)`
-	margin-vertical: 25px;
-`;
-const MargedGaugeDescription = styled(GaugeDescription)`
-	margin-bottom: 10px;
-	margin-horizontal: 20px;
+const ElementStack = styled(Stack)`
+	padding: 25px 20px;
 `;

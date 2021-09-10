@@ -1,4 +1,5 @@
 import { getScoreQuality, ScoreQuality, ScoreUnit } from "@domain/circleActivity/circleActivityData";
+import { Row } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors, qualityColors } from "@ui/styles/colors";
@@ -34,10 +35,10 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 
 	return (
 		<Container style={style} onPress={onPress}>
-			<Topside>
+			<Row justify="space-between">
 				<SecondaryText>{label}</SecondaryText>
 				<SecondaryText>{unit === "qualitative" ? formatScoreQuality(scoreQuality) : `${value}${unit}`}</SecondaryText>
-			</Topside>
+			</Row>
 			<Gauge>
 				<GaugeValue quality={scoreQuality} rate={rate} />
 			</Gauge>
@@ -49,12 +50,6 @@ const Container = styled.Pressable`
 	${whiteCardStyle};
 	border-radius: 5px;
 	padding: 20px 25px;
-`;
-
-// TODO Replace with Row when merged
-const Topside = styled.View`
-	flex-direction: row;
-	justify-content: space-between;
 `;
 
 const Gauge = styled.View`
