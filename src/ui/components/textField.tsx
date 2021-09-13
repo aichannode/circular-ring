@@ -24,7 +24,6 @@ interface TextFieldProps {
 	keyboardType?: KeyboardTypeOptions;
 	returnKeyType?: ReturnKeyTypeOptions;
 	style?: StyleProp<ViewStyle>;
-	selection?: { start: number; end: number };
 	selectTextOnFocus?: boolean;
 	fontSize?: number;
 }
@@ -52,7 +51,6 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFi
 			<InputView isError={props.isError ? props.isError : false}>
 				<Field
 					ref={inputRef}
-					selection={props.selection}
 					selectTextOnFocus={props.selectTextOnFocus}
 					style={{ fontSize: props.fontSize }}
 					onChangeText={props.onValueChanged}
