@@ -57,7 +57,6 @@
   "forgot_password.new.password": "Password",
   "forgot_password.new.confirm_password": "Confim password",
   "forgot_password.new.button": "Save and Sign in",
-  "forgot_password.new.error": "Password must be at least 8 characters, 1 lowercase, 1 uppercase, 1 digit and 1 special character.",
   "global.back": "Back",
   "global.next": "Next",
   "home.sync.syncing": "Refreshing...",

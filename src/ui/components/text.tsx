@@ -8,6 +8,9 @@ export const PrimaryText = styled.Text`
 export const SecondaryText = styled.Text`
 	${textStyles.secondary};
 `;
+export const TitleText = styled.Text`
+	${textStyles.title};
+`;
 export const Strong = styled.Text`
 	font-weight: bold;
 	color: ${colors.primary};

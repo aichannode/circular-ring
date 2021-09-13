@@ -19,17 +19,17 @@ export const RingBatteryView: React.FC<RingBatteryViewProps> = ({ style, size, d
 
 	const ringBattery = useRingBattery();
 
-	return ringBattery ? (
+	return (
 		<Container style={style}>
 			<ChunkedCircle
 				size={size}
 				strokeWidth={strokeWidth}
 				gradient={CircleGradient.PURPLE}
-				pathRatio={ringBattery.charge / 100}
+				pathRatio={(ringBattery?.charge ?? 75) / 100}
 			/>
 
 			<CenterView>
-				{ringBattery.status === RingBatteryStatus.CHARGING && !detailed ? (
+				{ringBattery?.status === RingBatteryStatus.CHARGING && !detailed ? (
 					<Image source={require("@assets/images/charging.png")} width={fontSize} height={fontSize} />
 				) : (
 					<BatteryValue style={{ fontSize }}>
@@ -41,7 +41,7 @@ export const RingBatteryView: React.FC<RingBatteryViewProps> = ({ style, size, d
 				{detailed && <SecondaryText>{format("ring.battery.label")}</SecondaryText>}
 			</CenterView>
 		</Container>
-	) : null;
+	);
 };
 
 const Container = styled.View``;

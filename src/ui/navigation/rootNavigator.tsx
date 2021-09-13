@@ -14,6 +14,7 @@ import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
 import { SignUpSuccessScreen } from "@ui/screens/signup/signUpSuccessScreen";
 import React from "react";
 import { Image } from "react-native";
+import { CircleActivityScreen } from "@ui/screens/circleActivity/circleActivityScreen";
 
 const SetupStack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
@@ -35,6 +36,11 @@ export const RootNavigator: React.FC = () => {
 					name={Routes.MyRing}
 					component={MyRingScreen}
 					options={{ title: format("header.my_ring"), headerRight: undefined }}
+				/>
+				<MainStack.Screen
+					name={Routes.Activity}
+					component={CircleActivityScreen}
+					options={{ title: format("header.activity"), headerRight: undefined }}
 				/>
 			</MainStack.Navigator>
 		) : (
