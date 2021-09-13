@@ -45,6 +45,17 @@ export class RingService {
 		});
 	}
 
+	async registerCurrentRing() {
+		const id = await this.deviceService.getResponse(Channel.MAC);
+		const firmware = await this.deviceService.getResponse(Channel.FIRMWARE_VERSION);
+		if (id && firmware) {
+			return this.ringApi.addRing({
+				id,
+				firmware,
+			});
+		}
+	}
+
 	async syncData() {
 		try {
 			this._syncState.set(SyncState.PREPARING);

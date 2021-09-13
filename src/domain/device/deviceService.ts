@@ -100,7 +100,6 @@ export class DeviceService {
 
 		if (loadedDevice) {
 			this.autoConnectDevice(loadedDevice.name);
-			this.startMonitoring();
 		}
 	}
 
@@ -154,7 +153,8 @@ export class DeviceService {
 			this._connectionState.set(DeviceConnectionState.CONNECTED);
 			const storedDevice = { name: device.name };
 			this._favoriteDevice.set(storedDevice);
-			this.favoriteDeviceStorage.save(storedDevice);
+			await this.favoriteDeviceStorage.save(storedDevice);
+			await this.startMonitoring();
 		} catch (e) {
 			this.log("Error connecting to device", e);
 			this._connectionState.set(DeviceConnectionState.DISCONNECTED);
@@ -251,7 +251,7 @@ export class DeviceService {
 			this.log("Error : no device connected");
 			return;
 		}
-		this.log("Writing...");
+		this.log("Writing...", message);
 		await device.writeCharacteristicWithoutResponseForService(
 			NUServiceUUID,
 			RXCharacteristicUUID,
@@ -259,7 +259,11 @@ export class DeviceService {
 		);
 	}
 
-	async getResponse(message: string, returnChannel: string) {
+	async getResponse(
+		message: string,
+		returnChannel: string = message,
+		deserialize = (response: string) => response.slice(returnChannel.length)
+	) {
 		const device = this._connectedDevice.get();
 		if (!device) {
 			this.log("Error : no device connected");
@@ -274,13 +278,14 @@ export class DeviceService {
 		const responsePromise = new Promise<string>((resolve) => {
 			const listener = (output: string) => {
 				if (output.startsWith(returnChannel)) {
-					resolve(output);
+					resolve(deserialize(output));
 					this.onMessageReceived.remove(listener);
 				}
 			};
 			this.onMessageReceived.add(listener);
 		});
 
+		this.log("WRITE", message);
 		await device.writeCharacteristicWithoutResponseForService(
 			NUServiceUUID,
 			RXCharacteristicUUID,
@@ -305,6 +310,7 @@ export class DeviceService {
 				subscription.remove();
 			} else {
 				const decodedOutput = base64decode(charac?.value ?? "");
+				this.log("------------------", decodedOutput);
 				this.onMessageReceived.dispatch(decodedOutput);
 			}
 		});

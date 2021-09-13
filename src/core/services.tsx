@@ -17,10 +17,10 @@ const userStorage = new UserStorage();
 const favoriteDeviceStorage = new FavoriteDeviceStorage();
 const ringDataStorage = new RingDataStorage();
 
-const ringApi = new RingApi();
-
 const apiService = new ApiService();
 const circleActivityApi = new CircleActivityApi();
+
+const ringApi = new RingApi(apiService);
 
 const bluetoothService = new BluetoothService();
 const deviceService = new DeviceService(bluetoothService, favoriteDeviceStorage);
