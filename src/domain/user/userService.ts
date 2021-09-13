@@ -17,22 +17,30 @@ export class UserService {
 	) {}
 
 	async init() {
-		this._user.set(await this.userStorage.load());
+		this._user.set(await this.userStorage.loadUser());
 	}
 
 	async loginWithEmail(email: string, password: string): Promise<void> {
 		this.logger.debug("Calling authService");
-		await this.authService.loginEmail(email, password);
-		// await this.retrieveUser();
+		try {
+			await this.authService.loginEmail(email, password);
+			// await this.retrieveUser();
+		} catch (error) {
+			if ((error as { code: string }).code === "UserNotConfirmedException") {
+				await this.userStorage.saveJustRegisteredUser(email, password);
+			}
+			throw error;
+		}
+	}
 
-		// TODO : remove once signUp implemented
-		// await this.authService.signUpEmail(email, password);
+	get currentUserEmail() {
+		return this.authService.userEmail;
 	}
 
 	async logout() {
 		await this.authService.logout();
 		this._user.set(null);
-		await this.userStorage.remove();
+		await this.userStorage.removeUser();
 	}
 
 	// private async retrieveUser() {
@@ -45,4 +53,26 @@ export class UserService {
 	// 		throw error;
 	// 	}
 	// }
+
+	/** Sign Up process **/
+
+	async signUpWithEmail(email: string, password: string) {
+		await this.authService.signUpEmail(email, password);
+		await this.userStorage.saveJustRegisteredUser(email, password);
+	}
+
+	async resendSignUpCode() {
+		await this.authService.resendSignUpValidationCode();
+	}
+
+	async validateSignUp(code: string) {
+		const justRegistered = await this.userStorage.loadJustRegisteredUser();
+		if (justRegistered) {
+			await this.authService.validateSignUpConfirmationCode(code, justRegistered.email);
+			await this.loginWithEmail(justRegistered.email, justRegistered.password);
+			await this.userStorage.removeJustRegisteredUser();
+		} else {
+			throw Error("Cannot retrieve JustRegistered user credentials");
+		}
+	}
 }

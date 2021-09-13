@@ -1,9 +1,10 @@
 import { useServices } from "@core/services";
-import { PrimaryButton } from "@ui/components/buttons";
+import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { TextField } from "@ui/components/textField";
 import { useI18n } from "@ui/i18n";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback, useRef, useState } from "react";
 import { Keyboard, TextInput } from "react-native";
@@ -12,6 +13,7 @@ import styled from "styled-components/native";
 export const LoginScreen = () => {
 	const { format } = useI18n();
 	const { userService } = useServices();
+	const { navigate } = useRoutesNavigation();
 
 	const [email, setEmail] = useState("");
 
@@ -34,6 +36,8 @@ export const LoginScreen = () => {
 				setLoading(false);
 				if (code === "NotAuthorizedException") {
 					setErrorMessage(format("login.error.invalid_credentials"));
+				} else if ("UserNotConfirmedException") {
+					navigate(Routes.SignUpConfirmationCode);
 				} else {
 					setErrorMessage(format("login.error.default"));
 				}
@@ -41,9 +45,13 @@ export const LoginScreen = () => {
 		}
 	}, [email, password]);
 
+	const goToSignUp = useCallback(() => {
+		navigate(Routes.SignUpEmail);
+	}, []);
+
 	return (
 		<ScrollScreen>
-			<Logo source={require("../../../assets/images/circularOffcial.png")} />
+			<Logo source={require("@assets/images/circularOffcial.png")} />
 			<Title>{format("login.title")}</Title>
 			<ErrorMessage>{errorMessage}</ErrorMessage>
 			<InputField
@@ -69,7 +77,10 @@ export const LoginScreen = () => {
 				{isLoading ? (
 					<Spinner size={24} />
 				) : (
-					<PrimaryButton onPress={performLogin}>{format("login.login_button")}</PrimaryButton>
+					<>
+						<SecondaryButton onPress={goToSignUp}>{format("login.signup_button")}</SecondaryButton>
+						<PrimaryButton onPress={performLogin}>{format("login.login_button")}</PrimaryButton>
+					</>
 				)}
 			</ButtonContainer>
 		</ScrollScreen>
@@ -82,7 +93,7 @@ const Logo = styled.Image`
 `;
 
 const Title = styled.Text`
-	${textStyles.titleMedium};
+	${textStyles.mediumTitle};
 	margin-bottom: 30px;
 `;
 
@@ -97,8 +108,10 @@ const InputField = styled(TextField)`
 `;
 
 const ButtonContainer = styled.View`
+	width: 100%;
 	flex-direction: row;
 	justify-content: space-between;
+	align-items: center;
 	margin-top: 80px;
 	margin-bottom: 40px;
 `;

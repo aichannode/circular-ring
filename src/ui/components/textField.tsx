@@ -24,6 +24,8 @@ interface TextFieldProps {
 	keyboardType?: KeyboardTypeOptions;
 	returnKeyType?: ReturnKeyTypeOptions;
 	style?: StyleProp<ViewStyle>;
+	selectTextOnFocus?: boolean;
+	fontSize?: number;
 }
 
 export interface TextFieldRef {
@@ -49,11 +51,14 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFi
 			<InputView isError={props.isError ? props.isError : false}>
 				<Field
 					ref={inputRef}
+					selectTextOnFocus={props.selectTextOnFocus}
+					style={{ fontSize: props.fontSize }}
 					onChangeText={props.onValueChanged}
 					onSubmitEditing={props.onSubmit}
 					placeholderTextColor={colors.textPlaceholder}
 					multiline={false}
 					maxLength={props.maxLength}
+					autoCapitalize={"none"}
 					value={props.value}
 					keyboardType={props.keyboardType}
 					blurOnSubmit={props.blurOnSubmit}

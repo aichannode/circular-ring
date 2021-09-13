@@ -1,6 +1,7 @@
 import { useAuth } from "@domain/auth/hooks/useAuth";
 import { useAccountLinked } from "@domain/device/hooks";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { LoginOrSignUpScreen } from "@ui/screens/loginOrRegister/loginOrSignUpScreen";
 import { MyRingBattery } from "@ui/components/navigation/myRingBattery";
 import { Routes } from "@ui/navigation/routes";
 import { useI18n } from "@ui/i18n";
@@ -8,6 +9,9 @@ import { HomeScreen } from "@ui/screens/home/homeScreen";
 import { LoginScreen } from "@ui/screens/login/loginScreen";
 import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
 import { RingSetupScreen } from "@ui/screens/ringSetup/ringSetupScreen";
+import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
+import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
+import { RingSetupStartScreen } from "@ui/screens/ringSetup/ringSetupStartScreen";
 import React from "react";
 import { Image } from "react-native";
 import { CircleActivityScreen } from "@ui/screens/circleActivity/circleActivityScreen";
@@ -41,12 +45,16 @@ export const RootNavigator: React.FC = () => {
 			</MainStack.Navigator>
 		) : (
 			<SetupStack.Navigator screenOptions={{ headerShown: false }}>
+				<SetupStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />
 				<SetupStack.Screen name={Routes.Pairing} component={RingSetupScreen} />
 			</SetupStack.Navigator>
 		)
 	) : (
 		<SetupStack.Navigator screenOptions={{ headerShown: false }}>
+			<SetupStack.Screen name={Routes.LoginOrSignUp} component={LoginOrSignUpScreen} />
 			<SetupStack.Screen name={Routes.Login} component={LoginScreen} />
+			<SetupStack.Screen name={Routes.SignUpEmail} component={SignUpEmailScreen} />
+			<SetupStack.Screen name={Routes.SignUpConfirmationCode} component={SignUpConfirmationCodeScreen} />
 		</SetupStack.Navigator>
 	);
 };

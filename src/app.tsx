@@ -1,12 +1,12 @@
 import { useSentry } from "@core/logger/hooks/useSentry";
 import { NavigationContainer } from "@react-navigation/native";
+import { RootNavigator } from "@ui/navigation/rootNavigator";
 import React, { useEffect, useState } from "react";
 import { IntlProvider } from "react-intl";
 import { LogBox } from "react-native";
 import * as RNLocalize from "react-native-localize";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import { initializeServices, ServicesProvider } from "@core/services";
-import { RootNavigator } from "./rootNavigator";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { translations } from "./wordings";
 import SplashScreen from "react-native-splash-screen";
 
