@@ -13,9 +13,12 @@ export class BluetoothService {
 	readonly enabled = this._state.select((state) => state === State.PoweredOn);
 	readonly ready = this._state.select((state) => state !== State.Unknown && state !== State.Resetting);
 
+	constructor() {
+		this.manager.onStateChange((state) => this._state.set(state));
+	}
+
 	async init() {
 		this._state.set(await this.manager.state());
-		this.manager.onStateChange((state) => this._state.set(state));
 	}
 
 	async enable() {
