@@ -24,24 +24,8 @@ interface TextFieldProps {
 	keyboardType?: KeyboardTypeOptions;
 	returnKeyType?: ReturnKeyTypeOptions;
 	style?: StyleProp<ViewStyle>;
-	selection?: { start: number; end: number };
 	selectTextOnFocus?: boolean;
 	fontSize?: number;
-	keyboardType?:
-		| "numeric"
-		| "default"
-		| "email-address"
-		| "phone-pad"
-		| "number-pad"
-		| "decimal-pad"
-		| "visible-password"
-		| "ascii-capable"
-		| "numbers-and-punctuation"
-		| "url"
-		| "name-phone-pad"
-		| "twitter"
-		| "web-search"
-		| undefined;
 }
 
 export interface TextFieldRef {
@@ -67,8 +51,7 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFi
 			<InputView isError={props.isError ? props.isError : false}>
 				<Field
 					ref={inputRef}
-					selection={props.selection}
-					selectTextOnFocus={props.selectTxtOnFocus}
+					selectTextOnFocus={props.selectTextOnFocus}
 					style={{ fontSize: props.fontSize }}
 					onChangeText={props.onValueChanged}
 					onSubmitEditing={props.onSubmit}
@@ -81,7 +64,6 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFi
 					placeholder={props.placeholder}
 					returnKeyType={props.returnKeyType}
 					secureTextEntry={isSecure}
-					keyboardType={props.keyboardType}
 				/>
 				{!!props.canBeSecure && (
 					<TouchableWithoutFeedback onPress={() => setSecure(!isSecure)}>

@@ -40,6 +40,8 @@ export class CognitoAuthService implements AuthService {
 					currentUser.getSession((error: Error | null, session: CognitoUserSession | null) => {
 						if (!error && session) {
 							this._accessToken.set(session.getAccessToken());
+						} else {
+							this.logger.warn("Refresh user failed", error);
 						}
 					});
 				}
@@ -49,14 +51,7 @@ export class CognitoAuthService implements AuthService {
 
 	async signUpEmail(email: string, password: string): Promise<void> {
 		return new Promise((resolve, reject) => {
-			const attributeList = [];
-
-			attributeList.push(
-				new CognitoUserAttribute({
-					Name: "email",
-					Value: email,
-				})
-			);
+			const attributeList = [new CognitoUserAttribute({ Name: "email", Value: email })];
 
 			this._userPool.signUp(email, password, attributeList, [], (err, result) => {
 				if (err) {
@@ -74,18 +69,51 @@ export class CognitoAuthService implements AuthService {
 		});
 	}
 
+	async resendSignUpValidationCode(): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const currentUser = this._cognitoUser.get();
+			if (currentUser) {
+				currentUser.resendConfirmationCode((err, result) => {
+					if (err) {
+						this.logger.warn("Error resending confirmation code", err);
+						reject(err);
+					} else {
+						resolve();
+					}
+				});
+			} else {
+				reject("No user defined");
+			}
+		});
+	}
+
+	async validateSignUpConfirmationCode(code: string, email: string): Promise<void> {
+		this.logger.debug("Cognito validation");
+		return new Promise((resolve, reject) => {
+			this.logger.debug(" - start validation");
+			const currentUser = new CognitoUser({ Username: email, Pool: this._userPool });
+			if (!!currentUser) {
+				this.logger.debug(" - validation process has user : perform validation");
+				currentUser.confirmRegistration(code, true, async (err, result) => {
+					if (err) {
+						this.logger.warn("Error confirming user", err);
+						reject(err);
+					} else {
+						this.logger.debug("User confirmation succeeded", result);
+						resolve();
+					}
+				});
+			} else {
+				reject("No user defined");
+			}
+		});
+	}
+
 	async loginEmail(email: string, password: string): Promise<void> {
 		return new Promise((resolve, reject) => {
-			const authenticationDetails = new AuthenticationDetails({
-				Username: email,
-				Password: password,
-			});
+			const authenticationDetails = new AuthenticationDetails({ Username: email, Password: password });
+			const cognitoUser = new CognitoUser({ Username: email, Pool: this._userPool });
 
-			const userData = {
-				Username: email,
-				Pool: this._userPool,
-			};
-			const cognitoUser = new CognitoUser(userData);
 			cognitoUser.authenticateUser(authenticationDetails, {
 				onSuccess: (result) => {
 					this._accessToken.set(result.getAccessToken());

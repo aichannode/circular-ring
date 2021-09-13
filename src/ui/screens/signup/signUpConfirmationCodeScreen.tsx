@@ -1,11 +1,12 @@
 import { useLogger } from "@core/logger/hooks/useLogger";
+import { useServices } from "@core/services";
 import { useUserEmail } from "@domain/user/hooks/useUser";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SixDigitInput } from "@ui/components/sixDigitInput";
 import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
-import { useRoutesNavigation } from "@ui/navigation/routes";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { textStyles } from "@ui/styles/textStyles";
 import { obfuscateEmail } from "@ui/utils/emailUtils";
 import React, { useCallback, useState } from "react";
@@ -15,7 +16,7 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 	const logger = useLogger("SignUpConfirmationCodeScreen");
 	const navigation = useRoutesNavigation();
 	const { format } = useI18n();
-	// const { userService } = useServices();
+	const { userService } = useServices();
 	const email = useUserEmail();
 
 	const [errorMessage, setErrorMessage] = useState("");
@@ -29,11 +30,12 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 		setLoading(true);
 		logger.debug("Trying to validate code : " + code);
 		try {
-			// await userService.validateSignUpCode(code);
+			await userService.validateSignUp(code);
 			setLoading(false);
+			navigation.navigate(Routes.SignUpSuccess);
 		} catch (error) {
 			setLoading(false);
-			setErrorMessage("login.error.default");
+			setErrorMessage(format("login.error.default"));
 		}
 	}, []);
 
@@ -41,11 +43,11 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 		setLoading(true);
 		setErrorMessage("");
 		try {
-			// await userService.resendSignUpCode(email);
+			await userService.resendSignUpCode();
 			setLoading(false);
 		} catch (error) {
 			setLoading(false);
-			setErrorMessage("login.error.default");
+			setErrorMessage(format("login.error.default"));
 		}
 	};
 
@@ -60,7 +62,7 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 				<Description>{format("signup_code.description", { email: !!email ? obfuscateEmail(email) : "" })}</Description>
 			)}
 			<SixDigitInputField onSubmit={validateCode} />
-			<ButtonContainer>
+			<ButtonContainer centerElements={isLoading}>
 				{isLoading ? (
 					<Spinner size={24} />
 				) : (
@@ -86,7 +88,7 @@ const HeaderImage = styled.Image`
 `;
 
 const Title = styled.Text`
-	${textStyles.titleMedium};
+	${textStyles.mediumTitle};
 	flex-grow: 1;
 	align-self: center;
 	margin-top: 60px;
@@ -119,10 +121,10 @@ const SixDigitInputField = styled(SixDigitInput)`
 	padding-right: 66px;
 `;
 
-const ButtonContainer = styled.View`
+const ButtonContainer = styled.View<{ centerElements: boolean }>`
 	width: 100%;
 	flex-direction: row;
-	justify-content: space-between;
+	justify-content: ${({ centerElements }) => (centerElements ? "center" : "space-between")};
 	padding: 40px 66px;
 	align-items: center;
 `;

@@ -19,6 +19,7 @@ export const LoginOrSignUpScreen = () => {
 
 	return (
 		<Container>
+			<LogoBig source={require("@assets/images/circularOffcialBig.png")} />
 			<ButtonContainer>
 				<SignInButton onPress={goToSignIn}>{format("signin_signup.signin")}</SignInButton>
 				<SignUpButton onPress={goToSignUp}>{format("signin_signup.signup")}</SignUpButton>
@@ -30,6 +31,11 @@ export const LoginOrSignUpScreen = () => {
 const Container = styled.View`
 	flex: 1;
 	justify-content: center;
+`;
+
+const LogoBig = styled.Image`
+	align-self: center;
+	margin-bottom: 70px;
 `;
 
 const ButtonContainer = styled.View`

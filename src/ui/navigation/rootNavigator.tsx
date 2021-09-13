@@ -14,8 +14,10 @@ import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
 import { RingSetupScreen } from "@ui/screens/ringSetup/ringSetupScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
+import { SignUpSuccessScreen } from "@ui/screens/signup/signUpSuccessScreen";
 import React from "react";
 import { Image } from "react-native";
+import { CircleActivityScreen } from "@ui/screens/circleActivity/circleActivityScreen";
 
 const SetupStack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
@@ -38,6 +40,11 @@ export const RootNavigator: React.FC = () => {
 					component={MyRingScreen}
 					options={{ title: format("header.my_ring"), headerRight: undefined }}
 				/>
+				<MainStack.Screen
+					name={Routes.Activity}
+					component={CircleActivityScreen}
+					options={{ title: format("header.activity"), headerRight: undefined }}
+				/>
 			</MainStack.Navigator>
 		) : (
 			<SetupStack.Navigator screenOptions={{ headerShown: false }}>
@@ -53,6 +60,7 @@ export const RootNavigator: React.FC = () => {
 			<SetupStack.Screen name={Routes.NewPassword} component={NewPasswordScreen} />
 			<SetupStack.Screen name={Routes.SignUpEmail} component={SignUpEmailScreen} />
 			<SetupStack.Screen name={Routes.SignUpConfirmationCode} component={SignUpConfirmationCodeScreen} />
+			<SetupStack.Screen name={Routes.SignUpSuccess} component={SignUpSuccessScreen} />
 		</SetupStack.Navigator>
 	);
 };

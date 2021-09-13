@@ -75,8 +75,10 @@ platform :ios do
   end
 end
 
-KEYCHAIN_NAME = SecureRandom.alphanumeric(15)
-KEYCHAIN_PASSWORD = SecureRandom.base64(10)
+KEYCHAIN_NAME = "CircularKeychain"
+#SecureRandom.alphanumeric(15)
+KEYCHAIN_PASSWORD = "CircularPass"
+#SecureRandom.base64(10)
 
 def setup_keychain()
   create_keychain(
@@ -103,7 +105,12 @@ def init_appstore_api_session
 end
 
 def build(flavor)
-  build_app(scheme: "Circular-#{flavor}", configuration: "Release", output_name: "app-#{flavor}-release.ipa")
+  build_app(
+    scheme: "Circular-#{flavor}",
+    configuration: "Release",
+    output_name: "app-#{flavor}-release.ipa",
+    export_method: flavor === "prod" ? "app-store" : "ad-hoc"
+  )
 end
 
 def update_registered_devices(flavor)

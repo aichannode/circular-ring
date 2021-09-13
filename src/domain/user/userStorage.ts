@@ -2,17 +2,34 @@ import { Storage } from "@core/storage";
 import { User } from "@domain/user/user";
 
 const userStorageKey = "@user";
+const justRegisteredUserStorageKey = "@justRegisteredUser";
 
 export class UserStorage {
-	save(user: User) {
+	/** User **/
+
+	saveUser(user: User) {
 		return Storage.save<User>(userStorageKey, user);
 	}
 
-	load() {
+	loadUser() {
 		return Storage.load<User>(userStorageKey);
 	}
 
-	remove() {
+	removeUser() {
 		return Storage.remove(userStorageKey);
+	}
+
+	/** Just Registered User **/
+
+	saveJustRegisteredUser(email: string, password: string) {
+		return Storage.save<{ email: string; password: string }>(justRegisteredUserStorageKey, { email, password });
+	}
+
+	loadJustRegisteredUser() {
+		return Storage.load<{ email: string; password: string }>(justRegisteredUserStorageKey);
+	}
+
+	removeJustRegisteredUser() {
+		return Storage.remove(justRegisteredUserStorageKey);
 	}
 }

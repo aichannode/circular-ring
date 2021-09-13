@@ -5,6 +5,9 @@ export interface AuthService {
 	authToken: Observable<string | undefined>;
 
 	signUpEmail(email: string, password: string): Promise<void>;
+	resendSignUpValidationCode(): Promise<void>;
+	validateSignUpConfirmationCode(code: string, email: string): Promise<void>;
+
 	loginEmail(email: string, password: string): Promise<void>;
 	forgotPassword(email: string): Promise<void>;
 	resendResetToken(email: string): Promise<void>;
