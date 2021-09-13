@@ -117,6 +117,7 @@ const FlexRow = styled.View`
 	flex-direction: row;
 	flex-grow: 1;
 	align-items: center;
+	justify-content: space-around;
 `;
 
 const InputField = styled(TextInput)`

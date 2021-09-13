@@ -42,11 +42,7 @@ export class UserService {
 	}
 
 	async resendResetToken(email: string): Promise<void> {
-		await this.authService.resendResetToken(email);
-	}
-
-	async confirmResetToken(email: string, resetToken: string): Promise<void> {
-		await this.authService.confirmResetToken(email, resetToken);
+		await this.authService.forgotPassword(email);
 	}
 
 	async newPassword(email: string, resetToken: string, newPassword: string): Promise<void> {

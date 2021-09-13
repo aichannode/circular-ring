@@ -148,24 +148,6 @@ export class CognitoAuthService implements AuthService {
 		});
 	}
 
-	async resendResetToken(email: string): Promise<void> {
-		return new Promise((resolve, reject) => {
-			const userData = {
-				Username: email,
-				Pool: this._userPool,
-			};
-			const cognitoUser = new CognitoUser(userData);
-			cognitoUser.resendConfirmationCode((err, result) => {
-				if (err) {
-					this.logger.warn(err.message || JSON.stringify(err));
-					reject(err);
-					return;
-				}
-				resolve();
-			});
-		});
-	}
-
 	async newPassword(email: string, resetToken: string, newPassword: string): Promise<void> {
 		return new Promise((resolve, reject) => {
 			const userData = {

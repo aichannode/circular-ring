@@ -113,7 +113,7 @@ export const ResetTokenScreen: React.FC = () => {
 				onValueChanged={setConfirmPassword}
 				blurOnSubmit={true}
 			/>
-			<ButtonContainer>
+			<ButtonContainer centerElements={false}>
 				{isLoading ? (
 					<Spinner size={24} />
 				) : (
@@ -197,11 +197,12 @@ const InputField = styled(TextField)`
 	padding-right: 66px;
 `;
 
-const ButtonContainer = styled.View`
-	flex-grow: 1;
+const ButtonContainer = styled.View<{ centerElements: boolean }>`
+	width: 100%;
 	flex-direction: row;
-	justify-content: space-around;
-	margin: 40px 66px;
+	justify-content: ${({ centerElements }) => (centerElements ? "center" : "space-between")};
+	padding: 40px 66px;
+	align-items: center;
 `;
 
 const ResendButton = styled.TouchableOpacity`

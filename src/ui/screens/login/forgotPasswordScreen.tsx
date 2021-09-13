@@ -53,8 +53,8 @@ export const ForgotPasswordScreen: React.FC = () => {
 					keyboardType={"email-address"}
 				/>
 				<ButtonContainer>
-					<SecondaryButton onPress={() => navigation.goBack()}>{format("global.back")}</SecondaryButton>
-					<PrimaryButton onPress={() => resetPassword()}>{format("global.next")}</PrimaryButton>
+					<SecondaryButton onPress={navigation.goBack}>{format("global.back")}</SecondaryButton>
+					<PrimaryButton onPress={resetPassword}>{format("global.next")}</PrimaryButton>
 				</ButtonContainer>
 			</ScrollScreen>
 		</>
