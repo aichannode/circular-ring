@@ -1,3 +1,4 @@
+import { ScoreQuality } from "@domain/circleActivity/circleActivityData";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
 import { WordingKey } from "../wordings";
@@ -38,6 +39,17 @@ export function useI18n() {
 				return `${hourCount}h`;
 			} else {
 				return `${minuteCount} min`;
+			}
+		},
+
+		formatScoreQuality: (scoreQuality: ScoreQuality) => {
+			switch (scoreQuality) {
+				case ScoreQuality.POOR:
+					return intl.formatMessage({ id: "score.quality.poor" });
+				case ScoreQuality.GOOD:
+					return intl.formatMessage({ id: "score.quality.good" });
+				case ScoreQuality.OPTIMAL:
+					return intl.formatMessage({ id: "score.quality.optimal" });
 			}
 		},
 	};
