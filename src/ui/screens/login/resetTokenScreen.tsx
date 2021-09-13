@@ -1,4 +1,3 @@
-import { useLogger } from "@core/logger/hooks/useLogger";
 import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { Divider } from "@ui/components/divider";
