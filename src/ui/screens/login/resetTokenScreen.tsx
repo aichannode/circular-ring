@@ -11,7 +11,7 @@ import { textStyles } from "@ui/styles/textStyles";
 import { obfuscateEmail } from "@ui/utils/emailUtils";
 import { isCorrectPassword } from "@ui/utils/passwordUtils";
 import React, { useCallback, useRef, useState } from "react";
-import { Text, TextInput } from "react-native";
+import { TextInput } from "react-native";
 import styled from "styled-components/native";
 
 export const ResetTokenScreen: React.FC = () => {

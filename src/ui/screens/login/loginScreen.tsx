@@ -7,7 +7,7 @@ import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback, useRef, useState } from "react";
-import { Keyboard, Text, TextInput } from "react-native";
+import { Keyboard, TextInput } from "react-native";
 import styled from "styled-components/native";
 
 export const LoginScreen = () => {
