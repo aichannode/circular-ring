@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { PrimaryButton } from "@ui/components/buttons";
+import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { TextField } from "@ui/components/textField";
@@ -45,6 +45,10 @@ export const LoginScreen = () => {
 		}
 	}, [email, password]);
 
+	const goToSignUp = useCallback(() => {
+		navigate(Routes.SignUpEmail);
+	}, []);
+
 	return (
 		<ScrollScreen>
 			<Logo source={require("@assets/images/circularOffcial.png")} />
@@ -73,7 +77,10 @@ export const LoginScreen = () => {
 				{isLoading ? (
 					<Spinner size={24} />
 				) : (
-					<PrimaryButton onPress={performLogin}>{format("login.login_button")}</PrimaryButton>
+					<>
+						<SecondaryButton onPress={goToSignUp}>{format("login.signup_button")}</SecondaryButton>
+						<PrimaryButton onPress={performLogin}>{format("login.login_button")}</PrimaryButton>
+					</>
 				)}
 			</ButtonContainer>
 		</ScrollScreen>
@@ -101,8 +108,10 @@ const InputField = styled(TextField)`
 `;
 
 const ButtonContainer = styled.View`
+	width: 100%;
 	flex-direction: row;
 	justify-content: space-between;
+	align-items: center;
 	margin-top: 80px;
 	margin-bottom: 40px;
 `;
