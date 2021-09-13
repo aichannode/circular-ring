@@ -9,7 +9,7 @@ import { Spinner } from "@ui/components/spinner";
 import { PrimaryText, SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import { whiteCardStyle } from "@ui/styles/containerStyles";
+import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React, { useEffect } from "react";
 import { Image, Platform } from "react-native";
 import styled from "styled-components/native";
@@ -107,7 +107,7 @@ const Message = styled(SecondaryText)`
 `;
 
 const DeviceWrapper = styled.Pressable`
-	${whiteCardStyle};
+	${roundedWhiteCardStyle};
 	flex-direction: row;
 	align-items: center;
 	margin-top: 20px;

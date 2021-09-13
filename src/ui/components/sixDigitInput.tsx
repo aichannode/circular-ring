@@ -1,28 +1,32 @@
 import { TextField } from "@ui/components/textField";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { StyleProp, TextInput, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
 interface Props {
 	style?: StyleProp<ViewStyle>;
-	onSubmit: () => void;
+	onSubmit: (code: string) => void;
 }
 
 export const SixDigitInput: React.FC<Props> = (props: Props) => {
-	const [code1, setCode1] = useState("0");
-	const [code2, setCode2] = useState("0");
-	const [code3, setCode3] = useState("0");
-	const [code4, setCode4] = useState("0");
-	const [code5, setCode5] = useState("0");
-	const [code6, setCode6] = useState("0");
+	const [code1, setCode1] = useState("");
+	const [code2, setCode2] = useState("");
+	const [code3, setCode3] = useState("");
+	const [code4, setCode4] = useState("");
+	const [code5, setCode5] = useState("");
+	const [code6, setCode6] = useState("");
 
 	const codeFieldRef = [
-		useRef<TextInput | null>(null),
-		useRef<TextInput | null>(null),
-		useRef<TextInput | null>(null),
-		useRef<TextInput | null>(null),
-		useRef<TextInput | null>(null),
+		useRef<TextInput | null>(null), // code2
+		useRef<TextInput | null>(null), // code3
+		useRef<TextInput | null>(null), // code4
+		useRef<TextInput | null>(null), // code5
+		useRef<TextInput | null>(null), // code6
 	];
+
+	const submitCode = useCallback(() => {
+		props.onSubmit?.([code1, code2, code3, code4, code5, code6].join(""));
+	}, [code1, code2, code3, code4, code5, code6]);
 
 	return (
 		<FlexRow style={props.style}>
@@ -95,8 +99,11 @@ export const SixDigitInput: React.FC<Props> = (props: Props) => {
 				selectTextOnFocus={true}
 				selection={{ start: 0, end: 1 }}
 				value={code6}
-				onValueChanged={(value) => setCode6(value)}
-				onSubmit={() => props.onSubmit()}
+				onValueChanged={(value) => {
+					setCode6(value);
+					submitCode();
+				}}
+				onSubmit={submitCode}
 				blurOnSubmit={true}
 				maxLength={1}
 				fontSize={22}

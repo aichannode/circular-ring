@@ -25,6 +25,7 @@ export class UserService {
 		await this.authService.loginEmail(email, password);
 		// await this.retrieveUser();
 
+		// TODO : remove once signUp implemented
 		// await this.authService.signUpEmail(email, password);
 	}
 
@@ -59,4 +60,12 @@ export class UserService {
 	// 		throw error;
 	// 	}
 	// }
+
+	async signUpWithEmail(email: string, password: string) {
+		await this.authService.signUpEmail(email, password);
+	}
+
+	get currentUserEmail() {
+		return /*this._currentUser.email ||*/ this.authService.userEmail;
+	}
 }
