@@ -11,6 +11,7 @@ import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
 import { RingSetupScreen } from "@ui/screens/ringSetup/ringSetupScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
+import { SignUpSuccessScreen } from "@ui/screens/signup/signUpSuccessScreen";
 import React from "react";
 import { Image } from "react-native";
 
@@ -47,6 +48,7 @@ export const RootNavigator: React.FC = () => {
 			<SetupStack.Screen name={Routes.Login} component={LoginScreen} />
 			<SetupStack.Screen name={Routes.SignUpEmail} component={SignUpEmailScreen} />
 			<SetupStack.Screen name={Routes.SignUpConfirmationCode} component={SignUpConfirmationCodeScreen} />
+			<SetupStack.Screen name={Routes.SignUpSuccess} component={SignUpSuccessScreen} />
 		</SetupStack.Navigator>
 	);
 };

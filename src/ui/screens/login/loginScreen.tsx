@@ -43,7 +43,7 @@ export const LoginScreen = () => {
 
 	return (
 		<ScrollScreen>
-			<Logo source={require("../../../assets/images/circularOffcial.png")} />
+			<Logo source={require("@assets/images/circularOffcial.png")} />
 			<Title>{format("login.title")}</Title>
 			<ErrorMessage>{errorMessage}</ErrorMessage>
 			<InputField

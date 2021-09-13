@@ -65,7 +65,7 @@ export const SignUpEmailScreen = () => {
 
 	return (
 		<ScrollScreen>
-			<Logo source={require("../../../assets/images/circularOffcial.png")} />
+			<Logo source={require("@assets/images/circularOffcial.png")} />
 			<Title>{format("signup.title")}</Title>
 			{errorMessage.length > 0 ? (
 				<ErrorMessage>{errorMessage}</ErrorMessage>
