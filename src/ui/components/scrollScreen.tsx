@@ -9,7 +9,7 @@ export const ScrollScreen: React.FunctionComponent<ScrollViewProps> = (props) =>
 			keyboardShouldPersistTaps={"handled"}
 			contentContainerStyle={[contentContainerStyle, props.contentContainerStyle]}
 		>
-			<Content {...props} behavior={Platform.OS === "ios" ? "padding" : "height"}></Content>
+			<Content {...props} behavior={Platform.OS === "ios" ? "padding" : undefined}></Content>
 		</ScrollView>
 	);
 };
