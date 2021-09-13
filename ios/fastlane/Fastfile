@@ -75,8 +75,10 @@ platform :ios do
   end
 end
 
-KEYCHAIN_NAME = SecureRandom.alphanumeric(15)
-KEYCHAIN_PASSWORD = SecureRandom.base64(10)
+KEYCHAIN_NAME = "CircularKeychain"
+#SecureRandom.alphanumeric(15)
+KEYCHAIN_PASSWORD = "CircularPass"
+#SecureRandom.base64(10)
 
 def setup_keychain()
   create_keychain(
