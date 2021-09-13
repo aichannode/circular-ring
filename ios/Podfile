@@ -24,6 +24,7 @@ def xcode12_post_install(installer)
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '11.0'
     end
   end
+  `sed -i -e  $'s/__IPHONE_10_0/__IPHONE_12_0/' Pods/RCT-Folly/folly/portability/Time.h`
 end
 
 target 'Circular-Dev' do
