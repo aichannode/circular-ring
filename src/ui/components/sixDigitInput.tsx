@@ -121,6 +121,7 @@ const FlexRow = styled.View`
 
 const InputField = styled(TextInput)`
 	font-size: 22px;
+	min-width: 18px;
 	text-align: center;
 	margin-right: 8px;
 	margin-left: 8px;
