@@ -126,4 +126,5 @@ const ButtonContainer = styled.View`
 
 const ForgotButton = styled(SimpleTextButton)`
 	align-items: center;
+	margin-bottom: 20px;
 `;
