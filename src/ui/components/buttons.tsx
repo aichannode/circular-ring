@@ -92,6 +92,13 @@ const PrimaryContent = styled(LinearGradient)<{ light?: boolean }>`
 	border-radius: 18px;
 `;
 
+const SecondaryContent = styled.View<{ pressed: boolean }>`
+	padding: 9px 22px;
+	border-radius: 18px;
+	border-color: ${colors.textPrimary};
+	border-width: 1px;
+`;
+
 const PrimaryBigContent = styled(LinearGradient)`
 	flex-direction: row;
 	align-items: center;

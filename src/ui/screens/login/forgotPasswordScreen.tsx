@@ -5,6 +5,7 @@ import { TextField } from "@ui/components/textField";
 import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
 import { textStyles } from "@ui/styles/textStyles";
+import { isEmail } from "@ui/utils/emailUtils";
 import React, { useState } from "react";
 import styled from "styled-components/native";
 
@@ -19,11 +20,16 @@ export const ForgotPasswordScreen: React.FC = () => {
 	const [error, setError] = useState(false);
 
 	const resetPassword = async () => {
-		try {
-			await userService.resetPassword(email);
-			navigation.navigate(Routes.ResetToken, { email });
-		} catch (error) {
+		if (!isEmail(email)) {
 			setError(true);
+		} else {
+			try {
+				await userService.resetPassword(email);
+				setError(false);
+				navigation.navigate(Routes.ResetToken, { email });
+			} catch (error) {
+				setError(true);
+			}
 		}
 	};
 
@@ -34,7 +40,7 @@ export const ForgotPasswordScreen: React.FC = () => {
 				<HeaderImage source={require("@assets/images/forgotPasswordZen.jpg")} />
 				<Title>{format("forgot_password.reset.title")}</Title>
 				{error ? (
-					<ErrorMessage>{format("forgot_password.reset.email.error")}</ErrorMessage>
+					<ErrorMessage>{format("signup.error.email_format")}</ErrorMessage>
 				) : (
 					<Description>{format("forgot_password.reset.description")}</Description>
 				)}
@@ -67,7 +73,7 @@ const HeaderImage = styled.Image`
 `;
 
 const Title = styled.Text`
-	${textStyles.titleMedium};
+	${textStyles.mediumTitle};
 	flex-grow: 1;
 	align-self: center;
 	margin-top: 60px;

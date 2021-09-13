@@ -173,7 +173,9 @@ export class CognitoAuthService implements AuthService {
 				},
 				onFailure: (err) => {
 					this.logger.debug("Authentication failed");
+					this.logger.debug("VerificationCode: " + resetToken + " , newPassword: " + newPassword);
 					this.logger.warn(err.message || JSON.stringify(err));
+					this.logger.warn(err);
 					reject(err);
 				},
 			});

@@ -7,7 +7,6 @@ export enum Routes {
 	Login = "Login",
 	ForgotPassword = "ForgotPassword",
 	ResetToken = "ResetCode",
-	NewPassword = "NewPassword",
 	SignUpEmail = "SignUpEmail",
 	SignUpConfirmationCode = "SignUpConfirmationCode",
 	Home = "Home",
@@ -20,7 +19,6 @@ export type AppRoutesParams = {
 	[Routes.Login]: undefined;
 	[Routes.ForgotPassword]: { email: string };
 	[Routes.ResetToken]: { email: string };
-	[Routes.NewPassword]: { email: string };
 	[Routes.SignUpEmail]: undefined;
 	[Routes.SignUpConfirmationCode]: undefined;
 	[Routes.Home]: undefined;
