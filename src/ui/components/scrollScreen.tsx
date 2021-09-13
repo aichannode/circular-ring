@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollViewProps } from "react-native";
+import { Platform, ScrollViewProps } from "react-native";
 import styled from "styled-components/native";
 
 export const ScrollScreen: React.FunctionComponent<ScrollViewProps> = (props) => {
@@ -9,7 +9,7 @@ export const ScrollScreen: React.FunctionComponent<ScrollViewProps> = (props) =>
 			keyboardShouldPersistTaps={"handled"}
 			contentContainerStyle={[contentContainerStyle, props.contentContainerStyle]}
 		>
-			<Content {...props}></Content>
+			<Content {...props} behavior={Platform.OS === "ios" ? "padding" : "height"}></Content>
 		</ScrollView>
 	);
 };
@@ -18,7 +18,7 @@ const ScrollView = styled.ScrollView`
 	flex: 1;
 `;
 
-const Content = styled.View`
+const Content = styled.KeyboardAvoidingView`
 	flex: 1;
 	justify-content: center;
 `;
