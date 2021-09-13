@@ -6,7 +6,7 @@ import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SixDigitInput } from "@ui/components/sixDigitInput";
 import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
-import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { useRoutesNavigation } from "@ui/navigation/routes";
 import { textStyles } from "@ui/styles/textStyles";
 import { obfuscateEmail } from "@ui/utils/emailUtils";
 import React, { useCallback, useState } from "react";
@@ -32,7 +32,6 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 		try {
 			await userService.validateSignUp(code);
 			setLoading(false);
-			navigation.navigate(Routes.SignUpSuccess);
 		} catch (error) {
 			setLoading(false);
 			setErrorMessage(format("login.error.default"));

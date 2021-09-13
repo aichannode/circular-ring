@@ -115,5 +115,5 @@ const SecondaryBigContent = styled.View<{ pressed: boolean }>`
 	width: 100%;
 	height: 56px;
 	border-radius: 28px;
-	background-color: ${({ pressed }) => (pressed ? colors.gray : colors.lightGray)};
+	background-color: ${({ pressed }) => (pressed ? colors.gray : colors.lightgray)};
 `;

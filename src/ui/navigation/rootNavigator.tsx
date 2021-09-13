@@ -11,7 +11,7 @@ import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
 import { RingSetupScreen } from "@ui/screens/ringSetup/ringSetupScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
-import { SignUpSuccessScreen } from "@ui/screens/signup/signUpSuccessScreen";
+import { RingSetupStartScreen } from "@ui/screens/ringSetup/ringSetupStartScreen";
 import React from "react";
 import { Image } from "react-native";
 import { CircleActivityScreen } from "@ui/screens/circleActivity/circleActivityScreen";
@@ -45,6 +45,7 @@ export const RootNavigator: React.FC = () => {
 			</MainStack.Navigator>
 		) : (
 			<SetupStack.Navigator screenOptions={{ headerShown: false }}>
+				<SetupStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />
 				<SetupStack.Screen name={Routes.Pairing} component={RingSetupScreen} />
 			</SetupStack.Navigator>
 		)
@@ -54,7 +55,6 @@ export const RootNavigator: React.FC = () => {
 			<SetupStack.Screen name={Routes.Login} component={LoginScreen} />
 			<SetupStack.Screen name={Routes.SignUpEmail} component={SignUpEmailScreen} />
 			<SetupStack.Screen name={Routes.SignUpConfirmationCode} component={SignUpConfirmationCodeScreen} />
-			<SetupStack.Screen name={Routes.SignUpSuccess} component={SignUpSuccessScreen} />
 		</SetupStack.Navigator>
 	);
 };

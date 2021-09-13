@@ -1,28 +1,23 @@
-import { useServices } from "@core/services";
 import { PrimaryButton } from "@ui/components/buttons";
 import { ScrollScreen } from "@ui/components/scrollScreen";
-import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { BackHandler } from "react-native";
 import styled from "styled-components/native";
 
-export const SignUpSuccessScreen = () => {
-	const { userService } = useServices();
+export const RingSetupStartScreen = () => {
+	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
-
-	const [isLoading, setLoading] = useState(false);
 
 	useEffect(() => {
 		BackHandler.addEventListener("hardwareBackPress", () => true);
 		return () => BackHandler.removeEventListener("hardwareBackPress", () => true);
 	}, []);
 
-	const performLogin = useCallback(async () => {
-		setLoading(true);
-		await userService.loginJustRegisteredUser();
-		setLoading(false);
+	const goToRingSetup = useCallback(() => {
+		navigate(Routes.Pairing);
 	}, []);
 
 	return (
@@ -33,11 +28,7 @@ export const SignUpSuccessScreen = () => {
 			<Check source={require("@assets/images/check.png")} />
 			<Description>{format("signup_success.description")}</Description>
 			<ButtonContainer>
-				{isLoading ? (
-					<Spinner size={24} />
-				) : (
-					<PrimaryButton onPress={performLogin}>{format("signup_success.start")}</PrimaryButton>
-				)}
+				<PrimaryButton onPress={goToRingSetup}>{format("signup_success.start")}</PrimaryButton>
 			</ButtonContainer>
 		</ScrollScreen>
 	);
