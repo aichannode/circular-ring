@@ -86,6 +86,86 @@ export class CognitoAuthService implements AuthService {
 		});
 	}
 
+	async forgotPassword(email: string): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const userData = {
+				Username: email,
+				Pool: this._userPool,
+			};
+			const cognitoUser = new CognitoUser(userData);
+			cognitoUser.forgotPassword({
+				onSuccess: (data) => {
+					console.log("CodeDeliveryData from forgotPassword: " + JSON.stringify(data));
+					resolve();
+				},
+				onFailure: (err) => {
+					this.logger.debug("Authentication failed");
+					this.logger.warn(err.message || JSON.stringify(err));
+					reject(err);
+				},
+			});
+		});
+	}
+
+	async resendResetToken(email: string): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const userData = {
+				Username: email,
+				Pool: this._userPool,
+			};
+			const cognitoUser = new CognitoUser(userData);
+			cognitoUser.resendConfirmationCode((err, result) => {
+				if (err) {
+					this.logger.warn(err.message || JSON.stringify(err));
+					reject(err);
+					return;
+				}
+				console.log("call result: " + result);
+				resolve();
+			});
+		});
+	}
+
+	async confirmResetToken(email: string, resetToken: string): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const userData = {
+				Username: email,
+				Pool: this._userPool,
+			};
+			const cognitoUser = new CognitoUser(userData);
+			cognitoUser.confirmRegistration(resetToken, true, (err, result) => {
+				if (err) {
+					this.logger.warn(err.message || JSON.stringify(err));
+					reject(err);
+					return;
+				}
+				console.log("call result: " + result);
+				resolve();
+			});
+		});
+	}
+
+	async newPassword(email: string, resetToken: string, newPassword: string): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const userData = {
+				Username: email,
+				Pool: this._userPool,
+			};
+			const cognitoUser = new CognitoUser(userData);
+			cognitoUser.confirmPassword(resetToken, newPassword, {
+				onSuccess: (data) => {
+					console.log("CodeDeliveryData from newPassowrd: " + data);
+					resolve();
+				},
+				onFailure: (err) => {
+					this.logger.debug("Authentication failed");
+					this.logger.warn(err.message || JSON.stringify(err));
+					reject(err);
+				},
+			});
+		});
+	}
+
 	async getToken(): Promise<string | undefined> {
 		const token = this.accessToken.get();
 		if (token) {

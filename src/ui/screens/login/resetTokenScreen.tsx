@@ -10,7 +10,7 @@ import styled from "styled-components/native";
 
 export const ResetTokenScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
-	const route = useAppRoute<Routes.ResetCode>();
+	const route = useAppRoute<Routes.ResetToken>();
 	const { userService } = useServices();
 
 	const { format } = useI18n();
@@ -23,7 +23,7 @@ export const ResetTokenScreen: React.FC = () => {
 
 	const resendCode = async () => {
 		try {
-			await userService.resetPassword(email);
+			await userService.resendResetToken(email);
 			setResend(true);
 		} catch (error) {
 			setResend(false);
@@ -44,7 +44,11 @@ export const ResetTokenScreen: React.FC = () => {
 			) : (
 				<Description>{format("forgot_password.reset.code.description", { email })}</Description>
 			)}
-			<SixDigitInputField onSubmit={() => navigation.navigate(Routes.NewPassword, { email })} />
+			<SixDigitInputField
+				onSubmit={() => {
+					navigation.navigate(Routes.NewPassword, { email });
+				}}
+			/>
 			<ButtonContainer>
 				<SecondaryButton onPress={() => navigation.goBack()}>{format("global.back")}</SecondaryButton>
 				<PrimaryButton onPress={() => resendCode()}>{format("forgot_password.reset.code.resend_button")}</PrimaryButton>

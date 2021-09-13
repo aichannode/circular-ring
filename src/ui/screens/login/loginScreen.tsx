@@ -51,7 +51,6 @@ export const LoginScreen = () => {
 				returnKeyType={"next"}
 				blurOnSubmit={false}
 				onSubmit={() => passwordFieldRef.current?.focus()}
-				keyboardType={"email-address"}
 			/>
 			<InputField
 				ref={passwordFieldRef}

@@ -29,10 +29,19 @@ export class UserService {
 	}
 
 	async resetPassword(email: string): Promise<void> {
-		const isEmailValid = await this.circularAuthService.checkEmail(email);
-		if (isEmailValid) {
-			await this.circularAuthService.resetPassword(email);
-		}
+		await this.authService.forgotPassword(email);
+	}
+
+	async resendResetToken(email: string): Promise<void> {
+		await this.authService.resendResetToken(email);
+	}
+
+	async confirmResetToken(email: string, resetToken: string): Promise<void> {
+		await this.authService.confirmResetToken(email, resetToken);
+	}
+
+	async newPassword(email: string, resetToken: string, newPassword: string): Promise<void> {
+		await this.authService.newPassword(email, resetToken, newPassword);
 	}
 
 	async logout() {
