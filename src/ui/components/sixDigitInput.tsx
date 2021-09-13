@@ -1,14 +1,18 @@
 import { colors } from "@ui/styles/colors";
-import React, { useCallback, useRef, useState } from "react";
+import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import { StyleProp, TextInput, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
-interface Props {
+interface SixDigitInputProps {
 	style?: StyleProp<ViewStyle>;
 	onSubmit: (code: string) => void;
 }
 
-export const SixDigitInput: React.FC<Props> = (props: Props) => {
+export interface SixDigitInputRef {
+	getCode: () => string;
+}
+
+export const SixDigitInput = forwardRef<SixDigitInputRef, SixDigitInputProps>((props: SixDigitInputProps, ref) => {
 	const [code1, setCode1] = useState("");
 	const [code2, setCode2] = useState("");
 	const [code3, setCode3] = useState("");
@@ -23,6 +27,10 @@ export const SixDigitInput: React.FC<Props> = (props: Props) => {
 		useRef<TextInput | null>(null), // code5
 		useRef<TextInput | null>(null), // code6
 	];
+
+	useImperativeHandle(ref, () => ({
+		getCode: () => [code1, code2, code3, code4, code5, code6].join(""),
+	}));
 
 	const submitCode = useCallback(() => {
 		props.onSubmit?.([code1, code2, code3, code4, code5, code6].join(""));
@@ -111,7 +119,7 @@ export const SixDigitInput: React.FC<Props> = (props: Props) => {
 			/>
 		</FlexRow>
 	);
-};
+});
 
 const FlexRow = styled.View`
 	flex-direction: row;
@@ -122,6 +130,7 @@ const FlexRow = styled.View`
 
 const InputField = styled(TextInput)`
 	font-size: 22px;
+	min-width: 18px;
 	text-align: center;
 	margin-right: 8px;
 	margin-left: 8px;

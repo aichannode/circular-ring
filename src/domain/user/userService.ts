@@ -81,15 +81,7 @@ export class UserService {
 		const justRegistered = await this.userStorage.loadJustRegisteredUser();
 		if (justRegistered) {
 			await this.authService.validateSignUpConfirmationCode(code, justRegistered.email);
-		} else {
-			throw Error("Cannot retrieve JustRegistered user credentials");
-		}
-	}
-
-	async loginJustRegisteredUser() {
-		const justRegistered = await this.userStorage.loadJustRegisteredUser();
-		if (justRegistered) {
-			await this.authService.loginEmail(justRegistered.email, justRegistered.password);
+			await this.loginWithEmail(justRegistered.email, justRegistered.password);
 			await this.userStorage.removeJustRegisteredUser();
 		} else {
 			throw Error("Cannot retrieve JustRegistered user credentials");

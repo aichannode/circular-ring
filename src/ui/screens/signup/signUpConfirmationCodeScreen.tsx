@@ -1,15 +1,15 @@
 import { useLogger } from "@core/logger/hooks/useLogger";
 import { useServices } from "@core/services";
 import { useUserEmail } from "@domain/user/hooks/useUser";
-import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
+import { PrimaryButton, SecondaryButton, SimpleTextButton } from "@ui/components/buttons";
 import { ScrollScreen } from "@ui/components/scrollScreen";
-import { SixDigitInput } from "@ui/components/sixDigitInput";
+import { SixDigitInput, SixDigitInputRef } from "@ui/components/sixDigitInput";
 import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
-import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { useRoutesNavigation } from "@ui/navigation/routes";
 import { textStyles } from "@ui/styles/textStyles";
 import { obfuscateEmail } from "@ui/utils/emailUtils";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components/native";
 
 export const SignUpConfirmationCodeScreen: React.FC = () => {
@@ -21,6 +21,7 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isLoading, setLoading] = useState(false);
+	const sixDigitInputRef = useRef<SixDigitInputRef>(null);
 
 	const validateCode = useCallback(async (code: string) => {
 		setErrorMessage("");
@@ -32,7 +33,6 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 		try {
 			await userService.validateSignUp(code);
 			setLoading(false);
-			navigation.navigate(Routes.SignUpSuccess);
 		} catch (error) {
 			setLoading(false);
 			setErrorMessage(format("login.error.default"));
@@ -61,14 +61,26 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 			) : (
 				<Description>{format("signup_code.description", { email: !!email ? obfuscateEmail(email) : "" })}</Description>
 			)}
-			<SixDigitInputField onSubmit={validateCode} />
-			<ButtonContainer centerElements={isLoading}>
+			<SixDigitInputField ref={sixDigitInputRef} onSubmit={validateCode} />
+			<ButtonContainer>
 				{isLoading ? (
 					<Spinner size={24} />
 				) : (
 					<>
-						<SecondaryButton onPress={navigation.goBack}>{format("global.back")}</SecondaryButton>
-						<PrimaryButton onPress={resendCode}>{format("signup_code.resend_button")}</PrimaryButton>
+						<RowButtonContainer>
+							<SecondaryButton onPress={navigation.goBack}>{format("global.back")}</SecondaryButton>
+							{/*<PrimaryButton onPress={resendCode}>{format("signup_code.resend_button")}</PrimaryButton>*/}
+							<PrimaryButton
+								onPress={() => {
+									if (sixDigitInputRef.current) {
+										validateCode(sixDigitInputRef.current.getCode());
+									}
+								}}
+							>
+								{format("signup_code.validate_button")}
+							</PrimaryButton>
+						</RowButtonContainer>
+						<SimpleTextButton onPress={resendCode}>{format("signup_code.resend_button")}</SimpleTextButton>
 					</>
 				)}
 			</ButtonContainer>
@@ -121,12 +133,18 @@ const SixDigitInputField = styled(SixDigitInput)`
 	padding-right: 66px;
 `;
 
-const ButtonContainer = styled.View<{ centerElements: boolean }>`
+const ButtonContainer = styled.View`
+	width: 100%;
+	padding: 32px 66px 48px;
+	align-items: center;
+`;
+
+const RowButtonContainer = styled.View`
 	width: 100%;
 	flex-direction: row;
-	justify-content: ${({ centerElements }) => (centerElements ? "center" : "space-between")};
-	padding: 40px 66px;
 	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 16px;
 `;
 
 const contentStyle = {

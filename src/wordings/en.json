@@ -40,6 +40,7 @@
   "signup_code.title": "Check your inbox!",
   "signup_code.description": "Enter the 6-digit code that we sent to <strong>{email}</strong> to activate your account.",
   "signup_code.resend_button": "Resend Code",
+  "signup_code.validate_button": "Validate",
   "signup_success.title": "All Set",
   "signup_success.description": "Now let’s set up your ring. You first need to wake it up by placing it on the charger for at least 15 minutes. Then, press start.",
   "signup_success.start": "Start",

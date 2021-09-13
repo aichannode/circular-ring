@@ -3,7 +3,6 @@ import { ScoreQuality } from "@domain/circleActivity/circleActivityData";
 export const colors = {
 	primary: "#ff3d00",
 	white: "#ffffff",
-	lightGray: "#ebebeb",
 	gray: "#979797",
 	lightgray: "#eeeeee",
 	textPrimary: "#364249",
