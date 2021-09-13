@@ -35,7 +35,7 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 			navigation.navigate(Routes.SignUpSuccess);
 		} catch (error) {
 			setLoading(false);
-			setErrorMessage("login.error.default");
+			setErrorMessage(format("login.error.default"));
 		}
 	}, []);
 
@@ -47,7 +47,7 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 			setLoading(false);
 		} catch (error) {
 			setLoading(false);
-			setErrorMessage("login.error.default");
+			setErrorMessage(format("login.error.default"));
 		}
 	};
 

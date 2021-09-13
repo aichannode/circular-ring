@@ -24,6 +24,9 @@ interface TextFieldProps {
 	keyboardType?: KeyboardTypeOptions;
 	returnKeyType?: ReturnKeyTypeOptions;
 	style?: StyleProp<ViewStyle>;
+	selection?: { start: number; end: number };
+	selectTextOnFocus?: boolean;
+	fontSize?: number;
 }
 
 export interface TextFieldRef {
@@ -41,7 +44,7 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFi
 		},
 	}));
 
-	const eyeIcon = isSecure ? require("@assets/images/eye_strike.png") : require("@assets/images/eye.png");
+	const eyeIcon = isSecure ? require("../../assets/images/eye_strike.png") : require("../../assets/images/eye.png");
 
 	return (
 		<Container style={props.style}>
@@ -49,6 +52,9 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFi
 			<InputView isError={props.isError ? props.isError : false}>
 				<Field
 					ref={inputRef}
+					selection={props.selection}
+					selectTextOnFocus={props.selectTextOnFocus}
+					style={{ fontSize: props.fontSize }}
 					onChangeText={props.onValueChanged}
 					onSubmitEditing={props.onSubmit}
 					placeholderTextColor={colors.textPlaceholder}

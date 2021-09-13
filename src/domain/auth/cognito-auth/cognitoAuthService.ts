@@ -87,11 +87,11 @@ export class CognitoAuthService implements AuthService {
 		});
 	}
 
-	async validateSignUpConfirmationCode(code: string): Promise<void> {
+	async validateSignUpConfirmationCode(code: string, email: string): Promise<void> {
 		this.logger.debug("Cognito validation");
 		return new Promise((resolve, reject) => {
 			this.logger.debug(" - start validation");
-			const currentUser = this._cognitoUser.get();
+			const currentUser = new CognitoUser({ Username: email, Pool: this._userPool });
 			if (!!currentUser) {
 				this.logger.debug(" - validation process has user : perform validation");
 				currentUser.confirmRegistration(code, true, async (err, result) => {

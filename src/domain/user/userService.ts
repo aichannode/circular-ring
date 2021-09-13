@@ -22,8 +22,15 @@ export class UserService {
 
 	async loginWithEmail(email: string, password: string): Promise<void> {
 		this.logger.debug("Calling authService");
-		await this.authService.loginEmail(email, password);
-		// await this.retrieveUser();
+		try {
+			await this.authService.loginEmail(email, password);
+			// await this.retrieveUser();
+		} catch (error) {
+			if ((error as { code: string }).code === "UserNotConfirmedException") {
+				await this.userStorage.saveJustRegisteredUser(email, password);
+			}
+			throw error;
+		}
 	}
 
 	get currentUserEmail() {
@@ -59,7 +66,12 @@ export class UserService {
 	}
 
 	async validateSignUp(code: string) {
-		await this.authService.validateSignUpConfirmationCode(code);
+		const justRegistered = await this.userStorage.loadJustRegisteredUser();
+		if (justRegistered) {
+			await this.authService.validateSignUpConfirmationCode(code, justRegistered.email);
+		} else {
+			throw Error("Cannot retrieve JustRegistered user credentials");
+		}
 	}
 
 	async loginJustRegisteredUser() {

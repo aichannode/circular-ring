@@ -6,7 +6,7 @@ export interface AuthService {
 
 	signUpEmail(email: string, password: string): Promise<void>;
 	resendSignUpValidationCode(): Promise<void>;
-	validateSignUpConfirmationCode(code: string): Promise<void>;
+	validateSignUpConfirmationCode(code: string, email: string): Promise<void>;
 
 	loginEmail(email: string, password: string): Promise<void>;
 	getToken(): Promise<string | undefined>;

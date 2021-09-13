@@ -4,6 +4,7 @@ import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { TextField } from "@ui/components/textField";
 import { useI18n } from "@ui/i18n";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback, useRef, useState } from "react";
 import { Keyboard, TextInput } from "react-native";
@@ -12,6 +13,7 @@ import styled from "styled-components/native";
 export const LoginScreen = () => {
 	const { format } = useI18n();
 	const { userService } = useServices();
+	const { navigate } = useRoutesNavigation();
 
 	const [email, setEmail] = useState("");
 
@@ -34,6 +36,8 @@ export const LoginScreen = () => {
 				setLoading(false);
 				if (code === "NotAuthorizedException") {
 					setErrorMessage(format("login.error.invalid_credentials"));
+				} else if ("UserNotConfirmedException") {
+					navigate(Routes.SignUpConfirmationCode);
 				} else {
 					setErrorMessage(format("login.error.default"));
 				}
