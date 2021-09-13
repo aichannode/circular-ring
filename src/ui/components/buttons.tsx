@@ -10,6 +10,7 @@ interface CircularButtonProps {
 	onPress: () => void;
 	light?: boolean;
 }
+
 export const PrimaryButton: React.FC<CircularButtonProps> = ({ onPress, style, light, children }) => {
 	return (
 		<Pressable onPress={onPress} style={style}>
@@ -67,6 +68,14 @@ export const SecondaryBigButton: React.FC<CircularButtonProps> = ({ onPress, sty
 	);
 };
 
+export const SimpleTextButton: React.FC<CircularButtonProps> = ({ onPress, style, children }) => {
+	return (
+		<Pressable onPress={onPress} style={style}>
+			<SimpleTextButtonText>{children}</SimpleTextButtonText>
+		</Pressable>
+	);
+};
+
 const PrimaryButtonText = styled.Text<{ light?: boolean }>`
 	${textStyles.primary};
 	color: ${colors.white};
@@ -85,6 +94,12 @@ const PrimaryBigButtonText = styled.Text`
 const GrayButtonText = styled.Text`
 	${textStyles.primary};
 	color: ${colors.textPrimary};
+`;
+
+const SimpleTextButtonText = styled.Text`
+	${textStyles.primary};
+	color: ${colors.textPrimary};
+	text-decoration: underline;
 `;
 
 const PrimaryContent = styled(LinearGradient)<{ light?: boolean }>`
