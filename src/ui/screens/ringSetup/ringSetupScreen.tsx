@@ -1,5 +1,4 @@
 import { useServices } from "@core/services";
-import { delay } from "@core/utils";
 import { DeviceSetupState } from "@domain/device/deviceService";
 import { useScannedDevices, useSetupState } from "@domain/device/hooks";
 import { PrimaryButton } from "@ui/components/buttons";
@@ -16,7 +15,7 @@ import styled from "styled-components/native";
 
 export const RingSetupScreen: React.FC = () => {
 	const { format } = useI18n();
-	const { bluetoothService, deviceService } = useServices();
+	const { bluetoothService, deviceService, ringService } = useServices();
 
 	const setupState = useSetupState();
 	const devices = useScannedDevices();
@@ -27,7 +26,6 @@ export const RingSetupScreen: React.FC = () => {
 		}
 	}, [setupState]);
 
-	const setupUserRing = async () => delay(2000); // Mock before having user signup and network layer
 	const isConnecting = setupState === DeviceSetupState.CONNECTING;
 
 	return (
@@ -76,7 +74,7 @@ export const RingSetupScreen: React.FC = () => {
 												onPress={async () => {
 													deviceService.stopScan();
 													await deviceService.connect(device);
-													await setupUserRing();
+													await ringService.registerCurrentRing();
 												}}
 											>
 												<Image source={require("@assets/images/ring.png")} />
