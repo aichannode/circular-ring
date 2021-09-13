@@ -137,7 +137,6 @@ export class CognitoAuthService implements AuthService {
 			const cognitoUser = new CognitoUser(userData);
 			cognitoUser.forgotPassword({
 				onSuccess: (data) => {
-					console.log("CodeDeliveryData from forgotPassword: " + JSON.stringify(data));
 					resolve();
 				},
 				onFailure: (err) => {
@@ -162,26 +161,6 @@ export class CognitoAuthService implements AuthService {
 					reject(err);
 					return;
 				}
-				console.log("call result: " + result);
-				resolve();
-			});
-		});
-	}
-
-	async confirmResetToken(email: string, resetToken: string): Promise<void> {
-		return new Promise((resolve, reject) => {
-			const userData = {
-				Username: email,
-				Pool: this._userPool,
-			};
-			const cognitoUser = new CognitoUser(userData);
-			cognitoUser.confirmRegistration(resetToken, true, (err, result) => {
-				if (err) {
-					this.logger.warn(err.message || JSON.stringify(err));
-					reject(err);
-					return;
-				}
-				console.log("call result: " + result);
 				resolve();
 			});
 		});
@@ -196,14 +175,11 @@ export class CognitoAuthService implements AuthService {
 			const cognitoUser = new CognitoUser(userData);
 			cognitoUser.confirmPassword(resetToken, newPassword, {
 				onSuccess: (data) => {
-					console.log("CodeDeliveryData from newPassowrd: " + data);
 					resolve();
 				},
 				onFailure: (err) => {
 					this.logger.debug("Authentication failed");
-					this.logger.debug("VerificationCode: " + resetToken + " , newPassword: " + newPassword);
 					this.logger.warn(err.message || JSON.stringify(err));
-					this.logger.warn(err);
 					reject(err);
 				},
 			});
