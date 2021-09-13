@@ -9,6 +9,8 @@ export interface AuthService {
 	validateSignUpConfirmationCode(code: string, email: string): Promise<void>;
 
 	loginEmail(email: string, password: string): Promise<void>;
+	forgotPassword(email: string): Promise<void>;
+	newPassword(email: string, resetToken: string, newPassword: string): Promise<void>;
 	getToken(): Promise<string | undefined>;
 	logout(): Promise<void>;
 }

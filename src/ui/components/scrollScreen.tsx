@@ -20,7 +20,6 @@ const ScrollView = styled.ScrollView`
 
 const Content = styled.View`
 	flex: 1;
-	align-items: center;
 	justify-content: center;
 `;
 

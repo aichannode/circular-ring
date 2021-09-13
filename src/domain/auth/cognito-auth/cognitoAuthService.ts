@@ -128,6 +128,46 @@ export class CognitoAuthService implements AuthService {
 		});
 	}
 
+	async forgotPassword(email: string): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const userData = {
+				Username: email,
+				Pool: this._userPool,
+			};
+			const cognitoUser = new CognitoUser(userData);
+			cognitoUser.forgotPassword({
+				onSuccess: (data) => {
+					resolve();
+				},
+				onFailure: (err) => {
+					this.logger.debug("Authentication failed");
+					this.logger.warn(err.message || JSON.stringify(err));
+					reject(err);
+				},
+			});
+		});
+	}
+
+	async newPassword(email: string, resetToken: string, newPassword: string): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const userData = {
+				Username: email,
+				Pool: this._userPool,
+			};
+			const cognitoUser = new CognitoUser(userData);
+			cognitoUser.confirmPassword(resetToken, newPassword, {
+				onSuccess: (data) => {
+					resolve();
+				},
+				onFailure: (err) => {
+					this.logger.debug("Authentication failed");
+					this.logger.warn(err.message || JSON.stringify(err));
+					reject(err);
+				},
+			});
+		});
+	}
+
 	async getToken(): Promise<string | undefined> {
 		const token = this._accessToken.get();
 		if (token && token.getExpiration() * SEC_TO_MILLISEC > Date.now()) {

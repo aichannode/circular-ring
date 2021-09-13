@@ -37,6 +37,18 @@ export class UserService {
 		return this.authService.userEmail;
 	}
 
+	async resetPassword(email: string): Promise<void> {
+		await this.authService.forgotPassword(email);
+	}
+
+	async resendResetToken(email: string): Promise<void> {
+		await this.authService.forgotPassword(email);
+	}
+
+	async newPassword(email: string, resetToken: string, newPassword: string): Promise<void> {
+		await this.authService.newPassword(email, resetToken, newPassword);
+	}
+
 	async logout() {
 		await this.authService.logout();
 		this._user.set(null);

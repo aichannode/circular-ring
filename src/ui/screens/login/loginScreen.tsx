@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
+import { PrimaryButton, SecondaryButton, SimpleTextButton } from "@ui/components/buttons";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { TextField } from "@ui/components/textField";
@@ -11,6 +11,7 @@ import { Keyboard, TextInput } from "react-native";
 import styled from "styled-components/native";
 
 export const LoginScreen = () => {
+	const navigation = useRoutesNavigation();
 	const { format } = useI18n();
 	const { userService } = useServices();
 	const { navigate } = useRoutesNavigation();
@@ -83,6 +84,9 @@ export const LoginScreen = () => {
 					</>
 				)}
 			</ButtonContainer>
+			<ForgotButton onPress={() => navigation.navigate(Routes.ForgotPassword, { email })}>
+				{format("forgot_password.question")}
+			</ForgotButton>
 		</ScrollScreen>
 	);
 };
@@ -90,17 +94,20 @@ export const LoginScreen = () => {
 const Logo = styled.Image`
 	margin-top: 70px;
 	margin-bottom: 70px;
+	align-self: center;
 `;
 
 const Title = styled.Text`
 	${textStyles.mediumTitle};
 	margin-bottom: 30px;
+	align-self: center;
 `;
 
 const ErrorMessage = styled.Text`
 	${textStyles.errorMessage};
 	margin-bottom: 20px;
 	text-align: center;
+	align-self: center;
 `;
 
 const InputField = styled(TextField)`
@@ -114,4 +121,9 @@ const ButtonContainer = styled.View`
 	align-items: center;
 	margin-top: 80px;
 	margin-bottom: 40px;
+	margin-horizontal: 10px;
+`;
+
+const ForgotButton = styled(SimpleTextButton)`
+	align-items: center;
 `;
