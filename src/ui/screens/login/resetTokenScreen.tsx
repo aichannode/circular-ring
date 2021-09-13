@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
+import { PrimaryButton, SecondaryButton, SimpleTextButton } from "@ui/components/buttons";
 import { Divider } from "@ui/components/divider";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SixDigitInput } from "@ui/components/sixDigitInput";
@@ -130,9 +130,7 @@ export const ResetTokenScreen: React.FC = () => {
 				)}
 			</ButtonContainer>
 
-			<ResendButton onPress={resendCode}>
-				<Text>{format("forgot_password.reset.code.resend_button")}</Text>
-			</ResendButton>
+			<ResendButton onPress={resendCode}>{format("forgot_password.reset.code.resend_button")}</ResendButton>
 		</ScrollScreen>
 	);
 };
@@ -205,8 +203,7 @@ const ButtonContainer = styled.View<{ centerElements: boolean }>`
 	align-items: center;
 `;
 
-const ResendButton = styled.TouchableOpacity`
-	background-color: transparent;
+const ResendButton = styled(SimpleTextButton)`
 	align-items: center;
 	margin-bottom: 20px;
 `;

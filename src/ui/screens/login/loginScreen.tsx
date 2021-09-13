@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
+import { PrimaryButton, SecondaryButton, SimpleTextButton } from "@ui/components/buttons";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { TextField } from "@ui/components/textField";
@@ -85,7 +85,7 @@ export const LoginScreen = () => {
 				)}
 			</ButtonContainer>
 			<ForgotButton onPress={() => navigation.navigate(Routes.ForgotPassword, { email })}>
-				<Text>{format("forgot_password.question")}</Text>
+				{format("forgot_password.question")}
 			</ForgotButton>
 		</ScrollScreen>
 	);
@@ -124,7 +124,6 @@ const ButtonContainer = styled.View`
 	margin-horizontal: 10px;
 `;
 
-const ForgotButton = styled.TouchableOpacity`
-	background-color: transparent;
+const ForgotButton = styled(SimpleTextButton)`
 	align-items: center;
 `;
