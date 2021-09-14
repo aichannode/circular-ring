@@ -74,3 +74,15 @@ export const Row = React.forwardRef<View, LayoutProps>(({ gap, children, ...prop
 export const Grow = styled.View`
 	flex: 1;
 `;
+
+export const responsiveCenter = (maxWidth = 250, horizontalPadding = 20, align: FlexAlign = "center") => css`
+	width: 100%;
+	max-width: ${maxWidth}px;
+	padding-horizontal: ${horizontalPadding}px;
+	align-items: ${align};
+	align-self: center;
+`;
+
+export const ResponsiveCenterView = styled.View<{ maxWidth?: number; horizontalPadding?: number; align?: FlexAlign }>`
+	${({ maxWidth, horizontalPadding, align }) => responsiveCenter(maxWidth, horizontalPadding, align)};
+`;

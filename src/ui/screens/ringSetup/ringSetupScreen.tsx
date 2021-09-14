@@ -3,7 +3,8 @@ import { DeviceSetupState } from "@domain/device/deviceService";
 import { useScannedDevices, useSetupState } from "@domain/device/hooks";
 import { PrimaryButton } from "@ui/components/buttons";
 import { Divider } from "@ui/components/divider";
-import { Stack } from "@ui/components/layout";
+import { ResponsiveCenterView, Stack } from "@ui/components/layout";
+import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { PrimaryText, SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
@@ -51,22 +52,24 @@ export const RingSetupScreen: React.FC = () => {
 					case DeviceSetupState.CONNECTING:
 						return (
 							<>
-								<Instructions hidden={isConnecting}>
-									<Image source={require("@assets/images/clock.png")} />
-									<InstructionsText>{format("setup.scan.enabled.title")}</InstructionsText>
-								</Instructions>
-								<Stack align="center">
-									<Image source={require("@assets/images/ringShadow.png")} style={{ position: "absolute" }} />
-									<InstructionsArrow source={require("@assets/images/arrowDown.png")} hidden={isConnecting} />
-									<Image source={require("@assets/images/ringBig.png")} />
-									<Message>
-										{isConnecting ? format("setup.connection.pending") : format("setup.scan.enabled.message")}
-									</Message>
-								</Stack>
+								<ResponsiveCenterView>
+									<Instructions hidden={isConnecting}>
+										<Image source={require("@assets/images/clock.png")} />
+										<InstructionsText>{format("setup.scan.enabled.title")}</InstructionsText>
+									</Instructions>
+									<Stack align="center">
+										<Image source={require("@assets/images/ringShadow.png")} style={{ position: "absolute" }} />
+										<InstructionsArrow source={require("@assets/images/arrowDown.png")} hidden={isConnecting} />
+										<Image source={require("@assets/images/ringBig.png")} />
+										<Message>
+											{isConnecting ? format("setup.connection.pending") : format("setup.scan.enabled.message")}
+										</Message>
+									</Stack>
+								</ResponsiveCenterView>
 								{isConnecting ? (
 									<Spinner />
 								) : (
-									<>
+									<ResponsiveCenterView maxWidth={330}>
 										<Divider />
 										{devices.map((device) => (
 											<DeviceWrapper
@@ -81,7 +84,7 @@ export const RingSetupScreen: React.FC = () => {
 												<DeviceName>{device.name}</DeviceName>
 											</DeviceWrapper>
 										))}
-									</>
+									</ResponsiveCenterView>
 								)}
 							</>
 						);
@@ -91,11 +94,10 @@ export const RingSetupScreen: React.FC = () => {
 	);
 };
 
-const Container = styled.View`
-	flex: 1;
+const Container = styled(ScrollScreen)`
 	align-items: center;
-	padding: 50px;
-	background-color: ${colors.white};
+	justify-content: flex-start;
+	padding-top: 50px;
 `;
 
 const Message = styled(SecondaryText)`

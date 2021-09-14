@@ -13,7 +13,7 @@ interface RingBatteryViewProps {
 	detailed?: boolean;
 }
 export const RingBatteryView: React.FC<RingBatteryViewProps> = ({ style, size, detailed }) => {
-	const strokeWidth = Math.round(size / 9);
+	const strokeWidth = Math.round(size / (detailed ? 12 : 9));
 	const fontSize = Math.round(size / (detailed ? 4 : 2.5));
 	const { format } = useI18n();
 

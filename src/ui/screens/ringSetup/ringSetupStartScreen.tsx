@@ -1,4 +1,5 @@
 import { PrimaryButton } from "@ui/components/buttons";
+import { ResponsiveCenterView } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
@@ -21,62 +22,40 @@ export const RingSetupStartScreen = () => {
 	}, []);
 
 	return (
-		<ScrollScreen contentContainerStyle={contentStyle}>
+		<ScrollScreen>
 			<Logo source={require("@assets/images/circularOffcial.png")} />
 			<HeaderImage source={require("@assets/images/signup_runner.jpg")} />
-			<Title>{format("signup_success.title")}</Title>
-			<Check source={require("@assets/images/check.png")} />
-			<Description>{format("signup_success.description")}</Description>
-			<ButtonContainer>
+			<ResponsiveCenterView align="center">
+				<Title>{format("signup_success.title")}</Title>
+				<Check source={require("@assets/images/check.png")} />
+				<Description>{format("signup_success.description")}</Description>
 				<PrimaryButton onPress={goToRingSetup}>{format("signup_success.start")}</PrimaryButton>
-			</ButtonContainer>
+			</ResponsiveCenterView>
 		</ScrollScreen>
 	);
 };
 
 const Logo = styled.Image`
-	margin-top: 70px;
-	margin-bottom: 70px;
+	margin-bottom: 50px;
 	align-self: center;
 `;
 
 const HeaderImage = styled.Image`
 	width: 100%;
-	flex-grow: 1;
 `;
 
 const Title = styled.Text`
 	${textStyles.mediumTitle};
-	flex-grow: 1;
-	align-self: center;
 	margin-top: 60px;
 `;
 
 const Check = styled.Image`
 	margin-top: 32px;
 	margin-bottom: 32px;
-	align-self: center;
 `;
 
 const Description = styled.Text`
 	${textStyles.primary};
-	flex-grow: 1;
-	align-self: center;
-	justify-content: center;
 	margin-bottom: 30px;
-	padding: 0 66px;
 	text-align: center;
 `;
-
-const ButtonContainer = styled.View`
-	width: 100%;
-	justify-content: space-between;
-	padding: 40px 66px;
-	align-items: center;
-`;
-
-const contentStyle = {
-	flexGrow: 1,
-	paddingLeft: 0,
-	paddingRight: 0,
-};
