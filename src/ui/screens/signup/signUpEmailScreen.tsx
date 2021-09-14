@@ -13,7 +13,7 @@ import { isEmail } from "@ui/utils/emailUtils";
 import { isCorrectPassword } from "@ui/utils/passwordUtils";
 import { openURL } from "@ui/utils/urlUtils";
 import React, { useCallback, useRef, useState } from "react";
-import { Pressable, TextInput } from "react-native";
+import { TextInput } from "react-native";
 import styled from "styled-components/native";
 
 export const SignUpEmailScreen = () => {
@@ -67,7 +67,7 @@ export const SignUpEmailScreen = () => {
 	return (
 		<ScrollScreen>
 			<Logo source={require("@assets/images/circularOffcial.png")} />
-			<ResponsiveCenterView align="center">
+			<ResponsiveCenterView>
 				<Title>{format("signup.title")}</Title>
 				{errorMessage.length > 0 ? (
 					<ErrorMessage>{errorMessage}</ErrorMessage>
@@ -120,13 +120,14 @@ export const SignUpEmailScreen = () => {
 				</ButtonContainer>
 				<TermsAndConditions>
 					{format("signup.terms.link_prefix")}
-					<Pressable
+					<TermsLink
 						onPress={() => {
 							openURL("https://www.circular.xyz/en/terms-of-use");
 						}}
 					>
-						<TermsLink>{format("signup.terms.link")}</TermsLink>
-					</Pressable>
+						{" "}
+						{format("signup.terms.link")}
+					</TermsLink>
 				</TermsAndConditions>
 			</ResponsiveCenterView>
 		</ScrollScreen>
@@ -172,5 +173,4 @@ const TermsAndConditions = styled.Text`
 
 const TermsLink = styled(TermsAndConditions)`
 	color: ${colors.primary};
-	margin-bottom: 20px;
 `;

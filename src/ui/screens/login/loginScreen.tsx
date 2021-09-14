@@ -54,7 +54,7 @@ export const LoginScreen = () => {
 	return (
 		<ScrollScreen>
 			<Logo source={require("@assets/images/circularOffcial.png")} />
-			<ResponsiveCenterView align="center">
+			<ResponsiveCenterView>
 				<Title>{format("login.title")}</Title>
 				<ErrorMessage>{errorMessage}</ErrorMessage>
 				<InputField

@@ -25,7 +25,7 @@ export const RingSetupStartScreen = () => {
 		<ScrollScreen>
 			<Logo source={require("@assets/images/circularOffcial.png")} />
 			<HeaderImage source={require("@assets/images/signup_runner.jpg")} />
-			<ResponsiveCenterView align="center">
+			<ResponsiveCenterView>
 				<Title>{format("signup_success.title")}</Title>
 				<Check source={require("@assets/images/check.png")} />
 				<Description>{format("signup_success.description")}</Description>
