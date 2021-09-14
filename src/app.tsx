@@ -1,5 +1,5 @@
 import { useSentry } from "@core/logger/hooks/useSentry";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { RootNavigator } from "@ui/navigation/rootNavigator";
 import React, { useEffect, useState } from "react";
 import { IntlProvider } from "react-intl";
@@ -12,6 +12,7 @@ import SplashScreen from "react-native-splash-screen";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 
+const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: "white" } };
 // @refresh reset
 export const App = () => {
 	const locale = getPreferredLangageCode(Object.keys(translations)) as "en";
@@ -29,7 +30,7 @@ export const App = () => {
 		<IntlProvider locale={locale} messages={translations[locale]}>
 			<SafeAreaProvider>
 				<ServicesProvider>
-					<NavigationContainer>
+					<NavigationContainer theme={theme}>
 						<RootNavigator />
 					</NavigationContainer>
 				</ServicesProvider>
