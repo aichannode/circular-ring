@@ -24,6 +24,13 @@ export const CirclesBanner: React.FC<CirclesBannerProps> = ({ style }) => {
 						<CircleLabel>{format("home.circles.activity.label")}</CircleLabel>
 					</Stack>
 				</CircleView>
+				{/* TODO DRY */}
+				<CircleView onPress={() => navigation.navigate(Routes.Live)}>
+					<Stack gap={10} align="center">
+						<Image source={require("@assets/images/circleLive.png")} />
+						<CircleLabel>{format("home.circles.live.label")}</CircleLabel>
+					</Stack>
+				</CircleView>
 			</Row>
 		</Container>
 	);

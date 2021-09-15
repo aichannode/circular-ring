@@ -39,6 +39,10 @@ export const textStyles = {
 		font-size: 14px;
 		color: ${colors.textSecondary};
 	`,
+	tertiary: css`
+		font-size: 12px;
+		color: ${colors.textTertiary};
+	`,
 	title: css`
 		font-size: 18px;
 		font-weight: 500;

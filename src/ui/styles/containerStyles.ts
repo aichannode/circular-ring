@@ -19,3 +19,11 @@ export const roundedWhiteCardStyle = css`
 	shadow-radius: 18px;
 	elevation: 10;
 `;
+
+export const shadow = (offset = "0 10px", radius = 13, opacity = 0.3) => css`
+	shadow-color: #000000;
+	shadow-offset: ${offset};
+	shadow-radius: ${radius}px;
+	shadow-opacity: ${opacity};
+	elevation: 10;
+`;

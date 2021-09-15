@@ -7,6 +7,7 @@ export const colors = {
 	lightgray: "#eeeeee",
 	textPrimary: "#364249",
 	textSecondary: "#333333",
+	textTertiary: "#8A8A8E",
 	textPlaceholder: "#657884",
 	green: "#2bd866",
 	orange: "#ff9334",

@@ -3,26 +3,27 @@ import { useAccountLinked } from "@domain/device/hooks";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { DrawerContent } from "@ui/navigation/drawer/drawerContent";
-import { LoginOrSignUpScreen } from "@ui/screens/loginOrRegister/loginOrSignUpScreen";
 import { MyRingBattery } from "@ui/components/navigation/myRingBattery";
 import { useI18n } from "@ui/i18n";
+import { DrawerContent } from "@ui/navigation/drawer/drawerContent";
 import { Routes } from "@ui/navigation/routes";
+import { CircleActivityScreen } from "@ui/screens/circleActivity/circleActivityScreen";
+import { CircleLiveScreen } from "@ui/screens/circleLive/circleLiveScreen";
 import { HomeScreen } from "@ui/screens/home/homeScreen";
 import { ForgotPasswordScreen } from "@ui/screens/login/forgotPasswordScreen";
 import { LoginScreen } from "@ui/screens/login/loginScreen";
 import { ResetTokenScreen } from "@ui/screens/login/resetTokenScreen";
+import { LoginOrSignUpScreen } from "@ui/screens/loginOrRegister/loginOrSignUpScreen";
 import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
 import { ProfileScreen } from "@ui/screens/profile/profileScreen";
 import { RingSetupScreen } from "@ui/screens/ringSetup/ringSetupScreen";
+import { RingSetupStartScreen } from "@ui/screens/ringSetup/ringSetupStartScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
-import { RingSetupStartScreen } from "@ui/screens/ringSetup/ringSetupStartScreen";
 import { TermsAndConditionsScreen } from "@ui/screens/signup/termsAndConditionsScreen";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import { Image, Pressable } from "react-native";
-import { CircleActivityScreen } from "@ui/screens/circleActivity/circleActivityScreen";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -82,6 +83,11 @@ export const RootNavigator: React.FC = () => {
 				name={Routes.Activity}
 				component={CircleActivityScreen}
 				options={{ title: format("header.activity"), headerRight: undefined }}
+			/>
+			<MainStack.Screen
+				name={Routes.Live}
+				component={CircleLiveScreen}
+				options={{ title: format("header.live"), headerRight: undefined }}
 			/>
 		</MainStack.Navigator>
 	);
