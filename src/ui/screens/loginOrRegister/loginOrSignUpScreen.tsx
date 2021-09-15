@@ -1,6 +1,7 @@
 import { PrimaryBigButton, SecondaryBigButton } from "@ui/components/buttons";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { colors } from "@ui/styles/colors";
 import React, { useCallback } from "react";
 import styled from "styled-components/native";
 
@@ -31,6 +32,7 @@ export const LoginOrSignUpScreen = () => {
 const Container = styled.View`
 	flex: 1;
 	justify-content: center;
+	background-color: ${colors.white};
 `;
 
 const LogoBig = styled.Image`
