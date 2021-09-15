@@ -5,6 +5,7 @@ import { RingApi } from "./ringApi";
 import { deserializeBattery, RingBattery } from "./ringBattery";
 import { ringDataEOF } from "./ringData";
 import { RingDataStorage } from "./ringDataStorage";
+import { deserializeLiveData, RingLiveData } from "./ringLiveData";
 
 const syncFinishedTimeout = 3000;
 
@@ -18,9 +19,11 @@ export enum SyncState {
 export class RingService {
 	private _ringBattery = observable<RingBattery | null>(null);
 	private _syncState = observable<SyncState>(SyncState.NONE);
+	private _ringLiveData = observable<{ listening: boolean; data?: RingLiveData | null }>({ listening: false });
 
 	ringBattery = this._ringBattery.readOnly();
 	syncState = this._syncState.readOnly();
+	ringLiveData = this._ringLiveData.readOnly();
 
 	constructor(
 		private readonly deviceService: DeviceService,
@@ -37,8 +40,25 @@ export class RingService {
 		this.syncData();
 	}
 
+	listenLiveData() {
+		this._ringLiveData.set({ listening: true });
+		return this.deviceService.listen("FBL1", "FB", (value) => {
+			if (value) {
+				const deserializedData = deserializeLiveData(value);
+				if (deserializedData) {
+					this._ringLiveData.update((c) => ({ ...c, data: deserializedData }));
+				}
+			}
+		});
+	}
+
+	stopLiveData() {
+		this._ringLiveData.update((c) => ({ ...c, listening: false }));
+		return this.deviceService.write("FBL0");
+	}
+
 	listenBattery() {
-		return this.deviceService.listen(Channel.BATTERY, (value) => {
+		return this.deviceService.listen(Channel.BATTERY, Channel.BATTERY, (value) => {
 			if (value) {
 				this._ringBattery.set(deserializeBattery(value));
 			}
@@ -67,7 +87,7 @@ export class RingService {
 			const allData = await new Promise<string>(async (resolve) => {
 				let data = waitingData ?? "";
 
-				const unsubscribe = await this.deviceService.listen(Channel.DATA, (value) => {
+				const unsubscribe = await this.deviceService.listen(Channel.DATA, Channel.DATA, (value) => {
 					this.log("FBC value", value);
 					data += value;
 					if (data !== ringDataEOF) {

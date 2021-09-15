@@ -214,7 +214,7 @@ export class DeviceService {
 		return timedPromise(scanPromise, findDeviceTimeout);
 	}
 
-	async listen(channel: Channel, cb: (response: string) => void) {
+	async listen(channel: string, returnChannel: string, cb: (response: string) => void) {
 		const device = this._connectedDevice.get() ?? (await observableToPromise(this._connectedDevice));
 		const monitoring = this._monitoring.get() || (await observableToPromise(this._monitoring));
 		if (!device) {
@@ -226,10 +226,10 @@ export class DeviceService {
 			throw "Not monitoring";
 		}
 
-		this.log("Listening to", channel);
+		this.log("Listening to", channel, "->", returnChannel);
 
 		const listener = (output: string) => {
-			if (output.startsWith(channel)) {
+			if (output.startsWith(returnChannel)) {
 				cb(output);
 			}
 		};
