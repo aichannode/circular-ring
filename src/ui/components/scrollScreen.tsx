@@ -1,4 +1,3 @@
-import { colors } from "@ui/styles/colors";
 import React from "react";
 import { Platform, ScrollViewProps } from "react-native";
 import styled from "styled-components/native";

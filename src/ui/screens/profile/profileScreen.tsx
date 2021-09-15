@@ -10,7 +10,6 @@ export const ProfileScreen = () => {
 	const { userService } = useServices();
 
 	const logout = useCallback(async () => {
-		console.log("Starting logout");
 		await userService.logout();
 	}, []);
 

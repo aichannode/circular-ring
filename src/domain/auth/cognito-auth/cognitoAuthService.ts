@@ -116,6 +116,7 @@ export class CognitoAuthService implements AuthService {
 
 			cognitoUser.authenticateUser(authenticationDetails, {
 				onSuccess: (result) => {
+					this._cognitoUser.set(cognitoUser);
 					this._accessToken.set(result.getAccessToken());
 					resolve();
 				},
