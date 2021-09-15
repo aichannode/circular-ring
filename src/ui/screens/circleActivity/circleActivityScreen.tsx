@@ -138,22 +138,22 @@ export const CircleActivityScreen: React.FC = () => {
 				<ElementStack gap={10}>
 					{
 						scoreDetailsData
-							.map(
-								({ description, label, ...data }, index) =>
-									// <React.Fragment key={label}>
-									[
-										<ScoreGauge key={label} {...data} label={label} onPress={() => setFocusedGauge(index)} />,
-										focusedGauge === index && (
-											<GaugeDescription
-												key={label + "description"}
-												label={label}
-												description={description}
-												onClose={() => setFocusedGauge(null)}
-											/>
-										),
-									]
-								// </React.Fragment>
-							)
+							.map(({ description, label, ...data }, index) => [
+								<ScoreGauge
+									key={label}
+									{...data}
+									label={label}
+									onPress={() => setFocusedGauge((current) => (current === index ? null : index))}
+								/>,
+								focusedGauge === index && (
+									<GaugeDescription
+										key={label + "description"}
+										label={label}
+										description={description}
+										onClose={() => setFocusedGauge(null)}
+									/>
+								),
+							])
 							.flatMap((x) => x)
 							.filter(Boolean) as JSX.Element[]
 					}

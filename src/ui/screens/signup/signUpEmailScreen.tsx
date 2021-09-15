@@ -1,6 +1,7 @@
 import { useLogger } from "@core/logger/hooks/useLogger";
 import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
+import { ResponsiveCenterView, Row } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { TextField } from "@ui/components/textField";
@@ -12,7 +13,7 @@ import { isEmail } from "@ui/utils/emailUtils";
 import { isCorrectPassword } from "@ui/utils/passwordUtils";
 import { openURL } from "@ui/utils/urlUtils";
 import React, { useCallback, useRef, useState } from "react";
-import { Pressable, TextInput } from "react-native";
+import { TextInput } from "react-native";
 import styled from "styled-components/native";
 
 export const SignUpEmailScreen = () => {
@@ -66,69 +67,76 @@ export const SignUpEmailScreen = () => {
 	return (
 		<ScrollScreen>
 			<Logo source={require("@assets/images/circularOffcial.png")} />
-			<Title>{format("signup.title")}</Title>
-			{errorMessage.length > 0 ? (
-				<ErrorMessage>{errorMessage}</ErrorMessage>
-			) : (
-				<Subtitle>{format("signup.subtitle")}</Subtitle>
-			)}
-			<InputField
-				title={format("signup.email.title")}
-				placeholder={format("signup.email.placeholder")}
-				value={email}
-				onValueChanged={setEmail}
-				keyboardType={"email-address"}
-				returnKeyType={"next"}
-				blurOnSubmit={false}
-				onSubmit={() => passwordFieldRef.current?.focus()}
-			/>
-			<InputField
-				ref={passwordFieldRef}
-				title={format("signup.password.title")}
-				placeholder={format("signup.password.placeholder")}
-				canBeSecure
-				value={password}
-				onValueChanged={setPassword}
-				returnKeyType={"next"}
-				blurOnSubmit={false}
-				onSubmit={() => confirmPasswordFieldRef.current?.focus()}
-			/>
-			<InputField
-				ref={confirmPasswordFieldRef}
-				title={format("signup.confirm_password.title")}
-				placeholder={format("signup.confirm_password.placeholder")}
-				canBeSecure
-				value={confirmPassword}
-				onValueChanged={setConfirmPassword}
-				blurOnSubmit={true}
-			/>
-			<ButtonContainer>
-				{isLoading ? (
-					<Spinner size={24} />
+			<ResponsiveCenterView>
+				<Title>{format("signup.title")}</Title>
+				{errorMessage.length > 0 ? (
+					<ErrorMessage>{errorMessage}</ErrorMessage>
 				) : (
-					<>
-						<LoginButton onPress={goToLoginScreen}>{format("signup.button.login")}</LoginButton>
-						<ConfirmButton onPress={checkAndSignUp}>{format("signup.button.confirm")}</ConfirmButton>
-					</>
+					<Subtitle>{format("signup.subtitle")}</Subtitle>
 				)}
-			</ButtonContainer>
-			<TermsAndConditions>
-				{format("signup.terms.link_prefix")}
-				<Pressable
-					onPress={() => {
-						openURL("https://www.circular.xyz/en/terms-of-use");
-					}}
-				>
-					<TermsLink>{format("signup.terms.link")}</TermsLink>
-				</Pressable>
-			</TermsAndConditions>
+				<InputField
+					title={format("signup.email.title")}
+					placeholder={format("signup.email.placeholder")}
+					value={email}
+					onValueChanged={setEmail}
+					keyboardType={"email-address"}
+					returnKeyType={"next"}
+					blurOnSubmit={false}
+					onSubmit={() => passwordFieldRef.current?.focus()}
+				/>
+				<InputField
+					ref={passwordFieldRef}
+					title={format("signup.password.title")}
+					placeholder={format("signup.password.placeholder")}
+					canBeSecure
+					value={password}
+					onValueChanged={setPassword}
+					returnKeyType={"next"}
+					blurOnSubmit={false}
+					onSubmit={() => confirmPasswordFieldRef.current?.focus()}
+				/>
+				<InputField
+					ref={confirmPasswordFieldRef}
+					title={format("signup.confirm_password.title")}
+					placeholder={format("signup.confirm_password.placeholder")}
+					canBeSecure
+					value={confirmPassword}
+					onValueChanged={setConfirmPassword}
+					blurOnSubmit={true}
+				/>
+				<ButtonContainer gap={35} justify="center">
+					{isLoading ? (
+						<Spinner size={24} />
+					) : (
+						[
+							<SecondaryButton key="back-login" onPress={goToLoginScreen}>
+								{format("signup.button.login")}
+							</SecondaryButton>,
+							<PrimaryButton key="signup" onPress={checkAndSignUp}>
+								{format("signup.button.confirm")}
+							</PrimaryButton>,
+						]
+					)}
+				</ButtonContainer>
+				<TermsAndConditions>
+					{format("signup.terms.link_prefix")}
+					<TermsLink
+						onPress={() => {
+							openURL("https://www.circular.xyz/en/terms-of-use");
+						}}
+					>
+						{" "}
+						{format("signup.terms.link")}
+					</TermsLink>
+				</TermsAndConditions>
+			</ResponsiveCenterView>
 		</ScrollScreen>
 	);
 };
 
 const Logo = styled.Image`
-	margin-top: 70px;
 	margin-bottom: 50px;
+	align-self: center;
 `;
 
 const Title = styled.Text`
@@ -152,19 +160,9 @@ const InputField = styled(TextField)`
 	margin-bottom: 40px;
 `;
 
-const ButtonContainer = styled.View`
-	flex-direction: row;
-	justify-content: space-between;
-	margin-top: 20px;
-	margin-bottom: 25px;
-`;
-
-const LoginButton = styled(SecondaryButton)`
-	margin-right: 12px;
-`;
-
-const ConfirmButton = styled(PrimaryButton)`
-	margin-left: 12px;
+const ButtonContainer = styled(Row)`
+	margin-top: 30px;
+	margin-bottom: 40px;
 `;
 
 const TermsAndConditions = styled.Text`
@@ -175,5 +173,4 @@ const TermsAndConditions = styled.Text`
 
 const TermsLink = styled(TermsAndConditions)`
 	color: ${colors.primary};
-	margin-bottom: 20px;
 `;
