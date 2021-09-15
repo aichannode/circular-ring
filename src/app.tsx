@@ -1,3 +1,4 @@
+import "react-native-gesture-handler";
 import { useSentry } from "@core/logger/hooks/useSentry";
 import { NavigationContainer } from "@react-navigation/native";
 import { RootNavigator } from "@ui/navigation/rootNavigator";
