@@ -67,6 +67,7 @@ export const RootNavigator: React.FC = () => {
 				headerRight: () => <MyRingBattery />,
 				headerTitleAlign: "center",
 				headerTitleStyle: headerTitleStyle,
+				headerBackImageSource: require("@assets/images/menuBackArrow.png"),
 			}}
 		>
 			<MainStack.Screen
@@ -98,6 +99,7 @@ export const RootNavigator: React.FC = () => {
 		<ProfileStack.Navigator
 			screenOptions={{
 				headerRight: () => <MyRingBattery />,
+				headerBackImageSource: require("@assets/images/menuBackArrow.png"),
 			}}
 		>
 			<ProfileStack.Screen
