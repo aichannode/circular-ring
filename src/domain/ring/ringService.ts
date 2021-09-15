@@ -42,16 +42,21 @@ export class RingService {
 
 	listenLiveData() {
 		this._ringLiveData.set({ listening: true });
-		return this.deviceService.listen("FBL1", "FB", (value) => {
+		return this.deviceService.listen("FBL1", "FBL", (value) => {
 			if (value) {
 				const deserializedData = deserializeLiveData(value);
 				if (deserializedData) {
-					this._ringLiveData.update((c) => ({ ...c, data: deserializedData }));
+					this._ringLiveData.update((c) => {
+						const maxHeartRate = c.data
+							? Math.max(deserializedData.heartRate, c.data.heartRate)
+							: deserializedData.heartRate;
+						return { ...c, data: { ...deserializedData, maxHeartRate } };
+					});
 				}
 			}
 		});
 	}
-
+	// 40% and 55% of user’s max HR it is considered low intensity activity,  between 55% and 70% of user’s max HR it is considered medium intensity activity, between 70% and 100% o
 	stopLiveData() {
 		this._ringLiveData.update((c) => ({ ...c, listening: false }));
 		return this.deviceService.write("FBL0");

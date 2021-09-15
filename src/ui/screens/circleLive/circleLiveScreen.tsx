@@ -1,8 +1,10 @@
+import { useLiveData } from "@domain/ring/hooks";
+import { getIntensity, Intensity } from "@domain/ring/ringLiveData";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
-import { TertiaryText, TitleText } from "@ui/components/text";
+import { PrimaryText, TertiaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
-import { colors } from "@ui/styles/colors";
+import { colors, intensityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle, shadow } from "@ui/styles/containerStyles";
 import React from "react";
 import { Image } from "react-native";
@@ -10,8 +12,11 @@ import LinearGradient from "react-native-linear-gradient";
 import styled from "styled-components/native";
 
 export const CircleLiveScreen: React.FC = () => {
-	const { format } = useI18n();
-	const isRunning = false;
+	const { format, formatIntensity } = useI18n();
+	const { data, listening, start, stop } = useLiveData();
+
+	const maxHeartRateRatio = data ? data.heartRate / data.maxHeartRate : null;
+	const activityIntensity = getIntensity(maxHeartRateRatio);
 
 	return (
 		<Container>
@@ -25,23 +30,39 @@ export const CircleLiveScreen: React.FC = () => {
 						<Stack gap={10} style={{ flex: 1 }}>
 							<InfoCard>
 								<TertiaryText>{format("live.intensity.label")}</TertiaryText>
+								{activityIntensity ? <DataValue>{formatIntensity(activityIntensity)}</DataValue> : null}
 							</InfoCard>
 							<InfoCard>
 								<TertiaryText>{format("live.hr_max.label")}</TertiaryText>
+								{maxHeartRateRatio ? <DataValue>{maxHeartRateRatio} bpm</DataValue> : null}
 							</InfoCard>
 						</Stack>
 						<InfoCard style={{ flex: 1 }}>
 							<TertiaryText>{format("live.hr_max.ratio.label")}</TertiaryText>
+							{data && maxHeartRateRatio ? (
+								<>
+									<DataValue>{(data.heartRate / maxHeartRateRatio) * 100} %</DataValue>
+									<Gauge>
+										<GaugeValue intensity={activityIntensity} rate={maxHeartRateRatio} />
+									</Gauge>
+								</>
+							) : null}
 						</InfoCard>
 					</Row>
 				</Stack>
 				<HeartCardWrapper>
 					<HeartRateCard start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} colors={["#f44a59", "#f97444"]}>
 						<Image source={require("@assets/images/heartBeat.png")} />
+						{data && (
+							<HeartRateValue>
+								{data.heartRate}
+								<HeartRateUnit>bpm</HeartRateUnit>
+							</HeartRateValue>
+						)}
 					</HeartRateCard>
-					<PlayPauseButton>
+					<PlayPauseButton onPress={listening ? stop : start}>
 						<PlayPauseButtonContent start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} colors={["#f44a59", "#f97444"]}>
-							{isRunning ? (
+							{listening ? (
 								<Row gap={8}>
 									<PauseBar />
 									<PauseBar />
@@ -57,9 +78,11 @@ export const CircleLiveScreen: React.FC = () => {
 					<Row gap={20}>
 						<InfoCard style={{ flex: 1 }}>
 							<TertiaryText>{format("live.hrv.label")}</TertiaryText>
+							{data ? <DataValue>{data.hrv} ms</DataValue> : null}
 						</InfoCard>
 						<InfoCard style={{ flex: 1 }}>
 							<TertiaryText>{format("live.blood_ox.label")}</TertiaryText>
+							{data ? <DataValue>{data.spo2} %</DataValue> : null}
 						</InfoCard>
 					</Row>
 				</Stack>
@@ -120,4 +143,38 @@ const StartLabel = styled.Text`
 	font-size: 19px;
 	color: ${colors.white};
 	font-weight: bold;
+`;
+
+const HeartRateValue = styled.Text`
+	margin-top: 14px;
+	font-size: 40px;
+	text-align: center;
+	font-weight: 500;
+	color: ${colors.white};
+`;
+
+const HeartRateUnit = styled.Text`
+	font-size: 19px;
+`;
+
+const DataValue = styled(PrimaryText)`
+	font-size: 20px;
+	font-weight: bold;
+`;
+
+const Gauge = styled.View`
+	background-color: ${colors.lightgray};
+	border-radius: 5px;
+	height: 4px;
+	overflow: hidden;
+`;
+
+const GaugeValue = styled.View<{ intensity: Intensity; rate: number }>`
+	background-color: ${({ intensity }) => intensityColors[intensity]};
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: ${({ rate }) => rate * 100}%;
+	border-radius: 5px;
 `;

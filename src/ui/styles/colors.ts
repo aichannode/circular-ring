@@ -1,4 +1,5 @@
 import { ScoreQuality } from "@domain/circleActivity/circleActivityData";
+import { Intensity } from "@domain/ring/ringLiveData";
 
 export const colors = {
 	primary: "#ff3d00",
@@ -18,4 +19,11 @@ export const qualityColors: { [key in ScoreQuality]: string } = {
 	[ScoreQuality.POOR]: colors.red,
 	[ScoreQuality.GOOD]: colors.orange,
 	[ScoreQuality.OPTIMAL]: colors.green,
+};
+
+export const intensityColors: { [key in Intensity]: string } = {
+	[Intensity.LOW]: colors.red,
+	[Intensity.MEDIUM]: colors.orange,
+	[Intensity.HIGH]: colors.green,
+	[Intensity.NONE]: colors.textPrimary,
 };
