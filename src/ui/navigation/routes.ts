@@ -14,6 +14,7 @@ export enum Routes {
 	MyRing = "MyRing",
 	Pairing = "Pairing",
 	Activity = "Activity",
+	Alarm = "Alarm",
 }
 
 export type AppRoutesParams = {
@@ -28,6 +29,7 @@ export type AppRoutesParams = {
 	[Routes.MyRing]: undefined;
 	[Routes.Pairing]: undefined;
 	[Routes.Activity]: undefined;
+	[Routes.Alarm]: undefined;
 };
 
 export const useRoutesNavigation = () => useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
