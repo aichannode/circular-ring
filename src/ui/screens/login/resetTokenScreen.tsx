@@ -1,6 +1,5 @@
 import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton, SimpleTextButton } from "@ui/components/buttons";
-import { Divider } from "@ui/components/divider";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SixDigitInput } from "@ui/components/sixDigitInput";
 import { Spinner } from "@ui/components/spinner";
@@ -92,7 +91,7 @@ export const ResetTokenScreen: React.FC = () => {
 				}}
 			/>
 
-			<Separator />
+			<ResendButton onPress={resendCode}>{format("forgot_password.reset.code.resend_button")}</ResendButton>
 
 			{errorMessagePassword ? <ErrorMessage>{errorMessagePassword}</ErrorMessage> : null}
 			<InputField
@@ -129,8 +128,6 @@ export const ResetTokenScreen: React.FC = () => {
 					</>
 				)}
 			</ButtonContainer>
-
-			<ResendButton onPress={resendCode}>{format("forgot_password.reset.code.resend_button")}</ResendButton>
 		</ScrollScreen>
 	);
 };
@@ -150,13 +147,7 @@ const Title = styled.Text`
 	${textStyles.mediumTitle};
 	flex-grow: 1;
 	align-self: center;
-	margin-top: 60px;
-	margin-bottom: 20px;
-`;
-
-const Separator = styled(Divider)`
-	flex-grow: 1;
-	align-self: center;
+	margin-top: 30px;
 	margin-bottom: 20px;
 `;
 
@@ -199,13 +190,13 @@ const ButtonContainer = styled.View<{ centerElements: boolean }>`
 	width: 100%;
 	flex-direction: row;
 	justify-content: ${({ centerElements }) => (centerElements ? "center" : "space-between")};
-	padding: 40px 66px;
+	padding: 20px 66px;
 	align-items: center;
 `;
 
 const ResendButton = styled(SimpleTextButton)`
 	align-items: center;
-	margin-bottom: 20px;
+	margin-bottom: 40px;
 `;
 
 const contentStyle = {
