@@ -17,6 +17,7 @@
   "login.error.default": "An error occurred.\nPlease try again later.",
   "header.my_ring": "My Ring",
   "header.activity": "Activity Analysis",
+  "header.alarm": "ALARM CLOCK",
   "header.live": "LIVE",
   "ring.battery.label": "BATTERY",
   "signin_signup.signin": "Sign in",
@@ -46,7 +47,7 @@
   "signup_success.description": "Now let’s set up your ring. You first need to wake it up by placing it on the charger for at least 15 minutes. Then, press start.",
   "signup_success.start": "Start",
   "forgot_password.question": "Forgot password ?",
-  "forgot_password.reset.title": "Pasword Reset",
+  "forgot_password.reset.title": "Password Reset",
   "forgot_password.reset.description": "What’s the <strong>email</strong> you signed up with?",
   "forgot_password.reset.email.placeholder": "Tap to write",
   "forgot_password.reset.email.error": "The email address you entered doesn’t match an existing Circular account. Please try again.",
@@ -71,6 +72,7 @@
   "home.circles.title": "My Circles",
   "home.circles.activity.label": "Activity analysis",
   "home.circles.live.label": "Live",
+  "home.circles.alarm.label": "Alarm clock",
   "activity.score.daily_metrics": "Daily metrics",
   "activity.score.details": "Energy score details",
   "score.quality.poor": "Poor",
@@ -112,5 +114,12 @@
   "live.hrv.label": "HRV",
   "live.blood_ox.label": "Blood Ox.",
   "drawer.profile": "Profile",
-  "drawer.close": "Close"
+  "drawer.close": "Close",
+  "alarm.score.programmed": "Programmed alarms",
+  "alarm.score.week": "Week overview",
+  "alarm.score.add_button": "Add an alarm",
+  "onboarding.wear.title": "How to wear Circular",
+  "onboarding.wear.info.top": "The best fingers to wear Circular are the <colored>index</colored>, <colored>middle finger</colored>, <colored>ring finger</colored>, pinky finger and thumb.\n\nTry as much as possible to use the same finger and same ring positioning each time you wear your Circular.",
+  "onboarding.wear.info.bottom": "The flat part of the ring should be on the <colored>palmar side</colored> of your finger.\n\nThe button should be <colored>facing your thumb</colored>, for ease of use.",
+  "onboarding.personal_info.title": "Tell us more about yourself"
 }

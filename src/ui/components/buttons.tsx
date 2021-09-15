@@ -70,8 +70,8 @@ export const SecondaryBigButton: React.FC<CircularButtonProps> = ({ onPress, sty
 
 export const SimpleTextButton: React.FC<CircularButtonProps> = ({ onPress, style, children }) => {
 	return (
-		<Pressable onPress={onPress} style={style}>
-			<SimpleTextButtonText>{children}</SimpleTextButtonText>
+		<Pressable onPress={onPress}>
+			<SimpleTextButtonText style={style}>{children}</SimpleTextButtonText>
 		</Pressable>
 	);
 };

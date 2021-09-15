@@ -1,6 +1,8 @@
 import { css } from "styled-components/native";
 
 export const whiteCardStyle = css`
+	width: 100%;
+	padding: 32px 26px;
 	background-color: #ffffff;
 	border-radius: 2px;
 	shadow-color: #000000;
