@@ -1,3 +1,4 @@
+import { colors } from "@ui/styles/colors";
 import React from "react";
 import { Platform, ScrollViewProps } from "react-native";
 import styled from "styled-components/native";
@@ -25,6 +26,6 @@ const Content = styled.KeyboardAvoidingView`
 
 const contentContainerStyle = {
 	flexGrow: 1,
-	paddingLeft: 66,
-	paddingRight: 66,
-};
+	paddingVertical: 50,
+	backgroundColor: colors.white,
+} as const;

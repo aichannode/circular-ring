@@ -94,21 +94,17 @@ const InputView = styled.View<{ isError: boolean }>`
 	width: 100%;
 	padding: 0;
 	height: 30px;
+	flex-direction: row;
 `;
 
 const Field = styled.TextInput`
-	flex-grow: 1;
+	flex: 1;
 	padding: 0 8px;
 	font-size: 12px;
 	color: ${colors.textPrimary};
 `;
 
 const SecureIconContainer = styled.View`
-	position: absolute;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	margin: auto;
 	width: 40px;
 	align-items: center;
 	justify-content: center;

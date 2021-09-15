@@ -1,5 +1,6 @@
 import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton, SimpleTextButton } from "@ui/components/buttons";
+import { ResponsiveCenterView, Row } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { TextField } from "@ui/components/textField";
@@ -53,54 +54,58 @@ export const LoginScreen = () => {
 	return (
 		<ScrollScreen>
 			<Logo source={require("@assets/images/circularOffcial.png")} />
-			<Title>{format("login.title")}</Title>
-			<ErrorMessage>{errorMessage}</ErrorMessage>
-			<InputField
-				title={format("login.email.title")}
-				placeholder={format("login.email.placeholder")}
-				value={email}
-				onValueChanged={setEmail}
-				keyboardType={"email-address"}
-				returnKeyType={"next"}
-				blurOnSubmit={false}
-				onSubmit={() => passwordFieldRef.current?.focus()}
-			/>
-			<InputField
-				ref={passwordFieldRef}
-				title={format("login.password.title")}
-				placeholder={format("login.password.placeholder")}
-				canBeSecure
-				value={password}
-				onValueChanged={setPassword}
-				blurOnSubmit={true}
-			/>
-			<ButtonContainer>
-				{isLoading ? (
-					<Spinner size={24} />
-				) : (
-					<>
-						<SecondaryButton onPress={goToSignUp}>{format("login.signup_button")}</SecondaryButton>
-						<PrimaryButton onPress={performLogin}>{format("login.login_button")}</PrimaryButton>
-					</>
-				)}
-			</ButtonContainer>
-			<ForgotButton onPress={() => navigation.navigate(Routes.ForgotPassword, { email })}>
-				{format("forgot_password.question")}
-			</ForgotButton>
+			<ResponsiveCenterView>
+				<Title>{format("login.title")}</Title>
+				<ErrorMessage>{errorMessage}</ErrorMessage>
+				<InputField
+					title={format("login.email.title")}
+					placeholder={format("login.email.placeholder")}
+					value={email}
+					onValueChanged={setEmail}
+					keyboardType={"email-address"}
+					returnKeyType={"next"}
+					blurOnSubmit={false}
+					onSubmit={() => passwordFieldRef.current?.focus()}
+				/>
+				<InputField
+					ref={passwordFieldRef}
+					title={format("login.password.title")}
+					placeholder={format("login.password.placeholder")}
+					canBeSecure
+					value={password}
+					onValueChanged={setPassword}
+					blurOnSubmit={true}
+				/>
+				<ButtonContainer gap={35} justify="center">
+					{isLoading ? (
+						<Spinner size={24} />
+					) : (
+						[
+							<SecondaryButton key="back-signup" onPress={goToSignUp}>
+								{format("login.signup_button")}
+							</SecondaryButton>,
+							<PrimaryButton key="login" onPress={performLogin}>
+								{format("login.login_button")}
+							</PrimaryButton>,
+						]
+					)}
+				</ButtonContainer>
+				<ForgotButton onPress={() => navigation.navigate(Routes.ForgotPassword, { email })}>
+					{format("forgot_password.question")}
+				</ForgotButton>
+			</ResponsiveCenterView>
 		</ScrollScreen>
 	);
 };
 
 const Logo = styled.Image`
-	margin-top: 70px;
-	margin-bottom: 70px;
+	margin-bottom: 50px;
 	align-self: center;
 `;
 
 const Title = styled.Text`
 	${textStyles.mediumTitle};
 	margin-bottom: 30px;
-	align-self: center;
 `;
 
 const ErrorMessage = styled.Text`
@@ -114,14 +119,9 @@ const InputField = styled(TextField)`
 	margin-bottom: 40px;
 `;
 
-const ButtonContainer = styled.View`
-	width: 100%;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
-	margin-top: 80px;
+const ButtonContainer = styled(Row)`
+	margin-top: 30px;
 	margin-bottom: 40px;
-	margin-horizontal: 10px;
 `;
 
 const ForgotButton = styled(SimpleTextButton)`
