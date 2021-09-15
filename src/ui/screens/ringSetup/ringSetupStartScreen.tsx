@@ -22,7 +22,7 @@ export const RingSetupStartScreen = () => {
 	}, []);
 
 	return (
-		<ScrollScreen>
+		<ScrollScreen contentContainerStyle={{ paddingVertical: 50 }}>
 			<Logo source={require("@assets/images/circularOffcial.png")} />
 			<HeaderImage source={require("@assets/images/signup_runner.jpg")} />
 			<ResponsiveCenterView>

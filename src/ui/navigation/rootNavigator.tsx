@@ -37,10 +37,10 @@ const headerTitleStyle = {
 } as const;
 
 export const RootNavigator: React.FC = () => {
-	const accountLinked = useAccountLinked();
 	const { format } = useI18n();
-	const isAuthenticated = useAuth();
 	const navigation = useNavigation();
+	const isAuthenticated = useAuth();
+	const accountLinked = useAccountLinked();
 
 	const HomeDrawerNavigator = () => (
 		<HomeDrawer.Navigator

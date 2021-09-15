@@ -202,6 +202,8 @@ export class CognitoAuthService implements AuthService {
 	}
 
 	async logout(): Promise<void> {
-		return this._cognitoUser.get()?.signOut();
+		await this._cognitoUser.get()?.signOut();
+		this._cognitoUser.set(null);
+		this._accessToken.set(null);
 	}
 }

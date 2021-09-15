@@ -2,7 +2,7 @@ import { Grow } from "@ui/components/layout";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React from "react";
-import { Pressable } from "react-native";
+import { Pressable, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
 interface InfoListItemProps {
@@ -11,13 +11,14 @@ interface InfoListItemProps {
 	emphasize?: boolean;
 	action?: () => void;
 	hasDisclosure?: boolean;
+	style?: ViewStyle;
 }
 
 export const InfoListItem = (props: InfoListItemProps) => {
-	const { name, value = undefined, emphasize = false, action = undefined, hasDisclosure = false } = props;
+	const { name, value = undefined, emphasize = false, action = undefined, hasDisclosure = false, style } = props;
 	return (
 		<Pressable onPress={() => action?.()}>
-			<Container>
+			<Container style={style}>
 				<Name emphasize={emphasize}>{name}</Name>
 				<Grow />
 				{value && <Value>{value}</Value>}
@@ -34,6 +35,7 @@ const Container = styled.View`
 	flex-direction: row;
 	align-items: center;
 	margin-bottom: 1px;
+	background-color: ${colors.lightgray};
 `;
 
 const Name = styled.Text<{ emphasize: boolean }>`
