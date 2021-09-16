@@ -1,26 +1,20 @@
+import { replaceInArray } from "@core/utils";
 import { colors } from "@ui/styles/colors";
-import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { StyleProp, TextInput, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
 interface SixDigitInputProps {
 	style?: StyleProp<ViewStyle>;
-	onSubmit: (code: string) => void;
+	codeValue: readonly string[];
+	onCodeChanged: (code: readonly string[]) => void;
 }
 
-export interface SixDigitInputRef {
-	getCode: () => string;
-}
-
-export const SixDigitInput = forwardRef<SixDigitInputRef, SixDigitInputProps>((props: SixDigitInputProps, ref) => {
-	const [code1, setCode1] = useState("");
-	const [code2, setCode2] = useState("");
-	const [code3, setCode3] = useState("");
-	const [code4, setCode4] = useState("");
-	const [code5, setCode5] = useState("");
-	const [code6, setCode6] = useState("");
+export const SixDigitInput = (props: SixDigitInputProps) => {
+	const { style, codeValue, onCodeChanged } = props;
 
 	const codeFieldRef = [
+		useRef<TextInput | null>(null), // code1
 		useRef<TextInput | null>(null), // code2
 		useRef<TextInput | null>(null), // code3
 		useRef<TextInput | null>(null), // code4
@@ -28,34 +22,20 @@ export const SixDigitInput = forwardRef<SixDigitInputRef, SixDigitInputProps>((p
 		useRef<TextInput | null>(null), // code6
 	];
 
-	useImperativeHandle(ref, () => ({
-		getCode: () => [code1, code2, code3, code4, code5, code6].join(""),
-	}));
-
-	const submitCode = useCallback(() => {
-		props.onSubmit?.([code1, code2, code3, code4, code5, code6].join(""));
-	}, [code1, code2, code3, code4, code5, code6]);
+	useEffect(() => {
+		if (codeValue === ["", "", "", "", "", ""]) {
+			codeFieldRef[0].current?.focus();
+		}
+	}, codeValue);
 
 	return (
-		<FlexRow style={props.style}>
-			<InputField
-				selectTextOnFocus={true}
-				value={code1}
-				onChangeText={(value) => {
-					setCode1(value);
-					if (value.length === 1) {
-						codeFieldRef[0].current?.focus();
-					}
-				}}
-				maxLength={1}
-				keyboardType={"numeric"}
-			/>
+		<FlexRow style={style}>
 			<InputField
 				ref={codeFieldRef[0]}
 				selectTextOnFocus={true}
-				value={code2}
+				value={codeValue[0]}
 				onChangeText={(value) => {
-					setCode2(value);
+					onCodeChanged(replaceInArray(codeValue, 0, value));
 					if (value.length === 1) {
 						codeFieldRef[1].current?.focus();
 					}
@@ -66,11 +46,17 @@ export const SixDigitInput = forwardRef<SixDigitInputRef, SixDigitInputProps>((p
 			<InputField
 				ref={codeFieldRef[1]}
 				selectTextOnFocus={true}
-				value={code3}
+				value={codeValue[1]}
 				onChangeText={(value) => {
-					setCode3(value);
+					onCodeChanged(replaceInArray(codeValue, 1, value));
 					if (value.length === 1) {
 						codeFieldRef[2].current?.focus();
+					}
+				}}
+				onKeyPress={(e) => {
+					if (codeValue[1] === "" && e.nativeEvent.key === "Backspace") {
+						onCodeChanged(replaceInArray(codeValue, 0, ""));
+						codeFieldRef[0].current?.focus();
 					}
 				}}
 				maxLength={1}
@@ -79,11 +65,17 @@ export const SixDigitInput = forwardRef<SixDigitInputRef, SixDigitInputProps>((p
 			<InputField
 				ref={codeFieldRef[2]}
 				selectTextOnFocus={true}
-				value={code4}
+				value={codeValue[2]}
 				onChangeText={(value) => {
-					setCode4(value);
+					onCodeChanged(replaceInArray(codeValue, 2, value));
 					if (value.length === 1) {
 						codeFieldRef[3].current?.focus();
+					}
+				}}
+				onKeyPress={(e) => {
+					if (codeValue[2] === "" && e.nativeEvent.key === "Backspace") {
+						onCodeChanged(replaceInArray(codeValue, 1, ""));
+						codeFieldRef[1].current?.focus();
 					}
 				}}
 				maxLength={1}
@@ -92,11 +84,17 @@ export const SixDigitInput = forwardRef<SixDigitInputRef, SixDigitInputProps>((p
 			<InputField
 				ref={codeFieldRef[3]}
 				selectTextOnFocus={true}
-				value={code5}
+				value={codeValue[3]}
 				onChangeText={(value) => {
-					setCode5(value);
+					onCodeChanged(replaceInArray(codeValue, 3, value));
 					if (value.length === 1) {
 						codeFieldRef[4].current?.focus();
+					}
+				}}
+				onKeyPress={(e) => {
+					if (codeValue[3] === "" && e.nativeEvent.key === "Backspace") {
+						onCodeChanged(replaceInArray(codeValue, 2, ""));
+						codeFieldRef[2].current?.focus();
 					}
 				}}
 				maxLength={1}
@@ -105,21 +103,42 @@ export const SixDigitInput = forwardRef<SixDigitInputRef, SixDigitInputProps>((p
 			<InputField
 				ref={codeFieldRef[4]}
 				selectTextOnFocus={true}
-				value={code6}
+				value={codeValue[4]}
 				onChangeText={(value) => {
-					setCode6(value);
+					onCodeChanged(replaceInArray(codeValue, 4, value));
 					if (value.length === 1) {
-						submitCode();
+						codeFieldRef[5].current?.focus();
 					}
 				}}
-				onSubmitEditing={submitCode}
+				onKeyPress={(e) => {
+					if (codeValue[4] === "" && e.nativeEvent.key === "Backspace") {
+						onCodeChanged(replaceInArray(codeValue, 3, ""));
+						codeFieldRef[3].current?.focus();
+					}
+				}}
+				maxLength={1}
+				keyboardType={"numeric"}
+			/>
+			<InputField
+				ref={codeFieldRef[5]}
+				selectTextOnFocus={true}
+				value={codeValue[5]}
+				onChangeText={(value) => {
+					onCodeChanged(replaceInArray(codeValue, 5, value));
+				}}
+				onKeyPress={(e) => {
+					if (codeValue[5] === "" && e.nativeEvent.key === "Backspace") {
+						onCodeChanged(replaceInArray(codeValue, 4, ""));
+						codeFieldRef[4].current?.focus();
+					}
+				}}
 				blurOnSubmit={true}
 				maxLength={1}
 				keyboardType={"numeric"}
 			/>
 		</FlexRow>
 	);
-});
+};
 
 const FlexRow = styled.View`
 	flex-direction: row;
@@ -137,4 +156,5 @@ const InputField = styled(TextInput)`
 	padding: 6px 0;
 	border-bottom-color: ${colors.textPrimary};
 	border-bottom-width: 1px;
+	color: ${colors.textPrimary};
 `;

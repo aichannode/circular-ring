@@ -9,7 +9,7 @@ import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes"
 import { textStyles } from "@ui/styles/textStyles";
 import { obfuscateEmail } from "@ui/utils/emailUtils";
 import { isCorrectPassword } from "@ui/utils/passwordUtils";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { TextInput } from "react-native";
 import styled from "styled-components/native";
 
@@ -23,6 +23,12 @@ export const ResetTokenScreen: React.FC = () => {
 	const email = route.params.email;
 
 	const [resetToken, setResetToken] = useState("");
+	const [code, setCode] = useState<readonly string[]>(["", "", "", "", "", ""]);
+	useEffect(() => {
+		setResetToken(code.join(""));
+		console.log("> code : " + code.join(""));
+	}, [code]);
+
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const passwordFieldRef = useRef<TextInput | null>(null);
@@ -34,11 +40,12 @@ export const ResetTokenScreen: React.FC = () => {
 
 	const resendCode = async () => {
 		try {
+			setCode(["", "", "", "", "", ""]);
 			await userService.resendResetToken(email);
 			setResend(true);
 		} catch (error) {
 			setResend(false);
-			setErrorMessageToken("login.error.default");
+			setErrorMessageToken(format("login.error.default"));
 		}
 	};
 
@@ -85,11 +92,7 @@ export const ResetTokenScreen: React.FC = () => {
 			) : (
 				<Description>{format("forgot_password.reset.code.description", { email: obfuscateEmail(email) })}</Description>
 			)}
-			<SixDigitInputField
-				onSubmit={(code) => {
-					setResetToken(code);
-				}}
-			/>
+			<SixDigitInputField codeValue={code} onCodeChanged={setCode} />
 
 			<ResendButton onPress={resendCode}>{format("forgot_password.reset.code.resend_button")}</ResendButton>
 
