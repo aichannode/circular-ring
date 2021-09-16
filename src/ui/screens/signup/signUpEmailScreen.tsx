@@ -1,7 +1,7 @@
 import { useLogger } from "@core/logger/hooks/useLogger";
 import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
-import { Grow, ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
+import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { TextField } from "@ui/components/textField";
@@ -110,7 +110,6 @@ export const SignUpEmailScreen = () => {
 					/>
 				</Stack>
 			</ResponsiveCenterView>
-			<Grow />
 			<ButtonContainer gap={35} justify="center">
 				{isLoading ? (
 					<Spinner size={24} />
@@ -143,7 +142,8 @@ export const SignUpEmailScreen = () => {
 };
 
 const Logo = styled.Image`
-	margin-bottom: 50px;
+	margin-top: 40px;
+	margin-bottom: 64px;
 	align-self: center;
 `;
 
@@ -165,7 +165,7 @@ const ErrorMessage = styled.Text`
 `;
 
 const ButtonContainer = styled(Row)`
-	margin-top: 35px;
+	margin-top: 40px;
 	margin-bottom: 40px;
 `;
 
