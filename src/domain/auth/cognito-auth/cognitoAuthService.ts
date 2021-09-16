@@ -69,15 +69,16 @@ export class CognitoAuthService implements AuthService {
 		});
 	}
 
-	async resendSignUpValidationCode(): Promise<void> {
+	async resendSignUpValidationCode(email: string): Promise<void> {
 		return new Promise((resolve, reject) => {
-			const currentUser = this._cognitoUser.get();
+			const currentUser = new CognitoUser({ Username: email, Pool: this._userPool });
 			if (currentUser) {
 				currentUser.resendConfirmationCode((err, result) => {
 					if (err) {
 						this.logger.warn("Error resending confirmation code", err);
 						reject(err);
 					} else {
+						this._cognitoUser.set(currentUser);
 						resolve();
 					}
 				});

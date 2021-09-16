@@ -1,5 +1,6 @@
 import { PrimaryButton } from "@ui/components/buttons";
 import { ResponsiveCenterView } from "@ui/components/layout";
+import { LogoImageHeader } from "@ui/components/logoImageHeader";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
@@ -23,8 +24,7 @@ export const RingSetupStartScreen = () => {
 
 	return (
 		<ScrollScreen>
-			<Logo source={require("@assets/images/circularOffcial.png")} />
-			<HeaderImage source={require("@assets/images/signup_runner.jpg")} />
+			<LogoImageHeader source={require("@assets/images/signup_runner.jpg")} />
 			<ResponsiveCenterView>
 				<Title>{format("signup_success.title")}</Title>
 				<Check source={require("@assets/images/check.png")} />
@@ -34,15 +34,6 @@ export const RingSetupStartScreen = () => {
 		</ScrollScreen>
 	);
 };
-
-const Logo = styled.Image`
-	margin-bottom: 50px;
-	align-self: center;
-`;
-
-const HeaderImage = styled.Image`
-	width: 100%;
-`;
 
 const Title = styled.Text`
 	${textStyles.mediumTitle};

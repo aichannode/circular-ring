@@ -1,5 +1,7 @@
 import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton, SimpleTextButton } from "@ui/components/buttons";
+import { Row } from "@ui/components/layout";
+import { LogoImageHeader } from "@ui/components/logoImageHeader";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SixDigitInput } from "@ui/components/sixDigitInput";
 import { Spinner } from "@ui/components/spinner";
@@ -26,7 +28,6 @@ export const ResetTokenScreen: React.FC = () => {
 	const [code, setCode] = useState<readonly string[]>(["", "", "", "", "", ""]);
 	useEffect(() => {
 		setResetToken(code.join(""));
-		console.log("> code : " + code.join(""));
 	}, [code]);
 
 	const [password, setPassword] = useState("");
@@ -82,8 +83,7 @@ export const ResetTokenScreen: React.FC = () => {
 
 	return (
 		<ScrollScreen contentContainerStyle={contentStyle}>
-			<Logo source={require("@assets/images/circularOffcial.png")} />
-			<HeaderImage source={require("@assets/images/forgotPasswordZen.jpg")} />
+			<LogoImageHeader source={require("@assets/images/forgotPasswordZen.jpg")} />
 			<Title>{format("forgot_password.reset.title")}</Title>
 			{errorMessageToken ? (
 				<ErrorMessage>{errorMessageToken}</ErrorMessage>
@@ -115,43 +115,30 @@ export const ResetTokenScreen: React.FC = () => {
 				onValueChanged={setConfirmPassword}
 				blurOnSubmit={true}
 			/>
-			<ButtonContainer centerElements={false}>
+			<ButtonContainer gap={35} justify="center">
 				{isLoading ? (
 					<Spinner size={24} />
 				) : (
-					<>
-						<SecondaryButton onPress={() => navigation.goBack()}>{format("global.back")}</SecondaryButton>
-						<PrimaryButton
-							onPress={() => {
-								checkAndValidatePassword();
-							}}
-						>
+					[
+						<SecondaryButton key={"back"} onPress={() => navigation.goBack()}>
+							{format("global.back")}
+						</SecondaryButton>,
+						<PrimaryButton key={"validate"} onPress={checkAndValidatePassword}>
 							{format("forgot_password.new.button")}
-						</PrimaryButton>
-					</>
+						</PrimaryButton>,
+					]
 				)}
 			</ButtonContainer>
 		</ScrollScreen>
 	);
 };
 
-const Logo = styled.Image`
-	margin-top: 70px;
-	margin-bottom: 70px;
-	align-self: center;
-`;
-
-const HeaderImage = styled.Image`
-	width: 100%;
-	flex-grow: 1;
-`;
-
 const Title = styled.Text`
 	${textStyles.mediumTitle};
 	flex-grow: 1;
 	align-self: center;
-	margin-top: 30px;
-	margin-bottom: 20px;
+	margin-top: 40px;
+	margin-bottom: 30px;
 `;
 
 const Description = styled.Text`
@@ -176,7 +163,7 @@ const ErrorMessage = styled.Text`
 `;
 
 const SixDigitInputField = styled(SixDigitInput)`
-	margin-bottom: 20px;
+	margin-bottom: 30px;
 	padding-left: 66px;
 	padding-right: 66px;
 `;
@@ -189,21 +176,19 @@ const InputField = styled(TextField)`
 	padding-right: 66px;
 `;
 
-const ButtonContainer = styled.View<{ centerElements: boolean }>`
-	width: 100%;
-	flex-direction: row;
-	justify-content: ${({ centerElements }) => (centerElements ? "center" : "space-between")};
-	padding: 20px 66px;
-	align-items: center;
+const ButtonContainer = styled(Row)`
+	margin-top: 57px;
+	margin-bottom: 40px;
 `;
 
 const ResendButton = styled(SimpleTextButton)`
 	align-items: center;
-	margin-bottom: 40px;
+	margin-bottom: 56px;
 `;
 
 const contentStyle = {
 	flexGrow: 1,
 	paddingLeft: 0,
 	paddingRight: 0,
+	paddingVertical: 0,
 };

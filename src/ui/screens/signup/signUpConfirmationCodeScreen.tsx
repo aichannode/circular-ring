@@ -2,6 +2,7 @@ import { useLogger } from "@core/logger/hooks/useLogger";
 import { useServices } from "@core/services";
 import { useUserEmail } from "@domain/user/hooks/useUser";
 import { PrimaryButton, SecondaryButton, SimpleTextButton } from "@ui/components/buttons";
+import { LogoImageHeader } from "@ui/components/logoImageHeader";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SixDigitInput } from "@ui/components/sixDigitInput";
 import { Spinner } from "@ui/components/spinner";
@@ -63,8 +64,7 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 
 	return (
 		<ScrollScreen contentContainerStyle={contentStyle}>
-			<Logo source={require("@assets/images/circularOffcial.png")} />
-			<HeaderImage source={require("@assets/images/signup_runner.jpg")} />
+			<LogoImageHeader source={require("@assets/images/signup_runner.jpg")} />
 			<Title>{format("signup_code.title")}</Title>
 			{errorMessage.length > 0 ? (
 				<ErrorMessage>{errorMessage}</ErrorMessage>
@@ -95,17 +95,6 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 		</ScrollScreen>
 	);
 };
-
-const Logo = styled.Image`
-	margin-top: 70px;
-	margin-bottom: 70px;
-	align-self: center;
-`;
-
-const HeaderImage = styled.Image`
-	width: 100%;
-	flex-grow: 1;
-`;
 
 const Title = styled.Text`
 	${textStyles.mediumTitle};
@@ -159,4 +148,5 @@ const contentStyle = {
 	flexGrow: 1,
 	paddingLeft: 0,
 	paddingRight: 0,
+	paddingVertical: 0,
 };
