@@ -1,6 +1,6 @@
 import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton, SimpleTextButton } from "@ui/components/buttons";
-import { Row } from "@ui/components/layout";
+import { Grow, Row, Stack } from "@ui/components/layout";
 import { LogoImageHeader } from "@ui/components/logoImageHeader";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SixDigitInput } from "@ui/components/sixDigitInput";
@@ -82,7 +82,7 @@ export const ResetTokenScreen: React.FC = () => {
 	}, [password, confirmPassword]);
 
 	return (
-		<ScrollScreen contentContainerStyle={contentStyle}>
+		<StyledScrollScreen contentContainerStyle={contentStyle}>
 			<LogoImageHeader source={require("@assets/images/forgotPasswordZen.jpg")} />
 			<Title>{format("forgot_password.reset.title")}</Title>
 			{errorMessageToken ? (
@@ -97,24 +97,27 @@ export const ResetTokenScreen: React.FC = () => {
 			<ResendButton onPress={resendCode}>{format("forgot_password.reset.code.resend_button")}</ResendButton>
 
 			{errorMessagePassword ? <ErrorMessage>{errorMessagePassword}</ErrorMessage> : null}
-			<InputField
-				title={format("forgot_password.new.password")}
-				placeholder={format("forgot_password.reset.password.placeholder")}
-				canBeSecure
-				value={password}
-				onValueChanged={setPassword}
-				blurOnSubmit={false}
-				onSubmit={() => passwordFieldRef.current?.focus()}
-			/>
-			<InputField
-				ref={passwordFieldRef}
-				title={format("forgot_password.new.confirm_password")}
-				placeholder={format("forgot_password.reset.confirm_password.placeholder")}
-				canBeSecure
-				value={confirmPassword}
-				onValueChanged={setConfirmPassword}
-				blurOnSubmit={true}
-			/>
+			<Stack gap={30}>
+				<InputField
+					title={format("forgot_password.new.password")}
+					placeholder={format("forgot_password.reset.password.placeholder")}
+					canBeSecure
+					value={password}
+					onValueChanged={setPassword}
+					blurOnSubmit={false}
+					onSubmit={() => passwordFieldRef.current?.focus()}
+				/>
+				<InputField
+					ref={passwordFieldRef}
+					title={format("forgot_password.new.confirm_password")}
+					placeholder={format("forgot_password.reset.confirm_password.placeholder")}
+					canBeSecure
+					value={confirmPassword}
+					onValueChanged={setConfirmPassword}
+					blurOnSubmit={true}
+				/>
+			</Stack>
+			<Grow />
 			<ButtonContainer gap={35} justify="center">
 				{isLoading ? (
 					<Spinner size={24} />
@@ -129,13 +132,16 @@ export const ResetTokenScreen: React.FC = () => {
 					]
 				)}
 			</ButtonContainer>
-		</ScrollScreen>
+		</StyledScrollScreen>
 	);
 };
 
+const StyledScrollScreen = styled(ScrollScreen)`
+	justify-content: flex-start;
+`;
+
 const Title = styled.Text`
 	${textStyles.mediumTitle};
-	flex-grow: 1;
 	align-self: center;
 	margin-top: 40px;
 	margin-bottom: 30px;
@@ -143,20 +149,19 @@ const Title = styled.Text`
 
 const Description = styled.Text`
 	${textStyles.primary};
-	flex-grow: 1;
 	align-self: center;
 	justify-content: center;
-	margin-bottom: 20px;
+	margin-bottom: 40px;
 	padding-left: 66px;
 	padding-right: 66px;
+	text-align: center;
 `;
 
 const ErrorMessage = styled.Text`
 	${textStyles.errorMessage};
-	flex-grow: 1;
 	align-self: center;
 	justify-content: center;
-	margin-bottom: 20px;
+	margin-bottom: 40px;
 	padding-left: 66px;
 	padding-right: 66px;
 	text-align: center;
@@ -169,7 +174,6 @@ const SixDigitInputField = styled(SixDigitInput)`
 `;
 
 const InputField = styled(TextField)`
-	flex-grow: 1;
 	justify-content: center;
 	margin-bottom: 20px;
 	padding-left: 66px;
@@ -187,8 +191,5 @@ const ResendButton = styled(SimpleTextButton)`
 `;
 
 const contentStyle = {
-	flexGrow: 1,
-	paddingLeft: 0,
-	paddingRight: 0,
 	paddingVertical: 0,
 };
