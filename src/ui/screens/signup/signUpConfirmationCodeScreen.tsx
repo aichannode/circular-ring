@@ -2,6 +2,7 @@ import { useLogger } from "@core/logger/hooks/useLogger";
 import { useServices } from "@core/services";
 import { useUserEmail } from "@domain/user/hooks/useUser";
 import { PrimaryButton, SecondaryButton, SimpleTextButton } from "@ui/components/buttons";
+import { Grow, Row } from "@ui/components/layout";
 import { LogoImageHeader } from "@ui/components/logoImageHeader";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SixDigitInput } from "@ui/components/sixDigitInput";
@@ -63,7 +64,7 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 	};
 
 	return (
-		<ScrollScreen contentContainerStyle={contentStyle}>
+		<ScrollScreen style={{ justifyContent: "flex-start" }} contentContainerStyle={contentStyle}>
 			<LogoImageHeader source={require("@assets/images/signup_runner.jpg")} />
 			<Title>{format("signup_code.title")}</Title>
 			{errorMessage.length > 0 ? (
@@ -72,14 +73,14 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 				<Description>{format("signup_code.description", { email: !!email ? obfuscateEmail(email) : "" })}</Description>
 			)}
 			<SixDigitInputField codeValue={code} onCodeChanged={setCode} />
+			<Grow />
 			<ButtonContainer>
 				{isLoading ? (
 					<Spinner size={24} />
 				) : (
 					<>
-						<RowButtonContainer>
+						<RowButtonContainer gap={35}>
 							<SecondaryButton onPress={navigation.goBack}>{format("global.back")}</SecondaryButton>
-							{/*<PrimaryButton onPress={resendCode}>{format("signup_code.resend_button")}</PrimaryButton>*/}
 							<PrimaryButton
 								onPress={() => {
 									validateCode(code);
@@ -98,28 +99,25 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 
 const Title = styled.Text`
 	${textStyles.mediumTitle};
-	flex-grow: 1;
 	align-self: center;
 	margin-top: 60px;
-	margin-bottom: 20px;
+	margin-bottom: 40px;
 `;
 
 const Description = styled.Text`
 	${textStyles.primary};
-	flex-grow: 1;
 	align-self: center;
 	justify-content: center;
-	margin-bottom: 20px;
+	margin-bottom: 60px;
 	padding: 0 66px;
 	text-align: center;
 `;
 
 const ErrorMessage = styled.Text`
 	${textStyles.errorMessage};
-	flex-grow: 1;
 	align-self: center;
 	justify-content: center;
-	margin-bottom: 20px;
+	margin-bottom: 60px;
 	padding: 0 80px;
 	text-align: center;
 `;
@@ -136,17 +134,10 @@ const ButtonContainer = styled.View`
 	align-items: center;
 `;
 
-const RowButtonContainer = styled.View`
-	width: 100%;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
+const RowButtonContainer = styled(Row)`
 	margin-bottom: 16px;
 `;
 
 const contentStyle = {
-	flexGrow: 1,
-	paddingLeft: 0,
-	paddingRight: 0,
 	paddingVertical: 0,
 };
