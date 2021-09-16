@@ -37,11 +37,7 @@ export const HeartBeatCard: React.FC<HeartBeatCardProps> = ({ listening, heartRa
 
 	useEffect(() => {
 		if (listening) {
-			console.log("GO");
-
-			animation.start(() => {
-				console.log("STOPPED");
-			});
+			animation.start();
 		} else {
 			animation.reset();
 		}

@@ -18,13 +18,17 @@ export function deserializeLiveData(liveData: string) {
 		throw Error("Invalid live data message " + liveData);
 	}
 
-	const [time, type, heartRateHex, spo2Hex, hrvHex, br, temp, step, bat, correlHex] = matches.slice(1);
+	const [, type, heartRateHex, spo2Hex, hrvHex, , , , , correlHex] = matches.slice(1);
 
 	if (type === "00") {
+		const correlation = hexToSint16(correlHex);
 		const heartRate = +`0x${heartRateHex}`;
+
+		if (correlation < CORRELATION_GOOD_THRESHOLD || heartRate === 0) {
+			return;
+		}
 		const spo2 = hexToSint16(spo2Hex) / 100;
 		const hrv = +`0x${hrvHex}`;
-		const correlation = hexToSint16(correlHex);
 
 		return {
 			heartRate,
@@ -58,3 +62,6 @@ function hexToSint16(str: string) {
 	const n = parseInt(str, 16);
 	return (n & 0x8000) > 0 ? n - 0x10000 : n;
 }
+
+export const CORRELATION_GOOD_THRESHOLD = 60;
+export const CORRELATION_OPTIMAL_THRESHOLD = 90;

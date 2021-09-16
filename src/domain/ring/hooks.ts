@@ -1,6 +1,6 @@
 import { useServices } from "@core/services";
 import { useObservable } from "micro-observables";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback } from "react";
 
 export const useRingBattery = () => useObservable(useServices().ringService.ringBattery);
 export const useSyncState = () => useObservable(useServices().ringService.syncState);

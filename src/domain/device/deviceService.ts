@@ -3,7 +3,6 @@ import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { observable, Observable } from "micro-observables";
 import { Signal } from "micro-signals";
 import { Device, ScanMode, State } from "react-native-ble-plx";
-import { Channel } from "./channels";
 import { StoredDevice } from "./device";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 
