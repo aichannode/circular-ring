@@ -1,47 +1,64 @@
+import { getScoreQuality } from "@domain/circleActivity/circleActivityData";
 import { useLiveData } from "@domain/ring/hooks";
 import { getIntensity, Intensity } from "@domain/ring/ringLiveData";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { PrimaryText, TertiaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
-import { colors, intensityColors } from "@ui/styles/colors";
+import { colors, intensityColors, qualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle, shadow } from "@ui/styles/containerStyles";
-import React from "react";
-import { Image } from "react-native";
+import React, { useEffect } from "react";
 import LinearGradient from "react-native-linear-gradient";
 import styled from "styled-components/native";
+import { HeartBeatCard } from "./heartBeatCard";
 
 export const CircleLiveScreen: React.FC = () => {
-	const { format, formatIntensity } = useI18n();
+	const { format, formatIntensity, formatScoreQuality } = useI18n();
 	const { data, listening, start, stop } = useLiveData();
 
-	const maxHeartRateRatio = data ? data.heartRate / data.maxHeartRate : null;
+	const maxHeartRateRatio = data ? (data.heartRate / data.maxHeartRate) * 100 : null;
 	const activityIntensity = getIntensity(maxHeartRateRatio);
+	const dataQuality = data ? getScoreQuality(data?.correlation, 60, 80) : null;
+
+	console.log(data?.correlation);
+
+	useEffect(() => stop, []);
 
 	return (
-		<Container>
+		<Container contentContainerStyle={{ paddingTop: 30 }}>
 			<ResponsiveCenterView maxWidth={380} align="stretch">
 				<Stack gap={16}>
 					<Row gap={100}>
 						<TitleText>{format("live.heart_rate.label")}</TitleText>
-						<TertiaryText>{format("live.accuracy.label")}</TertiaryText>
+						<Row gap={5} align="center">
+							<TertiaryText>
+								{format("live.accuracy.label")}
+								{dataQuality ? <QualityValue> {formatScoreQuality(dataQuality)}</QualityValue> : null}
+							</TertiaryText>
+							{dataQuality ? <ColoredDot color={qualityColors[dataQuality]} /> : null}
+						</Row>
 					</Row>
-					<Row gap={20}>
+					<Row gap={20} style={{ height: 155 }}>
 						<Stack gap={10} style={{ flex: 1 }}>
 							<InfoCard>
 								<TertiaryText>{format("live.intensity.label")}</TertiaryText>
-								{activityIntensity ? <DataValue>{formatIntensity(activityIntensity)}</DataValue> : null}
+								<Row gap={10} align="center">
+									<DataValue>{formatIntensity(activityIntensity)}</DataValue>
+									{activityIntensity !== Intensity.NONE ? (
+										<ColoredDot color={intensityColors[activityIntensity]} />
+									) : null}
+								</Row>
 							</InfoCard>
 							<InfoCard>
 								<TertiaryText>{format("live.hr_max.label")}</TertiaryText>
-								{maxHeartRateRatio ? <DataValue>{maxHeartRateRatio} bpm</DataValue> : null}
+								{data?.maxHeartRate ? <DataValue>{data.maxHeartRate} bpm</DataValue> : null}
 							</InfoCard>
 						</Stack>
-						<InfoCard style={{ flex: 1 }}>
+						<InfoCard style={{ flex: 1, paddingBottom: 30 }}>
 							<TertiaryText>{format("live.hr_max.ratio.label")}</TertiaryText>
 							{data && maxHeartRateRatio ? (
 								<>
-									<DataValue>{(data.heartRate / maxHeartRateRatio) * 100} %</DataValue>
+									<DataValue style={{ alignSelf: "center" }}>{Math.floor(maxHeartRateRatio)} %</DataValue>
 									<Gauge>
 										<GaugeValue intensity={activityIntensity} rate={maxHeartRateRatio} />
 									</Gauge>
@@ -50,7 +67,13 @@ export const CircleLiveScreen: React.FC = () => {
 						</InfoCard>
 					</Row>
 				</Stack>
-				<HeartCardWrapper>
+				<HeartBeatCard
+					listening={listening}
+					heartRate={data?.heartRate}
+					onToggle={listening ? stop : start}
+					style={{ marginVertical: 40 }}
+				/>
+				{/* <HeartCardWrapper>
 					<HeartRateCard start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} colors={["#f44a59", "#f97444"]}>
 						<Image source={require("@assets/images/heartBeat.png")} />
 						{data && (
@@ -72,10 +95,10 @@ export const CircleLiveScreen: React.FC = () => {
 							)}
 						</PlayPauseButtonContent>
 					</PlayPauseButton>
-				</HeartCardWrapper>
+				</HeartCardWrapper> */}
 				<Stack gap={20}>
 					<TitleText>{format("live.hrv_blood_ox.label")}</TitleText>
-					<Row gap={20}>
+					<Row gap={20} style={{ height: 70 }}>
 						<InfoCard style={{ flex: 1 }}>
 							<TertiaryText>{format("live.hrv.label")}</TertiaryText>
 							{data ? <DataValue>{data.hrv} ms</DataValue> : null}
@@ -101,12 +124,13 @@ const InfoCard = styled.View`
 	border-radius: 6px;
 	justify-content: space-between;
 	padding: 5px 12px 10px;
-	min-height: 70px;
+	flex: 1;
 `;
 
 const HeartCardWrapper = styled.View`
 	${shadow("2px 4px")}
-	margin: 50px 0 80px;
+	margin: 50px 0 40px;
+	padding-bottom: 42px;
 `;
 const HeartRateCard = styled(LinearGradient)`
 	border-radius: 22px;
@@ -118,7 +142,6 @@ const HeartRateCard = styled(LinearGradient)`
 const PlayPauseButton = styled.Pressable`
 	position: absolute;
 	bottom: 0;
-	transform: translateY(42px);
 	align-self: center;
 
 	${shadow("4px 5px", 18)}
@@ -177,4 +200,17 @@ const GaugeValue = styled.View<{ intensity: Intensity; rate: number }>`
 	left: 0;
 	width: ${({ rate }) => rate * 100}%;
 	border-radius: 5px;
+`;
+
+const ColoredDot = styled.View<{ color: string }>`
+	flex-grow: 0;
+	flex-shrink: 0;
+	width: 10px;
+	height: 10px;
+	border-radius: 5px;
+	background-color: ${({ color }) => color};
+`;
+
+const QualityValue = styled(DataValue)`
+	font-size: 12px;
 `;
