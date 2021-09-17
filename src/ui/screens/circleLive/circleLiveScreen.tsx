@@ -1,6 +1,7 @@
 import { getScoreQuality } from "@domain/circleActivity/circleActivityData";
 import { useLiveData } from "@domain/ring/hooks";
 import { getIntensity, Intensity } from "@domain/ring/ringLiveData";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
@@ -9,6 +10,7 @@ import { useI18n } from "@ui/i18n";
 import { colors, intensityColors, qualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React, { useEffect } from "react";
+import { Text, View } from "react-native";
 import styled from "styled-components/native";
 import { HeartBeatCard } from "./heartBeatCard";
 
@@ -99,6 +101,11 @@ export const CircleLiveScreen: React.FC = () => {
 					</Row>
 				</Stack>
 			</ResponsiveCenterView>
+			<BottomSheetModal index={1} snapPoints={["50%"]}>
+				<View>
+					<Text>SALUT</Text>
+				</View>
+			</BottomSheetModal>
 		</Container>
 	);
 };

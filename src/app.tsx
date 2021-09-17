@@ -10,6 +10,7 @@ import { initializeServices, ServicesProvider } from "@core/services";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { translations } from "./wordings";
 import SplashScreen from "react-native-splash-screen";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 
@@ -32,7 +33,9 @@ export const App = () => {
 			<SafeAreaProvider>
 				<ServicesProvider>
 					<NavigationContainer theme={theme}>
-						<RootNavigator />
+						<BottomSheetModalProvider>
+							<RootNavigator />
+						</BottomSheetModalProvider>
 					</NavigationContainer>
 				</ServicesProvider>
 			</SafeAreaProvider>
