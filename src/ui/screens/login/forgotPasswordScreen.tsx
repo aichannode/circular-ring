@@ -1,6 +1,7 @@
 import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
-import { ResponsiveCenterView, Row } from "@ui/components/layout";
+import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
+import { LogoImageHeader } from "@ui/components/logoImageHeader";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { TextField } from "@ui/components/textField";
 import { useI18n } from "@ui/i18n";
@@ -35,9 +36,8 @@ export const ForgotPasswordScreen: React.FC = () => {
 	};
 
 	return (
-		<ScrollScreen contentContainerStyle={{ paddingVertical: 50 }}>
-			<Logo source={require("@assets/images/circularOffcial.png")} />
-			<HeaderImage source={require("@assets/images/forgotPasswordZen.jpg")} />
+		<ScrollScreen contentContainerStyle={{ paddingVertical: 0 }}>
+			<LogoImageHeader source={require("@assets/images/forgotPasswordZen.jpg")} />
 			<ResponsiveCenterView>
 				<Title>{format("forgot_password.reset.title")}</Title>
 				{error ? (
@@ -53,23 +53,15 @@ export const ForgotPasswordScreen: React.FC = () => {
 					blurOnSubmit={true}
 					keyboardType={"email-address"}
 				/>
-				<ButtonContainer gap={35} justify="center">
-					<SecondaryButton onPress={navigation.goBack}>{format("global.back")}</SecondaryButton>
-					<PrimaryButton onPress={resetPassword}>{format("global.next")}</PrimaryButton>
-				</ButtonContainer>
 			</ResponsiveCenterView>
+			<Grow />
+			<ButtonContainer gap={35} justify="center">
+				<SecondaryButton onPress={navigation.goBack}>{format("global.back")}</SecondaryButton>
+				<PrimaryButton onPress={resetPassword}>{format("global.next")}</PrimaryButton>
+			</ButtonContainer>
 		</ScrollScreen>
 	);
 };
-
-const Logo = styled.Image`
-	margin-bottom: 70px;
-	align-self: center;
-`;
-
-const HeaderImage = styled.Image`
-	width: 100%;
-`;
 
 const Title = styled.Text`
 	${textStyles.mediumTitle};

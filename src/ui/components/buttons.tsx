@@ -97,9 +97,8 @@ const GrayButtonText = styled.Text`
 `;
 
 const SimpleTextButtonText = styled.Text`
-	${textStyles.primary};
+	font-size: 14px;
 	color: ${colors.textPrimary};
-	text-decoration: underline;
 `;
 
 const PrimaryContent = styled(LinearGradient)<{ light?: boolean }>`

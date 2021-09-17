@@ -1,6 +1,6 @@
 import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton, SimpleTextButton } from "@ui/components/buttons";
-import { ResponsiveCenterView, Row } from "@ui/components/layout";
+import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { TextField } from "@ui/components/textField";
@@ -90,6 +90,7 @@ export const LoginScreen = () => {
 						]
 					)}
 				</ButtonContainer>
+				<Grow />
 				<ForgotButton onPress={() => navigation.navigate(Routes.ForgotPassword, { email })}>
 					{format("forgot_password.question")}
 				</ForgotButton>
@@ -99,7 +100,8 @@ export const LoginScreen = () => {
 };
 
 const Logo = styled.Image`
-	margin-bottom: 50px;
+	margin-top: 40px;
+	margin-bottom: 100px;
 	align-self: center;
 `;
 
@@ -120,8 +122,8 @@ const InputField = styled(TextField)`
 `;
 
 const ButtonContainer = styled(Row)`
-	margin-top: 30px;
-	margin-bottom: 40px;
+	margin-top: 80px;
+	margin-bottom: 30px;
 `;
 
 const ForgotButton = styled(SimpleTextButton)`
