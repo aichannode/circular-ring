@@ -1,7 +1,8 @@
 import { getScoreQuality } from "@domain/circleActivity/circleActivityData";
+import { DeviceAutoConnectState } from "@domain/device/deviceService";
+import { useAutoConnectState } from "@domain/device/hooks";
 import { useLiveData } from "@domain/ring/hooks";
 import { getIntensity, Intensity } from "@domain/ring/ringLiveData";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
@@ -9,10 +10,10 @@ import { PrimaryText, TertiaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors, intensityColors, qualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
-import React, { useEffect } from "react";
-import { Text, View } from "react-native";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components/native";
 import { HeartBeatCard } from "./heartBeatCard";
+import { NoRingConnectedBottomSheet, OpenBottomSheetHandle } from "./noRingConnectedBottomSheet";
 
 export const CircleLiveScreen: React.FC = () => {
 	const { format, formatIntensity, formatScoreQuality } = useI18n();
@@ -21,6 +22,9 @@ export const CircleLiveScreen: React.FC = () => {
 	const maxHeartRateRatio = data ? (data.heartRate / data.maxHeartRate) * 100 : null;
 	const activityIntensity = getIntensity(maxHeartRateRatio);
 	const dataQuality = data ? getScoreQuality(data?.correlation, 60, 80) : null;
+	const autoConnectState = useAutoConnectState();
+
+	const bottomSheet = useRef<OpenBottomSheetHandle>(null);
 
 	useEffect(() => {
 		return () => {
@@ -84,7 +88,17 @@ export const CircleLiveScreen: React.FC = () => {
 				<HeartBeatCard
 					listening={listening}
 					heartRate={data?.heartRate}
-					onToggle={listening ? stop : start}
+					onToggle={
+						listening
+							? stop
+							: () => {
+									if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
+										start();
+									} else {
+										bottomSheet.current?.open();
+									}
+							  }
+					}
 					style={{ marginVertical: 40 }}
 				/>
 				<Stack gap={20}>
@@ -101,11 +115,7 @@ export const CircleLiveScreen: React.FC = () => {
 					</Row>
 				</Stack>
 			</ResponsiveCenterView>
-			<BottomSheetModal index={1} snapPoints={["50%"]}>
-				<View>
-					<Text>SALUT</Text>
-				</View>
-			</BottomSheetModal>
+			<NoRingConnectedBottomSheet ref={bottomSheet} />
 		</Container>
 	);
 };
