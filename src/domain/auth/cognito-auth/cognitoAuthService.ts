@@ -117,6 +117,7 @@ export class CognitoAuthService implements AuthService {
 
 			cognitoUser.authenticateUser(authenticationDetails, {
 				onSuccess: (result) => {
+					this._cognitoUser.set(cognitoUser);
 					this._accessToken.set(result.getAccessToken());
 					resolve();
 				},
@@ -203,6 +204,8 @@ export class CognitoAuthService implements AuthService {
 	}
 
 	async logout(): Promise<void> {
-		return this._cognitoUser.get()?.signOut();
+		await this._cognitoUser.get()?.signOut();
+		this._cognitoUser.set(null);
+		this._accessToken.set(null);
 	}
 }

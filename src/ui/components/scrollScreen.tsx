@@ -1,4 +1,3 @@
-import { colors } from "@ui/styles/colors";
 import React from "react";
 import { Platform, ScrollViewProps } from "react-native";
 import styled from "styled-components/native";
@@ -31,6 +30,4 @@ const Content = styled.View`
 
 const contentContainerStyle = {
 	flexGrow: 1,
-	paddingVertical: 50,
-	backgroundColor: colors.white,
 } as const;

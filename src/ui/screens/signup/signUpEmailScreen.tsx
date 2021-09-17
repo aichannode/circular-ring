@@ -65,7 +65,7 @@ export const SignUpEmailScreen = () => {
 	}, [email, password, confirmPassword]);
 
 	return (
-		<ScrollScreen>
+		<ScrollScreen contentContainerStyle={{ paddingVertical: 50 }}>
 			<Logo source={require("@assets/images/circularOffcial.png")} />
 			<ResponsiveCenterView>
 				<Title>{format("signup.title")}</Title>

@@ -9,11 +9,17 @@ export enum Routes {
 	ResetToken = "ResetCode",
 	SignUpEmail = "SignUpEmail",
 	SignUpConfirmationCode = "SignUpConfirmationCode",
+
 	RingSetupStart = "RingSetupStart",
+
+	HomeDrawer = "HomeDrawer",
+	MainHome = "MainHome",
 	Home = "Home",
 	MyRing = "MyRing",
 	Pairing = "Pairing",
 	Activity = "Activity",
+
+	Profile = "Profile",
 }
 
 export type AppRoutesParams = {
@@ -24,10 +30,13 @@ export type AppRoutesParams = {
 	[Routes.SignUpEmail]: undefined;
 	[Routes.SignUpConfirmationCode]: undefined;
 	[Routes.RingSetupStart]: undefined;
+	[Routes.HomeDrawer]: undefined;
+	[Routes.MainHome]: undefined;
 	[Routes.Home]: undefined;
 	[Routes.MyRing]: undefined;
 	[Routes.Pairing]: undefined;
 	[Routes.Activity]: undefined;
+	[Routes.Profile]: undefined;
 };
 
 export const useRoutesNavigation = () => useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
