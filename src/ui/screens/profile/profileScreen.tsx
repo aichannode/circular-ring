@@ -21,7 +21,7 @@ export const ProfileScreen = () => {
 		await userService.logout();
 	}, []);
 
-	const scoreQuality = getScoreQuality(score, 80, 90);
+	const scoreQuality = score ? getScoreQuality(score, 80, 90) : null;
 
 	return (
 		<ScrollScreen style={{ justifyContent: "flex-start" }} contentContainerStyle={{ paddingTop: 30 }}>
@@ -30,7 +30,9 @@ export const ProfileScreen = () => {
 					<ScoreView value={score} color={colors.primary} />
 					<View>
 						<SecondaryText>{format("profile.global_score.label")}</SecondaryText>
-						<TitleText style={{ color: colors.primary }}>{formatScoreQuality(scoreQuality)}</TitleText>
+						{scoreQuality && (
+							<TitleText style={{ color: colors.primary }}>{formatScoreQuality(scoreQuality)}</TitleText>
+						)}
 					</View>
 				</ScoreCard>
 			</ResponsiveCenterView>
