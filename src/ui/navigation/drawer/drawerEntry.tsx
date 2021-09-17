@@ -20,17 +20,19 @@ export const DrawerEntry: React.FC<DrawerEntryProps> = ({ route, children }) => 
 	}, [route]);
 
 	return (
-		<Pressable onPress={goToRoute}>
+		<StyledPressable onPress={goToRoute}>
 			<EntryText>{children}</EntryText>
-		</Pressable>
+		</StyledPressable>
 	);
 };
 
+const StyledPressable = styled.Pressable`
+	justify-content: center;
+	height: 62px;
+`;
+
 const EntryText = styled.Text`
 	${textStyles.bigTitle};
-	height: 62px;
-	width: 100%;
-	text-align-vertical: center;
 	text-align: left;
 	color: ${colors.white};
 `;

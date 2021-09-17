@@ -67,7 +67,7 @@ export const RootNavigator: React.FC = () => {
 					headerTitle: () => <Image source={require("@assets/images/logoHeader.png")} />,
 					headerLeft: () => (
 						<Pressable onPress={() => navigation.dispatch(DrawerActions.openDrawer)}>
-							<Image source={require("@assets/images/menu.png")} />
+							<Image source={require("@assets/images/menu.png")} style={{ marginLeft: 10 }} />
 						</Pressable>
 					),
 				}}
