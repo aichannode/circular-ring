@@ -1,5 +1,5 @@
 import { PrimaryButton } from "@ui/components/buttons";
-import { ResponsiveCenterView } from "@ui/components/layout";
+import { Grow, ResponsiveCenterView } from "@ui/components/layout";
 import { LogoImageHeader } from "@ui/components/logoImageHeader";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
@@ -23,14 +23,17 @@ export const RingSetupStartScreen = () => {
 	}, []);
 
 	return (
-		<ScrollScreen>
+		<ScrollScreen contentContainerStyle={{ paddingVertical: 0 }}>
 			<LogoImageHeader source={require("@assets/images/signup_runner.jpg")} />
 			<ResponsiveCenterView>
 				<Title>{format("signup_success.title")}</Title>
 				<Check source={require("@assets/images/check.png")} />
 				<Description>{format("signup_success.description")}</Description>
-				<PrimaryButton onPress={goToRingSetup}>{format("signup_success.start")}</PrimaryButton>
 			</ResponsiveCenterView>
+			<Grow />
+			<ButtonContainer>
+				<PrimaryButton onPress={goToRingSetup}>{format("signup_success.start")}</PrimaryButton>
+			</ButtonContainer>
 		</ScrollScreen>
 	);
 };
@@ -49,4 +52,10 @@ const Description = styled.Text`
 	${textStyles.primary};
 	margin-bottom: 30px;
 	text-align: center;
+`;
+
+const ButtonContainer = styled.View`
+	flex: 1;
+	margin-bottom: 40px;
+	align-items: center;
 `;

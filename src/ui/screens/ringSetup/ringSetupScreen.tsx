@@ -10,8 +10,9 @@ import { PrimaryText, SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
+import { textStyles } from "@ui/styles/textStyles";
 import React, { useEffect } from "react";
-import { Image, Platform } from "react-native";
+import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 
 export const RingSetupScreen: React.FC = () => {
@@ -36,16 +37,28 @@ export const RingSetupScreen: React.FC = () => {
 					case DeviceSetupState.DISABLED:
 						return (
 							<>
-								<Message>{format("setup.scan.disabled.message")}</Message>
-								{Platform.OS === "android" && (
-									<PrimaryButton
-										onPress={async () => {
-											bluetoothService.enable();
-										}}
-									>
-										{format("setup.scan.disabled.enable")}
-									</PrimaryButton>
-								)}
+								{/*<Message>{format("setup.scan.disabled.message")}</Message>*/}
+								<ResponsiveCenterView>
+									<Stack gap={50} align={"center"}>
+										<DisabledTitle>{format("setup.scan.disabled.title")}</DisabledTitle>
+										<View>
+											<Image source={require("@assets/images/ringShadow.png")} />
+											<Cover>
+												<Image source={require("@assets/images/ringBig.png")} />
+											</Cover>
+										</View>
+										<DisabledMessage>{format("setup.scan.disabled.message")}</DisabledMessage>
+										{Platform.OS === "android" && (
+											<PrimaryButton
+												onPress={async () => {
+													bluetoothService.enable();
+												}}
+											>
+												{format("setup.scan.disabled.enable")}
+											</PrimaryButton>
+										)}
+									</Stack>
+								</ResponsiveCenterView>
 							</>
 						);
 					case DeviceSetupState.SCANNING:
@@ -98,6 +111,25 @@ const Container = styled(ScrollScreen)`
 	align-items: center;
 	justify-content: flex-start;
 	padding-top: 50px;
+`;
+
+const DisabledTitle = styled.Text`
+	${textStyles.bigTitle};
+`;
+
+const Cover = styled.View`
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+`;
+
+const DisabledMessage = styled(SecondaryText)`
+	text-align: center;
 `;
 
 const Message = styled(SecondaryText)`
