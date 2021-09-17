@@ -35,7 +35,7 @@ export const ForgotPasswordScreen: React.FC = () => {
 	};
 
 	return (
-		<ScrollScreen>
+		<ScrollScreen contentContainerStyle={{ paddingVertical: 50 }}>
 			<Logo source={require("@assets/images/circularOffcial.png")} />
 			<HeaderImage source={require("@assets/images/forgotPasswordZen.jpg")} />
 			<ResponsiveCenterView>

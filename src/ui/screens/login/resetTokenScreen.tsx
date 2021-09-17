@@ -203,4 +203,5 @@ const contentStyle = {
 	flexGrow: 1,
 	paddingLeft: 0,
 	paddingRight: 0,
+	paddingVertical: 50,
 };
