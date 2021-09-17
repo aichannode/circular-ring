@@ -3,7 +3,7 @@ import { DeviceSetupState } from "@domain/device/deviceService";
 import { useScannedDevices, useSetupState } from "@domain/device/hooks";
 import { PrimaryButton } from "@ui/components/buttons";
 import { Divider } from "@ui/components/divider";
-import { ResponsiveCenterView, Stack } from "@ui/components/layout";
+import { Grow, ResponsiveCenterView, Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { PrimaryText, SecondaryText } from "@ui/components/text";
@@ -83,7 +83,7 @@ export const RingSetupScreen: React.FC = () => {
 									<Spinner />
 								) : (
 									<ResponsiveCenterView maxWidth={330}>
-										<Divider />
+										<StyledDivider />
 										{devices.map((device) => (
 											<DeviceWrapper
 												key={device.id}
@@ -95,6 +95,8 @@ export const RingSetupScreen: React.FC = () => {
 											>
 												<Image source={require("@assets/images/ring.png")} />
 												<DeviceName>{device.name}</DeviceName>
+												<Grow />
+												<Image source={require("@assets/images/disclosure.png")} />
 											</DeviceWrapper>
 										))}
 									</ResponsiveCenterView>
@@ -138,13 +140,17 @@ const Message = styled(SecondaryText)`
 	text-align: center;
 `;
 
+const StyledDivider = styled(Divider)`
+	margin-bottom: 40px;
+`;
+
 const DeviceWrapper = styled.Pressable`
 	${roundedWhiteCardStyle};
 	flex-direction: row;
 	align-items: center;
-	margin-top: 20px;
 	align-self: stretch;
-	padding: 10px 14px;
+	padding: 15px 14px;
+	margin-bottom: 10px;
 `;
 
 const Instructions = styled.View<{ hidden?: boolean }>`
@@ -162,7 +168,7 @@ const InstructionsText = styled(SecondaryText)`
 
 const DeviceName = styled(PrimaryText)`
 	font-weight: 500;
-	margin-left: 10px;
+	margin-left: 15px;
 `;
 
 const InstructionsArrow = styled.Image<{ hidden?: boolean }>`

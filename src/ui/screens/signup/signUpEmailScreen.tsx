@@ -11,7 +11,6 @@ import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import { isEmail } from "@ui/utils/emailUtils";
 import { isCorrectPassword } from "@ui/utils/passwordUtils";
-import { openURL } from "@ui/utils/urlUtils";
 import React, { useCallback, useRef, useState } from "react";
 import { TextInput } from "react-native";
 import styled from "styled-components/native";
@@ -129,7 +128,7 @@ export const SignUpEmailScreen = () => {
 					{format("signup.terms.link_prefix")}
 					<TermsLink
 						onPress={() => {
-							openURL("https://www.circular.xyz/en/terms-of-use");
+							navigate(Routes.TermsAndConditions);
 						}}
 					>
 						{" "}

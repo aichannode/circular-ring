@@ -18,6 +18,7 @@ import { RingSetupScreen } from "@ui/screens/ringSetup/ringSetupScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
 import { RingSetupStartScreen } from "@ui/screens/ringSetup/ringSetupStartScreen";
+import { TermsAndConditionsScreen } from "@ui/screens/signup/termsAndConditionsScreen";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import { Image, Pressable } from "react-native";
@@ -124,6 +125,7 @@ export const RootNavigator: React.FC = () => {
 			<SetupStack.Screen name={Routes.ResetToken} component={ResetTokenScreen} />
 			<SetupStack.Screen name={Routes.SignUpEmail} component={SignUpEmailScreen} />
 			<SetupStack.Screen name={Routes.SignUpConfirmationCode} component={SignUpConfirmationCodeScreen} />
+			<SetupStack.Screen name={Routes.TermsAndConditions} component={TermsAndConditionsScreen} />
 		</SetupStack.Navigator>
 	);
 };
