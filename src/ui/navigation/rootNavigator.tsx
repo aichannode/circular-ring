@@ -21,6 +21,7 @@ import { RingSetupScreen } from "@ui/screens/onboarding/ringSetup/ringSetupScree
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
 import { RingSetupStartScreen } from "@ui/screens/onboarding/ringSetup/ringSetupStartScreen";
+import { TermsAndConditionsScreen } from "@ui/screens/signup/termsAndConditionsScreen";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import { Image, Pressable } from "react-native";
@@ -47,7 +48,7 @@ export const RootNavigator: React.FC = () => {
 
 	const isAuthenticated = useAuth();
 
-	const accountLinkedToDevice = true; //useAccountLinked();
+	const accountLinkedToDevice = useAccountLinked();
 	const userValidated = useUserValidated();
 
 	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && userValidated;
@@ -77,7 +78,7 @@ export const RootNavigator: React.FC = () => {
 					headerTitle: () => <Image source={require("@assets/images/logoHeader.png")} />,
 					headerLeft: () => (
 						<Pressable onPress={() => navigation.dispatch(DrawerActions.openDrawer)}>
-							<Image source={require("@assets/images/menu.png")} />
+							<Image source={require("@assets/images/menu.png")} style={{ marginLeft: 10 }} />
 						</Pressable>
 					),
 				}}
@@ -139,6 +140,7 @@ export const RootNavigator: React.FC = () => {
 			<SetupStack.Screen name={Routes.ResetToken} component={ResetTokenScreen} />
 			<SetupStack.Screen name={Routes.SignUpEmail} component={SignUpEmailScreen} />
 			<SetupStack.Screen name={Routes.SignUpConfirmationCode} component={SignUpConfirmationCodeScreen} />
+			<SetupStack.Screen name={Routes.TermsAndConditions} component={TermsAndConditionsScreen} />
 		</SetupStack.Navigator>
 	);
 };

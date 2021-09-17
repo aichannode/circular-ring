@@ -14,8 +14,14 @@ interface InfoListItemProps {
 	style?: ViewStyle;
 }
 
-export const InfoListItem = (props: InfoListItemProps) => {
-	const { name, value = undefined, emphasize = false, action = undefined, hasDisclosure = false, style } = props;
+export const InfoListItem: React.FC<InfoListItemProps> = ({
+	name,
+	value,
+	emphasize = false,
+	action,
+	hasDisclosure = false,
+	style,
+}) => {
 	return (
 		<Pressable onPress={() => action?.()}>
 			<Container style={style}>

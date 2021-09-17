@@ -9,6 +9,7 @@ export enum Routes {
 	ResetToken = "ResetCode",
 	SignUpEmail = "SignUpEmail",
 	SignUpConfirmationCode = "SignUpConfirmationCode",
+	TermsAndConditions = "TermsAndConditions",
 
 	RingSetupStart = "RingSetupStart",
 	Pairing = "Pairing",
@@ -31,6 +32,7 @@ export type AppRoutesParams = {
 	[Routes.ResetToken]: { email: string };
 	[Routes.SignUpEmail]: undefined;
 	[Routes.SignUpConfirmationCode]: undefined;
+	[Routes.TermsAndConditions]: undefined;
 	[Routes.RingSetupStart]: undefined;
 	[Routes.Pairing]: undefined;
 	[Routes.OnboardingWearInfo]: undefined;

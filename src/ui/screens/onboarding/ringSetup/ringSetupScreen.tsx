@@ -3,15 +3,16 @@ import { DeviceSetupState } from "@domain/device/deviceService";
 import { useScannedDevices, useSetupState } from "@domain/device/hooks";
 import { PrimaryButton } from "@ui/components/buttons";
 import { Divider } from "@ui/components/divider";
-import { ResponsiveCenterView, Stack } from "@ui/components/layout";
+import { Grow, ResponsiveCenterView, Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { PrimaryText, SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
+import { textStyles } from "@ui/styles/textStyles";
 import React, { useEffect } from "react";
-import { Image, Platform } from "react-native";
+import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 
 export const RingSetupScreen: React.FC = () => {
@@ -36,16 +37,28 @@ export const RingSetupScreen: React.FC = () => {
 					case DeviceSetupState.DISABLED:
 						return (
 							<>
-								<Message>{format("setup.scan.disabled.message")}</Message>
-								{Platform.OS === "android" && (
-									<PrimaryButton
-										onPress={async () => {
-											bluetoothService.enable();
-										}}
-									>
-										{format("setup.scan.disabled.enable")}
-									</PrimaryButton>
-								)}
+								{/*<Message>{format("setup.scan.disabled.message")}</Message>*/}
+								<ResponsiveCenterView>
+									<Stack gap={50} align={"center"}>
+										<DisabledTitle>{format("setup.scan.disabled.title")}</DisabledTitle>
+										<View>
+											<Image source={require("@assets/images/ringShadow.png")} />
+											<Cover>
+												<Image source={require("@assets/images/ringBig.png")} />
+											</Cover>
+										</View>
+										<DisabledMessage>{format("setup.scan.disabled.message")}</DisabledMessage>
+										{Platform.OS === "android" && (
+											<PrimaryButton
+												onPress={async () => {
+													bluetoothService.enable();
+												}}
+											>
+												{format("setup.scan.disabled.enable")}
+											</PrimaryButton>
+										)}
+									</Stack>
+								</ResponsiveCenterView>
 							</>
 						);
 					case DeviceSetupState.SCANNING:
@@ -70,7 +83,7 @@ export const RingSetupScreen: React.FC = () => {
 									<Spinner />
 								) : (
 									<ResponsiveCenterView maxWidth={330}>
-										<Divider />
+										<StyledDivider />
 										{devices.map((device) => (
 											<DeviceWrapper
 												key={device.id}
@@ -82,6 +95,8 @@ export const RingSetupScreen: React.FC = () => {
 											>
 												<Image source={require("@assets/images/ring.png")} />
 												<DeviceName>{device.name}</DeviceName>
+												<Grow />
+												<Image source={require("@assets/images/disclosure.png")} />
 											</DeviceWrapper>
 										))}
 									</ResponsiveCenterView>
@@ -100,19 +115,42 @@ const Container = styled(ScrollScreen)`
 	padding-vertical: 50px;
 `;
 
+const DisabledTitle = styled.Text`
+	${textStyles.bigTitle};
+`;
+
+const Cover = styled.View`
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+`;
+
+const DisabledMessage = styled(SecondaryText)`
+	text-align: center;
+`;
+
 const Message = styled(SecondaryText)`
 	margin-top: 80px;
 	margin-bottom: 40px;
 	text-align: center;
 `;
 
+const StyledDivider = styled(Divider)`
+	margin-bottom: 40px;
+`;
+
 const DeviceWrapper = styled.Pressable`
 	${roundedWhiteCardStyle};
 	flex-direction: row;
 	align-items: center;
-	margin-top: 20px;
 	align-self: stretch;
-	padding: 10px 14px;
+	padding: 15px 14px;
+	margin-bottom: 10px;
 `;
 
 const Instructions = styled.View<{ hidden?: boolean }>`
@@ -130,7 +168,7 @@ const InstructionsText = styled(SecondaryText)`
 
 const DeviceName = styled(PrimaryText)`
 	font-weight: 500;
-	margin-left: 10px;
+	margin-left: 15px;
 `;
 
 const InstructionsArrow = styled.Image<{ hidden?: boolean }>`

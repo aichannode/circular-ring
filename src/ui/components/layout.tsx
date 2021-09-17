@@ -75,7 +75,7 @@ export const Grow = styled.View`
 	flex: 1;
 `;
 
-export const responsiveCenter = (maxWidth = 250, horizontalPadding = 20, align: FlexAlign = "center") => css`
+export const responsiveCenter = (maxWidth = 290, horizontalPadding = 20, align: FlexAlign = "center") => css`
 	width: 100%;
 	max-width: ${maxWidth}px;
 	padding-horizontal: ${horizontalPadding}px;
