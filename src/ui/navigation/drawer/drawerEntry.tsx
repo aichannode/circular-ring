@@ -3,7 +3,6 @@ import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback } from "react";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
-import { Pressable } from "react-native";
 import styled from "styled-components/native";
 
 interface DrawerEntryProps {
