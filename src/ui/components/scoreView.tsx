@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Animated, Easing, StyleProp, ViewStyle } from "react-native";
+import { Animated, Easing, StyleProp, Text, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 import { SineWave } from "./shapes/sineWave";
 import { PrimaryText } from "./text";
@@ -26,6 +26,9 @@ export const ScoreView: React.FC<ScoreViewProps> = ({ color, value, style }) => 
 		Animated.loop(animation).start();
 	}, []);
 
+	const units = Math.floor(value);
+	const decimals = ((value - units) * 100).toFixed(0);
+
 	return (
 		<Container color={color} style={style}>
 			<Animated.View
@@ -38,7 +41,10 @@ export const ScoreView: React.FC<ScoreViewProps> = ({ color, value, style }) => 
 			>
 				<SineWave color={color} amplitude={scoreWaveAmplitude} />
 			</Animated.View>
-			<ScoreValue>{value}</ScoreValue>
+			<ScoreValue style={{ color }}>
+				{Math.floor(value)}
+				{+decimals > 0 && <Text style={{ fontSize: 12 }}>,{decimals}</Text>}
+			</ScoreValue>
 		</Container>
 	);
 };

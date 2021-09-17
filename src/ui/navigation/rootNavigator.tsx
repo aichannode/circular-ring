@@ -40,8 +40,8 @@ const headerTitleStyle = {
 export const RootNavigator: React.FC = () => {
 	const { format } = useI18n();
 	const navigation = useNavigation();
-	const isAuthenticated = useAuth();
-	const accountLinked = useAccountLinked();
+	const isAuthenticated = true || useAuth();
+	const accountLinked = true || useAccountLinked();
 
 	const HomeDrawerNavigator = () => (
 		<HomeDrawer.Navigator

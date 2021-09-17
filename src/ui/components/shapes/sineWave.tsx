@@ -9,7 +9,7 @@ interface SineWaveProps {
 	alpha?: number;
 	style?: StyleProp<ViewStyle>;
 }
-export const SineWave: React.FC<SineWaveProps> = ({ color, curvature = 0.4, amplitude = 15, alpha = 0.3, style }) => {
+export const SineWave: React.FC<SineWaveProps> = ({ color, curvature = 0.4, amplitude = 15, alpha = 0.35, style }) => {
 	const hexAlpha = Math.round(alpha * 255).toString(16);
 
 	return (
@@ -23,7 +23,7 @@ export const SineWave: React.FC<SineWaveProps> = ({ color, curvature = 0.4, ampl
 					curve(150, amplitude, 200, 1, curvature) +
 					"L 200,200 L 0,200 L 0,0"
 				}
-				strokeWidth={2}
+				strokeWidth={1}
 				stroke={color}
 				fill={color + hexAlpha}
 			/>
