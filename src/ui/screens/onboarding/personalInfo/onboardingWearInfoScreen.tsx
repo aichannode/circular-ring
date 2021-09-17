@@ -1,4 +1,5 @@
 import { SimpleTextButton } from "@ui/components/buttons";
+import { Grow } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
@@ -32,6 +33,7 @@ export const OnboardingWearInfoScreen = () => {
 			<InfoBlock>
 				<InfoText>{format("onboarding.wear.info.bottom")}</InfoText>
 			</InfoBlock>
+			<Grow />
 			<ButtonContainer>
 				<StyledSimpleTextButton onPress={goNext}>{format("global.next")}</StyledSimpleTextButton>
 			</ButtonContainer>
