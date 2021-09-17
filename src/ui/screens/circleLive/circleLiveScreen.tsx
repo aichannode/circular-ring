@@ -1,8 +1,10 @@
 import { getScoreQuality } from "@domain/circleActivity/circleActivityData";
 import { DeviceAutoConnectState } from "@domain/device/deviceService";
 import { useAutoConnectState } from "@domain/device/hooks";
+import { usePreferences } from "@domain/preferences/hooks";
 import { useLiveData } from "@domain/ring/hooks";
 import { getIntensity, Intensity } from "@domain/ring/ringLiveData";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
@@ -13,7 +15,8 @@ import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components/native";
 import { HeartBeatCard } from "./heartBeatCard";
-import { NoRingConnectedBottomSheet, OpenBottomSheetHandle } from "./noRingConnectedBottomSheet";
+import { LiveTutorialBottomSheet } from "./liveTutorialBottomSheet";
+import { NoRingConnectedBottomSheet } from "./noRingConnectedBottomSheet";
 
 export const CircleLiveScreen: React.FC = () => {
 	const { format, formatIntensity, formatScoreQuality } = useI18n();
@@ -24,7 +27,10 @@ export const CircleLiveScreen: React.FC = () => {
 	const dataQuality = data ? getScoreQuality(data?.correlation, 60, 80) : null;
 	const autoConnectState = useAutoConnectState();
 
-	const bottomSheet = useRef<OpenBottomSheetHandle>(null);
+	const preferences = usePreferences();
+
+	const disconnectedBottomSheet = useRef<BottomSheetModal>(null);
+	const tutorialBottomSheet = useRef<BottomSheetModal>(null);
 
 	useEffect(() => {
 		return () => {
@@ -93,9 +99,14 @@ export const CircleLiveScreen: React.FC = () => {
 							? stop
 							: () => {
 									if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
-										start();
+										if (preferences?.skipLiveTutorial) {
+											start();
+										} else {
+											tutorialBottomSheet.current?.present();
+										}
 									} else {
-										bottomSheet.current?.open();
+										tutorialBottomSheet.current?.present();
+										// disconnectedBottomSheet.current?.present();
 									}
 							  }
 					}
@@ -115,7 +126,8 @@ export const CircleLiveScreen: React.FC = () => {
 					</Row>
 				</Stack>
 			</ResponsiveCenterView>
-			<NoRingConnectedBottomSheet ref={bottomSheet} />
+			<NoRingConnectedBottomSheet ref={disconnectedBottomSheet} />
+			<LiveTutorialBottomSheet ref={tutorialBottomSheet} onFinish={() => start()} />
 		</Container>
 	);
 };

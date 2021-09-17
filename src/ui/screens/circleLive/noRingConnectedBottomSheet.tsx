@@ -1,29 +1,21 @@
 import { DeviceAutoConnectState } from "@domain/device/deviceService";
 import { useAutoConnectState } from "@domain/device/hooks";
-import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { CircularBottomSheet } from "@ui/components/bottomSheet";
 import { PrimaryButton } from "@ui/components/buttons";
 import { ResponsiveCenterView } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
-import React, { useCallback, useEffect, useImperativeHandle, useRef } from "react";
+import React, { useEffect, useImperativeHandle, useRef } from "react";
 import { Image, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
-export interface OpenBottomSheetHandle {
-	open: () => void;
-}
-export const NoRingConnectedBottomSheet = React.forwardRef<OpenBottomSheetHandle>(({}, ref) => {
+export const NoRingConnectedBottomSheet = React.forwardRef<BottomSheetModal | null>(({}, ref) => {
 	const { format } = useI18n();
 	const bottomSheet = useRef<BottomSheetModal>(null);
 
-	useImperativeHandle(ref, () => ({ open: () => bottomSheet.current?.present() }), []);
-	const safeArea = useSafeAreaInsets();
-	const renderBackdrop = useCallback(
-		// eslint-disable-next-line react/jsx-props-no-spreading
-		(props) => <BottomSheetBackdrop disappearsOnIndex={-1} appearsOnIndex={0} {...props} />,
-		[]
-	);
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	useImperativeHandle(ref, () => bottomSheet.current!, []);
 
 	const autoConnectState = useAutoConnectState();
 
@@ -34,14 +26,8 @@ export const NoRingConnectedBottomSheet = React.forwardRef<OpenBottomSheetHandle
 	}, [autoConnectState]);
 
 	return (
-		<BottomSheetModal
-			ref={bottomSheet}
-			snapPoints={[580]}
-			// bottomInset={safeArea.bottom}
-			backdropComponent={renderBackdrop}
-			style={{ paddingBottom: safeArea.bottom }}
-		>
-			<Container style={{ paddingBottom: safeArea.bottom }}>
+		<CircularBottomSheet snapPoints={[580]} ref={bottomSheet}>
+			<Container>
 				<View>
 					<Image source={require("@assets/images/ringShadow.png")} />
 					<Cover>
@@ -51,7 +37,7 @@ export const NoRingConnectedBottomSheet = React.forwardRef<OpenBottomSheetHandle
 				<SecondaryText style={{ textAlign: "center" }}>{format("live.disconnected")}</SecondaryText>
 				<PrimaryButton onPress={() => bottomSheet.current?.close()}>{format("ok")}</PrimaryButton>
 			</Container>
-		</BottomSheetModal>
+		</CircularBottomSheet>
 	);
 });
 
