@@ -13,7 +13,6 @@ interface BottomSheetProps {
 }
 export const CircularBottomSheet = React.forwardRef<BottomSheetModal, BottomSheetProps>(
 	({ children, snapPoints }, ref) => {
-		const [key, setKey] = useState(0);
 		const safeArea = useSafeAreaInsets();
 		const renderBackdrop = useCallback(
 			// eslint-disable-next-line react/jsx-props-no-spreading
@@ -24,11 +23,9 @@ export const CircularBottomSheet = React.forwardRef<BottomSheetModal, BottomShee
 		return (
 			<BottomSheetModal
 				ref={ref}
-				key={key}
 				snapPoints={snapPoints}
 				backdropComponent={renderBackdrop}
 				style={{ paddingBottom: safeArea.bottom }}
-				onChange={() => setKey((c) => c + 1)}
 			>
 				{children}
 			</BottomSheetModal>
