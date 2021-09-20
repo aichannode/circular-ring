@@ -1,10 +1,10 @@
 import { Row } from "@ui/components/layout";
+import { OrangeDiagonalGradient } from "@ui/components/shapes/gradients";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { shadow } from "@ui/styles/containerStyles";
 import React, { useEffect, useMemo, useRef } from "react";
 import { Animated, StyleProp, ViewStyle } from "react-native";
-import LinearGradient from "react-native-linear-gradient";
 import styled from "styled-components/native";
 
 interface HeartBeatCardProps {
@@ -13,13 +13,14 @@ interface HeartBeatCardProps {
 	onToggle: () => void;
 	style?: StyleProp<ViewStyle>;
 }
+
+const FAKE_HEART_RATE = 70;
 // @refresh reset
 export const HeartBeatCard: React.FC<HeartBeatCardProps> = ({ listening, heartRate, onToggle, style }) => {
 	const { format } = useI18n();
 	const beat = useRef(new Animated.Value(1)).current;
 
-	const fakeHR = 70;
-	const animationTime = (60 / fakeHR) * 1000;
+	const animationTime = (60 / FAKE_HEART_RATE) * 1000;
 
 	const animation = useMemo(
 		() =>
@@ -45,7 +46,7 @@ export const HeartBeatCard: React.FC<HeartBeatCardProps> = ({ listening, heartRa
 
 	return (
 		<Container style={style}>
-			<HeartRateCard start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} colors={["#f44a59", "#f97444"]}>
+			<HeartRateCard>
 				<Animated.Image style={{ transform: [{ scale: beat }] }} source={require("@assets/images/heartBeat.png")} />
 				{heartRate !== undefined && (
 					<HeartRateValue>
@@ -55,7 +56,7 @@ export const HeartBeatCard: React.FC<HeartBeatCardProps> = ({ listening, heartRa
 				)}
 			</HeartRateCard>
 			<PlayPauseButton onPress={onToggle}>
-				<PlayPauseButtonContent start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} colors={["#f44a59", "#f97444"]}>
+				<PlayPauseButtonContent>
 					{listening ? (
 						<Row gap={8}>
 							<PauseBar />
@@ -75,7 +76,7 @@ const Container = styled.View`
 	padding-bottom: 42px;
 `;
 
-const HeartRateCard = styled(LinearGradient)`
+const HeartRateCard = styled(OrangeDiagonalGradient)`
 	border-radius: 22px;
 	height: 200px;
 	padding: 11px;
@@ -90,7 +91,7 @@ const PlayPauseButton = styled.Pressable`
 	${shadow("4px 5px", 18)}
 `;
 
-const PlayPauseButtonContent = styled(LinearGradient)`
+const PlayPauseButtonContent = styled(OrangeDiagonalGradient)`
 	width: 84px;
 	height: 84px;
 	border-radius: 42px;

@@ -5,6 +5,7 @@ export const colors = {
 	primary: "#ff3d00",
 	white: "#ffffff",
 	gray: "#979797",
+	darkGray: "#657884",
 	lightgray: "#eeeeee",
 	textPrimary: "#364249",
 	textSecondary: "#333333",
@@ -13,6 +14,8 @@ export const colors = {
 	green: "#2bd866",
 	orange: "#ff9334",
 	red: "#ff1d1d",
+	orangeGradientStart: "#f44a59",
+	orangeGradientEnd: "#f97444",
 };
 
 export const qualityColors: { [key in ScoreQuality]: string } = {

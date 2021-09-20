@@ -5,8 +5,27 @@ import { useRoutesNavigation, Routes } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import { Image, StyleProp, ViewStyle } from "react-native";
+import { WordingKey } from "src/wordings";
 import styled from "styled-components/native";
 
+interface CircleInfo {
+	route: Routes;
+	source: number;
+	key: WordingKey;
+}
+
+const circles: CircleInfo[] = [
+	{
+		route: Routes.Activity,
+		source: require("@assets/images/circleActivity.png"),
+		key: "home.circles.activity.label",
+	},
+	{
+		route: Routes.Live,
+		source: require("@assets/images/circleLive.png"),
+		key: "home.circles.live.label",
+	},
+];
 interface CirclesBannerProps {
 	style?: StyleProp<ViewStyle>;
 }
@@ -18,19 +37,14 @@ export const CirclesBanner: React.FC<CirclesBannerProps> = ({ style }) => {
 		<Container style={style} gap={15}>
 			<TitleText>{format("home.circles.title")}</TitleText>
 			<Row align="flex-start" gap={20}>
-				<CircleView onPress={() => navigation.navigate(Routes.Activity)}>
-					<Stack gap={10} align="center">
-						<Image source={require("@assets/images/circleActivity.png")} />
-						<CircleLabel>{format("home.circles.activity.label")}</CircleLabel>
-					</Stack>
-				</CircleView>
-				{/* TODO DRY */}
-				<CircleView onPress={() => navigation.navigate(Routes.Live)}>
-					<Stack gap={10} align="center">
-						<Image source={require("@assets/images/circleLive.png")} />
-						<CircleLabel>{format("home.circles.live.label")}</CircleLabel>
-					</Stack>
-				</CircleView>
+				{circles.map((circle) => (
+					<CircleView key={circle.route} onPress={() => navigation.navigate(circle.route)}>
+						<Stack gap={10} align="center">
+							<Image source={circle.source} />
+							<CircleLabel>{format(circle.key)}</CircleLabel>
+						</Stack>
+					</CircleView>
+				))}
 			</Row>
 		</Container>
 	);

@@ -1,3 +1,4 @@
+import { colors } from "@ui/styles/colors";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
@@ -21,11 +22,10 @@ export const CheckBox: React.FC<CheckBoxProps> = ({ value, onChange, label, styl
 const Container = styled.Pressable`
 	${row("center")};
 `;
-// TODO COLOR
 const Wrapper = styled.View`
 	width: 20px;
 	height: 20px;
-	border: 1px solid #657884;
+	border: 1px solid ${colors.darkGray};
 	border-radius: 2px;
 	overflow: visible;
 `;
