@@ -12,7 +12,7 @@ export const whiteCardStyle = css`
 
 export const roundedWhiteCardStyle = css`
 	background-color: #ffffff;
-	border-radius: 13px;
+	border-radius: 10px;
 	shadow-color: #000000;
 	shadow-offset: 0 10px;
 	shadow-opacity: 0.1;

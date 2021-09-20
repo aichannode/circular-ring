@@ -154,7 +154,6 @@ const Container = styled(ScrollScreen)`
 
 const InfoCard = styled.View`
 	${roundedWhiteCardStyle}
-	border-radius: 6px;
 	justify-content: space-between;
 	padding: 5px 12px 10px;
 	flex: 1;
