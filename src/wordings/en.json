@@ -105,6 +105,7 @@
   "metric.hr_max": "HR max (bpm)",
   "profile.header.title": "PROFILE",
   "profile.logout": "Log out",
+  "profile.global_score.label": "Global score",
   "live.heart_rate.label": "Heart rate",
   "live.accuracy.label": "Data Accuracy:",
   "live.intensity.label": "Activity Intensity",
@@ -126,5 +127,9 @@
   "onboarding.wear.title": "How to wear Circular",
   "onboarding.wear.info.top": "The best fingers to wear Circular are the <colored>index</colored>, <colored>middle finger</colored>, <colored>ring finger</colored>, pinky finger and thumb.\n\nTry as much as possible to use the same finger and same ring positioning each time you wear your Circular.",
   "onboarding.wear.info.bottom": "The flat part of the ring should be on the <colored>palmar side</colored> of your finger.\n\nThe button should be <colored>facing your thumb</colored>, for ease of use.",
-  "onboarding.personal_info.title": "Tell us more about yourself"
+  "onboarding.personal_info.title": "Tell us more about yourself",
+  "onboarding.personal_info.firstname_title": "What is your first name ?",
+  "onboarding.personal_info.lastname_title": "What is your last name ?",
+  "onboarding.personal_info.country_title": "Country",
+  "onboarding.personal_info.placeholder.text": "Type to write"
 }
