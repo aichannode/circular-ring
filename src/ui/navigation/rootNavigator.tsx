@@ -15,6 +15,7 @@ import { LoginScreen } from "@ui/screens/login/loginScreen";
 import { ResetTokenScreen } from "@ui/screens/login/resetTokenScreen";
 import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
 import { OnboardingPersonalInfo1Screen } from "@ui/screens/onboarding/personalInfo/onboardingPersonalInfo1Screen";
+import { OnboardingPersonalInfo2Screen } from "@ui/screens/onboarding/personalInfo/onboardingPersonalInfo2Screen";
 import { OnboardingWearInfoScreen } from "@ui/screens/onboarding/personalInfo/onboardingWearInfoScreen";
 import { ProfileScreen } from "@ui/screens/profile/profileScreen";
 import { RingSetupScreen } from "@ui/screens/onboarding/ringSetup/ringSetupScreen";
@@ -46,9 +47,9 @@ export const RootNavigator: React.FC = () => {
 	const { format } = useI18n();
 	const navigation = useNavigation();
 
-	const isAuthenticated = useAuth();
+	const isAuthenticated = true; //useAuth();
 
-	const accountLinkedToDevice = useAccountLinked();
+	const accountLinkedToDevice = true; //useAccountLinked();
 	const userValidated = useUserValidated();
 
 	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && userValidated;
@@ -125,6 +126,7 @@ export const RootNavigator: React.FC = () => {
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
 				<OnboardingStack.Screen name={Routes.OnboardingWearInfo} component={OnboardingWearInfoScreen} />
 				<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo1} component={OnboardingPersonalInfo1Screen} />
+				<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo2} component={OnboardingPersonalInfo2Screen} />
 			</OnboardingStack.Navigator>
 		) : (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>

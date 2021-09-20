@@ -40,6 +40,33 @@ export const SecondaryButton: React.FC<CircularButtonProps> = ({ onPress, style,
 	);
 };
 
+interface TertiaryButtonProps extends CircularButtonProps {
+	containerBackgroundColor: string;
+}
+
+export const Tertiarybutton: React.FC<TertiaryButtonProps> = ({
+	onPress,
+	style,
+	children,
+	containerBackgroundColor,
+}) => {
+	return (
+		<Pressable onPress={onPress} style={style}>
+			{({ pressed }) => (
+				<TertiaryBorder
+					colors={pressed ? ["#f97444", "#f44a59"] : ["#f44a59", "#f97444"]}
+					start={{ x: 0, y: 1 }}
+					end={{ x: 1, y: 0.5 }}
+				>
+					<TertiaryInner bgColor={containerBackgroundColor}>
+						<TertiaryButtonText>{children}</TertiaryButtonText>
+					</TertiaryInner>
+				</TertiaryBorder>
+			)}
+		</Pressable>
+	);
+};
+
 export const PrimaryBigButton: React.FC<CircularButtonProps> = ({ onPress, style, children }) => {
 	return (
 		<Pressable onPress={onPress} style={style}>
@@ -86,6 +113,11 @@ const SecondaryButtonText = styled.Text`
 	${textStyles.primary};
 `;
 
+const TertiaryButtonText = styled.Text`
+	${textStyles.primary};
+	color: ${colors.red};
+`;
+
 const PrimaryBigButtonText = styled.Text`
 	${textStyles.bigButton};
 	color: ${colors.white};
@@ -111,6 +143,17 @@ const SecondaryContent = styled.View<{ pressed: boolean }>`
 	border-radius: 18px;
 	border-color: ${colors.textPrimary};
 	border-width: 1px;
+`;
+
+const TertiaryBorder = styled(LinearGradient)<{ light?: boolean }>`
+	padding: 1px;
+	border-radius: 19px;
+`;
+
+const TertiaryInner = styled.View<{ bgColor: string }>`
+	padding: 9px 22px;
+	border-radius: 18px;
+	background-color: ${({ bgColor }) => bgColor};
 `;
 
 const PrimaryBigContent = styled(LinearGradient)`

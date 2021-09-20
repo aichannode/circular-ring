@@ -15,6 +15,7 @@ export enum Routes {
 	Pairing = "Pairing",
 	OnboardingWearInfo = "OnboardingWearInfo",
 	OnboardingPersonalInfo1 = "OnboardingPersonalInfo1",
+	OnboardingPersonalInfo2 = "OnboardingPersonalInfo2",
 
 	HomeDrawer = "HomeDrawer",
 	MainHome = "MainHome",
@@ -37,6 +38,7 @@ export type AppRoutesParams = {
 	[Routes.Pairing]: undefined;
 	[Routes.OnboardingWearInfo]: undefined;
 	[Routes.OnboardingPersonalInfo1]: undefined;
+	[Routes.OnboardingPersonalInfo2]: { firstName: string; lastName: string; country: string };
 	[Routes.HomeDrawer]: undefined;
 	[Routes.MainHome]: undefined;
 	[Routes.Home]: undefined;

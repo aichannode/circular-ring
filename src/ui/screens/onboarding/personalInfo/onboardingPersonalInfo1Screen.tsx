@@ -1,5 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { SimpleTextButton } from "@ui/components/buttons";
+import { CountryField } from "@ui/components/countryField";
 import { Grow } from "@ui/components/layout";
 import { BackButton } from "@ui/components/navigation/backButton";
 import { ScrollScreen } from "@ui/components/scrollScreen";
@@ -11,6 +12,7 @@ import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components/native";
+import * as RNLocalize from "react-native-localize";
 
 export const OnboardingPersonalInfo1Screen = () => {
 	const { format } = useI18n();
@@ -19,15 +21,23 @@ export const OnboardingPersonalInfo1Screen = () => {
 
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
-	const [country, setCountry] = useState("");
+	const [country, setCountry] = useState(RNLocalize.getCountry());
+	const [errorMessage, setErrorMessage] = useState("");
 
 	const firstNameRef = useRef<TextFieldRef | null>(null);
 	const lastNameRef = useRef<TextFieldRef | null>(null);
-	const countryRef = useRef<TextFieldRef | null>(null);
 
 	const goNext = useCallback(() => {
-		navigate(Routes.OnboardingPersonalInfo1);
-	}, []);
+		if (firstName.length === 0) {
+			setErrorMessage(format("onboarding.personal_info.error.firstname"));
+		} else if (lastName.length === 0) {
+			setErrorMessage(format("onboarding.personal_info.error.lastname"));
+		} else if (country.length === 0) {
+			setErrorMessage(format("onboarding.personal_info.error.country"));
+		} else {
+			navigate(Routes.OnboardingPersonalInfo2, { firstName, lastName, country });
+		}
+	}, [firstName, lastName, country]);
 
 	return (
 		<StyledScrollScreen>
@@ -41,6 +51,7 @@ export const OnboardingPersonalInfo1Screen = () => {
 					title={format("onboarding.personal_info.firstname_title")}
 					onValueChanged={setFirstName}
 					returnKeyType={"next"}
+					blurOnSubmit={false}
 					onSubmit={() => lastNameRef.current?.focus()}
 				/>
 			</InfoBlock>
@@ -52,19 +63,18 @@ export const OnboardingPersonalInfo1Screen = () => {
 					title={format("onboarding.personal_info.lastname_title")}
 					onValueChanged={setLastName}
 					returnKeyType={"next"}
-					onSubmit={() => countryRef.current?.focus()}
-				/>
-			</InfoBlock>
-			<InfoBlock>
-				<TextField
-					ref={countryRef}
-					placeholder={format("onboarding.personal_info.placeholder.text")}
-					value={country}
-					title={format("onboarding.personal_info.country_title")}
-					onValueChanged={setCountry}
 					blurOnSubmit={true}
 				/>
 			</InfoBlock>
+			<InfoBlock>
+				<CountryField
+					title={format("onboarding.personal_info.country_title")}
+					onValueChanged={setCountry}
+					placeholder={format("onboarding.personal_info.country_placeholder")}
+					defaultCountryCode={country}
+				/>
+			</InfoBlock>
+			<ErrorMessage>{errorMessage}</ErrorMessage>
 			<Grow />
 			<ButtonContainer>
 				<StyledSimpleTextButton onPress={navigation.goBack}>{format("global.back")}</StyledSimpleTextButton>
@@ -104,6 +114,13 @@ const ButtonContainer = styled.View`
 	margin: 30px 0;
 	flex-direction: row;
 	justify-content: space-between;
+`;
+
+const ErrorMessage = styled.Text`
+	${textStyles.errorMessage};
+	margin-top: 20px;
+	text-align: center;
+	align-self: center;
 `;
 
 const StyledSimpleTextButton = styled(SimpleTextButton)`

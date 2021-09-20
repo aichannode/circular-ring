@@ -1,3 +1,8 @@
+export enum Sex {
+	Male = "male",
+	Female = "female",
+}
+
 export interface User {
 	id: string;
 	firstName: string;
@@ -9,7 +14,7 @@ export interface User {
 	profilePictureUrl: string;
 	weight: number;
 	height: number;
-	sex: string;
+	sex: Sex;
 	bornDate: Date;
 	language: string;
 	scorePublic: boolean;
