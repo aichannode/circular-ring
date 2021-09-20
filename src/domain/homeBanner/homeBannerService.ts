@@ -19,6 +19,9 @@ export class HomeBannerService {
 				if (dismissed?.type === BannerType.CALIBRATION) {
 					return null;
 				}
+				if (daysLeft <= 0) {
+					return null;
+				}
 				return {
 					type: BannerType.CALIBRATION,
 					daysLeft,
@@ -30,14 +33,16 @@ export class HomeBannerService {
 	async init() {
 		const storedBanner = await this.homeBannerStorage.load();
 		if (storedBanner && hasBeenDismissedToday(storedBanner)) {
-			this.homeBannerStorage.clear();
-		} else {
 			this._dismissedBanner.set(storedBanner);
+		} else {
+			this.homeBannerStorage.clear();
 		}
 	}
 
 	dismiss(banner: HomeBanner) {
-		this.homeBannerStorage.save(banner);
+		const storedBanner = { ...banner, stored: new Date() };
+		this._dismissedBanner.set(storedBanner);
+		this.homeBannerStorage.save(storedBanner);
 	}
 }
 

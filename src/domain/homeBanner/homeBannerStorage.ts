@@ -4,8 +4,8 @@ import { HomeBanner, StoredBanner } from "./homeBanner";
 const homeBannerStorageKey = "@homeBanner";
 
 export class HomeBannerStorage {
-	save(banner: HomeBanner) {
-		return Storage.save<StoredBanner>(homeBannerStorageKey, { ...banner, stored: new Date() });
+	save(banner: StoredBanner) {
+		return Storage.save<StoredBanner>(homeBannerStorageKey, banner);
 	}
 
 	async load(): Promise<StoredBanner | null> {

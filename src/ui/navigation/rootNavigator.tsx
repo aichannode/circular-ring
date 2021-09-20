@@ -42,7 +42,7 @@ export const RootNavigator: React.FC = () => {
 	const { format } = useI18n();
 	const navigation = useNavigation();
 	const isAuthenticated = useAuth();
-	const accountLinked = useAccountLinked();
+	const accountLinked = true || useAccountLinked();
 
 	const HomeDrawerNavigator = () => (
 		<HomeDrawer.Navigator
