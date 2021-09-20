@@ -1,5 +1,5 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

@@ -5,6 +5,7 @@ import { usePreferences } from "@domain/preferences/hooks";
 import { useLiveData } from "@domain/ring/hooks";
 import { getIntensity, Intensity } from "@domain/ring/ringLiveData";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { CircularBottomSheet } from "@ui/components/bottomSheet";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
@@ -31,6 +32,12 @@ export const CircleLiveScreen: React.FC = () => {
 
 	const disconnectedBottomSheet = useRef<BottomSheetModal>(null);
 	const tutorialBottomSheet = useRef<BottomSheetModal>(null);
+
+	useEffect(() => {
+		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
+			disconnectedBottomSheet.current?.close();
+		}
+	}, [autoConnectState]);
 
 	useEffect(() => {
 		return () => {
@@ -98,15 +105,14 @@ export const CircleLiveScreen: React.FC = () => {
 						listening
 							? stop
 							: () => {
-									if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
-										if (preferences?.skipLiveTutorial) {
-											start();
-										} else {
-											tutorialBottomSheet.current?.present();
-										}
+									if (autoConnectState !== DeviceAutoConnectState.CONNECTED) {
+										disconnectedBottomSheet.current?.present();
+										return;
+									}
+									if (preferences?.skipLiveTutorial) {
+										start();
 									} else {
 										tutorialBottomSheet.current?.present();
-										// disconnectedBottomSheet.current?.present();
 									}
 							  }
 					}
@@ -126,8 +132,17 @@ export const CircleLiveScreen: React.FC = () => {
 					</Row>
 				</Stack>
 			</ResponsiveCenterView>
-			<NoRingConnectedBottomSheet ref={disconnectedBottomSheet} />
-			<LiveTutorialBottomSheet ref={tutorialBottomSheet} onFinish={() => start()} />
+			<CircularBottomSheet snapPoints={[580]} ref={disconnectedBottomSheet}>
+				<NoRingConnectedBottomSheet onClose={() => disconnectedBottomSheet.current?.close()} />
+			</CircularBottomSheet>
+			<CircularBottomSheet snapPoints={[610]} ref={tutorialBottomSheet}>
+				<LiveTutorialBottomSheet
+					onFinish={() => {
+						tutorialBottomSheet.current?.close();
+						start();
+					}}
+				/>
+			</CircularBottomSheet>
 		</Container>
 	);
 };
