@@ -18,17 +18,20 @@ import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SelectableButton } from "@ui/components/selectableButton";
 import { Switch } from "@ui/components/switch";
 import { useI18n } from "@ui/i18n";
-import { useRoutesNavigation } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import React, { useCallback, useEffect, useState } from "react";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
+import { TextInputMask } from "react-native-masked-text";
 import styled from "styled-components/native";
+
+dayjs.extend(customParseFormat);
 
 export const OnboardingPersonalInfo2Screen = () => {
 	const { format } = useI18n();
-	const { navigate } = useRoutesNavigation();
 	const navigation = useNavigation();
 
 	const [weightUnit, setWeightUnit] = useState<WeightUnit>(WeightUnit.kg);
@@ -54,17 +57,19 @@ export const OnboardingPersonalInfo2Screen = () => {
 		setHeight(defaultHeight.get(heightUnit) ?? 170);
 	}, [heightUnit]);
 
-	const openCalendar = useCallback(() => {
-		// TODO
-	}, []);
-
 	const goNext = useCallback(() => {
-		if (bornDate.length > 0) {
+		setErrorMessage("");
+		if (bornDate.length === 0) {
 			setErrorMessage(format("onboarding.personal_info.error.born_date"));
 		} else {
-			// TODO
+			const birthDate = dayjs(bornDate, "DD/MM/YYYY", true);
+			if (!birthDate.isValid() || birthDate.isAfter(dayjs())) {
+				setErrorMessage(format("onboarding.personal_info.error.born_date_invalid"));
+			} else {
+				// TODO
+			}
 		}
-	}, []);
+	}, [bornDate, sex, weight, height]);
 
 	return (
 		<StyledScrollScreen>
@@ -94,13 +99,18 @@ export const OnboardingPersonalInfo2Screen = () => {
 				<TitleAndOptions>
 					<BlockTitle>{format("onboarding.personal_info.born_title")}</BlockTitle>
 				</TitleAndOptions>
-				<Pressable onPress={openCalendar}>
-					<BornDateContainer>
-						<BornText isPlaceholder={bornDate.length > 0}>
-							{bornDate ? bornDate : format("onboarding.personal_info.born_placeholder")}
-						</BornText>
-					</BornDateContainer>
-				</Pressable>
+				<BornDateContainer>
+					<TextInputMask
+						type={"datetime"}
+						options={{
+							format: "DD/MM/YYYY",
+						}}
+						placeholder={format("onboarding.personal_info.born_placeholder")}
+						value={bornDate}
+						onChangeText={setBornDate}
+						style={{ padding: 0, width: "100%" }}
+					/>
+				</BornDateContainer>
 			</InfoBlock>
 			<InfoBlock>
 				<TitleAndOptions>
@@ -185,14 +195,8 @@ const BornDateContainer = styled.View`
 	border-bottom-width: 1px;
 	width: 100%;
 	padding: 0 8px;
-	height: 30px;
 	flex-direction: row;
 	align-items: center;
-`;
-
-const BornText = styled.Text<{ isPlaceholder: boolean }>`
-	font-size: 12px;
-	color: ${({ isPlaceholder }) => (isPlaceholder ? colors.textPlaceholder : colors.textPrimary)};
 `;
 
 const SexButtons = styled.View`
