@@ -3,7 +3,7 @@ import { base64decode, base64encode, delay, observableToPromise, timedPromise } 
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { observable, Observable } from "micro-observables";
 import { Signal } from "micro-signals";
-import { Device, ScanMode, State } from "react-native-ble-plx";
+import { BleError, Device, ScanMode, State, Subscription } from "react-native-ble-plx";
 import { StoredDevice } from "./device";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 
@@ -35,6 +35,8 @@ const findDeviceTimeout = 20000;
 const scanRetryTimeout = 10000;
 export class DeviceService {
 	private logger = getLogger("📟 DeviceService");
+
+	private _onDeviceDisconnectedSubscription: Subscription | null = null;
 
 	private _scannedDevices = observable(new Map<string, Device>());
 	private _connectedDevice = observable<Device | null>(null);
@@ -153,6 +155,9 @@ export class DeviceService {
 			this.logger.info("Services discovered for device", device.name);
 			this._connectedDevice.set(device);
 			this._connectionState.set(DeviceConnectionState.CONNECTED);
+			this._onDeviceDisconnectedSubscription = device.onDisconnected((error, disconnectedDevice) =>
+				this.handleDeviceDisconnection(error, disconnectedDevice)
+			);
 			const storedDevice = { name: device.name };
 			this._favoriteDevice.set(storedDevice);
 			await this.favoriteDeviceStorage.save(storedDevice);
@@ -164,6 +169,20 @@ export class DeviceService {
 		}
 	}
 
+	private handleDeviceDisconnection(error: BleError | null, device: Device) {
+		this.logger.warn(`Lost connection with device ${device.id} / ${device.name}`, error);
+		const connectedDevice = this._connectedDevice.get();
+		if (connectedDevice?.name && connectedDevice.id === device.id) {
+			this._connectionState.set(DeviceConnectionState.DISCONNECTED);
+			this._connectedDevice.set(null);
+			this._onDeviceDisconnectedSubscription?.remove();
+			this._onDeviceDisconnectedSubscription = null;
+			this.logger.info("Trying to reconnect to", connectedDevice.name);
+			this.autoConnectDevice(connectedDevice.name);
+		} else {
+			this.logger.warn("Disconnected from unknown device");
+		}
+	}
 	async autoConnectDevice(name: string) {
 		if (this.setupState.get() !== DeviceSetupState.FINISHED) {
 			this.logger.error("Error: can note autoconnect while setup is not finished");
