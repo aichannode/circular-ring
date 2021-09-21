@@ -2,6 +2,7 @@ import { useServices } from "@core/services";
 import { BannerType, HomeBanner } from "@domain/homeBanner/homeBanner";
 import { CloseButton } from "@ui/components/closeButton";
 import { row, Stack } from "@ui/components/layout";
+import { OrangeDiagonalGradient } from "@ui/components/shapes/gradients";
 import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -50,7 +51,7 @@ export const HomeBannerView: React.FC<HomeBannerViewProps> = ({ banner, style })
 	);
 };
 
-const Container = styled.View`
+const Container = styled(OrangeDiagonalGradient)`
 	padding: 20px 40px 20px 28px;
 	${row("center")};
 	background-color: black;
