@@ -17,6 +17,8 @@ import { RingSetupStartScreen } from "@ui/screens/ringSetup/ringSetupStartScreen
 import React from "react";
 import { Image } from "react-native";
 import { CircleActivityScreen } from "@ui/screens/circleActivity/circleActivityScreen";
+import { CircleAlarmScreen } from "@ui/screens/circleAlarm/circleAlarmScreen";
+import { NewAlarmScreen } from "@ui/screens/circleAlarm/newAlarmScreen";
 
 const SetupStack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
@@ -43,6 +45,16 @@ export const RootNavigator: React.FC = () => {
 					name={Routes.Activity}
 					component={CircleActivityScreen}
 					options={{ title: format("header.activity"), headerRight: undefined }}
+				/>
+				<MainStack.Screen
+					name={Routes.Alarm}
+					component={CircleAlarmScreen}
+					options={{ title: format("header.alarm"), headerRight: undefined }}
+				/>
+				<MainStack.Screen
+					name={Routes.NewAlarm}
+					component={NewAlarmScreen}
+					options={{ title: format("header.alarm"), headerRight: undefined }}
 				/>
 			</MainStack.Navigator>
 		) : (

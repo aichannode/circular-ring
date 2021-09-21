@@ -11,6 +11,7 @@ export const colors = {
 	green: "#2bd866",
 	orange: "#ff9334",
 	red: "#ff1d1d",
+	blue: "#3996f7",
 };
 
 export const qualityColors: { [key in ScoreQuality]: string } = {
