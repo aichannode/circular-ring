@@ -1,33 +1,50 @@
-import { SecondaryText, TitleText } from "@ui/components/text";
-import React, { useState } from "react";
-import styled from "styled-components/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Image, Platform, Pressable } from "react-native";
+import { SimpleTextButton } from "@ui/components/buttons";
+import { Hour } from "@ui/components/hour";
+import { SecondaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import React, { useState } from "react";
+import { Image, Platform, Pressable } from "react-native";
+import styled from "styled-components/native";
 
 export const NewAlarmScreen: React.FC = () => {
-	const [time, setTime] = useState(new Date());
-
 	const { format } = useI18n();
+	const [pickerVisible, setPickerVisible] = useState(false);
+	const [alarmTime, setAlarmTime] = useState(new Date());
+
+	const submit = (newValue: Date) => {
+		setPickerVisible(false);
+		setAlarmTime(newValue || alarmTime);
+	};
 
 	return (
 		<Container>
 			{Platform.OS === "android" ? (
-				<DateTimePicker
-					value={time}
-					mode={"time"}
-					is24Hour={true}
-					display="spinner"
-					onChange={(event, selectedTime) => setTime(selectedTime || time)}
-				/>
+				<>
+					<HourContainer>
+						<Hour value={alarmTime} onPress={() => setPickerVisible(true)} />
+						<EditTimeButton>{format("alarm.new.time.edit")}</EditTimeButton>
+					</HourContainer>
+					{pickerVisible && (
+						<DateTimePicker
+							value={alarmTime}
+							mode={"time"}
+							is24Hour={false}
+							// display="spinner"
+							onChange={(event, selectedTime) => {
+								event.type !== "dismissed" && selectedTime ? submit(selectedTime) : setPickerVisible(false);
+							}}
+						/>
+					)}
+				</>
 			) : (
 				<DateTimePicker
-					value={time}
+					value={alarmTime}
 					mode={"time"}
 					is24Hour={true}
 					display="spinner"
-					onChange={(event, selectedTime) => setTime(selectedTime || time)}
+					onChange={(event, selectedTime) => setAlarmTime(selectedTime || alarmTime)}
 				/>
 			)}
 
@@ -82,6 +99,17 @@ export const NewAlarmScreen: React.FC = () => {
 
 const Container = styled.View`
 	flex: 1;
+`;
+
+const HourContainer = styled.View`
+	margin-top: 100px;
+	margin-bottom: 85px;
+	justify-content: center;
+	align-items: center;
+`;
+
+const EditTimeButton = styled(SimpleTextButton)`
+	margin-top: 15px;
 `;
 
 const Title = styled(TitleText)`
