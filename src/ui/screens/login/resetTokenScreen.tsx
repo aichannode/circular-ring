@@ -1,6 +1,7 @@
 import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton, SimpleTextButton } from "@ui/components/buttons";
-import { Divider } from "@ui/components/divider";
+import { Grow, Row, Stack } from "@ui/components/layout";
+import { LogoImageHeader } from "@ui/components/logoImageHeader";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SixDigitInput } from "@ui/components/sixDigitInput";
 import { Spinner } from "@ui/components/spinner";
@@ -10,7 +11,7 @@ import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes"
 import { textStyles } from "@ui/styles/textStyles";
 import { obfuscateEmail } from "@ui/utils/emailUtils";
 import { isCorrectPassword } from "@ui/utils/passwordUtils";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { TextInput } from "react-native";
 import styled from "styled-components/native";
 
@@ -24,6 +25,11 @@ export const ResetTokenScreen: React.FC = () => {
 	const email = route.params.email;
 
 	const [resetToken, setResetToken] = useState("");
+	const [code, setCode] = useState<readonly string[]>(["", "", "", "", "", ""]);
+	useEffect(() => {
+		setResetToken(code.join(""));
+	}, [code]);
+
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const passwordFieldRef = useRef<TextInput | null>(null);
@@ -35,11 +41,12 @@ export const ResetTokenScreen: React.FC = () => {
 
 	const resendCode = async () => {
 		try {
+			setCode(["", "", "", "", "", ""]);
 			await userService.resendResetToken(email);
 			setResend(true);
 		} catch (error) {
 			setResend(false);
-			setErrorMessageToken("login.error.default");
+			setErrorMessageToken(format("login.error.default"));
 		}
 	};
 
@@ -75,9 +82,8 @@ export const ResetTokenScreen: React.FC = () => {
 	}, [password, confirmPassword]);
 
 	return (
-		<ScrollScreen contentContainerStyle={contentStyle}>
-			<Logo source={require("@assets/images/circularOffcial.png")} />
-			<HeaderImage source={require("@assets/images/forgotPasswordZen.jpg")} />
+		<StyledScrollScreen contentContainerStyle={contentStyle}>
+			<LogoImageHeader source={require("@assets/images/forgotPasswordZen.jpg")} />
 			<Title>{format("forgot_password.reset.title")}</Title>
 			{errorMessageToken ? (
 				<ErrorMessage>{errorMessageToken}</ErrorMessage>
@@ -86,130 +92,104 @@ export const ResetTokenScreen: React.FC = () => {
 			) : (
 				<Description>{format("forgot_password.reset.code.description", { email: obfuscateEmail(email) })}</Description>
 			)}
-			<SixDigitInputField
-				onSubmit={(code) => {
-					setResetToken(code);
-				}}
-			/>
+			<SixDigitInputField codeValue={code} onCodeChanged={setCode} />
 
-			<Separator />
+			<ResendButton onPress={resendCode}>{format("forgot_password.reset.code.resend_button")}</ResendButton>
 
 			{errorMessagePassword ? <ErrorMessage>{errorMessagePassword}</ErrorMessage> : null}
-			<InputField
-				title={format("forgot_password.new.password")}
-				placeholder={format("forgot_password.reset.password.placeholder")}
-				canBeSecure
-				value={password}
-				onValueChanged={setPassword}
-				blurOnSubmit={false}
-				onSubmit={() => passwordFieldRef.current?.focus()}
-			/>
-			<InputField
-				ref={passwordFieldRef}
-				title={format("forgot_password.new.confirm_password")}
-				placeholder={format("forgot_password.reset.confirm_password.placeholder")}
-				canBeSecure
-				value={confirmPassword}
-				onValueChanged={setConfirmPassword}
-				blurOnSubmit={true}
-			/>
-			<ButtonContainer centerElements={false}>
+			<Stack gap={30}>
+				<InputField
+					title={format("forgot_password.new.password")}
+					placeholder={format("forgot_password.reset.password.placeholder")}
+					canBeSecure
+					value={password}
+					onValueChanged={setPassword}
+					blurOnSubmit={false}
+					onSubmit={() => passwordFieldRef.current?.focus()}
+				/>
+				<InputField
+					ref={passwordFieldRef}
+					title={format("forgot_password.new.confirm_password")}
+					placeholder={format("forgot_password.reset.confirm_password.placeholder")}
+					canBeSecure
+					value={confirmPassword}
+					onValueChanged={setConfirmPassword}
+					blurOnSubmit={true}
+				/>
+			</Stack>
+			<Grow />
+			<ButtonContainer gap={35} justify="center">
 				{isLoading ? (
 					<Spinner size={24} />
 				) : (
-					<>
-						<SecondaryButton onPress={() => navigation.goBack()}>{format("global.back")}</SecondaryButton>
-						<PrimaryButton
-							onPress={() => {
-								checkAndValidatePassword();
-							}}
-						>
+					[
+						<SecondaryButton key={"back"} onPress={() => navigation.goBack()}>
+							{format("global.back")}
+						</SecondaryButton>,
+						<PrimaryButton key={"validate"} onPress={checkAndValidatePassword}>
 							{format("forgot_password.new.button")}
-						</PrimaryButton>
-					</>
+						</PrimaryButton>,
+					]
 				)}
 			</ButtonContainer>
-
-			<ResendButton onPress={resendCode}>{format("forgot_password.reset.code.resend_button")}</ResendButton>
-		</ScrollScreen>
+		</StyledScrollScreen>
 	);
 };
 
-const Logo = styled.Image`
-	margin-top: 70px;
-	margin-bottom: 70px;
-	align-self: center;
-`;
-
-const HeaderImage = styled.Image`
-	width: 100%;
-	flex-grow: 1;
+const StyledScrollScreen = styled(ScrollScreen)`
+	justify-content: flex-start;
 `;
 
 const Title = styled.Text`
 	${textStyles.mediumTitle};
-	flex-grow: 1;
 	align-self: center;
-	margin-top: 60px;
-	margin-bottom: 20px;
-`;
-
-const Separator = styled(Divider)`
-	flex-grow: 1;
-	align-self: center;
-	margin-bottom: 20px;
+	margin-top: 40px;
+	margin-bottom: 30px;
 `;
 
 const Description = styled.Text`
 	${textStyles.primary};
-	flex-grow: 1;
 	align-self: center;
 	justify-content: center;
-	margin-bottom: 20px;
+	margin-bottom: 40px;
 	padding-left: 66px;
 	padding-right: 66px;
+	text-align: center;
 `;
 
 const ErrorMessage = styled.Text`
 	${textStyles.errorMessage};
-	flex-grow: 1;
 	align-self: center;
 	justify-content: center;
-	margin-bottom: 20px;
+	margin-bottom: 40px;
 	padding-left: 66px;
 	padding-right: 66px;
 	text-align: center;
 `;
 
 const SixDigitInputField = styled(SixDigitInput)`
-	margin-bottom: 20px;
+	margin-bottom: 30px;
 	padding-left: 66px;
 	padding-right: 66px;
 `;
 
 const InputField = styled(TextField)`
-	flex-grow: 1;
 	justify-content: center;
 	margin-bottom: 20px;
 	padding-left: 66px;
 	padding-right: 66px;
 `;
 
-const ButtonContainer = styled.View<{ centerElements: boolean }>`
-	width: 100%;
-	flex-direction: row;
-	justify-content: ${({ centerElements }) => (centerElements ? "center" : "space-between")};
-	padding: 40px 66px;
-	align-items: center;
+const ButtonContainer = styled(Row)`
+	margin-top: 57px;
+	margin-bottom: 40px;
 `;
 
 const ResendButton = styled(SimpleTextButton)`
 	align-items: center;
-	margin-bottom: 20px;
+	margin-bottom: 56px;
 `;
 
 const contentStyle = {
-	flexGrow: 1,
-	paddingLeft: 0,
-	paddingRight: 0,
+	paddingVertical: 0,
 };

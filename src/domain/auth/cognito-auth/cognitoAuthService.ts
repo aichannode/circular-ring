@@ -55,29 +55,30 @@ export class CognitoAuthService implements AuthService {
 
 			this._userPool.signUp(email, password, attributeList, [], (err, result) => {
 				if (err) {
-					this.logger.warn(JSON.stringify(err));
+					this.logger.warn("Signup Error : " + JSON.stringify(err));
 					reject(err);
 				} else if (!result) {
 					this.logger.warn("signUp error: user is null");
 					reject("signUp error: user is null");
 				} else {
 					this._cognitoUser.set(result.user);
-					this.logger.debug("user is " + JSON.stringify(this._cognitoUser));
+					this.logger.debug("user is " + JSON.stringify(result.user));
 					resolve();
 				}
 			});
 		});
 	}
 
-	async resendSignUpValidationCode(): Promise<void> {
+	async resendSignUpValidationCode(email: string): Promise<void> {
 		return new Promise((resolve, reject) => {
-			const currentUser = this._cognitoUser.get();
+			const currentUser = new CognitoUser({ Username: email, Pool: this._userPool });
 			if (currentUser) {
 				currentUser.resendConfirmationCode((err, result) => {
 					if (err) {
 						this.logger.warn("Error resending confirmation code", err);
 						reject(err);
 					} else {
+						this._cognitoUser.set(currentUser);
 						resolve();
 					}
 				});
@@ -116,6 +117,7 @@ export class CognitoAuthService implements AuthService {
 
 			cognitoUser.authenticateUser(authenticationDetails, {
 				onSuccess: (result) => {
+					this._cognitoUser.set(cognitoUser);
 					this._accessToken.set(result.getAccessToken());
 					resolve();
 				},
@@ -202,6 +204,8 @@ export class CognitoAuthService implements AuthService {
 	}
 
 	async logout(): Promise<void> {
-		return this._cognitoUser.get()?.signOut();
+		await this._cognitoUser.get()?.signOut();
+		this._cognitoUser.set(null);
+		this._accessToken.set(null);
 	}
 }

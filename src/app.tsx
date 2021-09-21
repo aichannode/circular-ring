@@ -1,3 +1,4 @@
+import "react-native-gesture-handler";
 import { useSentry } from "@core/logger/hooks/useSentry";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { RootNavigator } from "@ui/navigation/rootNavigator";
@@ -9,6 +10,8 @@ import { initializeServices, ServicesProvider } from "@core/services";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { translations } from "./wordings";
 import SplashScreen from "react-native-splash-screen";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 
@@ -28,13 +31,17 @@ export const App = () => {
 
 	return initialized ? (
 		<IntlProvider locale={locale} messages={translations[locale]}>
-			<SafeAreaProvider>
-				<ServicesProvider>
-					<NavigationContainer theme={theme}>
-						<RootNavigator />
-					</NavigationContainer>
-				</ServicesProvider>
-			</SafeAreaProvider>
+			<GestureHandlerRootView style={{ flex: 1 }}>
+				<SafeAreaProvider>
+					<ServicesProvider>
+						<NavigationContainer theme={theme}>
+							<BottomSheetModalProvider>
+								<RootNavigator />
+							</BottomSheetModalProvider>
+						</NavigationContainer>
+					</ServicesProvider>
+				</SafeAreaProvider>
+			</GestureHandlerRootView>
 		</IntlProvider>
 	) : null;
 };

@@ -18,6 +18,9 @@ export class UserService {
 
 	async init() {
 		this._user.set(await this.userStorage.loadUser());
+		this.authService.userEmail.subscribe((userEmail) => {
+			this._currentUserEmail.set(userEmail ?? null);
+		});
 	}
 
 	async loginWithEmail(email: string, password: string): Promise<void> {
@@ -28,14 +31,14 @@ export class UserService {
 		} catch (error) {
 			if ((error as { code: string }).code === "UserNotConfirmedException") {
 				await this.userStorage.saveJustRegisteredUser(email, password);
+				this._currentUserEmail.set(email);
 			}
 			throw error;
 		}
 	}
 
-	get currentUserEmail() {
-		return this.authService.userEmail;
-	}
+	private _currentUserEmail = observable<string | null>(null);
+	currentUserEmail = this._currentUserEmail.readOnly();
 
 	async resetPassword(email: string): Promise<void> {
 		await this.authService.forgotPassword(email);
@@ -71,10 +74,16 @@ export class UserService {
 	async signUpWithEmail(email: string, password: string) {
 		await this.authService.signUpEmail(email, password);
 		await this.userStorage.saveJustRegisteredUser(email, password);
+		this._currentUserEmail.set(email);
 	}
 
 	async resendSignUpCode() {
-		await this.authService.resendSignUpValidationCode();
+		const justRegistered = await this.userStorage.loadJustRegisteredUser();
+		if (justRegistered) {
+			await this.authService.resendSignUpValidationCode(justRegistered.email);
+		} else {
+			throw Error("Cannot retrieve JustRegistered user credentials");
+		}
 	}
 
 	async validateSignUp(code: string) {
