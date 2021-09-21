@@ -80,15 +80,18 @@ const PrimaryButtonText = styled.Text<{ light?: boolean }>`
 	${textStyles.primary};
 	color: ${colors.white};
 	${({ light }) => light && "font-size: 11px"};
+	text-align: center;
 `;
 
 const SecondaryButtonText = styled.Text`
 	${textStyles.primary};
+	text-align: center;
 `;
 
 const PrimaryBigButtonText = styled.Text`
 	${textStyles.bigButton};
 	color: ${colors.white};
+	text-align: center;
 `;
 
 const GrayButtonText = styled.Text`
