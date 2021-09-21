@@ -1,5 +1,5 @@
 import { Row, Stack } from "@ui/components/layout";
-import { PrimaryText } from "@ui/components/text";
+import { PrimaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
@@ -39,6 +39,9 @@ export const CirclesBanner: React.FC<CirclesBannerProps> = ({ style }) => {
 	const navigation = useRoutesNavigation();
 
 	return (
+		<Container style={style} gap={15}>
+			<TitleText>{format("home.circles.title")}</TitleText>
+			<Row align="flex-start" gap={20}>
 				{circles.map((circle) => (
 					<CircleView key={circle.route} onPress={() => navigation.navigate(circle.route)}>
 						<Stack gap={10} align="center">

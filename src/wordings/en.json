@@ -187,7 +187,7 @@
   "onboarding.personal_info.error.firstname": "FirstName is required.",
   "onboarding.personal_info.error.lastname": "LastName is required.",
   "onboarding.personal_info.error.country": "Country is required.",
+  "onboarding.personal_info.error.born_date": "Born date is required.",
   "banner.calibration.title": "Calibration period",
-  "banner.calibration.message": "Keep wearing your ring during the entirety of the 14 days calibration period for improved results!",
-  "onboarding.personal_info.error.country": "Country is required."
+  "banner.calibration.message": "Keep wearing your ring during the entirety of the 14 days calibration period for improved results!"
 }
