@@ -109,18 +109,18 @@ const InfoBlock = styled.View`
 	margin-bottom: 12px;
 `;
 
-const ButtonContainer = styled.View`
-	width: 100%;
-	margin: 30px 0;
-	flex-direction: row;
-	justify-content: space-between;
-`;
-
 const ErrorMessage = styled.Text`
 	${textStyles.errorMessage};
 	margin-top: 20px;
 	text-align: center;
 	align-self: center;
+`;
+
+const ButtonContainer = styled.View`
+	width: 100%;
+	margin: 30px 0;
+	flex-direction: row;
+	justify-content: space-between;
 `;
 
 const StyledSimpleTextButton = styled(SimpleTextButton)`

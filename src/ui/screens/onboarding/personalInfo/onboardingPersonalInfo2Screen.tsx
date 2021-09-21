@@ -42,6 +42,8 @@ export const OnboardingPersonalInfo2Screen = () => {
 	const [weight, setWeight] = useState<number>(defaultWeight.get(weightUnit) ?? 80);
 	const [height, setHeight] = useState(defaultHeight.get(heightUnit) ?? 170);
 
+	const [errorMessage, setErrorMessage] = useState("");
+
 	useEffect(() => {
 		setWeightRange(weightUnit === WeightUnit.kg ? weightValuesKg : weightValuesLbs);
 		setWeight(defaultWeight.get(weightUnit) ?? 80);
@@ -57,7 +59,11 @@ export const OnboardingPersonalInfo2Screen = () => {
 	}, []);
 
 	const goNext = useCallback(() => {
-		// navigate(Routes.OnboardingPersonalInfo1);
+		if (bornDate.length > 0) {
+			setErrorMessage(format("onboarding.personal_info.error.born_date"));
+		} else {
+			// TODO
+		}
 	}, []);
 
 	return (
@@ -134,6 +140,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 					animatedScrollToDefaultIndex={false}
 				/>
 			</InfoBlock>
+			<ErrorMessage>{errorMessage}</ErrorMessage>
 			<Grow />
 			<ButtonContainer>
 				<StyledSimpleTextButton onPress={navigation.goBack}>{format("global.back")}</StyledSimpleTextButton>
@@ -205,6 +212,13 @@ const PickerValue = styled.Text`
 	width: 50px;
 	text-align: center;
 	font-size: 22px;
+`;
+
+const ErrorMessage = styled.Text`
+	${textStyles.errorMessage};
+	margin-top: 20px;
+	text-align: center;
+	align-self: center;
 `;
 
 const ButtonContainer = styled.View`
