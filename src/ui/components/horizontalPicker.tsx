@@ -10,9 +10,9 @@ import {
 	View,
 } from "react-native";
 
-export interface HorizontalPickerProps extends ScrollViewProps {
-	data: any[];
-	renderItem: (item: any, index: number) => ReactNode;
+export interface HorizontalPickerProps<T> extends ScrollViewProps {
+	data: T[];
+	renderItem: (item: T, index: number) => ReactNode;
 	itemWidth: number;
 	defaultIndex?: number;
 	animatedScrollToDefaultIndex?: boolean;
@@ -23,7 +23,7 @@ export type HorizontalPickerState = {
 	scrollViewWidth: number;
 };
 
-export class HorizontalPicker extends PureComponent<HorizontalPickerProps, HorizontalPickerState> {
+export class HorizontalPicker<T> extends PureComponent<HorizontalPickerProps<T>, HorizontalPickerState> {
 	private paddingSide: number;
 	private refScrollView: React.RefObject<ScrollView>;
 	private ignoreNextScroll: boolean;
@@ -32,7 +32,7 @@ export class HorizontalPicker extends PureComponent<HorizontalPickerProps, Horiz
 	private readonly defaultScrollEventThrottle = 16;
 	private readonly defaultDecelerationRate = Platform.OS == "ios" ? 50 : 0.9;
 
-	constructor(props: HorizontalPickerProps) {
+	constructor(props: HorizontalPickerProps<T>) {
 		super(props);
 		this.paddingSide = 0;
 		this.refScrollView = React.createRef();
@@ -141,7 +141,7 @@ export class HorizontalPicker extends PureComponent<HorizontalPickerProps, Horiz
 				onMomentumScrollBegin={this.onMomentumScrollBegin}
 				{...props}
 			>
-				{data.map((item: any, index: number) => (
+				{data.map((item: T, index: number) => (
 					<TouchableWithoutFeedback onPress={() => this.scrollToPosition(index)} key={index}>
 						<View>{renderItem(item, index)}</View>
 					</TouchableWithoutFeedback>

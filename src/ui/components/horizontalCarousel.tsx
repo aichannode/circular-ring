@@ -4,19 +4,19 @@ import React, { useCallback } from "react";
 import LinearGradient from "react-native-linear-gradient";
 import styled from "styled-components/native";
 
-interface HorizontalCarouselProps extends HorizontalPickerProps {
-	onValueChange?: (value: any) => void;
-	defaultValue?: any;
+interface HorizontalCarouselProps<T> extends HorizontalPickerProps<T> {
+	onValueChange?: (value: T) => void;
+	defaultValue?: T;
 }
 
-export const HorizontalCarousel: React.FC<HorizontalCarouselProps> = ({
+export function HorizontalCarousel<T>({
 	defaultValue,
 	onValueChange,
 	data,
 	renderItem,
 	itemWidth,
 	...props
-}) => {
+}: HorizontalCarouselProps<T>) {
 	let baseIndex = props.defaultIndex ?? 0;
 	if (defaultValue) {
 		baseIndex = data.indexOf(defaultValue);
@@ -56,7 +56,7 @@ export const HorizontalCarousel: React.FC<HorizontalCarouselProps> = ({
 			/>
 		</Container>
 	);
-};
+}
 
 const Container = styled.View``;
 
