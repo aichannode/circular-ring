@@ -1,4 +1,5 @@
 import { ScoreQuality } from "@domain/circleActivity/circleActivityData";
+import { Intensity } from "@domain/ring/ringLiveData";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
 import { WordingKey } from "../wordings";
@@ -51,6 +52,18 @@ export function useI18n() {
 					return intl.formatMessage({ id: "score.quality.good" });
 				case ScoreQuality.OPTIMAL:
 					return intl.formatMessage({ id: "score.quality.optimal" });
+			}
+		},
+		formatIntensity: (intensity: Intensity) => {
+			switch (intensity) {
+				case Intensity.LOW:
+					return intl.formatMessage({ id: "intensity.low" });
+				case Intensity.MEDIUM:
+					return intl.formatMessage({ id: "intensity.medium" });
+				case Intensity.HIGH:
+					return intl.formatMessage({ id: "intensity.high" });
+				case Intensity.NONE:
+					return intl.formatMessage({ id: "intensity.none" });
 			}
 		},
 	};

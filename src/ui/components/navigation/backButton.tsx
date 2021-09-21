@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Image, Pressable, View, ViewProps } from "react-native";
+import { Image, Pressable, ViewProps } from "react-native";
 
 export const BackButton = (props: ViewProps) => {
 	const navigation = useNavigation();

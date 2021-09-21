@@ -22,8 +22,8 @@ export enum Routes {
 	Home = "Home",
 	MyRing = "MyRing",
 	Activity = "Activity",
-
 	Profile = "Profile",
+	Live = "Live",
 }
 
 export type AppRoutesParams = {
@@ -45,6 +45,7 @@ export type AppRoutesParams = {
 	[Routes.MyRing]: undefined;
 	[Routes.Activity]: undefined;
 	[Routes.Profile]: undefined;
+	[Routes.Live]: undefined;
 };
 
 export const useRoutesNavigation = () => useNavigation<NativeStackNavigationProp<AppRoutesParams>>();

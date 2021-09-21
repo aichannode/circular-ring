@@ -3,7 +3,6 @@ import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { observable, Observable } from "micro-observables";
 import { Signal } from "micro-signals";
 import { Device, ScanMode, State } from "react-native-ble-plx";
-import { Channel } from "./channels";
 import { StoredDevice } from "./device";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 
@@ -214,7 +213,7 @@ export class DeviceService {
 		return timedPromise(scanPromise, findDeviceTimeout);
 	}
 
-	async listen(channel: Channel, cb: (response: string) => void) {
+	async listen(channel: string, returnChannel: string, cb: (response: string) => void) {
 		const device = this._connectedDevice.get() ?? (await observableToPromise(this._connectedDevice));
 		const monitoring = this._monitoring.get() || (await observableToPromise(this._monitoring));
 		if (!device) {
@@ -226,10 +225,10 @@ export class DeviceService {
 			throw "Not monitoring";
 		}
 
-		this.log("Listening to", channel);
+		this.log("Listening to", channel, "->", returnChannel);
 
 		const listener = (output: string) => {
-			if (output.startsWith(channel)) {
+			if (output.startsWith(returnChannel)) {
 				cb(output);
 			}
 		};

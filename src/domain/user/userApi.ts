@@ -1,5 +1,5 @@
 import { ApiService } from "@core/api/apiService";
-import { User } from "@domain/user/user";
+import { Sex, User } from "@domain/user/user";
 
 interface UserDto {
 	id: string;
@@ -35,6 +35,7 @@ export class UserApi {
 			...userDto,
 			bornDate: new Date(userDto.bornDate),
 			createdAt: new Date(userDto.createdAt),
+			sex: userDto.sex === "male" ? Sex.Male : Sex.Female,
 		};
 	}
 }
