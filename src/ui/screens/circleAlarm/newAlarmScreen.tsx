@@ -24,7 +24,7 @@ export const NewAlarmScreen: React.FC = () => {
 				<>
 					<HourContainer>
 						<Hour value={alarmTime} onPress={() => setPickerVisible(true)} />
-						<EditTimeButton>{format("alarm.new.time.edit")}</EditTimeButton>
+						<EditTimeButton onPress={() => setPickerVisible(true)}>{format("alarm.new.time.edit")}</EditTimeButton>
 					</HourContainer>
 					{pickerVisible && (
 						<DateTimePicker
