@@ -1,5 +1,6 @@
 import { Channel } from "@domain/device/channels";
 import { DeviceService } from "@domain/device/deviceService";
+import { RingAlarm } from "@domain/ring/ringAlarm";
 import { observable } from "micro-observables";
 import { RingApi } from "./ringApi";
 import { deserializeBattery, RingBattery } from "./ringBattery";
@@ -20,6 +21,7 @@ export class RingService {
 	private _ringBattery = observable<RingBattery | null>(null);
 	private _syncState = observable<SyncState>(SyncState.NONE);
 	private _ringLiveData = observable<{ listening: boolean; data?: RingLiveData | null }>({ listening: false });
+	private _ringAlarms = observable<RingAlarm[] | null>(null);
 
 	ringBattery = this._ringBattery.readOnly();
 	syncState = this._syncState.readOnly();

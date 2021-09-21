@@ -1,8 +1,9 @@
-import { SecondaryText } from "@ui/components/text";
+import { SecondaryText, TertiaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { ScreenSection } from "@ui/screens/circleActivity/screenSection";
 import { colors } from "@ui/styles/colors";
+import { textStyles } from "@ui/styles/textStyles";
 import React from "react";
 import { Pressable, ScrollView } from "react-native";
 import { Image } from "react-native";
@@ -39,6 +40,7 @@ const AlarmContainer = styled.View`
 `;
 
 const AddImage = styled(Image)`
+	tint-color: ${colors.textSecondary};
 	margin-right: 25px;
 `;
 
