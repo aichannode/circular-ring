@@ -1,16 +1,28 @@
+import {
+	defaultHeight,
+	defaultWeight,
+	HeightUnit,
+	heightValuesCm,
+	heightValuesFt,
+	WeightUnit,
+	weightValuesKg,
+	weightValuesLbs,
+} from "@domain/units";
 import { Sex } from "@domain/user/user";
 import { useNavigation } from "@react-navigation/native";
 import { SimpleTextButton } from "@ui/components/buttons";
+import { HorizontalCarousel } from "@ui/components/horizontalCarousel";
 import { Grow } from "@ui/components/layout";
 import { BackButton } from "@ui/components/navigation/backButton";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SelectableButton } from "@ui/components/selectableButton";
+import { Switch } from "@ui/components/switch";
 import { useI18n } from "@ui/i18n";
 import { useRoutesNavigation } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Pressable, View } from "react-native";
 import styled from "styled-components/native";
 
@@ -19,10 +31,26 @@ export const OnboardingPersonalInfo2Screen = () => {
 	const { navigate } = useRoutesNavigation();
 	const navigation = useNavigation();
 
+	const [weightUnit, setWeightUnit] = useState<WeightUnit>(WeightUnit.kg);
+	const [weightRange, setWeightRange] = useState<number[]>(weightValuesKg);
+
+	const [heightUnit, setHeightUnit] = useState<HeightUnit>(HeightUnit.cm);
+	const [heightRange, setHeightRange] = useState<number[]>(heightValuesCm);
+
 	const [sex, setSex] = useState(Sex.Female);
 	const [bornDate, setBornDate] = useState("");
-	const [weight, setWeight] = useState(80);
-	const [height, setHeight] = useState(170);
+	const [weight, setWeight] = useState<number>(defaultWeight.get(weightUnit) ?? 80);
+	const [height, setHeight] = useState(defaultHeight.get(heightUnit) ?? 170);
+
+	useEffect(() => {
+		setWeightRange(weightUnit === WeightUnit.kg ? weightValuesKg : weightValuesLbs);
+		setWeight(defaultWeight.get(weightUnit) ?? 80);
+	}, [weightUnit]);
+
+	useEffect(() => {
+		setHeightRange(heightUnit === HeightUnit.cm ? heightValuesCm : heightValuesFt);
+		setHeight(defaultHeight.get(heightUnit) ?? 170);
+	}, [heightUnit]);
 
 	const openCalendar = useCallback(() => {
 		// TODO
@@ -37,7 +65,9 @@ export const OnboardingPersonalInfo2Screen = () => {
 			<StyledBackButton />
 			<Title>{format("onboarding.personal_info.title")}</Title>
 			<InfoBlock>
-				<BlockTitle>{format("onboarding.personal_info.sex_title")}</BlockTitle>
+				<TitleAndOptions>
+					<BlockTitle>{format("onboarding.personal_info.sex_title")}</BlockTitle>
+				</TitleAndOptions>
 				<SexButtons>
 					<SelectableButton
 						title={format("onboarding.personal_info.sex_male")}
@@ -55,7 +85,9 @@ export const OnboardingPersonalInfo2Screen = () => {
 				</SexButtons>
 			</InfoBlock>
 			<InfoBlock>
-				<BlockTitle>{format("onboarding.personal_info.born_title")}</BlockTitle>
+				<TitleAndOptions>
+					<BlockTitle>{format("onboarding.personal_info.born_title")}</BlockTitle>
+				</TitleAndOptions>
 				<Pressable onPress={openCalendar}>
 					<BornDateContainer>
 						<BornText isPlaceholder={bornDate.length > 0}>
@@ -63,29 +95,44 @@ export const OnboardingPersonalInfo2Screen = () => {
 						</BornText>
 					</BornDateContainer>
 				</Pressable>
-				{/*<TextField*/}
-				{/*	placeholder={format("onboarding.personal_info.placeholder.text")}*/}
-				{/*	value={lastName}*/}
-				{/*	title={format("onboarding.personal_info.lastname_title")}*/}
-				{/*	onValueChanged={setLastName}*/}
-				{/*	returnKeyType={"next"}*/}
-				{/*/>*/}
 			</InfoBlock>
 			<InfoBlock>
-				{/*<TextField*/}
-				{/*	placeholder={format("onboarding.personal_info.placeholder.text")}*/}
-				{/*	value={country}*/}
-				{/*	title={format("onboarding.personal_info.country_title")}*/}
-				{/*	onValueChanged={setCountry}*/}
-				{/*/>*/}
+				<TitleAndOptions>
+					<BlockTitle>{format("onboarding.personal_info.weight_title")}</BlockTitle>
+					<Switch
+						options={[WeightUnit.kg, WeightUnit.lbs]}
+						currentOption={weightUnit}
+						onSelectOption={setWeightUnit}
+						containerBgColor={colors.white}
+					/>
+				</TitleAndOptions>
+				<HorizontalCarousel
+					data={weightRange}
+					renderItem={(item, index) => <PickerValue>{item}</PickerValue>}
+					itemWidth={50}
+					onValueChange={setWeight}
+					defaultValue={weight}
+					animatedScrollToDefaultIndex={false}
+				/>
 			</InfoBlock>
 			<InfoBlock>
-				{/*<TextField*/}
-				{/*	placeholder={format("onboarding.personal_info.placeholder.text")}*/}
-				{/*	value={country}*/}
-				{/*	title={format("onboarding.personal_info.country_title")}*/}
-				{/*	onValueChanged={setCountry}*/}
-				{/*/>*/}
+				<TitleAndOptions>
+					<BlockTitle>{format("onboarding.personal_info.height_title")}</BlockTitle>
+					<Switch
+						options={[HeightUnit.cm, HeightUnit.ft]}
+						currentOption={heightUnit}
+						onSelectOption={setHeightUnit}
+						containerBgColor={colors.white}
+					/>
+				</TitleAndOptions>
+				<HorizontalCarousel
+					data={heightRange}
+					renderItem={(item) => <PickerValue>{item}</PickerValue>}
+					itemWidth={50}
+					onValueChange={setHeight}
+					defaultValue={height}
+					animatedScrollToDefaultIndex={false}
+				/>
 			</InfoBlock>
 			<Grow />
 			<ButtonContainer>
@@ -124,7 +171,6 @@ const InfoBlock = styled.View`
 const BlockTitle = styled.Text`
 	font-size: 14px;
 	color: ${colors.textPrimary};
-	margin-bottom: 16px;
 `;
 
 const BornDateContainer = styled.View`
@@ -147,13 +193,28 @@ const SexButtons = styled.View`
 	align-items: center;
 `;
 
+const TitleAndOptions = styled.View`
+	width: 100%;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 16px;
+`;
+
+const PickerValue = styled.Text`
+	width: 50px;
+	text-align: center;
+	font-size: 22px;
+`;
+
 const ButtonContainer = styled.View`
 	width: 100%;
-	margin: 30px 0;
+	margin: 20px 0;
 	flex-direction: row;
 	justify-content: space-between;
 `;
 
 const StyledSimpleTextButton = styled(SimpleTextButton)`
 	text-decoration: none;
+	padding: 10px;
 `;

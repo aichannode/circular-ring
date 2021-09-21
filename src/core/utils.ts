@@ -33,3 +33,7 @@ export function observableToPromise<T>(obs: Observable<T>): Promise<T> {
 export function replaceInArray<T>(array: readonly T[], index: number, newValue: T): readonly T[] {
 	return [...array.slice(0, index), newValue, ...array.slice(index + 1)];
 }
+
+export function arrayFromRange(start: number, end: number, increment: number | undefined = 1): number[] {
+	return Array.from({ length: (end + increment - start) / increment }, (_, i) => i * increment + start);
+}

@@ -52,6 +52,7 @@ export const ForgotPasswordScreen: React.FC = () => {
 					onValueChanged={setEmail}
 					blurOnSubmit={true}
 					keyboardType={"email-address"}
+					autoCapitalize={"none"}
 				/>
 			</ResponsiveCenterView>
 			<Grow />

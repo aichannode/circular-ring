@@ -9,7 +9,8 @@
 		"start": "react-native start",
 		"test": "jest",
 		"lint": "eslint .",
-		"tsc": "tsc -noEmit"
+		"tsc": "tsc -noEmit",
+		"pods": "cd ios && bundle exec pod install && cd .."
 	},
 	"dependencies": {
 		"@betomorrow/logging-core": "^1.0.5",
