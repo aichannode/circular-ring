@@ -44,7 +44,12 @@ export const HomeBannerView: React.FC<HomeBannerViewProps> = ({ banner, style })
 			</View>
 			<Stack gap={10} style={{ flex: 1 }}>
 				<SecondaryText style={{ color: colors.white, fontWeight: "500" }}>{format(infos.titleKey)}</SecondaryText>
-				<SecondaryText style={{ color: colors.white }}>{format(infos.messageKey)}</SecondaryText>
+				<SecondaryText style={{ color: colors.white }}>
+					{format(
+						infos.messageKey,
+						banner.type === BannerType.CALIBRATION ? { days: `${banner.daysLeft}` } : undefined
+					)}
+				</SecondaryText>
 			</Stack>
 			<CloseButton padding={16} onClose={() => homeBannerService.dismiss(banner)} />
 		</Container>

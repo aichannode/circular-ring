@@ -167,6 +167,7 @@
   "alarm.new.warning.description": "You have created too many alarms. Delete an already existing one in order to continue.",
   "alarm.new.warning.button": "OK",
   "alarm.new.other.title": "Other",
+  "alarm.new.time.edit": "Edit alarm time",
   "onboarding.wear.title": "How to wear Circular",
   "onboarding.wear.info.top": "The best fingers to wear Circular are the <colored>index</colored>, <colored>middle finger</colored>, <colored>ring finger</colored>, pinky finger and thumb.\n\nTry as much as possible to use the same finger and same ring positioning each time you wear your Circular.",
   "onboarding.wear.info.bottom": "The flat part of the ring should be on the <colored>palmar side</colored> of your finger.\n\nThe button should be <colored>facing your thumb</colored>, for ease of use.",
@@ -186,6 +187,7 @@
   "onboarding.personal_info.error.firstname": "FirstName is required.",
   "onboarding.personal_info.error.lastname": "LastName is required.",
   "onboarding.personal_info.error.country": "Country is required.",
+  "onboarding.personal_info.error.born_date": "Born date is required.",
   "banner.calibration.title": "Calibration period",
-  "banner.calibration.message": "Keep wearing your ring during the entirety of the 14 days calibration period for improved results!"
+  "banner.calibration.message": "Keep wearing your ring during the entirety of the {days} days calibration period for improved results!"
 }

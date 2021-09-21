@@ -6,7 +6,7 @@ export class CalibrationApi {
 
 	async FAKE_UNKNOWN_getCalibrationDaysLeft() {
 		await delay(1000);
-		return 14;
+		return 12;
 		this.apiService;
 	}
 }
