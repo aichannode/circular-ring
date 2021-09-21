@@ -9,7 +9,7 @@ export class CalibrationService {
 	constructor(private readonly calibrationApi: CalibrationApi) {}
 
 	async fetchCalibrationLeft() {
-		const result = await this.calibrationApi.getCalibrationDaysLeft();
+		const result = await this.calibrationApi.FAKE_UNKNOWN_getCalibrationDaysLeft();
 		this._calibrationDaysLeft.set(result);
 	}
 }
