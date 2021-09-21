@@ -1,3 +1,4 @@
+import { getLogger } from "@core/logger/logger";
 import { base64decode, base64encode, observableToPromise, timedPromise } from "@core/utils";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { observable, Observable } from "micro-observables";
@@ -31,8 +32,9 @@ const RXCharacteristicUUID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
 const TXCharacteristicUUID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
 
 const findDeviceTimeout = 20000;
-
 export class DeviceService {
+	private logger = getLogger("📟 DeviceService");
+
 	private _scannedDevices = observable(new Map<string, Device>());
 	private _connectedDevice = observable<Device | null>(null);
 	private _connectionState = observable(DeviceConnectionState.DISCONNECTED);
@@ -104,27 +106,27 @@ export class DeviceService {
 
 	async startScan() {
 		if (this._scanning.get()) {
-			this.log("Cannot scan: Already scanning");
+			this.logger.warn("Cannot scan: Already scanning");
 			return;
 		}
 		await this.bluetoothService.enable();
 		const manager = this.bluetoothService.manager;
-		this.log("SCAN STARTED");
+		this.logger.info("SCAN STARTED");
 		this._scanning.set(true);
 		manager.startDeviceScan([NUServiceUUID], null, (error, device) => {
 			if (error) {
-				this.log("Error", error);
+				this.logger.error(error);
 				this.stopScan();
 				return;
 			}
 			if (!device) {
-				this.log("Unknown device found");
+				this.logger.error("Unknown device found");
 				return;
 			}
 			const currentDevices = this._scannedDevices.get();
 			if (!currentDevices.has(device.id)) {
 				this._scannedDevices.set(new Map(currentDevices).set(device.id, device));
-				this.log("New device", device?.name, device?.id);
+				this.logger.info("New device", device?.name, device?.id);
 			}
 		});
 	}
@@ -132,22 +134,22 @@ export class DeviceService {
 	stopScan() {
 		const manager = this.bluetoothService.manager;
 		manager.stopDeviceScan();
-		this.log("SCAN STOPPED");
+		this.logger.info("SCAN STOPPED");
 		this._scanning.set(false);
 	}
 
 	async connect(device: Device) {
 		if (!device.name) {
-			this.log("Error: trying to connect to unknown device");
+			this.logger.error("Error: trying to connect to unknown device");
 			return;
 		}
 		try {
-			this.log("Connecting to device", device.name);
+			this.logger.info("Connecting to device", device.name);
 			this._connectionState.set(DeviceConnectionState.CONNECTING);
 			await device.connect({ timeout: 20000 });
-			this.log("Connection successful to device", device.name);
+			this.logger.info("Connection successful to device", device.name);
 			await device.discoverAllServicesAndCharacteristics();
-			this.log("Services discovered for device", device.name);
+			this.logger.info("Services discovered for device", device.name);
 			this._connectedDevice.set(device);
 			this._connectionState.set(DeviceConnectionState.CONNECTED);
 			const storedDevice = { name: device.name };
@@ -155,7 +157,7 @@ export class DeviceService {
 			await this.favoriteDeviceStorage.save(storedDevice);
 			await this.startMonitoring();
 		} catch (e) {
-			this.log("Error connecting to device", e);
+			this.logger.error("Error connecting to device", e);
 			this._connectionState.set(DeviceConnectionState.DISCONNECTED);
 			throw e;
 		}
@@ -163,10 +165,10 @@ export class DeviceService {
 
 	async autoConnectDevice(name: string) {
 		if (this.setupState.get() !== DeviceSetupState.FINISHED) {
-			this.log("Error: can note autoconnect while setup is not finished");
+			this.logger.error("Error: can note autoconnect while setup is not finished");
 			return;
 		}
-		this.log("Trying to autoconnect to", name);
+		this.logger.info("Trying to autoconnect to", name);
 		await this.bluetoothService.enable();
 		this._lookingForDevice.set(true);
 		const manager = this.bluetoothService.manager;
@@ -174,7 +176,7 @@ export class DeviceService {
 			const connectedDevices = await manager.connectedDevices([NUServiceUUID]);
 			if (connectedDevices.length > 0) {
 				const alreadyConnectedDevice = connectedDevices[0];
-				this.log("Already connected to", alreadyConnectedDevice.name);
+				this.logger.info("Already connected to", alreadyConnectedDevice.name);
 				this._connectedDevice.set(alreadyConnectedDevice);
 				this._connectionState.set(DeviceConnectionState.CONNECTED);
 			}
@@ -190,18 +192,18 @@ export class DeviceService {
 
 		const scanPromise = new Promise<Device>((resolve, reject) => {
 			if (this._scanning.get()) {
-				this.log("Cannot find device: Already scanning");
+				this.logger.error("Cannot find device: Already scanning");
 				reject("Already Scanning");
 			}
-			this.log("Scanning to autoconnect to", name);
+			this.logger.info("Scanning to autoconnect to", name);
 			this._scanning.set(true);
 			manager.startDeviceScan([NUServiceUUID], { scanMode: ScanMode.LowLatency }, (error, device) => {
 				if (error) {
-					this.log("Error during scan", error);
+					this.logger.error("Error during scan", error);
 					this.stopScan();
 					reject(error);
 				} else if (device) {
-					this.log(`Discovered device named ${device.name} with id ${device.id}`);
+					this.logger.info(`Discovered device named ${device.name} with id ${device.id}`);
 					if (device.name === name) {
 						this.stopScan();
 						resolve(device);
@@ -217,15 +219,15 @@ export class DeviceService {
 		const device = this._connectedDevice.get() ?? (await observableToPromise(this._connectedDevice));
 		const monitoring = this._monitoring.get() || (await observableToPromise(this._monitoring));
 		if (!device) {
-			this.log("Error : no device connected");
+			this.logger.error("Error : no device connected");
 			throw "No Device";
 		}
 		if (!monitoring) {
-			this.log("Error, not monitoring");
+			this.logger.error("Error, not monitoring");
 			throw "Not monitoring";
 		}
 
-		this.log("Listening to", channel, "->", returnChannel);
+		this.logger.info("Listening to", channel, "->", returnChannel);
 
 		const listener = (output: string) => {
 			if (output.startsWith(returnChannel)) {
@@ -247,10 +249,10 @@ export class DeviceService {
 	async write(message: string) {
 		const device = this._connectedDevice.get();
 		if (!device) {
-			this.log("Error : no device connected");
+			this.logger.error("Error : no device connected");
 			return;
 		}
-		this.log("Writing...", message);
+		this.logger.info("Writing...", message);
 		await device.writeCharacteristicWithoutResponseForService(
 			NUServiceUUID,
 			RXCharacteristicUUID,
@@ -265,12 +267,12 @@ export class DeviceService {
 	) {
 		const device = this._connectedDevice.get();
 		if (!device) {
-			this.log("Error : no device connected");
+			this.logger.error("Error : no device connected");
 			return;
 		}
 		const monitoring = this._monitoring.get() || (await observableToPromise(this._monitoring));
 		if (!monitoring) {
-			this.log("Error, not monitoring");
+			this.logger.error("Error, not monitoring");
 			throw "Not monitoring";
 		}
 
@@ -284,7 +286,6 @@ export class DeviceService {
 			this.onMessageReceived.add(listener);
 		});
 
-		this.log("WRITE", message);
 		await device.writeCharacteristicWithoutResponseForService(
 			NUServiceUUID,
 			RXCharacteristicUUID,
@@ -298,27 +299,23 @@ export class DeviceService {
 		const device = this._connectedDevice.get() ?? (await observableToPromise(this._connectedDevice));
 
 		if (!device) {
-			this.log("Error : no device connected");
+			this.logger.error("Error : no device connected");
 			return;
 		}
-		this.log("START MONITORING");
+		this.logger.info("START MONITORING");
 		const subscription = device.monitorCharacteristicForService(NUServiceUUID, TXCharacteristicUUID, (err, charac) => {
 			if (err) {
 				this._monitoring.set(false);
-				this.log("ERROR DURING MONITORING", err);
+				this.logger.error("Error during monitoring", err);
 				subscription.remove();
 			} else {
 				const decodedOutput = base64decode(charac?.value ?? "");
-				this.log("------------------", decodedOutput);
+				this.logger.debug("------------------", decodedOutput);
 				this.onMessageReceived.dispatch(decodedOutput);
 			}
 		});
 		this._monitoring.set(true);
 
 		return subscription;
-	}
-
-	log(...args: unknown[]) {
-		console.log("🌐 [DEVICE]", ...args);
 	}
 }

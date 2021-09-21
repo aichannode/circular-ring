@@ -1,3 +1,4 @@
+import { getLogger } from "@core/logger/logger";
 import { delay } from "@core/utils";
 import { observable } from "micro-observables";
 import { PermissionsAndroid, Platform } from "react-native";
@@ -6,6 +7,8 @@ import { BleManager, State } from "react-native-ble-plx";
 const enableBluetoothTimeout = 5000;
 
 export class BluetoothService {
+	private logger = getLogger("📶 BluetoothService");
+
 	private _state = observable<State>(State.Unknown);
 	manager: BleManager = new BleManager();
 
@@ -29,16 +32,16 @@ export class BluetoothService {
 		}
 		if (Platform.OS === "ios") {
 			if (!this.enabled.get()) {
-				this.log("Bluetooth not enabled");
+				this.logger.warn("Bluetooth not enabled");
 				throw Error("CannotEnableBluetoothOnIOS");
 			}
 		} else {
 			if ("granted" !== (await PermissionsAndroid.request("android.permission.ACCESS_FINE_LOCATION"))) {
-				this.log("Unauthorized");
+				this.logger.warn("Unauthorized");
 				throw Error("Unauthorized");
 			}
 			if (!this.enabled.get()) {
-				this.log("Enabling Bluetooth");
+				this.logger.debug("Enabling Bluetooth");
 				const enablePromise = new Promise((resolve) => this.enabled.subscribe(resolve));
 				const timeoutPromise = delay(enableBluetoothTimeout).then(() => {
 					throw Error("Timeout");
@@ -47,10 +50,6 @@ export class BluetoothService {
 				await Promise.race([enablePromise, timeoutPromise]);
 			}
 		}
-		this.log("ENABLED");
-	}
-
-	log(...args: unknown[]) {
-		console.log("📶 [BLE]", ...args);
+		this.logger.debug("ENABLED");
 	}
 }
