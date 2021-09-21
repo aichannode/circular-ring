@@ -1,5 +1,5 @@
 import { getLogger } from "@core/logger/logger";
-import { base64decode, base64encode, observableToPromise, timedPromise } from "@core/utils";
+import { base64decode, base64encode, delay, observableToPromise, timedPromise } from "@core/utils";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { observable, Observable } from "micro-observables";
 import { Signal } from "micro-signals";
@@ -32,6 +32,7 @@ const RXCharacteristicUUID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
 const TXCharacteristicUUID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
 
 const findDeviceTimeout = 20000;
+const scanRetryTimeout = 10000;
 export class DeviceService {
 	private logger = getLogger("📟 DeviceService");
 
@@ -212,7 +213,15 @@ export class DeviceService {
 			});
 		});
 
-		return timedPromise(scanPromise, findDeviceTimeout);
+		try {
+			const deviceFound = await timedPromise(scanPromise, findDeviceTimeout);
+			return deviceFound;
+		} catch (e) {
+			this.logger.warn("Device not found:", e, "retrying in 10 seconds ");
+			this.stopScan();
+			await delay(scanRetryTimeout);
+			return this.findDevice(name);
+		}
 	}
 
 	async listen(channel: string, returnChannel: string, cb: (response: string) => void) {
