@@ -1,4 +1,4 @@
-import { SecondaryText, TertiaryText } from "@ui/components/text";
+import { SecondaryText, TertiaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { ScreenSection } from "@ui/screens/circleActivity/screenSection";
@@ -9,6 +9,7 @@ import { Pressable, ScrollView } from "react-native";
 import { Image } from "react-native";
 import styled from "styled-components/native";
 import { AlarmCard } from "./alarmCard";
+import { SleepInformations } from "./sleepInformations";
 
 export const CircleAlarmScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
@@ -17,7 +18,10 @@ export const CircleAlarmScreen: React.FC = () => {
 	return (
 		<Container>
 			<ScrollView>
-				<ScreenSection title={format("alarm.score.programmed")} />
+				<ScreenSection>
+					<SleepInformations style={{ marginBottom: 25, alignSelf: "center" }} />
+					<TitleText>{format("alarm.score.programmed")}</TitleText>
+				</ScreenSection>
 				<AlarmContainer>
 					<AlarmCard />
 					<AddAlarmButton onPress={() => navigation.navigate(Routes.NewAlarm)}>
