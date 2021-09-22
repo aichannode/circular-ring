@@ -1,6 +1,6 @@
 import { Channel } from "@domain/device/channels";
 import { DeviceService } from "@domain/device/deviceService";
-import { RingAlarm } from "@domain/ring/ringAlarm";
+import { deserializeAlarmData, RingAlarm } from "@domain/ring/ringAlarm";
 import { observable } from "micro-observables";
 import { RingApi } from "./ringApi";
 import { deserializeBattery, RingBattery } from "./ringBattery";
@@ -26,6 +26,7 @@ export class RingService {
 	ringBattery = this._ringBattery.readOnly();
 	syncState = this._syncState.readOnly();
 	ringLiveData = this._ringLiveData.readOnly();
+	ringAlarms = this._ringAlarms.readOnly();
 
 	constructor(
 		private readonly deviceService: DeviceService,
@@ -40,6 +41,7 @@ export class RingService {
 	async init() {
 		this.listenBattery();
 		this.syncData();
+		this.syncAlarmData();
 	}
 
 	listenLiveData() {
@@ -79,6 +81,21 @@ export class RingService {
 				id,
 				firmware,
 			});
+		}
+	}
+
+	async syncAlarmData() {
+		const response = await this.deviceService.getResponse(Channel.ALARM, Channel.ALARM, (response) => response);
+		const encodeAlarmList = response?.split("\n");
+		const newAlarmList: RingAlarm[] = [];
+		if (encodeAlarmList) {
+			for (let i = 0; i < encodeAlarmList.length; i++) {
+				const data = deserializeAlarmData(encodeAlarmList[i]);
+				if (data) {
+					newAlarmList.push(data);
+				}
+			}
+			this._ringAlarms.set(newAlarmList);
 		}
 	}
 
