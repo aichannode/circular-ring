@@ -65,7 +65,7 @@ export const CountryField = (props: CountryFieldProps) => {
 						countryCodes={props.authorizedCountries ? props.authorizedCountries : undefined}
 						translation={props.defaultCountryCode === "FR" ? "fra" : undefined}
 					/>
-					<Chevron source={require("@assets/images/disclosure.png")} tintColor={colors.textPrimary} />
+					<Chevron source={require("@assets/images/icon-chevron-down.png")} tintColor={colors.textPrimary} />
 				</CountryContainer>
 			</InputView>
 		</Container>
@@ -106,9 +106,9 @@ const CountryContainer = styled.View`
 
 const Chevron = styled.Image<{ tintColor: string }>`
 	position: absolute;
-	top: 8px;
-	right: 4px;
+	top: 0;
+	right: 0;
 	opacity: 0.4;
-	transform: rotate(90deg);
 	tint-color: ${(props) => props.tintColor};
+	overflow: visible;
 `;

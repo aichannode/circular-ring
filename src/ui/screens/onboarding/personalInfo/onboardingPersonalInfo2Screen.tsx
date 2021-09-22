@@ -31,6 +31,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import { TextInputMask } from "react-native-masked-text";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
 dayjs.extend(customParseFormat);
@@ -39,6 +40,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 	const { format } = useI18n();
 	const navigation = useNavigation();
 	const { userService } = useServices();
+	const safeArea = useSafeAreaInsets();
 
 	const route = useAppRoute<Routes.OnboardingPersonalInfo2>();
 	const { firstName, lastName, country } = route.params;
@@ -105,7 +107,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 
 	return (
 		<StyledScrollScreen>
-			<StyledBackButton />
+			<StyledBackButton top={safeArea.top} />
 			<Title>{format("onboarding.personal_info.title")}</Title>
 			<InfoBlock>
 				<TitleAndOptions>
@@ -206,10 +208,10 @@ const StyledScrollScreen = styled(ScrollScreen)`
 	padding-right: 30px;
 `;
 
-const StyledBackButton = styled(BackButton)`
+const StyledBackButton = styled(BackButton)<{ top: number }>`
 	position: absolute;
 	left: 20px;
-	top: 30px;
+	top: ${({ top }) => top}px;
 `;
 
 const Title = styled.Text`

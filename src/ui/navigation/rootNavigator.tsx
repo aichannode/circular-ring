@@ -47,10 +47,10 @@ export const RootNavigator: React.FC = () => {
 	const { format } = useI18n();
 	const navigation = useNavigation();
 
-	const isAuthenticated = !!useAuthenticatedUserEmail();
+	const isAuthenticated = true; //!!useAuthenticatedUserEmail();
 
-	const accountLinkedToDevice = useAccountLinked();
-	const hasUser = !!useUser();
+	const accountLinkedToDevice = true; //useAccountLinked();
+	const hasUser = false; //!!useUser();
 
 	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
 

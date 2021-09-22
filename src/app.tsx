@@ -4,7 +4,7 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { RootNavigator } from "@ui/navigation/rootNavigator";
 import React, { useEffect, useState } from "react";
 import { IntlProvider } from "react-intl";
-import { LogBox } from "react-native";
+import { LogBox, StatusBar } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import { initializeServices, ServicesProvider } from "@core/services";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -32,6 +32,7 @@ export const App = () => {
 	return initialized ? (
 		<IntlProvider locale={locale} messages={translations[locale]}>
 			<GestureHandlerRootView style={{ flex: 1 }}>
+				<StatusBar translucent={true} barStyle="dark-content" backgroundColor="transparent" />
 				<SafeAreaProvider>
 					<ServicesProvider>
 						<NavigationContainer theme={theme}>
