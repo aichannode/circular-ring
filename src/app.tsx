@@ -4,7 +4,7 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { RootNavigator } from "@ui/navigation/rootNavigator";
 import React, { useEffect, useState } from "react";
 import { IntlProvider } from "react-intl";
-import { LogBox } from "react-native";
+import { LogBox, Platform, UIManager } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import { initializeServices, ServicesProvider } from "@core/services";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -14,6 +14,10 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
+
+if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+	UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: "white" } };
 // @refresh reset
