@@ -1,58 +1,54 @@
 import { useServices } from "@core/services";
-import { BannerType, HomeBanner } from "@domain/homeBanner/homeBanner";
+import { BannerAction, HomeBanner, IconType } from "@domain/homeBanner/homeBanner";
 import { CloseButton } from "@ui/components/closeButton";
 import { row, Stack } from "@ui/components/layout";
 import { OrangeDiagonalGradient } from "@ui/components/shapes/gradients";
 import { SecondaryText } from "@ui/components/text";
-import { useI18n } from "@ui/i18n";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
-import dayjs from "dayjs";
 import React from "react";
-import { Image, StyleProp, View, ViewStyle } from "react-native";
-import { WordingKey } from "src/wordings";
+import { Image, Linking, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import styled from "styled-components/native";
-
-interface BannerInfo {
-	logo: number;
-	titleKey: WordingKey;
-	messageKey: WordingKey;
-}
-const bannerInfos: { [key in BannerType]: BannerInfo } = {
-	[BannerType.CALIBRATION]: {
-		logo: require("@assets/images/calendar.png"),
-		titleKey: "banner.calibration.title",
-		messageKey: "banner.calibration.message",
-	},
-};
 
 interface HomeBannerViewProps {
 	banner: HomeBanner;
 	style?: StyleProp<ViewStyle>;
 }
 export const HomeBannerView: React.FC<HomeBannerViewProps> = ({ banner, style }) => {
-	const infos = bannerInfos[banner.type];
-	const { format } = useI18n();
 	const { homeBannerService } = useServices();
+	const { navigate } = useRoutesNavigation();
 
 	return (
-		<Container style={style}>
-			<View style={{ marginRight: 30 }}>
-				<Image source={infos.logo} />
-				{banner.type === BannerType.CALIBRATION && (
-					<CalibrationEndDate>{dayjs().add(banner.daysLeft, "day").format("MM/DD")}</CalibrationEndDate>
-				)}
-			</View>
-			<Stack gap={10} style={{ flex: 1 }}>
-				<SecondaryText style={{ color: colors.white, fontWeight: "500" }}>{format(infos.titleKey)}</SecondaryText>
-				<SecondaryText style={{ color: colors.white }}>
-					{format(
-						infos.messageKey,
-						banner.type === BannerType.CALIBRATION ? { days: `${banner.daysLeft}` } : undefined
-					)}
-				</SecondaryText>
-			</Stack>
-			<CloseButton padding={16} onClose={() => homeBannerService.dismiss(banner)} />
-		</Container>
+		<Pressable
+			onPress={() => {
+				const action = banner.clientActions[0];
+				if (action) {
+					switch (action.type) {
+						case BannerAction.OPEN_WEB:
+							Linking.openURL(action.data);
+							break;
+						case BannerAction.APP_PAGE:
+							navigate(Routes.Activity); // TODO Handle routing with backend when we got specs
+							break;
+						default:
+							throw Error("Unhandled client action");
+					}
+					homeBannerService.dismiss(banner);
+				}
+			}}
+			style={style}
+		>
+			<Container>
+				<View style={{ marginRight: 30 }}>
+					{banner.iconType === IconType.URL ? <Image source={{ uri: banner.icon }} /> : null}
+				</View>
+				<Stack gap={10} style={{ flex: 1 }}>
+					<SecondaryText style={{ color: colors.white, fontWeight: "500" }}>{banner.title}</SecondaryText>
+					<SecondaryText style={{ color: colors.white }}>{banner.body}</SecondaryText>
+				</Stack>
+				<CloseButton padding={16} onClose={() => homeBannerService.dismiss(banner)} />
+			</Container>
+		</Pressable>
 	);
 };
 
@@ -61,13 +57,4 @@ const Container = styled(OrangeDiagonalGradient)`
 	${row("center")};
 	background-color: black;
 	border-radius: 2px;
-`;
-
-const CalibrationEndDate = styled.Text`
-	position: absolute;
-	bottom: 6px;
-	left: 3px;
-	font-size: 12px;
-	font-weight: bold;
-	color: ${colors.white};
 `;

@@ -18,6 +18,7 @@ import { CalibrationService } from "@domain/calibration/calibrationService";
 import { CalibrationApi } from "@domain/calibration/calibrationApi";
 import { HomeBannerStorage } from "@domain/homeBanner/homeBannerStorage";
 import { HomeBannerService } from "@domain/homeBanner/homeBannerService";
+import { HomeBannerApi } from "@domain/homeBanner/homeBannerApi";
 
 const userStorage = new UserStorage();
 const favoriteDeviceStorage = new FavoriteDeviceStorage();
@@ -45,7 +46,8 @@ const calibrationApi = new CalibrationApi(apiService);
 const calibrationService = new CalibrationService(calibrationApi);
 
 const homeBannerStorage = new HomeBannerStorage();
-const homeBannerService = new HomeBannerService(homeBannerStorage, calibrationService);
+const homeBannerApi = new HomeBannerApi(apiService);
+const homeBannerService = new HomeBannerService(homeBannerStorage, homeBannerApi);
 
 export const services = {
 	cognitoAuthService,

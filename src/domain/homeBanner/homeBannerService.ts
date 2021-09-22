@@ -1,51 +1,41 @@
-import { CalibrationService } from "@domain/calibration/calibrationService";
 import { Observable, observable } from "micro-observables";
-import { BannerType, CalibrationBanner, HomeBanner, StoredBanner } from "./homeBanner";
+import { HomeBanner, ReadBannersInfo } from "./homeBanner";
+import { HomeBannerApi } from "./homeBannerApi";
 import { HomeBannerStorage } from "./homeBannerStorage";
-import dayjs from "dayjs";
 
 export class HomeBannerService {
-	private _dismissedBanner = observable<StoredBanner | null>(null);
+	private _banners = observable<HomeBanner[]>([]);
+	private _readBannersInfos = observable<ReadBannersInfo>({ bannerIds: [] });
 
-	visibleBanner: Observable<CalibrationBanner | null>;
+	visibleBanner: Observable<HomeBanner | null>;
 
-	constructor(
-		private readonly homeBannerStorage: HomeBannerStorage,
-		private readonly calibrationService: CalibrationService
-	) {
+	constructor(private readonly homeBannerStorage: HomeBannerStorage, private readonly homeBannerApi: HomeBannerApi) {
 		this.visibleBanner = Observable.select(
-			[this._dismissedBanner, this.calibrationService.calibrationDaysLeft],
-			(dismissed, daysLeft) => {
-				if (dismissed?.type === BannerType.CALIBRATION) {
-					return null;
-				}
-				if (daysLeft <= 0) {
-					return null;
-				}
-				return {
-					type: BannerType.CALIBRATION,
-					daysLeft,
-				};
-			}
+			[this._banners, this._readBannersInfos],
+			(banners, { bannerIds }) => banners.find((banner) => bannerIds.indexOf(banner.id) < 0) ?? null
 		);
 	}
 
+	async fetchBanners() {
+		const infos = this._readBannersInfos.get();
+		const banners = await this.homeBannerApi.getBanners(infos.lastRead ?? new Date());
+		this._banners.set(banners);
+	}
+
 	async init() {
-		const storedBanner = await this.homeBannerStorage.load();
-		if (storedBanner && hasBeenDismissedToday(storedBanner)) {
-			this._dismissedBanner.set(storedBanner);
-		} else {
-			this.homeBannerStorage.clear();
+		const infos = await this.homeBannerStorage.load();
+		if (infos) {
+			this._readBannersInfos.set(infos);
 		}
 	}
 
-	dismiss(banner: HomeBanner) {
-		const storedBanner = { ...banner, stored: new Date() };
-		this._dismissedBanner.set(storedBanner);
-		this.homeBannerStorage.save(storedBanner);
+	async dismiss(banner: HomeBanner) {
+		const currentInfos = this._readBannersInfos.get();
+		const newInfos = {
+			bannerIds: [...currentInfos.bannerIds, banner.id],
+			lastRead: new Date(),
+		};
+		this._readBannersInfos.set(newInfos);
+		await this.homeBannerStorage.save(newInfos);
 	}
-}
-
-function hasBeenDismissedToday(banner: StoredBanner) {
-	return dayjs(banner?.stored).isAfter(dayjs().startOf("day"));
 }

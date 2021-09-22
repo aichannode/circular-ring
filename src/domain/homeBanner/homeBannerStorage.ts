@@ -1,16 +1,16 @@
 import { Storage } from "@core/storage";
-import { HomeBanner, StoredBanner } from "./homeBanner";
+import { ReadBannersInfo } from "./homeBanner";
 
-const homeBannerStorageKey = "@homeBanner";
+const homeBannerStorageKey = "@homeBanners";
 
 export class HomeBannerStorage {
-	save(banner: StoredBanner) {
-		return Storage.save<StoredBanner>(homeBannerStorageKey, banner);
+	async save(infos: ReadBannersInfo) {
+		await Storage.save<ReadBannersInfo>(homeBannerStorageKey, { ...infos, lastRead: new Date() });
 	}
 
-	async load(): Promise<StoredBanner | null> {
-		const banner = await Storage.load<StoredBannerDto>(homeBannerStorageKey);
-		return banner && { ...banner, stored: new Date(banner.stored) };
+	async load(): Promise<ReadBannersInfo | null> {
+		const infos = await Storage.load<ReadBannersInfoDto>(homeBannerStorageKey);
+		return infos && { ...infos, lastRead: new Date(infos.lastRead) };
 	}
 
 	clear() {
@@ -18,6 +18,6 @@ export class HomeBannerStorage {
 	}
 }
 
-interface StoredBannerDto extends HomeBanner {
-	stored: string;
+interface ReadBannersInfoDto extends Omit<ReadBannersInfo, "lastRead"> {
+	lastRead: string;
 }
