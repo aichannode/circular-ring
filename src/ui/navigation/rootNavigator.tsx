@@ -116,7 +116,7 @@ const ProfileNavigator = () => {
 
 export const RootNavigator: React.FC = () => {
 	const isAuthenticated = useAuth();
-	const accountLinked = true || useAccountLinked();
+	const accountLinked = useAccountLinked();
 
 	return isAuthenticated ? (
 		accountLinked ? (
