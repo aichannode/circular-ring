@@ -19,6 +19,7 @@ import { Grow } from "@ui/components/layout";
 import { BackButton } from "@ui/components/navigation/backButton";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SelectableButton } from "@ui/components/selectableButton";
+import { Spinner } from "@ui/components/spinner";
 import { Switch } from "@ui/components/switch";
 import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute } from "@ui/navigation/routes";
@@ -55,6 +56,8 @@ export const OnboardingPersonalInfo2Screen = () => {
 
 	const [errorMessage, setErrorMessage] = useState("");
 
+	const [isLoading, setLoading] = useState(false);
+
 	useEffect(() => {
 		setWeightRange(weightUnit === WeightUnit.kg ? weightValuesKg : weightValuesLbs);
 		setWeight(defaultWeight.get(weightUnit) ?? 80);
@@ -66,6 +69,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 	}, [heightUnit]);
 
 	const completeTutorial = useCallback(async () => {
+		setLoading(true);
 		const birthDate = dayjs(bornDate, "DD/MM/YYYY", true).toDate();
 		try {
 			await userService.completeTutorial({
@@ -78,7 +82,9 @@ export const OnboardingPersonalInfo2Screen = () => {
 				height: heightUnit === HeightUnit.cm ? height : ftToCm(height),
 			});
 			await userService.updateUserSettings("DD/MM/YYYY", heightUnit, weightUnit);
+			setLoading(false);
 		} catch (error) {
+			setLoading(false);
 			setErrorMessage(format("onboarding.personal_info.error.default"));
 		}
 	}, [bornDate, sex, weight, height]);
@@ -179,8 +185,14 @@ export const OnboardingPersonalInfo2Screen = () => {
 			<ErrorMessage>{errorMessage}</ErrorMessage>
 			<Grow />
 			<ButtonContainer>
-				<StyledSimpleTextButton onPress={navigation.goBack}>{format("global.back")}</StyledSimpleTextButton>
-				<StyledSimpleTextButton onPress={goNext}>{format("global.next")}</StyledSimpleTextButton>
+				{isLoading ? (
+					<Spinner size={24} />
+				) : (
+					<RowButtonContainer>
+						<StyledSimpleTextButton onPress={navigation.goBack}>{format("global.back")}</StyledSimpleTextButton>
+						<StyledSimpleTextButton onPress={goNext}>{format("global.next")}</StyledSimpleTextButton>
+					</RowButtonContainer>
+				)}
 			</ButtonContainer>
 		</StyledScrollScreen>
 	);
@@ -254,8 +266,11 @@ const ErrorMessage = styled.Text`
 const ButtonContainer = styled.View`
 	width: 100%;
 	margin: 20px 0;
-	flex-direction: row;
+`;
+
+const RowButtonContainer = styled.View`
 	justify-content: space-between;
+	flex-direction: row;
 `;
 
 const StyledSimpleTextButton = styled(SimpleTextButton)`
