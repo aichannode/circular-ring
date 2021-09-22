@@ -43,18 +43,11 @@ const headerTitleStyle = {
 	color: colors.textPrimary,
 } as const;
 
-export const RootNavigator: React.FC = () => {
+const MainHomeNavigator = () => {
 	const { format } = useI18n();
 	const navigation = useNavigation();
 
-	const isAuthenticated = !!useAuthenticatedUserEmail();
-
-	const accountLinkedToDevice = useAccountLinked();
-	const hasUser = !!useUser();
-
-	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
-
-	const MainHomeNavigator = () => (
+	return (
 		<MainStack.Navigator
 			screenOptions={{
 				headerStyle: { backgroundColor: colors.lightgray },
@@ -117,6 +110,15 @@ export const RootNavigator: React.FC = () => {
 			/>
 		</MainStack.Navigator>
 	);
+};
+
+export const RootNavigator: React.FC = () => {
+	const isAuthenticated = !!useAuthenticatedUserEmail();
+
+	const accountLinkedToDevice = useAccountLinked();
+	const hasUser = !!useUser();
+
+	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
 
 	return isOnboardingDone ? (
 		<HomeDrawer.Navigator

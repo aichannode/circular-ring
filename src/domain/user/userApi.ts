@@ -42,7 +42,6 @@ export class UserApi {
 	async updateUser(userPutDto: UserPutDto): Promise<User> {
 		const result = await this.apiService.put<UserDto>("/user", userPutDto);
 		const userDto = result.data;
-		this.logger.debug("GET USER : " + JSON.stringify(userDto));
 		return UserApi.userFromDto(userDto);
 	}
 
@@ -57,7 +56,6 @@ export class UserApi {
 
 	async getUserSettings(): Promise<UserSettings> {
 		const result = await this.apiService.get<UserSettings>("/user/setting");
-		this.logger.debug("GET USER SETTINGS : " + JSON.stringify(result.data));
 		return result.data;
 	}
 

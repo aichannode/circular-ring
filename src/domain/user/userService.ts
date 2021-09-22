@@ -116,6 +116,7 @@ export class UserService {
 		// get User
 		try {
 			const user = await this.userApi.getUser();
+			console.log("Got STRIDE : " + user.stride + " : " + typeof user.stride);
 			this._user.set(user);
 			await this.userStorage.saveUser(user);
 		} catch (error) {
@@ -183,7 +184,7 @@ export class UserService {
 				bornDate: toServerDate(currentUser.bornDate),
 				language: currentUser.language,
 				scorePublic: currentUser.scorePublic,
-				stride: currentUser.stride,
+				stride: 0, //currentUser.stride, => Server patch
 				tutorialCompleted: currentUser.tutorialCompleted,
 			});
 		}
