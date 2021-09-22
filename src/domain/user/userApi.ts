@@ -26,7 +26,7 @@ interface UserDto extends UserDtoBase {
 	createdAt: string;
 }
 
-type UserPutDto = UserDtoBase;
+export type UserPutDto = UserDtoBase;
 
 export class UserApi {
 	private readonly logger = getLogger("UserApi");

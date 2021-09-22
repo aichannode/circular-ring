@@ -20,6 +20,8 @@ import { OnboardingPersonalInfo2Screen } from "@ui/screens/onboarding/personalIn
 import { OnboardingWearInfoScreen } from "@ui/screens/onboarding/personalInfo/onboardingWearInfoScreen";
 import { RingSetupScreen } from "@ui/screens/onboarding/ringSetup/ringSetupScreen";
 import { RingSetupStartScreen } from "@ui/screens/onboarding/ringSetup/ringSetupStartScreen";
+import { ProfileEditNameScreen } from "@ui/screens/profile/profileEditNameScreen";
+import { ProfileInformationScreen } from "@ui/screens/profile/profileInformationScreen";
 import { ProfileScreen } from "@ui/screens/profile/profileScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
@@ -95,7 +97,22 @@ export const RootNavigator: React.FC = () => {
 				name={Routes.Profile}
 				component={ProfileScreen}
 				options={{
-					title: format("profile.header.title"),
+					title: format("header.profile"),
+				}}
+			/>
+			<MainStack.Screen
+				name={Routes.ProfileInformation}
+				component={ProfileInformationScreen}
+				options={{
+					title: format("header.profile_information"),
+				}}
+			/>
+			<MainStack.Screen
+				name={Routes.ProfileEditName}
+				component={ProfileEditNameScreen}
+				options={{
+					headerShown: false,
+					gestureEnabled: false,
 				}}
 			/>
 		</MainStack.Navigator>
