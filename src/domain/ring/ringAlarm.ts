@@ -33,4 +33,5 @@ export interface RingAlarm {
 	vibrationRepetition: number;
 	time: Date;
 	label: string;
+	color: string;
 }

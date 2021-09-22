@@ -1,14 +1,13 @@
-import { SecondaryText, TertiaryText } from "@ui/components/text";
+import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { ScreenSection } from "@ui/screens/circleActivity/screenSection";
 import { colors } from "@ui/styles/colors";
-import { textStyles } from "@ui/styles/textStyles";
 import React from "react";
-import { Pressable, ScrollView } from "react-native";
-import { Image } from "react-native";
+import { Image, Pressable, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { AlarmCard } from "./alarmCard";
+import { AlarmWeekOverview } from "./alarmWeekOverview";
 
 export const CircleAlarmScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
@@ -25,6 +24,8 @@ export const CircleAlarmScreen: React.FC = () => {
 						<SecondaryText>{format("alarm.score.add_button")}</SecondaryText>
 					</AddAlarmButton>
 				</AlarmContainer>
+				<ScreenSection title={format("alarm.week_overview")} />
+				<AlarmWeekOverview style={{ marginTop: 25 }} />
 			</ScrollView>
 		</Container>
 	);
@@ -32,10 +33,10 @@ export const CircleAlarmScreen: React.FC = () => {
 
 const Container = styled.View`
 	flex: 1;
+	background-color: ${colors.lightgray};
 `;
 
 const AlarmContainer = styled.View`
-	background-color: ${colors.lightgray};
 	padding: 25px 20px;
 `;
 

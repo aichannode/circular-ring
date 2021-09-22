@@ -168,6 +168,8 @@
   "alarm.new.warning.button": "OK",
   "alarm.new.other.title": "Other",
   "alarm.new.time.edit": "Edit alarm time",
+  "alarm.wake_up_score": "Wake up score",
+  "alarm.week_overview": "Week overview",
   "onboarding.wear.title": "How to wear Circular",
   "onboarding.wear.info.top": "The best fingers to wear Circular are the <colored>index</colored>, <colored>middle finger</colored>, <colored>ring finger</colored>, pinky finger and thumb.\n\nTry as much as possible to use the same finger and same ring positioning each time you wear your Circular.",
   "onboarding.wear.info.bottom": "The flat part of the ring should be on the <colored>palmar side</colored> of your finger.\n\nThe button should be <colored>facing your thumb</colored>, for ease of use.",
@@ -188,6 +190,8 @@
   "onboarding.personal_info.error.lastname": "LastName is required.",
   "onboarding.personal_info.error.country": "Country is required.",
   "onboarding.personal_info.error.born_date": "Born date is required.",
+  "onboarding.personal_info.error.born_date_invalid": "Born date is invalid.",
+  "onboarding.personal_info.error.default": "An error occurred.\nPlease try again later.",
   "banner.calibration.title": "Calibration period",
-  "banner.calibration.message": "Keep wearing your ring during the entirety of the 14 days calibration period for improved results!"
+  "banner.calibration.message": "Keep wearing your ring during the entirety of the {days} days calibration period for improved results!"
 }
