@@ -30,24 +30,38 @@ export class CognitoAuthService implements AuthService {
 			ClientId: Config.COGNITO_CLIENT_ID,
 		};
 		this._userPool = new CognitoUserPool(poolData);
+	}
 
-		// @ts-ignore
-		this._userPool.storage.sync((err, result) => {
-			if (!err && result === "SUCCESS") {
-				const currentUser = this._userPool.getCurrentUser();
-				this._cognitoUser.set(currentUser);
-				if (currentUser) {
-					currentUser.getSession((error: Error | null, session: CognitoUserSession | null) => {
-						if (!error && session) {
-							this._accessToken.set(session.getAccessToken());
-						} else {
-							this.logger.warn("Refresh user failed", error);
-						}
-					});
+	async init(): Promise<void> {
+		return new Promise((resolve, reject) => {
+			// @ts-ignore
+			this._userPool.storage.sync((err, result) => {
+				if (!err && result === "SUCCESS") {
+					const currentUser = this._userPool.getCurrentUser();
+					this._cognitoUser.set(currentUser);
+					if (currentUser) {
+						currentUser.getSession((error: Error | null, session: CognitoUserSession | null) => {
+							if (!error && session) {
+								this._accessToken.set(session.getAccessToken());
+								resolve();
+							} else {
+								this.logger.warn("Refresh user failed", error);
+							}
+						});
+					} else {
+						resolve();
+					}
+				} else {
+					resolve();
 				}
-			}
+			});
 		});
 	}
+
+	monInt = 1567;
+	firstBit = this.monInt & 1;
+	secondBit = (this.monInt >> 1) & 1;
+	threeToFiveBits = (this.monInt >> 2) & 0x3;
 
 	async signUpEmail(email: string, password: string): Promise<void> {
 		return new Promise((resolve, reject) => {

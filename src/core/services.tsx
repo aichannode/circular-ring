@@ -1,6 +1,7 @@
 import { ApiService } from "@core/api/apiService";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { CognitoAuthService } from "@domain/auth/cognito-auth/cognitoAuthService";
+import { UserApi } from "@domain/user/userApi";
 import { UserService } from "@domain/user/userService";
 import { UserStorage } from "@domain/user/userStorage";
 import { createContext, useContext } from "react";
@@ -31,9 +32,8 @@ const circleActivityService = new CircleActivityService(circleActivityApi);
 
 const cognitoAuthService = new CognitoAuthService();
 
-// const userApi = new UserApi(apiService);
-// const userService = new UserService(circularAuthService, /*userApi, */ userStorage);
-const userService = new UserService(cognitoAuthService, /*userApi, */ userStorage);
+const userApi = new UserApi(apiService);
+const userService = new UserService(cognitoAuthService, userApi, userStorage);
 
 const userPreferencesStorage = new UserPreferencesStorage();
 const userPreferencesService = new UserPreferencesService(userPreferencesStorage);
@@ -62,10 +62,12 @@ export function useServices(): Services {
 	return services;
 }
 
-export function initializeServices() {
+export async function initializeServices() {
 	apiService.init(cognitoAuthService);
+	await cognitoAuthService.init(); // must be initialized first
 	return Promise.all(
 		Object.values(services)
+			.filter((service) => service !== cognitoAuthService)
 			.map((service) => {
 				if ("init" in service) {
 					return service.init();

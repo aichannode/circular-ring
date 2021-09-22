@@ -1,4 +1,5 @@
 import { Buffer } from "buffer";
+import dayjs from "dayjs";
 import { Observable } from "micro-observables";
 
 export function delay(timeout: number): Promise<void> {
@@ -36,4 +37,8 @@ export function replaceInArray<T>(array: readonly T[], index: number, newValue: 
 
 export function arrayFromRange(start: number, end: number, increment: number | undefined = 1): number[] {
 	return Array.from({ length: (end + increment - start) / increment }, (_, i) => i * increment + start);
+}
+
+export function toServerDate(date: Date) {
+	return dayjs(date).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
 }

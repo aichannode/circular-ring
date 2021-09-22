@@ -1,6 +1,5 @@
-import { useAuth } from "@domain/auth/hooks/useAuth";
 import { useAccountLinked } from "@domain/device/hooks";
-import { useUserValidated } from "@domain/user/hooks/useUser";
+import { useUser, useAuthenticatedUserEmail } from "@domain/user/hooks/useUser";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -48,12 +47,12 @@ export const RootNavigator: React.FC = () => {
 	const { format } = useI18n();
 	const navigation = useNavigation();
 
-	const isAuthenticated = useAuth();
+	const isAuthenticated = !!useAuthenticatedUserEmail();
 
 	const accountLinkedToDevice = useAccountLinked();
-	const userValidated = useUserValidated();
+	const hasUser = !!useUser();
 
-	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && userValidated;
+	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
 
 	const HomeDrawerNavigator = () => (
 		<HomeDrawer.Navigator

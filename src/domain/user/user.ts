@@ -10,8 +10,8 @@ export interface User {
 	email: string;
 	validated: boolean;
 	country: string;
-	phoneNumber: string;
-	profilePictureUrl: string;
+	phoneNumber: string | null;
+	profilePictureUrl: string | null;
 	weight: number;
 	height: number;
 	sex: Sex;

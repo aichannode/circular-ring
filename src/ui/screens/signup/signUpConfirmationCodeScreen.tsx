@@ -1,6 +1,6 @@
 import { useLogger } from "@core/logger/hooks/useLogger";
 import { useServices } from "@core/services";
-import { useUserEmail } from "@domain/user/hooks/useUser";
+import { useJustRegisteredUserEmail } from "@domain/user/hooks/useUser";
 import { PrimaryButton, SecondaryButton, SimpleTextButton } from "@ui/components/buttons";
 import { Grow, Row } from "@ui/components/layout";
 import { LogoImageHeader } from "@ui/components/logoImageHeader";
@@ -20,7 +20,7 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
 	const { format } = useI18n();
 	const { userService } = useServices();
-	const email = useUserEmail();
+	const email = useJustRegisteredUserEmail();
 
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isLoading, setLoading] = useState(false);

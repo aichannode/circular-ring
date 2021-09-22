@@ -1,9 +1,12 @@
+import { useServices } from "@core/services";
 import {
 	defaultHeight,
 	defaultWeight,
+	ftToCm,
 	HeightUnit,
 	heightValuesCm,
 	heightValuesFt,
+	lbsToKg,
 	WeightUnit,
 	weightValuesKg,
 	weightValuesLbs,
@@ -18,6 +21,7 @@ import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SelectableButton } from "@ui/components/selectableButton";
 import { Switch } from "@ui/components/switch";
 import { useI18n } from "@ui/i18n";
+import { Routes, useAppRoute } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
@@ -33,6 +37,10 @@ dayjs.extend(customParseFormat);
 export const OnboardingPersonalInfo2Screen = () => {
 	const { format } = useI18n();
 	const navigation = useNavigation();
+	const { userService } = useServices();
+
+	const route = useAppRoute<Routes.OnboardingPersonalInfo2>();
+	const { firstName, lastName, country } = route.params;
 
 	const [weightUnit, setWeightUnit] = useState<WeightUnit>(WeightUnit.kg);
 	const [weightRange, setWeightRange] = useState<number[]>(weightValuesKg);
@@ -57,6 +65,24 @@ export const OnboardingPersonalInfo2Screen = () => {
 		setHeight(defaultHeight.get(heightUnit) ?? 170);
 	}, [heightUnit]);
 
+	const completeTutorial = useCallback(async () => {
+		const birthDate = dayjs(bornDate, "DD/MM/YYYY", true).toDate();
+		try {
+			await userService.completeTutorial({
+				firstName,
+				lastName,
+				country,
+				bornDate: birthDate,
+				sex,
+				weight: weightUnit === WeightUnit.kg ? weight : lbsToKg(weight),
+				height: heightUnit === HeightUnit.cm ? height : ftToCm(height),
+			});
+			await userService.updateUserSettings("DD/MM/YYYY", heightUnit, weightUnit);
+		} catch (error) {
+			setErrorMessage(format("onboarding.personal_info.error.default"));
+		}
+	}, [bornDate, sex, weight, height]);
+
 	const goNext = useCallback(() => {
 		setErrorMessage("");
 		if (bornDate.length === 0) {
@@ -66,7 +92,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 			if (!birthDate.isValid() || birthDate.isAfter(dayjs())) {
 				setErrorMessage(format("onboarding.personal_info.error.born_date_invalid"));
 			} else {
-				// TODO
+				completeTutorial();
 			}
 		}
 	}, [bornDate, sex, weight, height]);
