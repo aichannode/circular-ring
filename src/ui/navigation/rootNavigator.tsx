@@ -43,27 +43,20 @@ const headerTitleStyle = {
 	color: colors.textPrimary,
 } as const;
 
-export const RootNavigator: React.FC = () => {
+const HomeDrawerNavigator = () => (
+	<HomeDrawer.Navigator
+		screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
+		drawerContent={() => <DrawerContent />}
+	>
+		<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} />
+	</HomeDrawer.Navigator>
+);
+
+const MainHomeNavigator = () => {
 	const { format } = useI18n();
 	const navigation = useNavigation();
 
-	const isAuthenticated = true; //!!useAuthenticatedUserEmail();
-
-	const accountLinkedToDevice = true; //useAccountLinked();
-	const hasUser = false; //!!useUser();
-
-	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
-
-	const HomeDrawerNavigator = () => (
-		<HomeDrawer.Navigator
-			screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
-			drawerContent={() => <DrawerContent />}
-		>
-			<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} />
-		</HomeDrawer.Navigator>
-	);
-
-	const MainHomeNavigator = () => (
+	return (
 		<MainStack.Navigator
 			screenOptions={{
 				headerRight: () => <MyRingBattery />,
@@ -101,8 +94,12 @@ export const RootNavigator: React.FC = () => {
 			/>
 		</MainStack.Navigator>
 	);
+};
 
-	const ProfileNavigator = () => (
+const ProfileNavigator = () => {
+	const { format } = useI18n();
+
+	return (
 		<ProfileStack.Navigator
 			screenOptions={{
 				headerRight: () => <MyRingBattery />,
@@ -113,13 +110,22 @@ export const RootNavigator: React.FC = () => {
 				name={Routes.Profile}
 				component={ProfileScreen}
 				options={{
-					title: format("profile.header.title"),
+					title: format("header.profile"),
 					headerTitleAlign: "center",
 					headerTitleStyle: headerTitleStyle,
 				}}
 			/>
 		</ProfileStack.Navigator>
 	);
+};
+
+export const RootNavigator: React.FC = () => {
+	const isAuthenticated = !!useAuthenticatedUserEmail();
+
+	const accountLinkedToDevice = useAccountLinked();
+	const hasUser = !!useUser();
+
+	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
 
 	return isOnboardingDone ? (
 		<AuthenticatedStack.Navigator screenOptions={{ headerShown: false }}>

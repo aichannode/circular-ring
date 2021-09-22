@@ -2,7 +2,7 @@ import { useDailyData } from "@domain/circleActivity/hooks";
 import { Stack } from "@ui/components/layout";
 import { useI18n } from "@ui/i18n";
 import React, { useState } from "react";
-import { ScrollView } from "react-native";
+import { LayoutAnimation, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { DailyMetric } from "./dailyMetric";
 import { GaugeDescription } from "./gaugeDescription";
@@ -143,14 +143,20 @@ export const CircleActivityScreen: React.FC = () => {
 									key={label}
 									{...data}
 									label={label}
-									onPress={() => setFocusedGauge((current) => (current === index ? null : index))}
+									onPress={() => {
+										LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+										setFocusedGauge((current) => (current === index ? null : index));
+									}}
 								/>,
 								focusedGauge === index && (
 									<GaugeDescription
 										key={label + "description"}
 										label={label}
 										description={description}
-										onClose={() => setFocusedGauge(null)}
+										onClose={() => {
+											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+											setFocusedGauge(null);
+										}}
 									/>
 								),
 							])

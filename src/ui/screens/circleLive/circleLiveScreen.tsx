@@ -46,7 +46,7 @@ export const CircleLiveScreen: React.FC = () => {
 	}, []);
 
 	return (
-		<Container contentContainerStyle={{ paddingTop: 30 }}>
+		<Container contentContainerStyle={{ paddingVertical: 30 }}>
 			<ResponsiveCenterView maxWidth={380} align="stretch">
 				<Stack gap={16}>
 					<Row gap={100}>

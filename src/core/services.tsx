@@ -15,6 +15,11 @@ import { CircleActivityApi } from "@domain/circleActivity/circleActivityApi";
 import { CircleActivityService } from "@domain/circleActivity/circleActivityService";
 import { UserPreferencesStorage } from "@domain/preferences/userPreferencesStorage";
 import { UserPreferencesService } from "@domain/preferences/userPreferencesService";
+import { CalibrationService } from "@domain/calibration/calibrationService";
+import { CalibrationApi } from "@domain/calibration/calibrationApi";
+import { HomeBannerStorage } from "@domain/homeBanner/homeBannerStorage";
+import { HomeBannerService } from "@domain/homeBanner/homeBannerService";
+import { HomeBannerApi } from "@domain/homeBanner/homeBannerApi";
 
 const userStorage = new UserStorage();
 const favoriteDeviceStorage = new FavoriteDeviceStorage();
@@ -37,6 +42,12 @@ const userService = new UserService(cognitoAuthService, userApi, userStorage);
 
 const userPreferencesStorage = new UserPreferencesStorage();
 const userPreferencesService = new UserPreferencesService(userPreferencesStorage);
+const calibrationApi = new CalibrationApi(apiService);
+const calibrationService = new CalibrationService(calibrationApi);
+
+const homeBannerStorage = new HomeBannerStorage();
+const homeBannerApi = new HomeBannerApi(apiService);
+const homeBannerService = new HomeBannerService(homeBannerStorage, homeBannerApi);
 
 export const services = {
 	cognitoAuthService,
@@ -46,6 +57,8 @@ export const services = {
 	ringService,
 	circleActivityService,
 	userPreferencesService,
+	calibrationService,
+	homeBannerService,
 };
 
 export type Services = typeof services;
