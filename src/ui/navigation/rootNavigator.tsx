@@ -38,22 +38,20 @@ const headerTitleStyle = {
 	color: colors.textPrimary,
 } as const;
 
-export const RootNavigator: React.FC = () => {
+const HomeDrawerNavigator = () => (
+	<HomeDrawer.Navigator
+		screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
+		drawerContent={() => <DrawerContent />}
+	>
+		<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} />
+	</HomeDrawer.Navigator>
+);
+
+const MainHomeNavigator = () => {
 	const { format } = useI18n();
 	const navigation = useNavigation();
-	const isAuthenticated = useAuth();
-	const accountLinked = useAccountLinked();
 
-	const HomeDrawerNavigator = () => (
-		<HomeDrawer.Navigator
-			screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
-			drawerContent={() => <DrawerContent />}
-		>
-			<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} />
-		</HomeDrawer.Navigator>
-	);
-
-	const MainHomeNavigator = () => (
+	return (
 		<MainStack.Navigator
 			screenOptions={{
 				headerRight: () => <MyRingBattery />,
@@ -91,8 +89,12 @@ export const RootNavigator: React.FC = () => {
 			/>
 		</MainStack.Navigator>
 	);
+};
 
-	const ProfileNavigator = () => (
+const ProfileNavigator = () => {
+	const { format } = useI18n();
+
+	return (
 		<ProfileStack.Navigator
 			screenOptions={{
 				headerRight: () => <MyRingBattery />,
@@ -110,6 +112,11 @@ export const RootNavigator: React.FC = () => {
 			/>
 		</ProfileStack.Navigator>
 	);
+};
+
+export const RootNavigator: React.FC = () => {
+	const isAuthenticated = useAuth();
+	const accountLinked = true || useAccountLinked();
 
 	return isAuthenticated ? (
 		accountLinked ? (
