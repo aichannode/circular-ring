@@ -91,6 +91,8 @@ const MainHomeNavigator = () => {
 				component={ProfileScreen}
 				options={{
 					title: format("header.profile"),
+					headerTitleAlign: "center",
+					headerTitleStyle: headerTitleStyle,
 				}}
 			/>
 			<MainStack.Screen
