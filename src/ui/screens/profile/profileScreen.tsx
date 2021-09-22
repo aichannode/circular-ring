@@ -1,5 +1,6 @@
 import { useServices } from "@core/services";
 import { getScoreQuality } from "@domain/circleActivity/circleActivityData";
+import { UserAvatar } from "@ui/components/userAvatar";
 import { InfoListItem } from "@ui/components/infoListItem";
 import { ResponsiveCenterView, Row } from "@ui/components/layout";
 import { ScoreView } from "@ui/components/scoreView";
@@ -24,7 +25,11 @@ export const ProfileScreen = () => {
 	const scoreQuality = score ? getScoreQuality(score, 80, 90) : null;
 
 	return (
-		<ScrollScreen style={{ justifyContent: "flex-start" }} contentContainerStyle={{ paddingTop: 30 }}>
+		<ScrollScreen
+			style={{ justifyContent: "flex-start", alignItems: "center" }}
+			contentContainerStyle={{ paddingTop: 20 }}
+		>
+			<UserAvatar />
 			<ResponsiveCenterView>
 				<ScoreCard gap={16} align="center" justify="center">
 					<ScoreView value={score} color={colors.primary} />

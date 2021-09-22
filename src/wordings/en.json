@@ -107,6 +107,7 @@
   "metric.vo2_max": "VO2 max (ml/kg/min)",
   "metric.hr_max": "HR max (bpm)",
   "profile.header.title": "PROFILE",
+  "profile.user_creation": "User since {date}",
   "profile.logout": "Log out",
   "profile.global_score.label": "Global score",
   "live.heart_rate.label": "Heart rate",

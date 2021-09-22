@@ -32,8 +32,6 @@ const SetupStack = createNativeStackNavigator();
 
 const OnboardingStack = createNativeStackNavigator();
 
-const AuthenticatedStack = createNativeStackNavigator();
-const ProfileStack = createNativeStackNavigator();
 const HomeDrawer = createDrawerNavigator();
 const MainStack = createNativeStackNavigator();
 
@@ -47,29 +45,23 @@ export const RootNavigator: React.FC = () => {
 	const { format } = useI18n();
 	const navigation = useNavigation();
 
-	const isAuthenticated = true; //!!useAuthenticatedUserEmail();
+	const isAuthenticated = !!useAuthenticatedUserEmail();
 
-	const accountLinkedToDevice = true; //useAccountLinked();
-	const hasUser = false; //!!useUser();
+	const accountLinkedToDevice = useAccountLinked();
+	const hasUser = !!useUser();
 
 	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
-
-	const HomeDrawerNavigator = () => (
-		<HomeDrawer.Navigator
-			screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
-			drawerContent={() => <DrawerContent />}
-		>
-			<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} />
-		</HomeDrawer.Navigator>
-	);
 
 	const MainHomeNavigator = () => (
 		<MainStack.Navigator
 			screenOptions={{
+				headerStyle: { backgroundColor: colors.lightgray },
 				headerRight: () => <MyRingBattery />,
 				headerTitleAlign: "center",
 				headerTitleStyle: headerTitleStyle,
+				headerBackTitleVisible: false,
 				headerBackImageSource: require("@assets/images/menuBackArrow.png"),
+				headerTintColor: colors.textPrimary,
 			}}
 		>
 			<MainStack.Screen
@@ -99,33 +91,23 @@ export const RootNavigator: React.FC = () => {
 				component={CircleLiveScreen}
 				options={{ title: format("header.live"), headerRight: undefined }}
 			/>
-		</MainStack.Navigator>
-	);
-
-	const ProfileNavigator = () => (
-		<ProfileStack.Navigator
-			screenOptions={{
-				headerRight: () => <MyRingBattery />,
-				headerBackImageSource: require("@assets/images/menuBackArrow.png"),
-			}}
-		>
-			<ProfileStack.Screen
+			<MainStack.Screen
 				name={Routes.Profile}
 				component={ProfileScreen}
 				options={{
 					title: format("profile.header.title"),
-					headerTitleAlign: "center",
-					headerTitleStyle: headerTitleStyle,
 				}}
 			/>
-		</ProfileStack.Navigator>
+		</MainStack.Navigator>
 	);
 
 	return isOnboardingDone ? (
-		<AuthenticatedStack.Navigator screenOptions={{ headerShown: false }}>
-			<AuthenticatedStack.Screen name={Routes.HomeDrawer} component={HomeDrawerNavigator} />
-			<AuthenticatedStack.Screen name={Routes.Profile} component={ProfileNavigator} />
-		</AuthenticatedStack.Navigator>
+		<HomeDrawer.Navigator
+			screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
+			drawerContent={() => <DrawerContent />}
+		>
+			<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} />
+		</HomeDrawer.Navigator>
 	) : isAuthenticated ? (
 		accountLinkedToDevice ? (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
