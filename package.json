@@ -23,6 +23,7 @@
 		"amazon-cognito-identity-js": "^5.1.0",
 		"axios": "^0.21.1",
 		"buffer": "^6.0.3",
+		"dayjs": "^1.10.7",
 		"flat": "^5.0.2",
 		"jsc-android": "^250230.2.1",
 		"micro-observables": "^1.7.0",
