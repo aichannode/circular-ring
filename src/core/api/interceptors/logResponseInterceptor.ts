@@ -15,6 +15,7 @@ export const logResponseInterceptor: (logger: Logger) => Interceptor<AxiosRespon
 				error.response?.status,
 				error.config.method,
 				error.config.url,
+				error.response?.request?.responseURL,
 				error.response?.data.requestId,
 				error.config.data,
 				JSON.stringify(error.response?.data)

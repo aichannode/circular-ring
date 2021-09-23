@@ -8,7 +8,25 @@ import { DailyMetric } from "./dailyMetric";
 import { GaugeDescription } from "./gaugeDescription";
 import { ScoreGauge } from "./scoreGauge";
 import { ScreenSection } from "./screenSection";
+import { Metric } from "@domain/measure/metric";
+import { WordingKey } from "src/wordings";
 
+type MetricsData = {
+	[key in Metric]?: {
+		icon: number;
+		labelKey: WordingKey;
+	};
+};
+const metricsData: MetricsData = {
+	"user.daily.steps": {
+		icon: require("@assets/images/shoes.png"),
+		labelKey: "metric.steps",
+	},
+	"user.daily.walking.equivalency": {
+		icon: require("@assets/images/shoes.png"),
+		labelKey: "metric.steps",
+	},
+};
 export const CircleActivityScreen: React.FC = () => {
 	const dailyData = useDailyData();
 	const { format } = useI18n();
