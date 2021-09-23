@@ -14,9 +14,9 @@ export interface HorizontalPickerProps<T> extends ScrollViewProps {
 	data: T[];
 	renderItem: (item: T, index: number) => ReactNode;
 	itemWidth: number;
-	defaultIndex?: number;
+	item?: T;
 	animatedScrollToDefaultIndex?: boolean;
-	onChange?: (position: number) => void;
+	onItemChange?: (item: T) => void;
 }
 
 export type HorizontalPickerState = {
@@ -63,12 +63,12 @@ export class HorizontalPicker<T> extends PureComponent<HorizontalPickerProps<T>,
 			this.props.onScroll(e);
 		}
 
-		if (this.props.onChange != null && !this.ignoreNextScroll) {
+		if (this.props.onItemChange != null && !this.ignoreNextScroll) {
 			const position = Math.min(
 				this.props.data.length - 1,
 				Math.max(0, Math.round(this.currentPositionX / this.props.itemWidth))
 			);
-			this.props.onChange(position);
+			this.props.onItemChange(this.props.data[position]);
 			this.setDelayedSnap(position);
 		}
 	};
@@ -112,14 +112,15 @@ export class HorizontalPicker<T> extends PureComponent<HorizontalPickerProps<T>,
 	};
 
 	scrollToDefaultIndex = () => {
-		if (this.refScrollView.current != null && this.props.defaultIndex != null) {
-			const { defaultIndex, itemWidth, data } = this.props;
+		if (this.refScrollView.current != null && this.props.item != null) {
+			const { item, itemWidth, data } = this.props;
 
-			if (defaultIndex >= data.length) {
+			const itemIndex = Math.max(0, data.indexOf(item));
+			if (itemIndex >= data.length) {
 				return;
 			}
 
-			const x = defaultIndex * itemWidth;
+			const x = itemIndex * itemWidth;
 			this.refScrollView.current.scrollTo({ x, y: 0, animated: this.props.animatedScrollToDefaultIndex || false });
 		}
 	};

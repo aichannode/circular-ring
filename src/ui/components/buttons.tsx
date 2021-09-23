@@ -19,7 +19,11 @@ export const PrimaryButton: React.FC<CircularButtonProps> = ({ onPress, style, l
 					light={light}
 					start={{ x: 0, y: 1 }}
 					end={{ x: 1, y: 0.5 }}
-					colors={pressed ? ["#f97444", "#f44a59"] : ["#f44a59", "#f97444"]}
+					colors={
+						pressed
+							? [colors.orangeGradientEnd, colors.orangeGradientStart]
+							: [colors.orangeGradientStart, colors.orangeGradientEnd]
+					}
 				>
 					<PrimaryButtonText light={light}>{children}</PrimaryButtonText>
 				</PrimaryContent>
@@ -54,7 +58,11 @@ export const Tertiarybutton: React.FC<TertiaryButtonProps> = ({
 		<Pressable onPress={onPress} style={style}>
 			{({ pressed }) => (
 				<TertiaryBorder
-					colors={pressed ? ["#f97444", "#f44a59"] : ["#f44a59", "#f97444"]}
+					colors={
+						pressed
+							? [colors.orangeGradientEnd, colors.orangeGradientStart]
+							: [colors.orangeGradientStart, colors.orangeGradientEnd]
+					}
 					start={{ x: 0, y: 1 }}
 					end={{ x: 1, y: 0.5 }}
 				>
@@ -74,7 +82,11 @@ export const PrimaryBigButton: React.FC<CircularButtonProps> = ({ onPress, style
 				<PrimaryBigContent
 					start={{ x: 0, y: 1 }}
 					end={{ x: 1, y: 0.5 }}
-					colors={pressed ? ["#f97444", "#f44a59"] : ["#f44a59", "#f97444"]}
+					colors={
+						pressed
+							? [colors.orangeGradientEnd, colors.orangeGradientStart]
+							: [colors.orangeGradientStart, colors.orangeGradientEnd]
+					}
 				>
 					<PrimaryBigButtonText>{children}</PrimaryBigButtonText>
 				</PrimaryBigContent>

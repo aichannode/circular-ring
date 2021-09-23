@@ -15,7 +15,11 @@ export function Switch<T>({ options, currentOption, onSelectOption, containerBgC
 	const rightSelected = currentOption === options[1];
 
 	return (
-		<Container start={{ x: 0, y: 1 }} end={{ x: 1, y: 0.5 }} colors={["#f44a59", "#f97444", "#f44a59"]}>
+		<Container
+			start={{ x: 0, y: 1 }}
+			end={{ x: 1, y: 0.5 }}
+			colors={[colors.orangeGradientStart, colors.orangeGradientEnd, colors.orangeGradientStart]}
+		>
 			<LeftOption onPress={() => onSelectOption(options[0])}>
 				<UnselectedLeftBackground visible={!leftSelected} bgColor={containerBgColor}>
 					<OptionText selected={leftSelected}>{options[0]}</OptionText>
