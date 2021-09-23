@@ -7,9 +7,9 @@ import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
-import { ConfirmSexBottomSheet } from "@ui/screens/profile/confirmSexBottomSheet";
-import { HeightBottomSheet } from "@ui/screens/profile/heightBottomSheet";
-import { WeightBottomSheet } from "@ui/screens/profile/weightBottomSheet";
+import { ConfirmSexBottomSheet } from "@ui/screens/profile/basicInformation/confirmSexBottomSheet";
+import { HeightBottomSheet } from "@ui/screens/profile/basicInformation/heightBottomSheet";
+import { WeightBottomSheet } from "@ui/screens/profile/basicInformation/weightBottomSheet";
 import dayjs from "dayjs";
 import React, { useRef, useState } from "react";
 
@@ -78,7 +78,12 @@ export const ProfileInformationScreen = () => {
 				}}
 			/>
 			{/*<InfoListItem name={format("profile_info.leaderboard")} />*/}
-			{/*<InfoListItem name={format("profile_info.advanced_info")} hasDisclosure={true} />*/}
+			<InfoListItem
+				name={format("profile_info.advanced_info")}
+				hasDisclosure={true}
+				action={() => navigate(Routes.ProfileAdvancedInformation)}
+			/>
+
 			<CircularBottomSheet snapPoints={[480]} ref={heightBottomSheetRef}>
 				<HeightBottomSheet onSaved={() => heightBottomSheetRef.current?.close()} />
 			</CircularBottomSheet>
