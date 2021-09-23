@@ -136,6 +136,10 @@ export class HorizontalPicker<T> extends PureComponent<HorizontalPickerProps<T>,
 				decelerationRate={this.defaultDecelerationRate}
 				contentContainerStyle={{ paddingHorizontal: this.paddingSide }}
 				ref={this.refScrollView}
+				onContentSizeChange={(w, h) => {
+					this.props.onContentSizeChange?.(w, h);
+					this.scrollToDefaultIndex();
+				}}
 				onLayout={this.onLayoutScrollView}
 				onScroll={this.onScroll}
 				onScrollBeginDrag={this.onScrollBeginDrag}

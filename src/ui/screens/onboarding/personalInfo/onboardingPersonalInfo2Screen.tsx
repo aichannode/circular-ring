@@ -1,11 +1,13 @@
 import { useServices } from "@core/services";
 import {
+	cmToFt,
 	defaultHeight,
 	defaultWeight,
 	ftToCm,
 	HeightUnit,
 	heightValuesCm,
 	heightValuesFt,
+	kgToLbs,
 	lbsToKg,
 	WeightUnit,
 	weightValuesKg,
@@ -26,6 +28,7 @@ import { Routes, useAppRoute } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
+import { usePrevious } from "@ui/utils/usePrevious";
 import dayjs from "dayjs";
 import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
@@ -44,9 +47,11 @@ export const OnboardingPersonalInfo2Screen = () => {
 
 	const [weightUnit, setWeightUnit] = useState<WeightUnit>(WeightUnit.kg);
 	const [weightRange, setWeightRange] = useState<number[]>(weightValuesKg);
+	const previousWeightUnit = usePrevious(weightUnit);
 
 	const [heightUnit, setHeightUnit] = useState<HeightUnit>(HeightUnit.cm);
 	const [heightRange, setHeightRange] = useState<number[]>(heightValuesCm);
+	const previousHeightUnit = usePrevious(heightUnit);
 
 	const [sex, setSex] = useState(Sex.Female);
 	const [bornDate, setBornDate] = useState("");
@@ -58,13 +63,17 @@ export const OnboardingPersonalInfo2Screen = () => {
 	const [isLoading, setLoading] = useState(false);
 
 	useEffect(() => {
-		setWeightRange(weightUnit === WeightUnit.kg ? weightValuesKg : weightValuesLbs);
-		setWeight(defaultWeight.get(weightUnit) ?? 80);
+		if (!!previousWeightUnit && previousWeightUnit !== weightUnit) {
+			setWeightRange(weightUnit === WeightUnit.kg ? weightValuesKg : weightValuesLbs);
+			setWeight(weightUnit === WeightUnit.kg ? lbsToKg(weight) : kgToLbs(weight));
+		}
 	}, [weightUnit]);
 
 	useEffect(() => {
-		setHeightRange(heightUnit === HeightUnit.cm ? heightValuesCm : heightValuesFt);
-		setHeight(defaultHeight.get(heightUnit) ?? 170);
+		if (!!previousHeightUnit && previousHeightUnit !== heightUnit) {
+			setHeightRange(heightUnit === HeightUnit.cm ? heightValuesCm : heightValuesFt);
+			setHeight(heightUnit === HeightUnit.cm ? ftToCm(height) : cmToFt(height));
+		}
 	}, [heightUnit]);
 
 	const completeTutorial = useCallback(async () => {
@@ -137,6 +146,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 							format: "DD/MM/YYYY",
 						}}
 						placeholder={format("onboarding.personal_info.born_placeholder")}
+						placeholderTextColor={colors.textTertiary}
 						value={bornDate}
 						onChangeText={setBornDate}
 						style={{ padding: 0, width: "100%" }}
@@ -155,7 +165,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 				</TitleAndOptions>
 				<HorizontalCarousel
 					data={weightRange}
-					renderItem={(item, index) => <PickerValue>{item}</PickerValue>}
+					renderItem={(item, index) => <PickerValue itemWidth={50}>{item}</PickerValue>}
 					itemWidth={50}
 					onItemChange={setWeight}
 					item={weight}
@@ -174,8 +184,12 @@ export const OnboardingPersonalInfo2Screen = () => {
 				</TitleAndOptions>
 				<HorizontalCarousel
 					data={heightRange}
-					renderItem={(item) => <PickerValue>{item}</PickerValue>}
-					itemWidth={50}
+					renderItem={(item) => (
+						<PickerValue itemWidth={heightUnit === HeightUnit.cm ? 50 : 60}>
+							{item.toFixed(heightUnit === HeightUnit.cm ? 0 : 2)}
+						</PickerValue>
+					)}
+					itemWidth={heightUnit === HeightUnit.cm ? 50 : 60}
 					onItemChange={setHeight}
 					item={height}
 					animatedScrollToDefaultIndex={false}
@@ -249,8 +263,8 @@ const TitleAndOptions = styled.View`
 	margin-bottom: 16px;
 `;
 
-const PickerValue = styled.Text`
-	width: 50px;
+const PickerValue = styled.Text<{ itemWidth: number }>`
+	width: ${({ itemWidth }) => itemWidth}px;
 	text-align: center;
 	font-size: 22px;
 `;

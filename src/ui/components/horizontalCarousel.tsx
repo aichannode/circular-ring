@@ -48,7 +48,7 @@ export function HorizontalCarousel<T>({
 const Container = styled.View``;
 
 const UnderlineValue = styled.View`
-	width: 40px;
+	width: 50px;
 	height: 1px;
 	margin-top: 4px;
 	align-self: center;
