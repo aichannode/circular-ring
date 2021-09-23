@@ -1,4 +1,5 @@
 import { ApiService } from "@core/api/apiService";
+import { HeightUnit, WeightUnit } from "@domain/units";
 import { Sex, User } from "@domain/user/user";
 import { UserSettings } from "@domain/user/userSettings";
 
@@ -26,6 +27,13 @@ interface UserDto extends UserDtoBase {
 }
 
 export type UserPutDto = UserDtoBase;
+
+interface UserSettingsDto {
+	id: string;
+	dateFormat: string;
+	heightFormat: string;
+	weightFormat: string;
+}
 
 export class UserApi {
 	constructor(private readonly apiService: ApiService) {}
@@ -62,7 +70,15 @@ export class UserApi {
 		weightFormat: string;
 		timezone: string;
 	}): Promise<UserSettings> {
-		const result = await this.apiService.put<UserSettings>("/user/setting", userSettings);
-		return result.data;
+		const result = await this.apiService.put<UserSettingsDto>("/user/setting", userSettings);
+		return UserApi.userSettingsFromDto(result.data);
+	}
+
+	private static userSettingsFromDto(userSettingsDto: UserSettingsDto): UserSettings {
+		return {
+			...userSettingsDto,
+			weightFormat: userSettingsDto.weightFormat === "kg" ? WeightUnit.kg : WeightUnit.lbs,
+			heightFormat: userSettingsDto.heightFormat === "cm" ? HeightUnit.cm : HeightUnit.ft,
+		};
 	}
 }

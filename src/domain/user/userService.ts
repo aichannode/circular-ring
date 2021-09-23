@@ -116,7 +116,6 @@ export class UserService {
 		// get User
 		try {
 			const user = await this.userApi.getUser();
-			console.log("Got STRIDE : " + user.stride + " : " + typeof user.stride);
 			this._user.set(user);
 			await this.userStorage.saveUser(user);
 		} catch (error) {
@@ -144,7 +143,7 @@ export class UserService {
 			const userSettings = await this.userApi.updateUserSettings({
 				dateFormat,
 				heightFormat: heightUnit.toString(),
-				weightFormat: weightUnit.toString(),
+				weightFormat: weightUnit === WeightUnit.kg ? "kg" : "lb",
 				timezone,
 			});
 			this._userSettings.set(userSettings);
