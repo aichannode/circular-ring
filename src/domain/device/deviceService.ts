@@ -6,6 +6,8 @@ import { Signal } from "micro-signals";
 import { BleError, Device, ScanMode, State, Subscription } from "react-native-ble-plx";
 import { StoredDevice } from "./device";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
+import { LocationEnabler } from "./locationEnabler";
+import { Platform } from "react-native";
 
 export enum DeviceConnectionState {
 	DISCONNECTED = "DISCONNECTED",
@@ -16,6 +18,7 @@ export enum DeviceSetupState {
 	FINISHED = "FINISHED",
 	DISABLED = "DISABLED",
 	CONNECTING = "CONNECTING",
+	LOCATION_DISABLED = "LOCATION_DISABLED",
 	READY_TO_SCAN = "READY_TO_SCAN",
 	SCANNING = "SCANNING",
 }
@@ -33,11 +36,14 @@ const TXCharacteristicUUID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
 
 const findDeviceTimeout = 20000;
 const scanRetryTimeout = 10000;
+
+const locationConfig = { alwaysShow: true, needBle: true };
 export class DeviceService {
 	private logger = getLogger("📟 DeviceService");
 
 	private _onDeviceDisconnectedSubscription: Subscription | null = null;
 
+	private _locationEnabledAndroid = observable(false);
 	private _scannedDevices = observable(new Map<string, Device>());
 	private _connectedDevice = observable<Device | null>(null);
 	private _connectionState = observable(DeviceConnectionState.DISCONNECTED);
@@ -58,15 +64,28 @@ export class DeviceService {
 		private readonly bluetoothService: BluetoothService,
 		private readonly favoriteDeviceStorage: FavoriteDeviceStorage
 	) {
+		LocationEnabler.addListener(({ locationEnabled }) => {
+			this._locationEnabledAndroid.set(locationEnabled);
+		});
+		LocationEnabler.checkSettings(locationConfig);
 		this.setupState = Observable.select(
 			// TODO Use user.device instead of favoriteDevice there
-			[this.bluetoothService.state, this._connectionState, this._scanning, this._favoriteDevice],
-			(bleState, connectionState, scanning, favorite) => {
+			[
+				this.bluetoothService.state,
+				this._locationEnabledAndroid,
+				this._connectionState,
+				this._scanning,
+				this._favoriteDevice,
+			],
+			(bleState, locationAndroid, connectionState, scanning, favorite) => {
 				if (connectionState === DeviceConnectionState.CONNECTED || !!favorite) {
 					return DeviceSetupState.FINISHED;
 				}
 				if (bleState === State.PoweredOff) {
 					return DeviceSetupState.DISABLED;
+				}
+				if (Platform.OS === "android" && !locationAndroid) {
+					return DeviceSetupState.LOCATION_DISABLED;
 				}
 				if (connectionState === DeviceConnectionState.CONNECTING) {
 					return DeviceSetupState.CONNECTING;
@@ -113,6 +132,20 @@ export class DeviceService {
 			return;
 		}
 		await this.bluetoothService.enable();
+		if (Platform.OS === "android") {
+			LocationEnabler.checkSettings(locationConfig);
+			if (!this._locationEnabledAndroid.get()) {
+				await new Promise<void>((resolve) => {
+					this.requestLocation();
+					const unsub = this._locationEnabledAndroid.subscribe((enabled) => {
+						if (enabled) {
+							resolve();
+							unsub();
+						}
+					});
+				});
+			}
+		}
 		const manager = this.bluetoothService.manager;
 		this.logger.info("SCAN STARTED");
 		this._scanning.set(true);
@@ -345,5 +378,9 @@ export class DeviceService {
 		this._monitoring.set(true);
 
 		return subscription;
+	}
+
+	requestLocation() {
+		LocationEnabler.requestResolutionSettings(locationConfig);
 	}
 }
