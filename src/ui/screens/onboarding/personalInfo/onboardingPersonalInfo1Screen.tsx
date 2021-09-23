@@ -71,9 +71,9 @@ export const OnboardingPersonalInfo1Screen = () => {
 			<InfoBlock>
 				<CountryField
 					title={format("onboarding.personal_info.country_title")}
-					onValueChanged={setCountry}
+					onCountryCodeChanged={setCountry}
 					placeholder={format("onboarding.personal_info.country_placeholder")}
-					defaultCountryCode={country}
+					countryCode={country}
 				/>
 			</InfoBlock>
 			<ErrorMessage>{errorMessage}</ErrorMessage>

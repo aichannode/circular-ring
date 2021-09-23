@@ -2,6 +2,8 @@ import "react-native-gesture-handler";
 import { useSentry } from "@core/logger/hooks/useSentry";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { RootNavigator } from "@ui/navigation/rootNavigator";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import React, { useEffect, useState } from "react";
 import { IntlProvider } from "react-intl";
 import { LogBox, StatusBar, Platform, UIManager } from "react-native";
@@ -14,6 +16,7 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
+dayjs.extend(customParseFormat);
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
 	UIManager.setLayoutAnimationEnabledExperimental(true);

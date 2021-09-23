@@ -27,14 +27,11 @@ import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
 import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import { TextInputMask } from "react-native-masked-text";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-
-dayjs.extend(customParseFormat);
 
 export const OnboardingPersonalInfo2Screen = () => {
 	const { format } = useI18n();
@@ -160,8 +157,8 @@ export const OnboardingPersonalInfo2Screen = () => {
 					data={weightRange}
 					renderItem={(item, index) => <PickerValue>{item}</PickerValue>}
 					itemWidth={50}
-					onValueChange={setWeight}
-					defaultValue={weight}
+					onItemChange={setWeight}
+					item={weight}
 					animatedScrollToDefaultIndex={false}
 				/>
 			</InfoBlock>
@@ -179,8 +176,8 @@ export const OnboardingPersonalInfo2Screen = () => {
 					data={heightRange}
 					renderItem={(item) => <PickerValue>{item}</PickerValue>}
 					itemWidth={50}
-					onValueChange={setHeight}
-					defaultValue={height}
+					onItemChange={setHeight}
+					item={height}
 					animatedScrollToDefaultIndex={false}
 				/>
 			</InfoBlock>

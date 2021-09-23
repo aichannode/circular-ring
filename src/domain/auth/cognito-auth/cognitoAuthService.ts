@@ -58,11 +58,6 @@ export class CognitoAuthService implements AuthService {
 		});
 	}
 
-	monInt = 1567;
-	firstBit = this.monInt & 1;
-	secondBit = (this.monInt >> 1) & 1;
-	threeToFiveBits = (this.monInt >> 2) & 0x3;
-
 	async signUpEmail(email: string, password: string): Promise<void> {
 		return new Promise((resolve, reject) => {
 			const attributeList = [new CognitoUserAttribute({ Name: "email", Value: email })];

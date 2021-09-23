@@ -1,43 +1,20 @@
 import { HorizontalPicker, HorizontalPickerProps } from "@ui/components/horizontalPicker";
 import { colors } from "@ui/styles/colors";
-import React, { useCallback } from "react";
+import React from "react";
 import LinearGradient from "react-native-linear-gradient";
 import styled from "styled-components/native";
 
-interface HorizontalCarouselProps<T> extends HorizontalPickerProps<T> {
-	onValueChange?: (value: T) => void;
-	defaultValue?: T;
-}
+type HorizontalCarouselProps<T> = HorizontalPickerProps<T>;
 
-export function HorizontalCarousel<T>({
-	defaultValue,
-	onValueChange,
-	data,
-	renderItem,
-	itemWidth,
-	...props
-}: HorizontalCarouselProps<T>) {
-	let baseIndex = props.defaultIndex ?? 0;
-	if (defaultValue) {
-		baseIndex = data.indexOf(defaultValue);
-	}
-
-	const onSelectionChange = useCallback(
-		(position) => {
-			props.onChange?.(position);
-			onValueChange?.(data[position]);
-		},
-		[props.onChange, onValueChange]
-	);
-
+export function HorizontalCarousel<T>({ onItemChange, data, item, renderItem, itemWidth }: HorizontalCarouselProps<T>) {
 	return (
 		<Container>
 			<HorizontalPicker
 				data={data}
 				renderItem={renderItem}
 				itemWidth={itemWidth}
-				defaultIndex={baseIndex}
-				onChange={onSelectionChange}
+				item={item}
+				onItemChange={onItemChange}
 			/>
 			<UnderlineValue />
 			<LeftFader
