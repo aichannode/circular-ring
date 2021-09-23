@@ -48,7 +48,7 @@ export const LiveTutorialBottomSheet: React.FC<LiveTutorialBottomSheetProps> = (
 						<PrimaryButton
 							style={{ minWidth: 100 }}
 							onPress={() => {
-								userPreferencesService.skipLiveTutorial();
+								tutorialHidden && userPreferencesService.skipLiveTutorial();
 								onFinish();
 							}}
 						>
