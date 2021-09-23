@@ -36,7 +36,10 @@ export function replaceInArray<T>(array: readonly T[], index: number, newValue: 
 }
 
 export function arrayFromRange(start: number, end: number, increment: number | undefined = 1): number[] {
-	return Array.from({ length: (end + increment - start) / increment }, (_, i) => i * increment + start);
+	return Array.from({ length: (end + increment - start) / increment }, (_, i) => {
+		// Correctly rounded at 0.01 precision
+		return +(i * increment + start).toFixed(2);
+	});
 }
 
 export function toServerDate(date: Date) {
