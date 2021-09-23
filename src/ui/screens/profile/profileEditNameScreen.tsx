@@ -86,7 +86,7 @@ export const ProfileEditNameScreen = () => {
 				{isLoading ? (
 					<Spinner size={24} />
 				) : (
-					<PrimaryButton onPress={submitNames}>{format("profile_info.edit_name.save")}</PrimaryButton>
+					<PrimaryButton onPress={submitNames}>{format("global.save")}</PrimaryButton>
 				)}
 			</ButtonContainer>
 		</ScrollScreen>

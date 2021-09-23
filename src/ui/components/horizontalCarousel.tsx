@@ -1,14 +1,24 @@
 import { HorizontalPicker, HorizontalPickerProps } from "@ui/components/horizontalPicker";
 import { colors } from "@ui/styles/colors";
 import React from "react";
+import { StyleProp, ViewStyle } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import styled from "styled-components/native";
 
-type HorizontalCarouselProps<T> = HorizontalPickerProps<T>;
+interface HorizontalCarouselProps<T> extends HorizontalPickerProps<T> {
+	style?: StyleProp<ViewStyle>;
+}
 
-export function HorizontalCarousel<T>({ onItemChange, data, item, renderItem, itemWidth }: HorizontalCarouselProps<T>) {
+export function HorizontalCarousel<T>({
+	onItemChange,
+	data,
+	item,
+	renderItem,
+	itemWidth,
+	style,
+}: HorizontalCarouselProps<T>) {
 	return (
-		<Container>
+		<Container style={style}>
 			<HorizontalPicker
 				data={data}
 				renderItem={renderItem}

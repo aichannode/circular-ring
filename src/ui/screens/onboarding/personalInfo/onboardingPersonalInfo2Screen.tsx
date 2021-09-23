@@ -50,8 +50,8 @@ export const OnboardingPersonalInfo2Screen = () => {
 
 	const [sex, setSex] = useState(Sex.Female);
 	const [bornDate, setBornDate] = useState("");
-	const [weight, setWeight] = useState<number>(defaultWeight.get(weightUnit) ?? 80);
-	const [height, setHeight] = useState(defaultHeight.get(heightUnit) ?? 170);
+	const [weight, setWeight] = useState(defaultWeight[weightUnit] ?? 80);
+	const [height, setHeight] = useState(defaultHeight[heightUnit] ?? 170);
 
 	const [errorMessage, setErrorMessage] = useState("");
 

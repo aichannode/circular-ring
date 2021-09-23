@@ -3,7 +3,7 @@ import { toServerDate } from "@core/utils";
 import { AuthService } from "@domain/auth/authService";
 import { HeightUnit, WeightUnit } from "@domain/units";
 import { TutorialInfo } from "@domain/user/tutorialInfo";
-import { User } from "@domain/user/user";
+import { Sex, User } from "@domain/user/user";
 import { UserApi, UserPutDto } from "@domain/user/userApi";
 import { UserSettings } from "@domain/user/userSettings";
 import { UserStorage } from "@domain/user/userStorage";
@@ -169,7 +169,13 @@ export class UserService {
 	}
 
 	// TODO : add the other fields while implementing edition
-	async updateUserInfo(userInfo: { firstName?: string; lastName?: string }) {
+	async updateUserInfo(userInfo: {
+		firstName?: string;
+		lastName?: string;
+		height?: number;
+		weight?: number;
+		sex?: Sex;
+	}) {
 		const currentUser = this._user.get();
 		if (currentUser) {
 			await this.updateUser({
@@ -178,9 +184,9 @@ export class UserService {
 				country: currentUser.country,
 				phoneNumber: currentUser.phoneNumber,
 				profilePictureUrl: currentUser.profilePictureUrl,
-				weight: currentUser.weight,
-				height: currentUser.height,
-				sex: currentUser.sex.toString(),
+				weight: userInfo.weight ?? currentUser.weight,
+				height: userInfo.height ?? currentUser.height,
+				sex: (userInfo.sex ?? currentUser.sex).toString(),
 				bornDate: toServerDate(currentUser.bornDate),
 				language: currentUser.language,
 				scorePublic: currentUser.scorePublic,

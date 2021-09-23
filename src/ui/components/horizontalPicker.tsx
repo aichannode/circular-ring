@@ -4,15 +4,15 @@ import {
 	NativeScrollEvent,
 	NativeSyntheticEvent,
 	Platform,
-	ScrollView,
 	ScrollViewProps,
 	TouchableWithoutFeedback,
 	View,
 } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 export interface HorizontalPickerProps<T> extends ScrollViewProps {
 	data: T[];
-	renderItem: (item: T, index: number) => ReactNode;
+	renderItem: (item: T, index?: number) => ReactNode;
 	itemWidth: number;
 	item?: T;
 	animatedScrollToDefaultIndex?: boolean;
@@ -141,6 +141,7 @@ export class HorizontalPicker<T> extends PureComponent<HorizontalPickerProps<T>,
 				onScrollBeginDrag={this.onScrollBeginDrag}
 				onMomentumScrollBegin={this.onMomentumScrollBegin}
 				{...props}
+				style={{ flexGrow: 0 }}
 			>
 				{data.map((item: T, index: number) => (
 					<TouchableWithoutFeedback onPress={() => this.scrollToPosition(index)} key={index}>
