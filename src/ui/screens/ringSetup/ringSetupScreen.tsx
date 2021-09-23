@@ -35,31 +35,48 @@ export const RingSetupScreen: React.FC = () => {
 			{(() => {
 				switch (setupState) {
 					case DeviceSetupState.DISABLED:
+					case DeviceSetupState.LOCATION_DISABLED:
 						return (
-							<>
-								{/*<Message>{format("setup.scan.disabled.message")}</Message>*/}
-								<ResponsiveCenterView>
-									<Stack gap={50} align={"center"}>
-										<DisabledTitle>{format("setup.scan.disabled.title")}</DisabledTitle>
-										<View>
-											<Image source={require("@assets/images/ringShadow.png")} />
-											<Cover>
-												<Image source={require("@assets/images/ringBig.png")} />
-											</Cover>
-										</View>
-										<DisabledMessage>{format("setup.scan.disabled.message")}</DisabledMessage>
-										{Platform.OS === "android" && (
-											<PrimaryButton
-												onPress={async () => {
-													bluetoothService.enable();
-												}}
-											>
-												{format("setup.scan.disabled.enable")}
-											</PrimaryButton>
+							<ResponsiveCenterView>
+								<Stack gap={50} align={"center"}>
+									<DisabledTitle>
+										{format(
+											setupState === DeviceSetupState.DISABLED
+												? "setup.scan.disabled.title"
+												: "setup.scan.location_disabled.title"
 										)}
-									</Stack>
-								</ResponsiveCenterView>
-							</>
+									</DisabledTitle>
+									<View>
+										<Image source={require("@assets/images/ringShadow.png")} />
+										<Cover>
+											<Image source={require("@assets/images/ringBig.png")} />
+										</Cover>
+									</View>
+									<DisabledMessage>
+										{format(
+											setupState === DeviceSetupState.DISABLED
+												? "setup.scan.disabled.message"
+												: "setup.scan.location_disabled.message"
+										)}
+									</DisabledMessage>
+									{Platform.OS === "android" && (
+										<PrimaryButton
+											onPress={async () => {
+												bluetoothService.enable();
+												if (setupState === DeviceSetupState.LOCATION_DISABLED) {
+													deviceService.requestLocation();
+												}
+											}}
+										>
+											{format(
+												setupState === DeviceSetupState.DISABLED
+													? "setup.scan.disabled.enable"
+													: "setup.scan.location_disabled.enable"
+											)}
+										</PrimaryButton>
+									)}
+								</Stack>
+							</ResponsiveCenterView>
 						);
 					case DeviceSetupState.SCANNING:
 					case DeviceSetupState.CONNECTING:
