@@ -55,10 +55,15 @@ export const HeightBottomSheet = ({ onSaved }: HeightBottomSheetProps) => {
 			</TopContainer>
 			<HorizontalCarousel
 				data={userHeightUnit === HeightUnit.cm ? heightValuesCm : heightValuesFt}
-				item={height}
+				renderItem={(item) => (
+					<PickerValue itemWidth={userHeightUnit === HeightUnit.cm ? 50 : 60}>
+						{item.toFixed(userHeightUnit === HeightUnit.cm ? 0 : 2)}
+					</PickerValue>
+				)}
+				itemWidth={userHeightUnit === HeightUnit.cm ? 50 : 60}
 				onItemChange={setHeight}
-				itemWidth={50}
-				renderItem={(item) => <PickerValue>{`${item}`}</PickerValue>}
+				item={height}
+				animatedScrollToDefaultIndex={false}
 			/>
 			<BottomContainer>
 				{isLoading ? (
@@ -90,8 +95,8 @@ const ErrorMessage = styled.Text`
 	align-self: center;
 `;
 
-const PickerValue = styled.Text`
-	width: 50px;
+const PickerValue = styled.Text<{ itemWidth: number }>`
+	width: ${({ itemWidth }) => itemWidth}px;
 	text-align: center;
 	font-size: 22px;
 `;
