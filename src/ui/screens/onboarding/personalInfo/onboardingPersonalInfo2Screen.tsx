@@ -267,8 +267,6 @@ const PickerValue = styled.Text<{ itemWidth: number }>`
 	width: ${({ itemWidth }) => itemWidth}px;
 	text-align: center;
 	font-size: 22px;
-	border-width: 1px;
-	border-color: #00bcd4;
 `;
 
 const ErrorMessage = styled.Text`
