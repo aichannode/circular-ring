@@ -65,9 +65,7 @@ export const ProfileEditBirthdayScreen = () => {
 				<Title>{format("profile_info.edit_birthday.title")}</Title>
 				<ErrorMessage>{errorMessage}</ErrorMessage>
 				<EditionContainer>
-					<TitleAndOptions>
-						<BlockTitle>{format("onboarding.personal_info.born_title")}</BlockTitle>
-					</TitleAndOptions>
+					<InputTitle>{format("onboarding.personal_info.born_title")}</InputTitle>
 					<BornDateContainer>
 						<TextInputMask
 							type={"datetime"}
@@ -106,19 +104,14 @@ const ErrorMessage = styled.Text`
 	align-self: center;
 `;
 
-const EditionContainer = styled.View``;
-
-const TitleAndOptions = styled.View`
-	width: 100%;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 16px;
+const EditionContainer = styled.View`
+	margin-top: 20px;
 `;
 
-const BlockTitle = styled.Text`
+const InputTitle = styled.Text`
 	font-size: 14px;
 	color: ${colors.textPrimary};
+	margin-bottom: 16px;
 `;
 
 const BornDateContainer = styled.View`
