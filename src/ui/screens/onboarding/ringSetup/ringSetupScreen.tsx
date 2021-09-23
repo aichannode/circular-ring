@@ -26,6 +26,9 @@ export const RingSetupScreen: React.FC = () => {
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
 			deviceService.startScan();
 		}
+		if (setupState === DeviceSetupState.LOCATION_DISABLED) {
+			deviceService.checkSettings();
+		}
 	}, [setupState]);
 
 	const isConnecting = setupState === DeviceSetupState.CONNECTING;

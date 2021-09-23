@@ -67,7 +67,7 @@ export class DeviceService {
 		LocationEnabler.addListener(({ locationEnabled }) => {
 			this._locationEnabledAndroid.set(locationEnabled);
 		});
-		LocationEnabler.checkSettings(locationConfig);
+		this.checkSettings();
 		this.setupState = Observable.select(
 			// TODO Use user.device instead of favoriteDevice there
 			[
@@ -120,6 +120,7 @@ export class DeviceService {
 	async init() {
 		const loadedDevice = await this.favoriteDeviceStorage.load();
 		this._favoriteDevice.set(loadedDevice);
+		this.checkSettings();
 
 		if (loadedDevice) {
 			this.autoConnectDevice(loadedDevice.name);
@@ -133,7 +134,7 @@ export class DeviceService {
 		}
 		await this.bluetoothService.enable();
 		if (Platform.OS === "android") {
-			LocationEnabler.checkSettings(locationConfig);
+			this.checkSettings();
 			if (!this._locationEnabledAndroid.get()) {
 				await new Promise<void>((resolve) => {
 					this.requestLocation();
@@ -382,5 +383,8 @@ export class DeviceService {
 
 	requestLocation() {
 		LocationEnabler.requestResolutionSettings(locationConfig);
+	}
+	checkSettings() {
+		LocationEnabler.checkSettings(locationConfig);
 	}
 }
