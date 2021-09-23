@@ -1,7 +1,8 @@
+import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { Melody, RingAlarm, Weekdays } from "@domain/ring/ringAlarm";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
-import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
+import { alarmTagColors } from "@ui/utils/alarmTagColorsUtils";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
@@ -10,7 +11,8 @@ interface AlarmWeekOverviewProps {
 	style?: StyleProp<ViewStyle>;
 }
 export const AlarmWeekOverview: React.FC<AlarmWeekOverviewProps> = ({ style }) => {
-	const alarmsByDay = FAKE_useAlarmsByDay();
+	const alarms = useAlarms();
+	const alarmsByDay = FAKE_useAlarmsByDay(alarms);
 
 	return (
 		<ResponsiveCenterView maxWidth={300} align="stretch" style={style}>
@@ -19,7 +21,7 @@ export const AlarmWeekOverview: React.FC<AlarmWeekOverviewProps> = ({ style }) =
 					<DayView key={day} gap={6}>
 						<DayLetter key="day">{day.charAt(0).toUpperCase()}</DayLetter>
 						{alarmsByDay[day].map((alarm, index) => (
-							<AlarmIndicator key={alarm.label + index} color={alarm.color} />
+							<AlarmIndicator key={alarm.label + index} style={{ backgroundColor: alarmTagColors[alarm.id] }} />
 						))}
 					</DayView>
 				))}
@@ -38,28 +40,30 @@ const DayView = styled(Stack)`
 	width: 16px;
 `;
 
-const AlarmIndicator = styled.View<{ color: string }>`
+const AlarmIndicator = styled.View`
 	width: 16px;
 	height: 5px;
 	border-radius: 2px;
-	background-color: ${({ color }) => color};
 `;
 
 const FAKE_alarms: RingAlarm[] = [
 	{
-		isDisabled: false,
+		id: 0,
+		isActivated: false,
+		isExisting: true,
 		snooze: 2,
 		smart: 1,
 		melody: Melody.NOTIF1,
-		weekdays: [Weekdays.MONDAY, Weekdays.TUESDAY, Weekdays.WEDNESDAY, Weekdays.THURSTDAY, Weekdays.FRIDAY],
+		weekdays: [Weekdays.MONDAY, Weekdays.TUESDAY, Weekdays.WEDNESDAY, Weekdays.THURSDAY, Weekdays.FRIDAY],
 		vibrationPower: 1,
 		vibrationRepetition: 1,
 		time: new Date(),
 		label: "one",
-		color: colors.green,
 	},
 	{
-		isDisabled: false,
+		id: 1,
+		isActivated: false,
+		isExisting: true,
 		snooze: 2,
 		smart: 1,
 		melody: Melody.NOTIF1,
@@ -68,10 +72,11 @@ const FAKE_alarms: RingAlarm[] = [
 		vibrationRepetition: 1,
 		time: new Date(),
 		label: "two",
-		color: colors.orange,
 	},
 	{
-		isDisabled: true,
+		id: 2,
+		isActivated: false,
+		isExisting: true,
 		snooze: 2,
 		smart: 1,
 		melody: Melody.NOTIF1,
@@ -80,10 +85,11 @@ const FAKE_alarms: RingAlarm[] = [
 		vibrationRepetition: 1,
 		time: new Date(),
 		label: "three",
-		color: colors.red,
 	},
 	{
-		isDisabled: false,
+		id: 3,
+		isActivated: false,
+		isExisting: true,
 		snooze: 2,
 		smart: 1,
 		melody: Melody.NOTIF1,
@@ -92,11 +98,10 @@ const FAKE_alarms: RingAlarm[] = [
 		vibrationRepetition: 1,
 		time: new Date(),
 		label: "four",
-		color: colors.blue,
 	},
 ];
 
-function FAKE_useAlarmsByDay() {
+function FAKE_useAlarmsByDay(alarms: RingAlarm[] | null) {
 	const alarmsByDay: { [key in Weekdays]: RingAlarm[] } = Object.values(Weekdays).reduce(
 		(acc, day) => ({
 			...acc,
@@ -105,9 +110,11 @@ function FAKE_useAlarmsByDay() {
 		{}
 	) as { [key in Weekdays]: RingAlarm[] };
 
-	for (const alarm of FAKE_alarms.filter((alarm) => !alarm.isDisabled)) {
-		for (const day of alarm.weekdays) {
-			alarmsByDay[day].push(alarm);
+	if (alarms) {
+		for (const alarm of FAKE_alarms.filter((alarm) => !alarm.isActivated)) {
+			for (const day of alarm.weekdays) {
+				alarmsByDay[day].push(alarm);
+			}
 		}
 	}
 

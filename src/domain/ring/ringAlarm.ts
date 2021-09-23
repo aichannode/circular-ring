@@ -35,7 +35,6 @@ export interface RingAlarm {
 	vibrationRepetition: number;
 	melody: Melody;
 	label: string;
-	color: string;
 }
 
 const weekdaysOrderedList = [

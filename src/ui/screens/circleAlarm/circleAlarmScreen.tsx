@@ -1,4 +1,5 @@
 import { useAlarms } from "@domain/circleAlarm/alarmHooks";
+import { SecondaryText, TertiaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { ScreenSection } from "@ui/screens/circleActivity/screenSection";
@@ -8,6 +9,7 @@ import { Image, Pressable, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { AlarmCard } from "./alarmCard";
 import { AlarmWeekOverview } from "./alarmWeekOverview";
+import { SleepInformations } from "./sleepInformations";
 
 export const CircleAlarmScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
@@ -18,6 +20,7 @@ export const CircleAlarmScreen: React.FC = () => {
 	return (
 		<Container>
 			<ScrollView>
+				<SleepInformations style={{ marginBottom: 25, alignSelf: "center" }} />
 				<ScreenSection title={format("alarm.score.programmed")} />
 				<AlarmContainer>
 					{alarms?.map((value) => (
