@@ -1,3 +1,4 @@
+import { Melody } from "@domain/ring/ringAlarm";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { SimpleTextButton } from "@ui/components/buttons";
 import { Hour } from "@ui/components/hour";
@@ -12,6 +13,11 @@ export const NewAlarmScreen: React.FC = () => {
 	const { format } = useI18n();
 	const [pickerVisible, setPickerVisible] = useState(false);
 	const [alarmTime, setAlarmTime] = useState(new Date());
+	const [vibrationPower, setVibrationPower] = useState(50);
+	const [melody, setMelody] = useState<Melody>(Melody.ALERT);
+	const [label, setLabel] = useState("Alarm");
+	const [snooze, setSnooze] = useState(0);
+	const [smart, setSmart] = useState(0);
 
 	const submit = (newValue: Date) => {
 		setPickerVisible(false);
@@ -23,7 +29,13 @@ export const NewAlarmScreen: React.FC = () => {
 			{Platform.OS === "android" ? (
 				<>
 					<HourContainer>
-						<Hour value={alarmTime} onPress={() => setPickerVisible(true)} />
+						<Hour
+							value={alarmTime}
+							style={{
+								fontSize: 30,
+							}}
+							onPress={() => setPickerVisible(true)}
+						/>
 						<EditTimeButton onPress={() => setPickerVisible(true)}>{format("alarm.new.time.edit")}</EditTimeButton>
 					</HourContainer>
 					{pickerVisible && (
@@ -79,13 +91,13 @@ export const NewAlarmScreen: React.FC = () => {
 					<Arrow source={require("@assets/images/topArrowGrey.png")} />
 				</PreviewContainer>
 			</OtherButtonContainer>
-			<OtherButtonContainer>
+			{/* <OtherButtonContainer>
 				<SecondaryTitle>{format("alarm.new.smart_snooze.title")}</SecondaryTitle>
 				<PreviewContainer>
 					<Tips>{format("alarm.new.snooze.off")}</Tips>
 					<Arrow source={require("@assets/images/topArrowGrey.png")} />
 				</PreviewContainer>
-			</OtherButtonContainer>
+			</OtherButtonContainer> */}
 			<OtherButtonContainer>
 				<SecondaryTitle>{format("alarm.new.smart_alarm.title")}</SecondaryTitle>
 				<PreviewContainer>

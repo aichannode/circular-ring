@@ -1,29 +1,45 @@
+import { useServices } from "@core/services";
+import { RingAlarm } from "@domain/ring/ringAlarm";
 import { Divider } from "@ui/components/divider";
+import { Hour } from "@ui/components/hour";
 import { SecondaryText, TitleText } from "@ui/components/text";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
-import { textStyles } from "@ui/styles/textStyles";
+import { alarmTagColors } from "@ui/utils/alarmTagColorsUtils";
 import React, { useState } from "react";
-import { Platform, StyleProp, Switch, Text, ViewStyle } from "react-native";
+import { Platform, StyleProp, Switch, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
 interface AlarmCardProps {
+	data: RingAlarm;
 	style?: StyleProp<ViewStyle>;
 }
 
-export const AlarmCard: React.FC<AlarmCardProps> = ({ style }) => {
-	const [isEnabled, setIsEnabled] = useState(false);
+export const AlarmCard: React.FC<AlarmCardProps> = ({ data, style }) => {
+	const { circleAlarmService } = useServices();
+	const { id, isActivated } = data;
+	const [isEnabled, setIsEnabled] = useState(isActivated);
+
+	const updateAlarm = async () => {
+		console.log(JSON.stringify({ ...data, isActivated: !isEnabled, isExisting: true }));
+		setIsEnabled((prev) => !prev);
+		await circleAlarmService.updateAlarm({ ...data, isActivated: isEnabled, isExisting: true });
+	};
 
 	return (
 		<Card style={style}>
-			<ColorTag />
+			<ColorTag
+				style={{
+					backgroundColor: alarmTagColors[id],
+				}}
+			/>
 			<HourContainer>
-				<Hour>{"07 : 00"}</Hour>
+				<Hour value={data.time} is24Hour />
 			</HourContainer>
 			<VerticalSeparator />
 			<LabelContainer>
-				<TitleText>{"Alarm"}</TitleText>
-				<SecondaryText>{"Weekdays"}</SecondaryText>
+				<TitleText>{data.label}</TitleText>
+				<SecondaryText>{data.weekdays[0]}</SecondaryText>
 			</LabelContainer>
 			<SwitchContainer>
 				<SwitchButton
@@ -31,7 +47,7 @@ export const AlarmCard: React.FC<AlarmCardProps> = ({ style }) => {
 					ios_backgroundColor={colors.gray}
 					trackColor={{ false: colors.gray, true: colors.blue }}
 					thumbColor={colors.white}
-					onValueChange={() => setIsEnabled((prev) => !prev)}
+					onValueChange={() => updateAlarm()}
 					value={isEnabled}
 				/>
 			</SwitchContainer>
@@ -57,14 +73,9 @@ const LabelContainer = styled.View`
 	justify-content: center;
 `;
 
-const Hour = styled(Text)`
-	${textStyles.bigTitle};
-`;
-
 const ColorTag = styled(Divider)`
 	border-radius: 5px;
 	margin-right: 15px;
-	background-color: ${colors.green};
 	height: 67px;
 	width: 5px;
 `;

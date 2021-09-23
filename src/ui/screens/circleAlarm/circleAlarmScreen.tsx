@@ -1,28 +1,30 @@
-import { SecondaryText, TertiaryText } from "@ui/components/text";
+import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { ScreenSection } from "@ui/screens/circleActivity/screenSection";
 import { colors } from "@ui/styles/colors";
-import { textStyles } from "@ui/styles/textStyles";
 import React from "react";
-import { Pressable, ScrollView } from "react-native";
-import { Image } from "react-native";
+import { Image, Pressable, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { AlarmCard } from "./alarmCard";
 
 export const CircleAlarmScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
+	const alarms = useAlarms();
 	const { format } = useI18n();
+	console.log(alarms);
 
 	return (
 		<Container>
 			<ScrollView>
 				<ScreenSection title={format("alarm.score.programmed")} />
 				<AlarmContainer>
-					<AlarmCard />
+					{alarms?.map((value) => (
+						<AlarmCard key={value.id} data={value} />
+					))}
 					<AddAlarmButton onPress={() => navigation.navigate(Routes.NewAlarm)}>
 						<AddImage source={require("@assets/images/addButton.png")} />
-						<SecondaryText>{format("alarm.score.add_button")}</SecondaryText>
+						<AddAlarmText>{format("alarm.score.add_button")}</AddAlarmText>
 					</AddAlarmButton>
 				</AlarmContainer>
 			</ScrollView>
@@ -40,8 +42,13 @@ const AlarmContainer = styled.View`
 `;
 
 const AddImage = styled(Image)`
-	tint-color: ${colors.textSecondary};
+	tint-color: ${colors.darkGray};
 	margin-right: 25px;
+`;
+
+const AddAlarmText = styled.Text`
+	font-size: 16px;
+	color: ${colors.darkGray};
 `;
 
 const AddAlarmButton = styled(Pressable)`
