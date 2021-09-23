@@ -6,7 +6,7 @@ import { Signal } from "micro-signals";
 import { BleError, Device, ScanMode, State, Subscription } from "react-native-ble-plx";
 import { StoredDevice } from "./device";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
-import LocationEnabler from "react-native-location-enabler";
+import { LocationEnabler } from "./locationEnabler";
 import { Platform } from "react-native";
 
 export enum DeviceConnectionState {
