@@ -1,5 +1,4 @@
 import { ScoreQuality } from "@domain/circleActivity/circleActivityData";
-import { Metric } from "@domain/measure/metric";
 import { Intensity } from "@domain/ring/ringLiveData";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
@@ -65,24 +64,6 @@ export function useI18n() {
 					return intl.formatMessage({ id: "intensity.high" });
 				case Intensity.NONE:
 					return intl.formatMessage({ id: "intensity.none" });
-			}
-		},
-		formatMetric: (metric: Metric) => {
-			switch (metric) {
-				case "user.daily.steps":
-					return intl.formatMessage({ id: "metric.steps" });
-				case "user.daily.walking.equivalency":
-					return intl.formatMessage({ id: "metric.walking" });
-				case "user.daily.calories.burned":
-					return intl.formatMessage({ id: "metric.calories" });
-				case "user.daily.cardio.points":
-					return intl.formatMessage({ id: "metric.cardio" });
-				case "user.daily.vo2max":
-					return intl.formatMessage({ id: "metric.vo2_max" });
-				case "user.daily.awake.hr.max":
-					return intl.formatMessage({ id: "metric.hr_max" });
-				case "user.daily.score.recovery":
-					return intl.formatMessage({ id: "metric.hr_max" });
 			}
 		},
 	};
