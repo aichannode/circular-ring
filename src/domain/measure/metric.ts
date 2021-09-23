@@ -132,52 +132,90 @@ export type Metric =
 	| "user.monthly.awake.spo2"
 	| "user.lifetime.awake.spo2";
 
-type Extends<T, U extends T> = U;
+export const alldailyActivityMetrics = [
+	"user.daily.steps",
+	"user.daily.walking.equivalency",
+	"user.daily.calories.burned",
+	"user.daily.cardio.points",
+	"user.daily.vo2max",
+	"user.daily.awake.hr.max",
+] as const;
+export type DailyActivityMetric = typeof alldailyActivityMetrics[number];
 
-export type DailyActivityMetric = Extends<
-	Metric,
-	| "user.daily.steps"
-	| "user.daily.walking.equivalency"
-	| "user.daily.calories.burned"
-	| "user.daily.cardio.points"
-	| "user.daily.vo2max"
-	| "user.daily.awake.hr.max"
->;
+// export type DailyActivityMetric = Extends<
+// 	Metric,
+// 	| "user.daily.steps"
+// 	| "user.daily.walking.equivalency"
+// 	| "user.daily.calories.burned"
+// 	| "user.daily.cardio.points"
+// 	| "user.daily.vo2max"
+// 	| "user.daily.awake.hr.max"
+// >;
 
-export type DailyActivityGoalMetric = Extends<
-	Metric,
-	| "user.daily.steps.goal.min"
-	| "user.daily.steps.goal.max"
-	| "user.daily.walking.equivalency.goal.min"
-	| "user.daily.walking.equivalency.goal.max"
-	| "user.daily.calories.burned.goal.min"
-	| "user.daily.calories.burned.goal.max"
-	| "user.daily.cardio.points.goal.min"
-	| "user.daily.cardio.points.goal.max"
->;
+export const allDailyActivityGoalMetrics = [
+	"user.daily.steps.goal.min",
+	"user.daily.steps.goal.max",
+	"user.daily.walking.equivalency.goal.min",
+	"user.daily.walking.equivalency.goal.max",
+	"user.daily.calories.burned.goal.min",
+	"user.daily.calories.burned.goal.max",
+	"user.daily.cardio.points.goal.min",
+	"user.daily.cardio.points.goal.max",
+] as const;
+export type DailyActivityGoalMetric = typeof allDailyActivityGoalMetrics[number];
+// export type DailyActivityGoalMetric = Extends<
+// 	Metric,
+// 	| "user.daily.steps.goal.min"
+// 	| "user.daily.steps.goal.max"
+// 	| "user.daily.walking.equivalency.goal.min"
+// 	| "user.daily.walking.equivalency.goal.max"
+// 	| "user.daily.calories.burned.goal.min"
+// 	| "user.daily.calories.burned.goal.max"
+// 	| "user.daily.cardio.points.goal.min"
+// 	| "user.daily.cardio.points.goal.max"
+// >;
 
-export type EnergyScoreMetric = Extends<
-	Metric,
-	| "user.daily.score.recovery"
-	| "user.daily.wake.up.score"
-	| "user.daily.sleep.hrv"
-	| "user.daily.rhr"
-	| "user.daily.sleep.br"
-	| "user.daily.sleep.var.temperature"
-	| "user.2days.sleep.score"
-	| "user.daily.score.sleep.balance"
-	| "user.daily.score.activity.volume"
->;
+export const allEnergyScoreMetrics = [
+	"user.daily.score.recovery",
+	"user.daily.wake.up.score",
+	"user.daily.sleep.br",
+	"user.daily.sleep.hrv",
+	"user.daily.rhr",
+	"user.daily.sleep.var.temperature",
+	"user.2days.sleep.score",
+	"user.daily.score.sleep.balance",
+	"user.daily.score.activity.volume",
+] as const;
+export type EnergyScoreMetric = typeof allEnergyScoreMetrics[number];
+// export type EnergyScoreMetric = Extends<
+// 	Metric,
+// 	| "user.daily.score.recovery"
+// 	| "user.daily.wake.up.score"
+// 	| "user.daily.sleep.hrv"
+// 	| "user.daily.rhr"
+// 	| "user.daily.sleep.br"
+// 	| "user.daily.sleep.var.temperature"
+// 	| "user.2days.sleep.score"
+// 	| "user.daily.score.sleep.balance"
+// 	| "user.daily.score.activity.volume"
+// >;
 
-export type EnergyScoreGaugeMetric = Extends<
-	Metric,
-	| "user.daily.score.recovery"
-	| "user.daily.wake.up.score"
-	| "user.daily.score.hrv"
-	| "user.daily.score.rhr"
-	| "user.score.daily.br"
-	| "user.score.daily.var.temperature"
-	| "user.2days.sleep.score"
-	| "user.daily.score.sleep.balance"
-	| "user.daily.score.activity.volume"
->;
+export const allEnergyScoreGaugeMetrics = [
+	"user.daily.score.hrv",
+	"user.daily.score.rhr",
+	"user.score.daily.br",
+	"user.score.daily.var.temperature",
+] as const;
+export type EnergyScoreGaugeMetric = typeof allEnergyScoreGaugeMetrics[number];
+// export type EnergyScoreGaugeMetric = Extends<
+// 	Metric,
+// 	| "user.daily.score.recovery"
+// 	| "user.daily.wake.up.score"
+// 	| "user.daily.score.hrv"
+// 	| "user.daily.score.rhr"
+// 	| "user.score.daily.br"
+// 	| "user.score.daily.var.temperature"
+// 	| "user.2days.sleep.score"
+// 	| "user.daily.score.sleep.balance"
+// 	| "user.daily.score.activity.volume"
+// >;

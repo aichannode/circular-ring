@@ -4,8 +4,6 @@ import {
 	DailyActivityMetric,
 	EnergyScoreGaugeMetric,
 	EnergyScoreMetric,
-	Metric,
-	MetricInfo,
 } from "@domain/measure/metric";
 import { WordingKey } from "src/wordings";
 
@@ -13,8 +11,6 @@ export type DailyMetricsData = {
 	[key in DailyActivityMetric]: {
 		icon: number;
 		labelKey: WordingKey;
-		// goodCalculator?: (value: number, others: MetricInfo<DailyActivityGoalMetric>) => boolean;
-		// optimalCalculator?: (value: number, others: MetricInfo) => boolean;
 		goodGoal?: DailyActivityGoalMetric;
 		optimalGoal?: DailyActivityGoalMetric;
 	};
@@ -26,12 +22,10 @@ export type ScoreDetailsData = {
 		descriptionKey: WordingKey;
 		unit: ScoreUnit;
 		gauge?: EnergyScoreGaugeMetric;
-		// goodCalculator?: (value: number, others: MetricInfo) => boolean;
-		// optimalCalculator?: (value: number, others: MetricInfo) => boolean;
 	};
 };
 
-export const dailyMetricsData: DailyMetricsData = {
+export const dailyMetricsDataInfos: DailyMetricsData = {
 	"user.daily.steps": {
 		icon: require("@assets/images/shoes.png"),
 		labelKey: "metric.steps",
@@ -66,7 +60,7 @@ export const dailyMetricsData: DailyMetricsData = {
 	},
 };
 
-export const scoreDetailsData: ScoreDetailsData = {
+export const scoreDetailsDataInfos: ScoreDetailsData = {
 	"user.daily.score.recovery": {
 		titleKey: "score.details.recovery.label",
 		descriptionKey: "score.details.recovery.description",
@@ -76,5 +70,44 @@ export const scoreDetailsData: ScoreDetailsData = {
 		titleKey: "score.details.wake_up.label",
 		descriptionKey: "score.details.wake_up.description",
 		unit: "%",
+	},
+	"user.daily.sleep.br": {
+		titleKey: "score.details.breathing.label",
+		descriptionKey: "score.details.breathing.description",
+		unit: "rpm",
+		gauge: "user.score.daily.br",
+	},
+	"user.daily.sleep.hrv": {
+		titleKey: "score.details.hrv.label",
+		descriptionKey: "score.details.hrv.description",
+		unit: "ms",
+		gauge: "user.daily.score.hrv",
+	},
+	"user.daily.rhr": {
+		titleKey: "score.details.resting_heart_rate.label",
+		descriptionKey: "score.details.resting_heart_rate.description",
+		unit: "bpm",
+		gauge: "user.daily.score.rhr",
+	},
+	"user.daily.sleep.var.temperature": {
+		titleKey: "score.details.temperature.label",
+		descriptionKey: "score.details.temperature.description",
+		unit: "°C", // TODO Units ?
+		gauge: "user.score.daily.var.temperature",
+	},
+	"user.2days.sleep.score": {
+		titleKey: "score.details.sleep_quality.label",
+		descriptionKey: "score.details.sleep_quality.description",
+		unit: "%",
+	},
+	"user.daily.score.sleep.balance": {
+		titleKey: "score.details.sleep_balance.label",
+		descriptionKey: "score.details.sleep_balance.description",
+		unit: "qualitative",
+	},
+	"user.daily.score.activity.volume": {
+		titleKey: "score.details.activity_volume.label",
+		descriptionKey: "score.details.activity_volume.description",
+		unit: "qualitative",
 	},
 };
