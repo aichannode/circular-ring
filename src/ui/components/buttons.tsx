@@ -40,6 +40,18 @@ export const SecondaryButton: React.FC<CircularButtonProps> = ({ onPress, style,
 	);
 };
 
+export const TertiaryButton: React.FC<CircularButtonProps> = ({ onPress, style, children }) => {
+	return (
+		<Pressable onPress={onPress} style={style}>
+			{({ pressed }) => (
+				<TertiaryContent pressed={pressed}>
+					<PrimaryButtonText>{children}</PrimaryButtonText>
+				</TertiaryContent>
+			)}
+		</Pressable>
+	);
+};
+
 export const PrimaryBigButton: React.FC<CircularButtonProps> = ({ onPress, style, children }) => {
 	return (
 		<Pressable onPress={onPress} style={style}>
@@ -114,6 +126,12 @@ const SecondaryContent = styled.View<{ pressed: boolean }>`
 	border-radius: 18px;
 	border-color: ${colors.textPrimary};
 	border-width: 1px;
+`;
+
+const TertiaryContent = styled.View<{ pressed: boolean }>`
+	padding: 9px 22px;
+	border-radius: 18px;
+	background-color: ${colors.blue};
 `;
 
 const PrimaryBigContent = styled(LinearGradient)`

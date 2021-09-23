@@ -9,18 +9,18 @@ export enum Weekdays {
 }
 
 export enum Melody {
-	NOTIF1 = "NOTIF1",
-	NOTIF2 = "NOTIF2",
-	NOTIF3 = "NOTIF3",
-	NOTIF4 = "NOTIF4",
-	ALERT = "ALERT",
-	HEARTBEAT = "HEARTBEAT",
-	QUICK = "QUICK",
-	RAPID = "RAPID",
-	SOS = "SOS",
-	STACCATO = "STACCATO",
-	SYMPHONY = "SYMPHONY",
-	DISCHARGE = "DISCHARGE",
+	NOTIF1 = "notif1",
+	NOTIF2 = "notif2",
+	NOTIF3 = "notif3",
+	NOTIF4 = "notif4",
+	ALERT = "alert",
+	HEARTBEAT = "heartbeat",
+	QUICK = "quick",
+	RAPID = "rapid",
+	SOS = "sos",
+	STACCATO = "staccato",
+	SYMPHONY = "symphony",
+	DISCHARGE = "discharge",
 }
 
 export interface RingAlarm {
@@ -37,7 +37,7 @@ export interface RingAlarm {
 	label: string;
 }
 
-const weekdaysOrderedList = [
+export const weekdaysOrderedList = [
 	Weekdays.SUNDAY,
 	Weekdays.MONDAY,
 	Weekdays.TUESDAY,
@@ -47,11 +47,12 @@ const weekdaysOrderedList = [
 	Weekdays.SATURDAY,
 ];
 
-const melodyOrderedList = [
+export const melodyOrderedList = [
 	Melody.NOTIF1,
 	Melody.NOTIF2,
 	Melody.NOTIF3,
 	Melody.NOTIF4,
+	Melody.ALERT,
 	Melody.HEARTBEAT,
 	Melody.QUICK,
 	Melody.RAPID,

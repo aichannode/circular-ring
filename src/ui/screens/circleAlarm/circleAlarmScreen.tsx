@@ -20,7 +20,9 @@ export const CircleAlarmScreen: React.FC = () => {
 	return (
 		<Container>
 			<ScrollView>
-				<SleepInformations style={{ marginBottom: 25, alignSelf: "center" }} />
+				<ScoreContainer>
+					<SleepInformations style={{ marginBottom: 25, alignSelf: "center" }} />
+				</ScoreContainer>
 				<ScreenSection title={format("alarm.score.programmed")} />
 				<AlarmContainer>
 					{alarms?.map((value) => (
@@ -32,7 +34,7 @@ export const CircleAlarmScreen: React.FC = () => {
 					</AddAlarmButton>
 				</AlarmContainer>
 				<ScreenSection title={format("alarm.week_overview")} />
-				<AlarmWeekOverview style={{ marginTop: 25 }} />
+				<AlarmWeekOverview style={{ marginVertical: 25 }} />
 			</ScrollView>
 		</Container>
 	);
@@ -41,6 +43,12 @@ export const CircleAlarmScreen: React.FC = () => {
 const Container = styled.View`
 	flex: 1;
 	background-color: ${colors.lightgray};
+`;
+
+const ScoreContainer = styled.View`
+	flex: 1;
+	padding-top: 30px;
+	background-color: ${colors.white};
 `;
 
 const AlarmContainer = styled.View`

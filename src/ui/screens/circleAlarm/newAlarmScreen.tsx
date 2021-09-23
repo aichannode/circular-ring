@@ -1,11 +1,14 @@
 import { Melody } from "@domain/ring/ringAlarm";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { CircularBottomScrollSheet, CircularBottomSheet } from "@ui/components/bottomSheet";
 import { SimpleTextButton } from "@ui/components/buttons";
 import { Hour } from "@ui/components/hour";
 import { SecondaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
+import { VibrationBottomSheet } from "@ui/screens/circleAlarm/vibrationBottomSheet";
 import { colors } from "@ui/styles/colors";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Image, Platform, Pressable } from "react-native";
 import styled from "styled-components/native";
 
@@ -18,6 +21,8 @@ export const NewAlarmScreen: React.FC = () => {
 	const [label, setLabel] = useState("Alarm");
 	const [snooze, setSnooze] = useState(0);
 	const [smart, setSmart] = useState(0);
+
+	const vibrationBottomSheet = useRef<BottomSheetModal>(null);
 
 	const submit = (newValue: Date) => {
 		setPickerVisible(false);
@@ -42,7 +47,7 @@ export const NewAlarmScreen: React.FC = () => {
 						<DateTimePicker
 							value={alarmTime}
 							mode={"time"}
-							is24Hour={false}
+							is24Hour={true}
 							// display="spinner"
 							onChange={(event, selectedTime) => {
 								event.type !== "dismissed" && selectedTime ? submit(selectedTime) : setPickerVisible(false);
@@ -62,10 +67,10 @@ export const NewAlarmScreen: React.FC = () => {
 
 			<Title>{format("alarm.new.other.title")}</Title>
 
-			<OtherButtonContainer>
+			<OtherButtonContainer onPress={() => vibrationBottomSheet.current?.present()}>
 				<SecondaryTitle>{format("alarm.new.edit_vibration.title")}</SecondaryTitle>
 				<PreviewContainer>
-					<Tips>{format("alarm.new.edit_vibration.alert")}</Tips>
+					<Tips>{format("alarm.new.edit_vibration.type." + melody)}</Tips>
 					<Arrow source={require("@assets/images/topArrowGrey.png")} />
 				</PreviewContainer>
 			</OtherButtonContainer>
@@ -105,6 +110,18 @@ export const NewAlarmScreen: React.FC = () => {
 					<Arrow source={require("@assets/images/topArrowGrey.png")} />
 				</PreviewContainer>
 			</OtherButtonContainer>
+
+			<CircularBottomScrollSheet snapPoints={[800]} ref={vibrationBottomSheet}>
+				<VibrationBottomSheet
+					vibrationPower={vibrationPower}
+					melody={melody}
+					onClose={(vibrationPower, melody) => {
+						setVibrationPower(vibrationPower);
+						setMelody(melody);
+						vibrationBottomSheet.current?.close();
+					}}
+				/>
+			</CircularBottomScrollSheet>
 		</Container>
 	);
 };
