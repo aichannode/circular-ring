@@ -2,9 +2,11 @@ import "react-native-gesture-handler";
 import { useSentry } from "@core/logger/hooks/useSentry";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { RootNavigator } from "@ui/navigation/rootNavigator";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import React, { useEffect, useState } from "react";
 import { IntlProvider } from "react-intl";
-import { LogBox, Platform, UIManager } from "react-native";
+import { LogBox, StatusBar, Platform, UIManager } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import { initializeServices, ServicesProvider } from "@core/services";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -14,6 +16,7 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
+dayjs.extend(customParseFormat);
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
 	UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -36,6 +39,7 @@ export const App = () => {
 	return initialized ? (
 		<IntlProvider locale={locale} messages={translations[locale]}>
 			<GestureHandlerRootView style={{ flex: 1 }}>
+				<StatusBar translucent={true} barStyle="dark-content" backgroundColor="transparent" />
 				<SafeAreaProvider>
 					<ServicesProvider>
 						<NavigationContainer theme={theme}>

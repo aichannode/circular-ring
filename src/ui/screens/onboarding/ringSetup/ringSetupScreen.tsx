@@ -129,7 +129,7 @@ export const RingSetupScreen: React.FC = () => {
 const Container = styled(ScrollScreen)`
 	align-items: center;
 	justify-content: flex-start;
-	padding-top: 50px;
+	padding-vertical: 50px;
 `;
 
 const DisabledTitle = styled.Text`

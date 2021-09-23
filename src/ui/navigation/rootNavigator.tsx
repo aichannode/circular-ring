@@ -1,5 +1,5 @@
-import { useAuth } from "@domain/auth/hooks/useAuth";
 import { useAccountLinked } from "@domain/device/hooks";
+import { useUser, useAuthenticatedUserEmail } from "@domain/user/hooks/useUser";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -15,9 +15,12 @@ import { LoginScreen } from "@ui/screens/login/loginScreen";
 import { ResetTokenScreen } from "@ui/screens/login/resetTokenScreen";
 import { LoginOrSignUpScreen } from "@ui/screens/loginOrRegister/loginOrSignUpScreen";
 import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
+import { OnboardingPersonalInfo1Screen } from "@ui/screens/onboarding/personalInfo/onboardingPersonalInfo1Screen";
+import { OnboardingPersonalInfo2Screen } from "@ui/screens/onboarding/personalInfo/onboardingPersonalInfo2Screen";
+import { OnboardingWearInfoScreen } from "@ui/screens/onboarding/personalInfo/onboardingWearInfoScreen";
+import { RingSetupScreen } from "@ui/screens/onboarding/ringSetup/ringSetupScreen";
+import { RingSetupStartScreen } from "@ui/screens/onboarding/ringSetup/ringSetupStartScreen";
 import { ProfileScreen } from "@ui/screens/profile/profileScreen";
-import { RingSetupScreen } from "@ui/screens/ringSetup/ringSetupScreen";
-import { RingSetupStartScreen } from "@ui/screens/ringSetup/ringSetupStartScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
 import { TermsAndConditionsScreen } from "@ui/screens/signup/termsAndConditionsScreen";
@@ -26,6 +29,8 @@ import React from "react";
 import { Image, Pressable } from "react-native";
 
 const SetupStack = createNativeStackNavigator();
+
+const OnboardingStack = createNativeStackNavigator();
 
 const AuthenticatedStack = createNativeStackNavigator();
 const ProfileStack = createNativeStackNavigator();
@@ -105,7 +110,7 @@ const ProfileNavigator = () => {
 				name={Routes.Profile}
 				component={ProfileScreen}
 				options={{
-					title: format("profile.header.title"),
+					title: format("header.profile"),
 					headerTitleAlign: "center",
 					headerTitleStyle: headerTitleStyle,
 				}}
@@ -115,20 +120,30 @@ const ProfileNavigator = () => {
 };
 
 export const RootNavigator: React.FC = () => {
-	const isAuthenticated = useAuth();
-	const accountLinked = useAccountLinked();
+	const isAuthenticated = !!useAuthenticatedUserEmail();
 
-	return isAuthenticated ? (
-		accountLinked ? (
-			<AuthenticatedStack.Navigator screenOptions={{ headerShown: false }}>
-				<AuthenticatedStack.Screen name={Routes.HomeDrawer} component={HomeDrawerNavigator} />
-				<AuthenticatedStack.Screen name={Routes.Profile} component={ProfileNavigator} />
-			</AuthenticatedStack.Navigator>
+	const accountLinkedToDevice = useAccountLinked();
+	const hasUser = !!useUser();
+
+	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
+
+	return isOnboardingDone ? (
+		<AuthenticatedStack.Navigator screenOptions={{ headerShown: false }}>
+			<AuthenticatedStack.Screen name={Routes.HomeDrawer} component={HomeDrawerNavigator} />
+			<AuthenticatedStack.Screen name={Routes.Profile} component={ProfileNavigator} />
+		</AuthenticatedStack.Navigator>
+	) : isAuthenticated ? (
+		accountLinkedToDevice ? (
+			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
+				<OnboardingStack.Screen name={Routes.OnboardingWearInfo} component={OnboardingWearInfoScreen} />
+				<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo1} component={OnboardingPersonalInfo1Screen} />
+				<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo2} component={OnboardingPersonalInfo2Screen} />
+			</OnboardingStack.Navigator>
 		) : (
-			<SetupStack.Navigator screenOptions={{ headerShown: false }}>
-				<SetupStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />
-				<SetupStack.Screen name={Routes.Pairing} component={RingSetupScreen} />
-			</SetupStack.Navigator>
+			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
+				<OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />
+				<OnboardingStack.Screen name={Routes.Pairing} component={RingSetupScreen} />
+			</OnboardingStack.Navigator>
 		)
 	) : (
 		<SetupStack.Navigator screenOptions={{ headerShown: false }}>

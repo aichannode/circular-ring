@@ -63,6 +63,7 @@ export const LoginScreen = () => {
 					value={email}
 					onValueChanged={setEmail}
 					keyboardType={"email-address"}
+					autoCapitalize={"none"}
 					returnKeyType={"next"}
 					blurOnSubmit={false}
 					onSubmit={() => passwordFieldRef.current?.focus()}
@@ -74,6 +75,7 @@ export const LoginScreen = () => {
 					canBeSecure
 					value={password}
 					onValueChanged={setPassword}
+					autoCapitalize={"none"}
 					blurOnSubmit={true}
 				/>
 				<ButtonContainer gap={35} justify="center">

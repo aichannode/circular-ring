@@ -18,3 +18,6 @@ export const Strong = styled.Text`
 	font-weight: bold;
 	color: ${colors.primary};
 `;
+export const Colored = styled.Text`
+	color: ${colors.primary};
+`;

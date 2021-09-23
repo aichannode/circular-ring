@@ -26,6 +26,7 @@ interface TextFieldProps {
 	style?: StyleProp<ViewStyle>;
 	selectTextOnFocus?: boolean;
 	fontSize?: number;
+	autoCapitalize?: "none" | "sentences" | "words" | "characters" | undefined;
 }
 
 export interface TextFieldRef {
@@ -58,7 +59,7 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFi
 					placeholderTextColor={colors.textPlaceholder}
 					multiline={false}
 					maxLength={props.maxLength}
-					autoCapitalize={"none"}
+					autoCapitalize={props.autoCapitalize}
 					value={props.value}
 					keyboardType={props.keyboardType}
 					blurOnSubmit={props.blurOnSubmit}

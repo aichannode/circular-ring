@@ -3,10 +3,11 @@ import { Intensity } from "@domain/ring/ringLiveData";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
 import { WordingKey } from "../wordings";
-import { Strong } from "./components/text";
+import { Colored, Strong } from "./components/text";
 
 const xmlFormatters = {
 	strong: (...chunks: string[]) => <Strong>{chunks}</Strong>,
+	colored: (...chunks: string[]) => <Colored>{chunks}</Colored>,
 } as const;
 
 export function useI18n() {

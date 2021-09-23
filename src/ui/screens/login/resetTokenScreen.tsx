@@ -104,6 +104,7 @@ export const ResetTokenScreen: React.FC = () => {
 					canBeSecure
 					value={password}
 					onValueChanged={setPassword}
+					autoCapitalize={"none"}
 					blurOnSubmit={false}
 					onSubmit={() => passwordFieldRef.current?.focus()}
 				/>
@@ -114,6 +115,7 @@ export const ResetTokenScreen: React.FC = () => {
 					canBeSecure
 					value={confirmPassword}
 					onValueChanged={setConfirmPassword}
+					autoCapitalize={"none"}
 					blurOnSubmit={true}
 				/>
 			</Stack>

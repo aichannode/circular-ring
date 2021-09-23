@@ -12,12 +12,15 @@ export enum Routes {
 	TermsAndConditions = "TermsAndConditions",
 
 	RingSetupStart = "RingSetupStart",
+	Pairing = "Pairing",
+	OnboardingWearInfo = "OnboardingWearInfo",
+	OnboardingPersonalInfo1 = "OnboardingPersonalInfo1",
+	OnboardingPersonalInfo2 = "OnboardingPersonalInfo2",
 
 	HomeDrawer = "HomeDrawer",
 	MainHome = "MainHome",
 	Home = "Home",
 	MyRing = "MyRing",
-	Pairing = "Pairing",
 	Activity = "Activity",
 	Profile = "Profile",
 	Live = "Live",
@@ -32,11 +35,14 @@ export type AppRoutesParams = {
 	[Routes.SignUpConfirmationCode]: undefined;
 	[Routes.TermsAndConditions]: undefined;
 	[Routes.RingSetupStart]: undefined;
+	[Routes.Pairing]: undefined;
+	[Routes.OnboardingWearInfo]: undefined;
+	[Routes.OnboardingPersonalInfo1]: undefined;
+	[Routes.OnboardingPersonalInfo2]: { firstName: string; lastName: string; country: string };
 	[Routes.HomeDrawer]: undefined;
 	[Routes.MainHome]: undefined;
 	[Routes.Home]: undefined;
 	[Routes.MyRing]: undefined;
-	[Routes.Pairing]: undefined;
 	[Routes.Activity]: undefined;
 	[Routes.Profile]: undefined;
 	[Routes.Live]: undefined;
