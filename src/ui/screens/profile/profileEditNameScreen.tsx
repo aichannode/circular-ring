@@ -15,7 +15,7 @@ export const ProfileEditNameScreen = () => {
 	const user = useUser();
 
 	if (!user) {
-		return null;
+		return <></>;
 	}
 
 	const { format } = useI18n();
@@ -110,5 +110,6 @@ const ErrorMessage = styled.Text`
 `;
 
 const ButtonContainer = styled.View`
+	margin-top: 30px;
 	align-items: center;
 `;

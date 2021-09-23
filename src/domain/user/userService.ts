@@ -175,6 +175,7 @@ export class UserService {
 		height?: number;
 		weight?: number;
 		sex?: Sex;
+		bornDate?: Date;
 	}) {
 		const currentUser = this._user.get();
 		if (currentUser) {
@@ -187,7 +188,7 @@ export class UserService {
 				weight: userInfo.weight ?? currentUser.weight,
 				height: userInfo.height ?? currentUser.height,
 				sex: (userInfo.sex ?? currentUser.sex).toString(),
-				bornDate: toServerDate(currentUser.bornDate),
+				bornDate: toServerDate(userInfo.bornDate ?? currentUser.bornDate),
 				language: currentUser.language,
 				scorePublic: currentUser.scorePublic,
 				stride: 0, //currentUser.stride, => Server patch

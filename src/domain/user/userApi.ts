@@ -1,5 +1,4 @@
 import { ApiService } from "@core/api/apiService";
-import { getLogger } from "@core/logger/logger";
 import { Sex, User } from "@domain/user/user";
 import { UserSettings } from "@domain/user/userSettings";
 
@@ -29,8 +28,6 @@ interface UserDto extends UserDtoBase {
 export type UserPutDto = UserDtoBase;
 
 export class UserApi {
-	private readonly logger = getLogger("UserApi");
-
 	constructor(private readonly apiService: ApiService) {}
 
 	async getUser(): Promise<User> {

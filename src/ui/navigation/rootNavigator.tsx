@@ -20,6 +20,7 @@ import { OnboardingPersonalInfo2Screen } from "@ui/screens/onboarding/personalIn
 import { OnboardingWearInfoScreen } from "@ui/screens/onboarding/personalInfo/onboardingWearInfoScreen";
 import { RingSetupScreen } from "@ui/screens/onboarding/ringSetup/ringSetupScreen";
 import { RingSetupStartScreen } from "@ui/screens/onboarding/ringSetup/ringSetupStartScreen";
+import { ProfileEditBirthdayScreen } from "@ui/screens/profile/profileEditBirthdayScreen";
 import { ProfileEditNameScreen } from "@ui/screens/profile/profileEditNameScreen";
 import { ProfileInformationScreen } from "@ui/screens/profile/profileInformationScreen";
 import { ProfileScreen } from "@ui/screens/profile/profileScreen";
@@ -107,7 +108,13 @@ const MainHomeNavigator = () => {
 				component={ProfileEditNameScreen}
 				options={{
 					headerShown: false,
-					gestureEnabled: false,
+				}}
+			/>
+			<MainStack.Screen
+				name={Routes.ProfileEditBirthday}
+				component={ProfileEditBirthdayScreen}
+				options={{
+					headerShown: false,
 				}}
 			/>
 		</MainStack.Navigator>
@@ -117,7 +124,7 @@ const MainHomeNavigator = () => {
 export const RootNavigator: React.FC = () => {
 	const isAuthenticated = !!useAuthenticatedUserEmail();
 
-	const accountLinkedToDevice = true; //useAccountLinked();
+	const accountLinkedToDevice = useAccountLinked();
 	const hasUser = !!useUser();
 
 	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;

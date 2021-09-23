@@ -25,6 +25,7 @@ export enum Routes {
 	Profile = "Profile",
 	ProfileInformation = "ProfileInformation",
 	ProfileEditName = "ProfileEditName",
+	ProfileEditBirthday = "ProfileEditBirthday",
 	Live = "Live",
 }
 
@@ -49,6 +50,7 @@ export type AppRoutesParams = {
 	[Routes.Profile]: undefined;
 	[Routes.ProfileInformation]: undefined;
 	[Routes.ProfileEditName]: undefined;
+	[Routes.ProfileEditBirthday]: undefined;
 	[Routes.Live]: undefined;
 };
 

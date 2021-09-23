@@ -135,6 +135,7 @@
   "profile_info.advanced_info": "Advanced Information",
   "profile_info.edit_name.title": "Edit Name",
   "profile_info.edit_name.save": "Save",
+  "profile_info.edit_birthday.title": "Edit Birthday",
   "live.heart_rate.label": "Heart rate",
   "live.accuracy.label": "Data Accuracy:",
   "live.intensity.label": "Activity Intensity",

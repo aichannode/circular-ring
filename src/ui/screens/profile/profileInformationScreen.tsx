@@ -48,7 +48,12 @@ export const ProfileInformationScreen = () => {
 				value={`${user.firstName} ${user.lastName}`}
 				action={() => navigate(Routes.ProfileEditName)}
 			/>
-			<InfoListItem name={format("profile_info.birthday")} hasDisclosure={true} value={displayedBirthday} />
+			<InfoListItem
+				name={format("profile_info.birthday")}
+				hasDisclosure={true}
+				value={displayedBirthday}
+				action={() => navigate(Routes.ProfileEditBirthday)}
+			/>
 			<InfoListItem
 				name={format("profile_info.height")}
 				hasDisclosure={true}
