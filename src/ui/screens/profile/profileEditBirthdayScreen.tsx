@@ -73,7 +73,7 @@ export const ProfileEditBirthdayScreen = () => {
 							placeholder={format("onboarding.personal_info.born_placeholder")}
 							value={birthday}
 							onChangeText={setBirthday}
-							style={{ padding: 0, width: "100%" }}
+							style={{ padding: 0, width: "100%", color: colors.textPrimary }}
 							autoFocus={true}
 						/>
 					</BornDateContainer>
