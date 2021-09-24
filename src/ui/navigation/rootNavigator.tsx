@@ -153,47 +153,17 @@ export const RootNavigator: React.FC = () => {
 	}
 
 	return isOnboardingDone ? (
-		<AuthenticatedStack.Navigator screenOptions={{ headerShown: false }}>
-			<AuthenticatedStack.Screen name={Routes.HomeDrawer} component={HomeDrawerNavigator} />
-			<AuthenticatedStack.Screen name={Routes.Profile} component={ProfileNavigator} />
-		</AuthenticatedStack.Navigator>
-	) : (
-		<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
-			<OnboardingStack.Screen name={Routes.OnboardingWearInfo} component={OnboardingWearInfoScreen} />
-			<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo1} component={OnboardingPersonalInfo1Screen} />
-			<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo2} component={OnboardingPersonalInfo2Screen} />
-		</OnboardingStack.Navigator>
-	);
-
-	return isOnboardingDone ? (
 		<HomeDrawer.Navigator
 			screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
 			drawerContent={() => <DrawerContent />}
 		>
 			<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} />
 		</HomeDrawer.Navigator>
-	) : isAuthenticated ? (
-		accountLinkedToDevice ? (
-			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
-				<OnboardingStack.Screen name={Routes.OnboardingWearInfo} component={OnboardingWearInfoScreen} />
-				<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo1} component={OnboardingPersonalInfo1Screen} />
-				<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo2} component={OnboardingPersonalInfo2Screen} />
-			</OnboardingStack.Navigator>
-		) : (
-			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
-				<OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />
-				<OnboardingStack.Screen name={Routes.Pairing} component={RingSetupScreen} />
-			</OnboardingStack.Navigator>
-		)
 	) : (
-		<SetupStack.Navigator screenOptions={{ headerShown: false }}>
-			<SetupStack.Screen name={Routes.LoginOrSignUp} component={LoginOrSignUpScreen} />
-			<SetupStack.Screen name={Routes.Login} component={LoginScreen} />
-			<SetupStack.Screen name={Routes.ForgotPassword} component={ForgotPasswordScreen} />
-			<SetupStack.Screen name={Routes.ResetToken} component={ResetTokenScreen} />
-			<SetupStack.Screen name={Routes.SignUpEmail} component={SignUpEmailScreen} />
-			<SetupStack.Screen name={Routes.SignUpConfirmationCode} component={SignUpConfirmationCodeScreen} />
-			<SetupStack.Screen name={Routes.TermsAndConditions} component={TermsAndConditionsScreen} />
-		</SetupStack.Navigator>
+		<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
+			<OnboardingStack.Screen name={Routes.OnboardingWearInfo} component={OnboardingWearInfoScreen} />
+			<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo1} component={OnboardingPersonalInfo1Screen} />
+			<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo2} component={OnboardingPersonalInfo2Screen} />
+		</OnboardingStack.Navigator>
 	);
 };
