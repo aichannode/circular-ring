@@ -1,4 +1,5 @@
 import { useServices } from "@core/services";
+import { round2Digits } from "@core/utils";
 import {
 	cmToFt,
 	defaultHeight,
@@ -65,14 +66,14 @@ export const OnboardingPersonalInfo2Screen = () => {
 	useEffect(() => {
 		if (!!previousWeightUnit && previousWeightUnit !== weightUnit) {
 			setWeightRange(weightUnit === WeightUnit.kg ? weightValuesKg : weightValuesLbs);
-			setWeight(weightUnit === WeightUnit.kg ? lbsToKg(weight) : kgToLbs(weight));
+			setWeight(weightUnit === WeightUnit.kg ? Math.round(lbsToKg(weight)) : Math.round(kgToLbs(weight)));
 		}
 	}, [weightUnit]);
 
 	useEffect(() => {
 		if (!!previousHeightUnit && previousHeightUnit !== heightUnit) {
 			setHeightRange(heightUnit === HeightUnit.cm ? heightValuesCm : heightValuesFt);
-			setHeight(heightUnit === HeightUnit.cm ? ftToCm(height) : cmToFt(height));
+			setHeight(heightUnit === HeightUnit.cm ? Math.round(ftToCm(height)) : round2Digits(cmToFt(height)));
 		}
 	}, [heightUnit]);
 

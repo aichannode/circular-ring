@@ -1,5 +1,5 @@
 import { getLogger } from "@core/logger/logger";
-import { toServerDate } from "@core/utils";
+import { round2Digits, toServerDate } from "@core/utils";
 import { AuthService } from "@domain/auth/authService";
 import { HeightUnit, WeightUnit } from "@domain/units";
 import { TutorialInfo } from "@domain/user/tutorialInfo";
@@ -156,11 +156,13 @@ export class UserService {
 	async completeTutorial(tutorialInfo: TutorialInfo) {
 		await this.updateUser({
 			...tutorialInfo,
+			height: round2Digits(tutorialInfo.height),
+			weight: round2Digits(tutorialInfo.weight),
 			sex: tutorialInfo.sex.toString(),
 			bornDate: toServerDate(tutorialInfo.bornDate),
 			phoneNumber: null,
 			profilePictureUrl: null,
-			language: "",
+			language: "en",
 			scorePublic: true,
 			tutorialCompleted: true,
 			stride: 0,
@@ -184,8 +186,8 @@ export class UserService {
 				country: currentUser.country,
 				phoneNumber: currentUser.phoneNumber,
 				profilePictureUrl: currentUser.profilePictureUrl,
-				weight: userInfo.weight ?? currentUser.weight,
-				height: userInfo.height ?? currentUser.height,
+				weight: round2Digits(userInfo.weight ?? currentUser.weight),
+				height: round2Digits(userInfo.height ?? currentUser.height),
 				sex: (userInfo.sex ?? currentUser.sex).toString(),
 				bornDate: toServerDate(userInfo.bornDate ?? currentUser.bornDate),
 				language: currentUser.language,

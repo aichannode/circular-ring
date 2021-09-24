@@ -29,7 +29,7 @@ export const WeightBottomSheet = ({ onSaved }: WeightBottomSheetProps) => {
 	const [isLoading, setLoading] = useState(false);
 
 	useEffect(() => {
-		const currentWeight = userWeightUnit === WeightUnit.kg ? user.weight : Math.round(kgToLbs(user.weight));
+		const currentWeight = userWeightUnit === WeightUnit.kg ? user.weight : kgToLbs(user.weight);
 		setWeight(currentWeight);
 	}, []);
 
