@@ -14,36 +14,34 @@ import { TextInputMask } from "react-native-masked-text";
 import styled from "styled-components/native";
 
 export const ProfileEditBirthdayScreen = () => {
-	const user = useUser();
-
-	if (!user) {
-		return <></>;
-	}
-
 	const { format } = useI18n();
 	const { userService } = useServices();
+	const user = useUser();
 	const navigation = useNavigation();
 
-	const [birthday, setBirthday] = useState(dayjs(user.bornDate).format("DD/MM/YYYY"));
+	const [birthday, setBirthday] = useState(dayjs(user?.bornDate).format("DD/MM/YYYY"));
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isLoading, setLoading] = useState(false);
 
-	const saveBirthday = useCallback(async (birthDate: dayjs.Dayjs) => {
-		if (!birthDate.isSame(dayjs(user.bornDate), "day")) {
-			setLoading(true);
-			const bornDate = birthDate.toDate();
-			try {
-				await userService.updateUserInfo({ bornDate });
-				setLoading(false);
+	const saveBirthday = useCallback(
+		async (birthDate: dayjs.Dayjs) => {
+			if (!birthDate.isSame(dayjs(user?.bornDate), "day")) {
+				setLoading(true);
+				const bornDate = birthDate.toDate();
+				try {
+					await userService.updateUserInfo({ bornDate });
+					setLoading(false);
+					navigation.goBack();
+				} catch (error) {
+					setLoading(false);
+					setErrorMessage(format("global.default_error"));
+				}
+			} else {
 				navigation.goBack();
-			} catch (error) {
-				setLoading(false);
-				setErrorMessage(format("global.default_error"));
 			}
-		} else {
-			navigation.goBack();
-		}
-	}, []);
+		},
+		[user?.bornDate]
+	);
 
 	const checkAndSaveBirthday = useCallback(async () => {
 		setErrorMessage("");
@@ -59,7 +57,7 @@ export const ProfileEditBirthdayScreen = () => {
 		}
 	}, [birthday]);
 
-	return (
+	return !user ? null : (
 		<ScrollScreen contentContainerStyle={{ paddingTop: 100, alignItems: "center", paddingBottom: 100 }}>
 			<ResponsiveCenterView>
 				<Title>{format("profile_info.edit_birthday.title")}</Title>

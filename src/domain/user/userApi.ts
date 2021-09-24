@@ -40,14 +40,12 @@ export class UserApi {
 
 	async getUser(): Promise<User> {
 		const result = await this.apiService.get<UserDto>("/user");
-		const userDto = result.data;
-		return UserApi.userFromDto(userDto);
+		return UserApi.userFromDto(result.data);
 	}
 
 	async updateUser(userPutDto: UserPutDto): Promise<User> {
 		const result = await this.apiService.put<UserDto>("/user", userPutDto);
-		const userDto = result.data;
-		return UserApi.userFromDto(userDto);
+		return UserApi.userFromDto(result.data);
 	}
 
 	private static userFromDto(userDto: UserDto): User {
@@ -61,7 +59,7 @@ export class UserApi {
 
 	async getUserSettings(): Promise<UserSettings> {
 		const result = await this.apiService.get<UserSettings>("/user/setting");
-		return result.data;
+		return UserApi.userSettingsFromDto(result.data);
 	}
 
 	async updateUserSettings(userSettings: {

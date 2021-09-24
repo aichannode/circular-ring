@@ -2,14 +2,14 @@ import { useServices } from "@core/services";
 import { round2Digits } from "@core/utils";
 import {
 	cmToFt,
-	defaultHeight,
-	defaultWeight,
 	ftToCm,
 	HeightUnit,
 	heightValuesCm,
 	heightValuesFt,
 	kgToLbs,
 	lbsToKg,
+	UNDEFINED_HEIGHT,
+	UNDEFINED_WEIGHT,
 	WeightUnit,
 	weightValuesKg,
 	weightValuesLbs,
@@ -29,9 +29,8 @@ import { Routes, useAppRoute } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
-import { usePrevious } from "@ui/utils/usePrevious";
 import dayjs from "dayjs";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { View } from "react-native";
 import { TextInputMask } from "react-native-masked-text";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -46,50 +45,25 @@ export const OnboardingPersonalInfo2Screen = () => {
 	const route = useAppRoute<Routes.OnboardingPersonalInfo2>();
 	const { firstName, lastName, country } = route.params;
 
+	const [sex, setSex] = useState(Sex.Female);
+
+	const [bornDate, setBornDate] = useState("");
+
 	const [weightUnit, setWeightUnit] = useState<WeightUnit>(WeightUnit.kg);
-	const [weightRange, setWeightRange] = useState<number[]>(weightValuesKg);
-	const previousWeightUnit = usePrevious(weightUnit);
+	const [weight, setWeight] = useState(UNDEFINED_WEIGHT); // weight always in kg
 
 	const [heightUnit, setHeightUnit] = useState<HeightUnit>(HeightUnit.cm);
-	const [heightRange, setHeightRange] = useState<number[]>(heightValuesCm);
-	const previousHeightUnit = usePrevious(heightUnit);
-
-	const [sex, setSex] = useState(Sex.Female);
-	const [bornDate, setBornDate] = useState("");
-	const [weight, setWeight] = useState(defaultWeight.get(weightUnit) ?? 80);
-	const [height, setHeight] = useState(defaultHeight.get(heightUnit) ?? 170);
+	const [height, setHeight] = useState(UNDEFINED_HEIGHT); // height always in cm
 
 	const [errorMessage, setErrorMessage] = useState("");
 
 	const [isLoading, setLoading] = useState(false);
 
-	useEffect(() => {
-		if (!!previousWeightUnit && previousWeightUnit !== weightUnit) {
-			setWeightRange(weightUnit === WeightUnit.kg ? weightValuesKg : weightValuesLbs);
-			setWeight(weightUnit === WeightUnit.kg ? Math.round(lbsToKg(weight)) : Math.round(kgToLbs(weight)));
-		}
-	}, [weightUnit]);
-
-	useEffect(() => {
-		if (!!previousHeightUnit && previousHeightUnit !== heightUnit) {
-			setHeightRange(heightUnit === HeightUnit.cm ? heightValuesCm : heightValuesFt);
-			setHeight(heightUnit === HeightUnit.cm ? Math.round(ftToCm(height)) : round2Digits(cmToFt(height)));
-		}
-	}, [heightUnit]);
-
 	const completeTutorial = useCallback(async () => {
 		setLoading(true);
 		const birthDate = dayjs(bornDate, "DD/MM/YYYY", true).toDate();
 		try {
-			await userService.completeTutorial({
-				firstName,
-				lastName,
-				country,
-				bornDate: birthDate,
-				sex,
-				weight: weightUnit === WeightUnit.kg ? weight : lbsToKg(weight),
-				height: heightUnit === HeightUnit.cm ? height : ftToCm(height),
-			});
+			await userService.completeTutorial({ firstName, lastName, country, bornDate: birthDate, sex, weight, height });
 			await userService.updateUserSettings("DD/MM/YYYY", heightUnit, weightUnit);
 			setLoading(false);
 		} catch (error) {
@@ -165,11 +139,11 @@ export const OnboardingPersonalInfo2Screen = () => {
 					/>
 				</TitleAndOptions>
 				<HorizontalCarousel
-					data={weightRange}
+					data={weightUnit === WeightUnit.kg ? weightValuesKg : weightValuesLbs}
 					renderItem={(item, index) => <PickerValue itemWidth={50}>{item}</PickerValue>}
 					itemWidth={50}
-					onItemChange={setWeight}
-					item={weight}
+					item={weightUnit === WeightUnit.kg ? Math.round(weight) : Math.round(kgToLbs(weight))}
+					onItemChange={(value) => setWeight(weightUnit === WeightUnit.kg ? value : lbsToKg(value))}
 					animatedScrollToDefaultIndex={false}
 				/>
 			</InfoBlock>
@@ -184,15 +158,15 @@ export const OnboardingPersonalInfo2Screen = () => {
 					/>
 				</TitleAndOptions>
 				<HorizontalCarousel
-					data={heightRange}
+					data={heightUnit === HeightUnit.cm ? heightValuesCm : heightValuesFt}
 					renderItem={(item) => (
 						<PickerValue itemWidth={heightUnit === HeightUnit.cm ? 50 : 60}>
 							{item.toFixed(heightUnit === HeightUnit.cm ? 0 : 2)}
 						</PickerValue>
 					)}
 					itemWidth={heightUnit === HeightUnit.cm ? 50 : 60}
-					onItemChange={setHeight}
-					item={height}
+					item={heightUnit === HeightUnit.cm ? Math.round(height) : round2Digits(cmToFt(height))}
+					onItemChange={(value) => setHeight(heightUnit === HeightUnit.cm ? value : round2Digits(ftToCm(value)))}
 					animatedScrollToDefaultIndex={false}
 				/>
 			</InfoBlock>

@@ -17,7 +17,11 @@ export const UserAvatar = () => {
 
 	return !user ? null : (
 		<UserInfo>
-			<AvatarBorder colors={["#f44a59", "#f97444"]} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }}>
+			<AvatarBorder
+				colors={[colors.orangeGradientStart, colors.orangeGradientEnd]}
+				start={{ x: 0.5, y: 0 }}
+				end={{ x: 0.5, y: 1 }}
+			>
 				<AvatarBackground>
 					{user.profilePictureUrl ? null : <DefaultAvatar source={require("@assets/images/man.png")} />}
 				</AvatarBackground>
