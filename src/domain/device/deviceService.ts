@@ -8,6 +8,7 @@ import { StoredDevice } from "./device";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 import { LocationEnabler } from "./locationEnabler";
 import { Platform } from "react-native";
+import { FakeDeviceService } from "@domain/fake/fakeDeviceService";
 
 export enum DeviceConnectionState {
 	DISCONNECTED = "DISCONNECTED",
@@ -63,6 +64,7 @@ export class DeviceService {
 
 	constructor(
 		private readonly bluetoothService: BluetoothService,
+		private readonly fakeDeviceService: FakeDeviceService,
 		private readonly favoriteDeviceStorage: FavoriteDeviceStorage
 	) {
 		LocationEnabler.addListener(({ locationEnabled }) => {
@@ -71,9 +73,15 @@ export class DeviceService {
 		this.checkSettings();
 		this.setupState = Observable.select(
 			// TODO Use user.device instead of favoriteDevice there
-			[this.bluetoothService.state, this._locationEnabledAndroid, this._connectionState, this._scanning],
-			(bleState, locationAndroid, connectionState, scanning) => {
-				if (connectionState === DeviceConnectionState.CONNECTED) {
+			[
+				this.bluetoothService.state,
+				this._locationEnabledAndroid,
+				this._connectionState,
+				this._scanning,
+				this.fakeDeviceService.fakeDeviceEnabled,
+			],
+			(bleState, locationAndroid, connectionState, scanning, faked) => {
+				if (connectionState === DeviceConnectionState.CONNECTED || faked) {
 					return DeviceSetupState.FINISHED;
 				}
 				if (bleState === State.PoweredOff) {
@@ -110,6 +118,15 @@ export class DeviceService {
 				return DeviceAutoConnectState.DISCONNECTED;
 			}
 		);
+
+		this.fakeDeviceService.fakeDeviceEnabled.subscribe(async (enabled) => {
+			if (enabled) {
+				const debugDevice = "Circular_BeTomorrow";
+				this._favoriteDevice.set({ name: debugDevice });
+				this.stopScan();
+				this.autoConnectDevice(debugDevice);
+			}
+		});
 	}
 
 	async init() {
@@ -217,7 +234,7 @@ export class DeviceService {
 	}
 	async autoConnectDevice(name: string) {
 		if (this.setupState.get() !== DeviceSetupState.FINISHED) {
-			this.logger.error("Error: can note autoconnect while setup is not finished");
+			this.logger.error("Error: can not autoconnect while setup is not finished");
 			return;
 		}
 		this.logger.info("Trying to autoconnect to", name);

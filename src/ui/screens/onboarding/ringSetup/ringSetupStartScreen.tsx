@@ -1,3 +1,4 @@
+import { useServices } from "@core/services";
 import { PrimaryButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView } from "@ui/components/layout";
 import { LogoImageHeader } from "@ui/components/logoImageHeader";
@@ -12,6 +13,7 @@ import styled from "styled-components/native";
 export const RingSetupStartScreen = () => {
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
+	const { fakeDeviceService } = useServices();
 
 	useEffect(() => {
 		BackHandler.addEventListener("hardwareBackPress", () => true);
@@ -26,7 +28,7 @@ export const RingSetupStartScreen = () => {
 		<ScrollScreen contentContainerStyle={{ paddingVertical: 0 }}>
 			<LogoImageHeader source={require("@assets/images/signup_runner.jpg")} />
 			<ResponsiveCenterView>
-				<Title>{format("signup_success.title")}</Title>
+				<Title onLongPress={() => fakeDeviceService.toggleFakeDevice()}>{format("signup_success.title")}</Title>
 				<Check source={require("@assets/images/check.png")} />
 				<Description>{format("signup_success.description")}</Description>
 			</ResponsiveCenterView>

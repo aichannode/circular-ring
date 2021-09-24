@@ -12,7 +12,6 @@ export class RingApi {
 	}
 
 	async addRing(ring: PostUserRing) {
-		console.log("Add ring", ring);
 		const result = await this.apiService.post<UserRing>(`${ringApiBaseUrl}`, ring);
 		return result.data;
 	}
