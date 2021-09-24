@@ -1,3 +1,4 @@
+import { useServices } from "@core/services";
 import { Melody, melodyOrderedList } from "@domain/ring/ringAlarm";
 import Slider from "@react-native-community/slider";
 import { TertiaryButton } from "@ui/components/buttons";
@@ -17,6 +18,7 @@ export const VibrationBottomSheet: React.FC<VibrationBottomSheetProps> = ({ vibr
 	const { format } = useI18n();
 	const [vibration, setVibration] = useState(vibrationPower);
 	const [newMelody, setNewMelody] = useState(melody);
+	const { circleAlarmService } = useServices();
 
 	return (
 		<Container>
@@ -36,7 +38,10 @@ export const VibrationBottomSheet: React.FC<VibrationBottomSheetProps> = ({ vibr
 			<SelectionList
 				list={melodyOrderedList.slice(4)}
 				defaultIndex={melodyOrderedList.slice(4).indexOf(melody)}
-				triggeredData={(data) => setNewMelody(data as Melody)}
+				triggeredData={(data) => {
+					setNewMelody(data as Melody);
+					circleAlarmService.playMelody(data as Melody, vibration);
+				}}
 			/>
 			<TertiaryButton style={{ alignSelf: "center" }} onPress={() => onClose(vibration, newMelody)}>
 				{format("alarm.new.save_button")}

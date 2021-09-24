@@ -1,6 +1,6 @@
 import { Channel } from "@domain/device/channels";
 import { DeviceService } from "@domain/device/deviceService";
-import { deserializeAlarmData, RingAlarm, serializeAlarmData } from "@domain/ring/ringAlarm";
+import { deserializeAlarmData, Melody, RingAlarm, serializeAlarmData, serializeMelody } from "@domain/ring/ringAlarm";
 import { alarmDataEOF } from "@domain/ring/ringData";
 import { observable } from "micro-observables";
 
@@ -38,6 +38,10 @@ export class CircleAlarmService {
 			}
 			this._ringAlarms.set(newAlarmList);
 		}
+	}
+
+	playMelody(melody: Melody, power: number) {
+		return this.deviceService.write(serializeMelody(melody, power));
 	}
 
 	// async createAlarm(alarm: RingAlarm) {

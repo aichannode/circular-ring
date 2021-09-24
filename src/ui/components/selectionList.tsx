@@ -1,3 +1,4 @@
+import { useServices } from "@core/services";
 import { Divider } from "@ui/components/divider";
 import { PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
@@ -29,25 +30,23 @@ export const SelectionList: React.FC<SelectionListProps> = ({
 		<>
 			{list.map((element, index, array) => (
 				<View key={index}>
-					<Container>
+					<Container
+						onPress={() => {
+							setTriggeredElement(
+								triggeredElements.map((value, i) =>
+									i === index ? !value : value && !multipleSelection ? false : false
+								)
+							);
+							triggeredData(element);
+						}}
+					>
 						<PrimaryText>{format("alarm.new.edit_vibration.type." + element)}</PrimaryText>
-						<TouchableOpacity
-							activeOpacity={0.85}
-							style={triggeredElements[index] ? styles.circlePress : styles.circleNormal}
-							onPress={() => {
-								setTriggeredElement(
-									triggeredElements.map((value, i) =>
-										i === index ? !value : value && !multipleSelection ? false : false
-									)
-								);
-								triggeredData(element);
-							}}
-						>
+						<View style={triggeredElements[index] ? styles.circlePress : styles.circleNormal}>
 							<Image
 								style={{ height: 14, width: 14, tintColor: colors.white }}
 								source={require("@assets/images/check.png")}
 							/>
-						</TouchableOpacity>
+						</View>
 					</Container>
 					{index < array.length - 1 ? <Divider width={350} style={{ alignSelf: "center" }} /> : null}
 				</View>
@@ -77,7 +76,7 @@ const styles = StyleSheet.create({
 	},
 });
 
-const Container = styled.View`
+const Container = styled.Pressable`
 	flex-direction: row;
 	margin-horizontal: 40px;
 	margin-vertical: 16px;

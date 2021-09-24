@@ -182,3 +182,21 @@ export function serializeAlarmData(alarmData: RingAlarm): string {
 		label
 	);
 }
+
+const melodyIds: { [key in Melody]: string } = {
+	[Melody.NOTIF1]: "00",
+	[Melody.NOTIF2]: "01",
+	[Melody.NOTIF3]: "02",
+	[Melody.NOTIF4]: "03",
+	[Melody.ALERT]: "04",
+	[Melody.HEARTBEAT]: "05",
+	[Melody.QUICK]: "06",
+	[Melody.RAPID]: "07",
+	[Melody.SOS]: "08",
+	[Melody.STACCATO]: "09",
+	[Melody.SYMPHONY]: "0A",
+	[Melody.DISCHARGE]: "0B",
+};
+export function serializeMelody(melody: Melody, power: number) {
+	return "PRE" + melodyIds[melody] + power.toString(16);
+}
