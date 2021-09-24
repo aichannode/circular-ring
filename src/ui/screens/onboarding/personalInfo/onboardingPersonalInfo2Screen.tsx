@@ -124,7 +124,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 						placeholderTextColor={colors.textTertiary}
 						value={bornDate}
 						onChangeText={setBornDate}
-						style={{ padding: 0, width: "100%" }}
+						style={{ padding: 0, width: "100%", color: colors.textPrimary }}
 					/>
 				</BornDateContainer>
 			</InfoBlock>
