@@ -1,5 +1,14 @@
 import { useServices } from "@core/services";
-import { cmToFt, defaultHeight, ftToCm, HeightUnit, heightValuesCm, heightValuesFt } from "@domain/units";
+import { round2Digits } from "@core/utils";
+import {
+	cmToFt,
+	defaultHeight,
+	ftToCm,
+	HeightUnit,
+	heightValuesCm,
+	heightValuesFt,
+	UNDEFINED_HEIGHT,
+} from "@domain/units";
 import { useUser, useUserSettings } from "@domain/user/hooks/useUser";
 import { PrimaryButton } from "@ui/components/buttons";
 import { HorizontalCarousel } from "@ui/components/horizontalCarousel";
@@ -15,21 +24,21 @@ interface HeightBottomSheetProps {
 }
 
 export const HeightBottomSheet = ({ onSaved }: HeightBottomSheetProps) => {
-	const user = useUser();
-	if (!user) {
-		return <></>;
-	}
 	const { format } = useI18n();
-	const userSettings = useUserSettings();
 	const { userService } = useServices();
+	const user = useUser();
+	const userSettings = useUserSettings();
 	const userHeightUnit = userSettings?.heightFormat || HeightUnit.cm;
 
-	const [height, setHeight] = useState(defaultHeight.get(userHeightUnit) ?? 170);
+	const [height, setHeight] = useState(defaultHeight.get(userHeightUnit) ?? UNDEFINED_HEIGHT);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isLoading, setLoading] = useState(false);
 
 	useEffect(() => {
-		const currentHeight = userHeightUnit === HeightUnit.cm ? user.height : Math.round(cmToFt(user.height));
+		const currentHeight =
+			userHeightUnit === HeightUnit.cm
+				? Math.round(user?.height ?? UNDEFINED_HEIGHT)
+				: round2Digits(cmToFt(user?.height ?? UNDEFINED_HEIGHT));
 		setHeight(currentHeight);
 	}, []);
 
@@ -45,9 +54,9 @@ export const HeightBottomSheet = ({ onSaved }: HeightBottomSheetProps) => {
 			setLoading(false);
 			setErrorMessage(format("global.default_error"));
 		}
-	}, [height]);
+	}, [height, userHeightUnit]);
 
-	return (
+	return !user ? null : (
 		<Container>
 			<TopContainer>
 				<Title>{format("profile_info.bottom_sheet.height")}</Title>

@@ -47,11 +47,7 @@ export const ProfileScreen = () => {
 				</ScoreCard>
 			</ResponsiveCenterView>
 			<InfoListHeader>{format("profile.list_header.profile")}</InfoListHeader>
-			<InfoListItem
-				name={format("profile.list.profile_information")}
-				hasDisclosure={true}
-				action={goToProfileInformation}
-			/>
+			<InfoListItem name={format("profile.list.profile_information")} hasDisclosure action={goToProfileInformation} />
 			<SeparatedItem
 				name={format("profile.logout")}
 				action={() => logoutBottomSheetRef.current?.present()}

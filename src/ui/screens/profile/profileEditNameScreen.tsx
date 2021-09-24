@@ -12,18 +12,13 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components/native";
 
 export const ProfileEditNameScreen = () => {
-	const user = useUser();
-
-	if (!user) {
-		return <></>;
-	}
-
 	const { format } = useI18n();
 	const { userService } = useServices();
+	const user = useUser();
 	const navigation = useNavigation();
 
-	const [firstName, setFirstName] = useState(user.firstName);
-	const [lastName, setLastName] = useState(user.lastName);
+	const [firstName, setFirstName] = useState(user?.firstName ?? "");
+	const [lastName, setLastName] = useState(user?.lastName ?? "");
 	const [errorMessage, setErrorMessage] = useState("");
 
 	const firstNameRef = useRef<TextFieldRef | null>(null);
@@ -41,7 +36,7 @@ export const ProfileEditNameScreen = () => {
 			setErrorMessage("onboarding.personal_info.error.firstname");
 		} else if (lastName.length === 0) {
 			setErrorMessage("onboarding.personal_info.error.lastname");
-		} else if (firstName !== user.firstName || lastName !== user.lastName) {
+		} else if (firstName !== user?.firstName || lastName !== user?.lastName) {
 			setLoading(true);
 			try {
 				await userService.updateUserInfo({ firstName, lastName });
