@@ -8,7 +8,7 @@ import { ResponsiveCenterView } from "@ui/components/layout";
 import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components/native";
 
 interface HeightBottomSheetProps {
@@ -22,14 +22,9 @@ export const HeightBottomSheet = ({ onSaved }: HeightBottomSheetProps) => {
 	const userSettings = useUserSettings();
 	const userHeightUnit = userSettings?.heightFormat || HeightUnit.cm;
 
-	const [height, setHeight] = useState(UNDEFINED_HEIGHT); // height always in cm
+	const [height, setHeight] = useState(user?.height ?? UNDEFINED_HEIGHT); // height always in cm
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isLoading, setLoading] = useState(false);
-
-	useEffect(() => {
-		const currentHeight = user?.height ?? UNDEFINED_HEIGHT;
-		setHeight(currentHeight);
-	}, []);
 
 	const saveHeight = useCallback(async () => {
 		setLoading(true);

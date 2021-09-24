@@ -95,19 +95,13 @@ export const OnboardingPersonalInfo2Screen = () => {
 					<BlockTitle>{format("onboarding.personal_info.sex_title")}</BlockTitle>
 				</TitleAndOptions>
 				<SexButtons>
-					<SelectableButton
-						title={format("onboarding.personal_info.sex_male")}
-						selected={sex === Sex.Male}
-						onSelected={() => setSex(Sex.Male)}
-						bgColor={colors.white}
-					/>
+					<SelectableButton selected={sex === Sex.Male} onSelected={() => setSex(Sex.Male)} bgColor={colors.white}>
+						{format("onboarding.personal_info.sex_male")}
+					</SelectableButton>
 					<View style={{ width: 15 }} />
-					<SelectableButton
-						title={format("onboarding.personal_info.sex_female")}
-						selected={sex === Sex.Female}
-						onSelected={() => setSex(Sex.Female)}
-						bgColor={colors.white}
-					/>
+					<SelectableButton selected={sex === Sex.Female} onSelected={() => setSex(Sex.Female)} bgColor={colors.white}>
+						{format("onboarding.personal_info.sex_female")}
+					</SelectableButton>
 				</SexButtons>
 			</InfoBlock>
 			<InfoBlock>
