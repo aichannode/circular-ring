@@ -1,14 +1,6 @@
 import { useServices } from "@core/services";
 import { round2Digits } from "@core/utils";
-import {
-	cmToFt,
-	defaultHeight,
-	ftToCm,
-	HeightUnit,
-	heightValuesCm,
-	heightValuesFt,
-	UNDEFINED_HEIGHT,
-} from "@domain/units";
+import { cmToFt, ftToCm, HeightUnit, heightValuesCm, heightValuesFt, UNDEFINED_HEIGHT } from "@domain/units";
 import { useUser, useUserSettings } from "@domain/user/hooks/useUser";
 import { PrimaryButton } from "@ui/components/buttons";
 import { HorizontalCarousel } from "@ui/components/horizontalCarousel";
@@ -30,24 +22,20 @@ export const HeightBottomSheet = ({ onSaved }: HeightBottomSheetProps) => {
 	const userSettings = useUserSettings();
 	const userHeightUnit = userSettings?.heightFormat || HeightUnit.cm;
 
-	const [height, setHeight] = useState(defaultHeight.get(userHeightUnit) ?? UNDEFINED_HEIGHT);
+	const [height, setHeight] = useState(UNDEFINED_HEIGHT); // height always in cm
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isLoading, setLoading] = useState(false);
 
 	useEffect(() => {
-		const currentHeight =
-			userHeightUnit === HeightUnit.cm
-				? Math.round(user?.height ?? UNDEFINED_HEIGHT)
-				: round2Digits(cmToFt(user?.height ?? UNDEFINED_HEIGHT));
+		const currentHeight = user?.height ?? UNDEFINED_HEIGHT;
 		setHeight(currentHeight);
 	}, []);
 
 	const saveHeight = useCallback(async () => {
 		setLoading(true);
 		setErrorMessage("");
-		const newHeight = userHeightUnit === HeightUnit.cm ? height : ftToCm(height);
 		try {
-			await userService.updateUserInfo({ height: newHeight });
+			await userService.updateUserInfo({ height });
 			setLoading(false);
 			onSaved();
 		} catch (error) {
@@ -70,8 +58,8 @@ export const HeightBottomSheet = ({ onSaved }: HeightBottomSheetProps) => {
 					</PickerValue>
 				)}
 				itemWidth={userHeightUnit === HeightUnit.cm ? 50 : 60}
-				onItemChange={setHeight}
-				item={height}
+				onItemChange={(value) => setHeight(userHeightUnit === HeightUnit.cm ? value : round2Digits(ftToCm(value)))}
+				item={userHeightUnit === HeightUnit.cm ? Math.round(height) : round2Digits(cmToFt(height))}
 				animatedScrollToDefaultIndex={false}
 			/>
 			<BottomContainer>
