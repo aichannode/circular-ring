@@ -1,3 +1,4 @@
+import { round2Digits } from "@core/utils";
 import { cmToFt, HeightUnit, kgToLbs, UNDEFINED_HEIGHT, UNDEFINED_WEIGHT, WeightUnit } from "@domain/units";
 import { useUser, useUserSettings } from "@domain/user/hooks/useUser";
 import { Sex } from "@domain/user/user";
@@ -23,7 +24,7 @@ export const ProfileInformationScreen = () => {
 
 	const height = user?.height ?? UNDEFINED_HEIGHT;
 	const heightUnit = userSettings?.heightFormat || HeightUnit.cm;
-	const displayedHeight = (heightUnit === HeightUnit.ft ? Math.round(cmToFt(height)) : height).toFixed(0);
+	const displayedHeight = heightUnit === HeightUnit.ft ? round2Digits(cmToFt(height)) : Math.round(height);
 
 	const weight = user?.weight ?? UNDEFINED_WEIGHT;
 	const weightUnit = userSettings?.weightFormat || WeightUnit.kg;
