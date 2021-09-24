@@ -153,7 +153,7 @@ const Container = styled(ScrollScreen)`
 `;
 
 const InfoCard = styled.View`
-	${roundedWhiteCardStyle}
+	${roundedWhiteCardStyle};
 	justify-content: space-between;
 	padding: 5px 12px 10px;
 	flex: 1;
