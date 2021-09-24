@@ -6,13 +6,13 @@ const ringApiBaseUrl = "/rings";
 export class RingApi {
 	constructor(private readonly apiService: ApiService) {}
 
-	getRings() {
-		return this.apiService.get<UserRing[]>(`${ringApiBaseUrl}`);
+	async getRings() {
+		const result = await this.apiService.get<UserRing[]>(`${ringApiBaseUrl}`);
+		return result.data;
 	}
 
-	async addRing(ring: UserRing) {
+	async addRing(ring: PostUserRing) {
 		console.log("Add ring", ring);
-		// return delay(1000);
 		const result = await this.apiService.post<UserRing>(`${ringApiBaseUrl}`, ring);
 		return result.data;
 	}
@@ -26,3 +26,5 @@ export class RingApi {
 		return delay(3000);
 	}
 }
+
+type PostUserRing = Omit<UserRing, "userId" | "lastSyncDate">;

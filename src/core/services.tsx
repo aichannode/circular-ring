@@ -20,22 +20,24 @@ import { CalibrationApi } from "@domain/calibration/calibrationApi";
 import { HomeBannerStorage } from "@domain/homeBanner/homeBannerStorage";
 import { HomeBannerService } from "@domain/homeBanner/homeBannerService";
 import { HomeBannerApi } from "@domain/homeBanner/homeBannerApi";
+import { UserRingsStorage } from "@domain/ring/userRingsStorage";
 
 const userStorage = new UserStorage();
 const favoriteDeviceStorage = new FavoriteDeviceStorage();
 const ringDataStorage = new RingDataStorage();
+const userRingsStorage = new UserRingsStorage();
 
 const apiService = new ApiService();
 const circleActivityApi = new CircleActivityApi();
 
 const ringApi = new RingApi(apiService);
 
+const cognitoAuthService = new CognitoAuthService();
+
 const bluetoothService = new BluetoothService();
 const deviceService = new DeviceService(bluetoothService, favoriteDeviceStorage);
-const ringService = new RingService(deviceService, ringDataStorage, ringApi);
+const ringService = new RingService(deviceService, cognitoAuthService, userRingsStorage, ringDataStorage, ringApi);
 const circleActivityService = new CircleActivityService(circleActivityApi);
-
-const cognitoAuthService = new CognitoAuthService();
 
 const userApi = new UserApi(apiService);
 const userService = new UserService(cognitoAuthService, userApi, userStorage);
