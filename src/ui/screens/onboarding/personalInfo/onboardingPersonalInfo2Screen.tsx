@@ -139,7 +139,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 						placeholder={format("onboarding.personal_info.born_placeholder")}
 						value={bornDate}
 						onChangeText={setBornDate}
-						style={{ padding: 0, width: "100%" }}
+						style={{ padding: 0, width: "100%", color: colors.textPrimary }}
 					/>
 				</BornDateContainer>
 			</InfoBlock>
