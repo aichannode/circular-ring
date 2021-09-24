@@ -20,6 +20,9 @@ import { OnboardingPersonalInfo2Screen } from "@ui/screens/onboarding/personalIn
 import { OnboardingWearInfoScreen } from "@ui/screens/onboarding/personalInfo/onboardingWearInfoScreen";
 import { RingSetupScreen } from "@ui/screens/onboarding/ringSetup/ringSetupScreen";
 import { RingSetupStartScreen } from "@ui/screens/onboarding/ringSetup/ringSetupStartScreen";
+import { ProfileEditBirthdayScreen } from "@ui/screens/profile/profileEditBirthdayScreen";
+import { ProfileEditNameScreen } from "@ui/screens/profile/profileEditNameScreen";
+import { ProfileInformationScreen } from "@ui/screens/profile/profileInformationScreen";
 import { ProfileScreen } from "@ui/screens/profile/profileScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
@@ -32,8 +35,6 @@ const SetupStack = createNativeStackNavigator();
 
 const OnboardingStack = createNativeStackNavigator();
 
-const AuthenticatedStack = createNativeStackNavigator();
-const ProfileStack = createNativeStackNavigator();
 const HomeDrawer = createDrawerNavigator();
 const MainStack = createNativeStackNavigator();
 
@@ -43,15 +44,6 @@ const headerTitleStyle = {
 	color: colors.textPrimary,
 } as const;
 
-const HomeDrawerNavigator = () => (
-	<HomeDrawer.Navigator
-		screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
-		drawerContent={() => <DrawerContent />}
-	>
-		<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} />
-	</HomeDrawer.Navigator>
-);
-
 const MainHomeNavigator = () => {
 	const { format } = useI18n();
 	const navigation = useNavigation();
@@ -59,10 +51,13 @@ const MainHomeNavigator = () => {
 	return (
 		<MainStack.Navigator
 			screenOptions={{
+				headerStyle: { backgroundColor: colors.lightgray },
 				headerRight: () => <MyRingBattery />,
 				headerTitleAlign: "center",
 				headerTitleStyle: headerTitleStyle,
+				headerBackTitleVisible: false,
 				headerBackImageSource: require("@assets/images/menuBackArrow.png"),
+				headerTintColor: colors.textPrimary,
 			}}
 		>
 			<MainStack.Screen
@@ -92,21 +87,7 @@ const MainHomeNavigator = () => {
 				component={CircleLiveScreen}
 				options={{ title: format("header.live"), headerRight: undefined }}
 			/>
-		</MainStack.Navigator>
-	);
-};
-
-const ProfileNavigator = () => {
-	const { format } = useI18n();
-
-	return (
-		<ProfileStack.Navigator
-			screenOptions={{
-				headerRight: () => <MyRingBattery />,
-				headerBackImageSource: require("@assets/images/menuBackArrow.png"),
-			}}
-		>
-			<ProfileStack.Screen
+			<MainStack.Screen
 				name={Routes.Profile}
 				component={ProfileScreen}
 				options={{
@@ -115,7 +96,28 @@ const ProfileNavigator = () => {
 					headerTitleStyle: headerTitleStyle,
 				}}
 			/>
-		</ProfileStack.Navigator>
+			<MainStack.Screen
+				name={Routes.ProfileInformation}
+				component={ProfileInformationScreen}
+				options={{
+					title: format("header.profile_information"),
+				}}
+			/>
+			<MainStack.Screen
+				name={Routes.ProfileEditName}
+				component={ProfileEditNameScreen}
+				options={{
+					headerShown: false,
+				}}
+			/>
+			<MainStack.Screen
+				name={Routes.ProfileEditBirthday}
+				component={ProfileEditBirthdayScreen}
+				options={{
+					headerShown: false,
+				}}
+			/>
+		</MainStack.Navigator>
 	);
 };
 
@@ -128,10 +130,12 @@ export const RootNavigator: React.FC = () => {
 	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
 
 	return isOnboardingDone ? (
-		<AuthenticatedStack.Navigator screenOptions={{ headerShown: false }}>
-			<AuthenticatedStack.Screen name={Routes.HomeDrawer} component={HomeDrawerNavigator} />
-			<AuthenticatedStack.Screen name={Routes.Profile} component={ProfileNavigator} />
-		</AuthenticatedStack.Navigator>
+		<HomeDrawer.Navigator
+			screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
+			drawerContent={() => <DrawerContent />}
+		>
+			<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} />
+		</HomeDrawer.Navigator>
 	) : isAuthenticated ? (
 		accountLinkedToDevice ? (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>

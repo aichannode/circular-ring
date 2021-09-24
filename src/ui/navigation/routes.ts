@@ -23,6 +23,9 @@ export enum Routes {
 	MyRing = "MyRing",
 	Activity = "Activity",
 	Profile = "Profile",
+	ProfileInformation = "ProfileInformation",
+	ProfileEditName = "ProfileEditName",
+	ProfileEditBirthday = "ProfileEditBirthday",
 	Live = "Live",
 }
 
@@ -45,6 +48,9 @@ export type AppRoutesParams = {
 	[Routes.MyRing]: undefined;
 	[Routes.Activity]: undefined;
 	[Routes.Profile]: undefined;
+	[Routes.ProfileInformation]: undefined;
+	[Routes.ProfileEditName]: undefined;
+	[Routes.ProfileEditBirthday]: undefined;
 	[Routes.Live]: undefined;
 };
 

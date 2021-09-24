@@ -1,10 +1,10 @@
 import { getLogger } from "@core/logger/logger";
-import { toServerDate } from "@core/utils";
+import { round2Digits, toServerDate } from "@core/utils";
 import { AuthService } from "@domain/auth/authService";
 import { HeightUnit, WeightUnit } from "@domain/units";
 import { TutorialInfo } from "@domain/user/tutorialInfo";
-import { User } from "@domain/user/user";
-import { UserApi } from "@domain/user/userApi";
+import { Sex, User } from "@domain/user/user";
+import { UserApi, UserPutDto } from "@domain/user/userApi";
 import { UserSettings } from "@domain/user/userSettings";
 import { UserStorage } from "@domain/user/userStorage";
 import { observable } from "micro-observables";
@@ -143,7 +143,7 @@ export class UserService {
 			const userSettings = await this.userApi.updateUserSettings({
 				dateFormat,
 				heightFormat: heightUnit.toString(),
-				weightFormat: weightUnit.toString(),
+				weightFormat: weightUnit === WeightUnit.kg ? "kg" : "lb",
 				timezone,
 			});
 			this._userSettings.set(userSettings);
@@ -154,18 +154,53 @@ export class UserService {
 	}
 
 	async completeTutorial(tutorialInfo: TutorialInfo) {
-		try {
-			const user = await this.userApi.updateUser({
-				...tutorialInfo,
-				sex: tutorialInfo.sex.toString(),
-				bornDate: toServerDate(tutorialInfo.bornDate),
-				phoneNumber: null,
-				profilePictureUrl: null,
-				language: "",
-				scorePublic: true,
-				tutorialCompleted: true,
-				stride: 0,
+		await this.updateUser({
+			...tutorialInfo,
+			height: round2Digits(tutorialInfo.height),
+			weight: round2Digits(tutorialInfo.weight),
+			sex: tutorialInfo.sex.toString(),
+			bornDate: toServerDate(tutorialInfo.bornDate),
+			phoneNumber: null,
+			profilePictureUrl: null,
+			language: "en",
+			scorePublic: true,
+			tutorialCompleted: true,
+			stride: 0,
+		});
+	}
+
+	// TODO : add the other fields while implementing edition
+	async updateUserInfo(userInfo: {
+		firstName?: string;
+		lastName?: string;
+		height?: number;
+		weight?: number;
+		sex?: Sex;
+		bornDate?: Date;
+	}) {
+		const currentUser = this._user.get();
+		if (currentUser) {
+			await this.updateUser({
+				firstName: userInfo.firstName ?? currentUser.firstName,
+				lastName: userInfo.lastName ?? currentUser.lastName,
+				country: currentUser.country,
+				phoneNumber: currentUser.phoneNumber,
+				profilePictureUrl: currentUser.profilePictureUrl,
+				weight: round2Digits(userInfo.weight ?? currentUser.weight),
+				height: round2Digits(userInfo.height ?? currentUser.height),
+				sex: (userInfo.sex ?? currentUser.sex).toString(),
+				bornDate: toServerDate(userInfo.bornDate ?? currentUser.bornDate),
+				language: currentUser.language,
+				scorePublic: currentUser.scorePublic,
+				stride: 0, //currentUser.stride, => Server patch
+				tutorialCompleted: currentUser.tutorialCompleted,
 			});
+		}
+	}
+
+	private async updateUser(userPutDto: UserPutDto) {
+		try {
+			const user = await this.userApi.updateUser(userPutDto);
 			this._user.set(user);
 			await this.userStorage.saveUser(user);
 		} catch (error) {

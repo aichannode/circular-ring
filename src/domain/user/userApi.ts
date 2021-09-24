@@ -1,5 +1,5 @@
 import { ApiService } from "@core/api/apiService";
-import { getLogger } from "@core/logger/logger";
+import { HeightUnit, WeightUnit } from "@domain/units";
 import { Sex, User } from "@domain/user/user";
 import { UserSettings } from "@domain/user/userSettings";
 
@@ -26,24 +26,26 @@ interface UserDto extends UserDtoBase {
 	createdAt: string;
 }
 
-type UserPutDto = UserDtoBase;
+export type UserPutDto = UserDtoBase;
+
+interface UserSettingsDto {
+	id: string;
+	dateFormat: string;
+	heightFormat: string;
+	weightFormat: string;
+}
 
 export class UserApi {
-	private readonly logger = getLogger("UserApi");
-
 	constructor(private readonly apiService: ApiService) {}
 
 	async getUser(): Promise<User> {
 		const result = await this.apiService.get<UserDto>("/user");
-		const userDto = result.data;
-		return UserApi.userFromDto(userDto);
+		return UserApi.userFromDto(result.data);
 	}
 
 	async updateUser(userPutDto: UserPutDto): Promise<User> {
 		const result = await this.apiService.put<UserDto>("/user", userPutDto);
-		const userDto = result.data;
-		this.logger.debug("GET USER : " + JSON.stringify(userDto));
-		return UserApi.userFromDto(userDto);
+		return UserApi.userFromDto(result.data);
 	}
 
 	private static userFromDto(userDto: UserDto): User {
@@ -57,8 +59,7 @@ export class UserApi {
 
 	async getUserSettings(): Promise<UserSettings> {
 		const result = await this.apiService.get<UserSettings>("/user/setting");
-		this.logger.debug("GET USER SETTINGS : " + JSON.stringify(result.data));
-		return result.data;
+		return UserApi.userSettingsFromDto(result.data);
 	}
 
 	async updateUserSettings(userSettings: {
@@ -67,7 +68,15 @@ export class UserApi {
 		weightFormat: string;
 		timezone: string;
 	}): Promise<UserSettings> {
-		const result = await this.apiService.put<UserSettings>("/user/setting", userSettings);
-		return result.data;
+		const result = await this.apiService.put<UserSettingsDto>("/user/setting", userSettings);
+		return UserApi.userSettingsFromDto(result.data);
+	}
+
+	private static userSettingsFromDto(userSettingsDto: UserSettingsDto): UserSettings {
+		return {
+			...userSettingsDto,
+			weightFormat: userSettingsDto.weightFormat === "kg" ? WeightUnit.kg : WeightUnit.lbs,
+			heightFormat: userSettingsDto.heightFormat === "cm" ? HeightUnit.cm : HeightUnit.ft,
+		};
 	}
 }

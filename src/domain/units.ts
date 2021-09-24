@@ -19,8 +19,9 @@ const LBS_MAX = 661;
 const LBS_INCREMENT = 1;
 export const weightValuesLbs = arrayFromRange(LBS_MIN, LBS_MAX, LBS_INCREMENT);
 
+export const UNDEFINED_WEIGHT = 80;
 export const defaultWeight = new Map<WeightUnit, number>([
-	[WeightUnit.kg, 80],
+	[WeightUnit.kg, UNDEFINED_WEIGHT],
 	[WeightUnit.lbs, 170],
 ]);
 
@@ -53,8 +54,9 @@ const FT_MAX = 8.23;
 const FT_INCREMENT = 0.01;
 export const heightValuesFt = arrayFromRange(FT_MIN, FT_MAX, FT_INCREMENT);
 
+export const UNDEFINED_HEIGHT = 170;
 export const defaultHeight = new Map<HeightUnit, number>([
-	[HeightUnit.cm, 170],
+	[HeightUnit.cm, UNDEFINED_HEIGHT],
 	[HeightUnit.ft, 6],
 ]);
 
