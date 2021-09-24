@@ -37,9 +37,13 @@ export function replaceInArray<T>(array: readonly T[], index: number, newValue: 
 
 export function arrayFromRange(start: number, end: number, increment: number | undefined = 1): number[] {
 	return Array.from({ length: (end + increment - start) / increment }, (_, i) => {
-		// Correctly rounded at 0.01 precision
-		return +(i * increment + start).toFixed(2);
+		return round2Digits(i * increment + start);
 	});
+}
+
+// Correctly rounded at 0.01 precision
+export function round2Digits(value: number): number {
+	return +value.toFixed(2);
 }
 
 export function toServerDate(date: Date) {

@@ -27,11 +27,11 @@ export const defaultWeight = new Map<WeightUnit, number>([
 const KG_TO_LBS = 2.205;
 
 export function kgToLbs(kgWeight: number) {
-	return Math.round(kgWeight * KG_TO_LBS);
+	return kgWeight * KG_TO_LBS;
 }
 
 export function lbsToKg(lbsWeight: number) {
-	return Math.round(lbsWeight / KG_TO_LBS);
+	return lbsWeight / KG_TO_LBS;
 }
 
 /**
@@ -61,9 +61,9 @@ export const defaultHeight = new Map<HeightUnit, number>([
 const FT_TO_CM = 30.48;
 
 export function cmToFt(cmHeight: number) {
-	return Math.round((cmHeight / FT_TO_CM) * 100) / 100;
+	return cmHeight / FT_TO_CM;
 }
 
 export function ftToCm(ftHeight: number) {
-	return Math.round(ftHeight * FT_TO_CM);
+	return ftHeight * FT_TO_CM;
 }

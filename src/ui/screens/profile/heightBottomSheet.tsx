@@ -36,7 +36,7 @@ export const HeightBottomSheet = ({ onSaved }: HeightBottomSheetProps) => {
 	const saveHeight = useCallback(async () => {
 		setLoading(true);
 		setErrorMessage("");
-		const newHeight = userHeightUnit === HeightUnit.cm ? height : Math.round(ftToCm(height));
+		const newHeight = userHeightUnit === HeightUnit.cm ? height : ftToCm(height);
 		try {
 			await userService.updateUserInfo({ height: newHeight });
 			setLoading(false);
