@@ -57,6 +57,7 @@ export class DeviceService {
 
 	readonly setupState: Observable<DeviceSetupState>;
 	readonly autoConnectState: Observable<DeviceAutoConnectState>;
+	readonly favoriteDevice = this._favoriteDevice.readOnly();
 
 	private onMessageReceived = new Signal<string>();
 
@@ -70,15 +71,9 @@ export class DeviceService {
 		this.checkSettings();
 		this.setupState = Observable.select(
 			// TODO Use user.device instead of favoriteDevice there
-			[
-				this.bluetoothService.state,
-				this._locationEnabledAndroid,
-				this._connectionState,
-				this._scanning,
-				this._favoriteDevice,
-			],
-			(bleState, locationAndroid, connectionState, scanning, favorite) => {
-				if (connectionState === DeviceConnectionState.CONNECTED || !!favorite) {
+			[this.bluetoothService.state, this._locationEnabledAndroid, this._connectionState, this._scanning],
+			(bleState, locationAndroid, connectionState, scanning) => {
+				if (connectionState === DeviceConnectionState.CONNECTED) {
 					return DeviceSetupState.FINISHED;
 				}
 				if (bleState === State.PoweredOff) {
@@ -204,8 +199,11 @@ export class DeviceService {
 	}
 
 	private handleDeviceDisconnection(error: BleError | null, device: Device) {
-		this.logger.warn(`Lost connection with device ${device.id} / ${device.name}`, error);
 		const connectedDevice = this._connectedDevice.get();
+		if (!connectedDevice) {
+			return;
+		}
+		this.logger.warn(`Lost connection with device ${device.id} / ${device.name}`, error);
 		if (connectedDevice?.name && connectedDevice.id === device.id) {
 			this._connectionState.set(DeviceConnectionState.DISCONNECTED);
 			this._connectedDevice.set(null);
@@ -379,6 +377,19 @@ export class DeviceService {
 		this._monitoring.set(true);
 
 		return subscription;
+	}
+
+	async disconnect() {
+		const device = this._connectedDevice.get();
+		if (!device) {
+			this.logger.info("Already disonnected");
+			return;
+		}
+		this.logger.info("Disconnecting from device", device.name);
+		this._connectedDevice.set(null);
+		this._favoriteDevice.set(null);
+		await this.favoriteDeviceStorage.clear();
+		await device.cancelConnection();
 	}
 
 	requestLocation() {

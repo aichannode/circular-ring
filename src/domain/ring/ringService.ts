@@ -2,6 +2,7 @@ import { getLogger } from "@core/logger/logger";
 import { Channel } from "@domain/device/channels";
 import { DeviceService } from "@domain/device/deviceService";
 import { observable } from "micro-observables";
+import { UserRing } from "./ring";
 import { RingApi } from "./ringApi";
 import { deserializeBattery, RingBattery } from "./ringBattery";
 import { ringDataEOF } from "./ringData";
@@ -20,10 +21,12 @@ export enum SyncState {
 export class RingService {
 	private logger = getLogger("💍 RingService");
 
+	private _userRing = observable<UserRing | null>(null);
 	private _ringBattery = observable<RingBattery | null>(null);
 	private _syncState = observable<SyncState>(SyncState.NONE);
 	private _ringLiveData = observable<{ listening: boolean; data?: RingLiveData | null }>({ listening: false });
 
+	userRing = this._userRing.readOnly();
 	ringBattery = this._ringBattery.readOnly();
 	syncState = this._syncState.readOnly();
 	ringLiveData = this._ringLiveData.readOnly();
@@ -72,10 +75,21 @@ export class RingService {
 		const id = await this.deviceService.getResponse(Channel.MAC);
 		const firmware = await this.deviceService.getResponse(Channel.FIRMWARE_VERSION);
 		if (id && firmware) {
-			return this.ringApi.addRing({
-				id,
-				firmware,
-			});
+			try {
+				const userRing = await this.ringApi.addRing({
+					id,
+					firmware,
+				});
+				this._userRing.set(userRing);
+				return userRing;
+			} catch (e) {
+				this.deviceService.disconnect();
+				this._userRing.set(null);
+				throw e;
+			}
+		} else {
+			this.deviceService.disconnect();
+			this._userRing.set(null);
 		}
 	}
 

@@ -9,10 +9,12 @@ export class RingApi {
 	getRings() {
 		return this.apiService.get<UserRing[]>(`${ringApiBaseUrl}`);
 	}
-	addRing(ring: UserRing) {
+
+	async addRing(ring: UserRing) {
 		console.log("Add ring", ring);
-		return delay(1000);
-		return this.apiService.post<UserRing>(`${ringApiBaseUrl}`, ring);
+		// return delay(1000);
+		const result = await this.apiService.post<UserRing>(`${ringApiBaseUrl}`, ring);
+		return result.data;
 	}
 	deleteRing(ringId: string) {
 		return this.apiService.delete(`${ringApiBaseUrl}/${ringId}`);
