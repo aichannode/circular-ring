@@ -250,6 +250,7 @@ export class UserService {
 		rhr?: number;
 		female?: FemaleInfo;
 		stride?: number;
+		cycleLength?: number;
 	}) {
 		const currentInfo = this._userAdvancedInfo.get();
 		if (currentInfo) {

@@ -5,7 +5,9 @@ import { PrimaryButton } from "@ui/components/buttons";
 import { HorizontalCarousel } from "@ui/components/horizontalCarousel";
 import { ResponsiveCenterView } from "@ui/components/layout";
 import { Spinner } from "@ui/components/spinner";
+import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
+import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback, useState } from "react";
 import styled from "styled-components/native";
@@ -56,6 +58,15 @@ export const StrideBottomSheet = ({ onSaved }: StrideBottomSheetProps) => {
 				item={userStrideUnit === HeightUnit.cm ? Math.round(stride) : round2Digits(cmToFt(stride))}
 				animatedScrollToDefaultIndex={false}
 			/>
+			<SecondaryText
+				style={{ color: colors.primary }}
+				onPress={() => {
+					// TODO API WAIT
+					setStride(80);
+				}}
+			>
+				{format("profile_advanced_info.stride.reset")}
+			</SecondaryText>
 			<BottomContainer>
 				{isLoading ? (
 					<Spinner size={24} />

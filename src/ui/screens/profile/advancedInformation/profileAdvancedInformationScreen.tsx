@@ -33,6 +33,7 @@ import {
 import React, { useRef, useState } from "react";
 import { View } from "react-native";
 import styled from "styled-components/native";
+import { CycleLengthBottomSheet } from "./cycleLengthBottomSheet";
 import { StrideBottomSheet } from "./strideBottomSheet";
 
 export const ProfileAdvancedInformationScreen = () => {
@@ -51,6 +52,7 @@ export const ProfileAdvancedInformationScreen = () => {
 	const [currentOption, setCurrentOption] = useState<EditionInfoType>(WorkTime.DAY);
 	const editionBottomSheetRef = useRef<BottomSheetModal>(null);
 	const strideBottomSheetRef = useRef<BottomSheetModal>(null);
+	const cycleLengthBottomSheetRef = useRef<BottomSheetModal>(null);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 	const [isLoading, setLoading] = useState(false);
 
@@ -157,10 +159,9 @@ export const ProfileAdvancedInformationScreen = () => {
 					<InfoListItem
 						name={format("profile_advanced_info.cycle_length.title")}
 						hasDisclosure={true}
-						value={"TODO"}
+						value={format("profile_advanced_info.cycle_length.days", { count: advancedInfo.female?.cycleLength })}
 						action={() => {
-							// configureEditionBottomSheet(configsRef.current.dietarySupplementsConfig, advancedInfo.dietarySupplements);
-							// editionBottomSheetRef.current?.present();
+							cycleLengthBottomSheetRef.current?.present();
 						}}
 						disabled={advancedInfo.female.fertilityState === FertilityState.MENOPAUSE}
 					/>
@@ -221,6 +222,9 @@ export const ProfileAdvancedInformationScreen = () => {
 			</CircularBottomSheet>
 			<CircularBottomSheet snapPoints={[480]} ref={strideBottomSheetRef}>
 				<StrideBottomSheet onSaved={() => strideBottomSheetRef.current?.close()} />
+			</CircularBottomSheet>
+			<CircularBottomSheet snapPoints={[380]} ref={cycleLengthBottomSheetRef}>
+				<CycleLengthBottomSheet onSaved={() => cycleLengthBottomSheetRef.current?.close()} />
 			</CircularBottomSheet>
 		</ScrollScreen>
 	);

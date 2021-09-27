@@ -3,7 +3,6 @@
  */
 
 import { arrayFromRange } from "@core/utils";
-import { Sex } from "./user/user";
 
 export enum WeightUnit {
 	kg = "kg",

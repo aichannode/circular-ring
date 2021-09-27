@@ -275,6 +275,8 @@
   "profile_advanced_info.fertility_state.menopause": "Menopause",
   "profile_advanced_info.fertility_state.perimenopause": "Perimenopause",
   "profile_advanced_info.cycle_length.title": "Cycle Length",
+  "profile_advanced_info.cycle_length.bottom_sheet.title": "Select your Cycle Length",
+  "profile_advanced_info.cycle_length.days": "{count} days",
   "profile_advanced_info.birth_control.title": "Birth Control Type",
   "profile_advanced_info.birth_control.selection_invitation": "What is your birth control type?\nSelect from below:",
   "profile_advanced_info.birth_control.none": "None",
