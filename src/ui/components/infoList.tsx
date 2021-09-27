@@ -45,7 +45,11 @@ export function InfoListItem<T>({
 			<Container style={style}>
 				<Name emphasize={emphasize}>{name}</Name>
 				<Grow />
-				{value && <Value>{value}</Value>}
+				{value && (
+					<Value numberOfLines={1} ellipsizeMode={"tail"}>
+						{value}
+					</Value>
+				)}
 				{switchOptions && switchValue && onSwitchSelect && (
 					<Switch
 						options={switchOptions}
@@ -80,6 +84,8 @@ const Value = styled.Text`
 	font-size: 14px;
 	font-weight: 500;
 	color: ${colors.textPlaceholder};
+	flex-shrink: 1;
+	margin-left: 10px;
 `;
 
 const Disclosure = styled.Image`
