@@ -1,3 +1,4 @@
+import { CircleAlarmService } from "@domain/circleAlarm/circleAlarmService";
 import { getLogger } from "@core/logger/logger";
 import { Channel } from "@domain/device/channels";
 import { DeviceService } from "@domain/device/deviceService";
@@ -34,6 +35,7 @@ export class RingService {
 
 	constructor(
 		private readonly deviceService: DeviceService,
+		private readonly circlealarmService: CircleAlarmService,
 		private readonly userRingsStorage: UserRingsStorage,
 		private readonly ringDataStorage: RingDataStorage,
 		private readonly ringApi: RingApi
@@ -45,6 +47,7 @@ export class RingService {
 		this.getRings();
 		this.listenBattery();
 		this.syncData();
+		this.circlealarmService.fetchAlarmList();
 	}
 
 	listenLiveData() {

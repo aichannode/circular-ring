@@ -6,12 +6,13 @@ import styled from "styled-components/native";
 
 interface ScreenSectionProps {
 	style?: StyleProp<ViewStyle>;
-	title: string;
+	title?: string;
 }
-export const ScreenSection: React.FC<ScreenSectionProps> = ({ title, style }) => {
+export const ScreenSection: React.FC<ScreenSectionProps> = ({ title, style, children }) => {
 	return (
 		<Container style={style}>
-			<TitleText>{title}</TitleText>
+			{title ? <TitleText>{title}</TitleText> : null}
+			{children}
 		</Container>
 	);
 };

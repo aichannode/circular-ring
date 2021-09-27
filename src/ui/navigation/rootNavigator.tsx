@@ -8,6 +8,8 @@ import { useI18n } from "@ui/i18n";
 import { DrawerContent } from "@ui/navigation/drawer/drawerContent";
 import { Routes } from "@ui/navigation/routes";
 import { CircleActivityScreen } from "@ui/screens/circleActivity/circleActivityScreen";
+import { CircleAlarmScreen } from "@ui/screens/circleAlarm/circleAlarmScreen";
+import { NewAlarmScreen } from "@ui/screens/circleAlarm/newAlarmScreen";
 import { CircleLiveScreen } from "@ui/screens/circleLive/circleLiveScreen";
 import { HomeScreen } from "@ui/screens/home/homeScreen";
 import { ForgotPasswordScreen } from "@ui/screens/login/forgotPasswordScreen";
@@ -89,6 +91,17 @@ const MainHomeNavigator = () => {
 				component={CircleLiveScreen}
 				options={{ title: format("header.live"), headerRight: undefined }}
 			/>
+			<MainStack.Screen
+				name={Routes.Alarm}
+				component={CircleAlarmScreen}
+				options={{ title: format("header.alarm"), headerRight: undefined }}
+			/>
+			<MainStack.Screen
+				name={Routes.NewAlarm}
+				component={NewAlarmScreen}
+				options={{ title: format("header.alarm"), headerRight: undefined }}
+			/>
+
 			<MainStack.Screen
 				name={Routes.Profile}
 				component={ProfileScreen}
