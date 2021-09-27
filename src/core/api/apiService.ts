@@ -6,6 +6,7 @@ import { logResponseInterceptor } from "@core/api/interceptors/logResponseInterc
 import { getLogger } from "@core/logger/logger";
 import { AuthService } from "@domain/auth/authService";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { serializeArrayParametersInterceptor } from "./interceptors/serializeArrayParametersInterceptor";
 
 export class ApiService {
 	private logger: Logger = getLogger("ApiService");
@@ -17,6 +18,7 @@ export class ApiService {
 		this.instance = axios.create();
 		this.instance.defaults.headers = { "x-api-version": "1.0" };
 		addRequestInterceptor(this.instance, addBaseUrlInterceptor);
+		addRequestInterceptor(this.instance, serializeArrayParametersInterceptor);
 		addResponseInterceptor(this.instance, logResponseInterceptor(this.logger));
 	}
 
