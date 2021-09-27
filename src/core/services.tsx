@@ -40,7 +40,14 @@ const cognitoAuthService = new CognitoAuthService();
 const bluetoothService = new BluetoothService();
 const deviceService = new DeviceService(bluetoothService, fakeDeviceService, favoriteDeviceStorage);
 const circleAlarmService = new CircleAlarmService(deviceService);
-const ringService = new RingService(deviceService, circleAlarmService, userRingsStorage, ringDataStorage, ringApi);
+const ringService = new RingService(
+	cognitoAuthService,
+	deviceService,
+	circleAlarmService,
+	userRingsStorage,
+	ringDataStorage,
+	ringApi
+);
 const measureApi = new MeasureApi(apiService);
 
 const circleActivityService = new CircleActivityService(measureApi);

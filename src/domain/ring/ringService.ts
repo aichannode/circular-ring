@@ -10,6 +10,7 @@ import { ringDataEOF } from "./ringData";
 import { RingDataStorage } from "./ringDataStorage";
 import { deserializeLiveData, RingLiveData } from "./ringLiveData";
 import { UserRingsStorage } from "./userRingsStorage";
+import { AuthService } from "@domain/auth/authService";
 
 const syncFinishedTimeout = 3000;
 
@@ -34,17 +35,24 @@ export class RingService {
 	ringLiveData = this._ringLiveData.readOnly();
 
 	constructor(
+		private readonly authService: AuthService,
 		private readonly deviceService: DeviceService,
 		private readonly circlealarmService: CircleAlarmService,
 		private readonly userRingsStorage: UserRingsStorage,
 		private readonly ringDataStorage: RingDataStorage,
 		private readonly ringApi: RingApi
-	) {}
+	) {
+		const unsubscribe = this.authService.authToken.subscribe((token) => {
+			if (token) {
+				this.getRings();
+				unsubscribe();
+			}
+		});
+	}
 
 	async init() {
 		const loadedRings = await this.userRingsStorage.load();
 		this._userRing.set(loadedRings?.[0] ?? null);
-		this.getRings();
 		this.listenBattery();
 		this.syncData();
 		this.circlealarmService.fetchAlarmList();
@@ -90,13 +98,15 @@ export class RingService {
 		const firmware = await this.deviceService.getResponse(Channel.FIRMWARE_VERSION);
 		if (id && firmware) {
 			try {
-				const userRing = await this.ringApi.addRing({
-					id,
-					firmware,
-				});
-				this._userRing.set(userRing);
-				this.userRingsStorage.save([userRing]);
-				return userRing;
+				if (this._userRing.get()?.id !== id) {
+					const userRing = await this.ringApi.addRing({
+						id,
+						firmware,
+					});
+					this._userRing.set(userRing);
+					this.userRingsStorage.save([userRing]);
+					return userRing;
+				}
 			} catch (e) {
 				this.deviceService.disconnect();
 				this._userRing.set(null);
