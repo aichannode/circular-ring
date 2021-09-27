@@ -20,6 +20,7 @@ import { OnboardingPersonalInfo2Screen } from "@ui/screens/onboarding/personalIn
 import { OnboardingWearInfoScreen } from "@ui/screens/onboarding/personalInfo/onboardingWearInfoScreen";
 import { RingSetupScreen } from "@ui/screens/onboarding/ringSetup/ringSetupScreen";
 import { RingSetupStartScreen } from "@ui/screens/onboarding/ringSetup/ringSetupStartScreen";
+import { BirthControlEditionScreen } from "@ui/screens/profile/advancedInformation/birthControlEditionScreen";
 import { ProfileAdvancedInformationScreen } from "@ui/screens/profile/advancedInformation/profileAdvancedInformationScreen";
 import { ProfileEditBirthdayScreen } from "@ui/screens/profile/basicInformation/profileEditBirthdayScreen";
 import { ProfileEditNameScreen } from "@ui/screens/profile/basicInformation/profileEditNameScreen";
@@ -116,6 +117,11 @@ const MainHomeNavigator = () => {
 				name={Routes.ProfileAdvancedInformation}
 				component={ProfileAdvancedInformationScreen}
 				options={{ title: format("header.profile_advanced_information") }}
+			/>
+			<MainStack.Screen
+				name={Routes.ProfileBirthControl}
+				component={BirthControlEditionScreen}
+				options={{ title: format("header.birth_control") }}
 			/>
 		</MainStack.Navigator>
 	);

@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { FertilityState, WorkTime } from "@domain/user/advancedInfo";
+import { BirthControl, FertilityState, WorkTime } from "@domain/user/advancedInfo";
 import { useUser, useUserAdvancedInfo } from "@domain/user/hooks/useUser";
 import { Sex } from "@domain/user/user";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -144,59 +144,62 @@ export const ProfileAdvancedInformationScreen = () => {
 							editionBottomSheetRef.current?.present();
 						}}
 					/>
-					{advancedInfo.female.fertilityState !== FertilityState.MENSTRUAL_CYCLE ? null : (
-						<>
-							<InfoListItem
-								name={format("profile_advanced_info.cycle_length.title")}
-								hasDisclosure={true}
-								value={"TODO"}
-								action={() => {
-									// configureEditionBottomSheet(configsRef.current.dietarySupplementsConfig, advancedInfo.dietarySupplements);
-									// editionBottomSheetRef.current?.present();
-								}}
-							/>
-							<InfoListItem
-								name={format("profile_advanced_info.birth_control.title")}
-								hasDisclosure={true}
-								value={format(advanceInfoI18nKey(birthControlKeys, advancedInfo.female.birthControl))}
-								action={() => {
-									navigate(Routes.ProfileBirthControl);
-								}}
-							/>
-							<InfoListItem
-								name={format("profile_advanced_info.pill_pack_format.title")}
-								hasDisclosure={true}
-								value={format(advanceInfoI18nKey(pillPackFormatKeys, advancedInfo.female.pillPackFormat))}
-								action={() => {
-									configureEditionBottomSheet(
-										configsRef.current.pillPackFormatConfig,
-										advancedInfo.female.pillPackFormat
-									);
-									editionBottomSheetRef.current?.present();
-								}}
-							/>
-							<InfoListItem
-								name={format("profile_advanced_info.conceiving.title")}
-								switchOptions={[format("global.yes"), format("global.no")]}
-								switchValue={advancedInfo.female.conceiving ? format("global.yes") : format("global.no")}
-								onSwitchSelect={async (value) => {
-									setLoading(true);
-									setErrorMessage(undefined);
-									const isTrue = value === format("global.yes");
-									try {
-										await userService.updateUserAdvancedInfo({
-											female: { ...advancedInfo.female, conceiving: isTrue },
-										});
-									} catch (error) {
-										setErrorMessage(format("global.default_error"));
-									}
-									setLoading(false);
-								}}
-								loading={isLoading}
-								errorMessage={errorMessage}
-							/>
-						</>
-					)}
+					<InfoListItem
+						name={format("profile_advanced_info.cycle_length.title")}
+						hasDisclosure={true}
+						value={"TODO"}
+						action={() => {
+							// configureEditionBottomSheet(configsRef.current.dietarySupplementsConfig, advancedInfo.dietarySupplements);
+							// editionBottomSheetRef.current?.present();
+						}}
+						disabled={advancedInfo.female.fertilityState === FertilityState.MENOPAUSE}
+					/>
+					<InfoListItem
+						name={format("profile_advanced_info.birth_control.title")}
+						hasDisclosure={true}
+						value={format(advanceInfoI18nKey(birthControlKeys, advancedInfo.female.birthControl))}
+						action={() => {
+							navigate(Routes.ProfileBirthControl);
+						}}
+						disabled={advancedInfo.female.fertilityState !== FertilityState.MENSTRUAL_CYCLE}
+					/>
+					<InfoListItem
+						name={format("profile_advanced_info.pill_pack_format.title")}
+						hasDisclosure={true}
+						value={format(advanceInfoI18nKey(pillPackFormatKeys, advancedInfo.female.pillPackFormat))}
+						action={() => {
+							configureEditionBottomSheet(configsRef.current.pillPackFormatConfig, advancedInfo.female.pillPackFormat);
+							editionBottomSheetRef.current?.present();
+						}}
+						disabled={
+							advancedInfo.female.fertilityState !== FertilityState.MENSTRUAL_CYCLE ||
+							advancedInfo.female.birthControl !== BirthControl.PILLS
+						}
+					/>
+					<InfoListItem
+						name={format("profile_advanced_info.conceiving.title")}
+						switchOptions={[format("global.yes"), format("global.no")]}
+						switchValue={advancedInfo.female.conceiving ? format("global.yes") : format("global.no")}
+						onSwitchSelect={async (value) => {
+							setLoading(true);
+							setErrorMessage(undefined);
+							const isTrue = value === format("global.yes");
+							try {
+								await userService.updateUserAdvancedInfo({
+									female: { ...advancedInfo.female, conceiving: isTrue },
+								});
+							} catch (error) {
+								setErrorMessage(format("global.default_error"));
+							}
+							setLoading(false);
+						}}
+						loading={isLoading}
+						errorMessage={errorMessage}
+						disabled={
+							advancedInfo.female.fertilityState !== FertilityState.MENSTRUAL_CYCLE ||
+							advancedInfo.female.birthControl !== BirthControl.NONE
+						}
+					/>
 				</>
 			)}
 			<CircularBottomSheet snapPoints={[480]} ref={editionBottomSheetRef}>

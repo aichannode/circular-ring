@@ -16,6 +16,7 @@ export const colors = {
 	red: "#ff1d1d",
 	orangeGradientStart: "#f44a59",
 	orangeGradientEnd: "#f97444",
+	disabled: "#bfbfbf",
 };
 
 export const qualityColors: { [key in ScoreQuality]: string } = {

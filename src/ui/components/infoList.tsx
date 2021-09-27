@@ -37,6 +37,7 @@ interface InfoListItemProps<T> {
 	style?: ViewStyle;
 	errorMessage?: string;
 	loading?: boolean;
+	disabled?: boolean;
 }
 
 export function InfoListItem<T>({
@@ -53,18 +54,21 @@ export function InfoListItem<T>({
 	style,
 	errorMessage,
 	loading,
+	disabled = false,
 }: InfoListItemProps<T>) {
 	return (
 		<>
-			<Pressable onPress={() => action?.()}>
+			<Pressable onPress={() => (disabled ? null : action?.())}>
 				<Container style={style}>
-					<Name emphasize={emphasize}>{name}</Name>
+					<Name emphasize={emphasize} disabled={disabled}>
+						{name}
+					</Name>
 					<Grow />
 					{loading ? (
 						<Spinner size={18} />
 					) : (
 						<>
-							{value && (
+							{value && !disabled && (
 								<Value numberOfLines={1} ellipsizeMode={"tail"}>
 									{value}
 								</Value>
@@ -75,6 +79,7 @@ export function InfoListItem<T>({
 									containerBgColor={colors.lightgray}
 									currentOption={switchValue}
 									onSelectOption={onSwitchSelect}
+									disabled={disabled}
 								/>
 							)}
 						</>
@@ -84,7 +89,13 @@ export function InfoListItem<T>({
 							{!!checked && <CheckIcon source={require("@assets/images/checkSmall.png")} tintColor={colors.white} />}
 						</Check>
 					)}
-					{hasDisclosure && <Disclosure source={require("@assets/images/disclosure.png")} />}
+					{hasDisclosure && (
+						<Disclosure
+							source={require("@assets/images/disclosure.png")}
+							disabled={disabled}
+							tintColor={disabled ? colors.disabled : colors.textPlaceholder}
+						/>
+					)}
 				</Container>
 			</Pressable>
 			{errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
@@ -102,10 +113,10 @@ const Container = styled.View`
 	background-color: ${colors.lightgray};
 `;
 
-const Name = styled.Text<{ emphasize: boolean }>`
+const Name = styled.Text<{ emphasize: boolean; disabled: boolean }>`
 	${textStyles.primary};
 	font-size: 14px;
-	color: ${({ emphasize }) => (emphasize ? colors.red : colors.textPrimary)};
+	color: ${({ emphasize, disabled }) => (disabled ? colors.disabled : emphasize ? colors.red : colors.textPrimary)};
 `;
 
 const Value = styled.Text`
@@ -116,8 +127,9 @@ const Value = styled.Text`
 	margin-left: 10px;
 `;
 
-const Disclosure = styled.Image`
+const Disclosure = styled.Image<{ disabled: boolean; tintColor: string }>`
 	margin-left: 13px;
+	tint-color: ${({ tintColor }) => tintColor};
 `;
 
 const ErrorMessage = styled.Text`
