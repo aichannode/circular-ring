@@ -1,4 +1,5 @@
 import { Grow } from "@ui/components/layout";
+import { Spinner } from "@ui/components/spinner";
 import { Switch } from "@ui/components/switch";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
@@ -27,6 +28,8 @@ interface InfoListItemProps<T> {
 	switchValue?: T;
 	onSwitchSelect?: (option: T) => void;
 	style?: ViewStyle;
+	errorMessage?: string;
+	loading?: boolean;
 }
 
 export function InfoListItem<T>({
@@ -39,28 +42,39 @@ export function InfoListItem<T>({
 	switchValue,
 	onSwitchSelect,
 	style,
+	errorMessage,
+	loading,
 }: InfoListItemProps<T>) {
 	return (
-		<Pressable onPress={() => action?.()}>
-			<Container style={style}>
-				<Name emphasize={emphasize}>{name}</Name>
-				<Grow />
-				{value && (
-					<Value numberOfLines={1} ellipsizeMode={"tail"}>
-						{value}
-					</Value>
-				)}
-				{switchOptions && switchValue && onSwitchSelect && (
-					<Switch
-						options={switchOptions}
-						containerBgColor={colors.lightgray}
-						currentOption={switchValue}
-						onSelectOption={onSwitchSelect}
-					/>
-				)}
-				{hasDisclosure && <Disclosure source={require("@assets/images/disclosure.png")} />}
-			</Container>
-		</Pressable>
+		<>
+			<Pressable onPress={() => action?.()}>
+				<Container style={style}>
+					<Name emphasize={emphasize}>{name}</Name>
+					<Grow />
+					{loading ? (
+						<Spinner size={18} />
+					) : (
+						<>
+							{value && (
+								<Value numberOfLines={1} ellipsizeMode={"tail"}>
+									{value}
+								</Value>
+							)}
+							{switchOptions && switchValue && onSwitchSelect && (
+								<Switch
+									options={switchOptions}
+									containerBgColor={colors.lightgray}
+									currentOption={switchValue}
+									onSelectOption={onSwitchSelect}
+								/>
+							)}
+						</>
+					)}
+					{hasDisclosure && <Disclosure source={require("@assets/images/disclosure.png")} />}
+				</Container>
+			</Pressable>
+			{errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+		</>
 	);
 }
 
@@ -90,4 +104,9 @@ const Value = styled.Text`
 
 const Disclosure = styled.Image`
 	margin-left: 13px;
+`;
+
+const ErrorMessage = styled.Text`
+	${textStyles.errorMessage};
+	padding: 0 20px;
 `;

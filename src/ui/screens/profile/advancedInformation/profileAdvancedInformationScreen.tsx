@@ -82,6 +82,8 @@ export const ProfileAdvancedInformationScreen = () => {
 		useState<AdvancedInfoEditionConfig<EditionInfoType>>(workTimeConfig);
 	const [currentOption, setCurrentOption] = useState<EditionInfoType>(WorkTime.DAY);
 	const editionBottomSheetRef = useRef<BottomSheetModal>(null);
+	const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+	const [isLoading, setLoading] = useState(false);
 
 	function configureEditionBottomSheet(config: AdvancedInfoEditionConfig<EditionInfoType>, option: EditionInfoType) {
 		setBottomSheetConfig(config);
@@ -147,9 +149,19 @@ export const ProfileAdvancedInformationScreen = () => {
 				name={format("profile_advanced_info.open_for_napping.title")}
 				switchOptions={[format("global.yes"), format("global.no")]}
 				switchValue={advancedInfo.openForNap ? format("global.yes") : format("global.no")}
-				onSwitchSelect={(value) => {
-					// TODO
+				onSwitchSelect={async (value) => {
+					setLoading(true);
+					setErrorMessage(undefined);
+					const isTrue = value === format("global.yes");
+					try {
+						await userService.updateUserAdvancedInfo({ openForNap: isTrue });
+					} catch (error) {
+						setErrorMessage(format("global.default_error"));
+					}
+					setLoading(false);
 				}}
+				loading={isLoading}
+				errorMessage={errorMessage}
 			/>
 			<CircularBottomSheet snapPoints={[480]} ref={editionBottomSheetRef}>
 				<AdvancedInfoEditionBottomSheet
