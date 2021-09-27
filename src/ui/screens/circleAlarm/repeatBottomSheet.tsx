@@ -1,5 +1,5 @@
 import { Weekdays } from "@domain/ring/ringAlarm";
-import { TertiaryButton } from "@ui/components/buttons";
+import { QuadraryButton } from "@ui/components/buttons";
 import { Divider } from "@ui/components/divider";
 import { PrimaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
@@ -117,9 +117,9 @@ export const RepeatBottomSheet: React.FC<RepeatBottomSheetProps> = ({ weekdays, 
 					{index < array.length - 1 ? <Divider width={350} style={{ alignSelf: "center" }} /> : null}
 				</View>
 			))}
-			<TertiaryButton style={{ alignSelf: "center" }} onPress={() => onClose(triggeredElements)}>
+			<QuadraryButton style={{ alignSelf: "center" }} onPress={() => onClose(triggeredElements)}>
 				{format("alarm.new.save_button")}
-			</TertiaryButton>
+			</QuadraryButton>
 		</Container>
 	);
 };

@@ -1,4 +1,4 @@
-import { TertiaryButton } from "@ui/components/buttons";
+import { QuadraryButton } from "@ui/components/buttons";
 import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { textStyles } from "@ui/styles/textStyles";
@@ -16,9 +16,9 @@ export const WarningBottomSheet: React.FC<WarningBottomSheetProps> = ({ message,
 		<Container>
 			<Title style={{ alignSelf: "center" }}>{format("alarm.new.warning.title")}</Title>
 			<Description style={{ marginLeft: 34 }}>{message}</Description>
-			<TertiaryButton style={{ alignSelf: "center" }} onPress={() => onClose()}>
+			<QuadraryButton style={{ alignSelf: "center" }} onPress={() => onClose()}>
 				{format("alarm.new.warning.button")}
-			</TertiaryButton>
+			</QuadraryButton>
 		</Container>
 	);
 };

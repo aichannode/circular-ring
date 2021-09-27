@@ -1,5 +1,5 @@
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { TertiaryButton } from "@ui/components/buttons";
+import { QuadraryButton } from "@ui/components/buttons";
 import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -25,9 +25,9 @@ export const LabelBottomSheet: React.FC<LabelBottomSheetProps> = ({ label, onClo
 				blurOnSubmit={true}
 				onSubmitEditing={() => onClose(newLabel)}
 			/>
-			<TertiaryButton style={{ alignSelf: "center" }} onPress={() => onClose(newLabel)}>
+			<QuadraryButton style={{ alignSelf: "center" }} onPress={() => onClose(newLabel)}>
 				{format("alarm.new.save_button")}
-			</TertiaryButton>
+			</QuadraryButton>
 		</Container>
 	);
 };

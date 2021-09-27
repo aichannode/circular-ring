@@ -12,7 +12,7 @@ interface AlarmWeekOverviewProps {
 }
 export const AlarmWeekOverview: React.FC<AlarmWeekOverviewProps> = ({ style }) => {
 	const alarms = useAlarms();
-	const alarmsByDay = FAKE_useAlarmsByDay(alarms);
+	const alarmsByDay = useAlarmsByDay(alarms);
 
 	return (
 		<ResponsiveCenterView maxWidth={300} align="stretch" style={style}>
@@ -46,7 +46,7 @@ const AlarmIndicator = styled.View`
 	border-radius: 2px;
 `;
 
-function FAKE_useAlarmsByDay(alarms: RingAlarm[] | null) {
+function useAlarmsByDay(alarms: RingAlarm[] | null) {
 	const alarmsByDay: { [key in Weekdays]: RingAlarm[] } = Object.values(Weekdays).reduce(
 		(acc, day) => ({
 			...acc,

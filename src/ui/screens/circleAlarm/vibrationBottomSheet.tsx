@@ -1,7 +1,7 @@
 import { useServices } from "@core/services";
 import { Melody, melodyOrderedList } from "@domain/ring/ringAlarm";
 import Slider from "@react-native-community/slider";
-import { TertiaryButton } from "@ui/components/buttons";
+import { QuadraryButton } from "@ui/components/buttons";
 import { SelectionList } from "@ui/components/selectionList";
 import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
@@ -22,8 +22,8 @@ export const VibrationBottomSheet: React.FC<VibrationBottomSheetProps> = ({ vibr
 
 	return (
 		<Container>
-			<Title style={{ alignSelf: "center" }}>{format("alarm.new.edit_vibration.title")}</Title>
-			<SubTitle style={{ marginLeft: 34 }}>{format("alarm.new.edit_vibration.intensity")}</SubTitle>
+			<Title>{format("alarm.new.edit_vibration.title")}</Title>
+			<SubTitle>{format("alarm.new.edit_vibration.intensity")}</SubTitle>
 			<Slider
 				style={{ width: 200, height: 40, alignSelf: "center" }}
 				value={vibration}
@@ -34,7 +34,7 @@ export const VibrationBottomSheet: React.FC<VibrationBottomSheetProps> = ({ vibr
 				thumbTintColor={colors.blue}
 				maximumTrackTintColor={colors.gray}
 			/>
-			<SubTitle style={{ marginLeft: 34 }}>{format("alarm.new.edit_vibration.type.title")}</SubTitle>
+			<SubTitle>{format("alarm.new.edit_vibration.type.title")}</SubTitle>
 			<SelectionList
 				list={melodyOrderedList.slice(4)}
 				defaultIndex={melodyOrderedList.slice(4).indexOf(melody)}
@@ -43,9 +43,9 @@ export const VibrationBottomSheet: React.FC<VibrationBottomSheetProps> = ({ vibr
 					circleAlarmService.playMelody(data as Melody, vibration);
 				}}
 			/>
-			<TertiaryButton style={{ alignSelf: "center" }} onPress={() => onClose(vibration, newMelody)}>
+			<QuadraryButton style={{ alignSelf: "center" }} onPress={() => onClose(vibration, newMelody)}>
 				{format("alarm.new.save_button")}
-			</TertiaryButton>
+			</QuadraryButton>
 		</Container>
 	);
 };
