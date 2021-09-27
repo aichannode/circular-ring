@@ -46,7 +46,7 @@ export const CycleLengthBottomSheet = ({ onSaved }: CycleLengthBottomSheetProps)
 				<ErrorMessage>{errorMessage}</ErrorMessage>
 			</TopContainer>
 			<LabeledSlider
-				label="Days"
+				label={format("profile_advanced_info.cycle_length.label")}
 				style={{ width: 260, height: 6, alignSelf: "center" }}
 				value={cycleLength}
 				onValueChange={(value) => setCycleLength(Math.floor(value))}
