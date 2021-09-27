@@ -1,4 +1,5 @@
 import { Grow } from "@ui/components/layout";
+import { Spinner } from "@ui/components/spinner";
 import { Switch } from "@ui/components/switch";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
@@ -20,13 +21,23 @@ const InfoListHeaderText = styled.Text`
 interface InfoListItemProps<T> {
 	name: string;
 	value?: string;
+
 	emphasize?: boolean;
+
 	action?: () => void;
 	hasDisclosure?: boolean;
+
 	switchOptions?: T[];
 	switchValue?: T;
 	onSwitchSelect?: (option: T) => void;
+
+	checkable?: boolean;
+	checked?: boolean;
+
 	style?: ViewStyle;
+	errorMessage?: string;
+	loading?: boolean;
+	disabled?: boolean;
 }
 
 export function InfoListItem<T>({
@@ -38,25 +49,57 @@ export function InfoListItem<T>({
 	switchOptions,
 	switchValue,
 	onSwitchSelect,
+	checkable,
+	checked,
 	style,
+	errorMessage,
+	loading,
+	disabled = false,
 }: InfoListItemProps<T>) {
 	return (
-		<Pressable onPress={() => action?.()}>
-			<Container style={style}>
-				<Name emphasize={emphasize}>{name}</Name>
-				<Grow />
-				{value && <Value>{value}</Value>}
-				{switchOptions && switchValue && onSwitchSelect && (
-					<Switch
-						options={switchOptions}
-						containerBgColor={colors.lightgray}
-						currentOption={switchValue}
-						onSelectOption={onSwitchSelect}
-					/>
-				)}
-				{hasDisclosure && <Disclosure source={require("@assets/images/disclosure.png")} />}
-			</Container>
-		</Pressable>
+		<>
+			<Pressable onPress={() => (disabled ? null : action?.())}>
+				<Container style={style}>
+					<Name emphasize={emphasize} disabled={disabled}>
+						{name}
+					</Name>
+					<Grow />
+					{loading ? (
+						<Spinner size={18} />
+					) : (
+						<>
+							{value && !disabled && (
+								<Value numberOfLines={1} ellipsizeMode={"tail"}>
+									{value}
+								</Value>
+							)}
+							{switchOptions && switchValue && onSwitchSelect && (
+								<Switch
+									options={switchOptions}
+									containerBgColor={colors.lightgray}
+									currentOption={switchValue}
+									onSelectOption={onSwitchSelect}
+									disabled={disabled}
+								/>
+							)}
+						</>
+					)}
+					{!!checkable && (
+						<Check selected={!!checked}>
+							{!!checked && <CheckIcon source={require("@assets/images/checkSmall.png")} tintColor={colors.white} />}
+						</Check>
+					)}
+					{hasDisclosure && (
+						<Disclosure
+							source={require("@assets/images/disclosure.png")}
+							disabled={disabled}
+							tintColor={disabled ? colors.disabled : colors.textPlaceholder}
+						/>
+					)}
+				</Container>
+			</Pressable>
+			{errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+		</>
 	);
 }
 
@@ -70,18 +113,44 @@ const Container = styled.View`
 	background-color: ${colors.lightgray};
 `;
 
-const Name = styled.Text<{ emphasize: boolean }>`
+const Name = styled.Text<{ emphasize: boolean; disabled: boolean }>`
 	${textStyles.primary};
 	font-size: 14px;
-	color: ${({ emphasize }) => (emphasize ? colors.red : colors.textPrimary)};
+	color: ${({ emphasize, disabled }) => (disabled ? colors.disabled : emphasize ? colors.red : colors.textPrimary)};
 `;
 
 const Value = styled.Text`
 	font-size: 14px;
 	font-weight: 500;
 	color: ${colors.textPlaceholder};
+	flex-shrink: 1;
+	margin-left: 10px;
 `;
 
-const Disclosure = styled.Image`
+const Disclosure = styled.Image<{ disabled: boolean; tintColor: string }>`
 	margin-left: 13px;
+	tint-color: ${({ tintColor }) => tintColor};
+`;
+
+const ErrorMessage = styled.Text`
+	${textStyles.errorMessage};
+	padding: 0 20px;
+`;
+
+const Check = styled.View<{ selected: boolean }>`
+	width: 24px;
+	height: 24px;
+	justify-content: center;
+	align-items: center;
+	background-color: ${({ selected }) => (selected ? colors.primary : "transparent")};
+	border-radius: 12px;
+	border-width: ${({ selected }) => (selected ? 0 : 1)}px;
+	border-color: ${colors.gray};
+`;
+
+const CheckIcon = styled.Image<{ tintColor: string }>`
+	height: 14px;
+	flex-shrink: 1;
+	tint-color: ${(props) => props.tintColor};
+	resize-mode: contain;
 `;

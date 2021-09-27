@@ -2,6 +2,18 @@ import { getLogger } from "@core/logger/logger";
 import { round2Digits, toServerDate } from "@core/utils";
 import { AuthService } from "@domain/auth/authService";
 import { HeightUnit, WeightUnit } from "@domain/units";
+import {
+	AdvancedInfo,
+	ChronoType,
+	DietarySupplements,
+	FemaleInfo,
+	HrZone,
+	PhysicalDisability,
+	SleepDisorder,
+	SleeperType,
+	SleepingPills,
+	WorkTime,
+} from "@domain/user/advancedInfo";
 import { TutorialInfo } from "@domain/user/tutorialInfo";
 import { Sex, User } from "@domain/user/user";
 import { UserApi, UserPutDto } from "@domain/user/userApi";
@@ -17,11 +29,13 @@ export class UserService {
 	private _authenticatedUserEmail = observable<string | null>(null);
 	private _user = observable<User | null>(null);
 	private _userSettings = observable<UserSettings | null>(null);
+	private _userAdvancedInfo = observable<AdvancedInfo | null>(null);
 
 	readonly justRegisteredUserEmail = this._justRegisteredUserEmail.readOnly();
 	readonly authenticatedUserEmail = this._authenticatedUserEmail.readOnly();
 	readonly user = this._user.readOnly();
 	readonly userSettings = this._userSettings.readOnly();
+	readonly userAdvancedInfo = this._userAdvancedInfo.readOnly();
 
 	constructor(
 		private readonly authService: AuthService,
@@ -32,6 +46,7 @@ export class UserService {
 	async init() {
 		this._user.set(await this.userStorage.loadUser());
 		this._userSettings.set(await this.userStorage.loadUserSettings());
+		this._userAdvancedInfo.set(await this.userStorage.loadUserAdvancedInfo());
 		const authenticatedEmail = this.authService.userEmail.get();
 		if (!!authenticatedEmail) {
 			try {
@@ -80,6 +95,7 @@ export class UserService {
 		this._authenticatedUserEmail.set(null);
 		await this.userStorage.removeUser();
 		await this.userStorage.removeUserSettings();
+		await this.userStorage.removeUserAdvancedInfo();
 	}
 
 	/** Sign Up **/
@@ -132,6 +148,15 @@ export class UserService {
 			const userSettings = await this.userApi.getUserSettings();
 			this._userSettings.set(userSettings);
 			await this.userStorage.saveUserSettings(userSettings);
+		} catch (error) {
+			this.logger.warn("Get user settings failed: " + JSON.stringify(error));
+		}
+
+		// get User AdvancedInfo
+		try {
+			const userAdvancedInfo = await this.userApi.getAdvancedInfo();
+			this._userAdvancedInfo.set(userAdvancedInfo);
+			await this.userStorage.saveUserAdvancedInfo(userAdvancedInfo);
 		} catch (error) {
 			this.logger.warn("Get user settings failed: " + JSON.stringify(error));
 		}
@@ -204,8 +229,42 @@ export class UserService {
 			this._user.set(user);
 			await this.userStorage.saveUser(user);
 		} catch (error) {
-			this.logger.warn("Complete tutorial failed: " + JSON.stringify(error));
+			this.logger.warn("Update user failed: " + JSON.stringify(error));
 			throw error;
+		}
+	}
+
+	async updateUserAdvancedInfo(info: {
+		bmi?: number;
+		workTime?: WorkTime;
+		chronoType?: ChronoType;
+		physicalDisabilities?: PhysicalDisability;
+		sleepDisorder?: SleepDisorder;
+		sleepingPills?: SleepingPills;
+		dietarySupplements?: DietarySupplements;
+		sleeperType?: SleeperType;
+		openForNap?: boolean;
+		maxHr?: number;
+		hrZone?: HrZone;
+		vo2Max?: number;
+		rhr?: number;
+		female?: FemaleInfo;
+		stride?: number;
+		cycleLength?: number;
+	}) {
+		const currentInfo = this._userAdvancedInfo.get();
+		if (currentInfo) {
+			try {
+				const userAdvancedInfo = await this.userApi.updateAdvancedInfo({
+					...currentInfo,
+					...info,
+				});
+				this._userAdvancedInfo.set(userAdvancedInfo);
+				await this.userStorage.saveUserAdvancedInfo(userAdvancedInfo);
+			} catch (error) {
+				this.logger.warn("Update advanced-info failed: " + JSON.stringify(error));
+				throw error;
+			}
 		}
 	}
 }

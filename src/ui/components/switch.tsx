@@ -8,9 +8,16 @@ interface SwitchProps<T> {
 	currentOption: T;
 	onSelectOption: (option: T) => void;
 	containerBgColor: string;
+	disabled?: boolean;
 }
 
-export function Switch<T>({ options, currentOption, onSelectOption, containerBgColor }: SwitchProps<T>) {
+export function Switch<T>({
+	options,
+	currentOption,
+	onSelectOption,
+	containerBgColor,
+	disabled = false,
+}: SwitchProps<T>) {
 	const leftSelected = currentOption === options[0];
 	const rightSelected = currentOption === options[1];
 
@@ -18,16 +25,24 @@ export function Switch<T>({ options, currentOption, onSelectOption, containerBgC
 		<Container
 			start={{ x: 0, y: 1 }}
 			end={{ x: 1, y: 0.5 }}
-			colors={[colors.orangeGradientStart, colors.orangeGradientEnd, colors.orangeGradientStart]}
+			colors={
+				disabled
+					? [colors.disabled, colors.disabled]
+					: [colors.orangeGradientStart, colors.orangeGradientEnd, colors.orangeGradientStart]
+			}
 		>
-			<LeftOption onPress={() => onSelectOption(options[0])}>
+			<LeftOption onPress={() => (disabled ? null : onSelectOption(options[0]))}>
 				<UnselectedLeftBackground visible={!leftSelected} bgColor={containerBgColor}>
-					<OptionText selected={leftSelected}>{options[0]}</OptionText>
+					<OptionText selected={leftSelected} disabled={disabled} bgColor={containerBgColor}>
+						{options[0]}
+					</OptionText>
 				</UnselectedLeftBackground>
 			</LeftOption>
-			<RightOption onPress={() => onSelectOption(options[1])}>
+			<RightOption onPress={() => (disabled ? null : onSelectOption(options[1]))}>
 				<UnselectedRightBackground visible={!rightSelected} bgColor={containerBgColor}>
-					<OptionText selected={rightSelected}>{options[1]}</OptionText>
+					<OptionText selected={rightSelected} disabled={disabled} bgColor={containerBgColor}>
+						{options[1]}
+					</OptionText>
 				</UnselectedRightBackground>
 			</RightOption>
 		</Container>
@@ -72,8 +87,9 @@ const UnselectedRightBackground = styled.View<{ visible: boolean; bgColor: strin
 	background-color: ${({ visible, bgColor }) => (visible ? bgColor : "transparent")};
 `;
 
-const OptionText = styled.Text<{ selected: boolean }>`
+const OptionText = styled.Text<{ selected: boolean; disabled: boolean; bgColor: string }>`
 	font-size: 12px;
-	color: ${({ selected }) => (selected ? colors.lightgray : colors.primary)};
+	color: ${({ selected, disabled, bgColor }) =>
+		disabled ? (selected ? bgColor : colors.disabled) : selected ? colors.lightgray : colors.primary};
 	margin-bottom: 2px;
 `;

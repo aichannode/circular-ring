@@ -22,9 +22,11 @@ import { OnboardingPersonalInfo2Screen } from "@ui/screens/onboarding/personalIn
 import { OnboardingWearInfoScreen } from "@ui/screens/onboarding/personalInfo/onboardingWearInfoScreen";
 import { RingSetupScreen } from "@ui/screens/onboarding/ringSetup/ringSetupScreen";
 import { RingSetupStartScreen } from "@ui/screens/onboarding/ringSetup/ringSetupStartScreen";
-import { ProfileEditBirthdayScreen } from "@ui/screens/profile/profileEditBirthdayScreen";
-import { ProfileEditNameScreen } from "@ui/screens/profile/profileEditNameScreen";
-import { ProfileInformationScreen } from "@ui/screens/profile/profileInformationScreen";
+import { BirthControlEditionScreen } from "@ui/screens/profile/advancedInformation/birthControlEditionScreen";
+import { ProfileAdvancedInformationScreen } from "@ui/screens/profile/advancedInformation/profileAdvancedInformationScreen";
+import { ProfileEditBirthdayScreen } from "@ui/screens/profile/basicInformation/profileEditBirthdayScreen";
+import { ProfileEditNameScreen } from "@ui/screens/profile/basicInformation/profileEditNameScreen";
+import { ProfileInformationScreen } from "@ui/screens/profile/basicInformation/profileInformationScreen";
 import { ProfileScreen } from "@ui/screens/profile/profileScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
@@ -112,23 +114,27 @@ const MainHomeNavigator = () => {
 			<MainStack.Screen
 				name={Routes.ProfileInformation}
 				component={ProfileInformationScreen}
-				options={{
-					title: format("header.profile_information"),
-				}}
+				options={{ title: format("header.profile_information") }}
 			/>
 			<MainStack.Screen
 				name={Routes.ProfileEditName}
 				component={ProfileEditNameScreen}
-				options={{
-					headerShown: false,
-				}}
+				options={{ headerShown: false }}
 			/>
 			<MainStack.Screen
 				name={Routes.ProfileEditBirthday}
 				component={ProfileEditBirthdayScreen}
-				options={{
-					headerShown: false,
-				}}
+				options={{ headerShown: false }}
+			/>
+			<MainStack.Screen
+				name={Routes.ProfileAdvancedInformation}
+				component={ProfileAdvancedInformationScreen}
+				options={{ title: format("header.profile_advanced_information") }}
+			/>
+			<MainStack.Screen
+				name={Routes.ProfileBirthControl}
+				component={BirthControlEditionScreen}
+				options={{ title: format("header.birth_control") }}
 			/>
 		</MainStack.Navigator>
 	);

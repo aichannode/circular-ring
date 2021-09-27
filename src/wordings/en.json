@@ -275,6 +275,9 @@
   "profile_advanced_info.fertility_state.menopause": "Menopause",
   "profile_advanced_info.fertility_state.perimenopause": "Perimenopause",
   "profile_advanced_info.cycle_length.title": "Cycle Length",
+  "profile_advanced_info.cycle_length.bottom_sheet.title": "Select your Cycle Length",
+  "profile_advanced_info.cycle_length.days": "{count} days",
+  "profile_advanced_info.cycle_length.label": "Days",
   "profile_advanced_info.birth_control.title": "Birth Control Type",
   "profile_advanced_info.birth_control.selection_invitation": "What is your birth control type?\nSelect from below:",
   "profile_advanced_info.birth_control.none": "None",
@@ -299,6 +302,8 @@
   "profile_advanced_info.heart_rate.comparative_title": "Comparative Info",
   "profile_advanced_info.heart_rate.rhr": "😴 RHR",
   "profile_advanced_info.heart_rate.vo2_max": "😮‍💨 VO2 Max",
+  "profile_advanced_info.comparative_info.title": "Comparative Info",
+  "profile_advanced_info.comparative_info.description": "In this section, you can see comparative information. The values you can read are healthy and average values for your physiology. This information takes into account your gender, age and condition. You can compare to these values to evaluate where you position yourself. \n\n⚠️ However, please note that relying on population-level averages has its limits. That’s because metrics vary significantly between different people. What’s normal and healthy for one individual may not be for another.",
   "profile_advanced_info.bmi.title": "Body Mass Index",
   "profile_advanced_info.chrono_type.title": "Chronotype",
   "profile_advanced_info.chrono_type.morning": "Morning type",
@@ -306,5 +311,8 @@
   "profile_advanced_info.chrono_type.night": "Night type",
   "profile_advanced_info.chrono_type.morning_erratic": "Morning erratic type",
   "profile_advanced_info.chrono_type.solar_erratic": "Solar erratic type",
-  "profile_advanced_info.chrono_type.night_erratic": "Night erratic type"
+  "profile_advanced_info.chrono_type.night_erratic": "Night erratic type",
+  "profile_advanced_info.stride.title": "Stride",
+  "profile_advanced_info.stride.bottom_sheet.title": "Select Stride",
+  "profile_advanced_info.stride.reset": "Reset to default stride length"
 }

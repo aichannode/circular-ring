@@ -19,12 +19,12 @@ export const ProfileEditNameScreen = () => {
 
 	const [firstName, setFirstName] = useState(user?.firstName ?? "");
 	const [lastName, setLastName] = useState(user?.lastName ?? "");
-	const [errorMessage, setErrorMessage] = useState("");
 
 	const firstNameRef = useRef<TextFieldRef | null>(null);
 	const lastNameRef = useRef<TextFieldRef | null>(null);
 
 	const [isLoading, setLoading] = useState(false);
+	const [errorMessage, setErrorMessage] = useState("");
 
 	useEffect(() => {
 		firstNameRef.current?.focus();
