@@ -1,6 +1,5 @@
 import { ScoreQuality } from "@domain/circleActivity/circleActivityData";
-import { Weekdays } from "@domain/ring/ringAlarm";
-import { alarmDataEOF } from "@domain/ring/ringData";
+import { Melody, Weekdays } from "@domain/ring/ringAlarm";
 import { Intensity } from "@domain/ring/ringLiveData";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
@@ -142,6 +141,9 @@ export function useI18n() {
 				case 0:
 					return intl.formatMessage({ id: "alarm.new.snooze.off" });
 			}
+		},
+		formatMelody: (melody: Melody) => {
+			return intl.formatMessage({ id: "alarm.new.edit_vibration.type." + melody });
 		},
 	};
 }

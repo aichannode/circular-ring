@@ -19,7 +19,7 @@ import { Image, Platform, Pressable } from "react-native";
 import styled from "styled-components/native";
 
 export const NewAlarmScreen: React.FC = () => {
-	const { format, formatDay, formatSnooze, formatSmart } = useI18n();
+	const { format, formatDay, formatSnooze, formatSmart, formatMelody } = useI18n();
 	const navigation = useNavigation();
 	const { circleAlarmService } = useServices();
 	const [pickerVisible, setPickerVisible] = useState(false);
@@ -89,8 +89,8 @@ export const NewAlarmScreen: React.FC = () => {
 							value={alarmTime}
 							mode={"time"}
 							is24Hour={true}
-							onChange={(event, selectedTime) => {
-								event.type !== "dismissed" && selectedTime ? submitTime(selectedTime) : setPickerVisible(false);
+							onChange={(event: Event, selectedTime: Date | undefined) => {
+								selectedTime ? submitTime(selectedTime) : setPickerVisible(false);
 							}}
 						/>
 					)}
@@ -101,7 +101,7 @@ export const NewAlarmScreen: React.FC = () => {
 					mode={"time"}
 					is24Hour={true}
 					display="spinner"
-					onChange={(event, selectedTime) => setAlarmTime(selectedTime || alarmTime)}
+					onChange={(event: Event, selectedTime: Date | undefined) => setAlarmTime(selectedTime || alarmTime)}
 				/>
 			)}
 
@@ -110,7 +110,7 @@ export const NewAlarmScreen: React.FC = () => {
 			<OtherButtonContainer onPress={() => vibrationBottomSheet.current?.present()}>
 				<SecondaryTitle>{format("alarm.new.edit_vibration.title")}</SecondaryTitle>
 				<PreviewContainer>
-					<Tips>{format("alarm.new.edit_vibration.type." + melody)}</Tips>
+					<Tips>{formatMelody(melody)}</Tips>
 					<Arrow source={require("@assets/images/topArrowGrey.png")} />
 				</PreviewContainer>
 			</OtherButtonContainer>

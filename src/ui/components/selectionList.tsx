@@ -1,3 +1,4 @@
+import { Melody } from "@domain/ring/ringAlarm";
 import { Divider } from "@ui/components/divider";
 import { PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
@@ -14,7 +15,7 @@ interface SelectionListProps {
 }
 
 export const SelectionList: React.FC<SelectionListProps> = ({ list, defaultIndex, triggeredData }) => {
-	const { format } = useI18n();
+	const { formatMelody } = useI18n();
 	const triggeredList = list.map((value, index) => {
 		return index === defaultIndex;
 	});
@@ -30,7 +31,7 @@ export const SelectionList: React.FC<SelectionListProps> = ({ list, defaultIndex
 							triggeredData(element);
 						}}
 					>
-						<PrimaryText>{format("alarm.new.edit_vibration.type." + element)}</PrimaryText>
+						<PrimaryText>{formatMelody(element as Melody)}</PrimaryText>
 						<View style={triggeredElement[index] ? styles.circlePress : styles.circleNormal}>
 							<Image
 								style={{ height: 14, width: 14, tintColor: colors.white }}
