@@ -71,6 +71,7 @@ export const RingSetupScreen: React.FC = () => {
 										<PrimaryButton
 											onPress={async () => {
 												bluetoothService.enable();
+												deviceService.checkSettings();
 												if (setupState === DeviceSetupState.LOCATION_DISABLED) {
 													deviceService.requestLocation();
 												}
