@@ -3,7 +3,7 @@ import { PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import React, { useState } from "react";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import styled from "styled-components/native";
 
 interface SelectionListProps {
@@ -13,12 +13,7 @@ interface SelectionListProps {
 	multipleSelection?: boolean;
 }
 
-export const SelectionList: React.FC<SelectionListProps> = ({
-	list,
-	defaultIndex,
-	triggeredData,
-	multipleSelection = false,
-}) => {
+export const SelectionList: React.FC<SelectionListProps> = ({ list, defaultIndex, triggeredData }) => {
 	const { format } = useI18n();
 	const triggeredList = list.map((value, index) => {
 		return index === defaultIndex;
@@ -29,21 +24,19 @@ export const SelectionList: React.FC<SelectionListProps> = ({
 		<>
 			{list.map((element, index, array) => (
 				<View key={index}>
-					<Container>
+					<Container
+						onPress={() => {
+							setTriggeredElement(triggeredElement.map((value, i) => (i === index ? true : false)));
+							triggeredData(element);
+						}}
+					>
 						<PrimaryText>{format("alarm.new.edit_vibration.type." + element)}</PrimaryText>
-						<TouchableOpacity
-							activeOpacity={0.85}
-							style={triggeredElement[index] ? styles.circlePress : styles.circleNormal}
-							onPress={() => {
-								setTriggeredElement(triggeredElement.map((value, i) => (i === index ? true : false)));
-								triggeredData(element);
-							}}
-						>
+						<View style={triggeredElement[index] ? styles.circlePress : styles.circleNormal}>
 							<Image
 								style={{ height: 14, width: 14, tintColor: colors.white }}
 								source={require("@assets/images/check.png")}
 							/>
-						</TouchableOpacity>
+						</View>
 					</Container>
 					{index < array.length - 1 ? <Divider width={350} style={{ alignSelf: "center" }} /> : null}
 				</View>
@@ -73,7 +66,7 @@ const styles = StyleSheet.create({
 	},
 });
 
-const Container = styled.View`
+const Container = styled.Pressable`
 	flex-direction: row;
 	margin-horizontal: 40px;
 	margin-vertical: 16px;

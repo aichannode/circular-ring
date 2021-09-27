@@ -6,7 +6,7 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useMemo, useState } from "react";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import styled from "styled-components/native";
 
 interface RepeatBottomSheetProps {
@@ -15,7 +15,6 @@ interface RepeatBottomSheetProps {
 }
 export const RepeatBottomSheet: React.FC<RepeatBottomSheetProps> = ({ weekdays, onClose }) => {
 	const { format } = useI18n();
-	const [weekdaysList, setweekdaysList] = useState(weekdays);
 
 	const weekdaysLinkList = useMemo(
 		() => [
@@ -55,7 +54,7 @@ export const RepeatBottomSheet: React.FC<RepeatBottomSheetProps> = ({ weekdays, 
 		[]
 	);
 
-	const [triggeredElements, setTriggeredElements] = useState(weekdaysLinkList[0].value);
+	const [triggeredElements, setTriggeredElements] = useState(weekdays ?? weekdaysLinkList[0].value);
 
 	const pushWithoutDuplicate = (elements: Weekdays[]): Weekdays[] => {
 		triggeredElements.push(...elements);
@@ -66,59 +65,59 @@ export const RepeatBottomSheet: React.FC<RepeatBottomSheetProps> = ({ weekdays, 
 		<Container>
 			<Title style={{ alignSelf: "center" }}>{format("alarm.new.repeat.title")}</Title>
 			<Description>{format("alarm.new.repeat.description")}</Description>
-			<ListContainer>
+			<ListContainer
+				onPress={() =>
+					setTriggeredElements(
+						weekdaysLinkList[0].value.every((value) => triggeredElements.includes(value))
+							? triggeredElements.filter((value) => value === (Weekdays.SATURDAY || Weekdays.SUNDAY))
+							: pushWithoutDuplicate(weekdaysLinkList[0].value)
+					)
+				}
+			>
 				<PrimaryText>{format("alarm.new.repeat.weekdays")}</PrimaryText>
-				<TouchableOpacity
-					activeOpacity={0.85}
+				<View
 					style={
 						weekdaysLinkList[0].value.every((value) => triggeredElements.includes(value))
 							? styles.circlePress
 							: styles.circleNormal
-					}
-					onPress={() =>
-						setTriggeredElements(
-							weekdaysLinkList[0].value.every((value) => triggeredElements.includes(value))
-								? triggeredElements.filter((value) => value === (Weekdays.SATURDAY || Weekdays.SUNDAY))
-								: pushWithoutDuplicate(weekdaysLinkList[0].value)
-						)
 					}
 				>
 					<Image
 						style={{ height: 14, width: 14, tintColor: colors.white }}
 						source={require("@assets/images/check.png")}
 					/>
-				</TouchableOpacity>
+				</View>
 			</ListContainer>
 			<Divider width={350} style={{ alignSelf: "center" }} />
 			{weekdaysLinkList.slice(1).map((element, index, array) => (
 				<View key={element.label}>
-					<ListContainer>
+					<ListContainer
+						onPress={() =>
+							setTriggeredElements(
+								triggeredElements.includes(weekdaysLinkList[index + 1].value[0])
+									? triggeredElements.filter((value) => value !== weekdaysLinkList[index + 1].value[0])
+									: pushWithoutDuplicate([weekdaysLinkList[index + 1].value[0]])
+							)
+						}
+					>
 						<PrimaryText>{element.label}</PrimaryText>
-						<TouchableOpacity
-							activeOpacity={0.85}
+						<View
 							style={
 								triggeredElements.includes(weekdaysLinkList[index + 1].value[0])
 									? styles.circlePress
 									: styles.circleNormal
-							}
-							onPress={() =>
-								setTriggeredElements(
-									triggeredElements.includes(weekdaysLinkList[index + 1].value[0])
-										? triggeredElements.filter((value) => value !== weekdaysLinkList[index + 1].value[0])
-										: pushWithoutDuplicate([weekdaysLinkList[index + 1].value[0]])
-								)
 							}
 						>
 							<Image
 								style={{ height: 14, width: 14, tintColor: colors.white }}
 								source={require("@assets/images/check.png")}
 							/>
-						</TouchableOpacity>
+						</View>
 					</ListContainer>
 					{index < array.length - 1 ? <Divider width={350} style={{ alignSelf: "center" }} /> : null}
 				</View>
 			))}
-			<TertiaryButton style={{ alignSelf: "center" }} onPress={() => onClose(weekdaysList)}>
+			<TertiaryButton style={{ alignSelf: "center" }} onPress={() => onClose(triggeredElements)}>
 				{format("alarm.new.save_button")}
 			</TertiaryButton>
 		</Container>
@@ -151,7 +150,7 @@ const Container = styled.View`
 	padding-vertical: 20px;
 `;
 
-const ListContainer = styled.View`
+const ListContainer = styled.Pressable`
 	flex-direction: row;
 	margin-horizontal: 40px;
 	margin-vertical: 16px;

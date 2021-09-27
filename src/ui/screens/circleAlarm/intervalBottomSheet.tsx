@@ -5,7 +5,7 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useMemo, useState } from "react";
-import { Image, Platform, StyleSheet, Switch, TouchableOpacity, View } from "react-native";
+import { Image, Platform, StyleSheet, Switch, View } from "react-native";
 import styled from "styled-components/native";
 
 interface IntervalBottomSheetProps {
@@ -85,18 +85,14 @@ export const IntervalBottomSheet: React.FC<IntervalBottomSheetProps> = ({
 			) : null}
 			{snoozeLinkList.map((element, index, array) => (
 				<View key={element.label}>
-					<ListContainer>
+					<ListContainer onPress={() => setInterval(array[index].value)}>
 						<PrimaryText>{element.label}</PrimaryText>
-						<TouchableOpacity
-							activeOpacity={0.85}
-							style={interval === element.value ? styles.circlePress : styles.circleNormal}
-							onPress={() => setInterval(array[index].value)}
-						>
+						<View style={interval === element.value ? styles.circlePress : styles.circleNormal}>
 							<Image
 								style={{ height: 14, width: 14, tintColor: colors.white }}
 								source={require("@assets/images/check.png")}
 							/>
-						</TouchableOpacity>
+						</View>
 					</ListContainer>
 					{index < array.length - 1 ? <Divider width={350} style={{ alignSelf: "center" }} /> : null}
 				</View>
@@ -134,7 +130,7 @@ const Container = styled.View`
 	padding-vertical: 20px;
 `;
 
-const ListContainer = styled.View`
+const ListContainer = styled.Pressable`
 	flex-direction: row;
 	margin-horizontal: 40px;
 	margin-vertical: 16px;
