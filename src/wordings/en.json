@@ -309,5 +309,7 @@
   "profile_advanced_info.chrono_type.morning_erratic": "Morning erratic type",
   "profile_advanced_info.chrono_type.solar_erratic": "Solar erratic type",
   "profile_advanced_info.chrono_type.night_erratic": "Night erratic type",
-  "profile_advanced_info.stride.title": "Stride"
+  "profile_advanced_info.stride.title": "Stride",
+  "profile_advanced_info.stride.bottom_sheet.title": "Select Stride",
+  "profile_advanced_info.stride.reset": "Reset to default stride length"
 }

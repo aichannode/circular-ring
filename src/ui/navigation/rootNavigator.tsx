@@ -1,4 +1,4 @@
-import { useAccountLinked } from "@domain/device/hooks";
+import { useAccountLinked, useDeviceStored } from "@domain/device/hooks";
 import { useUser, useAuthenticatedUserEmail } from "@domain/user/hooks/useUser";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
@@ -132,8 +132,31 @@ export const RootNavigator: React.FC = () => {
 
 	const accountLinkedToDevice = useAccountLinked();
 	const hasUser = !!useUser();
+	const deviceStored = useDeviceStored();
 
 	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
+
+	if (!isAuthenticated) {
+		return (
+			<SetupStack.Navigator screenOptions={{ headerShown: false }}>
+				<SetupStack.Screen name={Routes.LoginOrSignUp} component={LoginOrSignUpScreen} />
+				<SetupStack.Screen name={Routes.Login} component={LoginScreen} />
+				<SetupStack.Screen name={Routes.ForgotPassword} component={ForgotPasswordScreen} />
+				<SetupStack.Screen name={Routes.ResetToken} component={ResetTokenScreen} />
+				<SetupStack.Screen name={Routes.SignUpEmail} component={SignUpEmailScreen} />
+				<SetupStack.Screen name={Routes.SignUpConfirmationCode} component={SignUpConfirmationCodeScreen} />
+				<SetupStack.Screen name={Routes.TermsAndConditions} component={TermsAndConditionsScreen} />
+			</SetupStack.Navigator>
+		);
+	}
+	if (!deviceStored || !accountLinkedToDevice) {
+		return (
+			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
+				<OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />
+				<OnboardingStack.Screen name={Routes.Pairing} component={RingSetupScreen} />
+			</OnboardingStack.Navigator>
+		);
+	}
 
 	return isOnboardingDone ? (
 		<HomeDrawer.Navigator
@@ -142,28 +165,11 @@ export const RootNavigator: React.FC = () => {
 		>
 			<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} />
 		</HomeDrawer.Navigator>
-	) : isAuthenticated ? (
-		accountLinkedToDevice ? (
-			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
-				<OnboardingStack.Screen name={Routes.OnboardingWearInfo} component={OnboardingWearInfoScreen} />
-				<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo1} component={OnboardingPersonalInfo1Screen} />
-				<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo2} component={OnboardingPersonalInfo2Screen} />
-			</OnboardingStack.Navigator>
-		) : (
-			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
-				<OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />
-				<OnboardingStack.Screen name={Routes.Pairing} component={RingSetupScreen} />
-			</OnboardingStack.Navigator>
-		)
 	) : (
-		<SetupStack.Navigator screenOptions={{ headerShown: false }}>
-			<SetupStack.Screen name={Routes.LoginOrSignUp} component={LoginOrSignUpScreen} />
-			<SetupStack.Screen name={Routes.Login} component={LoginScreen} />
-			<SetupStack.Screen name={Routes.ForgotPassword} component={ForgotPasswordScreen} />
-			<SetupStack.Screen name={Routes.ResetToken} component={ResetTokenScreen} />
-			<SetupStack.Screen name={Routes.SignUpEmail} component={SignUpEmailScreen} />
-			<SetupStack.Screen name={Routes.SignUpConfirmationCode} component={SignUpConfirmationCodeScreen} />
-			<SetupStack.Screen name={Routes.TermsAndConditions} component={TermsAndConditionsScreen} />
-		</SetupStack.Navigator>
+		<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
+			<OnboardingStack.Screen name={Routes.OnboardingWearInfo} component={OnboardingWearInfoScreen} />
+			<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo1} component={OnboardingPersonalInfo1Screen} />
+			<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo2} component={OnboardingPersonalInfo2Screen} />
+		</OnboardingStack.Navigator>
 	);
 };

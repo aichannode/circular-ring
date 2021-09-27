@@ -7,7 +7,7 @@ import { ResponsiveCenterView } from "@ui/components/layout";
 import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components/native";
 
 interface WeightBottomSheetProps {
@@ -21,13 +21,9 @@ export const WeightBottomSheet = ({ onSaved }: WeightBottomSheetProps) => {
 	const userSettings = useUserSettings();
 	const userWeightUnit = userSettings?.weightFormat || WeightUnit.kg;
 
-	const [weight, setWeight] = useState(UNDEFINED_WEIGHT); // weight always in kg
+	const [weight, setWeight] = useState(user?.weight ?? UNDEFINED_WEIGHT); // weight always in kg
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isLoading, setLoading] = useState(false);
-
-	useEffect(() => {
-		setWeight(user?.weight ?? UNDEFINED_WEIGHT);
-	}, []);
 
 	const saveWeight = useCallback(async () => {
 		setLoading(true);

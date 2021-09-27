@@ -95,19 +95,13 @@ export const OnboardingPersonalInfo2Screen = () => {
 					<BlockTitle>{format("onboarding.personal_info.sex_title")}</BlockTitle>
 				</TitleAndOptions>
 				<SexButtons>
-					<SelectableButton
-						title={format("onboarding.personal_info.sex_male")}
-						selected={sex === Sex.Male}
-						onSelected={() => setSex(Sex.Male)}
-						bgColor={colors.white}
-					/>
+					<SelectableButton selected={sex === Sex.Male} onSelected={() => setSex(Sex.Male)} bgColor={colors.white}>
+						{format("onboarding.personal_info.sex_male")}
+					</SelectableButton>
 					<View style={{ width: 15 }} />
-					<SelectableButton
-						title={format("onboarding.personal_info.sex_female")}
-						selected={sex === Sex.Female}
-						onSelected={() => setSex(Sex.Female)}
-						bgColor={colors.white}
-					/>
+					<SelectableButton selected={sex === Sex.Female} onSelected={() => setSex(Sex.Female)} bgColor={colors.white}>
+						{format("onboarding.personal_info.sex_female")}
+					</SelectableButton>
 				</SexButtons>
 			</InfoBlock>
 			<InfoBlock>
@@ -124,7 +118,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 						placeholderTextColor={colors.textTertiary}
 						value={bornDate}
 						onChangeText={setBornDate}
-						style={{ padding: 0, width: "100%" }}
+						style={{ padding: 0, width: "100%", color: colors.textPrimary }}
 					/>
 				</BornDateContainer>
 			</InfoBlock>
@@ -140,7 +134,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 				</TitleAndOptions>
 				<HorizontalCarousel
 					data={weightUnit === WeightUnit.kg ? weightValuesKg : weightValuesLbs}
-					renderItem={(item, index) => <PickerValue itemWidth={50}>{item}</PickerValue>}
+					renderItem={(item) => <PickerValue itemWidth={50}>{item}</PickerValue>}
 					itemWidth={50}
 					item={weightUnit === WeightUnit.kg ? Math.round(weight) : Math.round(kgToLbs(weight))}
 					onItemChange={(value) => setWeight(weightUnit === WeightUnit.kg ? value : lbsToKg(value))}

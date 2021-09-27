@@ -2,11 +2,13 @@ import { getLogger } from "@core/logger/logger";
 import { Channel } from "@domain/device/channels";
 import { DeviceService } from "@domain/device/deviceService";
 import { observable } from "micro-observables";
+import { UserRing } from "./ring";
 import { RingApi } from "./ringApi";
 import { deserializeBattery, RingBattery } from "./ringBattery";
 import { ringDataEOF } from "./ringData";
 import { RingDataStorage } from "./ringDataStorage";
 import { deserializeLiveData, RingLiveData } from "./ringLiveData";
+import { UserRingsStorage } from "./userRingsStorage";
 
 const syncFinishedTimeout = 3000;
 
@@ -20,21 +22,27 @@ export enum SyncState {
 export class RingService {
 	private logger = getLogger("💍 RingService");
 
+	private _userRing = observable<UserRing | null>(null);
 	private _ringBattery = observable<RingBattery | null>(null);
 	private _syncState = observable<SyncState>(SyncState.NONE);
 	private _ringLiveData = observable<{ listening: boolean; data?: RingLiveData | null }>({ listening: false });
 
+	userRing = this._userRing.readOnly();
 	ringBattery = this._ringBattery.readOnly();
 	syncState = this._syncState.readOnly();
 	ringLiveData = this._ringLiveData.readOnly();
 
 	constructor(
 		private readonly deviceService: DeviceService,
+		private readonly userRingsStorage: UserRingsStorage,
 		private readonly ringDataStorage: RingDataStorage,
 		private readonly ringApi: RingApi
 	) {}
 
 	async init() {
+		const loadedRings = await this.userRingsStorage.load();
+		this._userRing.set(loadedRings?.[0] ?? null);
+		this.getRings();
 		this.listenBattery();
 		this.syncData();
 	}
@@ -55,6 +63,12 @@ export class RingService {
 			}
 		});
 	}
+
+	async getRings() {
+		const rings = await this.ringApi.getRings();
+		this._userRing.set(rings[0] ?? null);
+	}
+
 	stopLiveData() {
 		this._ringLiveData.update((c) => ({ ...c, listening: false }));
 		return this.deviceService.write("FBL0");
@@ -72,10 +86,24 @@ export class RingService {
 		const id = await this.deviceService.getResponse(Channel.MAC);
 		const firmware = await this.deviceService.getResponse(Channel.FIRMWARE_VERSION);
 		if (id && firmware) {
-			return this.ringApi.addRing({
-				id,
-				firmware,
-			});
+			try {
+				const userRing = await this.ringApi.addRing({
+					id,
+					firmware,
+				});
+				this._userRing.set(userRing);
+				this.userRingsStorage.save([userRing]);
+				return userRing;
+			} catch (e) {
+				this.deviceService.disconnect();
+				this._userRing.set(null);
+				this.userRingsStorage.save([]);
+				throw e;
+			}
+		} else {
+			this.deviceService.disconnect();
+			this._userRing.set(null);
+			this.userRingsStorage.save([]);
 		}
 	}
 

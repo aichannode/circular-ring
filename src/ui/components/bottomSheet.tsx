@@ -26,6 +26,7 @@ export const CircularBottomSheet = React.forwardRef<BottomSheetModal, BottomShee
 				snapPoints={snapPoints}
 				backdropComponent={renderBackdrop}
 				style={{ paddingBottom: safeArea.bottom }}
+				handleComponent={null}
 			>
 				{children}
 			</BottomSheetModal>
