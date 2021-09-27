@@ -1,22 +1,20 @@
 import { useServices } from "@core/services";
-import {
-	DietarySupplements,
-	PhysicalDisability,
-	SleepDisorder,
-	SleepingPills,
-	WorkTime,
-} from "@domain/user/advancedInfo";
+import { WorkTime } from "@domain/user/advancedInfo";
 import { useUserAdvancedInfo } from "@domain/user/hooks/useUser";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { CircularBottomSheet } from "@ui/components/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
+import { AdvancedInfoBottomSheetConfig } from "@ui/screens/profile/advancedInformation/advancedInfoBottomSheetConfig";
 import {
 	AdvancedInfoEditionBottomSheet,
 	AdvancedInfoEditionConfig,
 	EditionInfoType,
 } from "@ui/screens/profile/advancedInformation/advancedInfoEditionBottomSheet";
+import { BMICard } from "@ui/screens/profile/advancedInformation/bmiCard";
+import { ChronotypeCard } from "@ui/screens/profile/advancedInformation/chronotypeCard";
+import { HeartRateCard } from "@ui/screens/profile/advancedInformation/heartRateCard";
 import {
 	advanceInfoI18nKey,
 	dietarySupplementsKeys,
@@ -26,60 +24,18 @@ import {
 	workTimeKeys,
 } from "@ui/screens/profile/advancedInformation/profileAdvancedInfoI18n";
 import React, { useRef, useState } from "react";
+import { View } from "react-native";
+import styled from "styled-components/native";
 
 export const ProfileAdvancedInformationScreen = () => {
 	const { format } = useI18n();
 	const advancedInfo = useUserAdvancedInfo();
 	const { userService } = useServices();
 
-	const workTimeConfig: AdvancedInfoEditionConfig<EditionInfoType> = {
-		title: format("profile_advanced_info.work_time.title"),
-		description: undefined,
-		options: [WorkTime.DAY, WorkTime.NIGHT],
-		translationSet: workTimeKeys,
-		saveProcess: async (option: EditionInfoType) => {
-			await userService.updateUserAdvancedInfo({ workTime: option as WorkTime });
-		},
-	};
-	const physicalDisabilitiesConfig: AdvancedInfoEditionConfig<EditionInfoType> = {
-		title: format("profile_advanced_info.physical_disability.title"),
-		description: undefined,
-		options: [PhysicalDisability.NONE, PhysicalDisability.TOTAL, PhysicalDisability.MODERATE],
-		translationSet: physicalDisabilityKeys,
-		saveProcess: async (option: EditionInfoType) => {
-			await userService.updateUserAdvancedInfo({ physicalDisabilities: option as PhysicalDisability });
-		},
-	};
-	const sleepDisorderConfig: AdvancedInfoEditionConfig<EditionInfoType> = {
-		title: format("profile_advanced_info.sleep_disorder.title"),
-		description: undefined,
-		options: [SleepDisorder.NONE, SleepDisorder.INSOMNIA, SleepDisorder.HYPERSOMNIA, SleepDisorder.OTHER],
-		translationSet: sleepDisorderKeys,
-		saveProcess: async (option: EditionInfoType) => {
-			await userService.updateUserAdvancedInfo({ sleepDisorder: option as SleepDisorder });
-		},
-	};
-	const sleepingPillsConfig: AdvancedInfoEditionConfig<EditionInfoType> = {
-		title: format("profile_advanced_info.sleeping_pills.title"),
-		description: format("profile_advanced_info.sleeping_pills.description"),
-		options: [SleepingPills.NONE, SleepingPills.DAILY, SleepingPills.WEEKLY, SleepingPills.MONTHLY],
-		translationSet: sleepingPillsKeys,
-		saveProcess: async (option: EditionInfoType) => {
-			await userService.updateUserAdvancedInfo({ sleepingPills: option as SleepingPills });
-		},
-	};
-	const dietarySupplementsConfig: AdvancedInfoEditionConfig<EditionInfoType> = {
-		title: format("profile_advanced_info.dietary_supplements.title"),
-		description: format("profile_advanced_info.dietary_supplements.description"),
-		options: [DietarySupplements.NONE, DietarySupplements.DAILY, DietarySupplements.WEEKLY, DietarySupplements.MONTHLY],
-		translationSet: dietarySupplementsKeys,
-		saveProcess: async (option: EditionInfoType) => {
-			await userService.updateUserAdvancedInfo({ dietarySupplements: option as DietarySupplements });
-		},
-	};
-
-	const [bottomSheetConfig, setBottomSheetConfig] =
-		useState<AdvancedInfoEditionConfig<EditionInfoType>>(workTimeConfig);
+	const configsRef = useRef(new AdvancedInfoBottomSheetConfig(userService, format));
+	const [bottomSheetConfig, setBottomSheetConfig] = useState<AdvancedInfoEditionConfig<EditionInfoType>>(
+		configsRef.current.workTimeConfig
+	);
 	const [currentOption, setCurrentOption] = useState<EditionInfoType>(WorkTime.DAY);
 	const editionBottomSheetRef = useRef<BottomSheetModal>(null);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
@@ -93,13 +49,19 @@ export const ProfileAdvancedInformationScreen = () => {
 	return !advancedInfo ? null : (
 		<ScrollScreen contentContainerStyle={{ paddingVertical: 0 }}>
 			<InfoListHeader>{format("profile_advanced_info.about_you")}</InfoListHeader>
+			<HeartRateCard />
+			<BMIChronoContainer>
+				<BMICard />
+				<View style={{ width: 20 }} />
+				<ChronotypeCard />
+			</BMIChronoContainer>
 			<InfoListHeader>{format("profile_advanced_info.lifestyle_info")}</InfoListHeader>
 			<InfoListItem
 				name={format("profile_advanced_info.work_time.title")}
 				hasDisclosure={true}
 				value={format(advanceInfoI18nKey(workTimeKeys, advancedInfo.workTime))}
 				action={() => {
-					configureEditionBottomSheet(workTimeConfig, advancedInfo?.workTime ?? WorkTime.DAY);
+					configureEditionBottomSheet(configsRef.current.workTimeConfig, advancedInfo?.workTime ?? WorkTime.DAY);
 					editionBottomSheetRef.current?.present();
 				}}
 			/>
@@ -108,7 +70,7 @@ export const ProfileAdvancedInformationScreen = () => {
 				hasDisclosure={true}
 				value={format(advanceInfoI18nKey(physicalDisabilityKeys, advancedInfo.physicalDisabilities))}
 				action={() => {
-					configureEditionBottomSheet(physicalDisabilitiesConfig, advancedInfo.physicalDisabilities);
+					configureEditionBottomSheet(configsRef.current.physicalDisabilitiesConfig, advancedInfo.physicalDisabilities);
 					editionBottomSheetRef.current?.present();
 				}}
 			/>
@@ -123,7 +85,7 @@ export const ProfileAdvancedInformationScreen = () => {
 				hasDisclosure={true}
 				value={format(advanceInfoI18nKey(sleepDisorderKeys, advancedInfo.sleepDisorder))}
 				action={() => {
-					configureEditionBottomSheet(sleepDisorderConfig, advancedInfo.sleepDisorder);
+					configureEditionBottomSheet(configsRef.current.sleepDisorderConfig, advancedInfo.sleepDisorder);
 					editionBottomSheetRef.current?.present();
 				}}
 			/>
@@ -132,7 +94,7 @@ export const ProfileAdvancedInformationScreen = () => {
 				hasDisclosure={true}
 				value={format(advanceInfoI18nKey(sleepingPillsKeys, advancedInfo.sleepingPills))}
 				action={() => {
-					configureEditionBottomSheet(sleepingPillsConfig, advancedInfo.sleepingPills);
+					configureEditionBottomSheet(configsRef.current.sleepingPillsConfig, advancedInfo.sleepingPills);
 					editionBottomSheetRef.current?.present();
 				}}
 			/>
@@ -141,7 +103,7 @@ export const ProfileAdvancedInformationScreen = () => {
 				hasDisclosure={true}
 				value={format(advanceInfoI18nKey(dietarySupplementsKeys, advancedInfo.dietarySupplements))}
 				action={() => {
-					configureEditionBottomSheet(dietarySupplementsConfig, advancedInfo.dietarySupplements);
+					configureEditionBottomSheet(configsRef.current.dietarySupplementsConfig, advancedInfo.dietarySupplements);
 					editionBottomSheetRef.current?.present();
 				}}
 			/>
@@ -173,3 +135,8 @@ export const ProfileAdvancedInformationScreen = () => {
 		</ScrollScreen>
 	);
 };
+
+const BMIChronoContainer = styled.View`
+	flex-direction: row;
+	margin: 20px 20px 0;
+`;
