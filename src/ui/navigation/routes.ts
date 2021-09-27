@@ -1,3 +1,4 @@
+import { RingAlarm } from "@domain/ring/ringAlarm";
 import { useNavigation } from "@react-navigation/core";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -23,7 +24,7 @@ export enum Routes {
 	MyRing = "MyRing",
 	Activity = "Activity",
 	Alarm = "Alarm",
-	NewAlarm = "NewAlarm",
+	EditAlarm = "EditAlarm",
 	Profile = "Profile",
 	ProfileInformation = "ProfileInformation",
 	ProfileEditName = "ProfileEditName",
@@ -52,7 +53,7 @@ export type AppRoutesParams = {
 	[Routes.MyRing]: undefined;
 	[Routes.Activity]: undefined;
 	[Routes.Alarm]: undefined;
-	[Routes.NewAlarm]: undefined;
+	[Routes.EditAlarm]: { initialAlarm: InitialAlarmData } | undefined;
 	[Routes.Profile]: undefined;
 	[Routes.ProfileInformation]: undefined;
 	[Routes.ProfileEditName]: undefined;
@@ -65,3 +66,7 @@ export type AppRoutesParams = {
 export const useRoutesNavigation = () => useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
 
 export const useAppRoute = <Route extends Routes>() => useRoute<RouteProp<AppRoutesParams, Route>>();
+
+export interface InitialAlarmData extends Omit<RingAlarm, "time"> {
+	time: string;
+}

@@ -66,9 +66,10 @@ export class CircleAlarmService {
 		return this.deviceService.write(serializeMelody(melody, power));
 	}
 
-	// async removeAlarm(alarm: RingAlarm) {
-
-	// }
+	async deleteAlarm(alarm: RingAlarm) {
+		await this.deviceService.write(serializeAlarmData({ ...alarm, isExisting: false }));
+		this._ringAlarms.update((alarms) => alarms.filter((el) => el.id !== alarm.id));
+	}
 
 	async updateAlarm(alarm: RingAlarm) {
 		await this.deviceService.write(serializeAlarmData({ ...alarm, isExisting: true }));

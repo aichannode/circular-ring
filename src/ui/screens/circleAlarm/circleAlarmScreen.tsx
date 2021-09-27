@@ -29,13 +29,20 @@ export const CircleAlarmScreen: React.FC = () => {
 				<ScreenSection title={format("alarm.score.programmed")} />
 				<AlarmContainer>
 					{alarms?.map((value) => (
-						<AlarmCard key={value.id} data={value} />
+						<Pressable
+							key={value.id}
+							onPress={() =>
+								navigation.navigate(Routes.EditAlarm, { initialAlarm: { ...value, time: value.time.toString() } })
+							}
+						>
+							<AlarmCard data={value} />
+						</Pressable>
 					))}
 					<AddAlarmButton
 						onPress={() => {
 							alarms.length >= MAX_ALARMS
 								? warningBottomSheet.current?.present()
-								: navigation.navigate(Routes.NewAlarm);
+								: navigation.navigate(Routes.EditAlarm);
 						}}
 					>
 						<AddImage source={require("@assets/images/addButton.png")} />

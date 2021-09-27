@@ -212,6 +212,7 @@
   "alarm.new.warning.button": "OK",
   "alarm.new.other.title": "Other",
   "alarm.new.time.edit": "Edit alarm time",
+  "alarm.delete": "Delete Alarm",
   "alarm.wake_up_score": "Wake up score",
   "alarm.week_overview": "Week overview",
   "alarm.weekdays": "Weekdays",

@@ -1,5 +1,5 @@
 import { useAccountLinked, useDeviceStored } from "@domain/device/hooks";
-import { useUser, useAuthenticatedUserEmail } from "@domain/user/hooks/useUser";
+import { useAuthenticatedUserEmail, useUser } from "@domain/user/hooks/useUser";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -9,7 +9,7 @@ import { DrawerContent } from "@ui/navigation/drawer/drawerContent";
 import { Routes } from "@ui/navigation/routes";
 import { CircleActivityScreen } from "@ui/screens/circleActivity/circleActivityScreen";
 import { CircleAlarmScreen } from "@ui/screens/circleAlarm/circleAlarmScreen";
-import { NewAlarmScreen } from "@ui/screens/circleAlarm/newAlarmScreen";
+import { EditAlarmScreen } from "@ui/screens/circleAlarm/editAlarmScreen";
 import { CircleLiveScreen } from "@ui/screens/circleLive/circleLiveScreen";
 import { HomeScreen } from "@ui/screens/home/homeScreen";
 import { ForgotPasswordScreen } from "@ui/screens/login/forgotPasswordScreen";
@@ -97,8 +97,8 @@ const MainHomeNavigator = () => {
 				options={{ title: format("header.alarm"), headerRight: undefined }}
 			/>
 			<MainStack.Screen
-				name={Routes.NewAlarm}
-				component={NewAlarmScreen}
+				name={Routes.EditAlarm}
+				component={EditAlarmScreen}
 				options={{ title: format("header.alarm"), headerRight: undefined }}
 			/>
 

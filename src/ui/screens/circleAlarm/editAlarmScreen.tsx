@@ -2,13 +2,14 @@ import { useServices } from "@core/services";
 import { Melody, Weekdays } from "@domain/ring/ringAlarm";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useNavigation } from "@react-navigation/native";
 import { CircularBottomScrollSheet, CircularBottomSheet } from "@ui/components/bottomSheet";
-import { SimpleTextButton } from "@ui/components/buttons";
+import { QuadraryButton, SimpleTextButton } from "@ui/components/buttons";
 import { Hour } from "@ui/components/hour";
 import { CheckAlarmButton } from "@ui/components/navigation/checkButton";
+import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SecondaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
+import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
 import { IntervalBottomSheet } from "@ui/screens/circleAlarm/intervalBottomSheet";
 import { LabelBottomSheet } from "@ui/screens/circleAlarm/labelBottomSheet";
 import { RepeatBottomSheet } from "@ui/screens/circleAlarm/repeatBottomSheet";
@@ -18,25 +19,30 @@ import React, { useLayoutEffect, useRef, useState } from "react";
 import { Image, Platform, Pressable } from "react-native";
 import styled from "styled-components/native";
 
-export const NewAlarmScreen: React.FC = () => {
+export const EditAlarmScreen: React.FC = () => {
+	const navigation = useRoutesNavigation();
+	const route = useAppRoute<Routes.EditAlarm>();
+	const initialAlarmParam = route.params?.initialAlarm;
+	const initialAlarm = initialAlarmParam && { ...initialAlarmParam, time: new Date(initialAlarmParam.time) };
 	const { format, formatDay, formatSnooze, formatSmart, formatMelody } = useI18n();
-	const navigation = useNavigation();
 	const { circleAlarmService } = useServices();
 	const [pickerVisible, setPickerVisible] = useState(false);
-	const [alarmTime, setAlarmTime] = useState(new Date());
-	const [vibrationPower, setVibrationPower] = useState(50);
-	const [melody, setMelody] = useState<Melody>(Melody.ALERT);
-	const [weekdays, setWeekdays] = useState<Weekdays[]>([
-		Weekdays.MONDAY,
-		Weekdays.TUESDAY,
-		Weekdays.WEDNESDAY,
-		Weekdays.THURSDAY,
-		Weekdays.FRIDAY,
-	]);
-	const [label, setLabel] = useState("Alarm");
-	const [snooze, setSnooze] = useState(0);
-	const [smart, setSmart] = useState(0);
-	const [isSmart, setIsSmart] = useState(false);
+	const [alarmTime, setAlarmTime] = useState(initialAlarm?.time ?? new Date());
+	const [vibrationPower, setVibrationPower] = useState(initialAlarm?.vibrationPower ?? 50);
+	const [melody, setMelody] = useState<Melody>(initialAlarm?.melody ?? Melody.ALERT);
+	const [weekdays, setWeekdays] = useState<Weekdays[]>(
+		initialAlarm?.weekdays ?? [
+			Weekdays.MONDAY,
+			Weekdays.TUESDAY,
+			Weekdays.WEDNESDAY,
+			Weekdays.THURSDAY,
+			Weekdays.FRIDAY,
+		]
+	);
+	const [label, setLabel] = useState(initialAlarm?.label ?? "Alarm");
+	const [snooze, setSnooze] = useState(initialAlarm?.snooze ?? 0);
+	const [smart, setSmart] = useState(initialAlarm?.smart ?? 0);
+	const [isSmart, setIsSmart] = useState(initialAlarm?.isSmart ?? false);
 	const vibrationBottomSheet = useRef<BottomSheetModal>(null);
 	const repeatBottomSheet = useRef<BottomSheetModal>(null);
 	const labelBottomSheet = useRef<BottomSheetModal>(null);
@@ -52,8 +58,8 @@ export const NewAlarmScreen: React.FC = () => {
 		navigation.setOptions({
 			headerRight: () => (
 				<CheckAlarmButton
-					onPress={() =>
-						circleAlarmService.createAlarm({
+					onPress={() => {
+						const newAlarm = {
 							snooze,
 							smart,
 							isSmart,
@@ -63,8 +69,13 @@ export const NewAlarmScreen: React.FC = () => {
 							vibrationRepetition: 1,
 							melody,
 							label,
-						})
-					}
+						};
+						if (initialAlarm) {
+							circleAlarmService.updateAlarm({ ...initialAlarm, ...newAlarm });
+						} else {
+							circleAlarmService.createAlarm(newAlarm);
+						}
+					}}
 				/>
 			),
 		});
@@ -196,17 +207,27 @@ export const NewAlarmScreen: React.FC = () => {
 					}}
 				/>
 			</CircularBottomScrollSheet>
+			{!!initialAlarm && (
+				<QuadraryButton
+					style={{ alignSelf: "center", width: 180, marginTop: 40 }}
+					onPress={() => {
+						circleAlarmService.deleteAlarm(initialAlarm);
+						navigation.navigate(Routes.Alarm);
+					}}
+				>
+					{format("alarm.delete")}
+				</QuadraryButton>
+			)}
 		</Container>
 	);
 };
 
-const Container = styled.View`
-	flex: 1;
+const Container = styled(ScrollScreen)`
+	padding-vertical: 50px;
 `;
 
 const HourContainer = styled.View`
-	margin-top: 100px;
-	margin-bottom: 85px;
+	margin-bottom: 50px;
 	justify-content: center;
 	align-items: center;
 `;

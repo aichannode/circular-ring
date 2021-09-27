@@ -2,6 +2,7 @@ import { useServices } from "@core/services";
 import { RingAlarm } from "@domain/ring/ringAlarm";
 import { Divider } from "@ui/components/divider";
 import { Hour } from "@ui/components/hour";
+import { Grow } from "@ui/components/layout";
 import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -42,23 +43,22 @@ export const AlarmCard: React.FC<AlarmCardProps> = ({ data, style }) => {
 				<TitleText>{data.label.length > 10 ? data.label.substring(0, 10) + "..." : data.label}</TitleText>
 				<DayTips>{formatDay(data.weekdays)}</DayTips>
 			</LabelContainer>
-			<SwitchContainer>
-				<SwitchButton
-					style={{ transform: Platform.OS === "android" ? [{ scale: 1.5 }] : undefined }}
-					ios_backgroundColor={colors.gray}
-					trackColor={{ false: colors.gray, true: colors.blue }}
-					thumbColor={colors.white}
-					onValueChange={() => updateAlarm(isEnabled)}
-					value={isEnabled}
-				/>
-			</SwitchContainer>
+			<Grow />
+			<SwitchButton
+				style={{ transform: Platform.OS === "android" ? [{ scale: 1.5 }] : undefined }}
+				ios_backgroundColor={colors.gray}
+				trackColor={{ false: colors.gray, true: colors.blue }}
+				thumbColor={colors.white}
+				onValueChange={() => updateAlarm(isEnabled)}
+				value={isEnabled}
+			/>
 		</Card>
 	);
 };
 
 const Card = styled.View`
 	${whiteCardStyle};
-	padding: 0px
+	padding: 0px;
 	flex-direction: row;
 	border-radius: 5px;
 	margin-bottom: 15px;
@@ -87,12 +87,6 @@ const VerticalSeparator = styled(Divider)`
 	background-color: ${colors.gray};
 	height: 67px;
 	width: 1px;
-`;
-
-const SwitchContainer = styled.View`
-	flex-grow: 1;
-	justify-content: center;
-	align-items: center;
 `;
 
 const SwitchButton = styled(Switch)`
