@@ -19,7 +19,7 @@ import { Image, Platform, Pressable } from "react-native";
 import styled from "styled-components/native";
 
 export const NewAlarmScreen: React.FC = () => {
-	const { format } = useI18n();
+	const { format, formatDay } = useI18n();
 	const navigation = useNavigation();
 	const { circleAlarmService } = useServices();
 	const [pickerVisible, setPickerVisible] = useState(false);
@@ -117,7 +117,7 @@ export const NewAlarmScreen: React.FC = () => {
 			<OtherButtonContainer onPress={() => repeatBottomSheet.current?.present()}>
 				<SecondaryTitle>{format("alarm.new.repeat.title")}</SecondaryTitle>
 				<PreviewContainer>
-					<Tips>{format("alarm.new.repeat.friday")}</Tips>
+					<Tips>{formatDay(weekdays)}</Tips>
 					<Arrow source={require("@assets/images/topArrowGrey.png")} />
 				</PreviewContainer>
 			</OtherButtonContainer>

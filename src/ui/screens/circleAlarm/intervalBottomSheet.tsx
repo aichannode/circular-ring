@@ -145,6 +145,7 @@ const Description = styled.Text`
 	${textStyles.primary};
 	align-self: center;
 	justify-content: center;
+	margin-top: 30px;
 	margin-bottom: 60px;
 	padding: 0 44px;
 	text-align: center;

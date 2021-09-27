@@ -1,4 +1,5 @@
 import { ScoreQuality } from "@domain/circleActivity/circleActivityData";
+import { Weekdays } from "@domain/ring/ringAlarm";
 import { Intensity } from "@domain/ring/ringLiveData";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
@@ -42,9 +43,6 @@ export function useI18n() {
 				return `${minuteCount} min`;
 			}
 		},
-		formatLittleDay: (day: string) => {
-			return day.substring(0, Math.min(day.length, 3));
-		},
 		formatScoreQuality: (scoreQuality: ScoreQuality) => {
 			switch (scoreQuality) {
 				case ScoreQuality.POOR:
@@ -65,6 +63,50 @@ export function useI18n() {
 					return intl.formatMessage({ id: "intensity.high" });
 				case Intensity.NONE:
 					return intl.formatMessage({ id: "intensity.none" });
+			}
+		},
+		formatDay: (days: Weekdays[]) => {
+			const weekdays = [Weekdays.MONDAY, Weekdays.TUESDAY, Weekdays.WEDNESDAY, Weekdays.THURSDAY, Weekdays.FRIDAY];
+			const everydays = [
+				Weekdays.MONDAY,
+				Weekdays.TUESDAY,
+				Weekdays.WEDNESDAY,
+				Weekdays.THURSDAY,
+				Weekdays.FRIDAY,
+				Weekdays.SATURDAY,
+				Weekdays.SUNDAY,
+			];
+			if (everydays.every((day) => days.includes(day))) {
+				return intl.formatMessage({ id: "alarm.everydays" });
+			} else if (weekdays.every((day) => days.includes(day))) {
+				return intl.formatMessage({ id: "alarm.weekdays" });
+			} else {
+				return days
+					.map((day) => {
+						switch (day) {
+							case Weekdays.MONDAY:
+								return intl.formatMessage({ id: "alarm.new.repeat.monday" }).substring(0, 3);
+
+							case Weekdays.TUESDAY:
+								return intl.formatMessage({ id: "alarm.new.repeat.tuesday" }).substring(0, 3);
+
+							case Weekdays.WEDNESDAY:
+								return intl.formatMessage({ id: "alarm.new.repeat.wednesday" }).substring(0, 3);
+
+							case Weekdays.THURSDAY:
+								return intl.formatMessage({ id: "alarm.new.repeat.thursday" }).substring(0, 3);
+
+							case Weekdays.FRIDAY:
+								return intl.formatMessage({ id: "alarm.new.repeat.friday" }).substring(0, 3);
+
+							case Weekdays.SATURDAY:
+								return intl.formatMessage({ id: "alarm.new.repeat.saturday" }).substring(0, 3);
+
+							case Weekdays.SUNDAY:
+								return intl.formatMessage({ id: "alarm.new.repeat.sunday" }).substring(0, 3);
+						}
+					})
+					.join(", ");
 			}
 		},
 	};

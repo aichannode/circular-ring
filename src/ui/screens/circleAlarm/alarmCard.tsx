@@ -2,7 +2,8 @@ import { useServices } from "@core/services";
 import { RingAlarm } from "@domain/ring/ringAlarm";
 import { Divider } from "@ui/components/divider";
 import { Hour } from "@ui/components/hour";
-import { SecondaryText, TitleText } from "@ui/components/text";
+import { TitleText } from "@ui/components/text";
+import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { alarmTagColors } from "@ui/utils/alarmTagColorsUtils";
@@ -17,6 +18,7 @@ interface AlarmCardProps {
 
 export const AlarmCard: React.FC<AlarmCardProps> = ({ data, style }) => {
 	const { circleAlarmService } = useServices();
+	const { formatDay } = useI18n();
 	const { id, isActivated } = data;
 	const [isEnabled, setIsEnabled] = useState(isActivated);
 
@@ -38,7 +40,7 @@ export const AlarmCard: React.FC<AlarmCardProps> = ({ data, style }) => {
 			<VerticalSeparator />
 			<LabelContainer>
 				<TitleText>{data.label.length > 10 ? data.label.substring(0, 10) + "..." : data.label}</TitleText>
-				<SecondaryText>{data.weekdays[0]}</SecondaryText>
+				<DayTips>{formatDay(data.weekdays)}</DayTips>
 			</LabelContainer>
 			<SwitchContainer>
 				<SwitchButton
@@ -95,4 +97,9 @@ const SwitchContainer = styled.View`
 const SwitchButton = styled(Switch)`
 	margin-right: 10px;
 	border-color: ${colors.blue};
+`;
+
+const DayTips = styled.Text`
+	font-size: 14px;
+	color: ${colors.textPrimary};
 `;
