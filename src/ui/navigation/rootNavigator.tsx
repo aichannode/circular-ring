@@ -143,9 +143,9 @@ const MainHomeNavigator = () => {
 export const RootNavigator: React.FC = () => {
 	const isAuthenticated = !!useAuthenticatedUserEmail();
 
-	const accountLinkedToDevice = true || useAccountLinked();
+	const accountLinkedToDevice = useAccountLinked();
 	const hasUser = !!useUser();
-	const deviceStored = true || useDeviceStored();
+	const deviceStored = useDeviceStored();
 
 	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
 
