@@ -1,6 +1,8 @@
 import { useServices } from "@core/services";
 import { DeviceSetupState } from "@domain/device/deviceService";
 import { useScannedDevices, useSetupState } from "@domain/device/hooks";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { CircularBottomSheet } from "@ui/components/bottomSheet";
 import { PrimaryButton } from "@ui/components/buttons";
 import { Divider } from "@ui/components/divider";
 import { Grow, ResponsiveCenterView, Stack } from "@ui/components/layout";
@@ -11,13 +13,16 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
+import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
 
 export const RingSetupScreen: React.FC = () => {
 	const { format } = useI18n();
 	const { bluetoothService, deviceService, ringService } = useServices();
+
+	const pairingFailedBottomSheet = useRef<BottomSheetModal>(null);
 
 	const setupState = useSetupState();
 	const devices = useScannedDevices();
@@ -83,6 +88,7 @@ export const RingSetupScreen: React.FC = () => {
 						);
 					case DeviceSetupState.SCANNING:
 					case DeviceSetupState.CONNECTING:
+					case DeviceSetupState.FINISHED:
 						return (
 							<>
 								<ResponsiveCenterView>
@@ -110,7 +116,13 @@ export const RingSetupScreen: React.FC = () => {
 												onPress={async () => {
 													deviceService.stopScan();
 													await deviceService.connect(device);
-													await ringService.registerCurrentRing();
+													try {
+														await ringService.registerCurrentRing();
+													} catch (e) {
+														if ((e as { statusCode: number }).statusCode === 409) {
+															pairingFailedBottomSheet.current?.present();
+														}
+													}
 												}}
 											>
 												<Image source={require("@assets/images/ring.png")} />
@@ -125,6 +137,9 @@ export const RingSetupScreen: React.FC = () => {
 						);
 				}
 			})()}
+			<CircularBottomSheet snapPoints={[600]} ref={pairingFailedBottomSheet}>
+				<PairingFailedBottomSheet onClose={() => pairingFailedBottomSheet.current?.close()} />
+			</CircularBottomSheet>
 		</Container>
 	);
 };

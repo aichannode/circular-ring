@@ -134,7 +134,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 				</TitleAndOptions>
 				<HorizontalCarousel
 					data={weightUnit === WeightUnit.kg ? weightValuesKg : weightValuesLbs}
-					renderItem={(item, index) => <PickerValue itemWidth={50}>{item}</PickerValue>}
+					renderItem={(item) => <PickerValue itemWidth={50}>{item}</PickerValue>}
 					itemWidth={50}
 					item={weightUnit === WeightUnit.kg ? Math.round(weight) : Math.round(kgToLbs(weight))}
 					onItemChange={(value) => setWeight(weightUnit === WeightUnit.kg ? value : lbsToKg(value))}

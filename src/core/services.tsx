@@ -1,41 +1,46 @@
 import { ApiService } from "@core/api/apiService";
-import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { CognitoAuthService } from "@domain/auth/cognito-auth/cognitoAuthService";
+import { BluetoothService } from "@domain/bluetooth/bluetoothService";
+import { CalibrationApi } from "@domain/calibration/calibrationApi";
+import { CalibrationService } from "@domain/calibration/calibrationService";
+import { CircleActivityApi } from "@domain/circleActivity/circleActivityApi";
+import { CircleActivityService } from "@domain/circleActivity/circleActivityService";
+import { DeviceService } from "@domain/device/deviceService";
+import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
+import { DevFakeDeviceService, EmptyFakeDeviceService } from "@domain/fake/fakeDeviceService";
+import { HomeBannerApi } from "@domain/homeBanner/homeBannerApi";
+import { HomeBannerService } from "@domain/homeBanner/homeBannerService";
+import { HomeBannerStorage } from "@domain/homeBanner/homeBannerStorage";
+import { UserPreferencesService } from "@domain/preferences/userPreferencesService";
+import { UserPreferencesStorage } from "@domain/preferences/userPreferencesStorage";
+import { RingApi } from "@domain/ring/ringApi";
+import { RingDataStorage } from "@domain/ring/ringDataStorage";
+import { RingService } from "@domain/ring/ringService";
+import { UserRingsStorage } from "@domain/ring/userRingsStorage";
 import { UserApi } from "@domain/user/userApi";
 import { UserService } from "@domain/user/userService";
 import { UserStorage } from "@domain/user/userStorage";
-import { createContext, useContext } from "react";
-import React from "react";
-import { DeviceService } from "@domain/device/deviceService";
-import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
-import { RingService } from "@domain/ring/ringService";
-import { RingDataStorage } from "@domain/ring/ringDataStorage";
-import { RingApi } from "@domain/ring/ringApi";
-import { CircleActivityApi } from "@domain/circleActivity/circleActivityApi";
-import { CircleActivityService } from "@domain/circleActivity/circleActivityService";
-import { UserPreferencesStorage } from "@domain/preferences/userPreferencesStorage";
-import { UserPreferencesService } from "@domain/preferences/userPreferencesService";
-import { CalibrationService } from "@domain/calibration/calibrationService";
-import { CalibrationApi } from "@domain/calibration/calibrationApi";
-import { HomeBannerStorage } from "@domain/homeBanner/homeBannerStorage";
-import { HomeBannerService } from "@domain/homeBanner/homeBannerService";
-import { HomeBannerApi } from "@domain/homeBanner/homeBannerApi";
+import React, { createContext, useContext } from "react";
+import { Config } from "react-native-config";
+
+const fakeDeviceService = Config.ENVIRONNEMENT === "dev" ? new DevFakeDeviceService() : new EmptyFakeDeviceService();
 
 const userStorage = new UserStorage();
 const favoriteDeviceStorage = new FavoriteDeviceStorage();
 const ringDataStorage = new RingDataStorage();
+const userRingsStorage = new UserRingsStorage();
 
 const apiService = new ApiService();
 const circleActivityApi = new CircleActivityApi();
 
 const ringApi = new RingApi(apiService);
 
-const bluetoothService = new BluetoothService();
-const deviceService = new DeviceService(bluetoothService, favoriteDeviceStorage);
-const ringService = new RingService(deviceService, ringDataStorage, ringApi);
-const circleActivityService = new CircleActivityService(circleActivityApi);
-
 const cognitoAuthService = new CognitoAuthService();
+
+const bluetoothService = new BluetoothService();
+const deviceService = new DeviceService(bluetoothService, fakeDeviceService, favoriteDeviceStorage);
+const ringService = new RingService(deviceService, userRingsStorage, ringDataStorage, ringApi);
+const circleActivityService = new CircleActivityService(circleActivityApi);
 
 const userApi = new UserApi(apiService);
 const userService = new UserService(cognitoAuthService, userApi, userStorage);
@@ -59,6 +64,7 @@ export const services = {
 	userPreferencesService,
 	calibrationService,
 	homeBannerService,
+	fakeDeviceService,
 };
 
 export type Services = typeof services;

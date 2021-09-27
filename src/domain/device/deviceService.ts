@@ -8,6 +8,7 @@ import { StoredDevice } from "./device";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 import { LocationEnabler } from "./locationEnabler";
 import { Platform } from "react-native";
+import { FakeDeviceService } from "@domain/fake/fakeDeviceService";
 
 export enum DeviceConnectionState {
 	DISCONNECTED = "DISCONNECTED",
@@ -57,11 +58,13 @@ export class DeviceService {
 
 	readonly setupState: Observable<DeviceSetupState>;
 	readonly autoConnectState: Observable<DeviceAutoConnectState>;
+	readonly favoriteDevice = this._favoriteDevice.readOnly();
 
 	private onMessageReceived = new Signal<string>();
 
 	constructor(
 		private readonly bluetoothService: BluetoothService,
+		private readonly fakeDeviceService: FakeDeviceService,
 		private readonly favoriteDeviceStorage: FavoriteDeviceStorage
 	) {
 		LocationEnabler.addListener(({ locationEnabled }) => {
@@ -75,10 +78,10 @@ export class DeviceService {
 				this._locationEnabledAndroid,
 				this._connectionState,
 				this._scanning,
-				this._favoriteDevice,
+				this.fakeDeviceService.fakeDeviceEnabled,
 			],
-			(bleState, locationAndroid, connectionState, scanning, favorite) => {
-				if (connectionState === DeviceConnectionState.CONNECTED || !!favorite) {
+			(bleState, locationAndroid, connectionState, scanning, faked) => {
+				if (connectionState === DeviceConnectionState.CONNECTED || faked) {
 					return DeviceSetupState.FINISHED;
 				}
 				if (bleState === State.PoweredOff) {
@@ -115,6 +118,15 @@ export class DeviceService {
 				return DeviceAutoConnectState.DISCONNECTED;
 			}
 		);
+
+		this.fakeDeviceService.fakeDeviceEnabled.subscribe(async (enabled) => {
+			if (enabled) {
+				const debugDevice = "Circular_BeTomorrow";
+				this._favoriteDevice.set({ name: debugDevice });
+				this.stopScan();
+				this.autoConnectDevice(debugDevice);
+			}
+		});
 	}
 
 	async init() {
@@ -204,8 +216,11 @@ export class DeviceService {
 	}
 
 	private handleDeviceDisconnection(error: BleError | null, device: Device) {
-		this.logger.warn(`Lost connection with device ${device.id} / ${device.name}`, error);
 		const connectedDevice = this._connectedDevice.get();
+		if (!connectedDevice) {
+			return;
+		}
+		this.logger.warn(`Lost connection with device ${device.id} / ${device.name}`, error);
 		if (connectedDevice?.name && connectedDevice.id === device.id) {
 			this._connectionState.set(DeviceConnectionState.DISCONNECTED);
 			this._connectedDevice.set(null);
@@ -219,7 +234,7 @@ export class DeviceService {
 	}
 	async autoConnectDevice(name: string) {
 		if (this.setupState.get() !== DeviceSetupState.FINISHED) {
-			this.logger.error("Error: can note autoconnect while setup is not finished");
+			this.logger.error("Error: can not autoconnect while setup is not finished");
 			return;
 		}
 		this.logger.info("Trying to autoconnect to", name);
@@ -379,6 +394,19 @@ export class DeviceService {
 		this._monitoring.set(true);
 
 		return subscription;
+	}
+
+	async disconnect() {
+		const device = this._connectedDevice.get();
+		if (!device) {
+			this.logger.info("Already disonnected");
+			return;
+		}
+		this.logger.info("Disconnecting from device", device.name);
+		this._connectedDevice.set(null);
+		this._favoriteDevice.set(null);
+		await this.favoriteDeviceStorage.clear();
+		await device.cancelConnection();
 	}
 
 	requestLocation() {
