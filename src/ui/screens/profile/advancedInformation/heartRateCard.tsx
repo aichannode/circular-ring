@@ -1,14 +1,20 @@
 import { useUserAdvancedInfo } from "@domain/user/hooks/useUser";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { CircularBottomSheet } from "@ui/components/bottomSheet";
 import { useI18n } from "@ui/i18n";
+import { ComparativeInfoBottomSheet } from "@ui/screens/profile/advancedInformation/comparativeInfoBottomSheet";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
-import React from "react";
+import React, { useRef } from "react";
+import { Image, Pressable } from "react-native";
 import styled from "styled-components/native";
 
 export const HeartRateCard = () => {
 	const { format } = useI18n();
 	const advancedInfo = useUserAdvancedInfo();
+
+	const comparativeInfoRef = useRef<BottomSheetModal>(null);
 
 	return !advancedInfo ? null : (
 		<Card>
@@ -36,7 +42,16 @@ export const HeartRateCard = () => {
 				</HRItem>
 			</HeartRateLeft>
 			<HeartRateRight>
-				<CardTitle>{format("profile_advanced_info.heart_rate.comparative_title")}</CardTitle>
+				<TitleContainer>
+					<CardTitle>{format("profile_advanced_info.heart_rate.comparative_title")}</CardTitle>
+					<Pressable
+						onPress={() => {
+							comparativeInfoRef.current?.present();
+						}}
+					>
+						<Image source={require("@assets/images/info.png")} />
+					</Pressable>
+				</TitleContainer>
 				<HRItem>
 					<HRItemTitleText>{format("profile_advanced_info.heart_rate.rhr")}</HRItemTitleText>
 					<HRItemValue>
@@ -56,6 +71,9 @@ export const HeartRateCard = () => {
 					</HRItemValue>
 				</HRItem>
 			</HeartRateRight>
+			<CircularBottomSheet snapPoints={[480]} ref={comparativeInfoRef}>
+				<ComparativeInfoBottomSheet onClose={() => comparativeInfoRef.current?.close()} />
+			</CircularBottomSheet>
 		</Card>
 	);
 };
@@ -78,6 +96,11 @@ const HeartRateRight = styled.View`
 	background-color: ${colors.lightgray};
 	border-radius: 10px;
 	padding: 15px 12px;
+`;
+
+const TitleContainer = styled.View`
+	flex-direction: row;
+	justify-content: space-between;
 `;
 
 const CardTitle = styled.Text`
