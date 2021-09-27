@@ -233,10 +233,6 @@ export class DeviceService {
 		}
 	}
 	async autoConnectDevice(name: string) {
-		if (this.setupState.get() !== DeviceSetupState.FINISHED) {
-			this.logger.error("Error: can not autoconnect while setup is not finished");
-			return;
-		}
 		this.logger.info("Trying to autoconnect to", name);
 		await this.bluetoothService.enable();
 		this._lookingForDevice.set(true);
