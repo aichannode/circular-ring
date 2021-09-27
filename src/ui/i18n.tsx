@@ -136,9 +136,9 @@ export function useI18n() {
 				case 3:
 					return "1 " + intl.formatMessage({ id: "alarm.new.snooze.hour" });
 				case 4:
-					return "1:15 " + intl.formatMessage({ id: "alarm.new.snooze.hours" });
+					return "1:15 " + intl.formatMessage({ id: "alarm.new.snooze.hour" });
 				case 5:
-					return "1:30 " + intl.formatMessage({ id: "alarm.new.snooze.minutes" });
+					return "1:30 " + intl.formatMessage({ id: "alarm.new.snooze.hour" });
 				case 0:
 					return intl.formatMessage({ id: "alarm.new.snooze.off" });
 			}
