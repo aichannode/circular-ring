@@ -1,5 +1,4 @@
 import { getLogger } from "@core/logger/logger";
-import { AuthService } from "@domain/auth/authService";
 import { Channel } from "@domain/device/channels";
 import { DeviceService } from "@domain/device/deviceService";
 import { observable } from "micro-observables";
@@ -35,22 +34,15 @@ export class RingService {
 
 	constructor(
 		private readonly deviceService: DeviceService,
-		private readonly authService: AuthService,
 		private readonly userRingsStorage: UserRingsStorage,
 		private readonly ringDataStorage: RingDataStorage,
 		private readonly ringApi: RingApi
-	) {
-		const unsubscribe = this.authService.authToken.subscribe((token) => {
-			if (token) {
-				this.getRings();
-				unsubscribe();
-			}
-		});
-	}
+	) {}
 
 	async init() {
 		const loadedRings = await this.userRingsStorage.load();
 		this._userRing.set(loadedRings?.[0] ?? null);
+		this.getRings();
 		this.listenBattery();
 		this.syncData();
 	}
