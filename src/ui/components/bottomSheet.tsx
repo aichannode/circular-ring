@@ -1,5 +1,7 @@
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import React, { useCallback } from "react";
+import { useForwardedRef } from "@ui/utils/useForwardedRef";
+import React, { useCallback, useEffect } from "react";
+import { BackHandler } from "react-native";
 import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -20,9 +22,24 @@ export const CircularBottomSheet = React.forwardRef<BottomSheetModal, BottomShee
 			[]
 		);
 
+		const inRef = useForwardedRef(ref);
+		const closeSheet = useCallback(() => {
+			inRef.current?.close();
+			return true;
+		}, []);
+
+		useEffect(() => () => BackHandler.removeEventListener("hardwareBackPress", closeSheet));
+
 		return (
 			<BottomSheetModal
-				ref={ref}
+				ref={inRef}
+				onAnimate={(_, to) => {
+					if (to < 0) {
+						BackHandler.removeEventListener("hardwareBackPress", closeSheet);
+					} else {
+						BackHandler.addEventListener("hardwareBackPress", closeSheet);
+					}
+				}}
 				snapPoints={snapPoints}
 				backdropComponent={renderBackdrop}
 				style={{ paddingBottom: safeArea.bottom }}
@@ -45,9 +62,24 @@ export const CircularBottomScrollSheet = React.forwardRef<BottomSheetModal, Bott
 			[]
 		);
 
+		const inRef = useForwardedRef(ref);
+		const closeSheet = useCallback(() => {
+			inRef.current?.close();
+			return true;
+		}, []);
+
+		useEffect(() => () => BackHandler.removeEventListener("hardwareBackPress", closeSheet));
+
 		return (
 			<BottomSheetModal
-				ref={ref}
+				ref={inRef}
+				onAnimate={(_, to) => {
+					if (to < 0) {
+						BackHandler.removeEventListener("hardwareBackPress", closeSheet);
+					} else {
+						BackHandler.addEventListener("hardwareBackPress", closeSheet);
+					}
+				}}
 				snapPoints={snapPoints}
 				backdropComponent={renderBackdrop}
 				style={{ paddingBottom: safeArea.bottom }}

@@ -4,8 +4,8 @@ import { CheckBox } from "@ui/components/checkBox";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
-import React, { useState } from "react";
-import { Image } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { BackHandler, Image } from "react-native";
 import styled from "styled-components/native";
 
 enum TutorialStep {
@@ -21,6 +21,20 @@ export const LiveTutorialBottomSheet: React.FC<LiveTutorialBottomSheetProps> = (
 	const [step, setStep] = useState(TutorialStep.ONE);
 	const [tutorialHidden, setTutorialHidden] = useState(false);
 	const { userPreferencesService } = useServices();
+
+	const backToStepOne = useCallback(() => {
+		setStep(TutorialStep.ONE);
+		return true;
+	}, []);
+
+	useEffect(() => {
+		if (step === TutorialStep.ONE) {
+			BackHandler.removeEventListener("hardwareBackPress", backToStepOne);
+		} else {
+			BackHandler.addEventListener("hardwareBackPress", backToStepOne);
+			return () => BackHandler.removeEventListener("hardwareBackPress", backToStepOne);
+		}
+	}, [step]);
 
 	return (
 		<Container>
