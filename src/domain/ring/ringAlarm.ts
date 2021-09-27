@@ -106,11 +106,11 @@ export function deserializeAlarmData(alarmData: string): RingAlarm | undefined {
 	const alarmDataMessageRegex = /ALR(\w\w)r(\w\w)h(\w\w)m(\w\w)v(\w\w)n(\w\w)M(\w\w)i(\w\w)L((?:\w|\W)*)/;
 	const matches = alarmData.match(alarmDataMessageRegex);
 
-	if (alarmData === "FBLEOS") {
+	if (alarmData === "ALREOS") {
 		return;
 	}
 	if (!matches) {
-		throw Error("Invalid live data message " + alarmData);
+		throw Error("Invalid alarm data message " + alarmData);
 	}
 
 	const [activationHex, weekdayHex, hour, min, vibrationPower, vibrationRepetition, melodyHex, alarmId, alarmLabel] =
