@@ -11,6 +11,8 @@ import { dailyMetricsDataInfos, scoreDetailsDataInfos } from "./measureDisplayIn
 import { ScoreGauge } from "./scoreGauge";
 import { ScreenSection } from "./screenSection";
 
+const scoreGoodThreshold = 0.8;
+const scoreOptimalThreshold = 0.9;
 export const CircleActivityScreen: React.FC = () => {
 	const dailyData = useDailyData();
 	const { format } = useI18n();
@@ -52,7 +54,7 @@ export const CircleActivityScreen: React.FC = () => {
 								const dataInfos = scoreDetailsDataInfos[metric];
 								const value = dailyData.metrics[metric];
 								const gaugeValue = dataInfos.gauge ? dailyData.metrics[dataInfos.gauge] : value;
-								if (!value || !gaugeValue) {
+								if (!value) {
 									console.warn("Missing value for metric", metric);
 									return null;
 								}
@@ -66,8 +68,8 @@ export const CircleActivityScreen: React.FC = () => {
 										value={Math.round(value)}
 										rate={gaugeValue / 100}
 										unit={dataInfos.unit}
-										goodThreshold={0.8}
-										optimalThreshold={0.9}
+										goodThreshold={scoreGoodThreshold}
+										optimalThreshold={scoreOptimalThreshold}
 										label={format(dataInfos.titleKey)}
 										onPress={() => {
 											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -90,33 +92,6 @@ export const CircleActivityScreen: React.FC = () => {
 							.flatMap((x) => x)
 							.filter(Boolean) as JSX.Element[]
 					}
-					{/* {
-						scoreDetailsData
-							.map(({ description, label, ...data }, index) => [
-								<ScoreGauge
-									key={label}
-									{...data}
-									label={label}
-									onPress={() => {
-										LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-										setFocusedGauge((current) => (current === index ? null : index));
-									}}
-								/>,
-								focusedGauge === index && (
-									<GaugeDescription
-										key={label + "description"}
-										label={label}
-										description={description}
-										onClose={() => {
-											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-											setFocusedGauge(null);
-										}}
-									/>
-								),
-							])
-							.flatMap((x) => x)
-							.filter(Boolean) as JSX.Element[]
-					} */}
 				</ElementStack>
 			</ScrollView>
 		</Container>

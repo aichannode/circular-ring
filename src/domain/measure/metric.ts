@@ -8,7 +8,7 @@ export interface MetricInfo<T extends Metric = Metric> {
 export type Metric =
 	| "user.daily.energy.score"
 	| "user.start.of.sport"
-	| "user.end .of.sport"
+	| "user.end.of.sport"
 	| "user.non.active.activity"
 	| "user.low.intensity.activity"
 	| "user.medium.intensity.activity"
