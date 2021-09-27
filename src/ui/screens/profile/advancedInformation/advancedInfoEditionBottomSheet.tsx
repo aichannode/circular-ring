@@ -1,6 +1,8 @@
 import {
 	DietarySupplements,
+	FertilityState,
 	PhysicalDisability,
+	PillPackFormat,
 	SleepDisorder,
 	SleepingPills,
 	WorkTime,
@@ -18,7 +20,14 @@ import { ScrollView } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import { WordingKey } from "../../../../wordings";
 
-export type EditionInfoType = WorkTime | PhysicalDisability | SleepDisorder | SleepingPills | DietarySupplements;
+export type EditionInfoType =
+	| WorkTime
+	| PhysicalDisability
+	| SleepDisorder
+	| SleepingPills
+	| DietarySupplements
+	| FertilityState
+	| PillPackFormat;
 
 export interface AdvancedInfoEditionConfig<T extends EditionInfoType> {
 	title: string;

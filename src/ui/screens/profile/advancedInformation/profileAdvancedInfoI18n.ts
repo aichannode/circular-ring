@@ -83,7 +83,7 @@ export const birthControlKeys = new Map<BirthControl, WordingKey>([
 	[BirthControl.OTHER, "profile_advanced_info.birth_control.other"],
 ]);
 
-export const PillPackFormatKeys = new Map<PillPackFormat, WordingKey>([
+export const pillPackFormatKeys = new Map<PillPackFormat, WordingKey>([
 	[PillPackFormat.DAYS_28, "profile_advanced_info.pill_pack_format.days_28"],
 	[PillPackFormat.DAYS_24, "profile_advanced_info.pill_pack_format.days_24"],
 	[PillPackFormat.DAYS_21, "profile_advanced_info.pill_pack_format.days_21"],

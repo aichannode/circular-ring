@@ -21,12 +21,19 @@ const InfoListHeaderText = styled.Text`
 interface InfoListItemProps<T> {
 	name: string;
 	value?: string;
+
 	emphasize?: boolean;
+
 	action?: () => void;
 	hasDisclosure?: boolean;
+
 	switchOptions?: T[];
 	switchValue?: T;
 	onSwitchSelect?: (option: T) => void;
+
+	checkable?: boolean;
+	checked?: boolean;
+
 	style?: ViewStyle;
 	errorMessage?: string;
 	loading?: boolean;
@@ -41,6 +48,8 @@ export function InfoListItem<T>({
 	switchOptions,
 	switchValue,
 	onSwitchSelect,
+	checkable,
+	checked,
 	style,
 	errorMessage,
 	loading,
@@ -69,6 +78,11 @@ export function InfoListItem<T>({
 								/>
 							)}
 						</>
+					)}
+					{!!checkable && (
+						<Check selected={!!checked}>
+							{!!checked && <CheckIcon source={require("@assets/images/checkSmall.png")} tintColor={colors.white} />}
+						</Check>
 					)}
 					{hasDisclosure && <Disclosure source={require("@assets/images/disclosure.png")} />}
 				</Container>
@@ -109,4 +123,22 @@ const Disclosure = styled.Image`
 const ErrorMessage = styled.Text`
 	${textStyles.errorMessage};
 	padding: 0 20px;
+`;
+
+const Check = styled.View<{ selected: boolean }>`
+	width: 24px;
+	height: 24px;
+	justify-content: center;
+	align-items: center;
+	background-color: ${({ selected }) => (selected ? colors.primary : "transparent")};
+	border-radius: 12px;
+	border-width: ${({ selected }) => (selected ? 0 : 1)}px;
+	border-color: ${colors.gray};
+`;
+
+const CheckIcon = styled.Image<{ tintColor: string }>`
+	height: 14px;
+	flex-shrink: 1;
+	tint-color: ${(props) => props.tintColor};
+	resize-mode: contain;
 `;

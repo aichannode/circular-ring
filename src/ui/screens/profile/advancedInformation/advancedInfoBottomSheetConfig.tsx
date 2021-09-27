@@ -1,6 +1,9 @@
 import {
+	AdvancedInfo,
 	DietarySupplements,
+	FertilityState,
 	PhysicalDisability,
+	PillPackFormat,
 	SleepDisorder,
 	SleepingPills,
 	WorkTime,
@@ -12,7 +15,9 @@ import {
 } from "@ui/screens/profile/advancedInformation/advancedInfoEditionBottomSheet";
 import {
 	dietarySupplementsKeys,
+	fertilityStateKeys,
 	physicalDisabilityKeys,
+	pillPackFormatKeys,
 	sleepDisorderKeys,
 	sleepingPillsKeys,
 	workTimeKeys,
@@ -25,8 +30,14 @@ export class AdvancedInfoBottomSheetConfig {
 	sleepDisorderConfig: AdvancedInfoEditionConfig<EditionInfoType>;
 	sleepingPillsConfig: AdvancedInfoEditionConfig<EditionInfoType>;
 	dietarySupplementsConfig: AdvancedInfoEditionConfig<EditionInfoType>;
+	fertilityStateConfig: AdvancedInfoEditionConfig<EditionInfoType>;
+	pillPackFormatConfig: AdvancedInfoEditionConfig<EditionInfoType>;
 
-	constructor(private userService: UserService, private format: (key: WordingKey) => string) {
+	constructor(
+		private userService: UserService,
+		private format: (key: WordingKey) => string,
+		advancedInfo: AdvancedInfo | null
+	) {
 		this.workTimeConfig = {
 			title: this.format("profile_advanced_info.work_time.title"),
 			description: undefined,
@@ -38,7 +49,7 @@ export class AdvancedInfoBottomSheetConfig {
 		};
 		this.physicalDisabilitiesConfig = {
 			title: this.format("profile_advanced_info.physical_disability.title"),
-			description: undefined,
+			description: this.format("profile_advanced_info.physical_disability.description"),
 			options: [PhysicalDisability.NONE, PhysicalDisability.TOTAL, PhysicalDisability.MODERATE],
 			translationSet: physicalDisabilityKeys,
 			saveProcess: async (option: EditionInfoType) => {
@@ -75,6 +86,32 @@ export class AdvancedInfoBottomSheetConfig {
 			translationSet: dietarySupplementsKeys,
 			saveProcess: async (option: EditionInfoType) => {
 				await this.userService.updateUserAdvancedInfo({ dietarySupplements: option as DietarySupplements });
+			},
+		};
+		this.fertilityStateConfig = {
+			title: this.format("profile_advanced_info.fertility_state.title"),
+			description: undefined,
+			options: [FertilityState.MENSTRUAL_CYCLE, FertilityState.PERIMENOPAUSE, FertilityState.MENOPAUSE],
+			translationSet: fertilityStateKeys,
+			saveProcess: async (option: EditionInfoType) => {
+				if (advancedInfo) {
+					await this.userService.updateUserAdvancedInfo({
+						female: { ...advancedInfo.female, fertilityState: option as FertilityState },
+					});
+				}
+			},
+		};
+		this.pillPackFormatConfig = {
+			title: this.format("profile_advanced_info.pill_pack_format.title"),
+			description: undefined,
+			options: [PillPackFormat.DAYS_28, PillPackFormat.DAYS_24, PillPackFormat.DAYS_21],
+			translationSet: pillPackFormatKeys,
+			saveProcess: async (option: EditionInfoType) => {
+				if (advancedInfo) {
+					await this.userService.updateUserAdvancedInfo({
+						female: { ...advancedInfo.female, pillPackFormat: option as PillPackFormat },
+					});
+				}
 			},
 		};
 	}

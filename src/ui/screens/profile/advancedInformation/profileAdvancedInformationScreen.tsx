@@ -1,6 +1,7 @@
 import { useServices } from "@core/services";
 import { WorkTime } from "@domain/user/advancedInfo";
-import { useUserAdvancedInfo } from "@domain/user/hooks/useUser";
+import { useUser, useUserAdvancedInfo } from "@domain/user/hooks/useUser";
+import { Sex } from "@domain/user/user";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { CircularBottomSheet } from "@ui/components/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
@@ -17,8 +18,11 @@ import { ChronotypeCard } from "@ui/screens/profile/advancedInformation/chronoty
 import { HeartRateCard } from "@ui/screens/profile/advancedInformation/heartRateCard";
 import {
 	advanceInfoI18nKey,
+	birthControlKeys,
 	dietarySupplementsKeys,
+	fertilityStateKeys,
 	physicalDisabilityKeys,
+	pillPackFormatKeys,
 	sleepDisorderKeys,
 	sleepingPillsKeys,
 	workTimeKeys,
@@ -29,10 +33,11 @@ import styled from "styled-components/native";
 
 export const ProfileAdvancedInformationScreen = () => {
 	const { format } = useI18n();
-	const advancedInfo = useUserAdvancedInfo();
 	const { userService } = useServices();
+	const user = useUser();
+	const advancedInfo = useUserAdvancedInfo();
 
-	const configsRef = useRef(new AdvancedInfoBottomSheetConfig(userService, format));
+	const configsRef = useRef(new AdvancedInfoBottomSheetConfig(userService, format, advancedInfo));
 	const [bottomSheetConfig, setBottomSheetConfig] = useState<AdvancedInfoEditionConfig<EditionInfoType>>(
 		configsRef.current.workTimeConfig
 	);
@@ -47,7 +52,7 @@ export const ProfileAdvancedInformationScreen = () => {
 	}
 
 	return !advancedInfo ? null : (
-		<ScrollScreen contentContainerStyle={{ paddingVertical: 0 }}>
+		<ScrollScreen contentContainerStyle={{ paddingTop: 0 }}>
 			<InfoListHeader>{format("profile_advanced_info.about_you")}</InfoListHeader>
 			<HeartRateCard />
 			<BMIChronoContainer>
@@ -125,6 +130,64 @@ export const ProfileAdvancedInformationScreen = () => {
 				loading={isLoading}
 				errorMessage={errorMessage}
 			/>
+			{(user?.sex === Sex.Female ?? false) && (
+				<>
+					<InfoListHeader>{format("profile_advanced_info.period_tracking_info")}</InfoListHeader>
+					<InfoListItem
+						name={format("profile_advanced_info.fertility_state.title")}
+						hasDisclosure={true}
+						value={format(advanceInfoI18nKey(fertilityStateKeys, advancedInfo.female.fertilityState))}
+						action={() => {
+							configureEditionBottomSheet(configsRef.current.fertilityStateConfig, advancedInfo.female.fertilityState);
+							editionBottomSheetRef.current?.present();
+						}}
+					/>
+					<InfoListItem
+						name={format("profile_advanced_info.cycle_length.title")}
+						hasDisclosure={true}
+						value={"TODO"}
+						action={() => {
+							// configureEditionBottomSheet(configsRef.current.dietarySupplementsConfig, advancedInfo.dietarySupplements);
+							// editionBottomSheetRef.current?.present();
+						}}
+					/>
+					<InfoListItem
+						name={format("profile_advanced_info.birth_control.title")}
+						hasDisclosure={true}
+						value={format(advanceInfoI18nKey(birthControlKeys, advancedInfo.female.birthControl))}
+						action={() => {
+							// TODO
+						}}
+					/>
+					<InfoListItem
+						name={format("profile_advanced_info.pill_pack_format.title")}
+						hasDisclosure={true}
+						value={format(advanceInfoI18nKey(pillPackFormatKeys, advancedInfo.female.pillPackFormat))}
+						action={() => {
+							configureEditionBottomSheet(configsRef.current.pillPackFormatConfig, advancedInfo.female.pillPackFormat);
+							editionBottomSheetRef.current?.present();
+						}}
+					/>
+					<InfoListItem
+						name={format("profile_advanced_info.conceiving.title")}
+						switchOptions={[format("global.yes"), format("global.no")]}
+						switchValue={advancedInfo.female.conceiving ? format("global.yes") : format("global.no")}
+						onSwitchSelect={async (value) => {
+							setLoading(true);
+							setErrorMessage(undefined);
+							const isTrue = value === format("global.yes");
+							try {
+								await userService.updateUserAdvancedInfo({ female: { ...advancedInfo.female, conceiving: isTrue } });
+							} catch (error) {
+								setErrorMessage(format("global.default_error"));
+							}
+							setLoading(false);
+						}}
+						loading={isLoading}
+						errorMessage={errorMessage}
+					/>
+				</>
+			)}
 			<CircularBottomSheet snapPoints={[480]} ref={editionBottomSheetRef}>
 				<AdvancedInfoEditionBottomSheet
 					config={bottomSheetConfig}

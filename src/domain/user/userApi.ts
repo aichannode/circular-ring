@@ -89,6 +89,7 @@ export class UserApi {
 
 	async getAdvancedInfo(): Promise<AdvancedInfo> {
 		const result = await this.apiService.get<AdvancedInfo>("/user/advanced");
+		console.log("ADVANCED <= " + JSON.stringify(result.data));
 		return result.data;
 	}
 
