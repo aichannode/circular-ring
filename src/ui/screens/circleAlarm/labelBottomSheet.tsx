@@ -2,6 +2,8 @@ import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { TertiaryButton } from "@ui/components/buttons";
 import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
+import { colors } from "@ui/styles/colors";
+import { textStyles } from "@ui/styles/textStyles";
 import React, { useState } from "react";
 import styled from "styled-components/native";
 
@@ -40,7 +42,18 @@ const Title = styled(TitleText)`
 `;
 
 const LabelInput = styled(BottomSheetTextInput)`
+	${textStyles.primary}
+	background-color: ${colors.white};
 	align-self: center;
-	padding-horizontal: 50px;
+	border-radius: 40px;
+	width: 300px;
+	margin-horizontal: 50px;
+	padding-left: 15px;
 	margin-vertical: 100px;
+	shadow-color: #000000;
+	shadow-offset: 0 10px;
+	shadow-opacity: 0.1;
+	shadow-radius: 18px;
+	elevation: 10;
+	text-align: left;
 `;

@@ -1,5 +1,4 @@
 import { colors } from "@ui/styles/colors";
-import { textStyles } from "@ui/styles/textStyles";
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleProp, TextStyle } from "react-native";
 import styled from "styled-components/native";

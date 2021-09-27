@@ -2,11 +2,11 @@ import { Channel } from "@domain/device/channels";
 import { DeviceService } from "@domain/device/deviceService";
 import {
 	deserializeAlarmData,
+	getAlarmId,
+	Melody,
 	RingAlarm,
 	serializeAlarmData,
-	getAlarmId,
 	serializeMelody,
-	Melody,
 } from "@domain/ring/ringAlarm";
 import { alarmDataEOF } from "@domain/ring/ringData";
 import { observable } from "micro-observables";

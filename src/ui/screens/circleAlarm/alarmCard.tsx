@@ -37,7 +37,7 @@ export const AlarmCard: React.FC<AlarmCardProps> = ({ data, style }) => {
 			</HourContainer>
 			<VerticalSeparator />
 			<LabelContainer>
-				<TitleText>{data.label}</TitleText>
+				<TitleText>{data.label.length > 10 ? data.label.substring(0, 10) + "..." : data.label}</TitleText>
 				<SecondaryText>{data.weekdays[0]}</SecondaryText>
 			</LabelContainer>
 			<SwitchContainer>
@@ -62,7 +62,7 @@ const Card = styled.View`
 `;
 
 const HourContainer = styled.View`
-	flex-grow: 1;
+	margin-horizontal: 15px;
 	justify-content: center;
 	align-items: center;
 `;

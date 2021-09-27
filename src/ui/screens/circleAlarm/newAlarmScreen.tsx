@@ -3,7 +3,7 @@ import { Melody, Weekdays } from "@domain/ring/ringAlarm";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation } from "@react-navigation/native";
-import { CircularBottomScrollSheet } from "@ui/components/bottomSheet";
+import { CircularBottomScrollSheet, CircularBottomSheet } from "@ui/components/bottomSheet";
 import { SimpleTextButton } from "@ui/components/buttons";
 import { Hour } from "@ui/components/hour";
 import { CheckAlarmButton } from "@ui/components/navigation/checkButton";
@@ -89,7 +89,6 @@ export const NewAlarmScreen: React.FC = () => {
 							value={alarmTime}
 							mode={"time"}
 							is24Hour={true}
-							// display="spinner"
 							onChange={(event, selectedTime) => {
 								event.type !== "dismissed" && selectedTime ? submitTime(selectedTime) : setPickerVisible(false);
 							}}
@@ -167,7 +166,7 @@ export const NewAlarmScreen: React.FC = () => {
 					}}
 				/>
 			</CircularBottomScrollSheet>
-			<CircularBottomScrollSheet snapPoints={[350]} ref={labelBottomSheet}>
+			<CircularBottomSheet snapPoints={[500]} ref={labelBottomSheet}>
 				<LabelBottomSheet
 					label={label}
 					onClose={(label) => {
@@ -175,7 +174,7 @@ export const NewAlarmScreen: React.FC = () => {
 						labelBottomSheet.current?.close();
 					}}
 				/>
-			</CircularBottomScrollSheet>
+			</CircularBottomSheet>
 			<CircularBottomScrollSheet snapPoints={[700]} ref={snoozeBottomSheet}>
 				<IntervalBottomSheet
 					value={snooze}

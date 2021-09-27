@@ -63,6 +63,21 @@ export const melodyOrderedList = [
 	Melody.DISCHARGE,
 ];
 
+const melodyIds: { [key in Melody]: string } = {
+	[Melody.NOTIF1]: "00",
+	[Melody.NOTIF2]: "01",
+	[Melody.NOTIF3]: "02",
+	[Melody.NOTIF4]: "03",
+	[Melody.ALERT]: "04",
+	[Melody.HEARTBEAT]: "05",
+	[Melody.QUICK]: "06",
+	[Melody.RAPID]: "07",
+	[Melody.SOS]: "08",
+	[Melody.STACCATO]: "09",
+	[Melody.SYMPHONY]: "0A",
+	[Melody.DISCHARGE]: "0B",
+};
+
 export function activationHexToData(activationHex: string): {
 	snooze: number;
 	smart: number;
@@ -82,8 +97,9 @@ export function activationHexToData(activationHex: string): {
 export function dataToActivationHex(snooze: number, smart: number, isActivated: boolean, isExisting: boolean): string {
 	const activatedValue = isActivated ? 0 : 1;
 	const existingValue = isExisting ? 0 : 1;
+	const activationValue = (((((snooze << 3) + smart) << 1) + activatedValue) << 1) + existingValue;
 
-	return ((((((snooze << 3) + smart) << 1) + activatedValue) << 1) + existingValue).toString(16);
+	return activationValue < 16 ? "0" + activationValue.toString(16) : activationValue.toString(16);
 }
 
 export function deserializeAlarmData(alarmData: string): RingAlarm | undefined {
@@ -150,7 +166,7 @@ export function serializeAlarmData(alarmData: RingAlarm): string {
 		label,
 	} = alarmData;
 
-	const melodyHex = melodyOrderedList.findIndex((value) => value === melody).toString(16);
+	const melodyHex = melodyIds[melody];
 
 	let weekdaysValue = 0;
 	for (let i = 0; i < weekdays.length; i++) {
@@ -167,14 +183,15 @@ export function serializeAlarmData(alarmData: RingAlarm): string {
 		"ALR" +
 		dataToActivationHex(snooze, smart, isActivated, isExisting) +
 		"r" +
-		weekdaysValue.toString(16) +
+		(weekdaysValue < 16 ? "0" + weekdaysValue.toString(16) : weekdaysValue.toString(16)) +
 		"h" +
-		time.getHours() +
+		(time.getHours() < 10 ? "0" + time.getHours() : time.getHours()) +
 		"m" +
-		time.getMinutes() +
+		(time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes()) +
 		"v" +
-		vibrationPower +
+		(vibrationPower < 10 ? "0" + vibrationPower : vibrationPower) +
 		"n" +
+		"0" +
 		vibrationRepetition +
 		"M" +
 		melodyHex +
@@ -197,21 +214,6 @@ export function getAlarmId(alarmData: string): number {
 
 	return parseInt(alarmId, 16);
 }
-
-const melodyIds: { [key in Melody]: string } = {
-	[Melody.NOTIF1]: "00",
-	[Melody.NOTIF2]: "01",
-	[Melody.NOTIF3]: "02",
-	[Melody.NOTIF4]: "03",
-	[Melody.ALERT]: "04",
-	[Melody.HEARTBEAT]: "05",
-	[Melody.QUICK]: "06",
-	[Melody.RAPID]: "07",
-	[Melody.SOS]: "08",
-	[Melody.STACCATO]: "09",
-	[Melody.SYMPHONY]: "0A",
-	[Melody.DISCHARGE]: "0B",
-};
 
 export function serializeMelody(melody: Melody, power: number) {
 	return "PRE" + melodyIds[melody] + power.toString(16);

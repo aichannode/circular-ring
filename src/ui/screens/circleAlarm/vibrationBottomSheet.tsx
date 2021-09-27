@@ -27,7 +27,7 @@ export const VibrationBottomSheet: React.FC<VibrationBottomSheetProps> = ({ vibr
 			<Slider
 				style={{ width: 200, height: 40, alignSelf: "center" }}
 				value={vibration}
-				onValueChange={(value) => setVibration(value)}
+				onValueChange={(value) => setVibration(Math.floor(value))}
 				minimumValue={0}
 				maximumValue={100}
 				minimumTrackTintColor={colors.blue}

@@ -1,10 +1,8 @@
 import { useAuth } from "@domain/auth/hooks/useAuth";
-import { CircleAlarmService } from "@domain/circleAlarm/circleAlarmService";
 import { useAccountLinked } from "@domain/device/hooks";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { CheckAlarmButton } from "@ui/components/navigation/checkButton";
 import { MyRingBattery } from "@ui/components/navigation/myRingBattery";
 import { useI18n } from "@ui/i18n";
 import { DrawerContent } from "@ui/navigation/drawer/drawerContent";
