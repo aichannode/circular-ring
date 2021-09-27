@@ -1,4 +1,5 @@
 import { ScoreQuality } from "@domain/circleActivity/circleActivityData";
+import { Melody, Weekdays } from "@domain/ring/ringAlarm";
 import { Intensity } from "@domain/ring/ringLiveData";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
@@ -43,7 +44,6 @@ export function useI18n() {
 				return `${minuteCount} min`;
 			}
 		},
-
 		formatScoreQuality: (scoreQuality: ScoreQuality) => {
 			switch (scoreQuality) {
 				case ScoreQuality.POOR:
@@ -65,6 +65,85 @@ export function useI18n() {
 				case Intensity.NONE:
 					return intl.formatMessage({ id: "intensity.none" });
 			}
+		},
+		formatDay: (days: Weekdays[]) => {
+			const weekdays = [Weekdays.MONDAY, Weekdays.TUESDAY, Weekdays.WEDNESDAY, Weekdays.THURSDAY, Weekdays.FRIDAY];
+			const everydays = [
+				Weekdays.MONDAY,
+				Weekdays.TUESDAY,
+				Weekdays.WEDNESDAY,
+				Weekdays.THURSDAY,
+				Weekdays.FRIDAY,
+				Weekdays.SATURDAY,
+				Weekdays.SUNDAY,
+			];
+			if (everydays.every((day) => days.includes(day))) {
+				return intl.formatMessage({ id: "alarm.everydays" });
+			} else if (weekdays.every((day) => days.includes(day))) {
+				return intl.formatMessage({ id: "alarm.weekdays" });
+			} else {
+				return days
+					.map((day) => {
+						switch (day) {
+							case Weekdays.MONDAY:
+								return intl.formatMessage({ id: "alarm.new.repeat.monday" }).substring(0, 3);
+
+							case Weekdays.TUESDAY:
+								return intl.formatMessage({ id: "alarm.new.repeat.tuesday" }).substring(0, 3);
+
+							case Weekdays.WEDNESDAY:
+								return intl.formatMessage({ id: "alarm.new.repeat.wednesday" }).substring(0, 3);
+
+							case Weekdays.THURSDAY:
+								return intl.formatMessage({ id: "alarm.new.repeat.thursday" }).substring(0, 3);
+
+							case Weekdays.FRIDAY:
+								return intl.formatMessage({ id: "alarm.new.repeat.friday" }).substring(0, 3);
+
+							case Weekdays.SATURDAY:
+								return intl.formatMessage({ id: "alarm.new.repeat.saturday" }).substring(0, 3);
+
+							case Weekdays.SUNDAY:
+								return intl.formatMessage({ id: "alarm.new.repeat.sunday" }).substring(0, 3);
+						}
+					})
+					.join(", ");
+			}
+		},
+		formatSnooze: (snooze: number) => {
+			switch (snooze) {
+				case 1:
+					return "1 " + intl.formatMessage({ id: "alarm.new.snooze.minute" });
+				case 2:
+					return "2 " + intl.formatMessage({ id: "alarm.new.snooze.minutes" });
+				case 3:
+					return "5 " + intl.formatMessage({ id: "alarm.new.snooze.minutes" });
+				case 4:
+					return "10 " + intl.formatMessage({ id: "alarm.new.snooze.minutes" });
+				case 5:
+					return "15 " + intl.formatMessage({ id: "alarm.new.snooze.minutes" });
+				case 0:
+					return intl.formatMessage({ id: "alarm.new.snooze.off" });
+			}
+		},
+		formatSmart: (smart: number) => {
+			switch (smart) {
+				case 1:
+					return "30 " + intl.formatMessage({ id: "alarm.new.snooze.minutes" });
+				case 2:
+					return "45 " + intl.formatMessage({ id: "alarm.new.snooze.minutes" });
+				case 3:
+					return "1 " + intl.formatMessage({ id: "alarm.new.snooze.hour" });
+				case 4:
+					return "1:15 " + intl.formatMessage({ id: "alarm.new.snooze.hour" });
+				case 5:
+					return "1:30 " + intl.formatMessage({ id: "alarm.new.snooze.hour" });
+				case 0:
+					return intl.formatMessage({ id: "alarm.new.snooze.off" });
+			}
+		},
+		formatMelody: (melody: Melody) => {
+			return intl.formatMessage({ id: "alarm.new.edit_vibration.type." + melody });
 		},
 	};
 }

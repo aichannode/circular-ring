@@ -1,7 +1,7 @@
 import { Row, Stack } from "@ui/components/layout";
 import { PrimaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
-import { useRoutesNavigation, Routes } from "@ui/navigation/routes";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import { Image, StyleProp, ViewStyle } from "react-native";
@@ -24,6 +24,11 @@ const circles: CircleInfo[] = [
 		route: Routes.Live,
 		source: require("@assets/images/circleLive.png"),
 		key: "home.circles.live.label",
+	},
+	{
+		route: Routes.Alarm,
+		source: require("@assets/images/circleAlarm.png"),
+		key: "home.circles.alarm.label",
 	},
 ];
 interface CirclesBannerProps {

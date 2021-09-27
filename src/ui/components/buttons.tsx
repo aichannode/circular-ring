@@ -43,7 +43,6 @@ export const SecondaryButton: React.FC<CircularButtonProps> = ({ onPress, style,
 		</Pressable>
 	);
 };
-
 interface TertiaryButtonProps extends CircularButtonProps {
 	containerBackgroundColor: string;
 }
@@ -70,6 +69,18 @@ export const Tertiarybutton: React.FC<TertiaryButtonProps> = ({
 						<TertiaryButtonText>{children}</TertiaryButtonText>
 					</TertiaryInner>
 				</TertiaryBorder>
+			)}
+		</Pressable>
+	);
+};
+
+export const QuadraryButton: React.FC<CircularButtonProps> = ({ onPress, style, children }) => {
+	return (
+		<Pressable onPress={onPress} style={style}>
+			{({ pressed }) => (
+				<QuadraryContent pressed={pressed}>
+					<PrimaryButtonText>{children}</PrimaryButtonText>
+				</QuadraryContent>
 			)}
 		</Pressable>
 	);
@@ -158,6 +169,12 @@ const SecondaryContent = styled.View<{ pressed: boolean }>`
 	border-radius: 18px;
 	border-color: ${colors.textPrimary};
 	border-width: 1px;
+`;
+
+const QuadraryContent = styled.View<{ pressed: boolean }>`
+	padding: 9px 22px;
+	border-radius: 18px;
+	background-color: ${colors.blue};
 `;
 
 const TertiaryBorder = styled(LinearGradient)<{ light?: boolean }>`

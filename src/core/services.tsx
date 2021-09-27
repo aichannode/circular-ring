@@ -4,6 +4,7 @@ import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { CalibrationApi } from "@domain/calibration/calibrationApi";
 import { CalibrationService } from "@domain/calibration/calibrationService";
 import { CircleActivityService } from "@domain/circleActivity/circleActivityService";
+import { CircleAlarmService } from "@domain/circleAlarm/circleAlarmService";
 import { DeviceService } from "@domain/device/deviceService";
 import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
 import { DevFakeDeviceService, EmptyFakeDeviceService } from "@domain/fake/fakeDeviceService";
@@ -38,7 +39,8 @@ const cognitoAuthService = new CognitoAuthService();
 
 const bluetoothService = new BluetoothService();
 const deviceService = new DeviceService(bluetoothService, fakeDeviceService, favoriteDeviceStorage);
-const ringService = new RingService(deviceService, userRingsStorage, ringDataStorage, ringApi);
+const circleAlarmService = new CircleAlarmService(deviceService);
+const ringService = new RingService(deviceService, circleAlarmService, userRingsStorage, ringDataStorage, ringApi);
 const measureApi = new MeasureApi(apiService);
 
 const circleActivityService = new CircleActivityService(measureApi);
@@ -62,6 +64,7 @@ export const services = {
 	userService,
 	ringService,
 	circleActivityService,
+	circleAlarmService,
 	userPreferencesService,
 	calibrationService,
 	homeBannerService,

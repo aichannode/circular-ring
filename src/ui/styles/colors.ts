@@ -14,6 +14,7 @@ export const colors = {
 	green: "#2bd866",
 	orange: "#ff9334",
 	red: "#ff1d1d",
+	blue: "#3996f7",
 	orangeGradientStart: "#f44a59",
 	orangeGradientEnd: "#f97444",
 };

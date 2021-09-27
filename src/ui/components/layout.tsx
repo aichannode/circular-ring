@@ -12,7 +12,7 @@ interface LayoutProps {
 	wrap?: "wrap";
 	style?: StyleProp<ViewStyle>;
 	gap?: number;
-	children: ChildrenType | JSX.Element;
+	children: ChildrenType | React.ReactNode;
 }
 
 export const stack = (align: FlexAlign = "stretch", justify: FlexJustify = "flex-start", reverse?: "reverse") => css`

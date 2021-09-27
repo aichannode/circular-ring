@@ -22,6 +22,8 @@ export enum Routes {
 	Home = "Home",
 	MyRing = "MyRing",
 	Activity = "Activity",
+	Alarm = "Alarm",
+	NewAlarm = "NewAlarm",
 	Profile = "Profile",
 	ProfileInformation = "ProfileInformation",
 	ProfileEditName = "ProfileEditName",
@@ -47,6 +49,8 @@ export type AppRoutesParams = {
 	[Routes.Home]: undefined;
 	[Routes.MyRing]: undefined;
 	[Routes.Activity]: undefined;
+	[Routes.Alarm]: undefined;
+	[Routes.NewAlarm]: undefined;
 	[Routes.Profile]: undefined;
 	[Routes.ProfileInformation]: undefined;
 	[Routes.ProfileEditName]: undefined;
