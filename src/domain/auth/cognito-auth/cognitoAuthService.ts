@@ -30,22 +30,31 @@ export class CognitoAuthService implements AuthService {
 			ClientId: Config.COGNITO_CLIENT_ID,
 		};
 		this._userPool = new CognitoUserPool(poolData);
+	}
 
-		// @ts-ignore
-		this._userPool.storage.sync((err, result) => {
-			if (!err && result === "SUCCESS") {
-				const currentUser = this._userPool.getCurrentUser();
-				this._cognitoUser.set(currentUser);
-				if (currentUser) {
-					currentUser.getSession((error: Error | null, session: CognitoUserSession | null) => {
-						if (!error && session) {
-							this._accessToken.set(session.getAccessToken());
-						} else {
-							this.logger.warn("Refresh user failed", error);
-						}
-					});
+	async init(): Promise<void> {
+		return new Promise((resolve) => {
+			// @ts-ignore
+			this._userPool.storage.sync((err, result) => {
+				if (!err && result === "SUCCESS") {
+					const currentUser = this._userPool.getCurrentUser();
+					this._cognitoUser.set(currentUser);
+					if (currentUser) {
+						currentUser.getSession((error: Error | null, session: CognitoUserSession | null) => {
+							if (!error && session) {
+								this._accessToken.set(session.getAccessToken());
+								resolve();
+							} else {
+								this.logger.warn("Refresh user failed", error);
+							}
+						});
+					} else {
+						resolve();
+					}
+				} else {
+					resolve();
 				}
-			}
+			});
 		});
 	}
 
@@ -73,7 +82,7 @@ export class CognitoAuthService implements AuthService {
 		return new Promise((resolve, reject) => {
 			const currentUser = new CognitoUser({ Username: email, Pool: this._userPool });
 			if (currentUser) {
-				currentUser.resendConfirmationCode((err, result) => {
+				currentUser.resendConfirmationCode((err) => {
 					if (err) {
 						this.logger.warn("Error resending confirmation code", err);
 						reject(err);
@@ -138,7 +147,7 @@ export class CognitoAuthService implements AuthService {
 			};
 			const cognitoUser = new CognitoUser(userData);
 			cognitoUser.forgotPassword({
-				onSuccess: (data) => {
+				onSuccess: () => {
 					resolve();
 				},
 				onFailure: (err) => {
@@ -158,7 +167,7 @@ export class CognitoAuthService implements AuthService {
 			};
 			const cognitoUser = new CognitoUser(userData);
 			cognitoUser.confirmPassword(resetToken, newPassword, {
-				onSuccess: (data) => {
+				onSuccess: () => {
 					resolve();
 				},
 				onFailure: (err) => {

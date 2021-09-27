@@ -58,9 +58,9 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({ style }) => {
 };
 
 const Container = styled.View`
+	${whiteCardStyle};
 	padding: 7px 15px;
 	${row("center")};
-	${whiteCardStyle};
 	border-radius: 2px;
 `;
 

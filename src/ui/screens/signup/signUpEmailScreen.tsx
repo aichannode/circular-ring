@@ -81,6 +81,7 @@ export const SignUpEmailScreen = () => {
 						value={email}
 						onValueChanged={setEmail}
 						keyboardType={"email-address"}
+						autoCapitalize={"none"}
 						returnKeyType={"next"}
 						blurOnSubmit={false}
 						onSubmit={() => passwordFieldRef.current?.focus()}
@@ -93,6 +94,7 @@ export const SignUpEmailScreen = () => {
 						canBeSecure
 						value={password}
 						onValueChanged={setPassword}
+						autoCapitalize={"none"}
 						returnKeyType={"next"}
 						blurOnSubmit={false}
 						onSubmit={() => confirmPasswordFieldRef.current?.focus()}
@@ -105,6 +107,7 @@ export const SignUpEmailScreen = () => {
 						canBeSecure
 						value={confirmPassword}
 						onValueChanged={setConfirmPassword}
+						autoCapitalize={"none"}
 						blurOnSubmit={true}
 					/>
 				</Stack>

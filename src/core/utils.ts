@@ -1,4 +1,5 @@
 import { Buffer } from "buffer";
+import dayjs from "dayjs";
 import { Observable } from "micro-observables";
 
 export function delay(timeout: number): Promise<void> {
@@ -32,4 +33,19 @@ export function observableToPromise<T>(obs: Observable<T>): Promise<T> {
 
 export function replaceInArray<T>(array: readonly T[], index: number, newValue: T): readonly T[] {
 	return [...array.slice(0, index), newValue, ...array.slice(index + 1)];
+}
+
+export function arrayFromRange(start: number, end: number, increment: number | undefined = 1): number[] {
+	return Array.from({ length: (end + increment - start) / increment }, (_, i) => {
+		return round2Digits(i * increment + start);
+	});
+}
+
+// Correctly rounded at 0.01 precision
+export function round2Digits(value: number): number {
+	return +value.toFixed(2);
+}
+
+export function toServerDate(date: Date) {
+	return dayjs(date).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
 }

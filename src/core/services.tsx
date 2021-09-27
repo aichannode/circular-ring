@@ -1,44 +1,61 @@
 import { ApiService } from "@core/api/apiService";
-import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { CognitoAuthService } from "@domain/auth/cognito-auth/cognitoAuthService";
-import { UserService } from "@domain/user/userService";
-import { UserStorage } from "@domain/user/userStorage";
-import { createContext, useContext } from "react";
-import React from "react";
+import { BluetoothService } from "@domain/bluetooth/bluetoothService";
+import { CalibrationApi } from "@domain/calibration/calibrationApi";
+import { CalibrationService } from "@domain/calibration/calibrationService";
+import { CircleActivityService } from "@domain/circleActivity/circleActivityService";
+import { CircleAlarmService } from "@domain/circleAlarm/circleAlarmService";
 import { DeviceService } from "@domain/device/deviceService";
 import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
-import { RingService } from "@domain/ring/ringService";
-import { RingDataStorage } from "@domain/ring/ringDataStorage";
-import { RingApi } from "@domain/ring/ringApi";
-import { CircleActivityApi } from "@domain/circleActivity/circleActivityApi";
-import { CircleActivityService } from "@domain/circleActivity/circleActivityService";
-import { UserPreferencesStorage } from "@domain/preferences/userPreferencesStorage";
+import { DevFakeDeviceService, EmptyFakeDeviceService } from "@domain/fake/fakeDeviceService";
+import { HomeBannerApi } from "@domain/homeBanner/homeBannerApi";
+import { HomeBannerService } from "@domain/homeBanner/homeBannerService";
+import { HomeBannerStorage } from "@domain/homeBanner/homeBannerStorage";
+import { MeasureApi } from "@domain/measure/measureApi";
 import { UserPreferencesService } from "@domain/preferences/userPreferencesService";
-import { CircleAlarmService } from "@domain/circleAlarm/circleAlarmService";
+import { UserPreferencesStorage } from "@domain/preferences/userPreferencesStorage";
+import { RingApi } from "@domain/ring/ringApi";
+import { RingDataStorage } from "@domain/ring/ringDataStorage";
+import { RingService } from "@domain/ring/ringService";
+import { UserRingsStorage } from "@domain/ring/userRingsStorage";
+import { UserApi } from "@domain/user/userApi";
+import { UserService } from "@domain/user/userService";
+import { UserStorage } from "@domain/user/userStorage";
+import React, { createContext, useContext } from "react";
+import { Config } from "react-native-config";
+
+const fakeDeviceService = Config.ENVIRONNEMENT === "dev" ? new DevFakeDeviceService() : new EmptyFakeDeviceService();
 
 const userStorage = new UserStorage();
 const favoriteDeviceStorage = new FavoriteDeviceStorage();
 const ringDataStorage = new RingDataStorage();
+const userRingsStorage = new UserRingsStorage();
 
 const apiService = new ApiService();
-const circleActivityApi = new CircleActivityApi();
 
 const ringApi = new RingApi(apiService);
 
-const bluetoothService = new BluetoothService();
-const deviceService = new DeviceService(bluetoothService, favoriteDeviceStorage);
-const circleAlarmService = new CircleAlarmService(deviceService);
-const ringService = new RingService(deviceService, circleAlarmService, ringDataStorage, ringApi);
-const circleActivityService = new CircleActivityService(circleActivityApi);
-
 const cognitoAuthService = new CognitoAuthService();
 
-// const userApi = new UserApi(apiService);
-// const userService = new UserService(circularAuthService, /*userApi, */ userStorage);
-const userService = new UserService(cognitoAuthService, /*userApi, */ userStorage);
+const bluetoothService = new BluetoothService();
+const deviceService = new DeviceService(bluetoothService, fakeDeviceService, favoriteDeviceStorage);
+const circleAlarmService = new CircleAlarmService(deviceService);
+const ringService = new RingService(deviceService, circleAlarmService, userRingsStorage, ringDataStorage, ringApi);
+const measureApi = new MeasureApi(apiService);
+
+const circleActivityService = new CircleActivityService(measureApi);
+
+const userApi = new UserApi(apiService);
+const userService = new UserService(cognitoAuthService, userApi, userStorage);
 
 const userPreferencesStorage = new UserPreferencesStorage();
 const userPreferencesService = new UserPreferencesService(userPreferencesStorage);
+const calibrationApi = new CalibrationApi(apiService);
+const calibrationService = new CalibrationService(calibrationApi);
+
+const homeBannerStorage = new HomeBannerStorage();
+const homeBannerApi = new HomeBannerApi(apiService);
+const homeBannerService = new HomeBannerService(homeBannerStorage, homeBannerApi);
 
 export const services = {
 	cognitoAuthService,
@@ -49,6 +66,9 @@ export const services = {
 	circleActivityService,
 	circleAlarmService,
 	userPreferencesService,
+	calibrationService,
+	homeBannerService,
+	fakeDeviceService,
 };
 
 export type Services = typeof services;
@@ -65,10 +85,12 @@ export function useServices(): Services {
 	return services;
 }
 
-export function initializeServices() {
+export async function initializeServices() {
 	apiService.init(cognitoAuthService);
+	await cognitoAuthService.init(); // must be initialized first
 	return Promise.all(
 		Object.values(services)
+			.filter((service) => service !== cognitoAuthService)
 			.map((service) => {
 				if ("init" in service) {
 					return service.init();

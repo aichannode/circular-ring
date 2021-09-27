@@ -14,7 +14,13 @@ export const TertiaryText = styled.Text`
 export const TitleText = styled.Text`
 	${textStyles.title};
 `;
+export const MediumTitleText = styled.Text`
+	${textStyles.mediumTitle};
+`;
 export const Strong = styled.Text`
 	font-weight: bold;
+	color: ${colors.primary};
+`;
+export const Colored = styled.Text`
 	color: ${colors.primary};
 `;

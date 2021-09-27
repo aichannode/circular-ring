@@ -1,6 +1,8 @@
 import { useServices } from "@core/services";
 import { DeviceSetupState } from "@domain/device/deviceService";
 import { useScannedDevices, useSetupState } from "@domain/device/hooks";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { CircularBottomSheet } from "@ui/components/bottomSheet";
 import { PrimaryButton } from "@ui/components/buttons";
 import { Divider } from "@ui/components/divider";
 import { Grow, ResponsiveCenterView, Stack } from "@ui/components/layout";
@@ -11,13 +13,16 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
+import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
 
 export const RingSetupScreen: React.FC = () => {
 	const { format } = useI18n();
 	const { bluetoothService, deviceService, ringService } = useServices();
+
+	const pairingFailedBottomSheet = useRef<BottomSheetModal>(null);
 
 	const setupState = useSetupState();
 	const devices = useScannedDevices();
@@ -25,6 +30,9 @@ export const RingSetupScreen: React.FC = () => {
 	useEffect(() => {
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
 			deviceService.startScan();
+		}
+		if (setupState === DeviceSetupState.LOCATION_DISABLED) {
+			deviceService.checkSettings();
 		}
 	}, [setupState]);
 
@@ -35,34 +43,52 @@ export const RingSetupScreen: React.FC = () => {
 			{(() => {
 				switch (setupState) {
 					case DeviceSetupState.DISABLED:
+					case DeviceSetupState.LOCATION_DISABLED:
 						return (
-							<>
-								{/*<Message>{format("setup.scan.disabled.message")}</Message>*/}
-								<ResponsiveCenterView>
-									<Stack gap={50} align={"center"}>
-										<DisabledTitle>{format("setup.scan.disabled.title")}</DisabledTitle>
-										<View>
-											<Image source={require("@assets/images/ringShadow.png")} />
-											<Cover>
-												<Image source={require("@assets/images/ringBig.png")} />
-											</Cover>
-										</View>
-										<DisabledMessage>{format("setup.scan.disabled.message")}</DisabledMessage>
-										{Platform.OS === "android" && (
-											<PrimaryButton
-												onPress={async () => {
-													bluetoothService.enable();
-												}}
-											>
-												{format("setup.scan.disabled.enable")}
-											</PrimaryButton>
+							<ResponsiveCenterView>
+								<Stack gap={50} align={"center"}>
+									<DisabledTitle>
+										{format(
+											setupState === DeviceSetupState.DISABLED
+												? "setup.scan.disabled.title"
+												: "setup.scan.location_disabled.title"
 										)}
-									</Stack>
-								</ResponsiveCenterView>
-							</>
+									</DisabledTitle>
+									<View>
+										<Image source={require("@assets/images/ringShadow.png")} />
+										<Cover>
+											<Image source={require("@assets/images/ringBig.png")} />
+										</Cover>
+									</View>
+									<DisabledMessage>
+										{format(
+											setupState === DeviceSetupState.DISABLED
+												? "setup.scan.disabled.message"
+												: "setup.scan.location_disabled.message"
+										)}
+									</DisabledMessage>
+									{Platform.OS === "android" && (
+										<PrimaryButton
+											onPress={async () => {
+												bluetoothService.enable();
+												if (setupState === DeviceSetupState.LOCATION_DISABLED) {
+													deviceService.requestLocation();
+												}
+											}}
+										>
+											{format(
+												setupState === DeviceSetupState.DISABLED
+													? "setup.scan.disabled.enable"
+													: "setup.scan.location_disabled.enable"
+											)}
+										</PrimaryButton>
+									)}
+								</Stack>
+							</ResponsiveCenterView>
 						);
 					case DeviceSetupState.SCANNING:
 					case DeviceSetupState.CONNECTING:
+					case DeviceSetupState.FINISHED:
 						return (
 							<>
 								<ResponsiveCenterView>
@@ -90,7 +116,13 @@ export const RingSetupScreen: React.FC = () => {
 												onPress={async () => {
 													deviceService.stopScan();
 													await deviceService.connect(device);
-													await ringService.registerCurrentRing();
+													try {
+														await ringService.registerCurrentRing();
+													} catch (e) {
+														if ((e as { statusCode: number }).statusCode === 409) {
+															pairingFailedBottomSheet.current?.present();
+														}
+													}
 												}}
 											>
 												<Image source={require("@assets/images/ring.png")} />
@@ -105,6 +137,9 @@ export const RingSetupScreen: React.FC = () => {
 						);
 				}
 			})()}
+			<CircularBottomSheet snapPoints={[600]} ref={pairingFailedBottomSheet}>
+				<PairingFailedBottomSheet onClose={() => pairingFailedBottomSheet.current?.close()} />
+			</CircularBottomSheet>
 		</Container>
 	);
 };
@@ -112,7 +147,7 @@ export const RingSetupScreen: React.FC = () => {
 const Container = styled(ScrollScreen)`
 	align-items: center;
 	justify-content: flex-start;
-	padding-top: 50px;
+	padding-vertical: 50px;
 `;
 
 const DisabledTitle = styled.Text`

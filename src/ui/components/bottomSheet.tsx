@@ -28,6 +28,7 @@ export const CircularBottomSheet = React.forwardRef<BottomSheetModal, BottomShee
 				style={{ paddingBottom: safeArea.bottom }}
 				activeOffsetY={[-1, 1]}
 				failOffsetX={[-5, 5]}
+				handleComponent={null}
 			>
 				{children}
 			</BottomSheetModal>
