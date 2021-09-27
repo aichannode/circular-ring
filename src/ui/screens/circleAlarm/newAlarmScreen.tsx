@@ -19,7 +19,7 @@ import { Image, Platform, Pressable } from "react-native";
 import styled from "styled-components/native";
 
 export const NewAlarmScreen: React.FC = () => {
-	const { format, formatDay } = useI18n();
+	const { format, formatDay, formatSnooze, formatSmart } = useI18n();
 	const navigation = useNavigation();
 	const { circleAlarmService } = useServices();
 	const [pickerVisible, setPickerVisible] = useState(false);
@@ -131,17 +131,17 @@ export const NewAlarmScreen: React.FC = () => {
 
 			<OtherButtonContainer style={{ marginTop: 19 }} onPress={() => snoozeBottomSheet.current?.present()}>
 				<SecondaryTitle>
-					{isSmart ? format("alarm.new.snooze.title") : format("alarm.new.smart_snooze.title")}
+					{isSmart ? format("alarm.new.smart_snooze.title") : format("alarm.new.snooze.title")}
 				</SecondaryTitle>
 				<PreviewContainer>
-					<Tips>{format("alarm.new.snooze.off")}</Tips>
+					<Tips>{formatSnooze(snooze)}</Tips>
 					<Arrow source={require("@assets/images/topArrowGrey.png")} />
 				</PreviewContainer>
 			</OtherButtonContainer>
 			<OtherButtonContainer onPress={() => smartBottomSheet.current?.present()}>
 				<SecondaryTitle>{format("alarm.new.smart_alarm.title")}</SecondaryTitle>
 				<PreviewContainer>
-					<Tips>{format("alarm.new.snooze.off")}</Tips>
+					<Tips>{formatSmart(smart)}</Tips>
 					<Arrow source={require("@assets/images/topArrowGrey.png")} />
 				</PreviewContainer>
 			</OtherButtonContainer>

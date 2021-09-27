@@ -1,5 +1,6 @@
 import { ScoreQuality } from "@domain/circleActivity/circleActivityData";
 import { Weekdays } from "@domain/ring/ringAlarm";
+import { alarmDataEOF } from "@domain/ring/ringData";
 import { Intensity } from "@domain/ring/ringLiveData";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
@@ -107,6 +108,38 @@ export function useI18n() {
 						}
 					})
 					.join(", ");
+			}
+		},
+		formatSnooze: (snooze: number) => {
+			switch (snooze) {
+				case 1:
+					return "1 " + intl.formatMessage({ id: "alarm.new.snooze.minute" });
+				case 2:
+					return "2 " + intl.formatMessage({ id: "alarm.new.snooze.minutes" });
+				case 3:
+					return "5 " + intl.formatMessage({ id: "alarm.new.snooze.minutes" });
+				case 4:
+					return "10 " + intl.formatMessage({ id: "alarm.new.snooze.minutes" });
+				case 5:
+					return "15 " + intl.formatMessage({ id: "alarm.new.snooze.minutes" });
+				case 0:
+					return intl.formatMessage({ id: "alarm.new.snooze.off" });
+			}
+		},
+		formatSmart: (smart: number) => {
+			switch (smart) {
+				case 1:
+					return "30 " + intl.formatMessage({ id: "alarm.new.snooze.minutes" });
+				case 2:
+					return "45 " + intl.formatMessage({ id: "alarm.new.snooze.minutes" });
+				case 3:
+					return "1 " + intl.formatMessage({ id: "alarm.new.snooze.hour" });
+				case 4:
+					return "1:15 " + intl.formatMessage({ id: "alarm.new.snooze.hours" });
+				case 5:
+					return "1:30 " + intl.formatMessage({ id: "alarm.new.snooze.minutes" });
+				case 0:
+					return intl.formatMessage({ id: "alarm.new.snooze.off" });
 			}
 		},
 	};

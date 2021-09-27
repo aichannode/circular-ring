@@ -20,34 +20,34 @@ export const IntervalBottomSheet: React.FC<IntervalBottomSheetProps> = ({
 	snoozeDisplay = false,
 	onClose,
 }) => {
-	const { format } = useI18n();
+	const { format, formatSnooze, formatSmart } = useI18n();
 	const [interval, setInterval] = useState(value);
 	const [isSmartValue, setIsSmartValue] = useState(isSmart);
 
 	const snoozeLinkList = useMemo(
 		() => [
 			{
-				label: snoozeDisplay ? "1 " + format("alarm.new.snooze.minute") : "30 " + format("alarm.new.snooze.minutes"),
+				label: snoozeDisplay ? formatSnooze(1) : formatSmart(1),
 				value: 1,
 			},
 			{
-				label: snoozeDisplay ? "2 " + format("alarm.new.snooze.minutes") : "45 " + format("alarm.new.snooze.minutes"),
+				label: snoozeDisplay ? formatSnooze(2) : formatSmart(2),
 				value: 2,
 			},
 			{
-				label: snoozeDisplay ? "5 " + format("alarm.new.snooze.minutes") : "1 " + format("alarm.new.snooze.hour"),
+				label: snoozeDisplay ? formatSnooze(3) : formatSmart(3),
 				value: 3,
 			},
 			{
-				label: snoozeDisplay ? "10 " + format("alarm.new.snooze.minutes") : "1:15 " + format("alarm.new.snooze.hour"),
+				label: snoozeDisplay ? formatSnooze(4) : formatSmart(4),
 				value: 4,
 			},
 			{
-				label: snoozeDisplay ? "15 " + format("alarm.new.snooze.minutes") : "1:30" + format("alarm.new.snooze.hour"),
+				label: snoozeDisplay ? formatSnooze(5) : formatSmart(5),
 				value: 5,
 			},
 			{
-				label: format("alarm.new.snooze.off"),
+				label: formatSnooze(0),
 				value: 0,
 			},
 		],

@@ -12,6 +12,7 @@ import { alarmDataEOF } from "@domain/ring/ringData";
 import { observable } from "micro-observables";
 
 const ID_FOR_CREATION = 255;
+export const MAX_ALARMS = 16;
 
 export class CircleAlarmService {
 	private _ringAlarms = observable<RingAlarm[]>([]);

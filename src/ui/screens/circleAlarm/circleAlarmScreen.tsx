@@ -1,9 +1,13 @@
 import { useAlarms } from "@domain/circleAlarm/alarmHooks";
+import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { CircularBottomSheet } from "@ui/components/bottomSheet";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { ScreenSection } from "@ui/screens/circleActivity/screenSection";
+import { WarningBottomSheet } from "@ui/screens/circleAlarm/warningBottomSheet";
 import { colors } from "@ui/styles/colors";
-import React from "react";
+import React, { useRef } from "react";
 import { Image, Pressable, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { AlarmCard } from "./alarmCard";
@@ -14,6 +18,7 @@ export const CircleAlarmScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
 	const alarms = useAlarms();
 	const { format } = useI18n();
+	const warningBottomSheet = useRef<BottomSheetModal>(null);
 
 	return (
 		<Container>
@@ -26,7 +31,13 @@ export const CircleAlarmScreen: React.FC = () => {
 					{alarms?.map((value) => (
 						<AlarmCard key={value.id} data={value} />
 					))}
-					<AddAlarmButton onPress={() => navigation.navigate(Routes.NewAlarm)}>
+					<AddAlarmButton
+						onPress={() => {
+							alarms.length >= MAX_ALARMS
+								? warningBottomSheet.current?.present()
+								: navigation.navigate(Routes.NewAlarm);
+						}}
+					>
 						<AddImage source={require("@assets/images/addButton.png")} />
 						<AddAlarmText>{format("alarm.score.add_button")}</AddAlarmText>
 					</AddAlarmButton>
@@ -34,6 +45,14 @@ export const CircleAlarmScreen: React.FC = () => {
 				<ScreenSection title={format("alarm.week_overview")} />
 				<AlarmWeekOverview style={{ marginVertical: 25 }} />
 			</ScrollView>
+			<CircularBottomSheet snapPoints={[500]} ref={warningBottomSheet}>
+				<WarningBottomSheet
+					message={format("alarm.new.warning.description")}
+					onClose={() => {
+						warningBottomSheet.current?.close();
+					}}
+				/>
+			</CircularBottomSheet>
 		</Container>
 	);
 };
