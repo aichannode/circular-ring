@@ -249,6 +249,7 @@ export class UserService {
 		vo2Max?: number;
 		rhr?: number;
 		female?: FemaleInfo;
+		stride?: number;
 	}) {
 		const currentInfo = this._userAdvancedInfo.get();
 		if (currentInfo) {

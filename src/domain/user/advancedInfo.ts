@@ -96,4 +96,5 @@ export interface AdvancedInfo {
 	vo2Max: number;
 	rhr: number;
 	female: FemaleInfo;
+	stride: number;
 }

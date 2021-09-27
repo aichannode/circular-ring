@@ -3,6 +3,7 @@
  */
 
 import { arrayFromRange } from "@core/utils";
+import { Sex } from "./user/user";
 
 export enum WeightUnit {
 	kg = "kg",
@@ -53,6 +54,15 @@ const FT_MIN = 2.63;
 const FT_MAX = 8.23;
 const FT_INCREMENT = 0.01;
 export const heightValuesFt = arrayFromRange(FT_MIN, FT_MAX, FT_INCREMENT);
+
+const CM_STRIDE_MIN = 30;
+const CM_STRIDE_MAX = 105;
+const CM_STRIDE_INCREMENT = 1;
+export const strideValuesCm = arrayFromRange(CM_STRIDE_MIN, CM_STRIDE_MAX, CM_STRIDE_INCREMENT);
+const FT_STRIDE_MIN = 0.98;
+const FT_STRIDE_MAX = 3.44;
+const FT_STRIDE_INCREMENT = 0.01;
+export const strideValuesFt = arrayFromRange(FT_STRIDE_MIN, FT_STRIDE_MAX, FT_STRIDE_INCREMENT);
 
 export const UNDEFINED_HEIGHT = 170;
 export const defaultHeight = new Map<HeightUnit, number>([

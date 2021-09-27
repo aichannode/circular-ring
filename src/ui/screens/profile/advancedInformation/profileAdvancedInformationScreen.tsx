@@ -1,6 +1,8 @@
 import { useServices } from "@core/services";
+import { round2Digits } from "@core/utils";
+import { cmToFt, HeightUnit } from "@domain/units";
 import { BirthControl, FertilityState, WorkTime } from "@domain/user/advancedInfo";
-import { useUser, useUserAdvancedInfo } from "@domain/user/hooks/useUser";
+import { useUser, useUserAdvancedInfo, useUserSettings } from "@domain/user/hooks/useUser";
 import { Sex } from "@domain/user/user";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { CircularBottomSheet } from "@ui/components/bottomSheet";
@@ -31,6 +33,7 @@ import {
 import React, { useRef, useState } from "react";
 import { View } from "react-native";
 import styled from "styled-components/native";
+import { StrideBottomSheet } from "./strideBottomSheet";
 
 export const ProfileAdvancedInformationScreen = () => {
 	const { format } = useI18n();
@@ -38,6 +41,8 @@ export const ProfileAdvancedInformationScreen = () => {
 	const { userService } = useServices();
 	const user = useUser();
 	const advancedInfo = useUserAdvancedInfo();
+	const userSettings = useUserSettings();
+	const heightUnit = userSettings?.heightFormat || HeightUnit.cm;
 
 	const configsRef = useRef(new AdvancedInfoBottomSheetConfig(userService, format, advancedInfo));
 	const [bottomSheetConfig, setBottomSheetConfig] = useState<AdvancedInfoEditionConfig<EditionInfoType>>(
@@ -45,6 +50,7 @@ export const ProfileAdvancedInformationScreen = () => {
 	);
 	const [currentOption, setCurrentOption] = useState<EditionInfoType>(WorkTime.DAY);
 	const editionBottomSheetRef = useRef<BottomSheetModal>(null);
+	const strideBottomSheetRef = useRef<BottomSheetModal>(null);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 	const [isLoading, setLoading] = useState(false);
 
@@ -53,7 +59,7 @@ export const ProfileAdvancedInformationScreen = () => {
 		setCurrentOption(option);
 	}
 
-	return !advancedInfo ? null : (
+	return !advancedInfo || !user ? null : (
 		<ScrollScreen contentContainerStyle={{ paddingTop: 0 }}>
 			<InfoListHeader>{format("profile_advanced_info.about_you")}</InfoListHeader>
 			<HeartRateCard />
@@ -81,12 +87,16 @@ export const ProfileAdvancedInformationScreen = () => {
 					editionBottomSheetRef.current?.present();
 				}}
 			/>
-			{/*<InfoListItem*/}
-			{/*	name={format("profile_advanced_info.stride.title")}*/}
-			{/*	hasDisclosure={true}*/}
-			{/*	value={"toto cm"}*/}
-			{/*	// action={() => navigate(Routes.ProfileEditName)}*/}
-			{/*/>*/}
+			<InfoListItem
+				name={format("profile_advanced_info.stride.title")}
+				hasDisclosure={true}
+				value={`${
+					heightUnit === HeightUnit.ft ? round2Digits(cmToFt(user.stride)) : Math.round(user.stride)
+				} ${heightUnit}`}
+				action={() => {
+					strideBottomSheetRef.current?.present();
+				}}
+			/>
 			<InfoListItem
 				name={format("profile_advanced_info.sleep_disorder.title")}
 				hasDisclosure={true}
@@ -208,6 +218,9 @@ export const ProfileAdvancedInformationScreen = () => {
 					currentOption={currentOption}
 					onClose={() => editionBottomSheetRef.current?.close()}
 				/>
+			</CircularBottomSheet>
+			<CircularBottomSheet snapPoints={[480]} ref={strideBottomSheetRef}>
+				<StrideBottomSheet onSaved={() => strideBottomSheetRef.current?.close()} />
 			</CircularBottomSheet>
 		</ScrollScreen>
 	);

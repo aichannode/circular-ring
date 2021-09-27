@@ -57,6 +57,7 @@ export class UserApi {
 			bornDate: new Date(userDto.bornDate),
 			createdAt: new Date(userDto.createdAt),
 			sex: userDto.sex === "male" ? Sex.Male : Sex.Female,
+			stride: 80,
 		};
 	}
 
