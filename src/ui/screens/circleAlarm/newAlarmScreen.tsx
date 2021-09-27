@@ -1,33 +1,76 @@
-import { Melody } from "@domain/ring/ringAlarm";
+import { useServices } from "@core/services";
+import { Melody, Weekdays } from "@domain/ring/ringAlarm";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { CircularBottomScrollSheet, CircularBottomSheet } from "@ui/components/bottomSheet";
+import { useNavigation } from "@react-navigation/native";
+import { CircularBottomScrollSheet } from "@ui/components/bottomSheet";
 import { SimpleTextButton } from "@ui/components/buttons";
 import { Hour } from "@ui/components/hour";
+import { CheckAlarmButton } from "@ui/components/navigation/checkButton";
 import { SecondaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
+import { IntervalBottomSheet } from "@ui/screens/circleAlarm/intervalBottomSheet";
+import { LabelBottomSheet } from "@ui/screens/circleAlarm/labelBottomSheet";
+import { RepeatBottomSheet } from "@ui/screens/circleAlarm/repeatBottomSheet";
 import { VibrationBottomSheet } from "@ui/screens/circleAlarm/vibrationBottomSheet";
 import { colors } from "@ui/styles/colors";
-import React, { useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { Image, Platform, Pressable } from "react-native";
 import styled from "styled-components/native";
 
 export const NewAlarmScreen: React.FC = () => {
 	const { format } = useI18n();
+	const navigation = useNavigation();
+	const { circleAlarmService } = useServices();
 	const [pickerVisible, setPickerVisible] = useState(false);
 	const [alarmTime, setAlarmTime] = useState(new Date());
 	const [vibrationPower, setVibrationPower] = useState(50);
 	const [melody, setMelody] = useState<Melody>(Melody.ALERT);
+	const [weekdays, setWeekdays] = useState<Weekdays[]>([
+		Weekdays.MONDAY,
+		Weekdays.TUESDAY,
+		Weekdays.WEDNESDAY,
+		Weekdays.THURSDAY,
+		Weekdays.FRIDAY,
+	]);
 	const [label, setLabel] = useState("Alarm");
 	const [snooze, setSnooze] = useState(0);
 	const [smart, setSmart] = useState(0);
-
+	const [isSmart, setIsSmart] = useState(false);
 	const vibrationBottomSheet = useRef<BottomSheetModal>(null);
+	const repeatBottomSheet = useRef<BottomSheetModal>(null);
+	const labelBottomSheet = useRef<BottomSheetModal>(null);
+	const snoozeBottomSheet = useRef<BottomSheetModal>(null);
+	const smartBottomSheet = useRef<BottomSheetModal>(null);
 
-	const submit = (newValue: Date) => {
+	const submitTime = (newValue: Date) => {
 		setPickerVisible(false);
 		setAlarmTime(newValue || alarmTime);
 	};
+
+	useLayoutEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<CheckAlarmButton
+					onPress={() =>
+						circleAlarmService.createAlarm({
+							snooze,
+							smart,
+							isExisting: false,
+							isActivated: true,
+							isSmart,
+							weekdays,
+							time: alarmTime,
+							vibrationPower,
+							vibrationRepetition: 0,
+							melody,
+							label,
+						})
+					}
+				/>
+			),
+		});
+	}, [snooze, smart, alarmTime, vibrationPower, label, isSmart, melody, weekdays]);
 
 	return (
 		<Container>
@@ -50,7 +93,7 @@ export const NewAlarmScreen: React.FC = () => {
 							is24Hour={true}
 							// display="spinner"
 							onChange={(event, selectedTime) => {
-								event.type !== "dismissed" && selectedTime ? submit(selectedTime) : setPickerVisible(false);
+								event.type !== "dismissed" && selectedTime ? submitTime(selectedTime) : setPickerVisible(false);
 							}}
 						/>
 					)}
@@ -74,36 +117,31 @@ export const NewAlarmScreen: React.FC = () => {
 					<Arrow source={require("@assets/images/topArrowGrey.png")} />
 				</PreviewContainer>
 			</OtherButtonContainer>
-			<OtherButtonContainer>
+			<OtherButtonContainer onPress={() => repeatBottomSheet.current?.present()}>
 				<SecondaryTitle>{format("alarm.new.repeat.title")}</SecondaryTitle>
 				<PreviewContainer>
 					<Tips>{format("alarm.new.repeat.friday")}</Tips>
 					<Arrow source={require("@assets/images/topArrowGrey.png")} />
 				</PreviewContainer>
 			</OtherButtonContainer>
-			<OtherButtonContainer>
+			<OtherButtonContainer onPress={() => labelBottomSheet.current?.present()}>
 				<SecondaryTitle>{format("alarm.new.label.title")}</SecondaryTitle>
 				<PreviewContainer>
-					<Tips>{"Alarm"}</Tips>
+					<Tips>{label}</Tips>
 					<Arrow source={require("@assets/images/topArrowGrey.png")} />
 				</PreviewContainer>
 			</OtherButtonContainer>
 
-			<OtherButtonContainer style={{ marginTop: 19 }}>
-				<SecondaryTitle>{format("alarm.new.snooze.title")}</SecondaryTitle>
+			<OtherButtonContainer style={{ marginTop: 19 }} onPress={() => snoozeBottomSheet.current?.present()}>
+				<SecondaryTitle>
+					{isSmart ? format("alarm.new.snooze.title") : format("alarm.new.smart_snooze.title")}
+				</SecondaryTitle>
 				<PreviewContainer>
 					<Tips>{format("alarm.new.snooze.off")}</Tips>
 					<Arrow source={require("@assets/images/topArrowGrey.png")} />
 				</PreviewContainer>
 			</OtherButtonContainer>
-			{/* <OtherButtonContainer>
-				<SecondaryTitle>{format("alarm.new.smart_snooze.title")}</SecondaryTitle>
-				<PreviewContainer>
-					<Tips>{format("alarm.new.snooze.off")}</Tips>
-					<Arrow source={require("@assets/images/topArrowGrey.png")} />
-				</PreviewContainer>
-			</OtherButtonContainer> */}
-			<OtherButtonContainer>
+			<OtherButtonContainer onPress={() => smartBottomSheet.current?.present()}>
 				<SecondaryTitle>{format("alarm.new.smart_alarm.title")}</SecondaryTitle>
 				<PreviewContainer>
 					<Tips>{format("alarm.new.snooze.off")}</Tips>
@@ -111,7 +149,7 @@ export const NewAlarmScreen: React.FC = () => {
 				</PreviewContainer>
 			</OtherButtonContainer>
 
-			<CircularBottomScrollSheet snapPoints={[800]} ref={vibrationBottomSheet}>
+			<CircularBottomScrollSheet snapPoints={[820]} ref={vibrationBottomSheet}>
 				<VibrationBottomSheet
 					vibrationPower={vibrationPower}
 					melody={melody}
@@ -119,6 +157,46 @@ export const NewAlarmScreen: React.FC = () => {
 						setVibrationPower(vibrationPower);
 						setMelody(melody);
 						vibrationBottomSheet.current?.close();
+					}}
+				/>
+			</CircularBottomScrollSheet>
+			<CircularBottomScrollSheet snapPoints={[700]} ref={repeatBottomSheet}>
+				<RepeatBottomSheet
+					weekdays={weekdays}
+					onClose={(value) => {
+						setWeekdays(value);
+						console.log(value);
+						repeatBottomSheet.current?.close();
+					}}
+				/>
+			</CircularBottomScrollSheet>
+			<CircularBottomScrollSheet snapPoints={[350]} ref={labelBottomSheet}>
+				<LabelBottomSheet
+					label={label}
+					onClose={(label) => {
+						setLabel(label);
+						labelBottomSheet.current?.close();
+					}}
+				/>
+			</CircularBottomScrollSheet>
+			<CircularBottomScrollSheet snapPoints={[700]} ref={snoozeBottomSheet}>
+				<IntervalBottomSheet
+					value={snooze}
+					isSmart={isSmart}
+					snoozeDisplay
+					onClose={(value, isSmart) => {
+						setSnooze(value);
+						setIsSmart(isSmart ?? false);
+						snoozeBottomSheet.current?.close();
+					}}
+				/>
+			</CircularBottomScrollSheet>
+			<CircularBottomScrollSheet snapPoints={[700]} ref={smartBottomSheet}>
+				<IntervalBottomSheet
+					value={smart}
+					onClose={(value) => {
+						setSmart(value);
+						smartBottomSheet.current?.close();
 					}}
 				/>
 			</CircularBottomScrollSheet>

@@ -1,5 +1,4 @@
 import { useAlarms } from "@domain/circleAlarm/alarmHooks";
-import { SecondaryText, TertiaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { ScreenSection } from "@ui/screens/circleActivity/screenSection";

@@ -1,11 +1,13 @@
 import { Channel } from "@domain/device/channels";
 import { DeviceService } from "@domain/device/deviceService";
-import { deserializeAlarmData, RingAlarm, serializeAlarmData } from "@domain/ring/ringAlarm";
+import { deserializeAlarmData, RingAlarm, serializeAlarmData, getAlarmId } from "@domain/ring/ringAlarm";
 import { alarmDataEOF } from "@domain/ring/ringData";
 import { observable } from "micro-observables";
 
+const ID_FOR_CREATION = 255;
+
 export class CircleAlarmService {
-	private _ringAlarms = observable<RingAlarm[] | null>(null);
+	private _ringAlarms = observable<RingAlarm[]>([]);
 	ringAlarms = this._ringAlarms.readOnly();
 
 	constructor(private readonly deviceService: DeviceService) {}
@@ -40,9 +42,14 @@ export class CircleAlarmService {
 		}
 	}
 
-	// async createAlarm(alarm: RingAlarm) {
-
-	// }
+	async createAlarm(alarm: Omit<RingAlarm, "id">) {
+		const response = await this.deviceService.getResponse(serializeAlarmData({ ...alarm, id: ID_FOR_CREATION }));
+		if (!response) {
+			throw Error("Invalid live data message " + response);
+		}
+		const id = getAlarmId(response);
+		this._ringAlarms.update((alarms) => [...alarms, { ...alarm, id }]);
+	}
 
 	// async removeAlarm(alarm: RingAlarm) {
 
@@ -50,7 +57,7 @@ export class CircleAlarmService {
 
 	async updateAlarm(alarm: RingAlarm) {
 		const response = await this.deviceService.getResponse(serializeAlarmData(alarm));
-		console.log(response);
+		this._ringAlarms.update((alarms) => alarms.map((el, i) => (i === alarm.id ? { ...el, ...alarm } : el)));
 	}
 
 	log(...args: unknown[]) {

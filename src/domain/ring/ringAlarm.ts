@@ -29,6 +29,7 @@ export interface RingAlarm {
 	smart: number;
 	isActivated: boolean;
 	isExisting: boolean;
+	isSmart: boolean;
 	weekdays: Weekdays[];
 	time: Date;
 	vibrationPower: number;
@@ -62,8 +63,6 @@ export const melodyOrderedList = [
 	Melody.DISCHARGE,
 ];
 
-const snoozeTime = [0, 1, 2, 5, 10, 15];
-
 export function activationHexToData(activationHex: string): {
 	snooze: number;
 	smart: number;
@@ -74,20 +73,17 @@ export function activationHexToData(activationHex: string): {
 	const isExisting = !(activationDec & 1);
 	const isActivated = !((activationDec >> 1) & 1);
 
-	const smartValue = (activationDec >> 2) & 0x7;
-	const snoozeValue = (activationDec >> 5) & 0x7;
-	const smart = smartValue === 0 ? 0 : 15 * smartValue + 15;
+	const smart = (activationDec >> 2) & 0x7;
+	const snooze = (activationDec >> 5) & 0x7;
 
-	return { snooze: snoozeTime[snoozeValue], smart, isActivated, isExisting };
+	return { snooze, smart, isActivated, isExisting };
 }
 
 export function dataToActivationHex(snooze: number, smart: number, isActivated: boolean, isExisting: boolean): string {
-	const snoozeValue = snoozeTime.findIndex((value) => value === snooze);
-	const smartValue = smart === 0 ? 0 : (smart - 15) / 15;
 	const activatedValue = isActivated ? 0 : 1;
 	const existingValue = isExisting ? 0 : 1;
 
-	return ((((((snoozeValue << 3) + smartValue) << 1) + activatedValue) << 1) + existingValue).toString(16);
+	return ((((((snooze << 3) + smart) << 1) + activatedValue) << 1) + existingValue).toString(16);
 }
 
 export function deserializeAlarmData(alarmData: string): RingAlarm | undefined {
@@ -116,15 +112,17 @@ export function deserializeAlarmData(alarmData: string): RingAlarm | undefined {
 		}
 		index += 1;
 	}
+	const isSmart = (weekdayDec >> 7) & 1;
 
 	const time = new Date();
 	time.setHours(Number(hour));
 	time.setMinutes(Number(min));
 
 	return {
-		id: Number(alarmId),
+		id: parseInt(alarmId, 16),
 		isExisting,
 		isActivated,
+		isSmart: !!isSmart,
 		vibrationPower: Number(vibrationPower),
 		vibrationRepetition: Number(vibrationRepetition),
 		snooze,
@@ -143,6 +141,7 @@ export function serializeAlarmData(alarmData: RingAlarm): string {
 		smart,
 		isActivated,
 		isExisting,
+		isSmart,
 		weekdays,
 		time,
 		vibrationPower,
@@ -159,6 +158,9 @@ export function serializeAlarmData(alarmData: RingAlarm): string {
 		if (weekdaysIndex > -1) {
 			weekdaysValue += Math.pow(2, weekdaysIndex);
 		}
+	}
+	if (isSmart) {
+		weekdaysValue += Math.pow(2, 7);
 	}
 
 	return (
@@ -181,4 +183,17 @@ export function serializeAlarmData(alarmData: RingAlarm): string {
 		"L" +
 		label
 	);
+}
+
+export function getAlarmId(alarmData: string): number {
+	const alarmDataMessageRegex = /ALR(\w\w)r(\w\w)h(\w\w)m(\w\w)v(\w\w)n(\w\w)M(\w\w)i(\w\w)L((?:\w|\W)*)/;
+	const matches = alarmData.match(alarmDataMessageRegex);
+
+	if (!matches) {
+		throw Error("Invalid live data message " + alarmData);
+	}
+
+	const [, , , , , , , alarmId] = matches.slice(1);
+
+	return parseInt(alarmId, 16);
 }

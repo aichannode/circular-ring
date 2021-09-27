@@ -23,7 +23,7 @@ export const SelectionList: React.FC<SelectionListProps> = ({
 	const triggeredList = list.map((value, index) => {
 		return index === defaultIndex;
 	});
-	const [triggeredElements, setTriggeredElement] = useState(triggeredList);
+	const [triggeredElement, setTriggeredElement] = useState(triggeredList);
 
 	return (
 		<>
@@ -33,13 +33,9 @@ export const SelectionList: React.FC<SelectionListProps> = ({
 						<PrimaryText>{format("alarm.new.edit_vibration.type." + element)}</PrimaryText>
 						<TouchableOpacity
 							activeOpacity={0.85}
-							style={triggeredElements[index] ? styles.circlePress : styles.circleNormal}
+							style={triggeredElement[index] ? styles.circlePress : styles.circleNormal}
 							onPress={() => {
-								setTriggeredElement(
-									triggeredElements.map((value, i) =>
-										i === index ? !value : value && !multipleSelection ? false : false
-									)
-								);
+								setTriggeredElement(triggeredElement.map((value, i) => (i === index ? true : false)));
 								triggeredData(element);
 							}}
 						>

@@ -283,6 +283,8 @@ PODS:
     - React-Core
   - react-native-safe-area-context (3.3.2):
     - React-Core
+  - react-native-slider (4.1.7):
+    - React-Core
   - react-native-splash-screen (3.2.0):
     - React
   - react-native-webview (11.13.0):
@@ -453,6 +455,7 @@ DEPENDENCIES:
   - react-native-config (from `../node_modules/react-native-config`)
   - react-native-mail (from `../node_modules/react-native-mail`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -541,6 +544,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-mail"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-slider:
+    :path: "../node_modules/@react-native-community/slider"
   react-native-splash-screen:
     :path: "../node_modules/react-native-splash-screen"
   react-native-webview:
@@ -630,6 +635,7 @@ SPEC CHECKSUMS:
   react-native-config: 72d948053a442779b3178fddd571e37f118ef606
   react-native-mail: 8fdcd3aef007c33a6877a18eb4cf7447a1d4ce4a
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
+  react-native-slider: 269d81247e2a87358ee03241da55b00c919e4d7a
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-webview: 133a6a5149f963259646e710b4545c67ef35d7c9
   React-perflogger: fd28ee1f2b5b150b00043f0301d96bd417fdc339
@@ -661,4 +667,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 827a1eb494b0e54b9b64d3e47a563a7b31db57c8
 
-COCOAPODS: 1.10.2
+COCOAPODS: 1.10.1
