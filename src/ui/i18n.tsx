@@ -42,7 +42,9 @@ export function useI18n() {
 				return `${minuteCount} min`;
 			}
 		},
-
+		formatLittleDay: (day: string) => {
+			return day.substring(0, Math.min(day.length, 3));
+		},
 		formatScoreQuality: (scoreQuality: ScoreQuality) => {
 			switch (scoreQuality) {
 				case ScoreQuality.POOR:

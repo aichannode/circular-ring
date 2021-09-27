@@ -20,10 +20,9 @@ export const AlarmCard: React.FC<AlarmCardProps> = ({ data, style }) => {
 	const { id, isActivated } = data;
 	const [isEnabled, setIsEnabled] = useState(isActivated);
 
-	const updateAlarm = async () => {
-		console.log(JSON.stringify({ ...data, isActivated: !isEnabled, isExisting: true }));
+	const updateAlarm = async (prevState: boolean) => {
 		setIsEnabled((prev) => !prev);
-		await circleAlarmService.updateAlarm({ ...data, isActivated: isEnabled, isExisting: true });
+		await circleAlarmService.updateAlarm({ ...data, isActivated: !prevState, isExisting: true });
 	};
 
 	return (
@@ -47,7 +46,7 @@ export const AlarmCard: React.FC<AlarmCardProps> = ({ data, style }) => {
 					ios_backgroundColor={colors.gray}
 					trackColor={{ false: colors.gray, true: colors.blue }}
 					thumbColor={colors.white}
-					onValueChange={() => updateAlarm()}
+					onValueChange={() => updateAlarm(isEnabled)}
 					value={isEnabled}
 				/>
 			</SwitchContainer>

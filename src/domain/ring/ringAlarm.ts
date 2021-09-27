@@ -186,11 +186,11 @@ export function serializeAlarmData(alarmData: RingAlarm): string {
 }
 
 export function getAlarmId(alarmData: string): number {
-	const alarmDataMessageRegex = /ALR(\w\w)r(\w\w)h(\w\w)m(\w\w)v(\w\w)n(\w\w)M(\w\w)i(\w\w)L((?:\w|\W)*)/;
+	const alarmDataMessageRegex = /(\w\w)r(\w\w)h(\w\w)m(\w\w)v(\w\w)n(\w\w)M(\w\w)i(\w\w)L((?:\w|\W)*)/;
 	const matches = alarmData.match(alarmDataMessageRegex);
 
 	if (!matches) {
-		throw Error("Invalid live data message " + alarmData);
+		throw Error("Invalid alarm data message " + alarmData);
 	}
 
 	const [, , , , , , , alarmId] = matches.slice(1);
@@ -216,3 +216,47 @@ const melodyIds: { [key in Melody]: string } = {
 export function serializeMelody(melody: Melody, power: number) {
 	return "PRE" + melodyIds[melody] + power.toString(16);
 }
+
+//const { format } = useI18n();
+
+// export const weekdaysLinkList = useMemo(
+// 	() => [
+// 		{
+// 			label: format("alarm.new.repeat.weekdays"),
+// 			value: [Weekdays.MONDAY, Weekdays.TUESDAY, Weekdays.WEDNESDAY, Weekdays.THURSDAY, Weekdays.FRIDAY],
+// 		},
+// 		{
+// 			label: format("alarm.new.repeat.monday"),
+// 			value: [Weekdays.MONDAY],
+// 		},
+// 		{
+// 			label: format("alarm.new.repeat.tuesday"),
+// 			value: [Weekdays.TUESDAY],
+// 		},
+// 		{
+// 			label: format("alarm.new.repeat.wednesday"),
+// 			value: [Weekdays.WEDNESDAY],
+// 		},
+// 		{
+// 			label: format("alarm.new.repeat.thursday"),
+// 			value: [Weekdays.THURSDAY],
+// 		},
+// 		{
+// 			label: format("alarm.new.repeat.friday"),
+// 			value: [Weekdays.FRIDAY],
+// 		},
+// 		{
+// 			label: format("alarm.new.repeat.saturday"),
+// 			value: [Weekdays.SATURDAY],
+// 		},
+// 		{
+// 			label: format("alarm.new.repeat.sunday"),
+// 			value: [Weekdays.SUNDAY],
+// 		},
+// 	],
+// 	[]
+// );
+
+// export function displayWeekdays(weekdays: Weekdays[]): string {
+// 	const littleLabel = weekdaysLinkList.map((value) => value.label.substring(0, Math.min(value.label.length, 3)));
+// }

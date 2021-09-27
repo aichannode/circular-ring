@@ -49,13 +49,16 @@ export class CircleAlarmService {
 		}
 	}
 
-	async createAlarm(alarm: Omit<RingAlarm, "id">) {
-		const response = await this.deviceService.getResponse(serializeAlarmData({ ...alarm, id: ID_FOR_CREATION }));
+	async createAlarm(alarm: Omit<RingAlarm, "id" | "isExisting" | "isActivated">) {
+		const response = await this.deviceService.getResponse(
+			serializeAlarmData({ ...alarm, id: ID_FOR_CREATION, isExisting: true, isActivated: true }),
+			Channel.ALARM
+		);
 		if (!response) {
-			throw Error("Invalid live data message " + response);
+			throw Error("Invalid alarm data message " + response);
 		}
 		const id = getAlarmId(response);
-		this._ringAlarms.update((alarms) => [...alarms, { ...alarm, id }]);
+		this._ringAlarms.update((alarms) => [...alarms, { ...alarm, id, isExisting: true, isActivated: true }]);
 	}
 
 	playMelody(melody: Melody, power: number) {
@@ -67,8 +70,8 @@ export class CircleAlarmService {
 	// }
 
 	async updateAlarm(alarm: RingAlarm) {
-		await this.deviceService.getResponse(serializeAlarmData(alarm));
-		this._ringAlarms.update((alarms) => alarms.map((el, i) => (i === alarm.id ? { ...el, ...alarm } : el)));
+		await this.deviceService.write(serializeAlarmData({ ...alarm, isExisting: true }));
+		this._ringAlarms.update((alarms) => alarms.map((el) => (el.id === alarm.id ? { ...el, ...alarm } : el)));
 	}
 
 	log(...args: unknown[]) {

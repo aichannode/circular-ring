@@ -56,13 +56,11 @@ export const NewAlarmScreen: React.FC = () => {
 						circleAlarmService.createAlarm({
 							snooze,
 							smart,
-							isExisting: false,
-							isActivated: true,
 							isSmart,
 							weekdays,
 							time: alarmTime,
 							vibrationPower,
-							vibrationRepetition: 0,
+							vibrationRepetition: 1,
 							melody,
 							label,
 						})
@@ -165,7 +163,6 @@ export const NewAlarmScreen: React.FC = () => {
 					weekdays={weekdays}
 					onClose={(value) => {
 						setWeekdays(value);
-						console.log(value);
 						repeatBottomSheet.current?.close();
 					}}
 				/>

@@ -1,5 +1,5 @@
 import { useAlarms } from "@domain/circleAlarm/alarmHooks";
-import { Melody, RingAlarm, Weekdays } from "@domain/ring/ringAlarm";
+import { RingAlarm, Weekdays } from "@domain/ring/ringAlarm";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { textStyles } from "@ui/styles/textStyles";
 import { alarmTagColors } from "@ui/utils/alarmTagColorsUtils";
@@ -46,61 +46,6 @@ const AlarmIndicator = styled.View`
 	border-radius: 2px;
 `;
 
-const FAKE_alarms: RingAlarm[] = [
-	{
-		id: 0,
-		isActivated: false,
-		isExisting: true,
-		snooze: 2,
-		smart: 1,
-		melody: Melody.NOTIF1,
-		weekdays: [Weekdays.MONDAY, Weekdays.TUESDAY, Weekdays.WEDNESDAY, Weekdays.THURSDAY, Weekdays.FRIDAY],
-		vibrationPower: 1,
-		vibrationRepetition: 1,
-		time: new Date(),
-		label: "one",
-	},
-	{
-		id: 1,
-		isActivated: false,
-		isExisting: true,
-		snooze: 2,
-		smart: 1,
-		melody: Melody.NOTIF1,
-		weekdays: [Weekdays.MONDAY, Weekdays.SUNDAY],
-		vibrationPower: 1,
-		vibrationRepetition: 1,
-		time: new Date(),
-		label: "two",
-	},
-	{
-		id: 2,
-		isActivated: false,
-		isExisting: true,
-		snooze: 2,
-		smart: 1,
-		melody: Melody.NOTIF1,
-		weekdays: [Weekdays.MONDAY, Weekdays.SUNDAY],
-		vibrationPower: 1,
-		vibrationRepetition: 1,
-		time: new Date(),
-		label: "three",
-	},
-	{
-		id: 3,
-		isActivated: false,
-		isExisting: true,
-		snooze: 2,
-		smart: 1,
-		melody: Melody.NOTIF1,
-		weekdays: [Weekdays.WEDNESDAY],
-		vibrationPower: 1,
-		vibrationRepetition: 1,
-		time: new Date(),
-		label: "four",
-	},
-];
-
 function FAKE_useAlarmsByDay(alarms: RingAlarm[] | null) {
 	const alarmsByDay: { [key in Weekdays]: RingAlarm[] } = Object.values(Weekdays).reduce(
 		(acc, day) => ({
@@ -111,7 +56,7 @@ function FAKE_useAlarmsByDay(alarms: RingAlarm[] | null) {
 	) as { [key in Weekdays]: RingAlarm[] };
 
 	if (alarms) {
-		for (const alarm of FAKE_alarms.filter((alarm) => !alarm.isActivated)) {
+		for (const alarm of alarms.filter((alarm) => alarm.isActivated)) {
 			for (const day of alarm.weekdays) {
 				alarmsByDay[day].push(alarm);
 			}

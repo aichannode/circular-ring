@@ -14,7 +14,6 @@ export const CircleAlarmScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
 	const alarms = useAlarms();
 	const { format } = useI18n();
-	console.log(alarms);
 
 	return (
 		<Container>

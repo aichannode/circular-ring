@@ -67,7 +67,7 @@ export const IntervalBottomSheet: React.FC<IntervalBottomSheetProps> = ({
 				{snoozeDisplay
 					? isSmartValue
 						? format("alarm.new.smart_snooze.description")
-						: format("alamr.new.snooze.descrition")
+						: format("alarm.new.snooze.description")
 					: format("alarm.new.smart_alarm.description")}
 			</Description>
 			{snoozeDisplay ? (
@@ -80,7 +80,7 @@ export const IntervalBottomSheet: React.FC<IntervalBottomSheetProps> = ({
 						onValueChange={() => setIsSmartValue((prev) => !prev)}
 						value={isSmartValue}
 					/>
-					<Description>{format("alamr.new.snooze.smart_switch")}</Description>
+					<Description>{format("alarm.new.snooze.smart_switch")}</Description>
 				</SwitchContainer>
 			) : null}
 			{snoozeLinkList.map((element, index, array) => (
