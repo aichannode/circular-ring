@@ -1,8 +1,10 @@
 import { ApiService } from "@core/api/apiService";
-import { delay } from "@core/utils";
+import RNFS from "react-native-fs";
 import { UserRing } from "./ring";
 
 const ringApiBaseUrl = "/rings";
+
+const tempSyncDataFile = RNFS.DocumentDirectoryPath + "/sync-temp.txt";
 export class RingApi {
 	constructor(private readonly apiService: ApiService) {}
 
@@ -19,10 +21,23 @@ export class RingApi {
 		return this.apiService.delete(`${ringApiBaseUrl}/${ringId}`);
 	}
 
-	async sendData(rawData: string) {
-		// return this.apiService.post(``, rawData);
-		console.log("Fake Sending data...", rawData.length);
-		return delay(3000);
+	async sendData(ring: UserRing, rawData: string) {
+		await RNFS.writeFile(tempSyncDataFile, rawData, "utf8");
+
+		const formData = new FormData();
+		formData.append("ringId", ring.id);
+		formData.append("firmware", ring.firmware);
+		formData.append("file", {
+			uri: tempSyncDataFile,
+			type: "text/plain",
+			name: "sync.txt",
+		});
+
+		try {
+			await this.apiService.post(`${ringApiBaseUrl}/raw-data/sync`, formData);
+		} finally {
+			RNFS.unlink(tempSyncDataFile);
+		}
 	}
 }
 
