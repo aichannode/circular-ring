@@ -77,10 +77,14 @@ export function useI18n() {
 				Weekdays.SATURDAY,
 				Weekdays.SUNDAY,
 			];
+			const weekends = [Weekdays.SATURDAY, Weekdays.SUNDAY];
+
 			if (everydays.every((day) => days.includes(day))) {
 				return intl.formatMessage({ id: "alarm.everydays" });
 			} else if (weekdays.every((day) => days.includes(day))) {
 				return intl.formatMessage({ id: "alarm.weekdays" });
+			} else if (weekends.every((day) => days.includes(day))) {
+				return intl.formatMessage({ id: "alarm.weekends" });
 			} else {
 				return days
 					.map((day) => {

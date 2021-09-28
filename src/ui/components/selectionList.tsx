@@ -39,7 +39,7 @@ export const SelectionList: React.FC<SelectionListProps> = ({ list, defaultIndex
 							/>
 						</View>
 					</Container>
-					{index < array.length - 1 ? <Divider width={350} style={{ alignSelf: "center" }} /> : null}
+					{index < array.length - 1 ? <Separator /> : null}
 				</View>
 			))}
 		</>
@@ -72,4 +72,12 @@ const Container = styled.Pressable`
 	margin-horizontal: 40px;
 	margin-vertical: 16px;
 	justify-content: space-between;
+`;
+
+const Separator = styled.View`
+	align-self: center;
+	width: 350px;
+	height: 1px;
+	background-color: ${colors.lightgray};
+	margin-horizontal: 20px;
 `;

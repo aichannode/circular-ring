@@ -14,8 +14,8 @@ export const WarningBottomSheet: React.FC<WarningBottomSheetProps> = ({ message,
 
 	return (
 		<Container>
-			<Title style={{ alignSelf: "center" }}>{format("alarm.new.warning.title")}</Title>
-			<Description style={{ marginLeft: 34 }}>{message}</Description>
+			<Title>{format("alarm.new.warning.title")}</Title>
+			<Description>{message}</Description>
 			<QuadraryButton style={{ alignSelf: "center" }} onPress={() => onClose()}>
 				{format("alarm.new.warning.button")}
 			</QuadraryButton>

@@ -20,7 +20,6 @@ export enum Melody {
 	SOS = "sos",
 	STACCATO = "staccato",
 	SYMPHONY = "symphony",
-	DISCHARGE = "discharge",
 }
 
 export interface RingAlarm {
@@ -60,7 +59,6 @@ export const melodyOrderedList = [
 	Melody.SOS,
 	Melody.STACCATO,
 	Melody.SYMPHONY,
-	Melody.DISCHARGE,
 ];
 
 const melodyIds: { [key in Melody]: string } = {
@@ -75,7 +73,6 @@ const melodyIds: { [key in Melody]: string } = {
 	[Melody.SOS]: "08",
 	[Melody.STACCATO]: "09",
 	[Melody.SYMPHONY]: "0A",
-	[Melody.DISCHARGE]: "0B",
 };
 
 export function activationHexToData(activationHex: string): {
@@ -179,8 +176,7 @@ export function serializeAlarmData(alarmData: RingAlarm): string {
 		weekdaysValue += Math.pow(2, 7);
 	}
 
-	return (
-		"ALR" +
+	return "ALR" +
 		dataToActivationHex(snooze, smart, isActivated, isExisting) +
 		"r" +
 		(weekdaysValue < 16 ? "0" + weekdaysValue.toString(16) : weekdaysValue.toString(16)) +
@@ -196,10 +192,9 @@ export function serializeAlarmData(alarmData: RingAlarm): string {
 		"M" +
 		melodyHex +
 		"i" +
-		id.toString(16) +
-		"L" +
-		label
-	);
+		(id < 10)
+		? "0" + id.toString(16)
+		: id.toString(16) + "L" + label;
 }
 
 export function getAlarmId(alarmData: string): number {

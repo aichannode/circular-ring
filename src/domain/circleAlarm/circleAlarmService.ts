@@ -1,3 +1,4 @@
+import { getLogger } from "@core/logger/logger";
 import { Channel } from "@domain/device/channels";
 import { DeviceService } from "@domain/device/deviceService";
 import {
@@ -15,19 +16,19 @@ const ID_FOR_CREATION = 255;
 export const MAX_ALARMS = 16;
 
 export class CircleAlarmService {
+	private logger = getLogger("⏰ CircleAlarmService");
+
 	private _ringAlarms = observable<RingAlarm[]>([]);
 	ringAlarms = this._ringAlarms.readOnly();
 
 	constructor(private readonly deviceService: DeviceService) {}
 
 	async fetchAlarmList() {
-		this.log("Retrieving data...");
+		this.logger.info("Retrieving alarm data...");
 		const allData = await new Promise<string>(async (resolve) => {
 			let data = "";
 
 			const unsubscribe = await this.deviceService.listen(Channel.ALARM, Channel.ALARM, (value) => {
-				this.log("ALR value", value);
-
 				if (value !== alarmDataEOF) {
 					data += "," + value.trim();
 				}
@@ -39,15 +40,13 @@ export class CircleAlarmService {
 		});
 		const encodeAlarmList = allData.split(",");
 		const newAlarmList: RingAlarm[] = [];
-		if (encodeAlarmList) {
-			for (let i = 1; i < encodeAlarmList.length; i++) {
-				const data = deserializeAlarmData(encodeAlarmList[i]);
-				if (data) {
-					newAlarmList.push(data);
-				}
+		for (let i = 1; i < encodeAlarmList.length; i++) {
+			const data = deserializeAlarmData(encodeAlarmList[i]);
+			if (data) {
+				newAlarmList.push(data);
 			}
-			this._ringAlarms.set(newAlarmList);
 		}
+		this._ringAlarms.set(newAlarmList);
 	}
 
 	async createAlarm(alarm: Omit<RingAlarm, "id" | "isExisting" | "isActivated">) {
@@ -56,6 +55,7 @@ export class CircleAlarmService {
 			Channel.ALARM
 		);
 		if (!response) {
+			this.logger.warn("No response after alarm creation");
 			throw Error("Invalid alarm data message " + response);
 		}
 		const id = getAlarmId(response);
@@ -74,9 +74,5 @@ export class CircleAlarmService {
 	async updateAlarm(alarm: RingAlarm) {
 		await this.deviceService.write(serializeAlarmData({ ...alarm, isExisting: true }));
 		this._ringAlarms.update((alarms) => alarms.map((el) => (el.id === alarm.id ? { ...el, ...alarm } : el)));
-	}
-
-	log(...args: unknown[]) {
-		console.log("💍 [ALARM]", ...args);
 	}
 }

@@ -1,14 +1,17 @@
 import { useServices } from "@core/services";
 import { useObservable } from "micro-observables";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export const useAlarms = () => {
 	const { circleAlarmService } = useServices();
-	const data = useObservable(circleAlarmService.ringAlarms);
+	const alarms = useObservable(circleAlarmService.ringAlarms);
+	const [loading, setLoading] = useState(false);
 
-	useEffect(() => {
-		circleAlarmService.fetchAlarmList();
+	const loadAlarms = useCallback(async () => {
+		setLoading(true);
+		await circleAlarmService.fetchAlarmList();
+		setLoading(false);
 	}, []);
 
-	return data;
+	return { loading, alarms, loadAlarms };
 };

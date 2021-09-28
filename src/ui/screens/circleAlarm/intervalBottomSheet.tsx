@@ -63,7 +63,7 @@ export const IntervalBottomSheet: React.FC<IntervalBottomSheetProps> = ({
 						: format("alarm.new.snooze.title")
 					: format("alarm.new.smart_alarm.title")}
 			</Title>
-			<Description style={{ marginLeft: 34 }}>
+			<Description>
 				{snoozeDisplay
 					? isSmartValue
 						? format("alarm.new.smart_snooze.description")
@@ -94,7 +94,7 @@ export const IntervalBottomSheet: React.FC<IntervalBottomSheetProps> = ({
 							/>
 						</View>
 					</ListContainer>
-					{index < array.length - 1 ? <Divider width={350} style={{ alignSelf: "center" }} /> : null}
+					{index < array.length - 1 ? <Separator /> : null}
 				</View>
 			))}
 			<QuadraryButton style={{ alignSelf: "center" }} onPress={() => onClose(interval, isSmartValue)}>
@@ -135,6 +135,14 @@ const ListContainer = styled.Pressable`
 	margin-horizontal: 40px;
 	margin-vertical: 16px;
 	justify-content: space-between;
+`;
+
+const Separator = styled.View`
+	align-self: center;
+	width: 350px;
+	height: 1px;
+	background-color: ${colors.lightgray};
+	margin-horizontal: 20px;
 `;
 
 const Title = styled(TitleText)`

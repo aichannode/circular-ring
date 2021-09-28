@@ -2,12 +2,13 @@ import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { CircularBottomSheet } from "@ui/components/bottomSheet";
+import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { ScreenSection } from "@ui/screens/circleActivity/screenSection";
 import { WarningBottomSheet } from "@ui/screens/circleAlarm/warningBottomSheet";
 import { colors } from "@ui/styles/colors";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Image, Pressable, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { AlarmCard } from "./alarmCard";
@@ -16,9 +17,13 @@ import { SleepInformations } from "./sleepInformations";
 
 export const CircleAlarmScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
-	const alarms = useAlarms();
+	const { loading, alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
 	const warningBottomSheet = useRef<BottomSheetModal>(null);
+
+	useEffect(() => {
+		loadAlarms();
+	}, [loadAlarms]);
 
 	return (
 		<Container>
@@ -38,6 +43,7 @@ export const CircleAlarmScreen: React.FC = () => {
 							<AlarmCard data={value} />
 						</Pressable>
 					))}
+					{loading ? <Spinner size={35} /> : null}
 					<AddAlarmButton
 						onPress={() => {
 							alarms.length >= MAX_ALARMS
@@ -92,6 +98,7 @@ const AddAlarmText = styled.Text`
 const AddAlarmButton = styled(Pressable)`
 	background-color: ${colors.gray + "80"};
 	flex-direction: row;
+	margin-top: 5px;
 	height: 67px;
 	justify-content: center;
 	align-items: center;

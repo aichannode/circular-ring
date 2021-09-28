@@ -37,7 +37,6 @@ export class RingService {
 	constructor(
 		private readonly authService: AuthService,
 		private readonly deviceService: DeviceService,
-		private readonly circlealarmService: CircleAlarmService,
 		private readonly userRingsStorage: UserRingsStorage,
 		private readonly ringDataStorage: RingDataStorage,
 		private readonly ringApi: RingApi
@@ -55,7 +54,6 @@ export class RingService {
 		this._userRing.set(loadedRings?.[0] ?? null);
 		this.listenBattery();
 		this.syncData();
-		this.circlealarmService.fetchAlarmList();
 	}
 
 	listenLiveData() {

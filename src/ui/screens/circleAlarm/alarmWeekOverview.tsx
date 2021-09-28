@@ -11,7 +11,7 @@ interface AlarmWeekOverviewProps {
 	style?: StyleProp<ViewStyle>;
 }
 export const AlarmWeekOverview: React.FC<AlarmWeekOverviewProps> = ({ style }) => {
-	const alarms = useAlarms();
+	const { alarms } = useAlarms();
 	const alarmsByDay = useAlarmsByDay(alarms);
 
 	return (

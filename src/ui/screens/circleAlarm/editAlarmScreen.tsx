@@ -177,7 +177,7 @@ export const EditAlarmScreen: React.FC = () => {
 					}}
 				/>
 			</CircularBottomScrollSheet>
-			<CircularBottomSheet snapPoints={[500]} ref={labelBottomSheet}>
+			<CircularBottomSheet snapPoints={[400]} ref={labelBottomSheet}>
 				<LabelBottomSheet
 					label={label}
 					onClose={(label) => {

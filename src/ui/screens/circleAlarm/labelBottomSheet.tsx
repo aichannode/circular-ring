@@ -47,6 +47,7 @@ const LabelInput = styled(BottomSheetTextInput)`
 	align-self: center;
 	border-radius: 40px;
 	width: 300px;
+	height: 50px;
 	margin-horizontal: 50px;
 	padding-left: 15px;
 	margin-vertical: 100px;

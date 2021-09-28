@@ -57,8 +57,7 @@ export const RepeatBottomSheet: React.FC<RepeatBottomSheetProps> = ({ weekdays, 
 	const [triggeredElements, setTriggeredElements] = useState(weekdays ?? weekdaysLinkList[0].value);
 
 	const pushWithoutDuplicate = (elements: Weekdays[]): Weekdays[] => {
-		triggeredElements.push(...elements);
-		return triggeredElements.filter((value, i) => triggeredElements.indexOf(value) === i);
+		return [...new Set([...triggeredElements, ...elements])];
 	};
 
 	return (
@@ -88,7 +87,7 @@ export const RepeatBottomSheet: React.FC<RepeatBottomSheetProps> = ({ weekdays, 
 					/>
 				</View>
 			</ListContainer>
-			<Divider width={350} style={{ alignSelf: "center" }} />
+			<Separator />
 			{weekdaysLinkList.slice(1).map((element, index, array) => (
 				<View key={element.label}>
 					<ListContainer
@@ -114,7 +113,7 @@ export const RepeatBottomSheet: React.FC<RepeatBottomSheetProps> = ({ weekdays, 
 							/>
 						</View>
 					</ListContainer>
-					{index < array.length - 1 ? <Divider width={350} style={{ alignSelf: "center" }} /> : null}
+					{index < array.length - 1 ? <Separator /> : null}
 				</View>
 			))}
 			<QuadraryButton style={{ alignSelf: "center" }} onPress={() => onClose(triggeredElements)}>
@@ -144,6 +143,14 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.blue,
 	},
 });
+
+const Separator = styled.View`
+	align-self: center;
+	width: 350px;
+	height: 1px;
+	background-color: ${colors.lightgray};
+	margin-horizontal: 20px;
+`;
 
 const Container = styled.View`
 	flex: 1;
