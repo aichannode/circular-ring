@@ -176,7 +176,8 @@ export function serializeAlarmData(alarmData: RingAlarm): string {
 		weekdaysValue += Math.pow(2, 7);
 	}
 
-	return "ALR" +
+	return (
+		"ALR" +
 		dataToActivationHex(snooze, smart, isActivated, isExisting) +
 		"r" +
 		(weekdaysValue < 16 ? "0" + weekdaysValue.toString(16) : weekdaysValue.toString(16)) +
@@ -192,9 +193,10 @@ export function serializeAlarmData(alarmData: RingAlarm): string {
 		"M" +
 		melodyHex +
 		"i" +
-		(id < 10)
-		? "0" + id.toString(16)
-		: id.toString(16) + "L" + label;
+		(id < 10 ? "0" + id.toString(16) : id.toString(16)) +
+		"L" +
+		label
+	);
 }
 
 export function getAlarmId(alarmData: string): number {
