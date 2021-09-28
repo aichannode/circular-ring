@@ -6,6 +6,7 @@ import { PrimaryText } from "./text";
 
 interface ScoreViewProps {
 	color: string;
+	textColor?: string;
 	value?: number;
 	style?: StyleProp<ViewStyle>;
 }
@@ -14,7 +15,7 @@ const scoreWaveAmplitude = 15;
 const animationDuration = 2500;
 const noValueHeight = 60;
 // @refresh reset
-export const ScoreView: React.FC<ScoreViewProps> = ({ color, value = 0, style }) => {
+export const ScoreView: React.FC<ScoreViewProps> = ({ color, textColor, value = 0, style }) => {
 	const waveTranslateX = useRef(new Animated.Value(0)).current;
 
 	useEffect(() => {
@@ -42,7 +43,7 @@ export const ScoreView: React.FC<ScoreViewProps> = ({ color, value = 0, style })
 			>
 				<SineWave color={color} amplitude={scoreWaveAmplitude} />
 			</Animated.View>
-			<ScoreValue style={{ color }}>
+			<ScoreValue style={{ color: textColor ?? color }}>
 				{Math.floor(value) || "-"}
 				{+decimals > 0 && <Text style={{ fontSize: 12 }}>,{decimals}</Text>}
 			</ScoreValue>

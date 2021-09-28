@@ -23,7 +23,7 @@ export const SleepInformations: React.FC<SleepInformationsProps> = ({ style }) =
 		<ResponsiveCenterView style={style} maxWidth={175} align="stretch" horizontalPadding={0}>
 			<SecondaryText>{format("alarm.wake_up_score")}</SecondaryText>
 			<ScoreWrapper align="center" gap={12}>
-				<ScoreView value={FAKE_sleepScore} color={colors.blue} />
+				<ScoreView value={FAKE_sleepScore} color={colors.blue} textColor={colors.textPrimary} />
 				<Row align="center" style={{ width: 100 }} justify="center">
 					<ColoredDot color={qualityColors[sleepScoreQuality]} />
 					<TitleText>{formatScoreQuality(sleepScoreQuality)}</TitleText>
