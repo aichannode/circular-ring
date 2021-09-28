@@ -1,10 +1,12 @@
 import { ApiService } from "@core/api/apiService";
+import { Platform } from "react-native";
 import RNFS from "react-native-fs";
 import { UserRing } from "./ring";
 
 const ringApiBaseUrl = "/rings";
 
-const tempSyncDataFile = RNFS.DocumentDirectoryPath + "/sync-temp.txt";
+const tempSyncDataFile = (Platform.OS === "android" ? "file://" : "") + RNFS.DocumentDirectoryPath + "/sync-temp.txt";
+
 export class RingApi {
 	constructor(private readonly apiService: ApiService) {}
 
