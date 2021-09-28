@@ -69,6 +69,7 @@ const MainHomeNavigator = () => {
 				component={HomeScreen}
 				options={{
 					headerTitle: () => <Image source={require("@assets/images/logoHeader.png")} />,
+					headerRight: () => <MyRingBattery full />,
 					headerLeft: () => (
 						<Pressable onPress={() => navigation.dispatch(DrawerActions.openDrawer)}>
 							<Image source={require("@assets/images/menu.png")} style={{ marginLeft: 10 }} />

@@ -25,7 +25,7 @@
   "login.error.invalid_credentials": "The email or password is invalid.",
   "login.error.default": "An error occurred.\nPlease try again later.",
   "header.my_ring": "My Ring",
-  "header.activity": "Activity Analysis",
+  "header.activity": "ACTIVITY ANALYSIS",
   "header.alarm": "ALARM CLOCK",
   "header.profile": "PROFILE",
   "header.profile_information": "PROFILE",
