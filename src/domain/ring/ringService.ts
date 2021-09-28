@@ -1,5 +1,5 @@
-import { CircleAlarmService } from "@domain/circleAlarm/circleAlarmService";
 import { getLogger } from "@core/logger/logger";
+import { AuthService } from "@domain/auth/authService";
 import { Channel } from "@domain/device/channels";
 import { DeviceService } from "@domain/device/deviceService";
 import { observable } from "micro-observables";
@@ -10,7 +10,6 @@ import { ringDataEOF } from "./ringData";
 import { RingDataStorage } from "./ringDataStorage";
 import { deserializeLiveData, RingLiveData } from "./ringLiveData";
 import { UserRingsStorage } from "./userRingsStorage";
-import { AuthService } from "@domain/auth/authService";
 
 const syncFinishedTimeout = 3000;
 

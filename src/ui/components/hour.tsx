@@ -1,6 +1,6 @@
 import { colors } from "@ui/styles/colors";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Pressable, StyleProp, TextStyle } from "react-native";
 import styled from "styled-components/native";
 

@@ -1,5 +1,4 @@
 import { Melody } from "@domain/ring/ringAlarm";
-import { Divider } from "@ui/components/divider";
 import { PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";

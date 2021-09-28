@@ -318,5 +318,6 @@
   "profile_advanced_info.chrono_type.night_erratic": "Night erratic type",
   "profile_advanced_info.stride.title": "Stride",
   "profile_advanced_info.stride.bottom_sheet.title": "Select Stride",
-  "profile_advanced_info.stride.reset": "Reset to default stride length"
+  "profile_advanced_info.stride.reset": "Reset to default stride length",
+  "manage_rings.general": "General"
 }

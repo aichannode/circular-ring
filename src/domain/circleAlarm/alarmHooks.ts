@@ -1,6 +1,6 @@
 import { useServices } from "@core/services";
 import { useObservable } from "micro-observables";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 export const useAlarms = () => {
 	const { circleAlarmService } = useServices();

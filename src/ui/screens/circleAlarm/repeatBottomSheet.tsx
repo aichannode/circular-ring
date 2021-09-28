@@ -1,6 +1,5 @@
 import { Weekdays } from "@domain/ring/ringAlarm";
 import { QuadraryButton } from "@ui/components/buttons";
-import { Divider } from "@ui/components/divider";
 import { PrimaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
