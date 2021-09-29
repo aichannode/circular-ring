@@ -5,6 +5,7 @@ import { CalibrationApi } from "@domain/calibration/calibrationApi";
 import { CalibrationService } from "@domain/calibration/calibrationService";
 import { CircleActivityService } from "@domain/circleActivity/circleActivityService";
 import { CircleAlarmService } from "@domain/circleAlarm/circleAlarmService";
+import { CircleSleepService } from "@domain/circleSleep/circleSleepService";
 import { DeviceService } from "@domain/device/deviceService";
 import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
 import { DevFakeDeviceService, EmptyFakeDeviceService } from "@domain/fake/fakeDeviceService";
@@ -44,6 +45,7 @@ const ringService = new RingService(cognitoAuthService, deviceService, userRings
 const measureApi = new MeasureApi(apiService);
 
 const circleActivityService = new CircleActivityService(measureApi);
+const circleSleepService = new CircleSleepService(measureApi);
 
 const userApi = new UserApi(apiService);
 const userService = new UserService(cognitoAuthService, userApi, userStorage);
@@ -65,6 +67,7 @@ export const services = {
 	ringService,
 	circleActivityService,
 	circleAlarmService,
+	circleSleepService,
 	userPreferencesService,
 	calibrationService,
 	homeBannerService,

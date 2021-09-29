@@ -130,7 +130,21 @@ export type Metric =
 	| "user.daily.awake.spo2"
 	| "user.7days.awake.spo2"
 	| "user.monthly.awake.spo2"
-	| "user.lifetime.awake.spo2";
+	| "user.lifetime.awake.spo2"
+	| "user.daily.awake.stage.duration"
+	| "user.daily.%awake.stage.duration"
+	| "user.daily.%real.sleep"
+	| "user.daily.real.sleep.duration"
+	| "user.daily.%rem.stage.score"
+	| "user.daily.%deep.stage.score"
+	| "user.daily.%time.to.fall.asleep"
+	| "user.daily.%sleep.debt"
+	| "user.daily.tranquility"
+	| "user.daily.circadian.rhythm"
+	| "user.daily.%rem.stage"
+	| "user.daily.%deep.stage"
+	| "user.daily.time.to.fall.asleep"
+	| "user.daily.sleep.debt";
 
 export const alldailyActivityMetrics = [
 	"user.daily.steps",
@@ -174,3 +188,26 @@ export const allEnergyScoreGaugeMetrics = [
 	"user.score.daily.var.temperature",
 ] as const;
 export type EnergyScoreGaugeMetric = typeof allEnergyScoreGaugeMetrics[number];
+
+export const allSleepQualityMetrics = [
+	"user.daily.awake.stage.duration",
+	"user.daily.real.sleep.duration",
+	"user.daily.tranquility",
+	"user.daily.circadian.rhythm",
+	"user.daily.%rem.stage",
+	"user.daily.%deep.stage",
+	"user.daily.time.to.fall.asleep",
+	"user.daily.sleep.debt",
+] as const;
+export type SleepQualityMetric = typeof allSleepQualityMetrics[number];
+
+export const allSleepQualityGaugeMetrics = [
+	"user.daily.%awake.stage.duration",
+	"user.daily.%real.sleep",
+
+	"user.daily.%rem.stage.score",
+	"user.daily.%deep.stage.score",
+	"user.daily.%time.to.fall.asleep",
+	"user.daily.%sleep.debt",
+] as const;
+export type SleepQualityGaugeMetric = typeof allSleepQualityGaugeMetrics[number];

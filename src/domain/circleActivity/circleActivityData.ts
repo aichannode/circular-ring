@@ -1,4 +1,4 @@
-export type ScoreUnit = "%" | "rpm" | "ms" | "bpm" | "°C" | "qualitative";
+export type ScoreUnit = "%" | "rpm" | "ms" | "bpm" | "°C" | "qualitative" | "time" | "tranquility";
 
 export enum ScoreQuality {
 	POOR = "POOR",

@@ -17,6 +17,8 @@ interface ScoreGaugeProps {
 	optimalThreshold?: number;
 	style?: StyleProp<ViewStyle>;
 	onPress?: () => void;
+	displayGaugeValue?: boolean;
+	gaugeInverted?: boolean;
 }
 
 export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
@@ -28,8 +30,11 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 	optimalThreshold = 0.9,
 	style,
 	onPress,
+	displayGaugeValue,
+	gaugeInverted,
 }) => {
-	const scoreQuality = getScoreQuality(rate, goodThreshold, optimalThreshold);
+	const gaugeRatio = gaugeInverted ? 1 - rate : rate;
+	const scoreQuality = getScoreQuality(gaugeRatio, goodThreshold, optimalThreshold);
 
 	const { formatScoreQuality } = useI18n();
 
@@ -37,10 +42,13 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 		<Container style={style} onPress={onPress}>
 			<Row justify="space-between">
 				<SecondaryText>{label}</SecondaryText>
-				<SecondaryText>{unit === "qualitative" ? formatScoreQuality(scoreQuality) : `${value}${unit}`}</SecondaryText>
+				<SecondaryText>
+					{unit === "qualitative" ? formatScoreQuality(scoreQuality) : `${value}${unit}`}
+					{displayGaugeValue ? ` (${Math.round(rate * 100)}%)` : ""}
+				</SecondaryText>
 			</Row>
 			<Gauge>
-				<GaugeValue quality={scoreQuality} rate={rate} />
+				<GaugeValue quality={scoreQuality} rate={gaugeRatio} />
 			</Gauge>
 		</Container>
 	);
