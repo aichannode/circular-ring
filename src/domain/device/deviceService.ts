@@ -4,7 +4,7 @@ import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { observable, Observable } from "micro-observables";
 import { Signal } from "micro-signals";
 import { BleError, Device, ScanMode, State, Subscription } from "react-native-ble-plx";
-import { StoredDevice } from "./device";
+import { NamedDevice } from "./namedDevice";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 import { LocationEnabler } from "./locationEnabler";
 import { Platform } from "react-native";
@@ -52,7 +52,7 @@ export class DeviceService {
 	private _lookingForDevice = observable(false);
 	private _monitoring = observable(false);
 
-	private _favoriteDevice = observable<StoredDevice | null>(null);
+	private _favoriteDevice = observable<NamedDevice | null>(null);
 
 	scannedDevices = this._scannedDevices.select((devicesMap) => [...devicesMap.values()]);
 
@@ -135,6 +135,7 @@ export class DeviceService {
 		this.checkSettings();
 
 		if (loadedDevice) {
+			console.log("> Has device to autoconnect");
 			this.autoConnectDevice(loadedDevice.name);
 		}
 	}

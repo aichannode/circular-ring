@@ -118,7 +118,7 @@ export const RingSetupScreen: React.FC = () => {
 													deviceService.stopScan();
 													await deviceService.connect(device);
 													try {
-														await ringService.registerCurrentRing();
+														await ringService.registerConnectedRing();
 													} catch (e) {
 														if ((e as { statusCode: number }).statusCode === 409) {
 															pairingFailedBottomSheet.current?.present();

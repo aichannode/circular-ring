@@ -4,3 +4,7 @@ export interface UserRing {
 	userId: number;
 	lastSyncDate: Date;
 }
+
+export interface NamedUserRing extends UserRing {
+	name: string;
+}

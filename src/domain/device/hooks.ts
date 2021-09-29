@@ -5,9 +5,9 @@ export const useSetupState = () => useObservable(useServices().deviceService.set
 export const useAutoConnectState = () => useObservable(useServices().deviceService.autoConnectState);
 export const useAccountLinked = () => {
 	const { ringService, fakeDeviceService } = useServices();
-	const userRing = useObservable(ringService.userRing);
+	const userRings = useObservable(ringService.userRings);
 	const faked = useObservable(fakeDeviceService.fakeDeviceEnabled);
-	return !!userRing || faked;
+	return userRings.length > 0 || faked;
 };
 
 export const useDeviceStored = () => useObservable(useServices().deviceService.favoriteDevice);

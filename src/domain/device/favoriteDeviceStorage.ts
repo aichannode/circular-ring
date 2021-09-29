@@ -1,15 +1,15 @@
 import { Storage } from "@core/storage";
-import { StoredDevice } from "./device";
+import { NamedDevice } from "./namedDevice";
 
 const favoriteDeviceStorageKey = "@favoriteDevice";
 
 export class FavoriteDeviceStorage {
-	save(device: StoredDevice) {
-		return Storage.save<StoredDevice>(favoriteDeviceStorageKey, device);
+	save(device: NamedDevice) {
+		return Storage.save<NamedDevice>(favoriteDeviceStorageKey, device);
 	}
 
 	load() {
-		return Storage.load<StoredDevice>(favoriteDeviceStorageKey);
+		return Storage.load<NamedDevice>(favoriteDeviceStorageKey);
 	}
 
 	clear() {

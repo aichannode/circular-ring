@@ -6,15 +6,17 @@ const ringApiBaseUrl = "/rings";
 export class RingApi {
 	constructor(private readonly apiService: ApiService) {}
 
-	async getRings() {
+	async getRings(): Promise<UserRing[]> {
 		const result = await this.apiService.get<UserRing[]>(`${ringApiBaseUrl}`);
+		console.log("<= GET /rings : " + result.data);
 		return result.data;
 	}
 
-	async addRing(ring: PostUserRing) {
+	async addRing(ring: PostUserRing): Promise<UserRing> {
 		const result = await this.apiService.post<UserRing>(`${ringApiBaseUrl}`, ring);
 		return result.data;
 	}
+
 	deleteRing(ringId: string) {
 		return this.apiService.delete(`${ringApiBaseUrl}/${ringId}`);
 	}
