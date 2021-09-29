@@ -15,6 +15,8 @@ import { scoreDetailsDataInfos } from "./measureDisplayInfos";
 
 const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
+
+const FAKE_sleepScore = 64;
 export const CircleSleepScreen: React.FC = () => {
 	const dailyData = useSleepQualityDailyData();
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
@@ -26,10 +28,14 @@ export const CircleSleepScreen: React.FC = () => {
 
 	return (
 		<Container>
-			<ScreenSection>
-				<ScoreSection label={format("sleep.quality_score")} score={81} color={colors.darkBlue} />
+			<ScreenSection title={format("sleep.quality.details")}>
+				<ScoreSection
+					style={{ marginBottom: 25 }}
+					label={format("sleep.quality_score")}
+					score={FAKE_sleepScore}
+					color={colors.darkBlue}
+				/>
 			</ScreenSection>
-			<ScreenSection title={format("sleep.quality.details")} />
 			<ElementStack gap={10}>
 				{
 					allSleepQualityMetrics

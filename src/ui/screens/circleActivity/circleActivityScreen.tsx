@@ -11,9 +11,12 @@ import { dailyMetricsDataInfos, scoreDetailsDataInfos } from "./measureDisplayIn
 import { ScreenSection } from "../../components/screenSection";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
 import { ScoreGauge } from "@ui/components/measure/scoreGauge";
+import { ScoreSection } from "@ui/components/measure/scoreSection";
 
 const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
+
+const FAKE_energyScore = 85;
 export const CircleActivityScreen: React.FC = () => {
 	const dailyData = useDailyData();
 	const { format } = useI18n();
@@ -26,7 +29,14 @@ export const CircleActivityScreen: React.FC = () => {
 	return (
 		<Container>
 			<ScrollView>
-				<ScreenSection title={format("activity.score.daily_metrics")} />
+				<ScreenSection title={format("activity.score.daily_metrics")}>
+					<ScoreSection
+						style={{ marginBottom: 25 }}
+						color={colors.red}
+						score={FAKE_energyScore}
+						label={format("activity.energy_score")}
+					/>
+				</ScreenSection>
 				<ElementStack gap={10}>
 					{alldailyActivityMetrics.map((metric) => {
 						const dataInfos = dailyMetricsDataInfos[metric];

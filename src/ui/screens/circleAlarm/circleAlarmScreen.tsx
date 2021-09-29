@@ -2,10 +2,11 @@ import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { CircularBottomSheet } from "@ui/components/bottomSheet";
+import { ScoreSection } from "@ui/components/measure/scoreSection";
+import { ScreenSection } from "@ui/components/screenSection";
 import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
-import { ScreenSection } from "@ui/components/screenSection";
 import { WarningBottomSheet } from "@ui/screens/circleAlarm/warningBottomSheet";
 import { colors } from "@ui/styles/colors";
 import React, { useEffect, useRef } from "react";
@@ -13,7 +14,8 @@ import { Image, Pressable, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { AlarmCard } from "./alarmCard";
 import { AlarmWeekOverview } from "./alarmWeekOverview";
-import { SleepInformations } from "./sleepInformations";
+
+const FAKE_wakeupScore = 89;
 
 export const CircleAlarmScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
@@ -28,10 +30,14 @@ export const CircleAlarmScreen: React.FC = () => {
 	return (
 		<Container>
 			<ScrollView>
-				<ScoreContainer>
-					<SleepInformations style={{ marginBottom: 25, alignSelf: "center" }} />
-				</ScoreContainer>
-				<ScreenSection title={format("alarm.score.programmed")} />
+				<ScreenSection title={format("alarm.score.programmed")}>
+					<ScoreSection
+						label={format("alarm.wake_up_score")}
+						color={colors.blue}
+						score={FAKE_wakeupScore}
+						style={{ marginBottom: 25, alignSelf: "center" }}
+					/>
+				</ScreenSection>
 				<AlarmContainer>
 					{alarms?.map((value) => (
 						<Pressable
@@ -73,12 +79,6 @@ export const CircleAlarmScreen: React.FC = () => {
 const Container = styled.View`
 	flex: 1;
 	background-color: ${colors.lightgray};
-`;
-
-const ScoreContainer = styled.View`
-	flex: 1;
-	padding-top: 30px;
-	background-color: ${colors.white};
 `;
 
 const AlarmContainer = styled.View`

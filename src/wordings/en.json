@@ -97,6 +97,7 @@
   "home.circles.live.label": "Live",
   "home.circles.alarm.label": "Alarm clock",
   "home.circles.sleep.label": "Sleep analysis",
+  "activity.energy_score": "Energy score",
   "activity.score.daily_metrics": "Daily metrics",
   "activity.score.details": "Energy score details",
   "score.quality.poor": "Poor",
