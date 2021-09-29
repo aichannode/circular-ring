@@ -1,8 +1,8 @@
-import { getScoreQuality, ScoreQuality } from "@domain/circleActivity/circleActivityData";
+import { getScoreQuality, ScoreQuality } from "@domain/measure/score";
 import { Grow } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { colors, qualityColors } from "@ui/styles/colors";
-import { whiteCardStyle } from "@ui/styles/containerStyles";
+import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
@@ -38,7 +38,7 @@ export const DailyMetric: React.FC<DailyMetricProps> = ({
 };
 
 const Container = styled.View`
-	${whiteCardStyle};
+	${roundedWhiteCardStyle};
 	flex-direction: row;
 	align-items: center;
 	padding: 20px 25px;

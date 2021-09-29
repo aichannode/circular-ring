@@ -1,4 +1,4 @@
-import { getScoreQuality } from "@domain/circleActivity/circleActivityData";
+import { getScoreQuality } from "@domain/measure/score";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { ScoreView } from "@ui/components/scoreView";
 import { SecondaryText, TitleText } from "@ui/components/text";
@@ -9,24 +9,25 @@ import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
-const FAKE_sleepScore = 89;
-
-interface SleepInformationsProps {
+interface ScoreSectionProps {
+	label: string;
+	score?: number | null;
+	color: string;
 	style?: StyleProp<ViewStyle>;
 }
-export const SleepInformations: React.FC<SleepInformationsProps> = ({ style }) => {
-	const { format, formatScoreQuality } = useI18n();
+export const ScoreSection: React.FC<ScoreSectionProps> = ({ score, color, label, style }) => {
+	const { formatScoreQuality } = useI18n();
 
-	const sleepScoreQuality = getScoreQuality(FAKE_sleepScore, 80, 90);
+	const scoreQuality = score != undefined ? getScoreQuality(score, 80, 90) : null;
 
 	return (
 		<ResponsiveCenterView style={style} maxWidth={175} align="stretch" horizontalPadding={0}>
-			<SecondaryText>{format("alarm.wake_up_score")}</SecondaryText>
+			<SecondaryText>{label}</SecondaryText>
 			<ScoreWrapper align="center" gap={12}>
-				<ScoreView value={FAKE_sleepScore} color={colors.blue} textColor={colors.textPrimary} />
+				<ScoreView value={score ?? undefined} color={color} textColor={colors.textPrimary} />
 				<Row align="center" style={{ width: 100 }} justify="center">
-					<ColoredDot color={qualityColors[sleepScoreQuality]} />
-					<TitleText>{formatScoreQuality(sleepScoreQuality)}</TitleText>
+					{scoreQuality && <ColoredDot color={qualityColors[scoreQuality]} />}
+					{scoreQuality && <TitleText>{formatScoreQuality(scoreQuality)}</TitleText>}
 				</Row>
 			</ScoreWrapper>
 		</ResponsiveCenterView>

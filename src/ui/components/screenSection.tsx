@@ -11,8 +11,8 @@ interface ScreenSectionProps {
 export const ScreenSection: React.FC<ScreenSectionProps> = ({ title, style, children }) => {
 	return (
 		<Container style={style}>
-			{title ? <TitleText>{title}</TitleText> : null}
 			{children}
+			{title ? <TitleText>{title}</TitleText> : null}
 		</Container>
 	);
 };

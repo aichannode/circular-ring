@@ -16,6 +16,11 @@ interface CircleInfo {
 
 const circles: CircleInfo[] = [
 	{
+		route: Routes.Sleep,
+		source: require("@assets/images/circleSleep.png"),
+		key: "home.circles.sleep.label",
+	},
+	{
 		route: Routes.Activity,
 		source: require("@assets/images/circleActivity.png"),
 		key: "home.circles.activity.label",
