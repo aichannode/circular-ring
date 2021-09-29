@@ -1,3 +1,4 @@
+import { CircleSleepScreen } from "@ui/screens/circleSleep/circleSleepScreen";
 import { useAccountLinked, useDeviceStored } from "@domain/device/hooks";
 import { useAuthenticatedUserEmail, useUser } from "@domain/user/hooks/useUser";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -102,6 +103,11 @@ const MainHomeNavigator = () => {
 				name={Routes.Alarm}
 				component={CircleAlarmScreen}
 				options={{ title: format("header.alarm"), headerRight: undefined }}
+			/>
+			<MainStack.Screen
+				name={Routes.Sleep}
+				component={CircleSleepScreen}
+				options={{ title: format("header.sleep"), headerRight: undefined }}
 			/>
 			<MainStack.Screen
 				name={Routes.EditAlarm}

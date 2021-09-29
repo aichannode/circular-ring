@@ -1,20 +1,23 @@
-import { useDailyData } from "@domain/circleActivity/hooks";
+import { useActivityData } from "@domain/measure/hooks";
 import { alldailyActivityMetrics, allEnergyScoreMetrics } from "@domain/measure/metric";
 import { Stack } from "@ui/components/layout";
+import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
+import { ScoreGauge } from "@ui/components/measure/scoreGauge";
+import { ScoreSection } from "@ui/components/measure/scoreSection";
 import { useI18n } from "@ui/i18n";
+import { colors } from "@ui/styles/colors";
 import React, { useState } from "react";
 import { LayoutAnimation, ScrollView } from "react-native";
 import styled from "styled-components/native";
+import { ScreenSection } from "../../components/screenSection";
 import { DailyMetric } from "./dailyMetric";
-import { GaugeDescription } from "./gaugeDescription";
 import { dailyMetricsDataInfos, scoreDetailsDataInfos } from "./measureDisplayInfos";
-import { ScoreGauge } from "./scoreGauge";
-import { ScreenSection } from "./screenSection";
 
 const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
+
 export const CircleActivityScreen: React.FC = () => {
-	const dailyData = useDailyData();
+	const dailyData = useActivityData();
 	const { format } = useI18n();
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 
@@ -25,7 +28,14 @@ export const CircleActivityScreen: React.FC = () => {
 	return (
 		<Container>
 			<ScrollView>
-				<ScreenSection title={format("activity.score.daily_metrics")} />
+				<ScreenSection title={format("activity.score.daily_metrics")}>
+					<ScoreSection
+						style={{ marginBottom: 25 }}
+						color={colors.red}
+						score={dailyData.metrics["user.daily.energy.score"]}
+						label={format("activity.energy_score")}
+					/>
+				</ScreenSection>
 				<ElementStack gap={10}>
 					{alldailyActivityMetrics.map((metric) => {
 						const dataInfos = dailyMetricsDataInfos[metric];
@@ -79,6 +89,7 @@ export const CircleActivityScreen: React.FC = () => {
 									focusedGauge === index && (
 										<GaugeDescription
 											key={metric + "description"}
+											colorType="Activity"
 											label={format(dataInfos.titleKey)}
 											description={format(dataInfos.descriptionKey)}
 											onClose={() => {
@@ -100,6 +111,7 @@ export const CircleActivityScreen: React.FC = () => {
 
 const Container = styled.View`
 	flex: 1;
+	background-color: ${colors.lightgray};
 `;
 
 const ElementStack = styled(Stack)`

@@ -20,6 +20,7 @@ export enum SyncState {
 	ERROR = "ERROR",
 	SUCCESS = "SUCCESS",
 }
+
 export class RingService {
 	private logger = getLogger("💍 RingService");
 

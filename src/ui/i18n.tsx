@@ -1,4 +1,4 @@
-import { ScoreQuality } from "@domain/circleActivity/circleActivityData";
+import { ScoreQuality } from "@domain/measure/score";
 import { Melody, Weekdays } from "@domain/ring/ringAlarm";
 import { Intensity } from "@domain/ring/ringLiveData";
 import React, { useCallback } from "react";
@@ -37,9 +37,9 @@ export function useI18n() {
 			const hourCount = Math.floor(second / 3600);
 			const minuteCount = Math.floor(second / 60) % 60;
 			if (hourCount > 0 && minuteCount > 0) {
-				return `${hourCount}h${minuteCount.toString().padStart(2, "0")}`;
+				return `${hourCount} h ${minuteCount.toString().padStart(2, "0")} min`;
 			} else if (hourCount > 0) {
-				return `${hourCount}h`;
+				return `${hourCount} h`;
 			} else {
 				return `${minuteCount} min`;
 			}
@@ -52,6 +52,16 @@ export function useI18n() {
 					return intl.formatMessage({ id: "score.quality.good" });
 				case ScoreQuality.OPTIMAL:
 					return intl.formatMessage({ id: "score.quality.optimal" });
+			}
+		},
+		formatTranquility: (scoreQuality: ScoreQuality) => {
+			switch (scoreQuality) {
+				case ScoreQuality.POOR:
+					return intl.formatMessage({ id: "sleep.tranquility.very_agitated" });
+				case ScoreQuality.GOOD:
+					return intl.formatMessage({ id: "sleep.tranquility.agitated" });
+				case ScoreQuality.OPTIMAL:
+					return intl.formatMessage({ id: "sleep.tranquility.calm" });
 			}
 		},
 		formatIntensity: (intensity: Intensity) => {

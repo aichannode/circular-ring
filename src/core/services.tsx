@@ -3,7 +3,6 @@ import { CognitoAuthService } from "@domain/auth/cognito-auth/cognitoAuthService
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { CalibrationApi } from "@domain/calibration/calibrationApi";
 import { CalibrationService } from "@domain/calibration/calibrationService";
-import { CircleActivityService } from "@domain/circleActivity/circleActivityService";
 import { CircleAlarmService } from "@domain/circleAlarm/circleAlarmService";
 import { DeviceService } from "@domain/device/deviceService";
 import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
@@ -12,6 +11,7 @@ import { HomeBannerApi } from "@domain/homeBanner/homeBannerApi";
 import { HomeBannerService } from "@domain/homeBanner/homeBannerService";
 import { HomeBannerStorage } from "@domain/homeBanner/homeBannerStorage";
 import { MeasureApi } from "@domain/measure/measureApi";
+import { MeasureService } from "@domain/measure/measureService";
 import { UserPreferencesService } from "@domain/preferences/userPreferencesService";
 import { UserPreferencesStorage } from "@domain/preferences/userPreferencesStorage";
 import { RingApi } from "@domain/ring/ringApi";
@@ -44,9 +44,9 @@ const bluetoothService = new BluetoothService();
 const deviceService = new DeviceService(bluetoothService, fakeDeviceService, favoriteDeviceStorage);
 const circleAlarmService = new CircleAlarmService(deviceService);
 const ringService = new RingService(userService, deviceService, userRingsStorage, ringDataStorage, ringApi);
-const measureApi = new MeasureApi(apiService);
 
-const circleActivityService = new CircleActivityService(measureApi);
+const measureApi = new MeasureApi(apiService);
+const measureService = new MeasureService(measureApi);
 
 const userPreferencesStorage = new UserPreferencesStorage();
 const userPreferencesService = new UserPreferencesService(userPreferencesStorage);
@@ -63,7 +63,7 @@ export const services = {
 	deviceService,
 	userService,
 	ringService,
-	circleActivityService,
+	measureService,
 	circleAlarmService,
 	userPreferencesService,
 	calibrationService,

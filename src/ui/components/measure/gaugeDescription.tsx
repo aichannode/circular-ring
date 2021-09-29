@@ -10,10 +10,22 @@ interface GaugeDescriptionProps {
 	description: string;
 	onClose: () => void;
 	style?: StyleProp<ViewStyle>;
+	colorType: "Activity" | "Sleep";
 }
-export const GaugeDescription: React.FC<GaugeDescriptionProps> = ({ label, description, style, onClose }) => {
+export const GaugeDescription: React.FC<GaugeDescriptionProps> = ({
+	label,
+	description,
+	style,
+	onClose,
+	colorType,
+}) => {
 	return (
-		<Container start={{ x: 0, y: 1 }} end={{ x: 1, y: 0.5 }} colors={["#e00a0a", "#f53949"]} style={style}>
+		<Container
+			start={{ x: 0, y: 1 }}
+			end={{ x: 1, y: 0.5 }}
+			colors={colorType === "Activity" ? ["#e00a0a", "#f53949"] : ["#2932ee", "#3960f7"]}
+			style={style}
+		>
 			<Label>{label}</Label>
 			<Description>{description}</Description>
 			<Close onPress={onClose}>
@@ -31,6 +43,7 @@ const Container = styled(LinearGradient)`
 const Label = styled(TitleText)`
 	color: ${colors.white};
 	margin-right: 60px;
+	margin-bottom: 10px;
 `;
 
 const Description = styled(SecondaryText)`
