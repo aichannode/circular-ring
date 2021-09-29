@@ -1,8 +1,10 @@
 import { useSleepQualityDailyData } from "@domain/circleSleep/hooks";
 import { allSleepQualityMetrics } from "@domain/measure/metric";
 import { Stack } from "@ui/components/layout";
+import { ScoreSection } from "@ui/components/measure/scoreSection";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
+import { colors } from "@ui/styles/colors";
 import React, { useState } from "react";
 import { LayoutAnimation } from "react-native";
 import styled from "styled-components/native";
@@ -24,8 +26,11 @@ export const CircleSleepScreen: React.FC = () => {
 
 	return (
 		<Container>
+			<ScreenSection>
+				<ScoreSection label={format("sleep.quality_score")} score={81} color={colors.darkBlue} />
+			</ScreenSection>
 			<ScreenSection title={format("sleep.quality.details")} />
-			<Stack>
+			<ElementStack gap={10}>
 				{
 					allSleepQualityMetrics
 						.map((metric, index) => {
@@ -61,6 +66,7 @@ export const CircleSleepScreen: React.FC = () => {
 										key={metric + "description"}
 										label={format(dataInfos.titleKey)}
 										description={format(dataInfos.descriptionKey)}
+										colorType="Sleep"
 										onClose={() => {
 											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 											setFocusedGauge(null);
@@ -72,11 +78,15 @@ export const CircleSleepScreen: React.FC = () => {
 						.flatMap((x) => x)
 						.filter(Boolean) as JSX.Element[]
 				}
-			</Stack>
+			</ElementStack>
 		</Container>
 	);
 };
 
 const Container = styled(ScrollScreen)`
-	padding-vertical: 50px;
+	padding-bottom: 50px;
+	background-color: ${colors.lightgray};
+`;
+const ElementStack = styled(Stack)`
+	padding: 25px 20px;
 `;

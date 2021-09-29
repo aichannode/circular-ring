@@ -1,4 +1,4 @@
-import { getScoreQuality } from "@domain/circleActivity/circleActivityData";
+import { getScoreQuality } from "@domain/measure/score";
 import { UserAvatar } from "@ui/components/userAvatar";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";

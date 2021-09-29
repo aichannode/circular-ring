@@ -1,4 +1,4 @@
-import { getScoreQuality } from "@domain/circleActivity/circleActivityData";
+import { getScoreQuality } from "@domain/measure/score";
 import { DeviceAutoConnectState } from "@domain/device/deviceService";
 import { useAutoConnectState } from "@domain/device/hooks";
 import { usePreferences } from "@domain/preferences/hooks";

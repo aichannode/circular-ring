@@ -1,9 +1,9 @@
-import { getScoreQuality, ScoreQuality, ScoreUnit } from "@domain/circleActivity/circleActivityData";
+import { getScoreQuality, ScoreQuality, ScoreUnit } from "@domain/measure/score";
 import { Row } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors, qualityColors } from "@ui/styles/colors";
-import { whiteCardStyle } from "@ui/styles/containerStyles";
+import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
@@ -36,14 +36,20 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 	const gaugeRatio = gaugeInverted ? 1 - rate : rate;
 	const scoreQuality = getScoreQuality(gaugeRatio, goodThreshold, optimalThreshold);
 
-	const { formatScoreQuality } = useI18n();
+	const { formatScoreQuality, formatTranquility, formatDuration } = useI18n();
 
 	return (
 		<Container style={style} onPress={onPress}>
 			<Row justify="space-between">
 				<SecondaryText>{label}</SecondaryText>
 				<SecondaryText>
-					{unit === "qualitative" ? formatScoreQuality(scoreQuality) : `${value}${unit}`}
+					{unit === "qualitative"
+						? formatScoreQuality(scoreQuality)
+						: unit === "tranquility"
+						? formatTranquility(scoreQuality)
+						: unit === "time"
+						? formatDuration(value * 60)
+						: `${value}${unit}`}
 					{displayGaugeValue ? ` (${Math.round(rate * 100)}%)` : ""}
 				</SecondaryText>
 			</Row>
@@ -55,7 +61,7 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 };
 
 const Container = styled.Pressable`
-	${whiteCardStyle};
+	${roundedWhiteCardStyle};
 	padding: 20px 25px;
 `;
 

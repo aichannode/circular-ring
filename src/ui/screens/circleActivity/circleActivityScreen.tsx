@@ -2,6 +2,7 @@ import { useDailyData } from "@domain/circleActivity/hooks";
 import { alldailyActivityMetrics, allEnergyScoreMetrics } from "@domain/measure/metric";
 import { Stack } from "@ui/components/layout";
 import { useI18n } from "@ui/i18n";
+import { colors } from "@ui/styles/colors";
 import React, { useState } from "react";
 import { LayoutAnimation, ScrollView } from "react-native";
 import styled from "styled-components/native";
@@ -79,6 +80,7 @@ export const CircleActivityScreen: React.FC = () => {
 									focusedGauge === index && (
 										<GaugeDescription
 											key={metric + "description"}
+											colorType="Activity"
 											label={format(dataInfos.titleKey)}
 											description={format(dataInfos.descriptionKey)}
 											onClose={() => {
@@ -100,6 +102,7 @@ export const CircleActivityScreen: React.FC = () => {
 
 const Container = styled.View`
 	flex: 1;
+	background-color: ${colors.lightgray};
 `;
 
 const ElementStack = styled(Stack)`
