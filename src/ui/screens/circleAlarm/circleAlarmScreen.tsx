@@ -1,5 +1,6 @@
 import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
+import { useWakeUpScore } from "@domain/measure/hooks";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { CircularBottomSheet } from "@ui/components/bottomSheet";
 import { ScoreSection } from "@ui/components/measure/scoreSection";
@@ -15,13 +16,12 @@ import styled from "styled-components/native";
 import { AlarmCard } from "./alarmCard";
 import { AlarmWeekOverview } from "./alarmWeekOverview";
 
-const FAKE_wakeupScore = 89;
-
 export const CircleAlarmScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
 	const { loading, alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
 	const warningBottomSheet = useRef<BottomSheetModal>(null);
+	const wakeUpScore = useWakeUpScore();
 
 	useEffect(() => {
 		loadAlarms();
@@ -34,7 +34,7 @@ export const CircleAlarmScreen: React.FC = () => {
 					<ScoreSection
 						label={format("alarm.wake_up_score")}
 						color={colors.blue}
-						score={FAKE_wakeupScore}
+						score={wakeUpScore}
 						style={{ marginBottom: 25, alignSelf: "center" }}
 					/>
 				</ScreenSection>

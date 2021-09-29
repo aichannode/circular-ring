@@ -15,13 +15,16 @@ import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React, { useCallback, useRef } from "react";
 import { View } from "react-native";
 import styled from "styled-components/native";
+import { useGlobalScore } from "@domain/measure/hooks";
 
-const score = 82.42; // FAKE
 export const ProfileScreen = () => {
 	const { format, formatScoreQuality } = useI18n();
 	const { navigate } = useRoutesNavigation();
 
-	const scoreQuality = score ? getScoreQuality(score, 80, 90) : null;
+	const globalScore = useGlobalScore();
+	console.log("globalscore", globalScore);
+
+	const scoreQuality = globalScore ? getScoreQuality(globalScore, 80, 90) : null;
 
 	const goToProfileInformation = useCallback(() => {
 		navigate(Routes.ProfileInformation);
@@ -37,7 +40,7 @@ export const ProfileScreen = () => {
 			<UserAvatar />
 			<ResponsiveCenterView>
 				<ScoreCard gap={16} align="center" justify="center">
-					<ScoreView value={score} color={colors.primary} />
+					<ScoreView value={globalScore ?? undefined} color={colors.primary} />
 					<View>
 						<SecondaryText>{format("profile.global_score.label")}</SecondaryText>
 						{scoreQuality && (

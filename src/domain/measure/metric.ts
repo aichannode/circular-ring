@@ -6,7 +6,10 @@ export interface MetricInfo<T extends Metric = Metric> {
 }
 
 export type Metric =
+	| "user.daily.global.score"
 	| "user.daily.energy.score"
+	| "user.daily.sleep.score"
+	| "user.daily.wake.up.score"
 	| "user.start.of.sport"
 	| "user.end.of.sport"
 	| "user.non.active.activity"

@@ -3,9 +3,7 @@ import { CognitoAuthService } from "@domain/auth/cognito-auth/cognitoAuthService
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { CalibrationApi } from "@domain/calibration/calibrationApi";
 import { CalibrationService } from "@domain/calibration/calibrationService";
-import { CircleActivityService } from "@domain/circleActivity/circleActivityService";
 import { CircleAlarmService } from "@domain/circleAlarm/circleAlarmService";
-import { CircleSleepService } from "@domain/circleSleep/circleSleepService";
 import { DeviceService } from "@domain/device/deviceService";
 import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
 import { DevFakeDeviceService, EmptyFakeDeviceService } from "@domain/fake/fakeDeviceService";
@@ -13,6 +11,7 @@ import { HomeBannerApi } from "@domain/homeBanner/homeBannerApi";
 import { HomeBannerService } from "@domain/homeBanner/homeBannerService";
 import { HomeBannerStorage } from "@domain/homeBanner/homeBannerStorage";
 import { MeasureApi } from "@domain/measure/measureApi";
+import { MeasureService } from "@domain/measure/measureService";
 import { UserPreferencesService } from "@domain/preferences/userPreferencesService";
 import { UserPreferencesStorage } from "@domain/preferences/userPreferencesStorage";
 import { RingApi } from "@domain/ring/ringApi";
@@ -40,12 +39,11 @@ const cognitoAuthService = new CognitoAuthService();
 
 const bluetoothService = new BluetoothService();
 const deviceService = new DeviceService(bluetoothService, fakeDeviceService, favoriteDeviceStorage);
-const circleAlarmService = new CircleAlarmService(deviceService);
 const ringService = new RingService(cognitoAuthService, deviceService, userRingsStorage, ringDataStorage, ringApi);
 const measureApi = new MeasureApi(apiService);
 
-const circleActivityService = new CircleActivityService(measureApi);
-const circleSleepService = new CircleSleepService(measureApi);
+const measureService = new MeasureService(measureApi);
+const circleAlarmService = new CircleAlarmService(deviceService);
 
 const userApi = new UserApi(apiService);
 const userService = new UserService(cognitoAuthService, userApi, userStorage);
@@ -65,9 +63,8 @@ export const services = {
 	deviceService,
 	userService,
 	ringService,
-	circleActivityService,
+	measureService,
 	circleAlarmService,
-	circleSleepService,
 	userPreferencesService,
 	calibrationService,
 	homeBannerService,
