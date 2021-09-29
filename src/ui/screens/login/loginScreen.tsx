@@ -38,7 +38,7 @@ export const LoginScreen = () => {
 				setLoading(false);
 				if (code === "NotAuthorizedException") {
 					setErrorMessage(format("login.error.invalid_credentials"));
-				} else if ("UserNotConfirmedException") {
+				} else if (code === "UserNotConfirmedException") {
 					navigate(Routes.SignUpConfirmationCode);
 				} else {
 					setErrorMessage(format("login.error.default"));
