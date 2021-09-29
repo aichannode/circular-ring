@@ -1,6 +1,8 @@
 import { useSleepQualityDailyData } from "@domain/circleSleep/hooks";
 import { allSleepQualityMetrics } from "@domain/measure/metric";
 import { Stack } from "@ui/components/layout";
+import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
+import { ScoreGauge } from "@ui/components/measure/scoreGauge";
 import { ScoreSection } from "@ui/components/measure/scoreSection";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
@@ -8,9 +10,7 @@ import { colors } from "@ui/styles/colors";
 import React, { useState } from "react";
 import { LayoutAnimation } from "react-native";
 import styled from "styled-components/native";
-import { GaugeDescription } from "../circleActivity/gaugeDescription";
-import { ScoreGauge } from "../circleActivity/scoreGauge";
-import { ScreenSection } from "../circleActivity/screenSection";
+import { ScreenSection } from "../../components/screenSection";
 import { scoreDetailsDataInfos } from "./measureDisplayInfos";
 
 const scoreGoodThreshold = 0.8;

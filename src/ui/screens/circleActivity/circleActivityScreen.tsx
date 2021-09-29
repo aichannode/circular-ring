@@ -7,10 +7,10 @@ import React, { useState } from "react";
 import { LayoutAnimation, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { DailyMetric } from "./dailyMetric";
-import { GaugeDescription } from "./gaugeDescription";
 import { dailyMetricsDataInfos, scoreDetailsDataInfos } from "./measureDisplayInfos";
-import { ScoreGauge } from "./scoreGauge";
-import { ScreenSection } from "./screenSection";
+import { ScreenSection } from "../../components/screenSection";
+import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
+import { ScoreGauge } from "@ui/components/measure/scoreGauge";
 
 const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
