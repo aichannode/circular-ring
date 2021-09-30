@@ -1,4 +1,4 @@
-import { DeviceAutoConnectState } from "@domain/device/deviceService";
+import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
 import { useAutoConnectState } from "@domain/device/hooks";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";

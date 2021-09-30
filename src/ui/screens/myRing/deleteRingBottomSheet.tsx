@@ -16,7 +16,7 @@ interface DeleteRingBottomSheetProps {
 
 export const DeleteRingBottomSheet: React.FC<DeleteRingBottomSheetProps> = ({ ring, onClose }) => {
 	const { format } = useI18n();
-	const { ringService } = useServices();
+	const { ringManagementService } = useServices();
 
 	// const [isSuccess, setSuccess] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string>("");
@@ -26,7 +26,7 @@ export const DeleteRingBottomSheet: React.FC<DeleteRingBottomSheetProps> = ({ ri
 		setErrorMessage("");
 		setLoading(true);
 		try {
-			await ringService.deleteRing(ring);
+			await ringManagementService.deleteRing(ring);
 			setLoading(false);
 			// TODO uncomment this line when we will stay in current screen
 			// setSuccess(true);

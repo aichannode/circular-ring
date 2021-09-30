@@ -2,14 +2,16 @@ import { getLogger } from "@core/logger/logger";
 import { base64decode, base64encode, delay, observableToPromise, timedPromise } from "@core/utils";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { Channel } from "@domain/device/channels";
+import { FakeDeviceService } from "@domain/fake/fakeDeviceService";
+import { deserializeBattery, RingBattery } from "@domain/ring/ringBattery";
+import { deserializeLiveData, RingLiveData } from "@domain/ring/ringLiveData";
 import { observable, Observable } from "micro-observables";
 import { Signal } from "micro-signals";
+import { Platform } from "react-native";
 import { BleError, Device, ScanMode, State, Subscription } from "react-native-ble-plx";
-import { NamedDevice } from "./namedDevice";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 import { LocationEnabler } from "./locationEnabler";
-import { Platform } from "react-native";
-import { FakeDeviceService } from "@domain/fake/fakeDeviceService";
+import { NamedDevice } from "./namedDevice";
 
 export enum DeviceConnectionState {
 	DISCONNECTED = "DISCONNECTED",
@@ -40,7 +42,7 @@ const findDeviceTimeout = 20000;
 const scanRetryTimeout = 10000;
 
 const locationConfig = { alwaysShow: true, needBle: true };
-export class DeviceService {
+export class BleDeviceService {
 	private logger = getLogger("📟 DeviceService");
 
 	private _onDeviceDisconnectedSubscription: Subscription | null = null;
@@ -56,12 +58,19 @@ export class DeviceService {
 	private _favoriteDevice = observable<NamedDevice | null>(null);
 	private _favoriteDeviceSNU = observable<string | null>(null);
 
+	private _currentRingBattery = observable<RingBattery | null>(null);
+	private _batteryListenerUnsubscribe: (() => void) | undefined = undefined;
+	private _currentRingLiveData = observable<{ listening: boolean; data?: RingLiveData | null }>({ listening: false });
+
 	scannedDevices = this._scannedDevices.select((devicesMap) => [...devicesMap.values()]);
 
 	readonly setupState: Observable<DeviceSetupState>;
 	readonly autoConnectState: Observable<DeviceAutoConnectState>;
 	readonly favoriteDevice = this._favoriteDevice.readOnly();
 	readonly favoriteDeviceSNU = this._favoriteDeviceSNU.readOnly();
+
+	readonly currentRingBattery = this._currentRingBattery.readOnly();
+	readonly currentRingLiveData = this._currentRingLiveData.readOnly();
 
 	private onMessageReceived = new Signal<string>();
 
@@ -125,6 +134,7 @@ export class DeviceService {
 		this.fakeDeviceService.fakeDeviceEnabled.subscribe(async (enabled) => {
 			if (enabled) {
 				const debugDevice = "Circular_BeTomorrow";
+				console.log("*** FAVORITE : DEBUG");
 				this._favoriteDevice.set({ name: debugDevice });
 				this._favoriteDeviceSNU.set("fake_snu");
 				this.stopScan();
@@ -135,11 +145,11 @@ export class DeviceService {
 
 	async init() {
 		const loadedDevice = await this.favoriteDeviceStorage.load();
+		console.log("*** FAVORITE : " + JSON.stringify(loadedDevice));
 		this._favoriteDevice.set(loadedDevice);
 		this.checkSettings();
 
 		if (loadedDevice) {
-			console.log("> Has device to autoconnect");
 			this.autoConnectDevice(loadedDevice.name);
 		}
 	}
@@ -210,6 +220,7 @@ export class DeviceService {
 				this.handleDeviceDisconnection(error, disconnectedDevice)
 			);
 			const storedDevice = { name: device.name };
+			console.log("*** FAVORITE : " + JSON.stringify(storedDevice));
 			this._favoriteDevice.set(storedDevice);
 			await this.favoriteDeviceStorage.save(storedDevice);
 			await this.startMonitoring();
@@ -217,6 +228,7 @@ export class DeviceService {
 			if (snu) {
 				this._favoriteDeviceSNU.set(snu);
 			}
+			await this.listenBattery();
 		} catch (e) {
 			this.logger.error("Error connecting to device", e);
 			this._connectionState.set(DeviceConnectionState.DISCONNECTED);
@@ -235,12 +247,15 @@ export class DeviceService {
 			this._connectedDevice.set(null);
 			this._onDeviceDisconnectedSubscription?.remove();
 			this._onDeviceDisconnectedSubscription = null;
+			this._batteryListenerUnsubscribe?.();
+			this._currentRingBattery.set(null);
 			this.logger.info("Trying to reconnect to", connectedDevice.name);
 			this.autoConnectDevice(connectedDevice.name);
 		} else {
 			this.logger.warn("Disconnected from unknown device");
 		}
 	}
+
 	async autoConnectDevice(name: string) {
 		this.logger.info("Trying to autoconnect to", name);
 		await this.bluetoothService.enable();
@@ -287,8 +302,7 @@ export class DeviceService {
 		});
 
 		try {
-			const deviceFound = await timedPromise(scanPromise, findDeviceTimeout);
-			return deviceFound;
+			return await timedPromise(scanPromise, findDeviceTimeout);
 		} catch (e) {
 			this.logger.warn("Device not found:", e, "retrying in 10 seconds ");
 			this.stopScan();
@@ -319,11 +333,7 @@ export class DeviceService {
 
 		this.onMessageReceived.add(listener);
 
-		await device.writeCharacteristicWithoutResponseForService(
-			NUServiceUUID,
-			RXCharacteristicUUID,
-			base64encode(channel)
-		);
+		await this.writeToDevice(device, channel);
 
 		return () => this.onMessageReceived.remove(listener);
 	}
@@ -334,6 +344,11 @@ export class DeviceService {
 			this.logger.error("Error : no device connected");
 			return;
 		}
+		await this.writeToDevice(device, message);
+	}
+
+	private async writeToDevice(device: Device, message: string) {
+		await delay(100);
 		this.logger.info("Writing...", message);
 		await device.writeCharacteristicWithoutResponseForService(
 			NUServiceUUID,
@@ -368,11 +383,7 @@ export class DeviceService {
 			this.onMessageReceived.add(listener);
 		});
 
-		await device.writeCharacteristicWithoutResponseForService(
-			NUServiceUUID,
-			RXCharacteristicUUID,
-			base64encode(message)
-		);
+		await this.writeToDevice(device, message);
 
 		return await responsePromise;
 	}
@@ -412,8 +423,11 @@ export class DeviceService {
 		this._connectionState.set(DeviceConnectionState.DISCONNECTED);
 		this._onDeviceDisconnectedSubscription?.remove();
 		this._onDeviceDisconnectedSubscription = null;
+		console.log("*** FAVORITE : null");
 		this._favoriteDevice.set(null);
 		this._favoriteDeviceSNU.set(null);
+		this._currentRingBattery.set(null);
+		this._batteryListenerUnsubscribe?.();
 		await this.favoriteDeviceStorage.clear();
 		await device.cancelConnection();
 	}
@@ -423,5 +437,39 @@ export class DeviceService {
 	}
 	checkSettings() {
 		LocationEnabler.checkSettings(locationConfig);
+	}
+
+	listenLiveData() {
+		this._currentRingLiveData.set({ listening: true });
+		return this.listen("FBL1", Channel.LIVE, (value) => {
+			if (value) {
+				const deserializedData = deserializeLiveData(value);
+				if (deserializedData) {
+					this._currentRingLiveData.update((c) => {
+						const maxHeartRate = c.data
+							? Math.max(deserializedData.heartRate, c.data.heartRate)
+							: deserializedData.heartRate;
+						return { ...c, data: { ...deserializedData, maxHeartRate } };
+					});
+				}
+			}
+		});
+	}
+
+	stopLiveData() {
+		this._currentRingLiveData.update((c) => ({ ...c, listening: false }));
+		return this.write("FBL0");
+	}
+
+	async listenBattery() {
+		this._batteryListenerUnsubscribe = await this.listen(Channel.BATTERY, Channel.BATTERY, (value) => {
+			if (value) {
+				this._currentRingBattery.set(deserializeBattery(value));
+			}
+		});
+	}
+
+	stopListenBattery() {
+		this._batteryListenerUnsubscribe?.();
 	}
 }

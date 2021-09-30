@@ -1,8 +1,7 @@
 import { getScoreQuality } from "@domain/measure/score";
-import { DeviceAutoConnectState } from "@domain/device/deviceService";
-import { useAutoConnectState } from "@domain/device/hooks";
+import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
+import { useAutoConnectState, useLiveData } from "@domain/device/hooks";
 import { usePreferences } from "@domain/preferences/hooks";
-import { useLiveData } from "@domain/ring/hooks";
 import { getIntensity, Intensity } from "@domain/ring/ringLiveData";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { CircularBottomSheet } from "@ui/components/bottomSheet";

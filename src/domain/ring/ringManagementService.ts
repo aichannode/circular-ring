@@ -1,14 +1,12 @@
 import { getLogger } from "@core/logger/logger";
 import { Channel } from "@domain/device/channels";
-import { DeviceService } from "@domain/device/deviceService";
+import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { UserService } from "@domain/user/userService";
 import { observable } from "micro-observables";
 import { NamedUserRing } from "./ring";
 import { RingApi } from "./ringApi";
-import { deserializeBattery, RingBattery } from "./ringBattery";
 import { ringDataEOF } from "./ringData";
 import { RingDataStorage } from "./ringDataStorage";
-import { deserializeLiveData, RingLiveData } from "./ringLiveData";
 import { UserRingsStorage } from "./userRingsStorage";
 
 const syncFinishedTimeout = 3000;
@@ -21,22 +19,17 @@ export enum SyncState {
 	SUCCESS = "SUCCESS",
 }
 
-export class RingService {
+export class RingManagementService {
 	private logger = getLogger("💍 RingService");
 
 	private _userRings = observable<NamedUserRing[]>([]);
-	private _currentRingBattery = observable<RingBattery | null>(null);
 	private _currentRingSyncState = observable<SyncState>(SyncState.NONE);
-	private _currentRingLiveData = observable<{ listening: boolean; data?: RingLiveData | null }>({ listening: false });
 
 	userRings = this._userRings.readOnly();
-	currentRingBattery = this._currentRingBattery.readOnly();
 	currentRingSyncState = this._currentRingSyncState.readOnly();
-	currentRingLiveData = this._currentRingLiveData.readOnly();
-
 	constructor(
 		private readonly userService: UserService,
-		private readonly deviceService: DeviceService,
+		private readonly deviceService: BleDeviceService,
 		private readonly userRingsStorage: UserRingsStorage,
 		private readonly ringDataStorage: RingDataStorage,
 		private readonly ringApi: RingApi
@@ -52,25 +45,7 @@ export class RingService {
 	async init() {
 		const loadedRings = await this.userRingsStorage.load();
 		this._userRings.set(loadedRings ?? []);
-		this.listenBattery();
 		this.syncData();
-	}
-
-	listenLiveData() {
-		this._currentRingLiveData.set({ listening: true });
-		return this.deviceService.listen("FBL1", Channel.LIVE, (value) => {
-			if (value) {
-				const deserializedData = deserializeLiveData(value);
-				if (deserializedData) {
-					this._currentRingLiveData.update((c) => {
-						const maxHeartRate = c.data
-							? Math.max(deserializedData.heartRate, c.data.heartRate)
-							: deserializedData.heartRate;
-						return { ...c, data: { ...deserializedData, maxHeartRate } };
-					});
-				}
-			}
-		});
 	}
 
 	async getRings() {
@@ -89,19 +64,6 @@ export class RingService {
 			};
 		});
 		this._userRings.set(newNamedRings);
-	}
-
-	stopLiveData() {
-		this._currentRingLiveData.update((c) => ({ ...c, listening: false }));
-		return this.deviceService.write("FBL0");
-	}
-
-	listenBattery() {
-		return this.deviceService.listen(Channel.BATTERY, Channel.BATTERY, (value) => {
-			if (value) {
-				this._currentRingBattery.set(deserializeBattery(value));
-			}
-		});
 	}
 
 	async registerConnectedRing() {

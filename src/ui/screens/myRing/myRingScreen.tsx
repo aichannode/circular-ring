@@ -9,7 +9,7 @@ import { Alert } from "react-native";
 import styled from "styled-components/native";
 
 export const MyRingScreen: React.FC = () => {
-	const { deviceService } = useServices();
+	const { bleDeviceService } = useServices();
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
 
@@ -18,7 +18,7 @@ export const MyRingScreen: React.FC = () => {
 			<RingBatteryView size={140} detailed />
 			<StyledPrimaryText
 				onLongPress={() => {
-					deviceService.write("RWF1S10");
+					bleDeviceService.write("RWF1S10");
 					Alert.alert("Data added");
 				}}
 			>

@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { DeviceSetupState } from "@domain/device/deviceService";
+import { DeviceSetupState } from "@domain/device/bleDeviceService";
 import { useScannedDevices, useSetupState } from "@domain/device/hooks";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { CircularBottomSheet } from "@ui/components/bottomSheet";
@@ -20,7 +20,7 @@ import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
 
 export const RingSetupScreen: React.FC = () => {
 	const { format } = useI18n();
-	const { bluetoothService, deviceService, ringService } = useServices();
+	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
 
 	const pairingFailedBottomSheet = useRef<BottomSheetModal>(null);
 
@@ -29,10 +29,10 @@ export const RingSetupScreen: React.FC = () => {
 
 	useEffect(() => {
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
-			deviceService.startScan();
+			bleDeviceService.startScan();
 		}
 		if (setupState === DeviceSetupState.LOCATION_DISABLED) {
-			deviceService.checkSettings();
+			bleDeviceService.checkSettings();
 		}
 	}, [setupState]);
 
@@ -71,9 +71,9 @@ export const RingSetupScreen: React.FC = () => {
 										<PrimaryButton
 											onPress={async () => {
 												bluetoothService.enable();
-												deviceService.checkSettings();
+												bleDeviceService.checkSettings();
 												if (setupState === DeviceSetupState.LOCATION_DISABLED) {
-													deviceService.requestLocation();
+													bleDeviceService.requestLocation();
 												}
 											}}
 										>
@@ -115,11 +115,11 @@ export const RingSetupScreen: React.FC = () => {
 											<DeviceWrapper
 												key={device.id}
 												onPress={async () => {
-													deviceService.stopScan();
+													bleDeviceService.stopScan();
 													setConnecting(true);
-													await deviceService.connect(device);
+													await bleDeviceService.connect(device);
 													try {
-														await ringService.registerConnectedRing();
+														await ringManagementService.registerConnectedRing();
 														setConnecting(false);
 													} catch (e) {
 														setConnecting(false);

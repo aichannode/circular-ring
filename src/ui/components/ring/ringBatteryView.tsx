@@ -1,4 +1,4 @@
-import { useRingBattery } from "@domain/ring/hooks";
+import { useRingBattery } from "@domain/device/hooks";
 import { RingBatteryStatus } from "@domain/ring/ringBattery";
 import { useI18n } from "@ui/i18n";
 import React from "react";

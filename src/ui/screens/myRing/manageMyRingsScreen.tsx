@@ -13,8 +13,8 @@ import React, { useRef, useState } from "react";
 
 export const ManageMyRingsScreen = () => {
 	const { format } = useI18n();
-	const { ringService } = useServices();
-	const userRings = useObservable(ringService.userRings);
+	const { ringManagementService } = useServices();
+	const userRings = useObservable(ringManagementService.userRings);
 
 	const deleteRingBottomSheetRef = useRef<BottomSheetModal>(null);
 
