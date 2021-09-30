@@ -112,8 +112,7 @@ export class RingService {
 				if (!alreadyRegistered) {
 					const userRing = await this.ringApi.addRing({ id, firmware });
 					const namedRing = { ...userRing, name: deviceName };
-					userRings.push(namedRing);
-					this._userRings.set(userRings);
+					this._userRings.update((rings) => [...rings, namedRing]);
 					this.userRingsStorage.save(userRings);
 					return userRing;
 				}

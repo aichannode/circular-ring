@@ -396,11 +396,14 @@ export class DeviceService {
 	async disconnect() {
 		const device = this._connectedDevice.get();
 		if (!device) {
-			this.logger.info("Already disonnected");
+			this.logger.info("Already disconnected");
 			return;
 		}
 		this.logger.info("Disconnecting from device", device.name);
 		this._connectedDevice.set(null);
+		this._connectionState.set(DeviceConnectionState.DISCONNECTED);
+		this._onDeviceDisconnectedSubscription?.remove();
+		this._onDeviceDisconnectedSubscription = null;
 		this._favoriteDevice.set(null);
 		await this.favoriteDeviceStorage.clear();
 		await device.cancelConnection();
