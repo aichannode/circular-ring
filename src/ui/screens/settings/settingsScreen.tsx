@@ -5,16 +5,21 @@ import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import styled from "styled-components/native";
+import { getVersion } from "react-native-device-info";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 
 export const SettingsScreen: React.FC = () => {
 	const { format } = useI18n();
 	const userSettings = useUserSettings();
 	const { userService } = useServices();
+	const { navigate } = useRoutesNavigation();
 
 	const [heightFormat, setHeightFormat] = useState(userSettings?.heightFormat);
 	const [weightFormat, setWeightFormat] = useState(userSettings?.weightFormat);
+
+	const appVersion = useMemo(() => getVersion(), []);
 
 	const updateSettings = useCallback(() => {
 		if (heightFormat === userSettings?.heightFormat && weightFormat === userSettings?.weightFormat) {
@@ -50,11 +55,25 @@ export const SettingsScreen: React.FC = () => {
 			{/* <InfoListItem name={format("settings.2fa")} /> */}
 			<InfoListHeader>{format("settings.other")}</InfoListHeader>
 			{/* <InfoListItem name={format("settings.clear_history")} /> */}
-			{/* <InfoListItem name={format("settings.terms")} /> TODO WEBVIEW
-			<InfoListItem name={format("settings.privacy")} /> TODO WEBVIEW */}
-			<InfoListItem name={format("settings.app_version")} />
+			<InfoListItem
+				name={format("settings.terms")}
+				hasDisclosure
+				action={() =>
+					navigate(Routes.WebView, { uri: format("url.terms_and_conditions"), label: format("settings.terms") })
+				}
+			/>
+			<InfoListItem
+				name={format("settings.privacy")}
+				hasDisclosure
+				action={() => navigate(Routes.WebView, { uri: format("url.privacy"), label: format("settings.privacy") })}
+			/>
+			<InfoListItem name={format("settings.app_version")} value={appVersion} />
 			<InfoListHeader>{format("settings.help")}</InfoListHeader>
-			{/* <InfoListItem name={format("settings.faq")} /> TODO WEBVIEW */}
+			<InfoListItem
+				name={format("settings.faq")}
+				hasDisclosure
+				action={() => navigate(Routes.WebView, { uri: format("url.faq"), label: format("settings.faq") })}
+			/>
 			{/* <InfoListItem name={format("settings.support")} />*/}
 		</Container>
 	);

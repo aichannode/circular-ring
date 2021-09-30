@@ -33,7 +33,7 @@ import { ProfileScreen } from "@ui/screens/profile/profileScreen";
 import { SettingsScreen } from "@ui/screens/settings/settingsScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
-import { TermsAndConditionsScreen } from "@ui/screens/signup/termsAndConditionsScreen";
+import { WebViewScreen } from "@ui/screens/webViewScreen";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import { Image, Pressable } from "react-native";
@@ -155,6 +155,7 @@ const MainHomeNavigator = () => {
 				component={SettingsScreen}
 				options={{ title: format("header.settings") }}
 			/>
+			<MainStack.Screen name={Routes.WebView} component={WebViewScreen} />
 		</MainStack.Navigator>
 	);
 };
@@ -177,7 +178,7 @@ export const RootNavigator: React.FC = () => {
 				<SetupStack.Screen name={Routes.ResetToken} component={ResetTokenScreen} />
 				<SetupStack.Screen name={Routes.SignUpEmail} component={SignUpEmailScreen} />
 				<SetupStack.Screen name={Routes.SignUpConfirmationCode} component={SignUpConfirmationCodeScreen} />
-				<SetupStack.Screen name={Routes.TermsAndConditions} component={TermsAndConditionsScreen} />
+				<SetupStack.Screen name={Routes.WebView} component={WebViewScreen} />
 			</SetupStack.Navigator>
 		);
 	}
