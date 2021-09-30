@@ -1,14 +1,17 @@
 import { useServices } from "@core/services";
-import { HeightUnit, WeightUnit } from "@domain/units";
+import { DateFormat, HeightUnit, WeightUnit } from "@domain/units";
 import { useUserSettings } from "@domain/user/hooks/useUser";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components/native";
 import { getVersion } from "react-native-device-info";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { CircularBottomSheet } from "@ui/components/bottomSheet";
+import { DateFormatBottomSheet } from "./dateFormatBottomSheet";
 
 export const SettingsScreen: React.FC = () => {
 	const { format } = useI18n();
@@ -25,8 +28,12 @@ export const SettingsScreen: React.FC = () => {
 		if (heightFormat === userSettings?.heightFormat && weightFormat === userSettings?.weightFormat) {
 			return;
 		}
-		heightFormat && weightFormat && userService.updateUserSettings("DD/MM/YYYY", heightFormat, weightFormat);
-	}, [heightFormat, weightFormat]);
+		heightFormat &&
+			weightFormat &&
+			userService.updateUserSettings(userSettings?.dateFormat ?? DateFormat.DMY, heightFormat, weightFormat);
+	}, [heightFormat, weightFormat, userSettings?.dateFormat]);
+
+	const dateFormatBottomSheet = useRef<BottomSheetModal>(null);
 
 	useUnmount(([updater]) => updater(), [updateSettings]);
 
@@ -34,8 +41,13 @@ export const SettingsScreen: React.FC = () => {
 		<Container>
 			<InfoListHeader>{format("settings.general")}</InfoListHeader>
 			{/* <InfoListItem name={format("settings.notifications.title")} /> */}
-			{/* <InfoListItem name={format("settings.date_format")} />
-			<InfoListItem name={format("settings.time_format")} /> */}
+			<InfoListItem
+				name={format("settings.date_format.title")}
+				action={() => dateFormatBottomSheet.current?.present()}
+				value={userSettings?.dateFormat}
+				hasDisclosure
+			/>
+			{/* <InfoListItem name={format("settings.time_format")} /> */}
 			<InfoListItem
 				name={format("settings.height_format")}
 				switchOptions={[HeightUnit.cm, HeightUnit.ft]}
@@ -75,6 +87,9 @@ export const SettingsScreen: React.FC = () => {
 				action={() => navigate(Routes.WebView, { uri: format("url.faq"), label: format("settings.faq") })}
 			/>
 			{/* <InfoListItem name={format("settings.support")} />*/}
+			<CircularBottomSheet ref={dateFormatBottomSheet} snapPoints={[480]}>
+				<DateFormatBottomSheet onSaved={() => dateFormatBottomSheet.current?.close()} />
+			</CircularBottomSheet>
 		</Container>
 	);
 };

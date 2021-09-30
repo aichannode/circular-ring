@@ -78,3 +78,12 @@ export function cmToFt(cmHeight: number) {
 export function ftToCm(ftHeight: number) {
 	return ftHeight * FT_TO_CM;
 }
+
+/**
+ * Date
+ */
+
+export enum DateFormat {
+	DMY = "DD/MM/YYYY",
+	MDY = "MM/DD/YYYY",
+}
