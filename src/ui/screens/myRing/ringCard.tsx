@@ -1,38 +1,21 @@
-import { useServices } from "@core/services";
 import { NamedUserRing } from "@domain/ring/ring";
-import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import dayjs from "dayjs";
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { Pressable, StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
 interface RingCardProps {
 	ring: NamedUserRing;
 	style?: StyleProp<ViewStyle>;
+	onDeleteClicked: () => void;
 }
 
-export const RingCard: React.FC<RingCardProps> = ({ ring, style }) => {
+export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked }) => {
 	const { format } = useI18n();
-	const { ringService } = useServices();
-
-	const [isLoading, setLoading] = useState(false);
-	const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
-
-	const deleteRing = useCallback(async () => {
-		setErrorMessage(undefined);
-		setLoading(true);
-		try {
-			await ringService.deleteRing(ring);
-			setLoading(false);
-		} catch (error) {
-			setLoading(false);
-			setErrorMessage(format("global.default_error"));
-		}
-	}, []);
 
 	return (
 		<Container style={style}>
@@ -52,17 +35,12 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style }) => {
 						</RingInfo>
 					</RingRightInfoContainer>
 					<DeleteContainer>
-						{isLoading ? (
-							<Spinner size={16} />
-						) : (
-							<Pressable onPress={deleteRing}>
-								<DeleteIcon source={require("@assets/images/close.png")} tintColor={colors.primary} />
-							</Pressable>
-						)}
+						<Pressable onPress={onDeleteClicked}>
+							<DeleteIcon source={require("@assets/images/close.png")} tintColor={colors.primary} />
+						</Pressable>
 					</DeleteContainer>
 				</RingInfoContainer>
 			</Card>
-			{errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 		</Container>
 	);
 };
@@ -110,9 +88,4 @@ const DeleteContainer = styled.View`
 
 const DeleteIcon = styled.Image<{ tintColor: string }>`
 	tint-color: ${({ tintColor }) => tintColor};
-`;
-
-const ErrorMessage = styled.Text`
-	${textStyles.errorMessage};
-	padding: 6px 20px 0;
 `;

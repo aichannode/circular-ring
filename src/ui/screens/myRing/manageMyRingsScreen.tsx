@@ -1,16 +1,24 @@
 import { useServices } from "@core/services";
+import { NamedUserRing } from "@domain/ring/ring";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { CircularBottomSheet } from "@ui/components/bottomSheet";
 import { InfoListHeader } from "@ui/components/infoList";
 import { Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
+import { DeleteRingBottomSheet } from "@ui/screens/myRing/deleteRingBottomSheet";
 import { RingCard } from "@ui/screens/myRing/ringCard";
 import { useObservable } from "micro-observables";
-import React from "react";
+import React, { useRef, useState } from "react";
 
 export const ManageMyRingsScreen = () => {
 	const { format } = useI18n();
 	const { ringService } = useServices();
 	const userRings = useObservable(ringService.userRings);
+
+	const deleteRingBottomSheetRef = useRef<BottomSheetModal>(null);
+
+	const [ringToDelete, setRingToDelete] = useState<NamedUserRing | undefined>(undefined);
 
 	return (
 		<ScrollScreen contentContainerStyle={{ paddingHorizontal: 20 }}>
@@ -24,9 +32,21 @@ export const ManageMyRingsScreen = () => {
 			<InfoListHeader>{format("manage_rings.paired_rings_title")}</InfoListHeader>
 			<Stack gap={25}>
 				{userRings.map((ring) => {
-					return <RingCard key={ring.id} ring={ring} />;
+					return (
+						<RingCard
+							key={ring.id}
+							ring={ring}
+							onDeleteClicked={() => {
+								setRingToDelete(ring);
+								deleteRingBottomSheetRef.current?.present();
+							}}
+						/>
+					);
 				})}
 			</Stack>
+			<CircularBottomSheet snapPoints={[480]} ref={deleteRingBottomSheetRef}>
+				<DeleteRingBottomSheet ring={ringToDelete!} onClose={() => deleteRingBottomSheetRef.current?.close()} />
+			</CircularBottomSheet>
 		</ScrollScreen>
 	);
 };

@@ -82,7 +82,7 @@ export class RingService {
 				name:
 					oldNamedRings.filter((oldRing) => {
 						return oldRing.id === r.id;
-					})[0].name ?? "?",
+					})[0]?.name ?? "?",
 			};
 		});
 		this._userRings.set(newNamedRings);
@@ -102,7 +102,7 @@ export class RingService {
 	}
 
 	async registerConnectedRing() {
-		const id = await this.deviceService.getResponse(Channel.MAC);
+		const id = await this.deviceService.getResponse(Channel.SNU);
 		const firmware = await this.deviceService.getResponse(Channel.FIRMWARE_VERSION);
 		const deviceName = this.deviceService.favoriteDevice.get()?.name;
 		if (id && firmware && deviceName) {
