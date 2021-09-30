@@ -30,6 +30,7 @@ import { ProfileEditBirthdayScreen } from "@ui/screens/profile/basicInformation/
 import { ProfileEditNameScreen } from "@ui/screens/profile/basicInformation/profileEditNameScreen";
 import { ProfileInformationScreen } from "@ui/screens/profile/basicInformation/profileInformationScreen";
 import { ProfileScreen } from "@ui/screens/profile/profileScreen";
+import { SettingsScreen } from "@ui/screens/settings/settingsScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
 import { TermsAndConditionsScreen } from "@ui/screens/signup/termsAndConditionsScreen";
@@ -148,6 +149,11 @@ const MainHomeNavigator = () => {
 				name={Routes.ProfileBirthControl}
 				component={BirthControlEditionScreen}
 				options={{ title: format("header.birth_control") }}
+			/>
+			<MainStack.Screen
+				name={Routes.Settings}
+				component={SettingsScreen}
+				options={{ title: format("header.settings") }}
 			/>
 		</MainStack.Navigator>
 	);
