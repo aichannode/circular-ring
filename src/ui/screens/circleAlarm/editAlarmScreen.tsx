@@ -112,6 +112,7 @@ export const EditAlarmScreen: React.FC = () => {
 					mode={"time"}
 					is24Hour={true}
 					display="spinner"
+					textColor={colors.textPrimary}
 					onChange={(event: Event, selectedTime: Date | undefined) => setAlarmTime(selectedTime || alarmTime)}
 				/>
 			)}
