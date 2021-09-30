@@ -62,7 +62,7 @@ export const ProfileAdvancedInformationScreen = () => {
 	}
 
 	return !advancedInfo || !user ? null : (
-		<ScrollScreen contentContainerStyle={{ paddingTop: 0 }}>
+		<Container contentContainerStyle={{ paddingTop: 0 }}>
 			<InfoListHeader>{format("profile_advanced_info.about_you")}</InfoListHeader>
 			<HeartRateCard />
 			<BMIChronoContainer>
@@ -226,9 +226,13 @@ export const ProfileAdvancedInformationScreen = () => {
 			<CircularBottomSheet snapPoints={[380]} ref={cycleLengthBottomSheetRef}>
 				<CycleLengthBottomSheet onSaved={() => cycleLengthBottomSheetRef.current?.close()} />
 			</CircularBottomSheet>
-		</ScrollScreen>
+		</Container>
 	);
 };
+
+const Container = styled(ScrollScreen)`
+	padding-bottom: 50px;
+`;
 
 const BMIChronoContainer = styled.View`
 	flex-direction: row;
