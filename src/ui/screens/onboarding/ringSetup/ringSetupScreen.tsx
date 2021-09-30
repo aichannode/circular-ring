@@ -13,7 +13,7 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
@@ -36,7 +36,7 @@ export const RingSetupScreen: React.FC = () => {
 		}
 	}, [setupState]);
 
-	const isConnecting = setupState === DeviceSetupState.CONNECTING;
+	const [isConnecting, setConnecting] = useState(false);
 
 	return (
 		<Container>
@@ -116,10 +116,13 @@ export const RingSetupScreen: React.FC = () => {
 												key={device.id}
 												onPress={async () => {
 													deviceService.stopScan();
+													setConnecting(true);
 													await deviceService.connect(device);
 													try {
 														await ringService.registerConnectedRing();
+														setConnecting(false);
 													} catch (e) {
+														setConnecting(false);
 														if ((e as { statusCode: number }).statusCode === 409) {
 															pairingFailedBottomSheet.current?.present();
 														}
