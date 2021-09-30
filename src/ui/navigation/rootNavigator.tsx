@@ -178,7 +178,7 @@ export const RootNavigator: React.FC = () => {
 	if (!deviceStored || !accountLinkedToDevice) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
-				<OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />
+				{!hasUser && <OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />}
 				<OnboardingStack.Screen name={Routes.Pairing} component={RingSetupScreen} />
 			</OnboardingStack.Navigator>
 		);
