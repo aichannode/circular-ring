@@ -23,7 +23,7 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 				<RingInfoContainer>
 					<RingImage source={require("@assets/images/ring.png")} />
 					<RingRightInfoContainer>
-						<RingName>{ring.name}</RingName>
+						<RingName>{ring.name ?? "Circular"}</RingName>
 						<RingInfo>
 							{format("manage_rings.ring.sync_date_prefix")} {dayjs(ring.lastSyncDate).format("DD/MM/YYYY")}
 						</RingInfo>
@@ -31,7 +31,7 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 							{format("manage_rings.ring.version_prefix")} {ring.firmware}
 						</RingInfo>
 						<RingInfo>
-							{format("manage_rings.ring.mac_address_prefix")} {ring.id}
+							{format("manage_rings.ring.snu_prefix")} {ring.id}
 						</RingInfo>
 					</RingRightInfoContainer>
 					<DeleteContainer>

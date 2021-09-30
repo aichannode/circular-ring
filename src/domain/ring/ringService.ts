@@ -75,14 +75,17 @@ export class RingService {
 
 	async getRings() {
 		const oldNamedRings = this._userRings.get();
+		const connectedRingId = this.deviceService.favoriteDeviceSNU.get();
+		const connectedRingName = this.deviceService.favoriteDevice.get()?.name;
+
 		const rings = await this.ringApi.getRings();
 		const newNamedRings: NamedUserRing[] = rings.map((r) => {
 			return {
 				...r,
 				name:
-					oldNamedRings.filter((oldRing) => {
-						return oldRing.id === r.id;
-					})[0]?.name ?? "?",
+					connectedRingName && connectedRingId && connectedRingId === r.id
+						? connectedRingName
+						: oldNamedRings.filter((oldRing) => oldRing.id === r.id)[0]?.name,
 			};
 		});
 		this._userRings.set(newNamedRings);
@@ -102,9 +105,9 @@ export class RingService {
 	}
 
 	async registerConnectedRing() {
-		const id = await this.deviceService.getResponse(Channel.SNU);
 		const firmware = await this.deviceService.getResponse(Channel.FIRMWARE_VERSION);
 		const deviceName = this.deviceService.favoriteDevice.get()?.name;
+		const id = await this.deviceService.favoriteDeviceSNU.get();
 		if (id && firmware && deviceName) {
 			try {
 				const userRings = this._userRings.get();
@@ -129,13 +132,13 @@ export class RingService {
 		const ringToDelete = this._userRings.get().filter((knownRing) => knownRing.id === ring.id)[0];
 		if (ringToDelete) {
 			try {
-				await this.ringApi.deleteRing(ring.id);
-				const newUserRings = this._userRings.get().filter((r) => r.id !== ringToDelete.id);
-				this._userRings.set(newUserRings);
-				await this.userRingsStorage.save(newUserRings);
-				if (this.deviceService.favoriteDevice.get()?.name === ringToDelete.name) {
+				const idToDelete = ringToDelete.id;
+				await this.ringApi.deleteRing(idToDelete);
+				if (this.deviceService.favoriteDeviceSNU.get() === idToDelete) {
 					await this.deviceService.disconnect();
 				}
+				this._userRings.update((oldRings) => oldRings.filter((r) => r.id !== idToDelete));
+				await this.userRingsStorage.save(this._userRings.get());
 			} catch (e) {
 				this.logger.warn("Delete ring failed : " + e);
 				throw e;

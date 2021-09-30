@@ -6,5 +6,5 @@ export interface UserRing {
 }
 
 export interface NamedUserRing extends UserRing {
-	name: string;
+	name?: string;
 }

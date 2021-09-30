@@ -338,7 +338,7 @@
   "manage_rings.ring.vibrate": "Vibrate",
   "manage_rings.ring.sync_date_prefix": "Last Synced",
   "manage_rings.ring.version_prefix": "Version",
-  "manage_rings.ring.mac_address_prefix": "MAC address:",
+  "manage_rings.ring.snu_prefix": "SNU:",
   "manage_rings.delete.validation.title": "Warning",
   "manage_rings.delete.validation.subtitle": "Are you sure that you want to dissociate this ring from your account?",
   "manage_rings.delete.validation.description": "This will delete the configuration of your ring. \n\nPlease keep your ring and phone close to each other during this process if you wish to continue.",

@@ -1,6 +1,7 @@
 import { getLogger } from "@core/logger/logger";
 import { base64decode, base64encode, delay, observableToPromise, timedPromise } from "@core/utils";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
+import { Channel } from "@domain/device/channels";
 import { observable, Observable } from "micro-observables";
 import { Signal } from "micro-signals";
 import { BleError, Device, ScanMode, State, Subscription } from "react-native-ble-plx";
@@ -53,12 +54,14 @@ export class DeviceService {
 	private _monitoring = observable(false);
 
 	private _favoriteDevice = observable<NamedDevice | null>(null);
+	private _favoriteDeviceSNU = observable<string | null>(null);
 
 	scannedDevices = this._scannedDevices.select((devicesMap) => [...devicesMap.values()]);
 
 	readonly setupState: Observable<DeviceSetupState>;
 	readonly autoConnectState: Observable<DeviceAutoConnectState>;
 	readonly favoriteDevice = this._favoriteDevice.readOnly();
+	readonly favoriteDeviceSNU = this._favoriteDeviceSNU.readOnly();
 
 	private onMessageReceived = new Signal<string>();
 
@@ -123,6 +126,7 @@ export class DeviceService {
 			if (enabled) {
 				const debugDevice = "Circular_BeTomorrow";
 				this._favoriteDevice.set({ name: debugDevice });
+				this._favoriteDeviceSNU.set("fake_snu");
 				this.stopScan();
 				this.autoConnectDevice(debugDevice);
 			}
@@ -209,6 +213,10 @@ export class DeviceService {
 			this._favoriteDevice.set(storedDevice);
 			await this.favoriteDeviceStorage.save(storedDevice);
 			await this.startMonitoring();
+			const snu = await this.getResponse(Channel.SNU);
+			if (snu) {
+				this._favoriteDeviceSNU.set(snu);
+			}
 		} catch (e) {
 			this.logger.error("Error connecting to device", e);
 			this._connectionState.set(DeviceConnectionState.DISCONNECTED);
@@ -405,6 +413,7 @@ export class DeviceService {
 		this._onDeviceDisconnectedSubscription?.remove();
 		this._onDeviceDisconnectedSubscription = null;
 		this._favoriteDevice.set(null);
+		this._favoriteDeviceSNU.set(null);
 		await this.favoriteDeviceStorage.clear();
 		await device.cancelConnection();
 	}
