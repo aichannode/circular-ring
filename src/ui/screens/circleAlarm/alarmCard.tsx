@@ -58,7 +58,7 @@ export const AlarmCard: React.FC<AlarmCardProps> = ({ data, style }) => {
 
 const Card = styled.View`
 	${whiteCardStyle};
-	padding: 0px;
+	padding: 0;
 	flex-direction: row;
 	border-radius: 5px;
 	margin-bottom: 15px;

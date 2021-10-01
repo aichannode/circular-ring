@@ -38,7 +38,7 @@
 		"react-native-config": "^1.4.4",
 		"react-native-country-picker-modal": "^2.0.0",
 		"react-native-device-info": "^8.0.0",
-		"react-native-fs": "^2.16.6",
+		"react-native-fs": "^2.18.0",
 		"react-native-gesture-handler": "^1.10.3",
 		"react-native-linear-gradient": "^2.5.6",
 		"react-native-localize": "^2.1.3",

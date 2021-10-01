@@ -1,20 +1,23 @@
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { useForwardedRef } from "@ui/utils/useForwardedRef";
-import React, { useCallback, useEffect } from "react";
-import { BackHandler } from "react-native";
-import Animated from "react-native-reanimated";
+import { Signal } from "micro-signals";
+import React, { useCallback, useEffect, useImperativeHandle, useRef } from "react";
+import { BackHandler, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export interface CircularBottomSheetHandle {
-	present: () => void;
-	close: () => void;
+export interface CircularBottomSheetHandle extends BottomSheetModalMethods {
+	asyncClose: () => Promise<void>;
 }
+
 interface BottomSheetProps {
-	snapPoints: Array<string | number> | Animated.SharedValue<Array<string | number>>;
+	snapPoints: Array<number>;
 	children: JSX.Element;
 }
-export const CircularBottomSheet = React.forwardRef<BottomSheetModal, BottomSheetProps>(
+export const CircularBottomSheet = React.forwardRef<CircularBottomSheetHandle, BottomSheetProps>(
 	({ children, snapPoints }, ref) => {
+		const closedSignal = useRef(new Signal<void>());
+
 		const safeArea = useSafeAreaInsets();
 		const renderBackdrop = useCallback(
 			// eslint-disable-next-line react/jsx-props-no-spreading
@@ -28,6 +31,15 @@ export const CircularBottomSheet = React.forwardRef<BottomSheetModal, BottomShee
 			return true;
 		}, []);
 
+		useImperativeHandle(inRef, () => ({
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			...inRef.current!,
+			asyncClose: async () => {
+				inRef.current?.close();
+				await closedSignal.current.promisify();
+			},
+		}));
+
 		useEffect(() => () => BackHandler.removeEventListener("hardwareBackPress", closeSheet));
 
 		return (
@@ -39,6 +51,9 @@ export const CircularBottomSheet = React.forwardRef<BottomSheetModal, BottomShee
 					} else {
 						BackHandler.addEventListener("hardwareBackPress", closeSheet);
 					}
+				}}
+				onDismiss={() => {
+					closedSignal.current.dispatch();
 				}}
 				snapPoints={snapPoints}
 				backdropComponent={renderBackdrop}
@@ -55,6 +70,7 @@ export const CircularBottomSheet = React.forwardRef<BottomSheetModal, BottomShee
 
 export const CircularBottomScrollSheet = React.forwardRef<BottomSheetModal, BottomSheetProps>(
 	({ children, snapPoints }, ref) => {
+		const closedSignal = useRef(new Signal<void>());
 		const safeArea = useSafeAreaInsets();
 		const renderBackdrop = useCallback(
 			// eslint-disable-next-line react/jsx-props-no-spreading
@@ -62,11 +78,26 @@ export const CircularBottomScrollSheet = React.forwardRef<BottomSheetModal, Bott
 			[]
 		);
 
+		const { height: screenHeight } = useWindowDimensions();
+
+		const clampedSnapPoints = snapPoints.map((point) => {
+			return Math.min(point, screenHeight - safeArea.top - 20);
+		});
+
 		const inRef = useForwardedRef(ref);
 		const closeSheet = useCallback(() => {
 			inRef.current?.close();
 			return true;
 		}, []);
+
+		useImperativeHandle(inRef, () => ({
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			...inRef.current!,
+			asyncClose: async () => {
+				inRef.current?.close();
+				await closedSignal.current.promisify();
+			},
+		}));
 
 		useEffect(() => () => BackHandler.removeEventListener("hardwareBackPress", closeSheet));
 
@@ -80,7 +111,10 @@ export const CircularBottomScrollSheet = React.forwardRef<BottomSheetModal, Bott
 						BackHandler.addEventListener("hardwareBackPress", closeSheet);
 					}
 				}}
-				snapPoints={snapPoints}
+				onDismiss={() => {
+					closedSignal.current.dispatch();
+				}}
+				snapPoints={clampedSnapPoints}
 				backdropComponent={renderBackdrop}
 				style={{ paddingBottom: safeArea.bottom }}
 				activeOffsetY={[-1, 1]}

@@ -1,13 +1,18 @@
 import { useServices } from "@core/services";
 import { Melody, Weekdays } from "@domain/ring/ringAlarm";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { CircularBottomScrollSheet, CircularBottomSheet } from "@ui/components/bottomSheet";
-import { QuadraryButton, SimpleTextButton } from "@ui/components/buttons";
+import {
+	CircularBottomScrollSheet,
+	CircularBottomSheet,
+	CircularBottomSheetHandle,
+} from "@ui/components/bottomSheet/bottomSheet";
+import { QuadraryButton } from "@ui/components/buttons";
 import { Hour } from "@ui/components/hour";
+import { ImageButton } from "@ui/components/imageButton";
+import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
+import { Grow } from "@ui/components/layout";
 import { CheckAlarmButton } from "@ui/components/navigation/checkButton";
 import { ScrollScreen } from "@ui/components/scrollScreen";
-import { SecondaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
 import { IntervalBottomSheet } from "@ui/screens/circleAlarm/intervalBottomSheet";
@@ -16,7 +21,7 @@ import { RepeatBottomSheet } from "@ui/screens/circleAlarm/repeatBottomSheet";
 import { VibrationBottomSheet } from "@ui/screens/circleAlarm/vibrationBottomSheet";
 import { colors } from "@ui/styles/colors";
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { Image, Platform, Pressable } from "react-native";
+import { Platform, View } from "react-native";
 import styled from "styled-components/native";
 
 export const EditAlarmScreen: React.FC = () => {
@@ -43,11 +48,11 @@ export const EditAlarmScreen: React.FC = () => {
 	const [snooze, setSnooze] = useState(initialAlarm?.snooze ?? 0);
 	const [smart, setSmart] = useState(initialAlarm?.smart ?? 0);
 	const [isSmart, setIsSmart] = useState(initialAlarm?.isSmart ?? false);
-	const vibrationBottomSheet = useRef<BottomSheetModal>(null);
-	const repeatBottomSheet = useRef<BottomSheetModal>(null);
-	const labelBottomSheet = useRef<BottomSheetModal>(null);
-	const snoozeBottomSheet = useRef<BottomSheetModal>(null);
-	const smartBottomSheet = useRef<BottomSheetModal>(null);
+	const vibrationBottomSheet = useRef<CircularBottomSheetHandle>(null);
+	const repeatBottomSheet = useRef<CircularBottomSheetHandle>(null);
+	const labelBottomSheet = useRef<CircularBottomSheetHandle>(null);
+	const snoozeBottomSheet = useRef<CircularBottomSheetHandle>(null);
+	const smartBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
 	const submitTime = (newValue: Date) => {
 		setPickerVisible(false);
@@ -86,14 +91,15 @@ export const EditAlarmScreen: React.FC = () => {
 			{Platform.OS === "android" ? (
 				<>
 					<HourContainer>
-						<Hour
-							value={alarmTime}
-							style={{
-								fontSize: 30,
-							}}
-							onPress={() => setPickerVisible(true)}
-						/>
-						<EditTimeButton onPress={() => setPickerVisible(true)}>{format("alarm.new.time.edit")}</EditTimeButton>
+						<Grow />
+						<Hour value={alarmTime} style={{ fontSize: 36 }} onPress={() => setPickerVisible(true)} />
+						<Grow>
+							<View style={{ paddingLeft: 20, paddingTop: 4 }}>
+								<EditTimeButton onPress={() => setPickerVisible(true)} source={require("@assets/images/pen.png")}>
+									{format("alarm.new.time.edit")}
+								</EditTimeButton>
+							</View>
+						</Grow>
 					</HourContainer>
 					{pickerVisible && (
 						<DateTimePicker
@@ -112,77 +118,72 @@ export const EditAlarmScreen: React.FC = () => {
 					mode={"time"}
 					is24Hour={true}
 					display="spinner"
+					textColor={colors.textPrimary}
 					onChange={(event: Event, selectedTime: Date | undefined) => setAlarmTime(selectedTime || alarmTime)}
 				/>
 			)}
 
-			<Title>{format("alarm.new.other.title")}</Title>
+			<InfoListHeader>{format("alarm.new.other.title")}</InfoListHeader>
 
-			<OtherButtonContainer onPress={() => vibrationBottomSheet.current?.present()}>
-				<SecondaryTitle>{format("alarm.new.edit_vibration.title")}</SecondaryTitle>
-				<PreviewContainer>
-					<Tips>{formatMelody(melody)}</Tips>
-					<Arrow source={require("@assets/images/topArrowGrey.png")} />
-				</PreviewContainer>
-			</OtherButtonContainer>
-			<OtherButtonContainer onPress={() => repeatBottomSheet.current?.present()}>
-				<SecondaryTitle>{format("alarm.new.repeat.title")}</SecondaryTitle>
-				<PreviewContainer>
-					<Tips>{formatDay(weekdays)}</Tips>
-					<Arrow source={require("@assets/images/topArrowGrey.png")} />
-				</PreviewContainer>
-			</OtherButtonContainer>
-			<OtherButtonContainer onPress={() => labelBottomSheet.current?.present()}>
-				<SecondaryTitle>{format("alarm.new.label.title")}</SecondaryTitle>
-				<PreviewContainer>
-					<Tips>{label}</Tips>
-					<Arrow source={require("@assets/images/topArrowGrey.png")} />
-				</PreviewContainer>
-			</OtherButtonContainer>
+			<InfoListItem
+				name={format("alarm.new.edit_vibration.title")}
+				hasDisclosure
+				value={formatMelody(melody)}
+				action={() => vibrationBottomSheet.current?.present()}
+			/>
+			<InfoListItem
+				name={format("alarm.new.repeat.title")}
+				hasDisclosure
+				value={formatDay(weekdays)}
+				action={() => repeatBottomSheet.current?.present()}
+			/>
+			<InfoListItem
+				name={format("alarm.new.label.title")}
+				hasDisclosure
+				value={label}
+				action={() => labelBottomSheet.current?.present()}
+			/>
 
-			<OtherButtonContainer style={{ marginTop: 19 }} onPress={() => snoozeBottomSheet.current?.present()}>
-				<SecondaryTitle>
-					{isSmart ? format("alarm.new.smart_snooze.title") : format("alarm.new.snooze.title")}
-				</SecondaryTitle>
-				<PreviewContainer>
-					<Tips>{formatSnooze(snooze)}</Tips>
-					<Arrow source={require("@assets/images/topArrowGrey.png")} />
-				</PreviewContainer>
-			</OtherButtonContainer>
-			<OtherButtonContainer onPress={() => smartBottomSheet.current?.present()}>
-				<SecondaryTitle>{format("alarm.new.smart_alarm.title")}</SecondaryTitle>
-				<PreviewContainer>
-					<Tips>{formatSmart(smart)}</Tips>
-					<Arrow source={require("@assets/images/topArrowGrey.png")} />
-				</PreviewContainer>
-			</OtherButtonContainer>
+			<InfoListItem
+				style={{ marginTop: 20 }}
+				name={isSmart ? format("alarm.new.smart_snooze.title") : format("alarm.new.snooze.title")}
+				hasDisclosure
+				value={formatSnooze(smart)}
+				action={() => snoozeBottomSheet.current?.present()}
+			/>
+			<InfoListItem
+				name={format("alarm.new.smart_alarm.title")}
+				hasDisclosure
+				value={formatSmart(snooze)}
+				action={() => smartBottomSheet.current?.present()}
+			/>
 
-			<CircularBottomScrollSheet snapPoints={[820]} ref={vibrationBottomSheet}>
+			<CircularBottomScrollSheet snapPoints={[2000]} ref={vibrationBottomSheet}>
 				<VibrationBottomSheet
 					vibrationPower={vibrationPower}
 					melody={melody}
-					onClose={(vibrationPower, melody) => {
+					onClose={async (vibrationPower, melody) => {
+						await vibrationBottomSheet.current?.asyncClose();
 						setVibrationPower(vibrationPower);
 						setMelody(melody);
-						vibrationBottomSheet.current?.close();
 					}}
 				/>
 			</CircularBottomScrollSheet>
 			<CircularBottomScrollSheet snapPoints={[700]} ref={repeatBottomSheet}>
 				<RepeatBottomSheet
 					weekdays={weekdays}
-					onClose={(value) => {
+					onClose={async (value) => {
+						await repeatBottomSheet.current?.asyncClose();
 						setWeekdays(value);
-						repeatBottomSheet.current?.close();
 					}}
 				/>
 			</CircularBottomScrollSheet>
 			<CircularBottomSheet snapPoints={[400]} ref={labelBottomSheet}>
 				<LabelBottomSheet
 					label={label}
-					onClose={(label) => {
+					onClose={async (label) => {
+						await labelBottomSheet.current?.asyncClose();
 						setLabel(label);
-						labelBottomSheet.current?.close();
 					}}
 				/>
 			</CircularBottomSheet>
@@ -191,19 +192,19 @@ export const EditAlarmScreen: React.FC = () => {
 					value={snooze}
 					isSmart={isSmart}
 					snoozeDisplay
-					onClose={(value, isSmart) => {
+					onClose={async (value, isSmart) => {
+						await snoozeBottomSheet.current?.asyncClose();
 						setSnooze(value);
 						setIsSmart(isSmart ?? false);
-						snoozeBottomSheet.current?.close();
 					}}
 				/>
 			</CircularBottomScrollSheet>
 			<CircularBottomScrollSheet snapPoints={[700]} ref={smartBottomSheet}>
 				<IntervalBottomSheet
 					value={smart}
-					onClose={(value) => {
+					onClose={async (value) => {
+						await smartBottomSheet.current?.asyncClose();
 						setSmart(value);
-						smartBottomSheet.current?.close();
 					}}
 				/>
 			</CircularBottomScrollSheet>
@@ -230,40 +231,9 @@ const HourContainer = styled.View`
 	margin-bottom: 50px;
 	justify-content: center;
 	align-items: center;
+	flex-direction: row;
 `;
 
-const EditTimeButton = styled(SimpleTextButton)`
-	margin-top: 15px;
-`;
-
-const Title = styled(TitleText)`
-	margin: 20px;
-`;
-
-const SecondaryTitle = styled(SecondaryText)`
-	flex-grow: 1;
+const EditTimeButton = styled(ImageButton)`
 	margin-left: 20px;
-`;
-const OtherButtonContainer = styled(Pressable)`
-	flex-direction: row;
-	align-items: center;
-	height: 50px;
-	justify-content: space-between;
-	margin-bottom: 1px;
-	background-color: ${colors.lightgray};
-`;
-
-const Tips = styled(SecondaryText)`
-	margin-horizontal: 14px;
-`;
-
-const Arrow = styled(Image)`
-	margin-right: 20px;
-`;
-
-const PreviewContainer = styled.View`
-	flex-grow: 1;
-	align-items: center;
-	justify-content: flex-end;
-	flex-direction: row;
 `;

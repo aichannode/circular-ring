@@ -1,5 +1,6 @@
 import { useActivityData } from "@domain/measure/hooks";
 import { alldailyActivityMetrics, allEnergyScoreMetrics } from "@domain/measure/metric";
+import { InfoListHeader } from "@ui/components/infoList";
 import { Stack } from "@ui/components/layout";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
 import { ScoreGauge } from "@ui/components/measure/scoreGauge";
@@ -9,7 +10,6 @@ import { colors } from "@ui/styles/colors";
 import React, { useState } from "react";
 import { LayoutAnimation, ScrollView } from "react-native";
 import styled from "styled-components/native";
-import { ScreenSection } from "../../components/screenSection";
 import { DailyMetric } from "./dailyMetric";
 import { dailyMetricsDataInfos, scoreDetailsDataInfos } from "./measureDisplayInfos";
 
@@ -28,14 +28,13 @@ export const CircleActivityScreen: React.FC = () => {
 	return (
 		<Container>
 			<ScrollView>
-				<ScreenSection title={format("activity.score.daily_metrics")}>
-					<ScoreSection
-						style={{ marginBottom: 25 }}
-						color={colors.red}
-						score={dailyData.metrics["user.daily.energy.score"]}
-						label={format("activity.energy_score")}
-					/>
-				</ScreenSection>
+				<ScoreSection
+					style={{ marginTop: 20 }}
+					color={colors.red}
+					score={dailyData.metrics["user.daily.energy.score"]}
+					label={format("activity.energy_score")}
+				/>
+				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
 				<ElementStack gap={10}>
 					{alldailyActivityMetrics.map((metric) => {
 						const dataInfos = dailyMetricsDataInfos[metric];
@@ -56,7 +55,7 @@ export const CircleActivityScreen: React.FC = () => {
 						);
 					})}
 				</ElementStack>
-				<ScreenSection title={format("activity.score.details")} />
+				<InfoListHeader>{format("activity.score.details")}</InfoListHeader>
 				<ElementStack gap={10}>
 					{
 						allEnergyScoreMetrics
@@ -111,9 +110,10 @@ export const CircleActivityScreen: React.FC = () => {
 
 const Container = styled.View`
 	flex: 1;
-	background-color: ${colors.lightgray};
+	background-color: ${colors.white};
 `;
 
 const ElementStack = styled(Stack)`
 	padding: 25px 20px;
+	background-color: ${colors.lightgray};
 `;

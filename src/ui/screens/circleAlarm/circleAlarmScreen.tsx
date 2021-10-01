@@ -1,10 +1,11 @@
 import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
+import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
+import { useAutoConnectState } from "@domain/device/hooks";
 import { useWakeUpScore } from "@domain/measure/hooks";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { CircularBottomSheet } from "@ui/components/bottomSheet";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
+import { InfoListHeader } from "@ui/components/infoList";
 import { ScoreSection } from "@ui/components/measure/scoreSection";
-import { ScreenSection } from "@ui/components/screenSection";
 import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
@@ -20,49 +21,58 @@ export const CircleAlarmScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
 	const { loading, alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
-	const warningBottomSheet = useRef<BottomSheetModal>(null);
+	const warningBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const wakeUpScore = useWakeUpScore();
+	const autoConnectState = useAutoConnectState();
 
 	useEffect(() => {
-		loadAlarms();
-	}, [loadAlarms]);
+		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
+			loadAlarms();
+		}
+	}, [loadAlarms, autoConnectState]);
 
+	const hasConnectedRing = autoConnectState === DeviceAutoConnectState.CONNECTED;
 	return (
 		<Container>
 			<ScrollView>
-				<ScreenSection title={format("alarm.score.programmed")}>
-					<ScoreSection
-						label={format("alarm.wake_up_score")}
-						color={colors.blue}
-						score={wakeUpScore}
-						style={{ marginBottom: 25, alignSelf: "center" }}
-					/>
-				</ScreenSection>
-				<AlarmContainer>
-					{alarms?.map((value) => (
-						<Pressable
-							key={value.id}
-							onPress={() =>
-								navigation.navigate(Routes.EditAlarm, { initialAlarm: { ...value, time: value.time.toString() } })
-							}
-						>
-							<AlarmCard data={value} />
-						</Pressable>
-					))}
-					{loading ? <Spinner size={35} /> : null}
-					<AddAlarmButton
-						onPress={() => {
-							alarms.length >= MAX_ALARMS
-								? warningBottomSheet.current?.present()
-								: navigation.navigate(Routes.EditAlarm);
-						}}
-					>
-						<AddImage source={require("@assets/images/addButton.png")} />
-						<AddAlarmText>{format("alarm.score.add_button")}</AddAlarmText>
-					</AddAlarmButton>
-				</AlarmContainer>
-				<ScreenSection title={format("alarm.week_overview")} />
-				<AlarmWeekOverview style={{ marginVertical: 25 }} />
+				<ScoreSection
+					label={format("alarm.wake_up_score")}
+					color={colors.blue}
+					score={wakeUpScore}
+					style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
+				/>
+				{!hasConnectedRing ? null : (
+					<>
+						<InfoListHeader>{format("alarm.score.programmed")}</InfoListHeader>
+						<AlarmContainer>
+							{alarms?.map((value) => (
+								<Pressable
+									key={value.id}
+									onPress={() =>
+										navigation.navigate(Routes.EditAlarm, { initialAlarm: { ...value, time: value.time.toString() } })
+									}
+								>
+									<AlarmCard data={value} />
+								</Pressable>
+							))}
+							{loading ? <Spinner size={35} /> : null}
+							<AddAlarmButton
+								onPress={() => {
+									alarms.length >= MAX_ALARMS
+										? warningBottomSheet.current?.present()
+										: navigation.navigate(Routes.EditAlarm);
+								}}
+							>
+								<AddImage source={require("@assets/images/addButton.png")} />
+								<AddAlarmText>{format("alarm.score.add_button")}</AddAlarmText>
+							</AddAlarmButton>
+						</AlarmContainer>
+						<InfoListHeader>{format("alarm.week_overview")}</InfoListHeader>
+						<AlarmOverviewContainer>
+							<AlarmWeekOverview style={{ marginVertical: 25 }} />
+						</AlarmOverviewContainer>
+					</>
+				)}
 			</ScrollView>
 			<CircularBottomSheet snapPoints={[500]} ref={warningBottomSheet}>
 				<WarningBottomSheet
@@ -78,11 +88,12 @@ export const CircleAlarmScreen: React.FC = () => {
 
 const Container = styled.View`
 	flex: 1;
-	background-color: ${colors.lightgray};
+	background-color: ${colors.white};
 `;
 
 const AlarmContainer = styled.View`
 	padding: 25px 20px;
+	background-color: ${colors.lightgray};
 `;
 
 const AddImage = styled(Image)`
@@ -103,4 +114,8 @@ const AddAlarmButton = styled(Pressable)`
 	justify-content: center;
 	align-items: center;
 	border-radius: 5px;
+`;
+
+const AlarmOverviewContainer = styled.View`
+	background-color: ${colors.lightgray};
 `;

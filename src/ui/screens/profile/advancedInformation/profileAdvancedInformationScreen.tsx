@@ -4,8 +4,7 @@ import { cmToFt, HeightUnit } from "@domain/units";
 import { BirthControl, FertilityState, WorkTime } from "@domain/user/advancedInfo";
 import { useUser, useUserAdvancedInfo, useUserSettings } from "@domain/user/hooks/useUser";
 import { Sex } from "@domain/user/user";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { CircularBottomSheet } from "@ui/components/bottomSheet";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
@@ -50,9 +49,9 @@ export const ProfileAdvancedInformationScreen = () => {
 		configsRef.current.workTimeConfig
 	);
 	const [currentOption, setCurrentOption] = useState<EditionInfoType>(WorkTime.DAY);
-	const editionBottomSheetRef = useRef<BottomSheetModal>(null);
-	const strideBottomSheetRef = useRef<BottomSheetModal>(null);
-	const cycleLengthBottomSheetRef = useRef<BottomSheetModal>(null);
+	const editionBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
+	const strideBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
+	const cycleLengthBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 	const [isLoading, setLoading] = useState(false);
 
@@ -62,7 +61,7 @@ export const ProfileAdvancedInformationScreen = () => {
 	}
 
 	return !advancedInfo || !user ? null : (
-		<ScrollScreen contentContainerStyle={{ paddingTop: 0 }}>
+		<Container contentContainerStyle={{ paddingTop: 0 }}>
 			<InfoListHeader>{format("profile_advanced_info.about_you")}</InfoListHeader>
 			<HeartRateCard />
 			<BMIChronoContainer>
@@ -226,9 +225,13 @@ export const ProfileAdvancedInformationScreen = () => {
 			<CircularBottomSheet snapPoints={[380]} ref={cycleLengthBottomSheetRef}>
 				<CycleLengthBottomSheet onSaved={() => cycleLengthBottomSheetRef.current?.close()} />
 			</CircularBottomSheet>
-		</ScrollScreen>
+		</Container>
 	);
 };
+
+const Container = styled(ScrollScreen)`
+	padding-bottom: 50px;
+`;
 
 const BMIChronoContainer = styled.View`
 	flex-direction: row;

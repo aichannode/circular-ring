@@ -1,7 +1,6 @@
 import { useServices } from "@core/services";
 import { NamedUserRing } from "@domain/ring/ring";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { CircularBottomSheet } from "@ui/components/bottomSheet";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader } from "@ui/components/infoList";
 import { Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
@@ -16,7 +15,7 @@ export const ManageMyRingsScreen = () => {
 	const { ringManagementService } = useServices();
 	const userRings = useObservable(ringManagementService.userRings);
 
-	const deleteRingBottomSheetRef = useRef<BottomSheetModal>(null);
+	const deleteRingBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 
 	const [ringToDelete, setRingToDelete] = useState<NamedUserRing | undefined>(undefined);
 

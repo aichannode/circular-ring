@@ -118,6 +118,11 @@ export class RingManagementService {
 	}
 
 	async syncData() {
+		const ring = this._userRings.get()[0];
+		if (!ring) {
+			this.logger.info("Sync cancelled: No ring");
+			return;
+		}
 		try {
 			this._currentRingSyncState.set(SyncState.PREPARING);
 			const waitingData = await this.ringDataStorage.load();
@@ -147,7 +152,7 @@ export class RingManagementService {
 				// Api call
 				if (allData !== ringDataEOF) {
 					this.logger.info("Sending data to server...");
-					await this.ringApi.sendData(allData);
+					await this.ringApi.sendData(ring, allData);
 					this.logger.info("Successfully sent data...");
 					setTimeout(() => this._currentRingSyncState.set(SyncState.NONE), syncFinishedTimeout);
 				}
