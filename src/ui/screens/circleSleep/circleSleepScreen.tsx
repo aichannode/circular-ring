@@ -1,5 +1,6 @@
 import { useSleepQualityDailyData } from "@domain/measure/hooks";
 import { allSleepQualityMetrics } from "@domain/measure/metric";
+import { InfoListHeader } from "@ui/components/infoList";
 import { Stack } from "@ui/components/layout";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
 import { ScoreGauge } from "@ui/components/measure/scoreGauge";
@@ -10,7 +11,6 @@ import { colors } from "@ui/styles/colors";
 import React, { useState } from "react";
 import { LayoutAnimation } from "react-native";
 import styled from "styled-components/native";
-import { ScreenSection } from "../../components/screenSection";
 import { scoreDetailsDataInfos } from "./measureDisplayInfos";
 
 const scoreGoodThreshold = 0.8;
@@ -27,14 +27,13 @@ export const CircleSleepScreen: React.FC = () => {
 
 	return (
 		<Container>
-			<ScreenSection title={format("sleep.quality.details")}>
-				<ScoreSection
-					style={{ marginBottom: 25 }}
-					label={format("sleep.quality_score")}
-					score={dailyData.metrics["user.daily.sleep.score"]}
-					color={colors.darkBlue}
-				/>
-			</ScreenSection>
+			<ScoreSection
+				style={{ marginTop: 20 }}
+				label={format("sleep.quality_score")}
+				score={dailyData.metrics["user.daily.sleep.score"]}
+				color={colors.darkBlue}
+			/>
+			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
 				{
 					allSleepQualityMetrics
@@ -89,9 +88,9 @@ export const CircleSleepScreen: React.FC = () => {
 };
 
 const Container = styled(ScrollScreen)`
-	padding-bottom: 50px;
-	background-color: ${colors.lightgray};
+	background-color: ${colors.white};
 `;
 const ElementStack = styled(Stack)`
 	padding: 25px 20px;
+	background-color: ${colors.lightgray};
 `;
