@@ -56,7 +56,7 @@ export const ProfileScreen = () => {
 				emphasize={true}
 			/>
 			<CircularBottomSheet snapPoints={[480]} ref={logoutBottomSheetRef}>
-				<LogoutBottomSheet onCancel={() => logoutBottomSheetRef.current?.close()} />
+				<LogoutBottomSheet onClose={() => logoutBottomSheetRef.current?.close()} />
 			</CircularBottomSheet>
 		</ScrollScreen>
 	);

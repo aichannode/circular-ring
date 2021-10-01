@@ -8,14 +8,15 @@ import React, { useCallback } from "react";
 import styled from "styled-components/native";
 
 interface LogoutBottomSheetProps {
-	onCancel: () => void;
+	onClose: () => void;
 }
 
-export const LogoutBottomSheet: React.FC<LogoutBottomSheetProps> = ({ onCancel }) => {
+export const LogoutBottomSheet: React.FC<LogoutBottomSheetProps> = ({ onClose }) => {
 	const { userService } = useServices();
 	const { format } = useI18n();
 
 	const logout = useCallback(async () => {
+		onClose();
 		await userService.logout();
 	}, []);
 
@@ -25,7 +26,7 @@ export const LogoutBottomSheet: React.FC<LogoutBottomSheetProps> = ({ onCancel }
 			<Description>{format("profile.logout_bottom_sheet.description")}</Description>
 			<Grow />
 			<ButtonContainer gap={35}>
-				<Tertiarybutton containerBackgroundColor={colors.white} onPress={onCancel}>
+				<Tertiarybutton containerBackgroundColor={colors.white} onPress={onClose}>
 					{format("global.cancel")}
 				</Tertiarybutton>
 				<PrimaryButton onPress={logout}>{format("profile.logout_bottom_sheet.logout")}</PrimaryButton>
