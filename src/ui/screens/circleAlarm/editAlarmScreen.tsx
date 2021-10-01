@@ -3,8 +3,10 @@ import { Melody, Weekdays } from "@domain/ring/ringAlarm";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { CircularBottomScrollSheet, CircularBottomSheet } from "@ui/components/bottomSheet";
-import { QuadraryButton, SimpleTextButton } from "@ui/components/buttons";
+import { QuadraryButton } from "@ui/components/buttons";
 import { Hour } from "@ui/components/hour";
+import { ImageButton } from "@ui/components/imageButton";
+import { Grow } from "@ui/components/layout";
 import { CheckAlarmButton } from "@ui/components/navigation/checkButton";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SecondaryText, TitleText } from "@ui/components/text";
@@ -16,7 +18,7 @@ import { RepeatBottomSheet } from "@ui/screens/circleAlarm/repeatBottomSheet";
 import { VibrationBottomSheet } from "@ui/screens/circleAlarm/vibrationBottomSheet";
 import { colors } from "@ui/styles/colors";
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { Image, Platform, Pressable } from "react-native";
+import { Image, Platform, Pressable, View } from "react-native";
 import styled from "styled-components/native";
 
 export const EditAlarmScreen: React.FC = () => {
@@ -86,14 +88,15 @@ export const EditAlarmScreen: React.FC = () => {
 			{Platform.OS === "android" ? (
 				<>
 					<HourContainer>
-						<Hour
-							value={alarmTime}
-							style={{
-								fontSize: 30,
-							}}
-							onPress={() => setPickerVisible(true)}
-						/>
-						<EditTimeButton onPress={() => setPickerVisible(true)}>{format("alarm.new.time.edit")}</EditTimeButton>
+						<Grow />
+						<Hour value={alarmTime} style={{ fontSize: 36 }} onPress={() => setPickerVisible(true)} />
+						<Grow>
+							<View style={{ paddingLeft: 20, paddingTop: 4 }}>
+								<EditTimeButton onPress={() => setPickerVisible(true)} source={require("@assets/images/pen.png")}>
+									{format("alarm.new.time.edit")}
+								</EditTimeButton>
+							</View>
+						</Grow>
 					</HourContainer>
 					{pickerVisible && (
 						<DateTimePicker
@@ -158,7 +161,7 @@ export const EditAlarmScreen: React.FC = () => {
 				</PreviewContainer>
 			</OtherButtonContainer>
 
-			<CircularBottomScrollSheet snapPoints={[820]} ref={vibrationBottomSheet}>
+			<CircularBottomScrollSheet snapPoints={[2000]} ref={vibrationBottomSheet}>
 				<VibrationBottomSheet
 					vibrationPower={vibrationPower}
 					melody={melody}
@@ -231,10 +234,11 @@ const HourContainer = styled.View`
 	margin-bottom: 50px;
 	justify-content: center;
 	align-items: center;
+	flex-direction: row;
 `;
 
-const EditTimeButton = styled(SimpleTextButton)`
-	margin-top: 15px;
+const EditTimeButton = styled(ImageButton)`
+	margin-left: 20px;
 `;
 
 const Title = styled(TitleText)`
