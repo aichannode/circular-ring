@@ -93,7 +93,13 @@ export const LoginScreen = () => {
 					)}
 				</ButtonContainer>
 				<Grow />
-				<ForgotButton onPress={() => navigation.navigate(Routes.ForgotPassword, { email })}>
+				<ForgotButton
+					onPress={() => {
+						setErrorMessage("");
+						setPassword("");
+						navigation.navigate(Routes.ForgotPassword, { email });
+					}}
+				>
 					{format("forgot_password.question")}
 				</ForgotButton>
 			</ResponsiveCenterView>
