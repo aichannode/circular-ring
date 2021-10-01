@@ -1,6 +1,5 @@
 import { useUserAdvancedInfo } from "@domain/user/hooks/useUser";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { CircularBottomSheet } from "@ui/components/bottomSheet";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet";
 import { useI18n } from "@ui/i18n";
 import { ComparativeInfoBottomSheet } from "@ui/screens/profile/advancedInformation/comparativeInfoBottomSheet";
 import { colors } from "@ui/styles/colors";
@@ -14,7 +13,7 @@ export const HeartRateCard = () => {
 	const { format } = useI18n();
 	const advancedInfo = useUserAdvancedInfo();
 
-	const comparativeInfoRef = useRef<BottomSheetModal>(null);
+	const comparativeInfoRef = useRef<CircularBottomSheetHandle>(null);
 
 	return !advancedInfo ? null : (
 		<Card>

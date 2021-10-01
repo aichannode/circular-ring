@@ -1,12 +1,12 @@
+import { useGlobalScore } from "@domain/measure/hooks";
 import { getScoreQuality } from "@domain/measure/score";
-import { UserAvatar } from "@ui/components/userAvatar";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { CircularBottomSheet } from "@ui/components/bottomSheet";
 import { ResponsiveCenterView, Row } from "@ui/components/layout";
 import { ScoreView } from "@ui/components/scoreView";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SecondaryText, TitleText } from "@ui/components/text";
+import { UserAvatar } from "@ui/components/userAvatar";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { LogoutBottomSheet } from "@ui/screens/profile/logoutBottomSheet";
@@ -15,7 +15,6 @@ import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React, { useCallback, useRef } from "react";
 import { View } from "react-native";
 import styled from "styled-components/native";
-import { useGlobalScore } from "@domain/measure/hooks";
 
 export const ProfileScreen = () => {
 	const { format, formatScoreQuality } = useI18n();
@@ -30,7 +29,7 @@ export const ProfileScreen = () => {
 		navigate(Routes.ProfileInformation);
 	}, []);
 
-	const logoutBottomSheetRef = useRef<BottomSheetModal>(null);
+	const logoutBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 
 	return (
 		<ScrollScreen

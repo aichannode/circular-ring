@@ -1,8 +1,7 @@
 import { useServices } from "@core/services";
 import { Melody, Weekdays } from "@domain/ring/ringAlarm";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { CircularBottomScrollSheet, CircularBottomSheet } from "@ui/components/bottomSheet";
+import { CircularBottomScrollSheet, CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet";
 import { QuadraryButton } from "@ui/components/buttons";
 import { Hour } from "@ui/components/hour";
 import { ImageButton } from "@ui/components/imageButton";
@@ -45,11 +44,11 @@ export const EditAlarmScreen: React.FC = () => {
 	const [snooze, setSnooze] = useState(initialAlarm?.snooze ?? 0);
 	const [smart, setSmart] = useState(initialAlarm?.smart ?? 0);
 	const [isSmart, setIsSmart] = useState(initialAlarm?.isSmart ?? false);
-	const vibrationBottomSheet = useRef<BottomSheetModal>(null);
-	const repeatBottomSheet = useRef<BottomSheetModal>(null);
-	const labelBottomSheet = useRef<BottomSheetModal>(null);
-	const snoozeBottomSheet = useRef<BottomSheetModal>(null);
-	const smartBottomSheet = useRef<BottomSheetModal>(null);
+	const vibrationBottomSheet = useRef<CircularBottomSheetHandle>(null);
+	const repeatBottomSheet = useRef<CircularBottomSheetHandle>(null);
+	const labelBottomSheet = useRef<CircularBottomSheetHandle>(null);
+	const snoozeBottomSheet = useRef<CircularBottomSheetHandle>(null);
+	const smartBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
 	const submitTime = (newValue: Date) => {
 		setPickerVisible(false);
@@ -165,28 +164,28 @@ export const EditAlarmScreen: React.FC = () => {
 				<VibrationBottomSheet
 					vibrationPower={vibrationPower}
 					melody={melody}
-					onClose={(vibrationPower, melody) => {
+					onClose={async (vibrationPower, melody) => {
+						await vibrationBottomSheet.current?.asyncClose();
 						setVibrationPower(vibrationPower);
 						setMelody(melody);
-						vibrationBottomSheet.current?.close();
 					}}
 				/>
 			</CircularBottomScrollSheet>
 			<CircularBottomScrollSheet snapPoints={[700]} ref={repeatBottomSheet}>
 				<RepeatBottomSheet
 					weekdays={weekdays}
-					onClose={(value) => {
+					onClose={async (value) => {
+						await repeatBottomSheet.current?.asyncClose();
 						setWeekdays(value);
-						repeatBottomSheet.current?.close();
 					}}
 				/>
 			</CircularBottomScrollSheet>
 			<CircularBottomSheet snapPoints={[400]} ref={labelBottomSheet}>
 				<LabelBottomSheet
 					label={label}
-					onClose={(label) => {
+					onClose={async (label) => {
+						await labelBottomSheet.current?.asyncClose();
 						setLabel(label);
-						labelBottomSheet.current?.close();
 					}}
 				/>
 			</CircularBottomSheet>
@@ -195,19 +194,19 @@ export const EditAlarmScreen: React.FC = () => {
 					value={snooze}
 					isSmart={isSmart}
 					snoozeDisplay
-					onClose={(value, isSmart) => {
+					onClose={async (value, isSmart) => {
+						await snoozeBottomSheet.current?.asyncClose();
 						setSnooze(value);
 						setIsSmart(isSmart ?? false);
-						snoozeBottomSheet.current?.close();
 					}}
 				/>
 			</CircularBottomScrollSheet>
 			<CircularBottomScrollSheet snapPoints={[700]} ref={smartBottomSheet}>
 				<IntervalBottomSheet
 					value={smart}
-					onClose={(value) => {
+					onClose={async (value) => {
+						await smartBottomSheet.current?.asyncClose();
 						setSmart(value);
-						smartBottomSheet.current?.close();
 					}}
 				/>
 			</CircularBottomScrollSheet>

@@ -1,8 +1,7 @@
 import { useServices } from "@core/services";
 import { DeviceSetupState } from "@domain/device/deviceService";
 import { useScannedDevices, useSetupState } from "@domain/device/hooks";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { CircularBottomSheet } from "@ui/components/bottomSheet";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet";
 import { PrimaryButton } from "@ui/components/buttons";
 import { Divider } from "@ui/components/divider";
 import { Grow, ResponsiveCenterView, Stack } from "@ui/components/layout";
@@ -22,7 +21,7 @@ export const RingSetupScreen: React.FC = () => {
 	const { format } = useI18n();
 	const { bluetoothService, deviceService, ringService } = useServices();
 
-	const pairingFailedBottomSheet = useRef<BottomSheetModal>(null);
+	const pairingFailedBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
 	const setupState = useSetupState();
 	const devices = useScannedDevices();

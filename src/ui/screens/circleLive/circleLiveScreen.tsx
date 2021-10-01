@@ -1,11 +1,10 @@
-import { getScoreQuality } from "@domain/measure/score";
 import { DeviceAutoConnectState } from "@domain/device/deviceService";
 import { useAutoConnectState } from "@domain/device/hooks";
+import { getScoreQuality } from "@domain/measure/score";
 import { usePreferences } from "@domain/preferences/hooks";
 import { useLiveData } from "@domain/ring/hooks";
 import { getIntensity, Intensity } from "@domain/ring/ringLiveData";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { CircularBottomSheet } from "@ui/components/bottomSheet";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
@@ -30,8 +29,8 @@ export const CircleLiveScreen: React.FC = () => {
 
 	const preferences = usePreferences();
 
-	const disconnectedBottomSheet = useRef<BottomSheetModal>(null);
-	const tutorialBottomSheet = useRef<BottomSheetModal>(null);
+	const disconnectedBottomSheet = useRef<CircularBottomSheetHandle>(null);
+	const tutorialBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
 	useEffect(() => {
 		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
@@ -137,8 +136,8 @@ export const CircleLiveScreen: React.FC = () => {
 			</CircularBottomSheet>
 			<CircularBottomSheet snapPoints={[610]} ref={tutorialBottomSheet}>
 				<LiveTutorialBottomSheet
-					onFinish={() => {
-						tutorialBottomSheet.current?.close();
+					onFinish={async () => {
+						await tutorialBottomSheet.current?.asyncClose();
 						start();
 					}}
 				/>

@@ -3,8 +3,7 @@ import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
 import { DeviceAutoConnectState } from "@domain/device/deviceService";
 import { useAutoConnectState } from "@domain/device/hooks";
 import { useWakeUpScore } from "@domain/measure/hooks";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { CircularBottomSheet } from "@ui/components/bottomSheet";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet";
 import { InfoListHeader } from "@ui/components/infoList";
 import { ScoreSection } from "@ui/components/measure/scoreSection";
 import { Spinner } from "@ui/components/spinner";
@@ -22,7 +21,7 @@ export const CircleAlarmScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
 	const { loading, alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
-	const warningBottomSheet = useRef<BottomSheetModal>(null);
+	const warningBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const wakeUpScore = useWakeUpScore();
 	const autoConnectState = useAutoConnectState();
 
