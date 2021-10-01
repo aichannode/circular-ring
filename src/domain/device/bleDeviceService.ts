@@ -134,7 +134,6 @@ export class BleDeviceService {
 		this.fakeDeviceService.fakeDeviceEnabled.subscribe(async (enabled) => {
 			if (enabled) {
 				const debugDevice = "Circular_BeTomorrow";
-				console.log("*** FAVORITE : DEBUG");
 				this._favoriteDevice.set({ name: debugDevice });
 				this._favoriteDeviceSNU.set("fake_snu");
 				this.stopScan();
@@ -145,7 +144,6 @@ export class BleDeviceService {
 
 	async init() {
 		const loadedDevice = await this.favoriteDeviceStorage.load();
-		console.log("*** FAVORITE : " + JSON.stringify(loadedDevice));
 		this._favoriteDevice.set(loadedDevice);
 		this.checkSettings();
 
@@ -220,7 +218,6 @@ export class BleDeviceService {
 				this.handleDeviceDisconnection(error, disconnectedDevice)
 			);
 			const storedDevice = { name: device.name };
-			console.log("*** FAVORITE : " + JSON.stringify(storedDevice));
 			this._favoriteDevice.set(storedDevice);
 			await this.favoriteDeviceStorage.save(storedDevice);
 			await this.startMonitoring();
@@ -423,7 +420,6 @@ export class BleDeviceService {
 		this._connectionState.set(DeviceConnectionState.DISCONNECTED);
 		this._onDeviceDisconnectedSubscription?.remove();
 		this._onDeviceDisconnectedSubscription = null;
-		console.log("*** FAVORITE : null");
 		this._favoriteDevice.set(null);
 		this._favoriteDeviceSNU.set(null);
 		this._currentRingBattery.set(null);
