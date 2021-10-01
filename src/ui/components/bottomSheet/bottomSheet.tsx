@@ -80,11 +80,9 @@ export const CircularBottomScrollSheet = React.forwardRef<BottomSheetModal, Bott
 
 		const { height: screenHeight } = useWindowDimensions();
 
-		const clampedSnapPoints = Array.isArray(snapPoints)
-			? snapPoints.map((point) => {
-					return Math.min(point, screenHeight - safeArea.top - 20);
-			  })
-			: snapPoints;
+		const clampedSnapPoints = snapPoints.map((point) => {
+			return Math.min(point, screenHeight - safeArea.top - 20);
+		});
 
 		const inRef = useForwardedRef(ref);
 		const closeSheet = useCallback(() => {
