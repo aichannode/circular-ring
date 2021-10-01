@@ -1,7 +1,7 @@
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useForwardedRef } from "@ui/utils/useForwardedRef";
 import React, { useCallback, useEffect } from "react";
-import { BackHandler } from "react-native";
+import { BackHandler, Dimensions } from "react-native";
 import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -9,6 +9,7 @@ export interface CircularBottomSheetHandle {
 	present: () => void;
 	close: () => void;
 }
+
 interface BottomSheetProps {
 	snapPoints: Array<string | number> | Animated.SharedValue<Array<string | number>>;
 	children: JSX.Element;
@@ -68,6 +69,16 @@ export const CircularBottomScrollSheet = React.forwardRef<BottomSheetModal, Bott
 			return true;
 		}, []);
 
+		const screenHeight = Dimensions.get("window").height;
+		const topInset = safeArea.top;
+
+		const clampedSnapPoints = Array.isArray(snapPoints)
+			? snapPoints.map((point) => {
+					const p = typeof point === "string" ? parseInt(point) : point;
+					return Math.min(p, screenHeight - topInset - 20);
+			  })
+			: snapPoints; // How to do that for Animated.SharedValue<Array<number | string>> ?
+
 		useEffect(() => () => BackHandler.removeEventListener("hardwareBackPress", closeSheet));
 
 		return (
@@ -80,7 +91,7 @@ export const CircularBottomScrollSheet = React.forwardRef<BottomSheetModal, Bott
 						BackHandler.addEventListener("hardwareBackPress", closeSheet);
 					}
 				}}
-				snapPoints={snapPoints}
+				snapPoints={clampedSnapPoints}
 				backdropComponent={renderBackdrop}
 				style={{ paddingBottom: safeArea.bottom }}
 				activeOffsetY={[-1, 1]}
