@@ -4,7 +4,7 @@ import { cmToFt, HeightUnit } from "@domain/units";
 import { BirthControl, FertilityState, WorkTime } from "@domain/user/advancedInfo";
 import { useUser, useUserAdvancedInfo, useUserSettings } from "@domain/user/hooks/useUser";
 import { Sex } from "@domain/user/user";
-import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";

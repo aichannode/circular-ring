@@ -1,6 +1,6 @@
 import { useGlobalScore } from "@domain/measure/hooks";
 import { getScoreQuality } from "@domain/measure/score";
-import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ResponsiveCenterView, Row } from "@ui/components/layout";
 import { ScoreView } from "@ui/components/scoreView";

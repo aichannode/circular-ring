@@ -1,7 +1,11 @@
 import { useServices } from "@core/services";
 import { Melody, Weekdays } from "@domain/ring/ringAlarm";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { CircularBottomScrollSheet, CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet";
+import {
+	CircularBottomScrollSheet,
+	CircularBottomSheet,
+	CircularBottomSheetHandle,
+} from "@ui/components/bottomSheet/bottomSheet";
 import { QuadraryButton } from "@ui/components/buttons";
 import { Hour } from "@ui/components/hour";
 import { ImageButton } from "@ui/components/imageButton";

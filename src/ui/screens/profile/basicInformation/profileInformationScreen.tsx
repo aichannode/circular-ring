@@ -2,7 +2,7 @@ import { round2Digits } from "@core/utils";
 import { cmToFt, HeightUnit, kgToLbs, UNDEFINED_HEIGHT, UNDEFINED_WEIGHT, WeightUnit } from "@domain/units";
 import { useUser, useUserSettings } from "@domain/user/hooks/useUser";
 import { Sex } from "@domain/user/user";
-import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";

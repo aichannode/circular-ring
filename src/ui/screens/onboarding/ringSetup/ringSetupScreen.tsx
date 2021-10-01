@@ -1,7 +1,7 @@
 import { useServices } from "@core/services";
 import { DeviceSetupState } from "@domain/device/deviceService";
 import { useScannedDevices, useSetupState } from "@domain/device/hooks";
-import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { PrimaryButton } from "@ui/components/buttons";
 import { Divider } from "@ui/components/divider";
 import { Grow, ResponsiveCenterView, Stack } from "@ui/components/layout";
