@@ -33,14 +33,19 @@ export function Switch<T>({
 		>
 			<LeftOption onPress={() => (disabled ? null : onSelectOption(options[0]))}>
 				<UnselectedLeftBackground visible={!leftSelected} bgColor={containerBgColor}>
-					<OptionText selected={leftSelected} disabled={disabled} bgColor={containerBgColor}>
+					<OptionText selected={leftSelected} disabled={disabled} bgColor={containerBgColor} style={{ marginLeft: 2 }}>
 						{options[0]}
 					</OptionText>
 				</UnselectedLeftBackground>
 			</LeftOption>
 			<RightOption onPress={() => (disabled ? null : onSelectOption(options[1]))}>
 				<UnselectedRightBackground visible={!rightSelected} bgColor={containerBgColor}>
-					<OptionText selected={rightSelected} disabled={disabled} bgColor={containerBgColor}>
+					<OptionText
+						selected={rightSelected}
+						disabled={disabled}
+						bgColor={containerBgColor}
+						style={{ marginRight: 2 }}
+					>
 						{options[1]}
 					</OptionText>
 				</UnselectedRightBackground>
@@ -91,5 +96,5 @@ const OptionText = styled.Text<{ selected: boolean; disabled: boolean; bgColor: 
 	font-size: 12px;
 	color: ${({ selected, disabled, bgColor }) =>
 		disabled ? (selected ? bgColor : colors.disabled) : selected ? colors.lightgray : colors.primary};
-	margin-bottom: 2px;
+	margin-bottom: 1px;
 `;
