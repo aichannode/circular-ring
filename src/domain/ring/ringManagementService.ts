@@ -93,12 +93,19 @@ export class RingManagementService {
 	async deleteRing(ring: NamedUserRing) {
 		const ringToDelete = this._userRings.get().filter((knownRing) => knownRing.id === ring.id)[0];
 		if (ringToDelete) {
+			this.logger.debug(`Deleting ring ${ringToDelete.name} (snu: ${ringToDelete.id})`);
 			try {
 				const idToDelete = ringToDelete.id;
-				await this.ringApi.deleteRing(idToDelete);
 				if (this.deviceService.favoriteDeviceSNU.get() === idToDelete) {
 					await this.deviceService.disconnect();
+				} else {
+					this.logger.debug(
+						`No need to disconnect. Current connected ring : ${
+							this.deviceService.favoriteDevice.get()?.name
+						} (snu: ${this.deviceService.favoriteDeviceSNU.get()})`
+					);
 				}
+				await this.ringApi.deleteRing(idToDelete);
 				this._userRings.update((oldRings) => oldRings.filter((r) => r.id !== idToDelete));
 				await this.userRingsStorage.save(this._userRings.get());
 			} catch (e) {

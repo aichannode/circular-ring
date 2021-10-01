@@ -426,6 +426,7 @@ export class BleDeviceService {
 		this._batteryListenerUnsubscribe?.();
 		await this.favoriteDeviceStorage.clear();
 		await device.cancelConnection();
+		this.logger.info(`Disconnection from device ${device.name} succeeded`);
 	}
 
 	requestLocation() {
