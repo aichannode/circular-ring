@@ -31,6 +31,7 @@ export const CircleAlarmScreen: React.FC = () => {
 		}
 	}, [loadAlarms, autoConnectState]);
 
+	const hasConnectedRing = autoConnectState === DeviceAutoConnectState.CONNECTED;
 	return (
 		<Container>
 			<ScrollView>
@@ -38,9 +39,9 @@ export const CircleAlarmScreen: React.FC = () => {
 					label={format("alarm.wake_up_score")}
 					color={colors.blue}
 					score={wakeUpScore}
-					style={{ marginTop: 20, alignSelf: "center" }}
+					style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
 				/>
-				{autoConnectState !== DeviceAutoConnectState.CONNECTED ? null : (
+				{!hasConnectedRing ? null : (
 					<>
 						<InfoListHeader>{format("alarm.score.programmed")}</InfoListHeader>
 						<AlarmContainer>

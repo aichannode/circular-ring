@@ -26,7 +26,7 @@ export const SelectionList: React.FC<SelectionListProps> = ({ list, defaultIndex
 				<View key={index}>
 					<Container
 						onPress={() => {
-							setTriggeredElement(triggeredElement.map((value, i) => (i === index ? true : false)));
+							setTriggeredElement(triggeredElement.map((value, i) => i === index));
 							triggeredData(element);
 						}}
 					>

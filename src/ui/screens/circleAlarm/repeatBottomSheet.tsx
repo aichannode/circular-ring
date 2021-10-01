@@ -115,7 +115,7 @@ export const RepeatBottomSheet: React.FC<RepeatBottomSheetProps> = ({ weekdays, 
 					{index < array.length - 1 ? <Separator /> : null}
 				</View>
 			))}
-			<QuadraryButton style={{ alignSelf: "center" }} onPress={() => onClose(triggeredElements)}>
+			<QuadraryButton style={{ alignSelf: "center", marginTop: 30 }} onPress={() => onClose(triggeredElements)}>
 				{format("alarm.new.save_button")}
 			</QuadraryButton>
 		</Container>
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
 
 const Separator = styled.View`
 	align-self: center;
-	width: 350px;
+	width: 100%;
 	height: 1px;
 	background-color: ${colors.lightgray};
 	margin-horizontal: 20px;
@@ -153,13 +153,14 @@ const Separator = styled.View`
 
 const Container = styled.View`
 	flex: 1;
-	padding-vertical: 20px;
+	padding: 20px 24px;
 `;
 
 const ListContainer = styled.Pressable`
 	flex-direction: row;
-	margin-horizontal: 40px;
-	margin-vertical: 16px;
+	height: 50px;
+	margin: 0 20px;
+	align-items: center;
 	justify-content: space-between;
 `;
 
@@ -172,7 +173,7 @@ const Description = styled.Text`
 	${textStyles.primary};
 	align-self: center;
 	justify-content: center;
-	margin-bottom: 60px;
-	padding: 0 66px;
+	margin-bottom: 40px;
+	padding: 0 40px;
 	text-align: center;
 `;

@@ -9,6 +9,7 @@ import {
 import { QuadraryButton } from "@ui/components/buttons";
 import { Hour } from "@ui/components/hour";
 import { ImageButton } from "@ui/components/imageButton";
+import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { Grow } from "@ui/components/layout";
 import { CheckAlarmButton } from "@ui/components/navigation/checkButton";
 import { ScrollScreen } from "@ui/components/scrollScreen";
@@ -123,46 +124,40 @@ export const EditAlarmScreen: React.FC = () => {
 				/>
 			)}
 
-			<Title>{format("alarm.new.other.title")}</Title>
+			<InfoListHeader>{format("alarm.new.other.title")}</InfoListHeader>
 
-			<OtherButtonContainer onPress={() => vibrationBottomSheet.current?.present()}>
-				<SecondaryTitle>{format("alarm.new.edit_vibration.title")}</SecondaryTitle>
-				<PreviewContainer>
-					<Tips>{formatMelody(melody)}</Tips>
-					<Arrow source={require("@assets/images/topArrowGrey.png")} />
-				</PreviewContainer>
-			</OtherButtonContainer>
-			<OtherButtonContainer onPress={() => repeatBottomSheet.current?.present()}>
-				<SecondaryTitle>{format("alarm.new.repeat.title")}</SecondaryTitle>
-				<PreviewContainer>
-					<Tips>{formatDay(weekdays)}</Tips>
-					<Arrow source={require("@assets/images/topArrowGrey.png")} />
-				</PreviewContainer>
-			</OtherButtonContainer>
-			<OtherButtonContainer onPress={() => labelBottomSheet.current?.present()}>
-				<SecondaryTitle>{format("alarm.new.label.title")}</SecondaryTitle>
-				<PreviewContainer>
-					<Tips>{label}</Tips>
-					<Arrow source={require("@assets/images/topArrowGrey.png")} />
-				</PreviewContainer>
-			</OtherButtonContainer>
+			<InfoListItem
+				name={format("alarm.new.edit_vibration.title")}
+				hasDisclosure
+				value={formatMelody(melody)}
+				action={() => vibrationBottomSheet.current?.present()}
+			/>
+			<InfoListItem
+				name={format("alarm.new.repeat.title")}
+				hasDisclosure
+				value={formatDay(weekdays)}
+				action={() => repeatBottomSheet.current?.present()}
+			/>
+			<InfoListItem
+				name={format("alarm.new.label.title")}
+				hasDisclosure
+				value={label}
+				action={() => labelBottomSheet.current?.present()}
+			/>
 
-			<OtherButtonContainer style={{ marginTop: 19 }} onPress={() => snoozeBottomSheet.current?.present()}>
-				<SecondaryTitle>
-					{isSmart ? format("alarm.new.smart_snooze.title") : format("alarm.new.snooze.title")}
-				</SecondaryTitle>
-				<PreviewContainer>
-					<Tips>{formatSnooze(snooze)}</Tips>
-					<Arrow source={require("@assets/images/topArrowGrey.png")} />
-				</PreviewContainer>
-			</OtherButtonContainer>
-			<OtherButtonContainer onPress={() => smartBottomSheet.current?.present()}>
-				<SecondaryTitle>{format("alarm.new.smart_alarm.title")}</SecondaryTitle>
-				<PreviewContainer>
-					<Tips>{formatSmart(smart)}</Tips>
-					<Arrow source={require("@assets/images/topArrowGrey.png")} />
-				</PreviewContainer>
-			</OtherButtonContainer>
+			<InfoListItem
+				style={{ marginTop: 20 }}
+				name={isSmart ? format("alarm.new.smart_snooze.title") : format("alarm.new.snooze.title")}
+				hasDisclosure
+				value={formatSnooze(smart)}
+				action={() => snoozeBottomSheet.current?.present()}
+			/>
+			<InfoListItem
+				name={format("alarm.new.smart_alarm.title")}
+				hasDisclosure
+				value={formatSmart(snooze)}
+				action={() => smartBottomSheet.current?.present()}
+			/>
 
 			<CircularBottomScrollSheet snapPoints={[2000]} ref={vibrationBottomSheet}>
 				<VibrationBottomSheet
@@ -242,36 +237,4 @@ const HourContainer = styled.View`
 
 const EditTimeButton = styled(ImageButton)`
 	margin-left: 20px;
-`;
-
-const Title = styled(TitleText)`
-	margin: 20px;
-`;
-
-const SecondaryTitle = styled(SecondaryText)`
-	flex-grow: 1;
-	margin-left: 20px;
-`;
-const OtherButtonContainer = styled(Pressable)`
-	flex-direction: row;
-	align-items: center;
-	height: 50px;
-	justify-content: space-between;
-	margin-bottom: 1px;
-	background-color: ${colors.lightgray};
-`;
-
-const Tips = styled(SecondaryText)`
-	margin-horizontal: 14px;
-`;
-
-const Arrow = styled(Image)`
-	margin-right: 20px;
-`;
-
-const PreviewContainer = styled.View`
-	flex-grow: 1;
-	align-items: center;
-	justify-content: flex-end;
-	flex-direction: row;
 `;
