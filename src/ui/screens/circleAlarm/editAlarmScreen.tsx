@@ -13,7 +13,6 @@ import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { Grow } from "@ui/components/layout";
 import { CheckAlarmButton } from "@ui/components/navigation/checkButton";
 import { ScrollScreen } from "@ui/components/scrollScreen";
-import { SecondaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
 import { IntervalBottomSheet } from "@ui/screens/circleAlarm/intervalBottomSheet";
@@ -22,7 +21,7 @@ import { RepeatBottomSheet } from "@ui/screens/circleAlarm/repeatBottomSheet";
 import { VibrationBottomSheet } from "@ui/screens/circleAlarm/vibrationBottomSheet";
 import { colors } from "@ui/styles/colors";
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { Image, Platform, Pressable, View } from "react-native";
+import { Platform, View } from "react-native";
 import styled from "styled-components/native";
 
 export const EditAlarmScreen: React.FC = () => {

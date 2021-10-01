@@ -1,7 +1,6 @@
 import { useServices } from "@core/services";
 import { RingAlarm } from "@domain/ring/ringAlarm";
 import { Divider } from "@ui/components/divider";
-import { Hour } from "@ui/components/hour";
 import { Grow } from "@ui/components/layout";
 import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
