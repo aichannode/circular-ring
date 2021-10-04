@@ -1,5 +1,6 @@
 import { colors } from "@ui/styles/colors";
-import React from "react";
+import dayjs from "dayjs";
+import React, { useCallback } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { Calendar as RNCalendar, CalendarTheme } from "react-native-calendars";
 import { CalendarDay } from "./calendarDay";
@@ -10,11 +11,21 @@ interface CalendarProps {
 	onDaySelected: (day: string) => void;
 }
 export const Calendar: React.FC<CalendarProps> = ({ selectedDay, onDaySelected, style }) => {
-	// const [selectedDay, setSelectedDay] = useState<string | null>(null);
+	const autoSelectDay = useCallback(
+		(dayOfMonth: string) => {
+			const newDay = dayjs(dayOfMonth);
+			const newSelectedDay = newDay.isAfter(selectedDay) ? newDay.startOf("month") : newDay.endOf("month");
+			onDaySelected(newSelectedDay.format("YYYY-MM-DD"));
+		},
+		[selectedDay, onDaySelected]
+	);
 
 	return (
 		<RNCalendar
 			onDayPress={(day) => onDaySelected(day.dateString)}
+			onMonthChange={(date) => {
+				autoSelectDay(date.dateString);
+			}}
 			style={style}
 			hideExtraDays
 			markedDates={selectedDay ? { [selectedDay]: { selected: true } } : undefined}
@@ -29,7 +40,6 @@ export const Calendar: React.FC<CalendarProps> = ({ selectedDay, onDaySelected, 
 								header: {
 									flexDirection: "row",
 									justifyContent: "space-between",
-									// paddingLeft: 10,
 									paddingHorizontal: 20,
 									marginTop: 6,
 									alignItems: "center",
@@ -41,7 +51,7 @@ export const Calendar: React.FC<CalendarProps> = ({ selectedDay, onDaySelected, 
 					textMonthFontWeight: "500",
 					textSectionTitleColor: colors.textPrimary,
 					arrowColor: colors.darkGray,
-				} as CalendarTheme
+				} as CalendarTheme // Wrong typings in react-native-calendars...
 			}
 		/>
 	);

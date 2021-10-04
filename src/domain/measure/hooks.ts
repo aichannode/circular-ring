@@ -1,5 +1,6 @@
+import { useStore } from "@betomorrow/micro-stores";
 import { useServices } from "@core/services";
-import { useAsync } from "@ui/utils/fetchHooks";
+import dayjs from "dayjs";
 import { useObservable } from "micro-observables";
 import { useEffect } from "react";
 
@@ -36,15 +37,7 @@ export const useWakeUpScore = () => {
 	return score;
 };
 
-export const useGlobalScore = (date?: Date) => {
+export const useGlobalScore = (ymdDay?: string) => {
 	const { measureService } = useServices();
-	const score = useObservable(measureService.globalScore);
-
-	const { run, loading } = useAsync(() => measureService.fetchGlobalScore(date), [date]);
-
-	useEffect(() => {
-		run();
-	}, [date]);
-
-	return { score, loading };
+	return useStore(ymdDay ?? dayjs().format("YYYY-MM-DD"), measureService.dailyGlobalScores, []);
 };

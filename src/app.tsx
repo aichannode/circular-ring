@@ -1,4 +1,5 @@
 import "react-native-gesture-handler";
+import "react-native-get-random-values";
 import { useSentry } from "@core/logger/hooks/useSentry";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { RootNavigator } from "@ui/navigation/rootNavigator";

@@ -1,3 +1,4 @@
+import { useServices } from "@core/services";
 import { useGlobalScore } from "@domain/measure/hooks";
 import { Calendar } from "@ui/components/calendar/calendar";
 import { ResponsiveCenterView } from "@ui/components/layout";
@@ -5,15 +6,21 @@ import { GlobalScoreCard } from "@ui/components/measure/globalScoreCard";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import dayjs from "dayjs";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components/native";
 
 export const CalendarScreen: React.FC = () => {
+	const { measureService } = useServices();
 	const [selectedDay, setSelectedDay] = useState(dayjs().format("YYYY-MM-DD"));
 
-	const date = useMemo(() => new Date(selectedDay), [selectedDay]);
+	// const date = useMemo(() => new Date(selectedDay), [selectedDay]);
+	const firstDayOfMonth = useMemo(() => dayjs(selectedDay).startOf("month").format("YYYY-MM-DD"), [selectedDay]);
 
-	const { score, loading } = useGlobalScore(date);
+	useEffect(() => {
+		measureService.fetchMonthGlobalScores(new Date(firstDayOfMonth));
+	}, [firstDayOfMonth]);
+
+	const { result: dailyScore } = useGlobalScore(selectedDay);
 
 	return (
 		<Container>
@@ -21,7 +28,7 @@ export const CalendarScreen: React.FC = () => {
 				<Calendar selectedDay={selectedDay} onDaySelected={(day) => setSelectedDay(day)} />
 			</CalendarWrapper>
 			<ResponsiveCenterView>
-				<GlobalScoreCard score={loading ? null : score} />
+				<GlobalScoreCard score={dailyScore ? dailyScore.score : null} />
 			</ResponsiveCenterView>
 		</Container>
 	);

@@ -1,3 +1,5 @@
+import { Store } from "@betomorrow/micro-stores";
+import { getLogger } from "@core/logger/logger";
 import dayjs from "dayjs";
 import { observable } from "micro-observables";
 import { MeasureApi } from "./measureApi";
@@ -13,15 +15,17 @@ import {
 } from "./metric";
 
 export class MeasureService {
+	private logger = getLogger("📊 MeasureService");
+
 	private _activityData = observable<MetricInfo | null>(null);
 	private _sleepQualityDailyData = observable<MetricInfo | null>(null);
-	private _globalScore = observable<number | null>(null);
 	private _wakeUpScore = observable<number | null>(null);
 
 	readonly activityData = this._activityData.readOnly();
 	readonly sleepQualityDailyData = this._sleepQualityDailyData.readOnly();
-	readonly globalScore = this._globalScore.readOnly();
 	readonly wakeUpScore = this._wakeUpScore.readOnly();
+
+	dailyGlobalScores = new Store((day) => this.fetchGlobalScore(day), "date");
 
 	constructor(private readonly measureApi: MeasureApi) {}
 
@@ -50,9 +54,31 @@ export class MeasureService {
 		this._wakeUpScore.set(metrics?.metrics["user.daily.wake.up.score"] ?? null);
 	}
 
-	async fetchGlobalScore(date?: Date) {
-		const metrics = await this.fetchDailyMeasures(["user.daily.global.score"], date);
-		this._globalScore.set(metrics?.metrics["user.daily.global.score"] ?? null);
+	async fetchGlobalScore(day?: string) {
+		const metrics = await this.fetchDailyMeasures(["user.daily.global.score"], day ? new Date(day) : undefined);
+		if (!metrics || !metrics.metrics["user.daily.global.score"]) {
+			this.logger.error("Error: global score metrics are empty");
+			throw Error("No global score metrics");
+		}
+
+		return {
+			date: dayjs(metrics.timestamp).format("YYYY-MM-DD"),
+			score: metrics.metrics["user.daily.global.score"],
+		};
+	}
+
+	async fetchMonthGlobalScores(firstDayOfMonth: Date) {
+		const allMetrics = await this.measureApi.getMeasures(
+			["user.daily.global.score"],
+			firstDayOfMonth,
+			dayjs(firstDayOfMonth).endOf("month").toDate()
+		);
+		this.dailyGlobalScores.merge(
+			allMetrics.map(({ timestamp, metrics }) => ({
+				date: dayjs(timestamp).format("YYYY-MM-DD"),
+				score: metrics["user.daily.global.score"] ?? 0,
+			}))
+		);
 	}
 
 	private async fetchDailyMeasures(measures: Metric[], date?: Date): Promise<MetricInfo<Metric> | null> {
