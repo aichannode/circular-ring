@@ -1,25 +1,15 @@
 import { DrawerActions } from "@react-navigation/native";
-import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import { NativeStackHeaderProps } from "@react-navigation/native-stack/lib/typescript/src/types";
 import { BackButton } from "@ui/components/navigation/backButton";
 import { colors } from "@ui/styles/colors";
 import React from "react";
-import { Image, ImageSourcePropType, Pressable } from "react-native";
+import { Image, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
-interface OptionsWithCircle extends NativeStackNavigationOptions {
-	circleIcon: ImageSourcePropType | undefined;
-}
-
-interface HeaderProps extends NativeStackHeaderProps {
-	options: Partial<OptionsWithCircle>;
-}
-
-export const Header = (props: HeaderProps) => {
+export const Header = ({ options, navigation }: NativeStackHeaderProps) => {
 	const { top } = useSafeAreaInsets();
 
-	const { options, navigation } = props;
 	const hasCircleIcon = !!options.headerLeft;
 
 	return (

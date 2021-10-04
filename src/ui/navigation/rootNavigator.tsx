@@ -3,7 +3,6 @@ import { CircleSleepScreen } from "@ui/screens/circleSleep/circleSleepScreen";
 import { useAccountLinked, useDeviceStored } from "@domain/device/hooks";
 import { useAuthenticatedUserEmail, useUser } from "@domain/user/hooks/useUser";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { MyRingBattery } from "@ui/components/navigation/myRingBattery";
 import { useI18n } from "@ui/i18n";
@@ -34,7 +33,6 @@ import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmat
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
 import { TermsAndConditionsScreen } from "@ui/screens/signup/termsAndConditionsScreen";
 import React from "react";
-import { Image } from "react-native";
 import styled from "styled-components/native";
 
 const SetupStack = createNativeStackNavigator();
