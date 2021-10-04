@@ -1,3 +1,4 @@
+import { Header } from "@ui/navigation/header/header";
 import { CircleSleepScreen } from "@ui/screens/circleSleep/circleSleepScreen";
 import { useAccountLinked, useDeviceStored } from "@domain/device/hooks";
 import { useAuthenticatedUserEmail, useUser } from "@domain/user/hooks/useUser";
@@ -32,9 +33,9 @@ import { ProfileScreen } from "@ui/screens/profile/profileScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
 import { TermsAndConditionsScreen } from "@ui/screens/signup/termsAndConditionsScreen";
-import { colors } from "@ui/styles/colors";
 import React from "react";
-import { Image, Pressable } from "react-native";
+import { Image } from "react-native";
+import styled from "styled-components/native";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -43,39 +44,20 @@ const OnboardingStack = createNativeStackNavigator();
 const HomeDrawer = createDrawerNavigator();
 const MainStack = createNativeStackNavigator();
 
-const headerTitleStyle = {
-	fontSize: 18,
-	fontWeight: "500",
-	color: colors.textPrimary,
-} as const;
-
 const MainHomeNavigator = () => {
 	const { format } = useI18n();
-	const navigation = useNavigation();
 
 	return (
 		<MainStack.Navigator
 			screenOptions={{
-				headerStyle: { backgroundColor: colors.lightgray },
-				headerRight: () => <MyRingBattery />,
-				headerTitleAlign: "center",
-				headerTitleStyle: headerTitleStyle,
-				headerBackTitleVisible: false,
-				headerBackImageSource: require("@assets/images/menuBackArrow.png"),
-				headerTintColor: colors.textPrimary,
+				header: (props) => <Header {...props} />,
 			}}
 		>
 			<MainStack.Screen
 				name={Routes.Home}
 				component={HomeScreen}
 				options={{
-					headerTitle: () => <Image source={require("@assets/images/logoHeader.png")} />,
 					headerRight: () => <MyRingBattery full />,
-					headerLeft: () => (
-						<Pressable onPress={() => navigation.dispatch(DrawerActions.openDrawer)}>
-							<Image source={require("@assets/images/menu.png")} style={{ marginLeft: 10 }} />
-						</Pressable>
-					),
 				}}
 			/>
 			<MainStack.Screen
@@ -86,27 +68,47 @@ const MainHomeNavigator = () => {
 			<MainStack.Screen
 				name={Routes.Activity}
 				component={CircleActivityScreen}
-				options={{ title: format("header.activity"), headerRight: undefined }}
+				options={{
+					title: format("header.activity"),
+					headerRight: undefined,
+					headerLeft: () => <CircleIcon source={require("@assets/images/circleActivity.png")} />,
+				}}
 			/>
 			<MainStack.Screen
 				name={Routes.Live}
 				component={CircleLiveScreen}
-				options={{ title: format("header.live"), headerRight: undefined }}
+				options={{
+					title: format("header.live"),
+					headerRight: undefined,
+					headerLeft: () => <CircleIcon source={require("@assets/images/circleLive.png")} />,
+				}}
 			/>
 			<MainStack.Screen
 				name={Routes.Alarm}
 				component={CircleAlarmScreen}
-				options={{ title: format("header.alarm"), headerRight: undefined }}
+				options={{
+					title: format("header.alarm"),
+					headerRight: undefined,
+					headerLeft: () => <CircleIcon source={require("@assets/images/circleAlarm.png")} />,
+				}}
 			/>
 			<MainStack.Screen
 				name={Routes.Sleep}
 				component={CircleSleepScreen}
-				options={{ title: format("header.sleep"), headerRight: undefined }}
+				options={{
+					title: format("header.sleep"),
+					headerRight: undefined,
+					headerLeft: () => <CircleIcon source={require("@assets/images/circleSleep.png")} />,
+				}}
 			/>
 			<MainStack.Screen
 				name={Routes.EditAlarm}
 				component={EditAlarmScreen}
-				options={{ title: format("header.alarm"), headerRight: undefined }}
+				options={{
+					title: format("header.alarm"),
+					headerRight: undefined,
+					headerLeft: () => <CircleIcon source={require("@assets/images/circleAlarm.png")} />,
+				}}
 			/>
 
 			<MainStack.Screen
@@ -114,14 +116,16 @@ const MainHomeNavigator = () => {
 				component={ProfileScreen}
 				options={{
 					title: format("header.profile"),
-					headerTitleAlign: "center",
-					headerTitleStyle: headerTitleStyle,
+					headerRight: () => <MyRingBattery />,
 				}}
 			/>
 			<MainStack.Screen
 				name={Routes.ProfileInformation}
 				component={ProfileInformationScreen}
-				options={{ title: format("header.profile_information") }}
+				options={{
+					title: format("header.profile_information"),
+					headerRight: () => <MyRingBattery />,
+				}}
 			/>
 			<MainStack.Screen
 				name={Routes.ProfileEditName}
@@ -136,16 +140,27 @@ const MainHomeNavigator = () => {
 			<MainStack.Screen
 				name={Routes.ProfileAdvancedInformation}
 				component={ProfileAdvancedInformationScreen}
-				options={{ title: format("header.profile_advanced_information") }}
+				options={{
+					title: format("header.profile_advanced_information"),
+					headerRight: () => <MyRingBattery />,
+				}}
 			/>
 			<MainStack.Screen
 				name={Routes.ProfileBirthControl}
 				component={BirthControlEditionScreen}
-				options={{ title: format("header.birth_control") }}
+				options={{
+					title: format("header.birth_control"),
+					headerRight: () => <MyRingBattery />,
+				}}
 			/>
 		</MainStack.Navigator>
 	);
 };
+
+const CircleIcon = styled.Image`
+	width: 54px;
+	height: 54px;
+`;
 
 export const RootNavigator: React.FC = () => {
 	const isAuthenticated = !!useAuthenticatedUserEmail();
