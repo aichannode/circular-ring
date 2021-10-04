@@ -25,6 +25,8 @@ export const DrawerContent = () => {
 				<Separator />
 				<DrawerEntry route={Routes.Profile}>{format("drawer.profile")}</DrawerEntry>
 				<Separator />
+				<DrawerEntry route={Routes.Calendar}>{format("drawer.calendar")}</DrawerEntry>
+				<Separator />
 				<DrawerEntry route={Routes.Settings}>{format("drawer.settings")}</DrawerEntry>
 				<Separator />
 			</ScrollView>

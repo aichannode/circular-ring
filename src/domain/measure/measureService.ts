@@ -50,13 +50,17 @@ export class MeasureService {
 		this._wakeUpScore.set(metrics?.metrics["user.daily.wake.up.score"] ?? null);
 	}
 
-	async fetchGlobalScore() {
-		const metrics = await this.fetchDailyMeasures(["user.daily.global.score"]);
+	async fetchGlobalScore(date?: Date) {
+		const metrics = await this.fetchDailyMeasures(["user.daily.global.score"], date);
 		this._globalScore.set(metrics?.metrics["user.daily.global.score"] ?? null);
 	}
 
-	private async fetchDailyMeasures(measures: Metric[]): Promise<MetricInfo<Metric> | null> {
-		const allMetrics = await this.measureApi.getMeasures(measures, dayjs().subtract(1, "day").toDate(), new Date());
+	private async fetchDailyMeasures(measures: Metric[], date?: Date): Promise<MetricInfo<Metric> | null> {
+		const allMetrics = await this.measureApi.getMeasures(
+			measures,
+			date ? dayjs(date).startOf("day").toDate() : dayjs().subtract(1, "day").toDate(),
+			date ? dayjs(date).endOf("day").toDate() : new Date()
+		);
 		const lastMetric = allMetrics[allMetrics.length - 1] ?? null;
 		return lastMetric;
 	}

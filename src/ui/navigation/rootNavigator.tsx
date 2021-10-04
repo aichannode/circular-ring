@@ -37,6 +37,7 @@ import { WebViewScreen } from "@ui/screens/webViewScreen";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import { Image, Pressable } from "react-native";
+import { CalendarScreen } from "@ui/screens/calendar/calendarScreen";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -154,6 +155,11 @@ const MainHomeNavigator = () => {
 				name={Routes.Settings}
 				component={SettingsScreen}
 				options={{ title: format("header.settings") }}
+			/>
+			<MainStack.Screen
+				name={Routes.Calendar}
+				component={CalendarScreen}
+				options={{ title: format("header.calendar") }}
 			/>
 			<MainStack.Screen name={Routes.WebView} component={WebViewScreen} />
 		</MainStack.Navigator>

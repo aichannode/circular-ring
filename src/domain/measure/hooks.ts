@@ -1,4 +1,5 @@
 import { useServices } from "@core/services";
+import { useAsync } from "@ui/utils/fetchHooks";
 import { useObservable } from "micro-observables";
 import { useEffect } from "react";
 
@@ -35,13 +36,15 @@ export const useWakeUpScore = () => {
 	return score;
 };
 
-export const useGlobalScore = () => {
+export const useGlobalScore = (date?: Date) => {
 	const { measureService } = useServices();
 	const score = useObservable(measureService.globalScore);
 
-	useEffect(() => {
-		measureService.fetchGlobalScore();
-	}, []);
+	const { run, loading } = useAsync(() => measureService.fetchGlobalScore(date), [date]);
 
-	return score;
+	useEffect(() => {
+		run();
+	}, [date]);
+
+	return { score, loading };
 };
