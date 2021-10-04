@@ -1,6 +1,6 @@
 import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
-import { DeviceAutoConnectState } from "@domain/device/deviceService";
+import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
 import { useAutoConnectState } from "@domain/device/hooks";
 import { useWakeUpScore } from "@domain/measure/hooks";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";

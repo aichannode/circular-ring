@@ -1,6 +1,6 @@
 import { useServices } from "@core/services";
 import { useSyncState } from "@domain/ring/hooks";
-import { SyncState } from "@domain/ring/ringService";
+import { SyncState } from "@domain/ring/ringManagementService";
 import { PrimaryButton } from "@ui/components/buttons";
 import { Grow, row } from "@ui/components/layout";
 import { Spinner } from "@ui/components/spinner";
@@ -17,7 +17,7 @@ interface SyncBannerProps {
 export const SyncBanner: React.FC<SyncBannerProps> = ({ style }) => {
 	const syncState = useSyncState();
 	const { format } = useI18n();
-	const { ringService } = useServices();
+	const { ringManagementService } = useServices();
 
 	if (syncState === SyncState.NONE || syncState === SyncState.PREPARING) {
 		return null;
@@ -39,7 +39,7 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({ style }) => {
 								<Icon source={require("@assets/images/sync.png")} />
 								<SyncInfo>{format("home.sync.error")}</SyncInfo>
 								<Grow />
-								<PrimaryButton light onPress={() => ringService.syncData()}>
+								<PrimaryButton light onPress={() => ringManagementService.syncData()}>
 									{format("home.sync.retry")}
 								</PrimaryButton>
 							</>

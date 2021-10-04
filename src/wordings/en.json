@@ -30,6 +30,7 @@
   "header.my_ring": "My Ring",
   "header.sleep": "SLEEP ANALYSIS",
   "header.activity": "ACTIVITY ANALYSIS",
+  "header.calendar": "CALENDAR",
   "header.settings": "Settings",
   "header.alarm": "ALARM CLOCK",
   "header.profile": "PROFILE",
@@ -177,6 +178,7 @@
   "intensity.high": "High",
   "intensity.none": "-",
   "drawer.profile": "Profile",
+  "drawer.calendar": "Calendar",
   "drawer.settings": "Settings",
   "drawer.close": "Close",
   "alarm.score.programmed": "Programmed alarms",
@@ -336,6 +338,7 @@
   "manage_rings.ring.turn_on": "Turn on",
   "manage_rings.ring.turn_off": "Turn off",
   "manage_rings.ring.vibrate": "Vibrate",
+  "manage_rings.ring.default_name": "Circular",
   "manage_rings.ring.sync_date_prefix": "Last Synced",
   "manage_rings.ring.version_prefix": "Version",
   "manage_rings.ring.snu_prefix": "SNU:",
@@ -384,5 +387,10 @@
   "settings.app_version": "App Version",
   "settings.help": "Help",
   "settings.faq": "FAQ",
-  "settings.support.title": "Contact support"
+  "settings.support.title": "Contact support",
+  "months": "January,February,March,April,May,June,July,August,September,October,November,December",
+  "months_short": "Jan,Mar,Feb,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+  "days": "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
+  "days_short": "S,M,T,W,T,F,S",
+  "today": "Today"
 }

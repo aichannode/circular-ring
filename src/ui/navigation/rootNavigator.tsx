@@ -17,6 +17,7 @@ import { ForgotPasswordScreen } from "@ui/screens/login/forgotPasswordScreen";
 import { LoginScreen } from "@ui/screens/login/loginScreen";
 import { ResetTokenScreen } from "@ui/screens/login/resetTokenScreen";
 import { LoginOrSignUpScreen } from "@ui/screens/loginOrRegister/loginOrSignUpScreen";
+import { ManageMyRingsScreen } from "@ui/screens/myRing/manageMyRingsScreen";
 import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
 import { OnboardingPersonalInfo1Screen } from "@ui/screens/onboarding/personalInfo/onboardingPersonalInfo1Screen";
 import { OnboardingPersonalInfo2Screen } from "@ui/screens/onboarding/personalInfo/onboardingPersonalInfo2Screen";
@@ -82,6 +83,11 @@ const MainHomeNavigator = () => {
 				name={Routes.MyRing}
 				component={MyRingScreen}
 				options={{ title: format("header.my_ring"), headerRight: undefined }}
+			/>
+			<MainStack.Screen
+				name={Routes.ManageMyRings}
+				component={ManageMyRingsScreen}
+				options={{ title: format("header.manage_my_rings"), headerRight: undefined }}
 			/>
 			<MainStack.Screen
 				name={Routes.Activity}
@@ -172,7 +178,7 @@ export const RootNavigator: React.FC = () => {
 	if (!deviceStored || !accountLinkedToDevice) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
-				<OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />
+				{!hasUser && <OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />}
 				<OnboardingStack.Screen name={Routes.Pairing} component={RingSetupScreen} />
 			</OnboardingStack.Navigator>
 		);
