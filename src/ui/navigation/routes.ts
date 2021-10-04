@@ -55,7 +55,7 @@ export type AppRoutesParams = {
 	[Routes.Activity]: undefined;
 	[Routes.Sleep]: undefined;
 	[Routes.Alarm]: undefined;
-	[Routes.EditAlarm]: { initialAlarm: InitialAlarmData } | undefined;
+	[Routes.EditAlarm]: { initialAlarm: RingAlarm } | undefined;
 	[Routes.Profile]: undefined;
 	[Routes.ProfileInformation]: undefined;
 	[Routes.ProfileEditName]: undefined;
@@ -68,7 +68,3 @@ export type AppRoutesParams = {
 export const useRoutesNavigation = () => useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
 
 export const useAppRoute = <Route extends Routes>() => useRoute<RouteProp<AppRoutesParams, Route>>();
-
-export interface InitialAlarmData extends Omit<RingAlarm, "time"> {
-	time: string;
-}

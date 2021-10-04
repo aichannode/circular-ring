@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { Melody, Weekdays } from "@domain/ring/ringAlarm";
+import { alarmTimeToDate, dateToAlarmTime, Melody, Weekdays } from "@domain/ring/ringAlarm";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
 	CircularBottomScrollSheet,
@@ -27,12 +27,11 @@ import styled from "styled-components/native";
 export const EditAlarmScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
 	const route = useAppRoute<Routes.EditAlarm>();
-	const initialAlarmParam = route.params?.initialAlarm;
-	const initialAlarm = initialAlarmParam && { ...initialAlarmParam, time: new Date(initialAlarmParam.time) };
+	const initialAlarm = route.params?.initialAlarm;
 	const { format, formatDay, formatSnooze, formatSmart, formatMelody } = useI18n();
 	const { circleAlarmService } = useServices();
 	const [pickerVisible, setPickerVisible] = useState(false);
-	const [alarmTime, setAlarmTime] = useState(initialAlarm?.time ?? new Date());
+	const [alarmTime, setAlarmTime] = useState<Date>(initialAlarm ? alarmTimeToDate(initialAlarm.time) : new Date());
 	const [vibrationPower, setVibrationPower] = useState(initialAlarm?.vibrationPower ?? 50);
 	const [melody, setMelody] = useState<Melody>(initialAlarm?.melody ?? Melody.ALERT);
 	const [weekdays, setWeekdays] = useState<Weekdays[]>(
@@ -69,7 +68,7 @@ export const EditAlarmScreen: React.FC = () => {
 							smart,
 							isSmart,
 							weekdays,
-							time: alarmTime,
+							time: dateToAlarmTime(alarmTime),
 							vibrationPower,
 							vibrationRepetition: 1,
 							melody,

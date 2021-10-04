@@ -48,9 +48,7 @@ export const CircleAlarmScreen: React.FC = () => {
 							{alarms?.map((value) => (
 								<Pressable
 									key={value.id}
-									onPress={() =>
-										navigation.navigate(Routes.EditAlarm, { initialAlarm: { ...value, time: value.time.toString() } })
-									}
+									onPress={() => navigation.navigate(Routes.EditAlarm, { initialAlarm: value })}
 								>
 									<AlarmCard data={value} />
 								</Pressable>

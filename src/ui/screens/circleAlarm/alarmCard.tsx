@@ -7,7 +7,6 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { alarmTagColors } from "@ui/utils/alarmTagColorsUtils";
-import dayjs from "dayjs";
 import React, { useState } from "react";
 import { Platform, StyleProp, Switch, ViewStyle } from "react-native";
 import styled from "styled-components/native";
@@ -36,7 +35,9 @@ export const AlarmCard: React.FC<AlarmCardProps> = ({ data, style }) => {
 				}}
 			/>
 			<HourContainer>
-				<Time style={style}>{dayjs(data.time).format("HH : mm")}</Time>
+				<Time style={style}>
+					{`${data.time.hour.toString().padStart(2, "0")} : ${data.time.minute.toString().padStart(2, "0")}`}
+				</Time>
 			</HourContainer>
 			<VerticalSeparator />
 			<LabelContainer>

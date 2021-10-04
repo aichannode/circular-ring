@@ -14,9 +14,11 @@ import { translations } from "./wordings";
 import SplashScreen from "react-native-splash-screen";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import utc from "dayjs/plugin/utc";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 dayjs.extend(customParseFormat);
+dayjs.extend(utc);
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
 	UIManager.setLayoutAnimationEnabledExperimental(true);
