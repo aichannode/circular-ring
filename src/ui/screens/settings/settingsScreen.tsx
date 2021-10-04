@@ -1,16 +1,15 @@
 import { useServices } from "@core/services";
 import { DateFormat, HeightUnit, WeightUnit } from "@domain/units";
 import { useUserSettings } from "@domain/user/hooks/useUser";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import styled from "styled-components/native";
 import { getVersion } from "react-native-device-info";
-import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { CircularBottomSheet } from "@ui/components/bottomSheet";
+import styled from "styled-components/native";
 import { DateFormatBottomSheet } from "./dateFormatBottomSheet";
 
 export const SettingsScreen: React.FC = () => {
@@ -33,7 +32,7 @@ export const SettingsScreen: React.FC = () => {
 			userService.updateUserSettings(userSettings?.dateFormat ?? DateFormat.DMY, heightFormat, weightFormat);
 	}, [heightFormat, weightFormat, userSettings?.dateFormat]);
 
-	const dateFormatBottomSheet = useRef<BottomSheetModal>(null);
+	const dateFormatBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
 	useUnmount(([updater]) => updater(), [updateSettings]);
 
