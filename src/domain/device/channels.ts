@@ -6,4 +6,6 @@ export enum Channel {
 	LIVE = "FBL",
 	ALARM = "ALR",
 	SNU = "SNU",
+	SRS = "SRS",
+	FRS = "FRS",
 }

@@ -117,6 +117,28 @@ export class RingManagementService {
 		}
 	}
 
+	async factoryResetCurrentRing() {
+		const idToReset = this.deviceService.favoriteDeviceSNU.get();
+		if (idToReset) {
+			const ringToReset = this._userRings.get().filter((ring) => ring.id === idToReset)[0];
+			if (ringToReset) {
+				try {
+					await this.deviceService.factoryResetCurrentRing();
+					await this.ringApi.deleteRing(idToReset);
+					this._userRings.update((oldRings) => oldRings.filter((r) => r.id !== idToReset));
+					await this.userRingsStorage.save(this._userRings.get());
+				} catch (error) {
+					this.logger.warn("Error removing ring from account after factory-reset :", error);
+					throw error;
+				}
+			} else {
+				throw new Error("Unknown ring");
+			}
+		} else {
+			throw new Error("No connected ring");
+		}
+	}
+
 	async syncData() {
 		const ring = this._userRings.get()[0];
 		if (!ring) {

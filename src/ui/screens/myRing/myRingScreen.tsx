@@ -1,10 +1,12 @@
 import { useServices } from "@core/services";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListItem } from "@ui/components/infoList";
 import { RingBatteryView } from "@ui/components/ring/ringBatteryView";
 import { PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
-import React from "react";
+import { FactoryResetBottomSheet } from "@ui/screens/myRing/factoryResetBottomSheet";
+import React, { useRef } from "react";
 import { Alert } from "react-native";
 import styled from "styled-components/native";
 
@@ -12,6 +14,8 @@ export const MyRingScreen: React.FC = () => {
 	const { bleDeviceService } = useServices();
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
+
+	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 
 	return (
 		<Container>
@@ -31,6 +35,17 @@ export const MyRingScreen: React.FC = () => {
 					navigate(Routes.ManageMyRings);
 				}}
 			/>
+			<InfoListItem
+				style={{ marginTop: 20 }}
+				name={format("ring.factory_reset")}
+				hasDisclosure
+				action={() => {
+					factoryResetBottomSheetRef.current?.present();
+				}}
+			/>
+			<CircularBottomSheet snapPoints={[480]} ref={factoryResetBottomSheetRef}>
+				<FactoryResetBottomSheet onClose={() => factoryResetBottomSheetRef.current?.close()} />
+			</CircularBottomSheet>
 		</Container>
 	);
 };

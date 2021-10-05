@@ -429,6 +429,29 @@ export class BleDeviceService {
 		this.logger.info(`Disconnection from device ${device.name} succeeded`);
 	}
 
+	async factoryResetCurrentRing() {
+		const device = this._connectedDevice.get();
+		if (!device) {
+			this.logger.warn("No connected device");
+			throw Error("No connected device");
+		}
+		this.logger.info("Factory-reset device", device.name);
+		this._connectedDevice.set(null);
+		this._connectionState.set(DeviceConnectionState.DISCONNECTED);
+		this._onDeviceDisconnectedSubscription?.remove();
+		this._onDeviceDisconnectedSubscription = null;
+		this._favoriteDevice.set(null);
+		this._favoriteDeviceSNU.set(null);
+		this._currentRingBattery.set(null);
+		this._batteryListenerUnsubscribe?.();
+		await this.favoriteDeviceStorage.clear();
+		// const result = await this.getResponse(Channel.FRS);
+		// if (result !== "ok") {
+		// 	this.logger.warn("Error during device factory-reset", result);
+		// 	throw Error("FactoryReset error");
+		// }
+	}
+
 	requestLocation() {
 		LocationEnabler.requestResolutionSettings(locationConfig);
 	}
