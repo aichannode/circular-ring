@@ -37,12 +37,14 @@ export const CalendarScreen: React.FC = () => {
 const Container = styled(ScrollScreen)`
 	padding-vertical: 24px;
 	align-items: center;
+	padding-horizontal: 10px;
 `;
 
 const CalendarWrapper = styled.View`
 	${whiteCardStyle};
+	padding-left: 0px;
+	padding-right: 0px;
 	border-radius: 5px;
-	/* margin-horizontal: 20px; */
 	margin-bottom: 50px;
 	max-width: 335px;
 `;
