@@ -1,3 +1,4 @@
+import { FetchStrategy } from "@betomorrow/micro-stores";
 import { useServices } from "@core/services";
 import { useGlobalScore } from "@domain/measure/hooks";
 import { Calendar } from "@ui/components/calendar/calendar";
@@ -13,14 +14,13 @@ export const CalendarScreen: React.FC = () => {
 	const { measureService } = useServices();
 	const [selectedDay, setSelectedDay] = useState(dayjs().format("YYYY-MM-DD"));
 
-	// const date = useMemo(() => new Date(selectedDay), [selectedDay]);
 	const firstDayOfMonth = useMemo(() => dayjs(selectedDay).startOf("month").format("YYYY-MM-DD"), [selectedDay]);
 
 	useEffect(() => {
 		measureService.fetchMonthGlobalScores(new Date(firstDayOfMonth));
 	}, [firstDayOfMonth]);
 
-	const { result: dailyScore } = useGlobalScore(selectedDay);
+	const { result: dailyScore } = useGlobalScore(selectedDay, FetchStrategy.Never);
 
 	return (
 		<Container>
@@ -41,6 +41,7 @@ const Container = styled(ScrollScreen)`
 
 const CalendarWrapper = styled.View`
 	${whiteCardStyle};
+	border-radius: 5px;
 	/* margin-horizontal: 20px; */
 	margin-bottom: 50px;
 	max-width: 335px;

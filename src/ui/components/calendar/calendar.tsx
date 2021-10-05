@@ -1,6 +1,7 @@
+import { useUser } from "@domain/user/hooks/useUser";
 import { colors } from "@ui/styles/colors";
 import dayjs from "dayjs";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { Calendar as RNCalendar, CalendarTheme } from "react-native-calendars";
 import { CalendarDay } from "./calendarDay";
@@ -19,9 +20,22 @@ export const Calendar: React.FC<CalendarProps> = ({ selectedDay, onDaySelected, 
 		},
 		[selectedDay, onDaySelected]
 	);
+	const user = useUser();
+	const [minDate, maxDate] = useMemo(() => [user?.createdAt || new Date(), new Date()], [user?.createdAt]);
+
+	const isFirstMonth = useMemo(
+		() => dayjs(selectedDay).startOf("month").isBefore(dayjs(minDate)),
+		[minDate, selectedDay]
+	);
+
+	const isLastMonth = useMemo(() => dayjs(selectedDay).endOf("month").isAfter(dayjs()), [maxDate, selectedDay]);
 
 	return (
 		<RNCalendar
+			minDate={minDate}
+			maxDate={maxDate}
+			disableArrowLeft={isFirstMonth}
+			disableArrowRight={isLastMonth}
 			onDayPress={(day) => onDaySelected(day.dateString)}
 			onMonthChange={(date) => {
 				autoSelectDay(date.dateString);

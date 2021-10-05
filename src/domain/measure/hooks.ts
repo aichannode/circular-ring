@@ -1,4 +1,4 @@
-import { useStore } from "@betomorrow/micro-stores";
+import { FetchStrategy, useStore } from "@betomorrow/micro-stores";
 import { useServices } from "@core/services";
 import dayjs from "dayjs";
 import { useObservable } from "micro-observables";
@@ -37,7 +37,7 @@ export const useWakeUpScore = () => {
 	return score;
 };
 
-export const useGlobalScore = (ymdDay?: string) => {
+export const useGlobalScore = (ymdDay?: string, strategy?: FetchStrategy) => {
 	const { measureService } = useServices();
-	return useStore(ymdDay ?? dayjs().format("YYYY-MM-DD"), measureService.dailyGlobalScores, []);
+	return useStore(ymdDay ?? dayjs().format("YYYY-MM-DD"), measureService.dailyGlobalScores, strategy);
 };
