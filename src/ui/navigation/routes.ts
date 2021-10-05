@@ -10,7 +10,7 @@ export enum Routes {
 	ResetToken = "ResetCode",
 	SignUpEmail = "SignUpEmail",
 	SignUpConfirmationCode = "SignUpConfirmationCode",
-	TermsAndConditions = "TermsAndConditions",
+	WebView = "WebView",
 
 	RingSetupStart = "RingSetupStart",
 	Pairing = "Pairing",
@@ -28,6 +28,7 @@ export enum Routes {
 	Alarm = "Alarm",
 	EditAlarm = "EditAlarm",
 	Profile = "Profile",
+	Settings = "Settings",
 	ProfileInformation = "ProfileInformation",
 	ProfileEditName = "ProfileEditName",
 	ProfileEditBirthday = "ProfileEditBirthday",
@@ -43,7 +44,7 @@ export type AppRoutesParams = {
 	[Routes.ResetToken]: { email: string };
 	[Routes.SignUpEmail]: undefined;
 	[Routes.SignUpConfirmationCode]: undefined;
-	[Routes.TermsAndConditions]: undefined;
+	[Routes.WebView]: { uri: string; label?: string };
 	[Routes.RingSetupStart]: undefined;
 	[Routes.Pairing]: undefined;
 	[Routes.OnboardingWearInfo]: undefined;
@@ -64,6 +65,7 @@ export type AppRoutesParams = {
 	[Routes.ProfileEditBirthday]: undefined;
 	[Routes.ProfileAdvancedInformation]: undefined;
 	[Routes.ProfileBirthControl]: undefined;
+	[Routes.Settings]: undefined;
 	[Routes.Live]: undefined;
 };
 
