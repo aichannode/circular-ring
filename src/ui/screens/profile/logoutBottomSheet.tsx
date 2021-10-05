@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { PrimaryButton, Tertiarybutton } from "@ui/components/buttons";
+import { PrimaryButton, TertiaryButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -26,9 +26,9 @@ export const LogoutBottomSheet: React.FC<LogoutBottomSheetProps> = ({ onClose })
 			<Description>{format("profile.logout_bottom_sheet.description")}</Description>
 			<Grow />
 			<ButtonContainer gap={35}>
-				<Tertiarybutton containerBackgroundColor={colors.white} onPress={onClose}>
+				<TertiaryButton containerBackgroundColor={colors.white} onPress={onClose}>
 					{format("global.cancel")}
-				</Tertiarybutton>
+				</TertiaryButton>
 				<PrimaryButton onPress={logout}>{format("profile.logout_bottom_sheet.logout")}</PrimaryButton>
 			</ButtonContainer>
 		</Container>

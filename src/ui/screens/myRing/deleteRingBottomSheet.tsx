@@ -1,6 +1,6 @@
 import { useServices } from "@core/services";
 import { NamedUserRing } from "@domain/ring/ring";
-import { PrimaryButton, Tertiarybutton } from "@ui/components/buttons";
+import { PrimaryButton, TertiaryButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
 import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
@@ -65,9 +65,9 @@ export const DeleteRingBottomSheet: React.FC<DeleteRingBottomSheetProps> = ({ ri
 						<Spinner size={24} />
 					) : (
 						[
-							<Tertiarybutton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
+							<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
 								{format("global.cancel")}
-							</Tertiarybutton>,
+							</TertiaryButton>,
 							<PrimaryButton key={"dissociate"} onPress={deleteRing}>
 								{format("manage_rings.delete.validation.dissociate")}
 							</PrimaryButton>,

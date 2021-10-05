@@ -182,6 +182,7 @@ export const RootNavigator: React.FC = () => {
 			</SetupStack.Navigator>
 		);
 	}
+
 	if (!deviceStored || !accountLinkedToDevice) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
