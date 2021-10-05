@@ -135,7 +135,6 @@ export function deserializeAlarmData(alarmData: string): RingAlarm | undefined {
 	const isSmart = (weekdayDec >> 7) & 1;
 
 	const time = fromGMT({ hour: Number(hour), minute: Number(min) });
-	console.log(`ALARM => Did read : ${hour} : ${min} => ${JSON.stringify(time)}`);
 
 	return {
 		id: parseInt(alarmId, 16),
