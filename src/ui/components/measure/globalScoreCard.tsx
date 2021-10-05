@@ -1,4 +1,4 @@
-import { getScoreQuality } from "@domain/measure/score";
+import { getScoreQuality, goodGlobalScoreThreshold, optimalGlobalScoreThreshold } from "@domain/measure/score";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
@@ -13,8 +13,6 @@ interface GlobalScoreCardProps {
 	score: number | null;
 	style?: StyleProp<ViewStyle>;
 }
-const goodGlobalScoreThreshold = 80;
-const optimalGlobalScoreThreshold = 90;
 export const GlobalScoreCard: React.FC<GlobalScoreCardProps> = ({ score, style }) => {
 	const { format, formatScoreQuality } = useI18n();
 

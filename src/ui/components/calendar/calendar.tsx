@@ -43,7 +43,7 @@ export const Calendar: React.FC<CalendarProps> = ({ selectedDay, onDaySelected, 
 			style={style}
 			hideExtraDays
 			markedDates={selectedDay ? { [selectedDay]: { selected: true } } : undefined}
-			dayComponent={(dayProps) => <CalendarDay {...dayProps} />}
+			dayComponent={CalendarDay}
 			theme={
 				{
 					textDayHeaderFontSize: 14,
