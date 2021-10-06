@@ -1,0 +1,46 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUnusedLocals": true,
+		"sourceMap": true,
+		"noEmit": true,
+		"target": "esnext",
+		"lib": ["ES6"],
+		"module": "CommonJS",
+		"moduleResolution": "node",
+		"jsx": "react-native",
+		"allowSyntheticDefaultImports": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"baseUrl": ".",
+		"paths": {
+			"@assets/*": ["src/assets/*"],
+			"@wordings": ["wordings"],
+			"@core/*": ["src/core/*"],
+			"@domain/*": ["src/domain/*"],
+			"@ui/*": ["src/ui/*"]
+		},
+		"plugins": [
+			{
+				"name": "typescript-styled-plugin",
+				"lint": {
+					"validProperties": [
+						"shadow-color",
+						"shadow-opacity",
+						"shadow-offset",
+						"shadow-radius",
+						"padding-horizontal",
+						"padding-vertical",
+						"margin-vertical",
+						"margin-horizontal",
+						"tint-color",
+						"aspect-ratio",
+						"elevation",
+						"resize-mode"
+					]
+				}
+			}
+		]
+	}
+}
