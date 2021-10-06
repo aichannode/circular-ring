@@ -1,10 +1,13 @@
 import { useServices } from "@core/services";
+import { useHomeBanner } from "@domain/homeBanner/hooks";
 import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringService";
+import { colors } from "@ui/styles/colors";
 import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { CirclesBanner } from "./circlesBanner";
+import { HomeBannerView } from "./homeBanner/homeBannerView";
 import { SyncBanner } from "./syncBanner";
 
 export const HomeScreen: React.FC = () => {
@@ -26,10 +29,12 @@ export const HomeScreen: React.FC = () => {
 		}
 	}, [syncState]);
 
+	const homeBanner = useHomeBanner();
+
 	return (
 		<Container>
 			<CirclesBanner />
-			<MargedSyncBanner />
+			<SyncBanner style={{ margin: 10 }} />
 			<ScrollView
 				style={{ flex: 1 }}
 				refreshControl={
@@ -39,15 +44,14 @@ export const HomeScreen: React.FC = () => {
 						onRefresh={() => forceRefresh()}
 					/>
 				}
-			/>
+			>
+				{homeBanner && <HomeBannerView banner={homeBanner} style={{ margin: 10 }} />}
+			</ScrollView>
 		</Container>
 	);
 };
 
 const Container = styled.View`
 	flex: 1;
-`;
-
-const MargedSyncBanner = styled(SyncBanner)`
-	margin: 10px;
+	background-color: ${colors.lightgray};
 `;

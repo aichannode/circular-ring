@@ -8,10 +8,19 @@ export const PrimaryText = styled.Text`
 export const SecondaryText = styled.Text`
 	${textStyles.secondary};
 `;
+export const TertiaryText = styled.Text`
+	${textStyles.tertiary};
+`;
 export const TitleText = styled.Text`
 	${textStyles.title};
 `;
+export const MediumTitleText = styled.Text`
+	${textStyles.mediumTitle};
+`;
 export const Strong = styled.Text`
 	font-weight: bold;
+	color: ${colors.primary};
+`;
+export const Colored = styled.Text`
 	color: ${colors.primary};
 `;

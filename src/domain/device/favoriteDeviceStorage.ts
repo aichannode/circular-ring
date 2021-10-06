@@ -11,4 +11,8 @@ export class FavoriteDeviceStorage {
 	load() {
 		return Storage.load<StoredDevice>(favoriteDeviceStorageKey);
 	}
+
+	clear() {
+		return Storage.remove(favoriteDeviceStorageKey);
+	}
 }

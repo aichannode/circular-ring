@@ -9,7 +9,11 @@ import styled from "styled-components/native";
 import { RingBatteryView } from "../ring/ringBatteryView";
 import { Spinner } from "../spinner";
 
-export const MyRingBattery: React.FC = () => {
+interface MyRingBatteryProps {
+	full?: boolean;
+}
+
+export const MyRingBattery: React.FC<MyRingBatteryProps> = ({ full }) => {
 	const { format } = useI18n();
 	const navigation = useRoutesNavigation();
 	const autoConnectState = useAutoConnectState();
@@ -24,7 +28,7 @@ export const MyRingBattery: React.FC = () => {
 		case DeviceAutoConnectState.CONNECTED:
 			return (
 				<Container onPress={() => navigation.navigate(Routes.MyRing)}>
-					<MyRingText>{format("header.my_ring")}</MyRingText>
+					{full && <MyRingText>{format("header.my_ring")}</MyRingText>}
 					<RingBatteryView size={28} />
 				</Container>
 			);
@@ -37,5 +41,7 @@ const Container = styled.Pressable`
 `;
 
 const MyRingText = styled.Text`
+	font-size: 14px;
+	font-weight: 500;
 	margin-right: 10px;
 `;

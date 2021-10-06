@@ -1,0 +1,18 @@
+export const alarmTagColors = [
+	"#2BD866",
+	"#FF3D00",
+	"#3960F7",
+	"#FFE5B4",
+	"#FFED00",
+	"#2AD1CB",
+	"#FF9334",
+	"#FF5DC9",
+	"#AC7CD6",
+	"#9A6A23",
+	"#FFFFFF",
+	"#7F7F7F",
+	"#1BAB69",
+	"#FF453F",
+	"#FD8080",
+	"#2D2D2D",
+];

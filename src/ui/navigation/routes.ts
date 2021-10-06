@@ -1,3 +1,4 @@
+import { RingAlarm } from "@domain/ring/ringAlarm";
 import { useNavigation } from "@react-navigation/core";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -9,11 +10,28 @@ export enum Routes {
 	ResetToken = "ResetCode",
 	SignUpEmail = "SignUpEmail",
 	SignUpConfirmationCode = "SignUpConfirmationCode",
+	TermsAndConditions = "TermsAndConditions",
+
 	RingSetupStart = "RingSetupStart",
+	Pairing = "Pairing",
+	OnboardingWearInfo = "OnboardingWearInfo",
+	OnboardingPersonalInfo1 = "OnboardingPersonalInfo1",
+	OnboardingPersonalInfo2 = "OnboardingPersonalInfo2",
+
+	HomeDrawer = "HomeDrawer",
+	MainHome = "MainHome",
 	Home = "Home",
 	MyRing = "MyRing",
-	Pairing = "Pairing",
 	Activity = "Activity",
+	Alarm = "Alarm",
+	EditAlarm = "EditAlarm",
+	Profile = "Profile",
+	ProfileInformation = "ProfileInformation",
+	ProfileEditName = "ProfileEditName",
+	ProfileEditBirthday = "ProfileEditBirthday",
+	ProfileAdvancedInformation = "ProfileAdvancedInformation",
+	ProfileBirthControl = "ProfileBirthControl",
+	Live = "Live",
 }
 
 export type AppRoutesParams = {
@@ -23,13 +41,32 @@ export type AppRoutesParams = {
 	[Routes.ResetToken]: { email: string };
 	[Routes.SignUpEmail]: undefined;
 	[Routes.SignUpConfirmationCode]: undefined;
+	[Routes.TermsAndConditions]: undefined;
 	[Routes.RingSetupStart]: undefined;
+	[Routes.Pairing]: undefined;
+	[Routes.OnboardingWearInfo]: undefined;
+	[Routes.OnboardingPersonalInfo1]: undefined;
+	[Routes.OnboardingPersonalInfo2]: { firstName: string; lastName: string; country: string };
+	[Routes.HomeDrawer]: undefined;
+	[Routes.MainHome]: undefined;
 	[Routes.Home]: undefined;
 	[Routes.MyRing]: undefined;
-	[Routes.Pairing]: undefined;
 	[Routes.Activity]: undefined;
+	[Routes.Alarm]: undefined;
+	[Routes.EditAlarm]: { initialAlarm: InitialAlarmData } | undefined;
+	[Routes.Profile]: undefined;
+	[Routes.ProfileInformation]: undefined;
+	[Routes.ProfileEditName]: undefined;
+	[Routes.ProfileEditBirthday]: undefined;
+	[Routes.ProfileAdvancedInformation]: undefined;
+	[Routes.ProfileBirthControl]: undefined;
+	[Routes.Live]: undefined;
 };
 
 export const useRoutesNavigation = () => useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
 
 export const useAppRoute = <Route extends Routes>() => useRoute<RouteProp<AppRoutesParams, Route>>();
+
+export interface InitialAlarmData extends Omit<RingAlarm, "time"> {
+	time: string;
+}

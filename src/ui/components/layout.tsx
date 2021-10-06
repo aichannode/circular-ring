@@ -12,7 +12,7 @@ interface LayoutProps {
 	wrap?: "wrap";
 	style?: StyleProp<ViewStyle>;
 	gap?: number;
-	children: ChildrenType | JSX.Element;
+	children: ChildrenType | React.ReactNode;
 }
 
 export const stack = (align: FlexAlign = "stretch", justify: FlexJustify = "flex-start", reverse?: "reverse") => css`
@@ -75,7 +75,7 @@ export const Grow = styled.View`
 	flex: 1;
 `;
 
-export const responsiveCenter = (maxWidth = 250, horizontalPadding = 20, align: FlexAlign = "center") => css`
+export const responsiveCenter = (maxWidth = 290, horizontalPadding = 20, align: FlexAlign = "center") => css`
 	width: 100%;
 	max-width: ${maxWidth}px;
 	padding-horizontal: ${horizontalPadding}px;

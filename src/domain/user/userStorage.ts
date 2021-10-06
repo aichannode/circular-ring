@@ -1,8 +1,12 @@
 import { Storage } from "@core/storage";
+import { AdvancedInfo } from "@domain/user/advancedInfo";
 import { User } from "@domain/user/user";
+import { UserSettings } from "@domain/user/userSettings";
 
 const userStorageKey = "@user";
 const justRegisteredUserStorageKey = "@justRegisteredUser";
+const userSettingsStorageKey = "@userSettings";
+const userAdvancedInfoStorageKey = "@userAdvancedInfo";
 
 export class UserStorage {
 	/** User **/
@@ -31,5 +35,33 @@ export class UserStorage {
 
 	removeJustRegisteredUser() {
 		return Storage.remove(justRegisteredUserStorageKey);
+	}
+
+	/** User settings **/
+
+	saveUserSettings(userSettings: UserSettings) {
+		return Storage.save<UserSettings>(userSettingsStorageKey, userSettings);
+	}
+
+	loadUserSettings() {
+		return Storage.load<UserSettings>(userSettingsStorageKey);
+	}
+
+	removeUserSettings() {
+		return Storage.remove(userSettingsStorageKey);
+	}
+
+	/** User Advanced Info **/
+
+	saveUserAdvancedInfo(advancedInfo: AdvancedInfo) {
+		return Storage.save<AdvancedInfo>(userAdvancedInfoStorageKey, advancedInfo);
+	}
+
+	loadUserAdvancedInfo() {
+		return Storage.load<AdvancedInfo>(userAdvancedInfoStorageKey);
+	}
+
+	removeUserAdvancedInfo() {
+		return Storage.remove(userAdvancedInfoStorageKey);
 	}
 }

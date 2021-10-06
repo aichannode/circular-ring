@@ -1,16 +1,33 @@
-import { CircleActivityData } from "@domain/circleActivity/circleActivityData";
+import { MeasureApi } from "@domain/measure/measureApi";
+import {
+	allDailyActivityGoalMetrics,
+	alldailyActivityMetrics,
+	allEnergyScoreGaugeMetrics,
+	allEnergyScoreMetrics,
+	MetricInfo,
+} from "@domain/measure/metric";
+import dayjs from "dayjs";
 import { observable } from "micro-observables";
-import { CircleActivityApi } from "./circleActivityApi";
 
 export class CircleActivityService {
-	private _dailyData = observable<CircleActivityData | null>(null);
+	private _dailyData = observable<MetricInfo | null>(null);
 
 	readonly dailyData = this._dailyData.readOnly();
 
-	constructor(private readonly circleActivityApi: CircleActivityApi) {}
+	constructor(private readonly measureApi: MeasureApi) {}
 
 	async fetchDailyData() {
-		const result = await this.circleActivityApi.getDailyMetrics();
-		this._dailyData.set(result);
+		const allMetrics = await this.measureApi.getMeasures(
+			[
+				...alldailyActivityMetrics,
+				...allDailyActivityGoalMetrics,
+				...allEnergyScoreMetrics,
+				...allEnergyScoreGaugeMetrics,
+			],
+			dayjs().subtract(1, "day").toDate(),
+			new Date()
+		);
+		const lastMetric = allMetrics[allMetrics.length - 1] ?? null;
+		this._dailyData.set(lastMetric);
 	}
 }

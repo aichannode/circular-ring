@@ -3,4 +3,6 @@ export enum Channel {
 	DATA = "FBC",
 	MAC = "MAC",
 	FIRMWARE_VERSION = "FWV",
+	LIVE = "FBL",
+	ALARM = "ALR",
 }

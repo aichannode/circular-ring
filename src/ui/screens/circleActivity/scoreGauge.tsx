@@ -48,7 +48,6 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 
 const Container = styled.Pressable`
 	${whiteCardStyle};
-	border-radius: 5px;
 	padding: 20px 25px;
 `;
 
