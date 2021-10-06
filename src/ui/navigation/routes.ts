@@ -36,6 +36,7 @@ export enum Routes {
 	ProfileBirthControl = "ProfileBirthControl",
 	Live = "Live",
 	Calendar = "Calendar",
+	CalendarEditNotes = "CalendarEditNotes",
 }
 
 export type AppRoutesParams = {
@@ -69,6 +70,7 @@ export type AppRoutesParams = {
 	[Routes.Settings]: undefined;
 	[Routes.Live]: undefined;
 	[Routes.Calendar]: undefined;
+	[Routes.CalendarEditNotes]: { day: string };
 };
 
 export const useRoutesNavigation = () => useNavigation<NativeStackNavigationProp<AppRoutesParams>>();

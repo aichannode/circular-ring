@@ -1,4 +1,5 @@
 import { FetchStrategy } from "@betomorrow/micro-stores";
+import { useCalendar } from "@domain/calendar/hooks/useCalendar";
 import { useGlobalScore } from "@domain/measure/hooks";
 import { optimalGlobalScoreThreshold } from "@domain/measure/score";
 import { colors } from "@ui/styles/colors";
@@ -9,26 +10,39 @@ import styled from "styled-components/native";
 
 export const CalendarDay: React.FC<DayComponentProps> = React.memo(({ date, marking, onPress, state }) => {
 	const fixedMarking = marking as unknown as { selected?: boolean } | undefined;
+
 	const { result: globalScore } = useGlobalScore(date.dateString, FetchStrategy.Never);
 
+	const dayCalendar = useCalendar(date.dateString, FetchStrategy.Never);
+
 	return (
-		<Container selected={fixedMarking?.selected} onPress={() => onPress(date)}>
+		<Container onPress={() => onPress(date)}>
 			<StarContainer>
 				{globalScore && globalScore.score > optimalGlobalScoreThreshold && (
 					<Image source={require("@assets/images/goldStar.png")} />
 				)}
 			</StarContainer>
-			<DayText today={state === "today"} disabled={state === "disabled"}>
-				{date.day}
-			</DayText>
+			<DayInfo selected={fixedMarking?.selected}>
+				<DayText today={state === "today"} disabled={state === "disabled"}>
+					{date.day}
+				</DayText>
+				<TagsContainer>
+					{/* TODO */}
+					{/*<Row gap={2}>{dayCalendar ? dayCalendar.notes : null}</Row>*/}
+				</TagsContainer>
+			</DayInfo>
 		</Container>
 	);
 });
 
-const Container = styled.Pressable<{ selected?: boolean }>`
+const Container = styled.Pressable`
+	align-items: center;
+`;
+
+const DayInfo = styled.View<{ selected?: boolean }>`
 	padding: 4px 12px;
-	${({ selected }) => selected && `background-color: ${colors.lightgray}`};
 	border-radius: 5px;
+	${({ selected }) => selected && `background-color: ${colors.lightgray}`};
 	align-items: center;
 `;
 
@@ -42,4 +56,10 @@ const StarContainer = styled.View`
 	height: 11px;
 	width: 12px;
 	margin-bottom: 4px;
+`;
+
+const TagsContainer = styled.View`
+	height: 14px;
+	align-items: center;
+	background-color: blue;
 `;
