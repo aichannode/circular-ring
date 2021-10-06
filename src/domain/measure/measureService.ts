@@ -90,4 +90,14 @@ export class MeasureService {
 		const lastMetric = allMetrics[allMetrics.length - 1] ?? null;
 		return lastMetric;
 	}
+
+	async fetchSleepDurationInfos() {
+		const metrics = await this.fetchDailyMeasures([
+			"user.daily.total.sleep.duration",
+			"user.sleep.stage",
+			"user.sleep.napping",
+		]);
+
+		console.log("DONE °°°°°°°°°°°°°°°°", JSON.stringify(metrics));
+	}
 }

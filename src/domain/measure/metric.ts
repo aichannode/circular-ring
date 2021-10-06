@@ -147,7 +147,10 @@ export type Metric =
 	| "user.daily.%rem.stage"
 	| "user.daily.%deep.stage"
 	| "user.daily.time.to.fall.asleep"
-	| "user.daily.sleep.debt";
+	| "user.daily.sleep.debt"
+	| "user.daily.total.sleep.duration"
+	| "user.sleep.stage"
+	| "user.sleep.napping";
 
 export const alldailyActivityMetrics = [
 	"user.daily.steps",
@@ -214,3 +217,16 @@ export const allSleepQualityGaugeMetrics = [
 	"user.daily.%sleep.debt",
 ] as const;
 export type SleepQualityGaugeMetric = typeof allSleepQualityGaugeMetrics[number];
+
+export enum DailyPhase {
+	SLEEP = "Sleep",
+	LYING = "Lying",
+	AWAKE = "Awake",
+	NAP = "Nap",
+	DISTURBANCE = "Disturbance",
+}
+export interface DailyPhaseInfo {
+	phase: DailyPhase;
+	start: Date;
+	end: Date;
+}
