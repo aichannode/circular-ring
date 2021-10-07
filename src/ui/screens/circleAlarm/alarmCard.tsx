@@ -63,6 +63,7 @@ const Card = styled.View`
 	flex-direction: row;
 	border-radius: 5px;
 	margin-bottom: 15px;
+	align-items: center;
 `;
 
 const HourContainer = styled.View`
