@@ -28,10 +28,6 @@ export const CircleActivityScreen: React.FC = () => {
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const { result: dailyData } = useActivityData(selectedDay);
 
-	if (!dailyData) {
-		return null;
-	}
-
 	return (
 		<Container>
 			<ScrollView>
@@ -39,7 +35,7 @@ export const CircleActivityScreen: React.FC = () => {
 					<ScoreSection
 						style={{ marginTop: 20 }}
 						color={colors.red}
-						score={dailyData.data.metrics["user.daily.energy.score"]}
+						score={dailyData?.data.metrics["user.daily.energy.score"]}
 						label={format("activity.energy_score")}
 					/>
 					<CircleCalendarButton
@@ -56,19 +52,15 @@ export const CircleActivityScreen: React.FC = () => {
 				<ElementStack gap={10}>
 					{alldailyActivityMetrics.map((metric) => {
 						const dataInfos = dailyMetricsDataInfos[metric];
-						const value = dailyData.data.metrics[metric];
-						if (!value) {
-							console.warn("Missing value for metric", metric);
-							return null;
-						}
+						const value = dailyData?.data.metrics[metric];
 						return (
 							<DailyMetric
 								key={metric}
 								icon={dataInfos.icon}
 								label={format(dataInfos.labelKey)}
-								value={Math.round(value)}
-								goodThreshold={dataInfos.goodGoal && dailyData.data.metrics[dataInfos.goodGoal]}
-								optimalThreshold={dataInfos.optimalGoal && dailyData.data.metrics[dataInfos.optimalGoal]}
+								value={value !== undefined ? Math.round(value) : undefined}
+								goodThreshold={dataInfos.goodGoal && dailyData?.data.metrics[dataInfos.goodGoal]}
+								optimalThreshold={dataInfos.optimalGoal && dailyData?.data.metrics[dataInfos.optimalGoal]}
 							/>
 						);
 					})}
@@ -79,21 +71,13 @@ export const CircleActivityScreen: React.FC = () => {
 						allEnergyScoreMetrics
 							.map((metric, index) => {
 								const dataInfos = scoreDetailsDataInfos[metric];
-								const value = dailyData.data.metrics[metric];
-								const gaugeValue = dataInfos.gauge ? dailyData.data.metrics[dataInfos.gauge] : value;
-								if (!value) {
-									console.warn("Missing value for metric", metric);
-									return null;
-								}
-								if (!gaugeValue) {
-									console.warn("Missing gauge for metric", metric, dataInfos.gauge);
-									return null;
-								}
+								const value = dailyData?.data.metrics[metric];
+								const gaugeValue = dataInfos.gauge ? dailyData?.data.metrics[dataInfos.gauge] : value;
 								return [
 									<ScoreGauge
 										key={metric}
-										value={Math.round(value)}
-										rate={gaugeValue / 100}
+										value={value !== undefined ? Math.round(value) : undefined}
+										rate={gaugeValue !== undefined ? gaugeValue / 100 : undefined}
 										unit={dataInfos.unit}
 										goodThreshold={scoreGoodThreshold}
 										optimalThreshold={scoreOptimalThreshold}
@@ -125,6 +109,7 @@ export const CircleActivityScreen: React.FC = () => {
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[400]}>
 				<View style={{ padding: 20 }}>
 					<Calendar
+						autoSelectDayOnMonthChange={false}
 						selectedDay={selectedDay}
 						onDaySelected={async (day) => {
 							await calendarBottomSheet.current?.asyncClose();

@@ -10,7 +10,7 @@ import styled from "styled-components/native";
 interface DailyMetricProps {
 	icon: number;
 	label: string;
-	value: number;
+	value?: number;
 	goodThreshold?: number;
 	optimalThreshold?: number;
 	style?: StyleProp<ViewStyle>;
@@ -24,7 +24,9 @@ export const DailyMetric: React.FC<DailyMetricProps> = ({
 	style,
 }) => {
 	const scoreQuality =
-		goodThreshold && optimalThreshold ? getScoreQuality(value, goodThreshold, optimalThreshold) : undefined;
+		goodThreshold && optimalThreshold && value !== undefined
+			? getScoreQuality(value, goodThreshold, optimalThreshold)
+			: undefined;
 
 	return (
 		<Container style={style}>
@@ -32,7 +34,7 @@ export const DailyMetric: React.FC<DailyMetricProps> = ({
 			<SecondaryText>{label}</SecondaryText>
 			<Grow />
 			{!!scoreQuality && <QualityIndicator quality={scoreQuality} />}
-			<Metric>{value}</Metric>
+			<Metric>{value !== undefined ? value : "-"}</Metric>
 		</Container>
 	);
 };

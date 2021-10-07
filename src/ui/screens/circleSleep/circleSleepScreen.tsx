@@ -31,9 +31,9 @@ export const CircleSleepScreen: React.FC = () => {
 
 	const { result: dailyData } = useSleepQualityDailyData(selectedDay);
 
-	if (!dailyData) {
-		return null;
-	}
+	// if (!dailyData) {
+	// 	return null;
+	// }
 
 	return (
 		<Container>
@@ -45,7 +45,7 @@ export const CircleSleepScreen: React.FC = () => {
 				<ScoreSection
 					style={{ marginTop: 20 }}
 					label={format("sleep.quality_score")}
-					score={dailyData.data.metrics["user.daily.sleep.score"]}
+					score={dailyData?.data.metrics["user.daily.sleep.score"]}
 					color={colors.darkBlue}
 				/>
 				<CircleCalendarButton
@@ -64,21 +64,13 @@ export const CircleSleepScreen: React.FC = () => {
 					allSleepQualityMetrics
 						.map((metric, index) => {
 							const dataInfos = scoreDetailsDataInfos[metric];
-							const value = dailyData.data.metrics[metric];
-							const gaugeValue = dataInfos.gauge ? dailyData.data.metrics[dataInfos.gauge] : value;
-							if (!value) {
-								console.warn("Missing value for metric", metric);
-								return null;
-							}
-							if (!gaugeValue) {
-								console.warn("Missing gauge for metric", metric, dataInfos.gauge);
-								return null;
-							}
+							const value = dailyData?.data.metrics[metric];
+							const gaugeValue = dataInfos.gauge ? dailyData?.data.metrics[dataInfos.gauge] : value;
 							return [
 								<ScoreGauge
 									key={metric}
-									value={Math.round(value)}
-									rate={gaugeValue / 100}
+									value={value !== undefined ? Math.round(value) : undefined}
+									rate={gaugeValue !== undefined ? gaugeValue / 100 : undefined}
 									unit={dataInfos.unit}
 									goodThreshold={scoreGoodThreshold}
 									optimalThreshold={scoreOptimalThreshold}
@@ -111,6 +103,7 @@ export const CircleSleepScreen: React.FC = () => {
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[400]}>
 				<View style={{ padding: 20 }}>
 					<Calendar
+						autoSelectDayOnMonthChange={false}
 						selectedDay={selectedDay}
 						onDaySelected={async (day) => {
 							await calendarBottomSheet.current?.asyncClose();
