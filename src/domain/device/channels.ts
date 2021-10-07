@@ -5,4 +5,5 @@ export enum Channel {
 	FIRMWARE_VERSION = "FWV",
 	LIVE = "FBL",
 	ALARM = "ALR",
+	SNU = "SNU",
 }

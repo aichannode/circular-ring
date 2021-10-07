@@ -1,7 +1,7 @@
 import { getLogger } from "@core/logger/logger";
 import { round2Digits, toServerDate } from "@core/utils";
 import { AuthService } from "@domain/auth/authService";
-import { HeightUnit, WeightUnit } from "@domain/units";
+import { DateFormat, HeightUnit, WeightUnit } from "@domain/units";
 import {
 	AdvancedInfo,
 	ChronoType,
@@ -21,6 +21,13 @@ import { UserSettings } from "@domain/user/userSettings";
 import { UserStorage } from "@domain/user/userStorage";
 import { observable } from "micro-observables";
 import * as RNLocalize from "react-native-localize";
+
+const defaultSettings = {
+	dateFormat: DateFormat.DMY,
+	heightFormat: HeightUnit.cm,
+	weightFormat: WeightUnit.kg,
+	id: "default_settings",
+};
 
 export class UserService {
 	private readonly logger = getLogger("UserService");
@@ -149,7 +156,9 @@ export class UserService {
 			this._userSettings.set(userSettings);
 			await this.userStorage.saveUserSettings(userSettings);
 		} catch (error) {
-			this.logger.warn("Get user settings failed: " + JSON.stringify(error));
+			this.logger.warn("Get user settings failed. Applying default settings.", JSON.stringify(error));
+			this._userSettings.set(defaultSettings);
+			await this.userStorage.saveUserSettings(defaultSettings);
 		}
 
 		// get User AdvancedInfo

@@ -1,19 +1,19 @@
 import { Storage } from "@core/storage";
-import { UserRing } from "./ring";
+import { NamedUserRing } from "./ring";
 
 const userRingsStorageKey = "@userRings";
 
 export class UserRingsStorage {
-	save(rings: UserRing[]) {
+	save(rings: NamedUserRing[]) {
 		return Storage.save(userRingsStorageKey, rings);
 	}
 
 	async load() {
-		const dtos = await Storage.load<UserRingDto[]>(userRingsStorageKey);
+		const dtos = await Storage.load<NamedUserRingDto[]>(userRingsStorageKey);
 		return dtos?.map((ring) => ({ ...ring, lastSyncDate: new Date(ring.lastSyncDate) }));
 	}
 }
 
-interface UserRingDto extends Omit<UserRing, "lastSyncDate"> {
+interface NamedUserRingDto extends Omit<NamedUserRing, "lastSyncDate"> {
 	lastSyncDate: string;
 }

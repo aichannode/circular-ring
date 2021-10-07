@@ -1,6 +1,6 @@
 import { getLogger } from "@core/logger/logger";
 import { Channel } from "@domain/device/channels";
-import { DeviceService } from "@domain/device/deviceService";
+import { BleDeviceService } from "@domain/device/bleDeviceService";
 import {
 	deserializeAlarmData,
 	getAlarmId,
@@ -21,7 +21,7 @@ export class CircleAlarmService {
 	private _ringAlarms = observable<RingAlarm[]>([]);
 	ringAlarms = this._ringAlarms.readOnly();
 
-	constructor(private readonly deviceService: DeviceService) {}
+	constructor(private readonly deviceService: BleDeviceService) {}
 
 	async fetchAlarmList() {
 		this.logger.info("Retrieving alarm data...");

@@ -1,5 +1,6 @@
 import { DrawerActions } from "@react-navigation/native";
 import { NativeStackHeaderProps } from "@react-navigation/native-stack/lib/typescript/src/types";
+import { Grow } from "@ui/components/layout";
 import { BackButton } from "@ui/components/navigation/backButton";
 import { colors } from "@ui/styles/colors";
 import React from "react";
@@ -27,6 +28,8 @@ export const Header = ({ options, navigation }: NativeStackHeaderProps) => {
 					{options.headerLeft ? options.headerLeft({}) : null}
 					<Spacer size={16} />
 					{options.title ? <Title>{options.title}</Title> : <Image source={require("@assets/images/logoHeader.png")} />}
+					<Grow />
+					{options.headerRight ? options.headerRight({}) : null}
 				</>
 			) : (
 				<>

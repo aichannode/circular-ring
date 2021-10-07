@@ -90,7 +90,7 @@ function activationHexToData(activationHex: string): {
 } {
 	const activationDec = parseInt(activationHex, 16);
 	const isExisting = !(activationDec & 1);
-	const isActivated = !((activationDec >> 1) & 1);
+	const isActivated = !!((activationDec >> 1) & 1);
 
 	const smart = (activationDec >> 2) & 0x7;
 	const snooze = (activationDec >> 5) & 0x7;
@@ -99,7 +99,7 @@ function activationHexToData(activationHex: string): {
 }
 
 function dataToActivationHex(snooze: number, smart: number, isActivated: boolean, isExisting: boolean): string {
-	const activatedValue = isActivated ? 0 : 1;
+	const activatedValue = isActivated ? 1 : 0;
 	const existingValue = isExisting ? 0 : 1;
 	const activationValue = (((((snooze << 3) + smart) << 1) + activatedValue) << 1) + existingValue;
 
@@ -135,7 +135,6 @@ export function deserializeAlarmData(alarmData: string): RingAlarm | undefined {
 	const isSmart = (weekdayDec >> 7) & 1;
 
 	const time = fromGMT({ hour: Number(hour), minute: Number(min) });
-	console.log(`ALARM => Did read : ${hour} : ${min} => ${JSON.stringify(time)}`);
 
 	return {
 		id: parseInt(alarmId, 16),

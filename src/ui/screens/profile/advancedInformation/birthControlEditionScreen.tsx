@@ -65,7 +65,7 @@ export const BirthControlEditionScreen = () => {
 			))}
 			<Grow />
 			<BottomContainer>
-				{errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+				{errorMessage ? <ErrorMessage>{errorMessage}</ErrorMessage> : null}
 				<ButtonContainer>
 					{isLoading ? <Spinner size={24} /> : <PrimaryButton onPress={save}>{format("global.save")}</PrimaryButton>}
 				</ButtonContainer>

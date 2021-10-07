@@ -1,5 +1,5 @@
 import { ApiService } from "@core/api/apiService";
-import { HeightUnit, WeightUnit } from "@domain/units";
+import { DateFormat, HeightUnit, WeightUnit } from "@domain/units";
 import { AdvancedInfo } from "@domain/user/advancedInfo";
 import { Sex, User } from "@domain/user/user";
 import { UserSettings } from "@domain/user/userSettings";
@@ -31,7 +31,7 @@ export type UserPutDto = UserDtoBase;
 
 interface UserSettingsDto {
 	id: string;
-	dateFormat: string;
+	dateFormat: DateFormat;
 	heightFormat: string;
 	weightFormat: string;
 }
@@ -90,7 +90,6 @@ export class UserApi {
 
 	async getAdvancedInfo(): Promise<AdvancedInfo> {
 		const result = await this.apiService.get<AdvancedInfo>("/user/advanced");
-		console.log("ADVANCED <= " + JSON.stringify(result.data));
 		return result.data;
 	}
 

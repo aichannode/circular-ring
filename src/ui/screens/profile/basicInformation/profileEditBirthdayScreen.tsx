@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { useUser } from "@domain/user/hooks/useUser";
+import { useUser, useUserSettings } from "@domain/user/hooks/useUser";
 import { useNavigation } from "@react-navigation/native";
 import { PrimaryButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView } from "@ui/components/layout";
@@ -17,9 +17,10 @@ export const ProfileEditBirthdayScreen = () => {
 	const { format } = useI18n();
 	const { userService } = useServices();
 	const user = useUser();
+	const userSettings = useUserSettings();
 	const navigation = useNavigation();
 
-	const [birthday, setBirthday] = useState(dayjs(user?.bornDate).format("DD/MM/YYYY"));
+	const [birthday, setBirthday] = useState(dayjs(user?.bornDate).format(userSettings?.dateFormat));
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isLoading, setLoading] = useState(false);
 
@@ -48,7 +49,7 @@ export const ProfileEditBirthdayScreen = () => {
 		if (birthday.length === 0) {
 			setErrorMessage(format("onboarding.personal_info.error.born_date"));
 		} else {
-			const birthDate = dayjs(birthday, "DD/MM/YYYY", true);
+			const birthDate = dayjs(birthday, userSettings?.dateFormat, true);
 			if (!birthDate.isValid() || birthDate.isAfter(dayjs())) {
 				setErrorMessage(format("onboarding.personal_info.error.born_date_invalid"));
 			} else {
@@ -68,7 +69,7 @@ export const ProfileEditBirthdayScreen = () => {
 						<TextInputMask
 							type={"datetime"}
 							options={{
-								format: "DD/MM/YYYY",
+								format: userSettings?.dateFormat,
 							}}
 							placeholder={format("onboarding.personal_info.born_placeholder")}
 							value={birthday}

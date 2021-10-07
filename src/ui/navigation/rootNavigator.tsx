@@ -17,6 +17,7 @@ import { ForgotPasswordScreen } from "@ui/screens/login/forgotPasswordScreen";
 import { LoginScreen } from "@ui/screens/login/loginScreen";
 import { ResetTokenScreen } from "@ui/screens/login/resetTokenScreen";
 import { LoginOrSignUpScreen } from "@ui/screens/loginOrRegister/loginOrSignUpScreen";
+import { ManageMyRingsScreen } from "@ui/screens/myRing/manageMyRingsScreen";
 import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
 import { OnboardingPersonalInfo1Screen } from "@ui/screens/onboarding/personalInfo/onboardingPersonalInfo1Screen";
 import { OnboardingPersonalInfo2Screen } from "@ui/screens/onboarding/personalInfo/onboardingPersonalInfo2Screen";
@@ -29,11 +30,13 @@ import { ProfileEditBirthdayScreen } from "@ui/screens/profile/basicInformation/
 import { ProfileEditNameScreen } from "@ui/screens/profile/basicInformation/profileEditNameScreen";
 import { ProfileInformationScreen } from "@ui/screens/profile/basicInformation/profileInformationScreen";
 import { ProfileScreen } from "@ui/screens/profile/profileScreen";
+import { SettingsScreen } from "@ui/screens/settings/settingsScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
-import { TermsAndConditionsScreen } from "@ui/screens/signup/termsAndConditionsScreen";
-import React from "react";
 import styled from "styled-components/native";
+import { WebViewScreen } from "@ui/screens/webViewScreen";
+import React from "react";
+import { CalendarScreen } from "@ui/screens/calendar/calendarScreen";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -62,6 +65,11 @@ const MainHomeNavigator = () => {
 				name={Routes.MyRing}
 				component={MyRingScreen}
 				options={{ title: format("header.my_ring"), headerRight: undefined }}
+			/>
+			<MainStack.Screen
+				name={Routes.ManageMyRings}
+				component={ManageMyRingsScreen}
+				options={{ title: format("header.manage_my_rings"), headerRight: undefined }}
 			/>
 			<MainStack.Screen
 				name={Routes.Activity}
@@ -151,6 +159,23 @@ const MainHomeNavigator = () => {
 					headerRight: () => <MyRingBattery />,
 				}}
 			/>
+			<MainStack.Screen
+				name={Routes.Settings}
+				component={SettingsScreen}
+				options={{
+					title: format("header.settings"),
+					headerRight: () => <MyRingBattery />,
+				}}
+			/>
+			<MainStack.Screen
+				name={Routes.Calendar}
+				component={CalendarScreen}
+				options={{
+					title: format("header.calendar"),
+					headerRight: () => <MyRingBattery />,
+				}}
+			/>
+			<MainStack.Screen name={Routes.WebView} component={WebViewScreen} />
 		</MainStack.Navigator>
 	);
 };
@@ -178,14 +203,15 @@ export const RootNavigator: React.FC = () => {
 				<SetupStack.Screen name={Routes.ResetToken} component={ResetTokenScreen} />
 				<SetupStack.Screen name={Routes.SignUpEmail} component={SignUpEmailScreen} />
 				<SetupStack.Screen name={Routes.SignUpConfirmationCode} component={SignUpConfirmationCodeScreen} />
-				<SetupStack.Screen name={Routes.TermsAndConditions} component={TermsAndConditionsScreen} />
+				<SetupStack.Screen name={Routes.WebView} component={WebViewScreen} />
 			</SetupStack.Navigator>
 		);
 	}
+
 	if (!deviceStored || !accountLinkedToDevice) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
-				<OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />
+				{!hasUser && <OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />}
 				<OnboardingStack.Screen name={Routes.Pairing} component={RingSetupScreen} />
 			</OnboardingStack.Navigator>
 		);

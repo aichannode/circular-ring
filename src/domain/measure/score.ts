@@ -13,3 +13,6 @@ export function getScoreQuality(score: number, goodThreshold: number, optimalThr
 		? ScoreQuality.GOOD
 		: ScoreQuality.POOR;
 }
+
+export const goodGlobalScoreThreshold = 80;
+export const optimalGlobalScoreThreshold = 90;

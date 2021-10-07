@@ -1,11 +1,12 @@
 import "react-native-gesture-handler";
+import "react-native-get-random-values";
 import { useSentry } from "@core/logger/hooks/useSentry";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { RootNavigator } from "@ui/navigation/rootNavigator";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import React, { useEffect, useState } from "react";
-import { IntlProvider } from "react-intl";
+import { createIntl, IntlProvider } from "react-intl";
 import { LogBox, StatusBar, Platform, UIManager } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import { initializeServices, ServicesProvider } from "@core/services";
@@ -15,6 +16,7 @@ import SplashScreen from "react-native-splash-screen";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import utc from "dayjs/plugin/utc";
+import { LocaleConfig } from "react-native-calendars";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 dayjs.extend(customParseFormat);
@@ -25,9 +27,21 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: "white" } };
+const locale = getPreferredLangageCode(Object.keys(translations)) as "en";
+
+const intl = createIntl({ locale, messages: translations[locale] });
+for (const loc of Object.keys(translations)) {
+	LocaleConfig.locales[loc] = {
+		monthNames: intl.formatMessage({ id: "months" }).split(","),
+		monthNamesShort: intl.formatMessage({ id: "months_short" }).split(","),
+		dayNames: intl.formatMessage({ id: "days" }).split(","),
+		dayNamesShort: intl.formatMessage({ id: "days_short" }).split(","),
+		today: intl.formatMessage({ id: "today" }),
+	};
+}
+LocaleConfig.defaultLocale = locale;
 // @refresh reset
 export const App = () => {
-	const locale = getPreferredLangageCode(Object.keys(translations)) as "en";
 	const [initialized, setInitialized] = useState(false);
 	useSentry();
 
