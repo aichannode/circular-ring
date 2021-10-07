@@ -133,6 +133,7 @@ export const TimeEditor = forwardRef<TimeEditorRef, TimeEditorProps>(
 							mode={"time"}
 							is24Hour={true}
 							onChange={(event: Event, selectedTime: Date | undefined) => {
+								setVisible(false);
 								selectedTime ? saveTime(selectedTime) : setVisible(false);
 							}}
 						/>
