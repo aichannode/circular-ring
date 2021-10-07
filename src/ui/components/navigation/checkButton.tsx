@@ -30,5 +30,5 @@ const Container = styled.Pressable`
 const CheckLogo = styled(Image)`
 	height: 21px;
 	width: 21px;
-	tint-color: ${colors.darkGray};
+	tint-color: ${colors.textPrimary};
 `;
