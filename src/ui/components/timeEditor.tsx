@@ -7,7 +7,6 @@ import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Platform } from "react-native";
-import { NativeViewGestureHandler } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 
 /**
@@ -39,17 +38,15 @@ export const EditTimeBottomSheet: React.FC<EditTimeBottomSheetProps> = ({
 				<Title>{title}</Title>
 				<Description>{description}</Description>
 			</TopContainer>
-			<NativeViewGestureHandler disallowInterruption={true}>
-				<EditionContainer>
-					<DateTimePicker
-						value={time}
-						mode={"time"}
-						display="spinner"
-						textColor={colors.textPrimary}
-						onChange={(event: Event, selectedTime: Date | undefined) => (selectedTime ? setTime(selectedTime) : null)}
-					/>
-				</EditionContainer>
-			</NativeViewGestureHandler>
+			<EditionContainer>
+				<DateTimePicker
+					value={time}
+					mode={"time"}
+					display="spinner"
+					textColor={colors.textPrimary}
+					onChange={(event: Event, selectedTime: Date | undefined) => (selectedTime ? setTime(selectedTime) : null)}
+				/>
+			</EditionContainer>
 			<ButtonContainer gap={35}>
 				<TertiaryButton containerBackgroundColor={colors.white} onPress={onClose}>
 					{format("global.cancel")}
@@ -141,7 +138,7 @@ export const TimeEditor = forwardRef<TimeEditorRef, TimeEditorProps>(
 						/>
 					)
 				) : (
-					<CircularBottomSheet snapPoints={[480]} ref={editTimeBottomSheetRef}>
+					<CircularBottomSheet snapPoints={[480]} ref={editTimeBottomSheetRef} allowSwipeDownToClose={false}>
 						<EditTimeBottomSheet
 							title={title}
 							description={description}
