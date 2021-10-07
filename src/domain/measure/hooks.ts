@@ -27,13 +27,13 @@ export const useSleepQualityDailyData = () => {
 };
 export const useSleepDurationData = () => {
 	const { measureService } = useServices();
-	// const data = useObservable(measureService.sleepQualityDailyData);
+	const data = useObservable(measureService.sleepDurationInfos);
 
 	useEffect(() => {
 		measureService.fetchSleepDurationInfos();
 	}, []);
 
-	// return data;
+	return data;
 };
 
 export const useWakeUpScore = () => {

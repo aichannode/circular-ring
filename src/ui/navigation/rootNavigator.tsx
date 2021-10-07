@@ -186,10 +186,10 @@ const CircleIcon = styled.Image`
 `;
 
 export const RootNavigator: React.FC = () => {
-	const isAuthenticated = true || !!useAuthenticatedUserEmail();
+	const isAuthenticated = !!useAuthenticatedUserEmail();
 
 	const accountLinkedToDevice = true || useAccountLinked();
-	const hasUser = true || useUser();
+	const hasUser = useUser();
 	const deviceStored = true || useDeviceStored();
 
 	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;

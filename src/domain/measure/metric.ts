@@ -217,16 +217,3 @@ export const allSleepQualityGaugeMetrics = [
 	"user.daily.%sleep.debt",
 ] as const;
 export type SleepQualityGaugeMetric = typeof allSleepQualityGaugeMetrics[number];
-
-export enum DailyPhase {
-	SLEEP = "Sleep",
-	LYING = "Lying",
-	AWAKE = "Awake",
-	NAP = "Nap",
-	DISTURBANCE = "Disturbance",
-}
-export interface DailyPhaseInfo {
-	phase: DailyPhase;
-	start: Date;
-	end: Date;
-}
