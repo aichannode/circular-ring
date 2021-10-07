@@ -222,7 +222,7 @@ export const RootNavigator: React.FC = () => {
 			screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
 			drawerContent={() => <DrawerContent />}
 		>
-			<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} />
+			<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} options={{ swipeEnabled: false }} />
 		</HomeDrawer.Navigator>
 	) : (
 		<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
