@@ -1,7 +1,8 @@
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React from "react";
-import { Pressable, StyleProp, ViewStyle } from "react-native";
+import { Pressable, StyleProp, View, ViewStyle } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import LinearGradient from "react-native-linear-gradient";
 import styled from "styled-components/native";
 
@@ -34,20 +35,18 @@ export const PrimaryButton: React.FC<CircularButtonProps> = ({ onPress, style, l
 
 export const SecondaryButton: React.FC<CircularButtonProps> = ({ onPress, style, children }) => {
 	return (
-		<Pressable onPress={onPress} style={style}>
-			{({ pressed }) => (
-				<SecondaryContent pressed={pressed}>
-					<SecondaryButtonText>{children}</SecondaryButtonText>
-				</SecondaryContent>
-			)}
-		</Pressable>
+		<TouchableOpacity onPress={onPress}>
+			<SecondaryContent style={style}>
+				<SecondaryButtonText>{children}</SecondaryButtonText>
+			</SecondaryContent>
+		</TouchableOpacity>
 	);
 };
 interface TertiaryButtonProps extends CircularButtonProps {
 	containerBackgroundColor: string;
 }
 
-export const Tertiarybutton: React.FC<TertiaryButtonProps> = ({
+export const TertiaryButton: React.FC<TertiaryButtonProps> = ({
 	onPress,
 	style,
 	children,
@@ -76,13 +75,13 @@ export const Tertiarybutton: React.FC<TertiaryButtonProps> = ({
 
 export const QuadraryButton: React.FC<CircularButtonProps> = ({ onPress, style, children }) => {
 	return (
-		<Pressable onPress={onPress} style={style}>
-			{({ pressed }) => (
-				<QuadraryContent pressed={pressed}>
+		<TouchableOpacity onPress={onPress}>
+			<View style={style}>
+				<QuadraryContent>
 					<PrimaryButtonText>{children}</PrimaryButtonText>
 				</QuadraryContent>
-			)}
-		</Pressable>
+			</View>
+		</TouchableOpacity>
 	);
 };
 
@@ -108,13 +107,11 @@ export const PrimaryBigButton: React.FC<CircularButtonProps> = ({ onPress, style
 
 export const SecondaryBigButton: React.FC<CircularButtonProps> = ({ onPress, style, children }) => {
 	return (
-		<Pressable onPress={onPress} style={style}>
-			{({ pressed }) => (
-				<SecondaryBigContent pressed={pressed}>
-					<GrayButtonText>{children}</GrayButtonText>
-				</SecondaryBigContent>
-			)}
-		</Pressable>
+		<TouchableOpacity onPress={onPress}>
+			<SecondaryBigContent style={style}>
+				<GrayButtonText>{children}</GrayButtonText>
+			</SecondaryBigContent>
+		</TouchableOpacity>
 	);
 };
 
@@ -164,14 +161,14 @@ const PrimaryContent = styled(LinearGradient)<{ light?: boolean }>`
 	border-radius: 18px;
 `;
 
-const SecondaryContent = styled.View<{ pressed: boolean }>`
+const SecondaryContent = styled.View`
 	padding: 9px 22px;
 	border-radius: 18px;
 	border-color: ${colors.textPrimary};
 	border-width: 1px;
 `;
 
-const QuadraryContent = styled.View<{ pressed: boolean }>`
+const QuadraryContent = styled.View`
 	padding: 9px 22px;
 	border-radius: 18px;
 	background-color: ${colors.blue};
@@ -197,12 +194,12 @@ const PrimaryBigContent = styled(LinearGradient)`
 	border-radius: 28px;
 `;
 
-const SecondaryBigContent = styled.View<{ pressed: boolean }>`
+const SecondaryBigContent = styled.View`
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
 	width: 100%;
 	height: 56px;
 	border-radius: 28px;
-	background-color: ${({ pressed }) => (pressed ? colors.gray : colors.lightgray)};
+	background-color: ${colors.lightgray};
 `;

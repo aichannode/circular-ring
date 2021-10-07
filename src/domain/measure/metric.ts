@@ -1,5 +1,5 @@
 export interface MetricInfo<T extends Metric = Metric> {
-	date: string;
+	timestamp: string;
 	metrics: {
 		[key in T]?: number;
 	};

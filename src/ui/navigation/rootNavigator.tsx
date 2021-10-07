@@ -30,12 +30,14 @@ import { ProfileEditBirthdayScreen } from "@ui/screens/profile/basicInformation/
 import { ProfileEditNameScreen } from "@ui/screens/profile/basicInformation/profileEditNameScreen";
 import { ProfileInformationScreen } from "@ui/screens/profile/basicInformation/profileInformationScreen";
 import { ProfileScreen } from "@ui/screens/profile/profileScreen";
+import { SettingsScreen } from "@ui/screens/settings/settingsScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
-import { TermsAndConditionsScreen } from "@ui/screens/signup/termsAndConditionsScreen";
+import { WebViewScreen } from "@ui/screens/webViewScreen";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import { Image, Pressable } from "react-native";
+import { CalendarScreen } from "@ui/screens/calendar/calendarScreen";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -149,6 +151,17 @@ const MainHomeNavigator = () => {
 				component={BirthControlEditionScreen}
 				options={{ title: format("header.birth_control") }}
 			/>
+			<MainStack.Screen
+				name={Routes.Settings}
+				component={SettingsScreen}
+				options={{ title: format("header.settings") }}
+			/>
+			<MainStack.Screen
+				name={Routes.Calendar}
+				component={CalendarScreen}
+				options={{ title: format("header.calendar") }}
+			/>
+			<MainStack.Screen name={Routes.WebView} component={WebViewScreen} />
 		</MainStack.Navigator>
 	);
 };
@@ -171,10 +184,11 @@ export const RootNavigator: React.FC = () => {
 				<SetupStack.Screen name={Routes.ResetToken} component={ResetTokenScreen} />
 				<SetupStack.Screen name={Routes.SignUpEmail} component={SignUpEmailScreen} />
 				<SetupStack.Screen name={Routes.SignUpConfirmationCode} component={SignUpConfirmationCodeScreen} />
-				<SetupStack.Screen name={Routes.TermsAndConditions} component={TermsAndConditionsScreen} />
+				<SetupStack.Screen name={Routes.WebView} component={WebViewScreen} />
 			</SetupStack.Navigator>
 		);
 	}
+
 	if (!deviceStored || !accountLinkedToDevice) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>

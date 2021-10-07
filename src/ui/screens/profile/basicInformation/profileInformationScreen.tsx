@@ -19,7 +19,7 @@ export const ProfileInformationScreen = () => {
 	const userSettings = useUserSettings();
 	const user = useUser();
 
-	const displayedBirthday = dayjs(user?.bornDate || new Date()).format("DD/MM/YYYY");
+	const displayedBirthday = dayjs(user?.bornDate || new Date()).format(userSettings?.dateFormat);
 
 	const height = user?.height ?? UNDEFINED_HEIGHT;
 	const heightUnit = userSettings?.heightFormat || HeightUnit.cm;
