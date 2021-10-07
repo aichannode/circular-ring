@@ -1,5 +1,8 @@
 import { useActivityData } from "@domain/measure/hooks";
 import { alldailyActivityMetrics, allEnergyScoreMetrics } from "@domain/measure/metric";
+import { useUserSettings } from "@domain/user/hooks/useUser";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
+import { Calendar } from "@ui/components/calendar/calendar";
 import { InfoListHeader } from "@ui/components/infoList";
 import { Stack } from "@ui/components/layout";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
@@ -7,8 +10,10 @@ import { ScoreGauge } from "@ui/components/measure/scoreGauge";
 import { ScoreSection } from "@ui/components/measure/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import React, { useState } from "react";
-import { LayoutAnimation, ScrollView } from "react-native";
+import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
+import dayjs from "dayjs";
+import React, { useMemo, useRef, useState } from "react";
+import { Image, LayoutAnimation, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import { DailyMetric } from "./dailyMetric";
 import { dailyMetricsDataInfos, scoreDetailsDataInfos } from "./measureDisplayInfos";
@@ -17,9 +22,14 @@ const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
 
 export const CircleActivityScreen: React.FC = () => {
-	const dailyData = useActivityData();
 	const { format } = useI18n();
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
+	const today = useMemo(() => dayjs().format("YYYY-MM-DD"), []);
+	const [selectedDay, setSelectedDay] = useState<string>(today);
+	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
+	const userSettings = useUserSettings();
+
+	const { result: dailyData } = useActivityData(selectedDay);
 
 	if (!dailyData) {
 		return null;
@@ -28,17 +38,30 @@ export const CircleActivityScreen: React.FC = () => {
 	return (
 		<Container>
 			<ScrollView>
-				<ScoreSection
-					style={{ marginTop: 20 }}
-					color={colors.red}
-					score={dailyData.metrics["user.daily.energy.score"]}
-					label={format("activity.energy_score")}
-				/>
+				<View>
+					<ScoreSection
+						style={{ marginTop: 20 }}
+						color={colors.red}
+						score={dailyData.metrics.metrics["user.daily.energy.score"]}
+						label={format("activity.energy_score")}
+					/>
+					<ChangeDateButton onPress={() => calendarBottomSheet.current?.present()}>
+						<CalendarIconWrapper>
+							<Image
+								style={{ tintColor: colors.darkGray, width: 16, height: 16 }}
+								source={require("@assets/images/calendar.png")}
+							/>
+						</CalendarIconWrapper>
+						<CurrentDay>
+							{selectedDay === today ? format("today") : dayjs(selectedDay).format(userSettings?.dateFormat)}
+						</CurrentDay>
+					</ChangeDateButton>
+				</View>
 				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
 				<ElementStack gap={10}>
 					{alldailyActivityMetrics.map((metric) => {
 						const dataInfos = dailyMetricsDataInfos[metric];
-						const value = dailyData.metrics[metric];
+						const value = dailyData.metrics.metrics[metric];
 						if (!value) {
 							console.warn("Missing value for metric", metric);
 							return null;
@@ -49,8 +72,8 @@ export const CircleActivityScreen: React.FC = () => {
 								icon={dataInfos.icon}
 								label={format(dataInfos.labelKey)}
 								value={Math.round(value)}
-								goodThreshold={dataInfos.goodGoal && dailyData.metrics[dataInfos.goodGoal]}
-								optimalThreshold={dataInfos.optimalGoal && dailyData.metrics[dataInfos.optimalGoal]}
+								goodThreshold={dataInfos.goodGoal && dailyData.metrics.metrics[dataInfos.goodGoal]}
+								optimalThreshold={dataInfos.optimalGoal && dailyData.metrics.metrics[dataInfos.optimalGoal]}
 							/>
 						);
 					})}
@@ -61,8 +84,8 @@ export const CircleActivityScreen: React.FC = () => {
 						allEnergyScoreMetrics
 							.map((metric, index) => {
 								const dataInfos = scoreDetailsDataInfos[metric];
-								const value = dailyData.metrics[metric];
-								const gaugeValue = dataInfos.gauge ? dailyData.metrics[dataInfos.gauge] : value;
+								const value = dailyData.metrics.metrics[metric];
+								const gaugeValue = dataInfos.gauge ? dailyData.metrics.metrics[dataInfos.gauge] : value;
 								if (!value) {
 									console.warn("Missing value for metric", metric);
 									return null;
@@ -104,6 +127,17 @@ export const CircleActivityScreen: React.FC = () => {
 					}
 				</ElementStack>
 			</ScrollView>
+			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[400]}>
+				<View style={{ padding: 20 }}>
+					<Calendar
+						selectedDay={selectedDay}
+						onDaySelected={async (day) => {
+							await calendarBottomSheet.current?.asyncClose();
+							setSelectedDay(day);
+						}}
+					/>
+				</View>
+			</CircularBottomSheet>
 		</Container>
 	);
 };
@@ -116,4 +150,24 @@ const Container = styled.View`
 const ElementStack = styled(Stack)`
 	padding: 25px 20px;
 	background-color: ${colors.lightgray};
+`;
+
+const ChangeDateButton = styled.Pressable`
+	position: absolute;
+	top: 25px;
+	right: 25px;
+	align-items: center;
+`;
+
+const CalendarIconWrapper = styled.View`
+	${roundedWhiteCardStyle};
+	padding: 8px;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 2px;
+`;
+
+const CurrentDay = styled.Text`
+	font-size: 10px;
+	color: ${colors.darkGray};
 `;

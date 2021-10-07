@@ -4,15 +4,9 @@ import dayjs from "dayjs";
 import { useObservable } from "micro-observables";
 import { useEffect } from "react";
 
-export const useActivityData = () => {
+export const useActivityData = (ymdDay?: string) => {
 	const { measureService } = useServices();
-	const data = useObservable(measureService.activityData);
-
-	useEffect(() => {
-		measureService.fetchActivityData();
-	}, []);
-
-	return data;
+	return useStore(ymdDay ?? dayjs().format("YYYY-MM-DD"), measureService.activityData, FetchStrategy.First);
 };
 
 export const useSleepQualityDailyData = () => {

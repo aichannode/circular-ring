@@ -18,29 +18,37 @@ import { DailyPhase, SleepDurationInfos } from "./sleep";
 export class MeasureService {
 	private logger = getLogger("📊 MeasureService");
 
-	private _activityData = observable<MetricInfo | null>(null);
+	// private _activityData = observable<MetricInfo | null>(null);
 	private _sleepQualityDailyData = observable<MetricInfo | null>(null);
 	private _wakeUpScore = observable<number | null>(null);
 	private _sleepDurationInfos = observable<SleepDurationInfos | null>(null);
 
-	readonly activityData = this._activityData.readOnly();
+	// readonly activityData = this._activityData.readOnly();
 	readonly sleepQualityDailyData = this._sleepQualityDailyData.readOnly();
 	readonly wakeUpScore = this._wakeUpScore.readOnly();
 	readonly sleepDurationInfos = this._sleepDurationInfos.readOnly();
 
+	activityData = new Store((day) => this.fetchActivityData(day), "date");
 	dailyGlobalScores = new Store((day) => this.fetchGlobalScore(day), "date");
 
 	constructor(private readonly measureApi: MeasureApi) {}
 
-	async fetchActivityData() {
-		const metrics = await this.fetchDailyMeasures([
-			"user.daily.energy.score",
-			...alldailyActivityMetrics,
-			...allDailyActivityGoalMetrics,
-			...allEnergyScoreMetrics,
-			...allEnergyScoreGaugeMetrics,
-		]);
-		this._activityData.set(metrics);
+	async fetchActivityData(day?: string) {
+		const metrics = await this.fetchDailyMeasures(
+			[
+				"user.daily.energy.score",
+				...alldailyActivityMetrics,
+				...allDailyActivityGoalMetrics,
+				...allEnergyScoreMetrics,
+				...allEnergyScoreGaugeMetrics,
+			],
+			day ? new Date(day) : undefined
+		);
+		if (!metrics) {
+			this.logger.error("Error: activity data metrics are empty");
+			throw Error("No global score metrics");
+		}
+		return { date: dayjs(metrics.timestamp).format("YYYY-MM-DD"), metrics };
 	}
 
 	async fetchSleepQualityDailyData() {
