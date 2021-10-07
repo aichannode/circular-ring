@@ -9,15 +9,9 @@ export const useActivityData = (ymdDay?: string) => {
 	return useStore(ymdDay ?? dayjs().format("YYYY-MM-DD"), measureService.activityData, FetchStrategy.First);
 };
 
-export const useSleepQualityDailyData = () => {
+export const useSleepQualityDailyData = (ymdDay?: string) => {
 	const { measureService } = useServices();
-	const data = useObservable(measureService.sleepQualityDailyData);
-
-	useEffect(() => {
-		measureService.fetchSleepQualityDailyData();
-	}, []);
-
-	return data;
+	return useStore(ymdDay ?? dayjs().format("YYYY-MM-DD"), measureService.sleepQualityData, FetchStrategy.First);
 };
 export const useSleepDurationData = () => {
 	const { measureService } = useServices();

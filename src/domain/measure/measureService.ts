@@ -19,21 +19,22 @@ export class MeasureService {
 	private logger = getLogger("📊 MeasureService");
 
 	// private _activityData = observable<MetricInfo | null>(null);
-	private _sleepQualityDailyData = observable<MetricInfo | null>(null);
+	// private _sleepQualityDailyData = observable<MetricInfo | null>(null);
 	private _wakeUpScore = observable<number | null>(null);
 	private _sleepDurationInfos = observable<SleepDurationInfos | null>(null);
 
 	// readonly activityData = this._activityData.readOnly();
-	readonly sleepQualityDailyData = this._sleepQualityDailyData.readOnly();
+	// readonly sleepQualityDailyData = this._sleepQualityDailyData.readOnly();
 	readonly wakeUpScore = this._wakeUpScore.readOnly();
 	readonly sleepDurationInfos = this._sleepDurationInfos.readOnly();
 
 	activityData = new Store((day) => this.fetchActivityData(day), "date");
+	sleepQualityData = new Store((day) => this.fetchSleepQualityDailyData(day), "date");
 	dailyGlobalScores = new Store((day) => this.fetchGlobalScore(day), "date");
 
 	constructor(private readonly measureApi: MeasureApi) {}
 
-	async fetchActivityData(day?: string) {
+	async fetchActivityData(ymdDay?: string) {
 		const metrics = await this.fetchDailyMeasures(
 			[
 				"user.daily.energy.score",
@@ -42,22 +43,25 @@ export class MeasureService {
 				...allEnergyScoreMetrics,
 				...allEnergyScoreGaugeMetrics,
 			],
-			day ? new Date(day) : undefined
+			ymdDay ? new Date(ymdDay) : undefined
 		);
 		if (!metrics) {
-			this.logger.error("Error: activity data metrics are empty");
-			throw Error("No global score metrics");
+			this.logger.error("Error: activity data metrics are empty for day", ymdDay);
+			throw Error("No activity metrics");
 		}
-		return { date: dayjs(metrics.timestamp).format("YYYY-MM-DD"), metrics };
+		return { date: dayjs(metrics.timestamp).format("YYYY-MM-DD"), data: metrics };
 	}
 
-	async fetchSleepQualityDailyData() {
-		const metrics = await this.fetchDailyMeasures([
-			"user.daily.sleep.score",
-			...allSleepQualityMetrics,
-			...allSleepQualityGaugeMetrics,
-		]);
-		this._sleepQualityDailyData.set(metrics);
+	async fetchSleepQualityDailyData(ymdDay?: string) {
+		const metrics = await this.fetchDailyMeasures(
+			["user.daily.sleep.score", ...allSleepQualityMetrics, ...allSleepQualityGaugeMetrics],
+			ymdDay ? new Date(ymdDay) : undefined
+		);
+		if (!metrics) {
+			this.logger.error("Error: sleep data metrics are empty for day", ymdDay);
+			throw Error("No sleep metrics");
+		}
+		return { date: dayjs(metrics.timestamp).format("YYYY-MM-DD"), data: metrics };
 	}
 
 	async fetchWakeUpScore() {
