@@ -72,8 +72,8 @@ export type AppRoutesParams = {
 	[Routes.Settings]: undefined;
 	[Routes.Live]: undefined;
 	[Routes.Calendar]: undefined;
-	[Routes.CalendarEditNotes]: { day: string };
-	[Routes.AllTags]: { selectedTags: CalendarTag[]; validateTagSelection: (tags: CalendarTag[]) => void };
+	[Routes.CalendarEditNotes]: { day: string; selectedTags?: CalendarTag[] };
+	[Routes.AllTags]: { day: string; selectedTags: CalendarTag[] };
 };
 
 export const useRoutesNavigation = () => useNavigation<NativeStackNavigationProp<AppRoutesParams>>();

@@ -11,6 +11,7 @@ import { Grow } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { PrimaryText } from "@ui/components/text";
+import { TimeEditor, TimeEditorRef } from "@ui/components/timeEditor";
 import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
 import { TagSelectionView } from "@ui/screens/calendar/tagSelectionView";
@@ -18,10 +19,17 @@ import { colors } from "@ui/styles/colors";
 import { shadow } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import dayjs from "dayjs";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Pressable } from "react-native";
 import { Marking } from "react-native-calendars";
 import styled from "styled-components/native";
+
+interface TimeEditorConfig {
+	date: Date;
+	title: string;
+	description: string;
+	saveTime: (time: Date) => void;
+}
 
 export const CalendarEditNotesScreen: React.FC = () => {
 	const { format, formatDateInterval, formatHour } = useI18n();
@@ -29,6 +37,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 	const navigate = navigation.navigate;
 
 	const route = useAppRoute<Routes.CalendarEditNotes>();
+	const originalTags = route.params.selectedTags ?? [];
 	const day = route.params.day;
 	const date = new Date(day);
 	const dateJS = dayjs(date);
@@ -47,11 +56,30 @@ export const CalendarEditNotesScreen: React.FC = () => {
 		[day]
 	);
 
-	const [selectedTags, setSelectedTags] = useState<CalendarTag[]>([]);
+	const [selectedTags, setSelectedTags] = useState<CalendarTag[]>(originalTags);
 	const [startDate, setStartDate] = useState(dateWithHourMinute(new Date().getHours(), new Date().getMinutes()));
 	const [endDate, setEndDate] = useState(dateWithHourMinute(new Date().getHours(), new Date().getMinutes()));
 	const [isLoading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
+
+	const startTimeEditionConfig = {
+		title: format("calendar.edit_start.title"),
+		description: format("calendar.edit_start.description"),
+		saveTime: setStartDate,
+	};
+
+	const endTimeEditionConfig = {
+		title: format("calendar.edit_end.title"),
+		description: format("calendar.edit_end.description"),
+		saveTime: setEndDate,
+	};
+
+	const [config, setConfig] = useState<TimeEditorConfig>({ ...startTimeEditionConfig, date: startDate });
+	const timeEditorRef = useRef<TimeEditorRef>(null);
+
+	useEffect(() => {
+		setSelectedTags(originalTags);
+	}, [originalTags]);
 
 	const saveNote = useCallback(async () => {
 		if (endDate < startDate) {
@@ -61,7 +89,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 		setLoading(true);
 		setErrorMessage("");
 		try {
-			await calendarService.registerNote(selectedTags, startDate, endDate);
+			await calendarService.createNote(selectedTags, startDate, endDate);
 			setLoading(false);
 			navigation.goBack();
 		} catch (e) {
@@ -115,7 +143,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 			<PopularTagContainer>
 				<PopularTagHeader>
 					<PopularTagHeaderText>{format("calendar.popular_tags_header")}</PopularTagHeaderText>
-					<Pressable onPress={() => navigate(Routes.AllTags, { selectedTags, validateTagSelection: setSelectedTags })}>
+					<Pressable onPress={() => navigate(Routes.AllTags, { day, selectedTags })}>
 						<AllTagButton>{format("calendar.see_all_tags")}</AllTagButton>
 					</Pressable>
 				</PopularTagHeader>
@@ -135,19 +163,21 @@ export const CalendarEditNotesScreen: React.FC = () => {
 				) : null}
 			</PopularTagContainer>
 			<InfoListItem
-				name={"start time toto"}
+				name={format("calendar.start_time")}
 				value={formatHour(startDate)}
 				hasDisclosure
 				action={() => {
-					// TODO
+					setConfig({ ...startTimeEditionConfig, date: startDate });
+					timeEditorRef.current?.present();
 				}}
 			/>
 			<InfoListItem
-				name={"end time toto"}
+				name={format("calendar.end_time")}
 				value={formatHour(endDate)}
 				hasDisclosure
 				action={() => {
-					/* TODO */
+					setConfig({ ...endTimeEditionConfig, date: endDate });
+					timeEditorRef.current?.present();
 				}}
 			/>
 			<Grow />
@@ -159,6 +189,13 @@ export const CalendarEditNotesScreen: React.FC = () => {
 					<PrimaryButton onPress={saveNote}>{format("calendar.save_note")}</PrimaryButton>
 				)}
 			</BottomContainer>
+			<TimeEditor
+				ref={timeEditorRef}
+				defaultTime={config.date}
+				title={config.title}
+				description={config.description}
+				saveTime={config.saveTime}
+			/>
 		</ScrollScreen>
 	) : null;
 };

@@ -13,11 +13,11 @@ import styled from "styled-components/native";
 export const AllTagsScreen: React.FC = () => {
 	const route = useAppRoute<Routes.AllTags>();
 	const originalSelectedTags = route.params.selectedTags;
-	const validateTagSelection = route.params.validateTagSelection;
 
 	const allTags = useAllTags();
 
 	const navigation = useRoutesNavigation();
+	const navigate = navigation.navigate;
 	const { format } = useI18n();
 
 	const [selectedTags, setSelectedTags] = useState(originalSelectedTags);
@@ -27,8 +27,7 @@ export const AllTagsScreen: React.FC = () => {
 			headerRight: () => (
 				<Pressable
 					onPress={() => {
-						validateTagSelection(selectedTags);
-						navigation.goBack();
+						navigate(Routes.CalendarEditNotes, { day: route.params.day, selectedTags });
 					}}
 				>
 					<EditButtonText>{format("global.edit")}</EditButtonText>

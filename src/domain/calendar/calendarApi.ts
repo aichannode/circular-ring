@@ -1,4 +1,5 @@
 import { ApiService } from "@core/api/apiService";
+import { toServerDate } from "@core/utils";
 import { Calendar, CalendarNote, CalendarTag } from "@domain/calendar/calendar";
 import dayjs from "dayjs";
 
@@ -79,6 +80,12 @@ export class CalendarApi {
 				streak: calendarDto.streak,
 				notes,
 			};
+		});
+	}
+
+	async createNote(tags: CalendarTag[], startTime: Date, endTime: Date) {
+		await this.apiService.post<CalendarNote>("/notes/me", {
+			params: { startTime: toServerDate(startTime), endTime: toServerDate(endTime), tags: tags.map((t) => t.id) },
 		});
 	}
 }

@@ -52,7 +52,12 @@ export class CalendarService {
 		}
 	}
 
-	async registerNote(selectedTags: CalendarTag[], startDate: Date, endDate: Date) {
-		// TODO
+	async createNote(tags: CalendarTag[], startDate: Date, endDate: Date) {
+		try {
+			await this.calendarApi.createNote(tags, startDate, endDate);
+		} catch (e) {
+			this.logger.warn("Error registering note : " + e);
+		}
+		await this.calendarStore.fetch(dayjs(startDate).format("YYYY-MM-DD"));
 	}
 }
