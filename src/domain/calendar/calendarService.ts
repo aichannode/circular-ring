@@ -56,7 +56,8 @@ export class CalendarService {
 		try {
 			await this.calendarApi.createNote(tags, startDate, endDate);
 		} catch (e) {
-			this.logger.warn("Error registering note : " + e);
+			this.logger.warn("Error registering note : " + JSON.stringify(e));
+			throw e;
 		}
 		await this.calendarStore.fetch(dayjs(startDate).format("YYYY-MM-DD"));
 	}

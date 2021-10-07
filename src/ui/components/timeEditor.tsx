@@ -7,6 +7,7 @@ import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Platform } from "react-native";
+import { NativeViewGestureHandler } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 
 /**
@@ -38,14 +39,17 @@ export const EditTimeBottomSheet: React.FC<EditTimeBottomSheetProps> = ({
 				<Title>{title}</Title>
 				<Description>{description}</Description>
 			</TopContainer>
-			<DateTimePicker
-				value={time}
-				mode={"time"}
-				is24Hour={true}
-				display="spinner"
-				textColor={colors.textPrimary}
-				onChange={(event: Event, selectedTime: Date | undefined) => (selectedTime ? setTime(selectedTime) : null)}
-			/>
+			<NativeViewGestureHandler disallowInterruption={true}>
+				<EditionContainer>
+					<DateTimePicker
+						value={time}
+						mode={"time"}
+						display="spinner"
+						textColor={colors.textPrimary}
+						onChange={(event: Event, selectedTime: Date | undefined) => (selectedTime ? setTime(selectedTime) : null)}
+					/>
+				</EditionContainer>
+			</NativeViewGestureHandler>
 			<ButtonContainer gap={35}>
 				<TertiaryButton containerBackgroundColor={colors.white} onPress={onClose}>
 					{format("global.cancel")}
@@ -75,8 +79,14 @@ const Description = styled.Text`
 	font-size: 14px;
 	color: ${colors.textPrimary};
 	text-align: center;
-	margin-top: 30px;
+	margin-top: 16px;
 	margin-bottom: 16px;
+`;
+
+const EditionContainer = styled.View`
+	flex: 1;
+	width: 100%;
+	justify-content: center;
 `;
 
 const ButtonContainer = styled(Row)`
@@ -108,7 +118,12 @@ export const TimeEditor = forwardRef<TimeEditorRef, TimeEditorProps>(
 
 		useImperativeHandle(ref, () => ({
 			present: () => {
-				setVisible(true);
+				console.log("Try to present");
+				if (Platform.OS === "android") {
+					setVisible(true);
+				} else {
+					editTimeBottomSheetRef.current?.present();
+				}
 			},
 		}));
 
@@ -131,11 +146,11 @@ export const TimeEditor = forwardRef<TimeEditorRef, TimeEditorProps>(
 							title={title}
 							description={description}
 							defaultTime={defaultTime}
-							onSave={(time) => {
+							onSave={async (time) => {
+								await editTimeBottomSheetRef.current?.asyncClose();
 								saveTime(time);
-								editTimeBottomSheetRef.current?.close();
 							}}
-							onClose={() => editTimeBottomSheetRef.current?.close()}
+							onClose={async () => await editTimeBottomSheetRef.current?.asyncClose()}
 						/>
 					</CircularBottomSheet>
 				)}

@@ -1,5 +1,6 @@
 import { FetchStrategy } from "@betomorrow/micro-stores";
 import { useServices } from "@core/services";
+import { delay } from "@core/utils";
 import { CalendarTag } from "@domain/calendar/calendar";
 import { useCalendar } from "@domain/calendar/hooks/useCalendar";
 import { usePopularTags } from "@domain/calendar/hooks/useTags";
@@ -19,13 +20,13 @@ import { colors } from "@ui/styles/colors";
 import { shadow } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import dayjs from "dayjs";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pressable } from "react-native";
 import { Marking } from "react-native-calendars";
 import styled from "styled-components/native";
 
 interface TimeEditorConfig {
-	date: Date;
+	time: Date;
 	title: string;
 	description: string;
 	saveTime: (time: Date) => void;
@@ -37,7 +38,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 	const navigate = navigation.navigate;
 
 	const route = useAppRoute<Routes.CalendarEditNotes>();
-	const originalTags = route.params.selectedTags ?? [];
+	const originalTags = useMemo(() => route.params.selectedTags ?? [], [route.params.selectedTags]);
 	const day = route.params.day;
 	const date = new Date(day);
 	const dateJS = dayjs(date);
@@ -74,12 +75,12 @@ export const CalendarEditNotesScreen: React.FC = () => {
 		saveTime: setEndDate,
 	};
 
-	const [config, setConfig] = useState<TimeEditorConfig>({ ...startTimeEditionConfig, date: startDate });
+	const [config, setConfig] = useState<TimeEditorConfig>({ ...startTimeEditionConfig, time: startDate });
 	const timeEditorRef = useRef<TimeEditorRef>(null);
 
 	useEffect(() => {
 		setSelectedTags(originalTags);
-	}, [originalTags]);
+	}, [JSON.stringify(originalTags)]);
 
 	const saveNote = useCallback(async () => {
 		if (endDate < startDate) {
@@ -112,9 +113,9 @@ export const CalendarEditNotesScreen: React.FC = () => {
 				<CalendarDay
 					date={{
 						dateString: day,
-						day: parseInt(dateJS.format("D")),
-						month: dateJS.month(),
-						year: dateJS.year(),
+						day: date.getDate(),
+						month: date.getMonth(),
+						year: date.getFullYear(),
 						timestamp: dateJS.date(),
 					}}
 					marking={{ selected: true } as unknown as Marking[]}
@@ -166,8 +167,9 @@ export const CalendarEditNotesScreen: React.FC = () => {
 				name={format("calendar.start_time")}
 				value={formatHour(startDate)}
 				hasDisclosure
-				action={() => {
-					setConfig({ ...startTimeEditionConfig, date: startDate });
+				action={async () => {
+					setConfig({ ...startTimeEditionConfig, time: startDate });
+					await delay(500);
 					timeEditorRef.current?.present();
 				}}
 			/>
@@ -175,8 +177,9 @@ export const CalendarEditNotesScreen: React.FC = () => {
 				name={format("calendar.end_time")}
 				value={formatHour(endDate)}
 				hasDisclosure
-				action={() => {
-					setConfig({ ...endTimeEditionConfig, date: endDate });
+				action={async () => {
+					setConfig({ ...endTimeEditionConfig, time: endDate });
+					await delay(500);
 					timeEditorRef.current?.present();
 				}}
 			/>
@@ -191,7 +194,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 			</BottomContainer>
 			<TimeEditor
 				ref={timeEditorRef}
-				defaultTime={config.date}
+				defaultTime={config.time}
 				title={config.title}
 				description={config.description}
 				saveTime={config.saveTime}
