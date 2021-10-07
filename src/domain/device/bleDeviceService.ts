@@ -445,11 +445,7 @@ export class BleDeviceService {
 		this._currentRingBattery.set(null);
 		this._batteryListenerUnsubscribe?.();
 		await this.favoriteDeviceStorage.clear();
-		// const result = await this.getResponse(Channel.FRS);
-		// if (result !== "ok") {
-		// 	this.logger.warn("Error during device factory-reset", result);
-		// 	throw Error("FactoryReset error");
-		// }
+		await this.writeToDevice(device, Channel.FRS);
 	}
 
 	requestLocation() {

@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { PrimaryButton, Tertiarybutton } from "@ui/components/buttons";
+import { PrimaryButton, TertiaryButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
 import { Spinner } from "@ui/components/spinner";
 import { MediumTitleText, PrimaryText } from "@ui/components/text";
@@ -43,9 +43,9 @@ export const FactoryResetBottomSheet: React.FC<FactoryResetBottomSheetProps> = (
 					<Spinner size={24} />
 				) : (
 					[
-						<Tertiarybutton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
+						<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
 							{format("global.cancel")}
-						</Tertiarybutton>,
+						</TertiaryButton>,
 						<PrimaryButton key={"ok"} onPress={performFactoryReset}>
 							{format("ok")}
 						</PrimaryButton>,
