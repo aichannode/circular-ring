@@ -2,6 +2,7 @@ export interface CalendarTag {
 	id: number;
 	name: string;
 	system: boolean;
+	category: string;
 }
 
 export interface CalendarNote {

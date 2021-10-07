@@ -70,7 +70,7 @@ export const EditAlarmScreen: React.FC = () => {
 							weekdays,
 							time: dateToAlarmTime(alarmTime),
 							vibrationPower,
-							vibrationRepetition: 1,
+							vibrationRepetition: 4,
 							melody,
 							label,
 						};

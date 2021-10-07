@@ -19,30 +19,38 @@ export class CalendarApi {
 	constructor(private readonly apiService: ApiService) {}
 
 	async getAllTags(): Promise<CalendarTag[]> {
-		// const result = await this.apiService.get<CalendarTag[]>("/notes/me/tags");
-		// return result.data;
-		return [
-			{
-				id: 0,
-				name: "Alcohol",
-				system: true,
-			},
-			{
-				id: 1,
-				name: "Sick",
-				system: true,
-			},
-			{
-				id: 2,
-				name: "Friends",
-				system: true,
-			},
-			{
-				id: 3,
-				name: "Baby care",
-				system: false,
-			},
-		];
+		const result = await this.apiService.get<CalendarTag[]>("/notes/me/tags");
+		console.log("<= " + JSON.stringify(result.data));
+		if (result.data.length > 0) {
+			return result.data;
+		} else {
+			return [
+				{
+					id: 0,
+					name: "Alcohol",
+					system: true,
+					category: "Toto",
+				},
+				{
+					id: 1,
+					name: "Sick",
+					system: true,
+					category: "Toto",
+				},
+				{
+					id: 2,
+					name: "Friends",
+					system: true,
+					category: "Tutu",
+				},
+				{
+					id: 3,
+					name: "Baby care",
+					system: true,
+					category: "Tutu",
+				},
+			];
+		}
 	}
 
 	async getCalendar(date: Date): Promise<Calendar[]> {

@@ -1,41 +1,79 @@
 import { FetchStrategy } from "@betomorrow/micro-stores";
+import { useServices } from "@core/services";
 import { CalendarTag } from "@domain/calendar/calendar";
 import { useCalendar } from "@domain/calendar/hooks/useCalendar";
-import { useTags } from "@domain/calendar/hooks/useTags";
+import { usePopularTags } from "@domain/calendar/hooks/useTags";
 import { PrimaryButton } from "@ui/components/buttons";
 import { CalendarDay } from "@ui/components/calendar/calendarDay";
 import { circularCalendarTheme } from "@ui/components/calendar/circularCalendarTheme";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
+import { Grow } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
+import { PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
-import { Routes, useAppRoute } from "@ui/navigation/routes";
-import { CalendarTagListView } from "@ui/screens/calendar/calendarTagListView";
+import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
+import { TagSelectionView } from "@ui/screens/calendar/tagSelectionView";
 import { colors } from "@ui/styles/colors";
 import { shadow } from "@ui/styles/containerStyles";
+import { textStyles } from "@ui/styles/textStyles";
 import dayjs from "dayjs";
 import React, { useCallback, useState } from "react";
+import { Pressable } from "react-native";
 import { Marking } from "react-native-calendars";
 import styled from "styled-components/native";
 
 export const CalendarEditNotesScreen: React.FC = () => {
 	const { format, formatDateInterval, formatHour } = useI18n();
+	const navigation = useRoutesNavigation();
+	const navigate = navigation.navigate;
+
 	const route = useAppRoute<Routes.CalendarEditNotes>();
 	const day = route.params.day;
 	const date = new Date(day);
 	const dateJS = dayjs(date);
 
+	const { calendarService } = useServices();
 	const calendar = useCalendar(day, FetchStrategy.Never);
-	const tags = useTags();
+	const popularTags = usePopularTags();
 
-	const [isLoading, setLoading] = useState(false);
+	const dateWithHourMinute = useCallback(
+		(hour: number, minute: number) => {
+			const d = new Date(day);
+			d.setHours(hour);
+			d.setMinutes(minute);
+			return d;
+		},
+		[day]
+	);
+
 	const [selectedTags, setSelectedTags] = useState<CalendarTag[]>([]);
+	const [startDate, setStartDate] = useState(dateWithHourMinute(new Date().getHours(), new Date().getMinutes()));
+	const [endDate, setEndDate] = useState(dateWithHourMinute(new Date().getHours(), new Date().getMinutes()));
+	const [isLoading, setLoading] = useState(false);
+	const [errorMessage, setErrorMessage] = useState("");
 
 	const saveNote = useCallback(async () => {
-		// TODO
-	}, []);
+		if (endDate < startDate) {
+			setErrorMessage(format("calendar.note_time_error"));
+			return;
+		}
+		setLoading(true);
+		setErrorMessage("");
+		try {
+			await calendarService.registerNote(selectedTags, startDate, endDate);
+			setLoading(false);
+			navigation.goBack();
+		} catch (e) {
+			setLoading(false);
+			setErrorMessage(format("global.default_error"));
+		}
+	}, [selectedTags, startDate, endDate]);
 
-	console.log("day param : " + day + " / day : " + dateJS.day());
+	const allRawTags = [...selectedTags, ...popularTags];
+	const visibleTags = allRawTags.filter((item, pos) => {
+		return allRawTags.indexOf(item) == pos;
+	});
 
 	return calendar ? (
 		<ScrollScreen contentContainerStyle={{ paddingVertical: 20 }}>
@@ -46,7 +84,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 				<CalendarDay
 					date={{
 						dateString: day,
-						day: dateJS.day(),
+						day: parseInt(dateJS.format("D")),
 						month: dateJS.month(),
 						year: dateJS.year(),
 						timestamp: dateJS.date(),
@@ -74,34 +112,46 @@ export const CalendarEditNotesScreen: React.FC = () => {
 				</>
 			) : null}
 			<InfoListHeader>{format("calendar.add_note")}</InfoListHeader>
-			<CalendarTagListView
-				tags={tags}
-				selectedTags={selectedTags}
-				onClickTag={(tag) => {
-					const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
-					if (isAlreadySelected) {
-						setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
-					} else {
-						setSelectedTags([...selectedTags, tag]);
-					}
-				}}
-			/>
+			<PopularTagContainer>
+				<PopularTagHeader>
+					<PopularTagHeaderText>{format("calendar.popular_tags_header")}</PopularTagHeaderText>
+					<Pressable onPress={() => navigate(Routes.AllTags, { selectedTags, validateTagSelection: setSelectedTags })}>
+						<AllTagButton>{format("calendar.see_all_tags")}</AllTagButton>
+					</Pressable>
+				</PopularTagHeader>
+				{visibleTags ? (
+					<TagSelectionView
+						tags={visibleTags}
+						selectedTags={selectedTags}
+						onClickTag={(tag) => {
+							const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
+							if (isAlreadySelected) {
+								setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
+							} else {
+								setSelectedTags([...selectedTags, tag]);
+							}
+						}}
+					/>
+				) : null}
+			</PopularTagContainer>
 			<InfoListItem
 				name={"start time toto"}
-				value={formatHour(new Date())}
+				value={formatHour(startDate)}
 				hasDisclosure
 				action={() => {
-					/* TODO */
+					// TODO
 				}}
 			/>
 			<InfoListItem
 				name={"end time toto"}
-				value={formatHour(new Date())}
+				value={formatHour(endDate)}
 				hasDisclosure
 				action={() => {
 					/* TODO */
 				}}
 			/>
+			<Grow />
+			<ErrorMessage>{errorMessage}</ErrorMessage>
 			<BottomContainer>
 				{isLoading ? (
 					<Spinner size={24} />
@@ -115,6 +165,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 
 const DayContainer = styled.View`
 	${shadow()};
+	border-radius: 2px;
 	background-color: ${colors.white};
 	align-items: center;
 	padding: 20px;
@@ -132,9 +183,39 @@ const DateStrong = styled.Text`
 	font-weight: 500;
 `;
 
+const PopularTagContainer = styled.View`
+	padding: 15px 20px;
+	background-color: ${colors.lightgray};
+	margin-bottom: 1px;
+`;
+
+const PopularTagHeader = styled.View`
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+`;
+
+const PopularTagHeaderText = styled(PrimaryText)`
+	font-size: 14px;
+`;
+
+const AllTagButton = styled.Text`
+	font-size: 14px;
+	color: ${colors.primary};
+	padding: 10px 0 10px 10px;
+`;
+
+const ErrorMessage = styled.Text`
+	${textStyles.errorMessage};
+	margin-top: 20px;
+	text-align: center;
+	align-self: center;
+`;
+
 const BottomContainer = styled.View`
 	margin-top: 20px;
 	margin-bottom: 30px;
 	height: 38px;
 	justify-content: center;
+	align-items: center;
 `;

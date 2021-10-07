@@ -5,14 +5,16 @@ import { CalendarApi } from "@domain/calendar/calendarApi";
 import dayjs from "dayjs";
 import { observable } from "micro-observables";
 
+export const PopularTagCategory = "Popular";
+
 export class CalendarService {
 	private logger = getLogger("CalendarService");
 
 	calendarStore = new Store((day) => this.fetchCalendar(dayjs(day).toDate()), "day");
 
-	private _allTagList = observable<CalendarTag[]>([]);
+	private _tagMap = observable<Map<string, CalendarTag[]>>(new Map());
 
-	readonly allTagList = this._allTagList.readOnly();
+	readonly tagMap = this._tagMap.readOnly();
 
 	constructor(private readonly calendarApi: CalendarApi) {}
 
@@ -24,6 +26,9 @@ export class CalendarService {
 		try {
 			const calendarList = await this.calendarApi.getCalendar(date);
 			this.logger.debug("Got calendar : " + JSON.stringify(calendarList));
+
+			// TODO update popular category from calendar data
+
 			return {
 				day: dayjs(date).format("YYYY-MM-DD"),
 				calendars: calendarList,
@@ -36,9 +41,18 @@ export class CalendarService {
 
 	private async fetchAllTags() {
 		try {
-			this._allTagList.set(await this.calendarApi.getAllTags());
+			const tags = await this.calendarApi.getAllTags();
+			const categories = tags.map((tag) => tag.category);
+			const categoryMap = new Map(
+				categories.map((category) => [category, tags.filter((tag) => tag.category === category)])
+			);
+			this._tagMap.set(categoryMap);
 		} catch (e) {
 			this.logger.warn("Error retrieving tags :", e);
 		}
+	}
+
+	async registerNote(selectedTags: CalendarTag[], startDate: Date, endDate: Date) {
+		// TODO
 	}
 }

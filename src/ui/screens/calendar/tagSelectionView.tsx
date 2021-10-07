@@ -1,7 +1,6 @@
 import { CalendarTag } from "@domain/calendar/calendar";
 import { Row } from "@ui/components/layout";
 import { CalendarTagView } from "@ui/screens/calendar/calendarTagView";
-import { colors } from "@ui/styles/colors";
 import React from "react";
 import styled from "styled-components/native";
 
@@ -11,7 +10,7 @@ interface CalendarTagListViewProps {
 	onClickTag: (tag: CalendarTag) => void;
 }
 
-export const CalendarTagListView: React.FC<CalendarTagListViewProps> = ({ tags, selectedTags, onClickTag }) => {
+export const TagSelectionView: React.FC<CalendarTagListViewProps> = ({ tags, selectedTags, onClickTag }) => {
 	return (
 		<Container gap={8} wrap={"wrap"}>
 			{tags.map((tag) => {
@@ -30,7 +29,5 @@ export const CalendarTagListView: React.FC<CalendarTagListViewProps> = ({ tags, 
 };
 
 const Container = styled(Row)`
-	background-color: ${colors.lightgray};
-	padding: 10px 20px 25px;
 	margin-bottom: 1px;
 `;
