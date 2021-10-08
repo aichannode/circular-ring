@@ -13,10 +13,11 @@ import styled from "styled-components/native";
 
 interface AlarmCardProps {
 	data: RingAlarm;
+	disabled?: boolean;
 	style?: StyleProp<ViewStyle>;
 }
 
-export const AlarmCard: React.FC<AlarmCardProps> = ({ data, style }) => {
+export const AlarmCard: React.FC<AlarmCardProps> = ({ data, disabled, style }) => {
 	const { circleAlarmService } = useServices();
 	const { formatDay } = useI18n();
 	const { id, isActivated } = data;
@@ -46,6 +47,7 @@ export const AlarmCard: React.FC<AlarmCardProps> = ({ data, style }) => {
 			</LabelContainer>
 			<Grow />
 			<SwitchButton
+				disabled={disabled}
 				style={{ transform: Platform.OS === "android" ? [{ scale: 1.5 }] : undefined }}
 				ios_backgroundColor={colors.gray}
 				trackColor={{ false: colors.gray, true: colors.blue }}

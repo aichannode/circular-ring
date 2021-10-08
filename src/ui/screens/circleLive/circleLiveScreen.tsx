@@ -1,6 +1,7 @@
-import { getScoreQuality } from "@domain/measure/score";
+import { useServices } from "@core/services";
 import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
 import { useAutoConnectState, useLiveData } from "@domain/device/hooks";
+import { getScoreQuality } from "@domain/measure/score";
 import { usePreferences } from "@domain/preferences/hooks";
 import { getIntensity, Intensity } from "@domain/ring/ringLiveData";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
@@ -16,7 +17,6 @@ import styled from "styled-components/native";
 import { HeartBeatCard } from "./heartBeatCard";
 import { LiveTutorialBottomSheet } from "./liveTutorialBottomSheet";
 import { NoRingConnectedBottomSheet } from "./noRingConnectedBottomSheet";
-import { useServices } from "@core/services";
 
 export const CircleLiveScreen: React.FC = () => {
 	const { format, formatIntensity, formatScoreQuality } = useI18n();

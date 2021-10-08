@@ -1,4 +1,5 @@
 import { useServices } from "@core/services";
+import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { alarmTimeToDate, dateToAlarmTime, Melody, Weekdays } from "@domain/ring/ringAlarm";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
@@ -27,6 +28,7 @@ import styled from "styled-components/native";
 export const EditAlarmScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
 	const route = useAppRoute<Routes.EditAlarm>();
+	const { alarms: allAlarm } = useAlarms();
 	const initialAlarm = route.params?.initialAlarm;
 	const { format, formatDay, formatSnooze, formatSmart, formatMelody } = useI18n();
 	const { circleAlarmService } = useServices();
@@ -43,7 +45,9 @@ export const EditAlarmScreen: React.FC = () => {
 			Weekdays.FRIDAY,
 		]
 	);
-	const [label, setLabel] = useState(initialAlarm?.label ?? "Alarm");
+	const [label, setLabel] = useState(
+		initialAlarm?.label ?? format("alarm.label.default") + (allAlarm.length > 0 ? ` ${allAlarm.length + 1}` : "")
+	);
 	const [snooze, setSnooze] = useState(initialAlarm?.snooze ?? 0);
 	const [smart, setSmart] = useState(initialAlarm?.smart ?? 0);
 	const [isSmart, setIsSmart] = useState(initialAlarm?.isSmart ?? false);

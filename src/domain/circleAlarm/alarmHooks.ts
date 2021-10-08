@@ -9,8 +9,11 @@ export const useAlarms = () => {
 
 	const loadAlarms = useCallback(async () => {
 		setLoading(true);
-		await circleAlarmService.fetchAlarmList();
-		setLoading(false);
+		try {
+			await circleAlarmService.fetchAlarmList();
+		} finally {
+			setLoading(false);
+		}
 	}, []);
 
 	return { loading, alarms, loadAlarms };
