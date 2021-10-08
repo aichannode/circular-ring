@@ -289,7 +289,7 @@ export class BleDeviceService {
 					this.stopScan();
 					reject(error);
 				} else if (device) {
-					this.logger.info(`Discovered device named ${device.name} with id ${device.id}`);
+					this.logger.info(`Discovered device named ${device.name} with id ${device.id} ... ${JSON.stringify(device)}`);
 					if (device.name === name) {
 						this.stopScan();
 						resolve(device);
@@ -416,6 +416,23 @@ export class BleDeviceService {
 			return;
 		}
 		this.logger.info("Disconnecting from device", device.name);
+		await this.forgetBeforeDisconnection();
+		await device.cancelConnection();
+		this.logger.info(`Disconnection from device ${device.name} succeeded`);
+	}
+
+	async factoryResetCurrentRing() {
+		const device = this._connectedDevice.get();
+		if (!device) {
+			this.logger.warn("No connected device");
+			throw Error("No connected device");
+		}
+		this.logger.info("Factory-reset device", device.name);
+		await this.forgetBeforeDisconnection();
+		await this.writeToDevice(device, Channel.FRS);
+	}
+
+	private async forgetBeforeDisconnection() {
 		this._connectedDevice.set(null);
 		this._connectionState.set(DeviceConnectionState.DISCONNECTED);
 		this._onDeviceDisconnectedSubscription?.remove();
@@ -425,8 +442,6 @@ export class BleDeviceService {
 		this._currentRingBattery.set(null);
 		this._batteryListenerUnsubscribe?.();
 		await this.favoriteDeviceStorage.clear();
-		await device.cancelConnection();
-		this.logger.info(`Disconnection from device ${device.name} succeeded`);
 	}
 
 	requestLocation() {
