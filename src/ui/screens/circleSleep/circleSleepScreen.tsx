@@ -1,7 +1,8 @@
-import { useSleepQualityDailyData } from "@domain/measure/hooks";
+import { useSleepDurationData, useSleepQualityDailyData } from "@domain/measure/hooks";
 import { allSleepQualityMetrics } from "@domain/measure/metric";
 import { InfoListHeader } from "@ui/components/infoList";
 import { Stack } from "@ui/components/layout";
+import { DailyPhasesPie } from "@ui/components/measure/dailyPhasesPie";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
 import { ScoreGauge } from "@ui/components/measure/scoreGauge";
 import { ScoreSection } from "@ui/components/measure/scoreSection";
@@ -9,7 +10,7 @@ import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import React, { useState } from "react";
-import { LayoutAnimation } from "react-native";
+import { LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
 import { scoreDetailsDataInfos } from "./measureDisplayInfos";
 
@@ -18,6 +19,7 @@ const scoreOptimalThreshold = 0.9;
 
 export const CircleSleepScreen: React.FC = () => {
 	const dailyData = useSleepQualityDailyData();
+	const sleepDurationData = useSleepDurationData();
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const { format } = useI18n();
 
@@ -33,6 +35,10 @@ export const CircleSleepScreen: React.FC = () => {
 				score={dailyData.metrics["user.daily.sleep.score"]}
 				color={colors.darkBlue}
 			/>
+			<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
+			<View>
+				<DailyPhasesPie sleepDurationData={sleepDurationData} />
+			</View>
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
 				{
