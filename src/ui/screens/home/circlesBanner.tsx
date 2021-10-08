@@ -68,8 +68,10 @@ const Container = styled(Stack)`
 const CircleLabel = styled(PrimaryText)`
 	font-size: 12px;
 	text-align: center;
+	flex-wrap: wrap;
 `;
 
 const CircleView = styled.Pressable`
-	width: 60px;
+	max-width: 80px;
+	min-width: 60px;
 `;
