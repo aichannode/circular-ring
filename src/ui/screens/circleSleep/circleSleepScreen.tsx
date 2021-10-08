@@ -22,7 +22,7 @@ const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
 
 export const CircleSleepScreen: React.FC = () => {
-	const sleepDurationData = useSleepDurationData();
+	const { result: sleepDurationData } = useSleepDurationData();
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const { format } = useI18n();
 
@@ -31,16 +31,8 @@ export const CircleSleepScreen: React.FC = () => {
 
 	const { result: dailyData } = useSleepQualityDailyData(selectedDay);
 
-	// if (!dailyData) {
-	// 	return null;
-	// }
-
 	return (
 		<Container>
-			<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
-			<View>
-				<DailyPhasesPie sleepDurationData={sleepDurationData} />
-			</View>
 			<View>
 				<ScoreSection
 					style={{ marginTop: 20 }}
@@ -58,6 +50,8 @@ export const CircleSleepScreen: React.FC = () => {
 					}}
 				/>
 			</View>
+			<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
+			<View>{sleepDurationData && <DailyPhasesPie sleepDurationData={sleepDurationData.infos} />}</View>
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
 				{

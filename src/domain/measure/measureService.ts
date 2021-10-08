@@ -13,24 +13,19 @@ import {
 	Metric,
 	MetricInfo,
 } from "./metric";
-import { DailyPhase, SleepDurationInfos } from "./sleep";
+import { DailyPhase } from "./sleep";
 
 export class MeasureService {
 	private logger = getLogger("📊 MeasureService");
 
-	// private _activityData = observable<MetricInfo | null>(null);
-	// private _sleepQualityDailyData = observable<MetricInfo | null>(null);
 	private _wakeUpScore = observable<number | null>(null);
-	private _sleepDurationInfos = observable<SleepDurationInfos | null>(null);
 
-	// readonly activityData = this._activityData.readOnly();
-	// readonly sleepQualityDailyData = this._sleepQualityDailyData.readOnly();
 	readonly wakeUpScore = this._wakeUpScore.readOnly();
-	readonly sleepDurationInfos = this._sleepDurationInfos.readOnly();
 
 	activityData = new Store((day) => this.fetchActivityData(day), "date");
 	sleepQualityData = new Store((day) => this.fetchSleepQualityDailyData(day), "date");
 	dailyGlobalScores = new Store((day) => this.fetchGlobalScore(day), "date");
+	sleepDurationInfos = new Store((day) => this.fetchSleepDurationInfos(day), "date");
 
 	constructor(private readonly measureApi: MeasureApi) {}
 
@@ -106,15 +101,15 @@ export class MeasureService {
 		return lastMetric;
 	}
 
-	async fetchSleepDurationInfos() {
+	async fetchSleepDurationInfos(ymdDay?: string) {
 		const allMetrics = await this.measureApi.getMeasures(
 			["user.daily.total.sleep.duration", "user.sleep.stage", "user.sleep.napping"],
-			dayjs().subtract(1, "day").toDate(),
-			new Date()
+			dayjs(ymdDay).subtract(1, "day").toDate(),
+			ymdDay ? new Date(ymdDay) : new Date()
 		);
 
 		const sleepDurationInfos = getDurationInfos(allMetrics);
-		this._sleepDurationInfos.set(sleepDurationInfos);
+		return { date: ymdDay ?? dayjs().format("YYYY-MM-DD"), infos: sleepDurationInfos };
 	}
 }
 
