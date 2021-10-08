@@ -120,11 +120,7 @@ const SearchWrapper = styled(Row)`
 	padding-left: 14px;
 	padding-right: 7px;
 	height: 38px;
-	shadow-color: #000000;
-	shadow-offset: 0 10px;
-	shadow-opacity: 0.1;
-	shadow-radius: 18px;
-	elevation: 10;
+	margin: 6px 16px;
 `;
 
 const SearchInput = styled.TextInput`
