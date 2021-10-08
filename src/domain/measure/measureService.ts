@@ -13,6 +13,7 @@ import {
 	Metric,
 	MetricInfo,
 } from "./metric";
+import { DailyPhase, SleepDurationInfos } from "./sleep";
 
 export class MeasureService {
 	private logger = getLogger("📊 MeasureService");
@@ -20,10 +21,12 @@ export class MeasureService {
 	private _activityData = observable<MetricInfo | null>(null);
 	private _sleepQualityDailyData = observable<MetricInfo | null>(null);
 	private _wakeUpScore = observable<number | null>(null);
+	private _sleepDurationInfos = observable<SleepDurationInfos | null>(null);
 
 	readonly activityData = this._activityData.readOnly();
 	readonly sleepQualityDailyData = this._sleepQualityDailyData.readOnly();
 	readonly wakeUpScore = this._wakeUpScore.readOnly();
+	readonly sleepDurationInfos = this._sleepDurationInfos.readOnly();
 
 	dailyGlobalScores = new Store((day) => this.fetchGlobalScore(day), "date");
 
@@ -90,4 +93,62 @@ export class MeasureService {
 		const lastMetric = allMetrics[allMetrics.length - 1] ?? null;
 		return lastMetric;
 	}
+
+	async fetchSleepDurationInfos() {
+		const allMetrics = await this.measureApi.getMeasures(
+			["user.daily.total.sleep.duration", "user.sleep.stage", "user.sleep.napping"],
+			dayjs().subtract(1, "day").toDate(),
+			new Date()
+		);
+
+		const sleepDurationInfos = getDurationInfos(allMetrics);
+		this._sleepDurationInfos.set(sleepDurationInfos);
+	}
+}
+
+function getDurationInfos(
+	allMetrics: MetricInfo<"user.sleep.stage" | "user.sleep.napping" | "user.daily.total.sleep.duration">[]
+) {
+	// Waiting for backend algorithm
+
+	return {
+		totalSleepDuration: 9 * 60 + 23,
+		dailyPhaseInfos: [
+			{
+				phase: DailyPhase.LYING,
+				start: dayjs().subtract(1, "day").hour(22).toDate(),
+				end: dayjs().subtract(1, "day").hour(23).toDate(),
+			},
+			{
+				phase: DailyPhase.SLEEP,
+				start: dayjs().subtract(1, "day").hour(23).toDate(),
+				end: dayjs().hour(1).toDate(),
+			},
+			{
+				phase: DailyPhase.DISTURBANCE,
+				start: dayjs().hour(1).toDate(),
+				end: dayjs().hour(2).toDate(),
+			},
+			{
+				phase: DailyPhase.SLEEP,
+				start: dayjs().hour(2).toDate(),
+				end: dayjs().hour(6).minute(0).toDate(),
+			},
+			{
+				phase: DailyPhase.AWAKE,
+				start: dayjs().hour(6).minute(0).toDate(),
+				end: dayjs().hour(14).toDate(),
+			},
+			{
+				phase: DailyPhase.NAP,
+				start: dayjs().hour(14).toDate(),
+				end: dayjs().hour(15).toDate(),
+			},
+			{
+				phase: DailyPhase.AWAKE,
+				start: dayjs().hour(15).toDate(),
+				end: dayjs().hour(19).toDate(),
+			},
+		],
+	};
 }
