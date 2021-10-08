@@ -1,5 +1,5 @@
 import { getLogger } from "@core/logger/logger";
-import { delay } from "@core/utils";
+import { delay, observableToPromise } from "@core/utils";
 import { observable } from "micro-observables";
 import { PermissionsAndroid, Platform } from "react-native";
 import { BleManager, State } from "react-native-ble-plx";
@@ -32,8 +32,8 @@ export class BluetoothService {
 		}
 		if (Platform.OS === "ios") {
 			if (!this.enabled.get()) {
-				this.logger.warn("Bluetooth not enabled");
-				throw Error("CannotEnableBluetoothOnIOS");
+				this.logger.warn("Bluetooth not enabled on iOS, waiting... for activation");
+				await observableToPromise(this.enabled);
 			}
 		} else {
 			if ("granted" !== (await PermissionsAndroid.request("android.permission.ACCESS_FINE_LOCATION"))) {
