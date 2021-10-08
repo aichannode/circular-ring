@@ -16,6 +16,7 @@ import styled from "styled-components/native";
 import { HeartBeatCard } from "./heartBeatCard";
 import { LiveTutorialBottomSheet } from "./liveTutorialBottomSheet";
 import { NoRingConnectedBottomSheet } from "./noRingConnectedBottomSheet";
+import { useServices } from "@core/services";
 
 export const CircleLiveScreen: React.FC = () => {
 	const { format, formatIntensity, formatScoreQuality } = useI18n();
@@ -27,6 +28,7 @@ export const CircleLiveScreen: React.FC = () => {
 	const autoConnectState = useAutoConnectState();
 
 	const preferences = usePreferences();
+	const { userPreferencesService } = useServices();
 
 	const disconnectedBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const tutorialBottomSheet = useRef<CircularBottomSheetHandle>(null);
@@ -135,8 +137,9 @@ export const CircleLiveScreen: React.FC = () => {
 			</CircularBottomSheet>
 			<CircularBottomSheet snapPoints={[610]} ref={tutorialBottomSheet}>
 				<LiveTutorialBottomSheet
-					onFinish={async () => {
+					onFinish={async (hideTutorial) => {
 						await tutorialBottomSheet.current?.asyncClose();
+						hideTutorial && userPreferencesService.skipLiveTutorial();
 						start();
 					}}
 				/>
