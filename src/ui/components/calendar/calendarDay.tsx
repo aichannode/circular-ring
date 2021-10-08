@@ -2,6 +2,7 @@ import { FetchStrategy } from "@betomorrow/micro-stores";
 import { useCalendar } from "@domain/calendar/hooks/useCalendar";
 import { useGlobalScore } from "@domain/measure/hooks";
 import { optimalGlobalScoreThreshold } from "@domain/measure/score";
+import { Row } from "@ui/components/layout";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import { Image } from "react-native";
@@ -28,7 +29,7 @@ export const CalendarDay: React.FC<DayComponentProps> = React.memo(({ date, mark
 				</DayText>
 				<TagsContainer>
 					{/* TODO */}
-					{/*<Row gap={2}>{dayCalendar ? dayCalendar.notes : null}</Row>*/}
+					<Row gap={2}>{dayCalendar && dayCalendar.notes.length > 0 ? <NoteDot /> : null}</Row>
 				</TagsContainer>
 			</DayInfo>
 		</Container>
@@ -61,5 +62,12 @@ const StarContainer = styled.View`
 const TagsContainer = styled.View`
 	height: 14px;
 	align-items: center;
-	background-color: blue;
+	justify-content: center;
+`;
+
+const NoteDot = styled.View`
+	width: 6px;
+	height: 6px;
+	border-radius: 3px;
+	background-color: ${colors.primary};
 `;

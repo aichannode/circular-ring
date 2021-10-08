@@ -5,11 +5,12 @@ import dayjs from "dayjs";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
 import { WordingKey } from "../wordings";
-import { Colored, Strong } from "./components/text";
+import { Bold, Colored, Strong } from "./components/text";
 
 const xmlFormatters = {
 	strong: (...chunks: string[]) => <Strong>{chunks}</Strong>,
 	colored: (...chunks: string[]) => <Colored>{chunks}</Colored>,
+	bold: (...chunks: string[]) => <Bold>{chunks}</Bold>,
 } as const;
 
 export function useI18n() {

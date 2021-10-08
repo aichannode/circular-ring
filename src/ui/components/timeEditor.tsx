@@ -115,7 +115,6 @@ export const TimeEditor = forwardRef<TimeEditorRef, TimeEditorProps>(
 
 		useImperativeHandle(ref, () => ({
 			present: () => {
-				console.log("Try to present");
 				if (Platform.OS === "android") {
 					setVisible(true);
 				} else {

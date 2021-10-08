@@ -64,4 +64,8 @@ export class CalendarApi {
 			tags: tags.map((t) => t.id),
 		});
 	}
+
+	async deleteNote(noteId: number) {
+		await this.apiService.delete(`/notes/me/${noteId}`);
+	}
 }

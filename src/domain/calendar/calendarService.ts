@@ -1,6 +1,6 @@
 import { Store } from "@betomorrow/micro-stores";
 import { getLogger } from "@core/logger/logger";
-import { CalendarTag } from "@domain/calendar/calendar";
+import { CalendarNote, CalendarTag } from "@domain/calendar/calendar";
 import { CalendarApi } from "@domain/calendar/calendarApi";
 import dayjs from "dayjs";
 import { observable } from "micro-observables";
@@ -70,6 +70,16 @@ export class CalendarService {
 			this.logger.warn("Error registering note : " + JSON.stringify(e));
 			throw e;
 		}
-		await this.calendarStore.fetch(dayjs(startDate).format("YYYY-MM-DD"));
+		await this.calendarStore.fetch(dayjs(startDate).startOf("month").format("YYYY-MM-DD"));
+	}
+
+	async deleteNote(note: CalendarNote) {
+		try {
+			await this.calendarApi.deleteNote(note.id);
+		} catch (e) {
+			this.logger.warn("Error deleting note : " + JSON.stringify(e));
+			throw e;
+		}
+		await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));
 	}
 }

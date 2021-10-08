@@ -1,13 +1,15 @@
 import { FetchStrategy } from "@betomorrow/micro-stores";
 import { useServices } from "@core/services";
+import { useCalendar } from "@domain/calendar/hooks/useCalendar";
 import { useGlobalScore } from "@domain/measure/hooks";
 import { CalendarView } from "@ui/components/calendar/calendarView";
 import { InfoListHeader } from "@ui/components/infoList";
-import { ResponsiveCenterView } from "@ui/components/layout";
+import { ResponsiveCenterView, Stack } from "@ui/components/layout";
 import { GlobalScoreCard } from "@ui/components/measure/globalScoreCard";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { CalendarNoteItem } from "@ui/screens/calendar/calendarNoteItem";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import dayjs from "dayjs";
@@ -21,13 +23,13 @@ export const CalendarScreen: React.FC = () => {
 	const { format } = useI18n();
 
 	const [selectedDay, setSelectedDay] = useState(dayjs().format("YYYY-MM-DD"));
+	const calendar = useCalendar(selectedDay, FetchStrategy.Never);
 
 	const firstDayOfMonth = useMemo(() => dayjs(selectedDay).startOf("month").format("YYYY-MM-DD"), [selectedDay]);
 
 	useEffect(() => {
 		const firstOfMonth = new Date(firstDayOfMonth);
 		measureService.fetchMonthGlobalScores(firstOfMonth);
-		// calendarService.fetchCalendar(firstOfMonth);
 		calendarService.calendarStore.fetch(firstDayOfMonth);
 	}, [firstDayOfMonth]);
 
@@ -47,6 +49,13 @@ export const CalendarScreen: React.FC = () => {
 					<EditButtonText>{format("calendar.edit_notes")}</EditButtonText>
 				</Pressable>
 			</NoteHeader>
+			<Stack gap={1}>
+				{!calendar
+					? null
+					: calendar.notes.map((note) => {
+							return <CalendarNoteItem key={`${note.id}-${note.tag.name}`} note={note} color={colors.primary} />;
+					  })}
+			</Stack>
 		</Container>
 	);
 };
