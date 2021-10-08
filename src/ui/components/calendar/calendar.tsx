@@ -10,8 +10,14 @@ interface CalendarProps {
 	style?: StyleProp<ViewStyle>;
 	selectedDay: string;
 	onDaySelected: (day: string) => void;
+	autoSelectDayOnMonthChange?: boolean;
 }
-export const Calendar: React.FC<CalendarProps> = ({ selectedDay, onDaySelected, style }) => {
+export const Calendar: React.FC<CalendarProps> = ({
+	selectedDay,
+	onDaySelected,
+	autoSelectDayOnMonthChange = true,
+	style,
+}) => {
 	const autoSelectDay = useCallback(
 		(dayOfMonth: string) => {
 			const newDay = dayjs(dayOfMonth);
@@ -37,9 +43,13 @@ export const Calendar: React.FC<CalendarProps> = ({ selectedDay, onDaySelected, 
 			disableArrowLeft={isFirstMonth}
 			disableArrowRight={isLastMonth}
 			onDayPress={(day) => onDaySelected(day.dateString)}
-			onMonthChange={(date) => {
-				autoSelectDay(date.dateString);
-			}}
+			onMonthChange={
+				autoSelectDayOnMonthChange
+					? (date) => {
+							autoSelectDay(date.dateString);
+					  }
+					: undefined
+			}
 			style={style}
 			hideExtraDays
 			markedDates={selectedDay ? { [selectedDay]: { selected: true } } : undefined}

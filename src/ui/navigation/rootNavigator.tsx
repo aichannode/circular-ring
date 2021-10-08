@@ -189,7 +189,7 @@ export const RootNavigator: React.FC = () => {
 	const isAuthenticated = !!useAuthenticatedUserEmail();
 
 	const accountLinkedToDevice = useAccountLinked();
-	const hasUser = useUser();
+	const hasUser = !!useUser();
 	const deviceStored = useDeviceStored();
 
 	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
