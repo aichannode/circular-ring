@@ -147,7 +147,10 @@ export type Metric =
 	| "user.daily.%rem.stage"
 	| "user.daily.%deep.stage"
 	| "user.daily.time.to.fall.asleep"
-	| "user.daily.sleep.debt";
+	| "user.daily.sleep.debt"
+	| "user.daily.total.sleep.duration"
+	| "user.sleep.stage"
+	| "user.sleep.napping";
 
 export const alldailyActivityMetrics = [
 	"user.daily.steps",
