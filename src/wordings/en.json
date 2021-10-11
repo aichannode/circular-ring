@@ -100,6 +100,7 @@
   "global.done": "Done",
   "global.date_interval_linker": "to",
   "global.edit": "Edit",
+  "global.add": "Add",
   "home.sync.syncing": "Refreshing...",
   "home.sync.error": "Sync failed",
   "home.sync.success": "Sync success",

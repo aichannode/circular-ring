@@ -2,7 +2,6 @@ import { useAllTags } from "@domain/calendar/hooks/useTags";
 import { InfoListHeader } from "@ui/components/infoList";
 import { Row } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
-import { MediumTitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
 import { TagSelectionView } from "@ui/screens/calendar/tagSelectionView";
@@ -37,7 +36,7 @@ export const AllTagsScreen: React.FC = () => {
 						navigate(Routes.CalendarEditNotes, { day: route.params.day, selectedTags });
 					}}
 				>
-					<EditButtonText>{format("global.edit")}</EditButtonText>
+					<CheckLogo source={require("@assets/images/checkSmall.png")} />
 				</Pressable>
 			),
 		});
@@ -106,10 +105,6 @@ export const AllTagsScreen: React.FC = () => {
 	);
 };
 
-const EditButtonText = styled(MediumTitleText)`
-	color: ${colors.primary};
-`;
-
 const TagListContainer = styled.View`
 	padding: 0 20px;
 `;
@@ -135,4 +130,10 @@ const CloseWrapper = styled.Pressable`
 	background-color: ${colors.lightgray};
 	align-items: center;
 	justify-content: center;
+`;
+
+const CheckLogo = styled(Image)`
+	height: 21px;
+	width: 21px;
+	tint-color: ${colors.primary};
 `;

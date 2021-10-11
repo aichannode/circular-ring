@@ -66,7 +66,7 @@ const homeBannerApi = new HomeBannerApi(apiService);
 const homeBannerService = new HomeBannerService(homeBannerStorage, homeBannerApi);
 
 const calendarApi = new CalendarApi(apiService);
-const calendarService = new CalendarService(calendarApi);
+const calendarService = new CalendarService(calendarApi, userService);
 
 export const services = {
 	cognitoAuthService,

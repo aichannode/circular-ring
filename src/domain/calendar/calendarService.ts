@@ -2,6 +2,7 @@ import { Store } from "@betomorrow/micro-stores";
 import { getLogger } from "@core/logger/logger";
 import { CalendarNote, CalendarTag } from "@domain/calendar/calendar";
 import { CalendarApi } from "@domain/calendar/calendarApi";
+import { UserService } from "@domain/user/userService";
 import dayjs from "dayjs";
 import { observable } from "micro-observables";
 
@@ -16,10 +17,17 @@ export class CalendarService {
 
 	readonly tagMap = this._tagMap.readOnly();
 
-	constructor(private readonly calendarApi: CalendarApi) {}
+	constructor(private readonly calendarApi: CalendarApi, private readonly userService: UserService) {}
 
 	init() {
-		this.fetchAllTags();
+		this.userService.user.subscribe((user) => {
+			if (user) {
+				this.fetchAllTags();
+			} else {
+				this._tagMap.set(new Map());
+				this.calendarStore.clear();
+			}
+		});
 	}
 
 	async fetchMonthCalendars(date: Date) {
