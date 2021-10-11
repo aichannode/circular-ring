@@ -27,21 +27,10 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: "white" } };
-const locale = getPreferredLangageCode(Object.keys(translations)) as "en";
 
-const intl = createIntl({ locale, messages: translations[locale] });
-for (const loc of Object.keys(translations)) {
-	LocaleConfig.locales[loc] = {
-		monthNames: intl.formatMessage({ id: "months" }).split(","),
-		monthNamesShort: intl.formatMessage({ id: "months_short" }).split(","),
-		dayNames: intl.formatMessage({ id: "days" }).split(","),
-		dayNamesShort: intl.formatMessage({ id: "days_short" }).split(","),
-		today: intl.formatMessage({ id: "today" }),
-	};
-}
-LocaleConfig.defaultLocale = locale;
 // @refresh reset
 export const App = () => {
+	const locale = getPreferredLangageCode(Object.keys(translations)) as "en"; // For some reason it can't be done in the main script
 	const [initialized, setInitialized] = useState(false);
 	useSentry();
 
@@ -50,6 +39,20 @@ export const App = () => {
 			setInitialized(true);
 			SplashScreen.hide();
 		});
+	}, []);
+
+	useEffect(() => {
+		const intl = createIntl({ locale, messages: translations[locale] });
+		for (const loc of Object.keys(translations)) {
+			LocaleConfig.locales[loc] = {
+				monthNames: intl.formatMessage({ id: "months" }).split(","),
+				monthNamesShort: intl.formatMessage({ id: "months_short" }).split(","),
+				dayNames: intl.formatMessage({ id: "days" }).split(","),
+				dayNamesShort: intl.formatMessage({ id: "days_short" }).split(","),
+				today: intl.formatMessage({ id: "today" }),
+			};
+		}
+		LocaleConfig.defaultLocale = locale;
 	}, []);
 
 	return initialized ? (
@@ -74,5 +77,6 @@ const defaultLanguageCode = "en";
 
 function getPreferredLangageCode(candidates: string[]): string {
 	const result = RNLocalize.findBestAvailableLanguage(candidates) || { languageTag: defaultLanguageCode };
+
 	return result.languageTag;
 }
