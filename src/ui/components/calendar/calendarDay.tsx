@@ -28,7 +28,6 @@ export const CalendarDay: React.FC<DayComponentProps> = React.memo(({ date, mark
 					{date.day}
 				</DayText>
 				<TagsContainer>
-					{/* TODO */}
 					<Row gap={2}>{dayCalendar && dayCalendar.notes.length > 0 ? <NoteDot /> : null}</Row>
 				</TagsContainer>
 			</DayInfo>

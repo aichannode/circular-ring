@@ -11,9 +11,17 @@ interface CalendarTagListViewProps {
 }
 
 export const TagSelectionView: React.FC<CalendarTagListViewProps> = ({ tags, selectedTags, onClickTag }) => {
+	const visibleTags = tags
+		.filter((item, pos) => {
+			return tags.map((t) => t.id).indexOf(item.id) == pos;
+		})
+		.sort((t1, t2) => {
+			return t1.name.localeCompare(t2.name);
+		});
+
 	return (
 		<Container gap={8} wrap={"wrap"}>
-			{tags.map((tag) => {
+			{visibleTags.map((tag) => {
 				return (
 					<CalendarTagView
 						key={tag.id}

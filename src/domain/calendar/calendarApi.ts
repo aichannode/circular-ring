@@ -28,29 +28,24 @@ export class CalendarApi {
 		await this.apiService.post("/notes/me/tags", { name, category: "Debug Tags" });
 	}
 
-	async getCalendar(date: Date): Promise<Calendar[]> {
+	async getMonthCalendars(date: Date): Promise<Calendar[]> {
 		const result = await this.apiService.get<CalendarDto[]>("/calendar", { params: { date } });
 		return CalendarApi.calendarListFromDto(result.data);
 	}
 
 	private static calendarListFromDto(dto: CalendarDto[]): Calendar[] {
 		return dto.map((calendarDto) => {
-			const notes: CalendarNote[] = [];
-			calendarDto.notes.forEach((note) => {
-				notes.push(
-					...note.tags.map((tag) => {
-						return {
-							id: note.id,
-							startTime: new Date(note.startTime),
-							endTime: new Date(note.endTime),
-							tag: tag,
-						};
-					})
-				);
-			});
+			const notes = calendarDto.notes.flatMap((note) =>
+				note.tags.map((tag) => ({
+					id: note.id,
+					startTime: new Date(note.startTime),
+					endTime: new Date(note.endTime),
+					tag: tag,
+				}))
+			);
 
 			return {
-				day: dayjs(new Date(calendarDto.date)).format("YYYY-MM-DD"),
+				day: dayjs(calendarDto.date).format("YYYY-MM-DD"),
 				streak: calendarDto.streak,
 				notes,
 			};

@@ -1,7 +1,7 @@
 import { useSleepDurationData, useSleepQualityDailyData } from "@domain/measure/hooks";
 import { allSleepQualityMetrics } from "@domain/measure/metric";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
-import { Calendar } from "@ui/components/calendar/calendar";
+import { CalendarView } from "@ui/components/calendar/calendarView";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
 import { Stack } from "@ui/components/layout";
@@ -96,7 +96,7 @@ export const CircleSleepScreen: React.FC = () => {
 			</ElementStack>
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[400]}>
 				<View style={{ padding: 20 }}>
-					<Calendar
+					<CalendarView
 						autoSelectDayOnMonthChange={false}
 						selectedDay={selectedDay}
 						onDaySelected={async (day) => {

@@ -10,7 +10,7 @@ export const PopularTagCategory = "Popular";
 export class CalendarService {
 	private logger = getLogger("CalendarService");
 
-	calendarStore = new Store((day) => this.fetchCalendar(dayjs(day).toDate()), "day");
+	calendarStore = new Store((day) => this.fetchMonthCalendars(dayjs(day).toDate()), "day");
 
 	private _tagMap = observable<Map<string, CalendarTag[]>>(new Map());
 
@@ -22,12 +22,22 @@ export class CalendarService {
 		this.fetchAllTags();
 	}
 
-	async fetchCalendar(date: Date) {
+	async fetchMonthCalendars(date: Date) {
 		try {
-			const calendarList = await this.calendarApi.getCalendar(date);
+			const calendarList = await this.calendarApi.getMonthCalendars(date);
 			this.logger.debug("Got calendar : " + JSON.stringify(calendarList));
 
-			// TODO update popular category from calendar data
+			const popularTags = this._tagMap.get().get(PopularTagCategory) ?? [];
+
+			calendarList
+				.flatMap((calendar) => calendar.notes)
+				.map((note) => note.tag)
+				.forEach((tag) => {
+					if (popularTags.findIndex((t) => t.id === tag.id) < 0) {
+						popularTags.push(tag);
+					}
+				});
+			this._tagMap.update((tagMap) => tagMap.set(PopularTagCategory, popularTags));
 
 			return {
 				day: dayjs(date).format("YYYY-MM-DD"),

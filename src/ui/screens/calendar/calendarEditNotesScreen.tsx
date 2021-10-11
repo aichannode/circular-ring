@@ -18,6 +18,7 @@ import { TagSelectionView } from "@ui/screens/calendar/tagSelectionView";
 import { colors } from "@ui/styles/colors";
 import { shadow } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
+import { useUnmount } from "@ui/utils/lifecycleHooks";
 import dayjs from "dayjs";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LayoutAnimation, Pressable, View } from "react-native";
@@ -46,19 +47,11 @@ export const CalendarEditNotesScreen: React.FC = () => {
 	const calendar = useCalendar(day, FetchStrategy.Never);
 	const popularTags = usePopularTags();
 
-	const dateWithHourMinute = useCallback(
-		(hour: number, minute: number) => {
-			const d = new Date(day);
-			d.setHours(hour);
-			d.setMinutes(minute);
-			return d;
-		},
-		[day]
-	);
+	const dateWithHour = useCallback((hour: number) => dayjs(day).hour(hour).toDate(), [day]);
 
 	const [selectedTags, setSelectedTags] = useState<CalendarTag[]>(originalTags);
-	const [startDate, setStartDate] = useState(dateWithHourMinute(new Date().getHours(), new Date().getMinutes()));
-	const [endDate, setEndDate] = useState(dateWithHourMinute(new Date().getHours(), new Date().getMinutes()));
+	const [startDate, setStartDate] = useState(dateWithHour(19));
+	const [endDate, setEndDate] = useState(dateWithHour(20));
 	const [isLoading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [noteAddedText, setNoteAddedText] = useState<string | undefined>(undefined);
@@ -78,6 +71,8 @@ export const CalendarEditNotesScreen: React.FC = () => {
 	const [config, setConfig] = useState<TimeEditorConfig>({ ...startTimeEditionConfig, time: startDate });
 	const timeEditorRef = useRef<TimeEditorRef>(null);
 
+	const dismissHeaderTimeout = useRef<NodeJS.Timeout>();
+
 	useEffect(() => {
 		setSelectedTags(originalTags);
 	}, [JSON.stringify(originalTags)]);
@@ -89,9 +84,15 @@ export const CalendarEditNotesScreen: React.FC = () => {
 		}
 	}, [noteAddedText]);
 
+	useUnmount(() => {
+		if (dismissHeaderTimeout.current) {
+			clearTimeout(dismissHeaderTimeout.current);
+		}
+	}, []);
+
 	useEffect(() => {
 		if (noteAddedText !== undefined) {
-			setTimeout(dismissHeader, 5000);
+			dismissHeaderTimeout.current = setTimeout(dismissHeader, 5000);
 		}
 	}, [noteAddedText]);
 
@@ -119,7 +120,10 @@ export const CalendarEditNotesScreen: React.FC = () => {
 		}
 	}, [selectedTags, startDate, endDate, dismissHeader]);
 
-	const allRawTags = [...selectedTags, ...popularTags];
+	const allRawTags = [...selectedTags, ...popularTags].sort((t1, t2) => {
+		return t1.name.localeCompare(t2.name);
+	});
+
 	const visibleTags = allRawTags.filter((item, pos) => {
 		return allRawTags.indexOf(item) == pos;
 	});
