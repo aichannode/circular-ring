@@ -1,6 +1,6 @@
 import { getLogger } from "@core/logger/logger";
-import { Channel } from "@domain/device/channels";
 import { BleDeviceService } from "@domain/device/bleDeviceService";
+import { Channel } from "@domain/device/channels";
 import { UserService } from "@domain/user/userService";
 import { observable } from "micro-observables";
 import { NamedUserRing } from "./ring";
@@ -40,6 +40,23 @@ export class RingManagementService {
 				unsubscribe();
 			}
 		});
+
+		// once device is connected, retrieve its name and set it to our ring info
+		this.deviceService.favoriteDeviceSNU.subscribe((snu) => {
+			this._userRings.update((rings) => {
+				return rings.map((r) => {
+					if (r.id === snu) {
+						return { ...r, name: this.deviceService.favoriteDevice.get()?.name ?? r.name };
+					} else {
+						return r;
+					}
+				});
+			});
+		});
+
+		this._userRings.subscribe((rings) => {
+			this.userRingsStorage.save(rings);
+		});
 	}
 
 	async init() {
@@ -49,18 +66,17 @@ export class RingManagementService {
 	}
 
 	async getRings() {
+		const rings = await this.ringApi.getRings();
+
 		const oldNamedRings = this._userRings.get();
 		const connectedRingId = this.deviceService.favoriteDeviceSNU.get();
 		const connectedRingName = this.deviceService.favoriteDevice.get()?.name;
 
-		const rings = await this.ringApi.getRings();
 		const newNamedRings: NamedUserRing[] = rings.map((r) => {
+			const oldRingName = oldNamedRings.filter((oldRing) => oldRing.id === r.id)[0]?.name;
 			return {
 				...r,
-				name:
-					connectedRingName && connectedRingId && connectedRingId === r.id
-						? connectedRingName
-						: oldNamedRings.filter((oldRing) => oldRing.id === r.id)[0]?.name,
+				name: connectedRingName && connectedRingId && connectedRingId === r.id ? connectedRingName : oldRingName,
 			};
 		});
 		this._userRings.set(newNamedRings);
@@ -78,7 +94,6 @@ export class RingManagementService {
 					const userRing = await this.ringApi.addRing({ id, firmware });
 					const namedRing = { ...userRing, name: deviceName };
 					this._userRings.update((rings) => [...rings, namedRing]);
-					this.userRingsStorage.save(userRings);
 					return userRing;
 				}
 			} catch (e) {
@@ -95,22 +110,32 @@ export class RingManagementService {
 		if (ringToDelete) {
 			this.logger.debug(`Deleting ring ${ringToDelete.name} (snu: ${ringToDelete.id})`);
 			try {
+				console.log("checking favorite ring : " + this.deviceService.favoriteDevice.get()?.name);
 				const idToDelete = ringToDelete.id;
-				if (this.deviceService.favoriteDeviceSNU.get() === idToDelete) {
+				if (this.deviceService.favoriteDevice.get()?.name === ringToDelete.name) {
 					await this.deviceService.disconnect();
 				} else {
 					this.logger.debug(
-						`No need to disconnect. Current connected ring : ${
+						`No need to disconnect. Current active ring is "${
 							this.deviceService.favoriteDevice.get()?.name
-						} (snu: ${this.deviceService.favoriteDeviceSNU.get()})`
+						}" (snu: ${this.deviceService.favoriteDeviceSNU.get()})`
 					);
 				}
 				await this.ringApi.deleteRing(idToDelete);
 				this._userRings.update((oldRings) => oldRings.filter((r) => r.id !== idToDelete));
-				await this.userRingsStorage.save(this._userRings.get());
 			} catch (e) {
-				this.logger.warn("Delete ring failed : " + e);
-				throw e;
+				this.logger.warn("Delete ring failed : " + JSON.stringify(e));
+
+				// @ts-ignore
+				if (e.statusCode === 500) {
+					// SERVER PATCH : DELETE /rings/{id} returns error 500, but ring is correctly deleted from user
+					this.logger.debug("**** SERVER PATCH ****");
+					this.logger.debug("Consider ring deletion succeeded");
+					this.logger.debug("**********************");
+					this._userRings.update((oldRings) => oldRings.filter((r) => r.id !== ring.id));
+				} else {
+					throw e;
+				}
 			}
 		} else {
 			throw new Error("Unknown ring");
@@ -126,7 +151,6 @@ export class RingManagementService {
 					await this.deviceService.factoryResetCurrentRing();
 					await this.ringApi.deleteRing(idToReset);
 					this._userRings.update((oldRings) => oldRings.filter((r) => r.id !== idToReset));
-					await this.userRingsStorage.save(this._userRings.get());
 				} catch (error) {
 					this.logger.warn("Error removing ring from account after factory-reset :", error);
 					throw error;

@@ -24,7 +24,11 @@ export const MyRingBattery: React.FC<MyRingBatteryProps> = ({ full }) => {
 		case DeviceAutoConnectState.SEARCHING:
 		case DeviceAutoConnectState.CONNECTING:
 		case DeviceAutoConnectState.DISCONNECTED:
-			return <Spinner size={24} />;
+			return (
+				<Container onPress={() => navigation.navigate(Routes.MyRing)}>
+					<Spinner size={24} />
+				</Container>
+			);
 		case DeviceAutoConnectState.CONNECTED:
 			return (
 				<Container onPress={() => navigation.navigate(Routes.MyRing)}>
