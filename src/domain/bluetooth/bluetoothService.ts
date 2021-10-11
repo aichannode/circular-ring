@@ -3,6 +3,7 @@ import { delay, observableToPromise } from "@core/utils";
 import { observable } from "micro-observables";
 import { PermissionsAndroid, Platform } from "react-native";
 import { BleManager, State } from "react-native-ble-plx";
+import DeviceInfo from "react-native-device-info";
 
 const enableBluetoothTimeout = 5000;
 
@@ -36,9 +37,12 @@ export class BluetoothService {
 				await observableToPromise(this.enabled);
 			}
 		} else {
-			if ("granted" !== (await PermissionsAndroid.request("android.permission.ACCESS_FINE_LOCATION"))) {
-				this.logger.warn("Unauthorized");
-				throw Error("Unauthorized");
+			const permission = await PermissionsAndroid.request("android.permission.ACCESS_FINE_LOCATION");
+			if (permission !== "granted") {
+				if ((await DeviceInfo.getApiLevel()) >= 23) {
+					this.logger.warn("Unauthorized, permission is", permission);
+					throw Error("Unauthorized");
+				}
 			}
 			if (!this.enabled.get()) {
 				this.logger.debug("Enabling Bluetooth");
