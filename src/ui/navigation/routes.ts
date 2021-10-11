@@ -1,3 +1,4 @@
+import { CalendarTag } from "@domain/calendar/calendar";
 import { RingAlarm } from "@domain/ring/ringAlarm";
 import { useNavigation } from "@react-navigation/core";
 import { RouteProp, useRoute } from "@react-navigation/native";
@@ -36,6 +37,8 @@ export enum Routes {
 	ProfileBirthControl = "ProfileBirthControl",
 	Live = "Live",
 	Calendar = "Calendar",
+	CalendarEditNotes = "CalendarEditNotes",
+	AllTags = "AllTags",
 }
 
 export type AppRoutesParams = {
@@ -69,6 +72,8 @@ export type AppRoutesParams = {
 	[Routes.Settings]: undefined;
 	[Routes.Live]: undefined;
 	[Routes.Calendar]: undefined;
+	[Routes.CalendarEditNotes]: { day: string; selectedTags?: CalendarTag[] };
+	[Routes.AllTags]: { day: string; selectedTags: CalendarTag[] };
 };
 
 export const useRoutesNavigation = () => useNavigation<NativeStackNavigationProp<AppRoutesParams>>();

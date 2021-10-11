@@ -37,12 +37,12 @@ export class ApiService {
 	}
 
 	post<T = unknown, R = AxiosResponse<T>>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<R> {
-		this.logger.debug("[POST] " + url);
+		this.logger.debug("[POST] " + url + " -- Data " + JSON.stringify(data));
 		return this.instance.post(url, data, config);
 	}
 
 	put<T = unknown, R = AxiosResponse<T>>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<R> {
-		this.logger.debug("[PUT] " + url);
+		this.logger.debug("[PUT] " + url + " -- Data " + JSON.stringify(data));
 		return this.instance.put(url, data, config);
 	}
 

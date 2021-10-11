@@ -18,7 +18,7 @@ export const Header = ({ options, navigation }: NativeStackHeaderProps) => {
 			{hasCircleIcon ? (
 				<>
 					{navigation.canGoBack() ? (
-						<BackButton />
+						<BackButton imageSource={options.headerBackImageSource} />
 					) : (
 						<Pressable onPress={() => navigation.dispatch(DrawerActions.openDrawer)}>
 							<Image source={require("@assets/images/menu.png")} style={{ marginLeft: 10 }} />
@@ -35,7 +35,7 @@ export const Header = ({ options, navigation }: NativeStackHeaderProps) => {
 				<>
 					<Left alignLeft={hasCircleIcon}>
 						{navigation.canGoBack() ? (
-							<BackButton />
+							<BackButton imageSource={options.headerBackImageSource} />
 						) : (
 							<Pressable onPress={() => navigation.dispatch(DrawerActions.openDrawer)}>
 								<Image source={require("@assets/images/menu.png")} style={{ marginLeft: 10 }} />

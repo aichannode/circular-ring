@@ -1,9 +1,9 @@
 import { useUser } from "@domain/user/hooks/useUser";
-import { colors } from "@ui/styles/colors";
+import { circularCalendarTheme } from "@ui/components/calendar/circularCalendarTheme";
 import dayjs from "dayjs";
 import React, { useCallback, useMemo } from "react";
 import { StyleProp, ViewStyle } from "react-native";
-import { Calendar as RNCalendar, CalendarTheme } from "react-native-calendars";
+import { Calendar as RNCalendar } from "react-native-calendars";
 import { CalendarDay } from "./calendarDay";
 
 interface CalendarProps {
@@ -12,7 +12,7 @@ interface CalendarProps {
 	onDaySelected: (day: string) => void;
 	autoSelectDayOnMonthChange?: boolean;
 }
-export const Calendar: React.FC<CalendarProps> = ({
+export const CalendarView: React.FC<CalendarProps> = ({
 	selectedDay,
 	onDaySelected,
 	autoSelectDayOnMonthChange = true,
@@ -54,29 +54,7 @@ export const Calendar: React.FC<CalendarProps> = ({
 			hideExtraDays
 			markedDates={selectedDay ? { [selectedDay]: { selected: true } } : undefined}
 			dayComponent={CalendarDay}
-			theme={
-				{
-					textDayHeaderFontSize: 14,
-					textDayHeaderFontWeight: "500",
-					stylesheet: {
-						calendar: {
-							header: {
-								header: {
-									flexDirection: "row",
-									justifyContent: "space-between",
-									paddingHorizontal: 20,
-									marginTop: 6,
-									alignItems: "center",
-								},
-							},
-						},
-					},
-					textMonthFontSize: 14,
-					textMonthFontWeight: "500",
-					textSectionTitleColor: colors.textPrimary,
-					arrowColor: colors.darkGray,
-				} as CalendarTheme // Wrong typings in react-native-calendars...
-			}
+			theme={circularCalendarTheme}
 		/>
 	);
 };

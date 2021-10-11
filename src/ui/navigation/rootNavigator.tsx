@@ -1,3 +1,5 @@
+import { AllTagsScreen } from "@ui/screens/calendar/allTagsScreen";
+import { CalendarEditNotesScreen } from "@ui/screens/calendar/calendarEditNotesScreen";
 import { Header } from "@ui/navigation/header/header";
 import { CircleSleepScreen } from "@ui/screens/circleSleep/circleSleepScreen";
 import { useAccountLinked, useDeviceStored } from "@domain/device/hooks";
@@ -173,6 +175,22 @@ const MainHomeNavigator = () => {
 				options={{
 					title: format("header.calendar"),
 					headerRight: () => <MyRingBattery />,
+				}}
+			/>
+			<MainStack.Screen
+				name={Routes.CalendarEditNotes}
+				component={CalendarEditNotesScreen}
+				options={{
+					title: format("header.calendar"),
+					headerRight: () => <MyRingBattery />,
+				}}
+			/>
+			<MainStack.Screen
+				name={Routes.AllTags}
+				component={AllTagsScreen}
+				options={{
+					title: format("header.all_tags"),
+					headerBackImageSource: require("@assets/images/crossBig.png"),
 				}}
 			/>
 			<MainStack.Screen name={Routes.WebView} component={WebViewScreen} />

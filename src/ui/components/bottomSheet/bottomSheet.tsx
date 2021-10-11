@@ -13,9 +13,10 @@ export interface CircularBottomSheetHandle extends BottomSheetModalMethods {
 interface BottomSheetProps {
 	snapPoints: Array<number>;
 	children: JSX.Element;
+	allowSwipeDownToClose?: boolean;
 }
 export const CircularBottomSheet = React.forwardRef<CircularBottomSheetHandle, BottomSheetProps>(
-	({ children, snapPoints }, ref) => {
+	({ children, snapPoints, allowSwipeDownToClose = true }, ref) => {
 		const closedSignal = useRef(new Signal<void>());
 
 		const safeArea = useSafeAreaInsets();
@@ -55,6 +56,7 @@ export const CircularBottomSheet = React.forwardRef<CircularBottomSheetHandle, B
 				onDismiss={() => {
 					closedSignal.current.dispatch();
 				}}
+				enableContentPanningGesture={allowSwipeDownToClose}
 				snapPoints={snapPoints}
 				backdropComponent={renderBackdrop}
 				style={{ paddingBottom: safeArea.bottom }}
@@ -69,7 +71,7 @@ export const CircularBottomSheet = React.forwardRef<CircularBottomSheetHandle, B
 );
 
 export const CircularBottomScrollSheet = React.forwardRef<BottomSheetModal, BottomSheetProps>(
-	({ children, snapPoints }, ref) => {
+	({ children, snapPoints, allowSwipeDownToClose = true }, ref) => {
 		const closedSignal = useRef(new Signal<void>());
 		const safeArea = useSafeAreaInsets();
 		const renderBackdrop = useCallback(
@@ -115,6 +117,7 @@ export const CircularBottomScrollSheet = React.forwardRef<BottomSheetModal, Bott
 					closedSignal.current.dispatch();
 				}}
 				snapPoints={clampedSnapPoints}
+				enableContentPanningGesture={allowSwipeDownToClose}
 				backdropComponent={renderBackdrop}
 				style={{ paddingBottom: safeArea.bottom }}
 				activeOffsetY={[-1, 1]}

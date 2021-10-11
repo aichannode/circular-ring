@@ -1,14 +1,16 @@
 import { ScoreQuality } from "@domain/measure/score";
 import { Melody, Weekdays } from "@domain/ring/ringAlarm";
 import { Intensity } from "@domain/ring/ringLiveData";
+import dayjs from "dayjs";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
 import { WordingKey } from "../wordings";
-import { Colored, Strong } from "./components/text";
+import { Bold, Colored, Strong } from "./components/text";
 
 const xmlFormatters = {
 	strong: (...chunks: string[]) => <Strong>{chunks}</Strong>,
 	colored: (...chunks: string[]) => <Colored>{chunks}</Colored>,
+	bold: (...chunks: string[]) => <Bold>{chunks}</Bold>,
 } as const;
 
 export function useI18n() {
@@ -158,6 +160,14 @@ export function useI18n() {
 		},
 		formatMelody: (melody: Melody) => {
 			return intl.formatMessage({ id: "alarm.new.edit_vibration.type." + melody });
+		},
+		formatDateInterval: (start: Date, end: Date, dateFormat: string | undefined = "hh : mm A") => {
+			return `${dayjs(start).format(dateFormat)} ${intl.formatMessage({ id: "global.date_interval_linker" })} ${dayjs(
+				end
+			).format(dateFormat)}`;
+		},
+		formatHour: (date: Date, dateFormat: string | undefined = "hh : mm A") => {
+			return dayjs(date).format(dateFormat);
 		},
 	};
 }

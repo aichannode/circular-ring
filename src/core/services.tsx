@@ -1,6 +1,8 @@
 import { ApiService } from "@core/api/apiService";
 import { CognitoAuthService } from "@domain/auth/cognito-auth/cognitoAuthService";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
+import { CalendarApi } from "@domain/calendar/calendarApi";
+import { CalendarService } from "@domain/calendar/calendarService";
 import { CalibrationApi } from "@domain/calibration/calibrationApi";
 import { CalibrationService } from "@domain/calibration/calibrationService";
 import { CircleAlarmService } from "@domain/circleAlarm/circleAlarmService";
@@ -63,6 +65,9 @@ const homeBannerStorage = new HomeBannerStorage();
 const homeBannerApi = new HomeBannerApi(apiService);
 const homeBannerService = new HomeBannerService(homeBannerStorage, homeBannerApi);
 
+const calendarApi = new CalendarApi(apiService);
+const calendarService = new CalendarService(calendarApi);
+
 export const services = {
 	cognitoAuthService,
 	bluetoothService,
@@ -75,6 +80,7 @@ export const services = {
 	calibrationService,
 	homeBannerService,
 	fakeDeviceService,
+	calendarService,
 };
 
 export type Services = typeof services;
