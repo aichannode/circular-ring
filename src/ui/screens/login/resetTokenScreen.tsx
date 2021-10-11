@@ -188,7 +188,7 @@ const ButtonContainer = styled(Row)`
 `;
 
 const ResendButton = styled(SimpleTextButton)`
-	align-items: center;
+	align-self: center;
 	margin-bottom: 56px;
 `;
 

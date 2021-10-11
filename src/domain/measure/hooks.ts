@@ -1,27 +1,21 @@
+import { FetchStrategy, useStore } from "@betomorrow/micro-stores";
 import { useServices } from "@core/services";
+import dayjs from "dayjs";
 import { useObservable } from "micro-observables";
 import { useEffect } from "react";
 
-export const useActivityData = () => {
+export const useActivityData = (ymdDay?: string) => {
 	const { measureService } = useServices();
-	const data = useObservable(measureService.activityData);
-
-	useEffect(() => {
-		measureService.fetchActivityData();
-	}, []);
-
-	return data;
+	return useStore(ymdDay ?? dayjs().format("YYYY-MM-DD"), measureService.activityData, FetchStrategy.First);
 };
 
-export const useSleepQualityDailyData = () => {
+export const useSleepQualityDailyData = (ymdDay?: string) => {
 	const { measureService } = useServices();
-	const data = useObservable(measureService.sleepQualityDailyData);
-
-	useEffect(() => {
-		measureService.fetchSleepQualityDailyData();
-	}, []);
-
-	return data;
+	return useStore(ymdDay ?? dayjs().format("YYYY-MM-DD"), measureService.sleepQualityData, FetchStrategy.First);
+};
+export const useSleepDurationData = (ymdDay?: string) => {
+	const { measureService } = useServices();
+	return useStore(ymdDay ?? dayjs().format("YYYY-MM-DD"), measureService.sleepDurationInfos, FetchStrategy.First);
 };
 
 export const useWakeUpScore = () => {
@@ -35,13 +29,7 @@ export const useWakeUpScore = () => {
 	return score;
 };
 
-export const useGlobalScore = () => {
+export const useGlobalScore = (ymdDay?: string, strategy?: FetchStrategy) => {
 	const { measureService } = useServices();
-	const score = useObservable(measureService.globalScore);
-
-	useEffect(() => {
-		measureService.fetchGlobalScore();
-	}, []);
-
-	return score;
+	return useStore(ymdDay ?? dayjs().format("YYYY-MM-DD"), measureService.dailyGlobalScores, strategy);
 };

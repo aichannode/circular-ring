@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export enum Weekdays {
 	SUNDAY = "SUNDAY",
 	MONDAY = "MONDAY",
@@ -22,6 +24,11 @@ export enum Melody {
 	SYMPHONY = "symphony",
 }
 
+export interface AlarmTime {
+	hour: number;
+	minute: number;
+}
+
 export interface RingAlarm {
 	id: number;
 	snooze: number;
@@ -30,7 +37,7 @@ export interface RingAlarm {
 	isExisting: boolean;
 	isSmart: boolean;
 	weekdays: Weekdays[];
-	time: Date;
+	time: AlarmTime;
 	vibrationPower: number;
 	vibrationRepetition: number;
 	melody: Melody;
@@ -75,7 +82,7 @@ const melodyIds: { [key in Melody]: string } = {
 	[Melody.SYMPHONY]: "0A",
 };
 
-export function activationHexToData(activationHex: string): {
+function activationHexToData(activationHex: string): {
 	snooze: number;
 	smart: number;
 	isActivated: boolean;
@@ -83,7 +90,7 @@ export function activationHexToData(activationHex: string): {
 } {
 	const activationDec = parseInt(activationHex, 16);
 	const isExisting = !(activationDec & 1);
-	const isActivated = !((activationDec >> 1) & 1);
+	const isActivated = !!((activationDec >> 1) & 1);
 
 	const smart = (activationDec >> 2) & 0x7;
 	const snooze = (activationDec >> 5) & 0x7;
@@ -91,12 +98,12 @@ export function activationHexToData(activationHex: string): {
 	return { snooze, smart, isActivated, isExisting };
 }
 
-export function dataToActivationHex(snooze: number, smart: number, isActivated: boolean, isExisting: boolean): string {
-	const activatedValue = isActivated ? 0 : 1;
+function dataToActivationHex(snooze: number, smart: number, isActivated: boolean, isExisting: boolean): string {
+	const activatedValue = isActivated ? 1 : 0;
 	const existingValue = isExisting ? 0 : 1;
 	const activationValue = (((((snooze << 3) + smart) << 1) + activatedValue) << 1) + existingValue;
 
-	return activationValue < 16 ? "0" + activationValue.toString(16) : activationValue.toString(16);
+	return activationValue.toString(16).padStart(2, "0");
 }
 
 export function deserializeAlarmData(alarmData: string): RingAlarm | undefined {
@@ -127,9 +134,7 @@ export function deserializeAlarmData(alarmData: string): RingAlarm | undefined {
 	}
 	const isSmart = (weekdayDec >> 7) & 1;
 
-	const time = new Date();
-	time.setHours(Number(hour));
-	time.setMinutes(Number(min));
+	const time = fromGMT({ hour: Number(hour), minute: Number(min) });
 
 	return {
 		id: parseInt(alarmId, 16),
@@ -176,17 +181,19 @@ export function serializeAlarmData(alarmData: RingAlarm): string {
 		weekdaysValue += Math.pow(2, 7);
 	}
 
+	const gmtTime = toGMT(time);
+
 	return (
 		"ALR" +
 		dataToActivationHex(snooze, smart, isActivated, isExisting) +
 		"r" +
-		(weekdaysValue < 16 ? "0" + weekdaysValue.toString(16) : weekdaysValue.toString(16)) +
+		weekdaysValue.toString(16).padStart(2, "0") +
 		"h" +
-		(time.getHours() < 10 ? "0" + time.getHours() : time.getHours()) +
+		gmtTime.hour.toString().padStart(2, "0") +
 		"m" +
-		(time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes()) +
+		gmtTime.minute.toString().padStart(2, "0") +
 		"v" +
-		(vibrationPower < 10 ? "0" + vibrationPower : vibrationPower) +
+		vibrationPower.toString().padStart(2, "0") +
 		"n" +
 		"0" +
 		vibrationRepetition +
@@ -214,4 +221,35 @@ export function getAlarmId(alarmData: string): number {
 
 export function serializeMelody(melody: Melody, power: number) {
 	return "PRE" + melodyIds[melody] + power.toString(16);
+}
+
+function toGMT(time: AlarmTime): AlarmTime {
+	const date = new Date();
+	date.setHours(time.hour);
+	date.setMinutes(time.minute);
+	const dateJS = dayjs(date);
+	const utcOffset = dateJS.utcOffset();
+	const gmtDate = dateJS.add(-utcOffset, "minute").toDate();
+	return { hour: gmtDate.getHours(), minute: gmtDate.getMinutes() };
+}
+
+function fromGMT(time: AlarmTime): AlarmTime {
+	const date = new Date();
+	date.setHours(time.hour);
+	date.setMinutes(time.minute);
+	const dateJS = dayjs(date);
+	const utcOffset = dateJS.utcOffset();
+	const gmtDate = dateJS.add(utcOffset, "minute").toDate();
+	return { hour: gmtDate.getHours(), minute: gmtDate.getMinutes() };
+}
+
+export function alarmTimeToDate(time: AlarmTime): Date {
+	const date = new Date();
+	date.setHours(time.hour);
+	date.setMinutes(time.minute);
+	return date;
+}
+
+export function dateToAlarmTime(date: Date): AlarmTime {
+	return { hour: date.getHours(), minute: date.getMinutes() };
 }

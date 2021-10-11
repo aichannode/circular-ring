@@ -1,5 +1,6 @@
 import { useServices } from "@core/services";
-import { Melody, Weekdays } from "@domain/ring/ringAlarm";
+import { useAlarms } from "@domain/circleAlarm/alarmHooks";
+import { alarmTimeToDate, dateToAlarmTime, Melody, Weekdays } from "@domain/ring/ringAlarm";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
 	CircularBottomScrollSheet,
@@ -27,12 +28,12 @@ import styled from "styled-components/native";
 export const EditAlarmScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
 	const route = useAppRoute<Routes.EditAlarm>();
-	const initialAlarmParam = route.params?.initialAlarm;
-	const initialAlarm = initialAlarmParam && { ...initialAlarmParam, time: new Date(initialAlarmParam.time) };
+	const { alarms: allAlarm } = useAlarms();
+	const initialAlarm = route.params?.initialAlarm;
 	const { format, formatDay, formatSnooze, formatSmart, formatMelody } = useI18n();
 	const { circleAlarmService } = useServices();
 	const [pickerVisible, setPickerVisible] = useState(false);
-	const [alarmTime, setAlarmTime] = useState(initialAlarm?.time ?? new Date());
+	const [alarmTime, setAlarmTime] = useState<Date>(initialAlarm ? alarmTimeToDate(initialAlarm.time) : new Date());
 	const [vibrationPower, setVibrationPower] = useState(initialAlarm?.vibrationPower ?? 50);
 	const [melody, setMelody] = useState<Melody>(initialAlarm?.melody ?? Melody.ALERT);
 	const [weekdays, setWeekdays] = useState<Weekdays[]>(
@@ -44,7 +45,9 @@ export const EditAlarmScreen: React.FC = () => {
 			Weekdays.FRIDAY,
 		]
 	);
-	const [label, setLabel] = useState(initialAlarm?.label ?? "Alarm");
+	const [label, setLabel] = useState(
+		initialAlarm?.label ?? format("alarm.label.default") + (allAlarm.length > 0 ? ` ${allAlarm.length + 1}` : "")
+	);
 	const [snooze, setSnooze] = useState(initialAlarm?.snooze ?? 0);
 	const [smart, setSmart] = useState(initialAlarm?.smart ?? 0);
 	const [isSmart, setIsSmart] = useState(initialAlarm?.isSmart ?? false);
@@ -69,9 +72,9 @@ export const EditAlarmScreen: React.FC = () => {
 							smart,
 							isSmart,
 							weekdays,
-							time: alarmTime,
+							time: dateToAlarmTime(alarmTime),
 							vibrationPower,
-							vibrationRepetition: 1,
+							vibrationRepetition: 4,
 							melody,
 							label,
 						};

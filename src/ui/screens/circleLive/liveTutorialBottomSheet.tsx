@@ -1,4 +1,3 @@
-import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { CheckBox } from "@ui/components/checkBox";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
@@ -13,14 +12,13 @@ enum TutorialStep {
 	TWO = "TWO",
 }
 interface LiveTutorialBottomSheetProps {
-	onFinish: () => void;
+	onFinish: (hideTutorial: boolean) => void;
 }
 
 export const LiveTutorialBottomSheet: React.FC<LiveTutorialBottomSheetProps> = ({ onFinish }) => {
 	const { format } = useI18n();
 	const [step, setStep] = useState(TutorialStep.ONE);
 	const [tutorialHidden, setTutorialHidden] = useState(false);
-	const { userPreferencesService } = useServices();
 
 	const backToStepOne = useCallback(() => {
 		setStep(TutorialStep.ONE);
@@ -62,8 +60,7 @@ export const LiveTutorialBottomSheet: React.FC<LiveTutorialBottomSheetProps> = (
 						<PrimaryButton
 							style={{ minWidth: 100 }}
 							onPress={() => {
-								tutorialHidden && userPreferencesService.skipLiveTutorial();
-								onFinish();
+								onFinish(tutorialHidden);
 							}}
 						>
 							{format("ok")}

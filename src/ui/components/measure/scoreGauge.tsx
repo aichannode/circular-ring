@@ -10,8 +10,8 @@ import styled from "styled-components/native";
 
 interface ScoreGaugeProps {
 	label: string;
-	value: number;
-	rate: number;
+	value?: number;
+	rate?: number;
 	unit: ScoreUnit;
 	goodThreshold?: number;
 	optimalThreshold?: number;
@@ -33,8 +33,9 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 	displayGaugeValue,
 	gaugeInverted,
 }) => {
-	const gaugeRatio = gaugeInverted ? 1 - rate : rate;
-	const scoreQuality = getScoreQuality(gaugeRatio, goodThreshold, optimalThreshold);
+	const gaugeRatio = gaugeInverted && rate !== undefined ? 1 - rate : rate;
+	const scoreQuality =
+		gaugeRatio !== undefined ? getScoreQuality(gaugeRatio, goodThreshold, optimalThreshold) : undefined;
 
 	const { formatScoreQuality, formatTranquility, formatDuration } = useI18n();
 
@@ -43,18 +44,20 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 			<Row justify="space-between">
 				<SecondaryText>{label}</SecondaryText>
 				<SecondaryText>
-					{unit === "qualitative"
+					{value === undefined || scoreQuality === undefined
+						? "-"
+						: unit === "qualitative"
 						? formatScoreQuality(scoreQuality)
 						: unit === "tranquility"
 						? formatTranquility(scoreQuality)
 						: unit === "time"
 						? formatDuration(value * 60)
 						: `${value}${unit}`}
-					{displayGaugeValue ? ` (${Math.round(rate * 100)}%)` : ""}
+					{displayGaugeValue && rate !== undefined ? ` (${Math.round(rate * 100)}%)` : ""}
 				</SecondaryText>
 			</Row>
 			<Gauge>
-				<GaugeValue quality={scoreQuality} rate={gaugeRatio} />
+				<GaugeValue quality={scoreQuality} rate={gaugeRatio ?? 0} />
 			</Gauge>
 		</Container>
 	);
@@ -73,8 +76,8 @@ const Gauge = styled.View`
 	overflow: hidden;
 `;
 
-const GaugeValue = styled.View<{ quality: ScoreQuality; rate: number }>`
-	background-color: ${({ quality }) => qualityColors[quality]};
+const GaugeValue = styled.View<{ quality?: ScoreQuality; rate: number }>`
+	background-color: ${({ quality }) => (quality ? qualityColors[quality] : colors.lightgray)};
 	position: absolute;
 	top: 0;
 	bottom: 0;

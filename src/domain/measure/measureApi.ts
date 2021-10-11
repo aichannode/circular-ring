@@ -5,8 +5,8 @@ const measureApiUrl = "/measures";
 export class MeasureApi {
 	constructor(private readonly apiService: ApiService) {}
 
-	async getMeasures(metrics: Metric[], start: Date, end: Date): Promise<MetricInfo[]> {
-		const result = await this.apiService.get<{ data: MetricInfo[] }>(measureApiUrl, {
+	async getMeasures<T extends Metric>(metrics: T[], start: Date, end: Date): Promise<MetricInfo<T>[]> {
+		const result = await this.apiService.get<{ data: MetricInfo<T>[] }>(measureApiUrl, {
 			params: { metrics, start: start.toISOString(), end: end.toISOString() },
 		});
 		return result.data.data;

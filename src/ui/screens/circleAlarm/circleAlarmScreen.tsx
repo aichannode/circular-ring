@@ -41,32 +41,32 @@ export const CircleAlarmScreen: React.FC = () => {
 					score={wakeUpScore}
 					style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
 				/>
-				{!hasConnectedRing ? null : (
+				<InfoListHeader>{format("alarm.score.programmed")}</InfoListHeader>
+				<AlarmContainer>
+					{alarms?.map((value) => (
+						<Pressable
+							disabled={!hasConnectedRing}
+							key={value.id}
+							onPress={() => navigation.navigate(Routes.EditAlarm, { initialAlarm: value })}
+						>
+							<AlarmCard data={value} disabled={!hasConnectedRing} />
+						</Pressable>
+					))}
+					{loading ? <Spinner size={35} /> : null}
+					<AddAlarmButton
+						disabled={!hasConnectedRing}
+						onPress={() => {
+							alarms.length >= MAX_ALARMS
+								? warningBottomSheet.current?.present()
+								: navigation.navigate(Routes.EditAlarm);
+						}}
+					>
+						<AddImage source={require("@assets/images/addButton.png")} />
+						<AddAlarmText>{format("alarm.score.add_button")}</AddAlarmText>
+					</AddAlarmButton>
+				</AlarmContainer>
+				{hasConnectedRing && (
 					<>
-						<InfoListHeader>{format("alarm.score.programmed")}</InfoListHeader>
-						<AlarmContainer>
-							{alarms?.map((value) => (
-								<Pressable
-									key={value.id}
-									onPress={() =>
-										navigation.navigate(Routes.EditAlarm, { initialAlarm: { ...value, time: value.time.toString() } })
-									}
-								>
-									<AlarmCard data={value} />
-								</Pressable>
-							))}
-							{loading ? <Spinner size={35} /> : null}
-							<AddAlarmButton
-								onPress={() => {
-									alarms.length >= MAX_ALARMS
-										? warningBottomSheet.current?.present()
-										: navigation.navigate(Routes.EditAlarm);
-								}}
-							>
-								<AddImage source={require("@assets/images/addButton.png")} />
-								<AddAlarmText>{format("alarm.score.add_button")}</AddAlarmText>
-							</AddAlarmButton>
-						</AlarmContainer>
 						<InfoListHeader>{format("alarm.week_overview")}</InfoListHeader>
 						<AlarmOverviewContainer>
 							<AlarmWeekOverview style={{ marginVertical: 25 }} />
@@ -106,7 +106,7 @@ const AddAlarmText = styled.Text`
 	color: ${colors.darkGray};
 `;
 
-const AddAlarmButton = styled(Pressable)`
+const AddAlarmButton = styled(Pressable)<{ disabled?: boolean }>`
 	background-color: ${colors.gray + "80"};
 	flex-direction: row;
 	margin-top: 5px;
@@ -114,6 +114,7 @@ const AddAlarmButton = styled(Pressable)`
 	justify-content: center;
 	align-items: center;
 	border-radius: 5px;
+	${({ disabled }) => disabled && "opacity: 0.2"};
 `;
 
 const AlarmOverviewContainer = styled.View`

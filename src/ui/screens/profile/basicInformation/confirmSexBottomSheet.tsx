@@ -1,6 +1,6 @@
 import { useServices } from "@core/services";
 import { Sex } from "@domain/user/user";
-import { PrimaryButton, Tertiarybutton } from "@ui/components/buttons";
+import { PrimaryButton, TertiaryButton } from "@ui/components/buttons";
 import { ResponsiveCenterView, Row } from "@ui/components/layout";
 import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
@@ -46,9 +46,9 @@ export const ConfirmSexBottomSheet = ({ sex, onClose }: ConfirmSexBottomSheetPro
 					<Spinner size={24} />
 				) : (
 					<Row gap={35}>
-						<Tertiarybutton containerBackgroundColor={colors.white} onPress={onClose}>
+						<TertiaryButton containerBackgroundColor={colors.white} onPress={onClose}>
 							{format("global.cancel")}
-						</Tertiarybutton>
+						</TertiaryButton>
 						<PrimaryButton onPress={saveSex}>{format("global.continue")}</PrimaryButton>
 					</Row>
 				)}

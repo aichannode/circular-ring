@@ -1,6 +1,7 @@
-import { getScoreQuality } from "@domain/measure/score";
+import { useServices } from "@core/services";
 import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
 import { useAutoConnectState, useLiveData } from "@domain/device/hooks";
+import { getScoreQuality } from "@domain/measure/score";
 import { usePreferences } from "@domain/preferences/hooks";
 import { getIntensity, Intensity } from "@domain/ring/ringLiveData";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
@@ -27,6 +28,7 @@ export const CircleLiveScreen: React.FC = () => {
 	const autoConnectState = useAutoConnectState();
 
 	const preferences = usePreferences();
+	const { userPreferencesService } = useServices();
 
 	const disconnectedBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const tutorialBottomSheet = useRef<CircularBottomSheetHandle>(null);
@@ -135,8 +137,9 @@ export const CircleLiveScreen: React.FC = () => {
 			</CircularBottomSheet>
 			<CircularBottomSheet snapPoints={[610]} ref={tutorialBottomSheet}>
 				<LiveTutorialBottomSheet
-					onFinish={async () => {
+					onFinish={async (hideTutorial) => {
 						await tutorialBottomSheet.current?.asyncClose();
+						hideTutorial && userPreferencesService.skipLiveTutorial();
 						start();
 					}}
 				/>
