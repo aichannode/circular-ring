@@ -4,36 +4,18 @@ import dayjs from "dayjs";
 import { useObservable } from "micro-observables";
 import { useEffect } from "react";
 
-export const useActivityData = () => {
+export const useActivityData = (ymdDay?: string) => {
 	const { measureService } = useServices();
-	const data = useObservable(measureService.activityData);
-
-	useEffect(() => {
-		measureService.fetchActivityData();
-	}, []);
-
-	return data;
+	return useStore(ymdDay ?? dayjs().format("YYYY-MM-DD"), measureService.activityData, FetchStrategy.First);
 };
 
-export const useSleepQualityDailyData = () => {
+export const useSleepQualityDailyData = (ymdDay?: string) => {
 	const { measureService } = useServices();
-	const data = useObservable(measureService.sleepQualityDailyData);
-
-	useEffect(() => {
-		measureService.fetchSleepQualityDailyData();
-	}, []);
-
-	return data;
+	return useStore(ymdDay ?? dayjs().format("YYYY-MM-DD"), measureService.sleepQualityData, FetchStrategy.First);
 };
-export const useSleepDurationData = () => {
+export const useSleepDurationData = (ymdDay?: string) => {
 	const { measureService } = useServices();
-	const data = useObservable(measureService.sleepDurationInfos);
-
-	useEffect(() => {
-		measureService.fetchSleepDurationInfos();
-	}, []);
-
-	return data;
+	return useStore(ymdDay ?? dayjs().format("YYYY-MM-DD"), measureService.sleepDurationInfos, FetchStrategy.First);
 };
 
 export const useWakeUpScore = () => {
