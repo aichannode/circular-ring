@@ -106,7 +106,7 @@ export const CircleActivityScreen: React.FC = () => {
 					}
 				</ElementStack>
 			</ScrollView>
-			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[400]}>
+			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
 				<View style={{ padding: 20 }}>
 					<CalendarView
 						autoSelectDayOnMonthChange={false}

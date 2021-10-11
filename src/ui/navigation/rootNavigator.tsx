@@ -206,9 +206,9 @@ const CircleIcon = styled.Image`
 export const RootNavigator: React.FC = () => {
 	const isAuthenticated = !!useAuthenticatedUserEmail();
 
-	const accountLinkedToDevice = true || useAccountLinked();
-	const hasUser = true || !!useUser();
-	const deviceStored = true || useDeviceStored();
+	const accountLinkedToDevice = useAccountLinked();
+	const hasUser = !!useUser();
+	const deviceStored = useDeviceStored();
 
 	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
 

@@ -1,7 +1,5 @@
 import { FetchStrategy } from "@betomorrow/micro-stores";
 import { useCalendar } from "@domain/calendar/hooks/useCalendar";
-import { useGlobalScore } from "@domain/measure/hooks";
-import { optimalGlobalScoreThreshold } from "@domain/measure/score";
 import { Row } from "@ui/components/layout";
 import { colors } from "@ui/styles/colors";
 import React from "react";
@@ -11,17 +9,12 @@ import styled from "styled-components/native";
 
 export const CalendarDay: React.FC<DayComponentProps> = React.memo(({ date, marking, onPress, state }) => {
 	const fixedMarking = marking as unknown as { selected?: boolean } | undefined;
-
-	const { result: globalScore } = useGlobalScore(date.dateString, FetchStrategy.Never);
-
 	const dayCalendar = useCalendar(date.dateString, FetchStrategy.Never);
 
 	return (
 		<Container onPress={() => onPress(date)}>
 			<StarContainer>
-				{globalScore && globalScore.score > optimalGlobalScoreThreshold && (
-					<Image source={require("@assets/images/goldStar.png")} />
-				)}
+				{dayCalendar && dayCalendar.streak && <Image source={require("@assets/images/goldStar.png")} />}
 			</StarContainer>
 			<DayInfo selected={fixedMarking?.selected}>
 				<DayText today={state === "today"} disabled={state === "disabled"}>

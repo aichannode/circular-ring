@@ -94,7 +94,7 @@ export const CircleSleepScreen: React.FC = () => {
 						.filter(Boolean) as JSX.Element[]
 				}
 			</ElementStack>
-			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[400]}>
+			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
 				<View style={{ padding: 20 }}>
 					<CalendarView
 						autoSelectDayOnMonthChange={false}
