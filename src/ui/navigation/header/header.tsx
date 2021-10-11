@@ -57,7 +57,7 @@ export const Header = ({ options, navigation }: NativeStackHeaderProps) => {
 };
 
 const Container = styled.View<{ statusBarHeight: number }>`
-	height: ${({ statusBarHeight }) => statusBarHeight + 60}px;
+	height: ${({ statusBarHeight }) => statusBarHeight + 75}px;
 	background-color: ${colors.lightgray};
 	flex-direction: row;
 	padding: ${({ statusBarHeight }) => statusBarHeight}px 16px 0;
