@@ -1,7 +1,7 @@
 import { useUser } from "@domain/user/hooks/useUser";
 import { circularCalendarTheme } from "@ui/components/calendar/circularCalendarTheme";
 import dayjs from "dayjs";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { Calendar as RNCalendar } from "react-native-calendars";
 import { CalendarDay } from "./calendarDay";
@@ -29,12 +29,14 @@ export const CalendarView: React.FC<CalendarProps> = ({
 	const user = useUser();
 	const [minDate, maxDate] = useMemo(() => [user?.createdAt || new Date(), new Date()], [user?.createdAt]);
 
+	const [visibleMonthDay, setVisibleMonthDay] = useState(dayjs().format("YYYY-MM-DD"));
+
 	const isFirstMonth = useMemo(
-		() => dayjs(selectedDay).startOf("month").isBefore(dayjs(minDate)),
-		[minDate, selectedDay]
+		() => dayjs(visibleMonthDay).startOf("month").isBefore(dayjs(minDate)),
+		[minDate, visibleMonthDay]
 	);
 
-	const isLastMonth = useMemo(() => dayjs(selectedDay).endOf("month").isAfter(dayjs()), [maxDate, selectedDay]);
+	const isLastMonth = useMemo(() => dayjs(visibleMonthDay).endOf("month").isAfter(dayjs()), [maxDate, visibleMonthDay]);
 
 	return (
 		<RNCalendar
@@ -43,13 +45,10 @@ export const CalendarView: React.FC<CalendarProps> = ({
 			disableArrowLeft={isFirstMonth}
 			disableArrowRight={isLastMonth}
 			onDayPress={(day) => onDaySelected(day.dateString)}
-			onMonthChange={
-				autoSelectDayOnMonthChange
-					? (date) => {
-							autoSelectDay(date.dateString);
-					  }
-					: undefined
-			}
+			onMonthChange={(date) => {
+				setVisibleMonthDay(date.dateString);
+				autoSelectDayOnMonthChange && autoSelectDay(date.dateString);
+			}}
 			style={style}
 			hideExtraDays
 			markedDates={selectedDay ? { [selectedDay]: { selected: true } } : undefined}
