@@ -137,7 +137,7 @@ export class BleDeviceService {
 				this._favoriteDevice.set({ name: debugDevice });
 				this._favoriteDeviceSNU.set("fake_snu");
 				this.stopScan();
-				this.autoConnectDevice(debugDevice);
+				this.autoConnectFavoriteDevice();
 			}
 		});
 	}
@@ -148,7 +148,7 @@ export class BleDeviceService {
 		this.checkSettings();
 
 		if (loadedDevice) {
-			this.autoConnectDevice(loadedDevice.name);
+			this.autoConnectFavoriteDevice();
 		}
 	}
 
@@ -247,13 +247,17 @@ export class BleDeviceService {
 			this._batteryListenerUnsubscribe?.();
 			this._currentRingBattery.set(null);
 			this.logger.info("Trying to reconnect to", connectedDevice.name);
-			this.autoConnectDevice(connectedDevice.name);
+			this.autoConnectFavoriteDevice();
 		} else {
 			this.logger.warn("Disconnected from unknown device");
 		}
 	}
 
-	async autoConnectDevice(name: string) {
+	async autoConnectFavoriteDevice() {
+		const name = this._favoriteDevice.get()?.name;
+		if (name === undefined) {
+			return;
+		}
 		this.logger.info("Trying to autoconnect to", name);
 		await this.bluetoothService.enable();
 		this._lookingForDevice.set(true);
@@ -266,14 +270,20 @@ export class BleDeviceService {
 				this._connectedDevice.set(alreadyConnectedDevice);
 				this._connectionState.set(DeviceConnectionState.CONNECTED);
 			}
-			const device = await this.findDevice(name);
-			return this.connect(device);
+			const device = await this.findFavoriteDevice();
+			if (device) {
+				return this.connect(device);
+			}
 		} finally {
 			this._lookingForDevice.set(false);
 		}
 	}
 
-	async findDevice(name: string): Promise<Device> {
+	async findFavoriteDevice(): Promise<Device | undefined> {
+		const name = this._favoriteDevice.get()?.name;
+		if (name === undefined) {
+			return undefined;
+		}
 		const manager = this.bluetoothService.manager;
 
 		const scanPromise = new Promise<Device>((resolve, reject) => {
@@ -304,7 +314,7 @@ export class BleDeviceService {
 			this.logger.warn("Device not found:", e, "retrying in 10 seconds ");
 			this.stopScan();
 			await delay(scanRetryTimeout);
-			return this.findDevice(name);
+			return this.findFavoriteDevice();
 		}
 	}
 
@@ -411,12 +421,12 @@ export class BleDeviceService {
 
 	async disconnect() {
 		const device = this._connectedDevice.get();
+		await this.forgetBeforeDisconnection();
 		if (!device) {
 			this.logger.info("Already disconnected");
 			return;
 		}
 		this.logger.info("Disconnecting from device", device.name);
-		await this.forgetBeforeDisconnection();
 		await device.cancelConnection();
 		this.logger.info(`Disconnection from device ${device.name} succeeded`);
 	}
