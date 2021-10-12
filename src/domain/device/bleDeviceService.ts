@@ -5,6 +5,7 @@ import { Channel } from "@domain/device/channels";
 import { FakeDeviceService } from "@domain/fake/fakeDeviceService";
 import { deserializeBattery, RingBattery } from "@domain/ring/ringBattery";
 import { deserializeLiveData, RingLiveData } from "@domain/ring/ringLiveData";
+import { UserService } from "@domain/user/userService";
 import { observable, Observable } from "micro-observables";
 import { Signal } from "micro-signals";
 import { Platform } from "react-native";
@@ -77,7 +78,8 @@ export class BleDeviceService {
 	constructor(
 		private readonly bluetoothService: BluetoothService,
 		private readonly fakeDeviceService: FakeDeviceService,
-		private readonly favoriteDeviceStorage: FavoriteDeviceStorage
+		private readonly favoriteDeviceStorage: FavoriteDeviceStorage,
+		private readonly userService: UserService
 	) {
 		LocationEnabler.addListener(({ locationEnabled }) => {
 			this._locationEnabledAndroid.set(locationEnabled);
@@ -144,12 +146,16 @@ export class BleDeviceService {
 
 	async init() {
 		const loadedDevice = await this.favoriteDeviceStorage.load();
-		this._favoriteDevice.set(loadedDevice);
 		this.checkSettings();
-
+		this._favoriteDevice.set(loadedDevice);
 		if (loadedDevice) {
 			this.autoConnectFavoriteDevice();
 		}
+		this.userService.user.subscribe(async (user) => {
+			if (!user) {
+				this.disconnect();
+			}
+		});
 	}
 
 	async startScan() {
