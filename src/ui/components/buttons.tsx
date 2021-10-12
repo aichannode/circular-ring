@@ -10,9 +10,10 @@ interface CircularButtonProps {
 	style?: StyleProp<ViewStyle>;
 	onPress: () => void;
 	light?: boolean;
+	disabled?: boolean;
 }
 
-export const PrimaryButton: React.FC<CircularButtonProps> = ({ onPress, style, light, children }) => {
+export const PrimaryButton: React.FC<CircularButtonProps> = ({ onPress, style, light, disabled, children }) => {
 	return (
 		<Pressable onPress={onPress} style={style}>
 			{({ pressed }) => (
@@ -21,7 +22,9 @@ export const PrimaryButton: React.FC<CircularButtonProps> = ({ onPress, style, l
 					start={{ x: 0, y: 1 }}
 					end={{ x: 1, y: 0.5 }}
 					colors={
-						pressed
+						disabled
+							? [colors.lightgray, colors.lightgray]
+							: pressed
 							? [colors.orangeGradientEnd, colors.orangeGradientStart]
 							: [colors.orangeGradientStart, colors.orangeGradientEnd]
 					}

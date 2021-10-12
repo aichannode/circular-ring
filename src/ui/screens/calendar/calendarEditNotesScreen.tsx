@@ -128,6 +128,8 @@ export const CalendarEditNotesScreen: React.FC = () => {
 		return allRawTags.indexOf(item) == pos;
 	});
 
+	const disableRegisterNote = endDate < startDate || selectedTags.length === 0;
+
 	return calendar ? (
 		<View style={{ flex: 1 }}>
 			<ScrollScreen contentContainerStyle={{ paddingVertical: 20 }}>
@@ -209,7 +211,9 @@ export const CalendarEditNotesScreen: React.FC = () => {
 					{isLoading ? (
 						<Spinner size={24} />
 					) : (
-						<PrimaryButton onPress={saveNote}>{format("calendar.save_note")}</PrimaryButton>
+						<PrimaryButton disabled={disableRegisterNote} onPress={saveNote}>
+							{format("calendar.save_note")}
+						</PrimaryButton>
 					)}
 				</BottomContainer>
 				<TimeEditor
