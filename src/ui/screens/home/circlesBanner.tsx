@@ -72,7 +72,5 @@ const CircleLabel = styled(PrimaryText)`
 `;
 
 const CircleView = styled.Pressable`
-	/* max-width: 80px;
-	min-width: 60px; */
 	width: 80px;
 `;

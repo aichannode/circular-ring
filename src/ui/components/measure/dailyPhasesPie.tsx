@@ -51,7 +51,7 @@ export const DailyPhasesPie: React.FC<DailyPhasesPieProps> = ({ sleepDurationDat
 				{sleepDurationData.dailyPhaseInfos.map((phaseInfo, i, allPhases) => {
 					const labels = renderedLabels(phaseInfo.phase, i, allPhases[i - 1]?.phase);
 					return labels.map((label, index) =>
-						label ? (
+						label !== null ? (
 							<React.Fragment key={`${i}-${index}`}>
 								<LabelPolarView
 									polarOrigin={polarOrigin}
@@ -61,7 +61,7 @@ export const DailyPhasesPie: React.FC<DailyPhasesPieProps> = ({ sleepDurationDat
 									angleDeg={angle(index > 0 ? phaseInfo.end : phaseInfo.start) - rightAngle}
 								>
 									<View>
-										<Label style={{ fontWeight: "500" }}>{format(label)}</Label>
+										<Label style={{ fontWeight: "500" }}>{label && format(label)}</Label>
 										<Label>{dayjs(index > 0 ? phaseInfo.end : phaseInfo.start).format("HH:mm")}</Label>
 									</View>
 								</LabelPolarView>
@@ -100,10 +100,10 @@ function renderedLabels(
 	phase: DailyPhase,
 	index: number,
 	previousPhase?: DailyPhase
-): [WordingKey | null, WordingKey | null] {
+): [WordingKey | null | "", WordingKey | null] {
 	// Check with server
 	if (phase === DailyPhase.LYING && index === 0) {
-		return ["sleep.duration.label.start_lying", null];
+		return ["", null];
 	}
 	if (phase === DailyPhase.SLEEP && previousPhase === DailyPhase.LYING) {
 		return ["sleep.duration.label.start_sleep", null];
