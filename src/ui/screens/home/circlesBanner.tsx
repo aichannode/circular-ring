@@ -46,7 +46,7 @@ export const CirclesBanner: React.FC<CirclesBannerProps> = ({ style }) => {
 	return (
 		<Container style={style} gap={15}>
 			<TitleText>{format("home.circles.title")}</TitleText>
-			<Row align="flex-start" gap={20}>
+			<Row align="flex-start" gap={4}>
 				{circles.map((circle) => (
 					<CircleView key={circle.route} onPress={() => navigation.navigate(circle.route)}>
 						<Stack gap={10} align="center">
@@ -72,6 +72,7 @@ const CircleLabel = styled(PrimaryText)`
 `;
 
 const CircleView = styled.Pressable`
-	max-width: 80px;
-	min-width: 60px;
+	/* max-width: 80px;
+	min-width: 60px; */
+	width: 80px;
 `;
