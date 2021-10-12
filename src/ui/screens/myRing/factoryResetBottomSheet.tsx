@@ -35,7 +35,7 @@ export const FactoryResetBottomSheet: React.FC<FactoryResetBottomSheetProps> = (
 	return (
 		<Container horizontalPadding={0}>
 			<Title>{format("ring.factory_reset_confirm.title")}</Title>
-			<Description>{format("ring.factory_reset_confirm.title")}</Description>
+			<Description>{format("ring.factory_reset_confirm.description")}</Description>
 			<ErrorMessage>{errorMessage}</ErrorMessage>
 			<Grow />
 			<ButtonContainer gap={35} style={{ height: 38 }}>
