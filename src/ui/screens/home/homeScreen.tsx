@@ -1,7 +1,7 @@
 import { useServices } from "@core/services";
 import { useHomeBanner } from "@domain/homeBanner/hooks";
 import { useSyncState } from "@domain/ring/hooks";
-import { SyncState } from "@domain/ring/ringService";
+import { SyncState } from "@domain/ring/ringManagementService";
 import { colors } from "@ui/styles/colors";
 import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView } from "react-native";
@@ -12,7 +12,7 @@ import { SyncBanner } from "./syncBanner";
 
 export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
-	const { ringService } = useServices();
+	const { ringManagementService } = useServices();
 	const [forceRefreshing, setForceRefreshing] = useState(false);
 
 	const forceRefresh = useCallback(() => {
@@ -20,7 +20,7 @@ export const HomeScreen: React.FC = () => {
 			return;
 		}
 		setForceRefreshing(true);
-		ringService.syncData();
+		ringManagementService.syncData();
 	}, [syncState, setForceRefreshing]);
 
 	useEffect(() => {

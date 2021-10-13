@@ -15,8 +15,9 @@ export class UserStorage {
 		return Storage.save<User>(userStorageKey, user);
 	}
 
-	loadUser() {
-		return Storage.load<User>(userStorageKey);
+	async loadUser(): Promise<User | null> {
+		const dto = await Storage.load<UserStorageDto>(userStorageKey);
+		return !!dto ? { ...dto, bornDate: new Date(dto.bornDate), createdAt: new Date(dto.createdAt) } : null;
 	}
 
 	removeUser() {
@@ -64,4 +65,9 @@ export class UserStorage {
 	removeUserAdvancedInfo() {
 		return Storage.remove(userAdvancedInfoStorageKey);
 	}
+}
+
+interface UserStorageDto extends Omit<User, "bornDate" | "createdAt"> {
+	bornDate: string;
+	createdAt: string;
 }

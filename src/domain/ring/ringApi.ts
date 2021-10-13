@@ -1,28 +1,46 @@
 import { ApiService } from "@core/api/apiService";
-import { delay } from "@core/utils";
+import { Platform } from "react-native";
+import RNFS from "react-native-fs";
 import { UserRing } from "./ring";
 
 const ringApiBaseUrl = "/rings";
+
+const tempSyncDataFile = (Platform.OS === "android" ? "file://" : "") + RNFS.DocumentDirectoryPath + "/sync-temp.txt";
+
 export class RingApi {
 	constructor(private readonly apiService: ApiService) {}
 
-	async getRings() {
+	async getRings(): Promise<UserRing[]> {
 		const result = await this.apiService.get<UserRing[]>(`${ringApiBaseUrl}`);
 		return result.data;
 	}
 
-	async addRing(ring: PostUserRing) {
+	async addRing(ring: PostUserRing): Promise<UserRing> {
 		const result = await this.apiService.post<UserRing>(`${ringApiBaseUrl}`, ring);
 		return result.data;
 	}
+
 	deleteRing(ringId: string) {
 		return this.apiService.delete(`${ringApiBaseUrl}/${ringId}`);
 	}
 
-	async sendData(rawData: string) {
-		// return this.apiService.post(``, rawData);
-		console.log("Fake Sending data...", rawData.length);
-		return delay(3000);
+	async sendData(ring: UserRing, rawData: string) {
+		await RNFS.writeFile(tempSyncDataFile, rawData, "utf8");
+
+		const formData = new FormData();
+		formData.append("ringId", ring.id);
+		formData.append("firmware", ring.firmware);
+		formData.append("file", {
+			uri: tempSyncDataFile,
+			type: "text/plain",
+			name: "sync.txt",
+		});
+
+		try {
+			await this.apiService.post(`${ringApiBaseUrl}/raw-data/sync`, formData);
+		} finally {
+			RNFS.unlink(tempSyncDataFile);
+		}
 	}
 }
 

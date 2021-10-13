@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { PrimaryButton, Tertiarybutton } from "@ui/components/buttons";
+import { PrimaryButton, TertiaryButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -8,14 +8,15 @@ import React, { useCallback } from "react";
 import styled from "styled-components/native";
 
 interface LogoutBottomSheetProps {
-	onCancel: () => void;
+	onClose: () => void;
 }
 
-export const LogoutBottomSheet: React.FC<LogoutBottomSheetProps> = ({ onCancel }) => {
+export const LogoutBottomSheet: React.FC<LogoutBottomSheetProps> = ({ onClose }) => {
 	const { userService } = useServices();
 	const { format } = useI18n();
 
 	const logout = useCallback(async () => {
+		onClose();
 		await userService.logout();
 	}, []);
 
@@ -25,9 +26,9 @@ export const LogoutBottomSheet: React.FC<LogoutBottomSheetProps> = ({ onCancel }
 			<Description>{format("profile.logout_bottom_sheet.description")}</Description>
 			<Grow />
 			<ButtonContainer gap={35}>
-				<Tertiarybutton containerBackgroundColor={colors.white} onPress={onCancel}>
+				<TertiaryButton containerBackgroundColor={colors.white} onPress={onClose}>
 					{format("global.cancel")}
-				</Tertiarybutton>
+				</TertiaryButton>
 				<PrimaryButton onPress={logout}>{format("profile.logout_bottom_sheet.logout")}</PrimaryButton>
 			</ButtonContainer>
 		</Container>

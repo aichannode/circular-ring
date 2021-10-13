@@ -1,4 +1,4 @@
-import { ScoreUnit } from "@domain/circleActivity/circleActivityData";
+import { ScoreUnit } from "@domain/measure/score";
 import {
 	DailyActivityGoalMetric,
 	DailyActivityMetric,

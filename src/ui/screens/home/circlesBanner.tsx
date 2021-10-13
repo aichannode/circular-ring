@@ -16,6 +16,16 @@ interface CircleInfo {
 
 const circles: CircleInfo[] = [
 	{
+		route: Routes.Alarm,
+		source: require("@assets/images/circleAlarm.png"),
+		key: "home.circles.alarm.label",
+	},
+	{
+		route: Routes.Sleep,
+		source: require("@assets/images/circleSleep.png"),
+		key: "home.circles.sleep.label",
+	},
+	{
 		route: Routes.Activity,
 		source: require("@assets/images/circleActivity.png"),
 		key: "home.circles.activity.label",
@@ -24,11 +34,6 @@ const circles: CircleInfo[] = [
 		route: Routes.Live,
 		source: require("@assets/images/circleLive.png"),
 		key: "home.circles.live.label",
-	},
-	{
-		route: Routes.Alarm,
-		source: require("@assets/images/circleAlarm.png"),
-		key: "home.circles.alarm.label",
 	},
 ];
 interface CirclesBannerProps {
@@ -41,7 +46,7 @@ export const CirclesBanner: React.FC<CirclesBannerProps> = ({ style }) => {
 	return (
 		<Container style={style} gap={15}>
 			<TitleText>{format("home.circles.title")}</TitleText>
-			<Row align="flex-start" gap={20}>
+			<Row align="flex-start" gap={4}>
 				{circles.map((circle) => (
 					<CircleView key={circle.route} onPress={() => navigation.navigate(circle.route)}>
 						<Stack gap={10} align="center">
@@ -63,8 +68,9 @@ const Container = styled(Stack)`
 const CircleLabel = styled(PrimaryText)`
 	font-size: 12px;
 	text-align: center;
+	flex-wrap: wrap;
 `;
 
 const CircleView = styled.Pressable`
-	width: 60px;
+	width: 80px;
 `;

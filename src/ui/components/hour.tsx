@@ -13,7 +13,7 @@ interface HourProps {
 export const Hour: React.FC<HourProps> = ({ value, is24Hour = false, style, onPress }) => {
 	return (
 		<Pressable onPress={onPress}>
-			{<Time style={style}>{`${is24Hour ? dayjs(value).format("HH : mm") : dayjs(value).format("hh : mm A")}`}</Time>}
+			<Time style={style}>{`${is24Hour ? dayjs(value).format("HH : mm") : dayjs(value).format("hh : mm A")}`}</Time>
 		</Pressable>
 	);
 };

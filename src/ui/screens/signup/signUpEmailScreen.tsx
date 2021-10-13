@@ -131,7 +131,7 @@ export const SignUpEmailScreen = () => {
 					{format("signup.terms.link_prefix")}
 					<TermsLink
 						onPress={() => {
-							navigate(Routes.TermsAndConditions);
+							navigate(Routes.WebView, { uri: format("url.terms_and_conditions") });
 						}}
 					>
 						{" "}

@@ -1,22 +1,24 @@
 import { ApiService } from "@core/api/apiService";
 import { CognitoAuthService } from "@domain/auth/cognito-auth/cognitoAuthService";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
+import { CalendarApi } from "@domain/calendar/calendarApi";
+import { CalendarService } from "@domain/calendar/calendarService";
 import { CalibrationApi } from "@domain/calibration/calibrationApi";
 import { CalibrationService } from "@domain/calibration/calibrationService";
-import { CircleActivityService } from "@domain/circleActivity/circleActivityService";
 import { CircleAlarmService } from "@domain/circleAlarm/circleAlarmService";
-import { DeviceService } from "@domain/device/deviceService";
+import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
 import { DevFakeDeviceService, EmptyFakeDeviceService } from "@domain/fake/fakeDeviceService";
 import { HomeBannerApi } from "@domain/homeBanner/homeBannerApi";
 import { HomeBannerService } from "@domain/homeBanner/homeBannerService";
 import { HomeBannerStorage } from "@domain/homeBanner/homeBannerStorage";
 import { MeasureApi } from "@domain/measure/measureApi";
+import { MeasureService } from "@domain/measure/measureService";
 import { UserPreferencesService } from "@domain/preferences/userPreferencesService";
 import { UserPreferencesStorage } from "@domain/preferences/userPreferencesStorage";
 import { RingApi } from "@domain/ring/ringApi";
 import { RingDataStorage } from "@domain/ring/ringDataStorage";
-import { RingService } from "@domain/ring/ringService";
+import { RingManagementService } from "@domain/ring/ringManagementService";
 import { UserRingsStorage } from "@domain/ring/userRingsStorage";
 import { UserApi } from "@domain/user/userApi";
 import { UserService } from "@domain/user/userService";
@@ -37,16 +39,22 @@ const ringApi = new RingApi(apiService);
 
 const cognitoAuthService = new CognitoAuthService();
 
-const bluetoothService = new BluetoothService();
-const deviceService = new DeviceService(bluetoothService, fakeDeviceService, favoriteDeviceStorage);
-const circleAlarmService = new CircleAlarmService(deviceService);
-const ringService = new RingService(cognitoAuthService, deviceService, userRingsStorage, ringDataStorage, ringApi);
-const measureApi = new MeasureApi(apiService);
-
-const circleActivityService = new CircleActivityService(measureApi);
-
 const userApi = new UserApi(apiService);
 const userService = new UserService(cognitoAuthService, userApi, userStorage);
+
+const bluetoothService = new BluetoothService();
+const bleDeviceService = new BleDeviceService(bluetoothService, fakeDeviceService, favoriteDeviceStorage, userService);
+const circleAlarmService = new CircleAlarmService(bleDeviceService);
+const ringManagementService = new RingManagementService(
+	userService,
+	bleDeviceService,
+	userRingsStorage,
+	ringDataStorage,
+	ringApi
+);
+
+const measureApi = new MeasureApi(apiService);
+const measureService = new MeasureService(measureApi);
 
 const userPreferencesStorage = new UserPreferencesStorage();
 const userPreferencesService = new UserPreferencesService(userPreferencesStorage);
@@ -57,18 +65,22 @@ const homeBannerStorage = new HomeBannerStorage();
 const homeBannerApi = new HomeBannerApi(apiService);
 const homeBannerService = new HomeBannerService(homeBannerStorage, homeBannerApi);
 
+const calendarApi = new CalendarApi(apiService);
+const calendarService = new CalendarService(calendarApi, userService);
+
 export const services = {
 	cognitoAuthService,
 	bluetoothService,
-	deviceService,
+	bleDeviceService,
 	userService,
-	ringService,
-	circleActivityService,
+	ringManagementService,
+	measureService,
 	circleAlarmService,
 	userPreferencesService,
 	calibrationService,
 	homeBannerService,
 	fakeDeviceService,
+	calendarService,
 };
 
 export type Services = typeof services;

@@ -1,5 +1,6 @@
 import { ChronoType } from "@domain/user/advancedInfo";
 import { useUserAdvancedInfo } from "@domain/user/hooks/useUser";
+import { Grow } from "@ui/components/layout";
 import { useI18n } from "@ui/i18n";
 import { advanceInfoI18nKey, chronoTypeKeys } from "@ui/screens/profile/advancedInformation/profileAdvancedInfoI18n";
 import { colors } from "@ui/styles/colors";
@@ -34,7 +35,9 @@ export const ChronotypeCard = () => {
 		<Card>
 			<Title>{format("profile_advanced_info.chrono_type.title")}</Title>
 			{advancedInfo?.chronoType ? <Icon source={iconSource()} /> : null}
+			<Grow />
 			<Value>{displayedTypeName}</Value>
+			<Grow />
 		</Card>
 	);
 };

@@ -24,3 +24,6 @@ export const Strong = styled.Text`
 export const Colored = styled.Text`
 	color: ${colors.primary};
 `;
+export const Bold = styled.Text`
+	font-weight: bold;
+`;

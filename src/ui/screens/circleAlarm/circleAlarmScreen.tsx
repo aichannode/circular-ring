@@ -1,11 +1,14 @@
 import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { CircularBottomSheet } from "@ui/components/bottomSheet";
+import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
+import { useAutoConnectState } from "@domain/device/hooks";
+import { useWakeUpScore } from "@domain/measure/hooks";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
+import { InfoListHeader } from "@ui/components/infoList";
+import { ScoreSection } from "@ui/components/measure/scoreSection";
 import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
-import { ScreenSection } from "@ui/screens/circleActivity/screenSection";
 import { WarningBottomSheet } from "@ui/screens/circleAlarm/warningBottomSheet";
 import { colors } from "@ui/styles/colors";
 import React, { useEffect, useRef } from "react";
@@ -13,38 +16,45 @@ import { Image, Pressable, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { AlarmCard } from "./alarmCard";
 import { AlarmWeekOverview } from "./alarmWeekOverview";
-import { SleepInformations } from "./sleepInformations";
 
 export const CircleAlarmScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
 	const { loading, alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
-	const warningBottomSheet = useRef<BottomSheetModal>(null);
+	const warningBottomSheet = useRef<CircularBottomSheetHandle>(null);
+	const wakeUpScore = useWakeUpScore();
+	const autoConnectState = useAutoConnectState();
 
 	useEffect(() => {
-		loadAlarms();
-	}, [loadAlarms]);
+		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
+			loadAlarms();
+		}
+	}, [loadAlarms, autoConnectState]);
 
+	const hasConnectedRing = autoConnectState === DeviceAutoConnectState.CONNECTED;
 	return (
 		<Container>
 			<ScrollView>
-				<ScoreContainer>
-					<SleepInformations style={{ marginBottom: 25, alignSelf: "center" }} />
-				</ScoreContainer>
-				<ScreenSection title={format("alarm.score.programmed")} />
+				<ScoreSection
+					label={format("alarm.wake_up_score")}
+					color={colors.blue}
+					score={wakeUpScore}
+					style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
+				/>
+				<InfoListHeader>{format("alarm.score.programmed")}</InfoListHeader>
 				<AlarmContainer>
 					{alarms?.map((value) => (
 						<Pressable
+							disabled={!hasConnectedRing}
 							key={value.id}
-							onPress={() =>
-								navigation.navigate(Routes.EditAlarm, { initialAlarm: { ...value, time: value.time.toString() } })
-							}
+							onPress={() => navigation.navigate(Routes.EditAlarm, { initialAlarm: value })}
 						>
-							<AlarmCard data={value} />
+							<AlarmCard data={value} disabled={!hasConnectedRing} />
 						</Pressable>
 					))}
 					{loading ? <Spinner size={35} /> : null}
 					<AddAlarmButton
+						disabled={!hasConnectedRing}
 						onPress={() => {
 							alarms.length >= MAX_ALARMS
 								? warningBottomSheet.current?.present()
@@ -55,8 +65,14 @@ export const CircleAlarmScreen: React.FC = () => {
 						<AddAlarmText>{format("alarm.score.add_button")}</AddAlarmText>
 					</AddAlarmButton>
 				</AlarmContainer>
-				<ScreenSection title={format("alarm.week_overview")} />
-				<AlarmWeekOverview style={{ marginVertical: 25 }} />
+				{hasConnectedRing && (
+					<>
+						<InfoListHeader>{format("alarm.week_overview")}</InfoListHeader>
+						<AlarmOverviewContainer>
+							<AlarmWeekOverview style={{ marginVertical: 25 }} />
+						</AlarmOverviewContainer>
+					</>
+				)}
 			</ScrollView>
 			<CircularBottomSheet snapPoints={[500]} ref={warningBottomSheet}>
 				<WarningBottomSheet
@@ -72,17 +88,12 @@ export const CircleAlarmScreen: React.FC = () => {
 
 const Container = styled.View`
 	flex: 1;
-	background-color: ${colors.lightgray};
-`;
-
-const ScoreContainer = styled.View`
-	flex: 1;
-	padding-top: 30px;
 	background-color: ${colors.white};
 `;
 
 const AlarmContainer = styled.View`
 	padding: 25px 20px;
+	background-color: ${colors.lightgray};
 `;
 
 const AddImage = styled(Image)`
@@ -95,7 +106,7 @@ const AddAlarmText = styled.Text`
 	color: ${colors.darkGray};
 `;
 
-const AddAlarmButton = styled(Pressable)`
+const AddAlarmButton = styled(Pressable)<{ disabled?: boolean }>`
 	background-color: ${colors.gray + "80"};
 	flex-direction: row;
 	margin-top: 5px;
@@ -103,4 +114,9 @@ const AddAlarmButton = styled(Pressable)`
 	justify-content: center;
 	align-items: center;
 	border-radius: 5px;
+	${({ disabled }) => disabled && "opacity: 0.2"};
+`;
+
+const AlarmOverviewContainer = styled.View`
+	background-color: ${colors.lightgray};
 `;

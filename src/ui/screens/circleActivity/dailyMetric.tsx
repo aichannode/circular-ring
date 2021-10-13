@@ -1,8 +1,8 @@
-import { getScoreQuality, ScoreQuality } from "@domain/circleActivity/circleActivityData";
+import { getScoreQuality, ScoreQuality } from "@domain/measure/score";
 import { Grow } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { colors, qualityColors } from "@ui/styles/colors";
-import { whiteCardStyle } from "@ui/styles/containerStyles";
+import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
@@ -10,7 +10,7 @@ import styled from "styled-components/native";
 interface DailyMetricProps {
 	icon: number;
 	label: string;
-	value: number;
+	value?: number;
 	goodThreshold?: number;
 	optimalThreshold?: number;
 	style?: StyleProp<ViewStyle>;
@@ -24,7 +24,9 @@ export const DailyMetric: React.FC<DailyMetricProps> = ({
 	style,
 }) => {
 	const scoreQuality =
-		goodThreshold && optimalThreshold ? getScoreQuality(value, goodThreshold, optimalThreshold) : undefined;
+		goodThreshold && optimalThreshold && value !== undefined
+			? getScoreQuality(value, goodThreshold, optimalThreshold)
+			: undefined;
 
 	return (
 		<Container style={style}>
@@ -32,13 +34,13 @@ export const DailyMetric: React.FC<DailyMetricProps> = ({
 			<SecondaryText>{label}</SecondaryText>
 			<Grow />
 			{!!scoreQuality && <QualityIndicator quality={scoreQuality} />}
-			<Metric>{value}</Metric>
+			<Metric>{value !== undefined ? value : "-"}</Metric>
 		</Container>
 	);
 };
 
 const Container = styled.View`
-	${whiteCardStyle};
+	${roundedWhiteCardStyle};
 	flex-direction: row;
 	align-items: center;
 	padding: 20px 25px;

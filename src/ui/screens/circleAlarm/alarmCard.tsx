@@ -1,7 +1,6 @@
 import { useServices } from "@core/services";
 import { RingAlarm } from "@domain/ring/ringAlarm";
 import { Divider } from "@ui/components/divider";
-import { Hour } from "@ui/components/hour";
 import { Grow } from "@ui/components/layout";
 import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
@@ -14,10 +13,11 @@ import styled from "styled-components/native";
 
 interface AlarmCardProps {
 	data: RingAlarm;
+	disabled?: boolean;
 	style?: StyleProp<ViewStyle>;
 }
 
-export const AlarmCard: React.FC<AlarmCardProps> = ({ data, style }) => {
+export const AlarmCard: React.FC<AlarmCardProps> = ({ data, disabled, style }) => {
 	const { circleAlarmService } = useServices();
 	const { formatDay } = useI18n();
 	const { id, isActivated } = data;
@@ -36,7 +36,9 @@ export const AlarmCard: React.FC<AlarmCardProps> = ({ data, style }) => {
 				}}
 			/>
 			<HourContainer>
-				<Hour value={data.time} is24Hour />
+				<Time style={style}>
+					{`${data.time.hour.toString().padStart(2, "0")} : ${data.time.minute.toString().padStart(2, "0")}`}
+				</Time>
 			</HourContainer>
 			<VerticalSeparator />
 			<LabelContainer>
@@ -45,6 +47,7 @@ export const AlarmCard: React.FC<AlarmCardProps> = ({ data, style }) => {
 			</LabelContainer>
 			<Grow />
 			<SwitchButton
+				disabled={disabled}
 				style={{ transform: Platform.OS === "android" ? [{ scale: 1.5 }] : undefined }}
 				ios_backgroundColor={colors.gray}
 				trackColor={{ false: colors.gray, true: colors.blue }}
@@ -58,16 +61,23 @@ export const AlarmCard: React.FC<AlarmCardProps> = ({ data, style }) => {
 
 const Card = styled.View`
 	${whiteCardStyle};
-	padding: 0px;
+	padding: 0;
 	flex-direction: row;
 	border-radius: 5px;
 	margin-bottom: 15px;
+	align-items: center;
 `;
 
 const HourContainer = styled.View`
 	margin-horizontal: 15px;
 	justify-content: center;
 	align-items: center;
+`;
+
+const Time = styled.Text`
+	font-size: 18px;
+	font-weight: 700;
+	color: ${colors.textPrimary};
 `;
 
 const LabelContainer = styled.View`

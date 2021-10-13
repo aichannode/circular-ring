@@ -2,8 +2,7 @@ import { round2Digits } from "@core/utils";
 import { cmToFt, HeightUnit, kgToLbs, UNDEFINED_HEIGHT, UNDEFINED_WEIGHT, WeightUnit } from "@domain/units";
 import { useUser, useUserSettings } from "@domain/user/hooks/useUser";
 import { Sex } from "@domain/user/user";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { CircularBottomSheet } from "@ui/components/bottomSheet";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
@@ -20,7 +19,7 @@ export const ProfileInformationScreen = () => {
 	const userSettings = useUserSettings();
 	const user = useUser();
 
-	const displayedBirthday = dayjs(user?.bornDate || new Date()).format("DD/MM/YYYY");
+	const displayedBirthday = dayjs(user?.bornDate || new Date()).format(userSettings?.dateFormat);
 
 	const height = user?.height ?? UNDEFINED_HEIGHT;
 	const heightUnit = userSettings?.heightFormat || HeightUnit.cm;
@@ -32,9 +31,9 @@ export const ProfileInformationScreen = () => {
 
 	const [newSex, setNewSex] = useState(user?.sex ?? Sex.Male);
 
-	const heightBottomSheetRef = useRef<BottomSheetModal>(null);
-	const weightBottomSheetRef = useRef<BottomSheetModal>(null);
-	const confirmSexBottomSheetRef = useRef<BottomSheetModal>(null);
+	const heightBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
+	const weightBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
+	const confirmSexBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 
 	return !user ? null : (
 		<ScrollScreen contentContainerStyle={{ paddingVertical: 0 }}>

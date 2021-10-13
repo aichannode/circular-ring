@@ -1,4 +1,4 @@
-import { ScoreQuality } from "@domain/circleActivity/circleActivityData";
+import { ScoreQuality } from "@domain/measure/score";
 import { Intensity } from "@domain/ring/ringLiveData";
 
 export const colors = {
@@ -15,6 +15,8 @@ export const colors = {
 	orange: "#ff9334",
 	red: "#ff1d1d",
 	blue: "#3996f7",
+	darkBlue: "#3960F7",
+	lightBlue: "#AEBBF0",
 	orangeGradientStart: "#f44a59",
 	orangeGradientEnd: "#f97444",
 	disabled: "#bfbfbf",

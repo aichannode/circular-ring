@@ -79,7 +79,7 @@ export const IntervalBottomSheet: React.FC<IntervalBottomSheetProps> = ({
 						onValueChange={() => setIsSmartValue((prev) => !prev)}
 						value={isSmartValue}
 					/>
-					<Description>{format("alarm.new.snooze.smart_switch")}</Description>
+					<SwitchLabel>{format("alarm.new.snooze.smart_switch")}</SwitchLabel>
 				</SwitchContainer>
 			) : null}
 			{snoozeLinkList.map((element, index, array) => (
@@ -96,7 +96,7 @@ export const IntervalBottomSheet: React.FC<IntervalBottomSheetProps> = ({
 					{index < array.length - 1 ? <Separator /> : null}
 				</View>
 			))}
-			<QuadraryButton style={{ alignSelf: "center" }} onPress={() => onClose(interval, isSmartValue)}>
+			<QuadraryButton style={{ alignSelf: "center", marginTop: 30 }} onPress={() => onClose(interval, isSmartValue)}>
 				{format("alarm.new.save_button")}
 			</QuadraryButton>
 		</Container>
@@ -126,19 +126,20 @@ const styles = StyleSheet.create({
 
 const Container = styled.View`
 	flex: 1;
-	padding-vertical: 20px;
+	padding: 20px 24px;
 `;
 
 const ListContainer = styled.Pressable`
 	flex-direction: row;
-	margin-horizontal: 40px;
-	margin-vertical: 16px;
+	height: 50px;
+	align-items: center;
+	margin-horizontal: 20px;
 	justify-content: space-between;
 `;
 
 const Separator = styled.View`
 	align-self: center;
-	width: 350px;
+	width: 100%;
 	height: 1px;
 	background-color: ${colors.lightgray};
 	margin-horizontal: 20px;
@@ -154,7 +155,7 @@ const Description = styled.Text`
 	justify-content: center;
 	margin-top: 30px;
 	margin-bottom: 60px;
-	padding: 0 44px;
+	padding: 0 20px;
 	text-align: center;
 `;
 
@@ -162,9 +163,15 @@ const SwitchContainer = styled.View`
 	flex-grow: 1;
 	justify-content: center;
 	align-items: center;
+	margin-bottom: 40px;
 `;
 
 const SwitchButton = styled(Switch)`
-	margin-right: 10px;
 	border-color: ${colors.blue};
+`;
+
+const SwitchLabel = styled.Text`
+	${textStyles.primary};
+	margin-top: 10px;
+	font-size: 14px;
 `;

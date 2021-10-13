@@ -7,8 +7,8 @@ import React from "react";
 import { Pressable, ViewProps, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
-export const InfoListHeader: React.FC<ViewProps> = ({ children }) => {
-	return <InfoListHeaderText>{children}</InfoListHeaderText>;
+export const InfoListHeader: React.FC<ViewProps> = ({ children, style }) => {
+	return <InfoListHeaderText style={style}>{children}</InfoListHeaderText>;
 };
 
 const InfoListHeaderText = styled.Text`
