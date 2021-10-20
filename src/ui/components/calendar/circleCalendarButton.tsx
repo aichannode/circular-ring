@@ -48,4 +48,6 @@ const CalendarIconWrapper = styled.View`
 const CurrentDay = styled.Text`
 	font-size: 10px;
 	color: ${colors.darkGray};
+	width: 60;
+	text-align: center;
 `;
