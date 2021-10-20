@@ -59,11 +59,10 @@ export const CircleLiveScreen: React.FC = () => {
 							{dataQuality ? <ColoredDot color={qualityColors[dataQuality]} /> : null}
 						</Row>
 					</Row>
-					<Row gap={20} style={{ height: 155 }}>
+					<Row gap={20} style={{ height: 155 }} align="center">
 						<Stack gap={10} style={{ flex: 1 }}>
 							<InfoCard>
 								<TertiaryText>{format("live.intensity.label")}</TertiaryText>
-								<Row gap={10} align="center">
 									{data ? (
 										<DataValue>{formatIntensity(activityIntensity)}</DataValue>
 									) : listening ? (
@@ -72,7 +71,6 @@ export const CircleLiveScreen: React.FC = () => {
 									{activityIntensity !== Intensity.NONE ? (
 										<ColoredDot color={intensityColors[activityIntensity]} />
 									) : null}
-								</Row>
 							</InfoCard>
 							<InfoCard>
 								<TertiaryText>{format("live.hr_max.label")}</TertiaryText>
