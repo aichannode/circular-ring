@@ -25,6 +25,7 @@ export class RingApi {
 	}
 
 	async sendData(ring: UserRing, rawData: string) {
+		console.log('🗒 rawData',rawData)
 		await RNFS.writeFile(tempSyncDataFile, rawData, "utf8");
 
 		const formData = new FormData();
@@ -35,7 +36,7 @@ export class RingApi {
 			type: "text/plain",
 			name: "sync.txt",
 		});
-
+	
 		try {
 			await this.apiService.post(`${ringApiBaseUrl}/raw-data/sync`, formData);
 		} finally {
