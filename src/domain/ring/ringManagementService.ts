@@ -181,7 +181,7 @@ export class RingManagementService {
 
 				const unsubscribe = await this.deviceService.listen(Channel.DATA, Channel.DATA, (value) => {
 					this.logger.debug("FBC value", value);
-					data += value;
+					data = data + "\n" + value;
 					if (data !== ringDataEOF) {
 						// There has been data since start
 						this._currentRingSyncState.set(SyncState.SYNCING);
