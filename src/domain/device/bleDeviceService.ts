@@ -10,6 +10,7 @@ import { observable, Observable } from "micro-observables";
 import { Signal } from "micro-signals";
 import { Platform } from "react-native";
 import { BleError, Device, ScanMode, State, Subscription } from "react-native-ble-plx";
+import { getUTCTimestamp } from "@utils/date";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 import { LocationEnabler } from "./locationEnabler";
 import { NamedDevice } from "./namedDevice";
@@ -231,6 +232,8 @@ export class BleDeviceService {
 			if (snu) {
 				this._favoriteDeviceSNU.set(snu);
 			}
+			await this.write(`${Channel.CALENDAR}${getUTCTimestamp()}`);
+			this.logger.info("🕒 Time set to device", device.name, getUTCTimestamp());
 			await this.listenBattery();
 		} catch (e) {
 			this.logger.error("Error connecting to device", e);
@@ -416,7 +419,7 @@ export class BleDeviceService {
 				subscription.remove();
 			} else {
 				const decodedOutput = base64decode(charac?.value ?? "");
-				this.logger.debug("------------------", decodedOutput);
+				this.logger.debug("✅ BleDeviceService | decodedOutput : ", decodedOutput);
 				this.onMessageReceived.dispatch(decodedOutput);
 			}
 		});
