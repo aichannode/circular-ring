@@ -21,6 +21,6 @@ export function useLiveData() {
 	const { data, listening } = useObservable(bleDeviceService.currentRingLiveData);
 	const start = useCallback(() => bleDeviceService.listenLiveData(), []);
 	const stop = useCallback(() => bleDeviceService.stopLiveData(), []);
-
-	return { data, listening, start, stop };
+	const flush = useCallback(() => bleDeviceService.flushRingLiveData(), []);
+	return { data, listening, start, stop,flush };
 }
