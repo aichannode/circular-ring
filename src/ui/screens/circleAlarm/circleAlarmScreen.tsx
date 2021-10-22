@@ -65,14 +65,11 @@ export const CircleAlarmScreen: React.FC = () => {
 						<AddAlarmText>{format("alarm.score.add_button")}</AddAlarmText>
 					</AddAlarmButton>
 				</AlarmContainer>
-				{hasConnectedRing && (
-					<>
-						<InfoListHeader>{format("alarm.week_overview")}</InfoListHeader>
-						<AlarmOverviewContainer>
-							<AlarmWeekOverview style={{ marginVertical: 25 }} />
-						</AlarmOverviewContainer>
-					</>
-				)}
+
+				<InfoListHeader>{format("alarm.week_overview")}</InfoListHeader>
+				<AlarmOverviewContainer>
+					<AlarmWeekOverview style={{ marginVertical: 25 }} />
+				</AlarmOverviewContainer>
 			</ScrollView>
 			<CircularBottomSheet snapPoints={[500]} ref={warningBottomSheet}>
 				<WarningBottomSheet
