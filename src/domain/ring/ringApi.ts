@@ -45,7 +45,7 @@ export class RingApi {
 	}
 
 	async submitFirmwareVersion(version: string): Promise<void>{
-		  await this.apiService.post<UserRing>(`${ringApiBaseUrl}`, version);
+		  await this.apiService.post<UserRing>(`${ringApiBaseUrl}`, {"firmware" : version});
 	}
 }
 
