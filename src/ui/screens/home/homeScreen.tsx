@@ -24,6 +24,7 @@ export const HomeScreen: React.FC = () => {
 	}, [syncState, setForceRefreshing]);
 
 	useEffect(() => {
+		 ringManagementService.submitFirmwareVersion();
 		if (syncState !== SyncState.PREPARING) {
 			setForceRefreshing(false);
 		}
