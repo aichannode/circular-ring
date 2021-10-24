@@ -16,6 +16,7 @@ export const HomeScreen: React.FC = () => {
 	const [forceRefreshing, setForceRefreshing] = useState(false);
 
 	const forceRefresh = useCallback(() => {
+ 
 		if (syncState !== SyncState.NONE) {
 			return;
 		}
