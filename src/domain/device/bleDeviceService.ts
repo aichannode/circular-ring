@@ -470,20 +470,27 @@ export class BleDeviceService {
 		LocationEnabler.checkSettings(locationConfig);
 	}
 
+	flushRingLiveData(){
+		 this._currentRingLiveData.set({listening : false,data : null});
+	}
 	listenLiveData() {
 		this._currentRingLiveData.set({ listening: true });
+		 
 		return this.listen("FBL1", Channel.LIVE, (value) => {
 			if (value) {
+				 
 				const deserializedData = deserializeLiveData(value);
 				if (deserializedData) {
 					this._currentRingLiveData.update((c) => {
 						const maxHeartRate = c.data
 							? Math.max(deserializedData.heartRate, c.data.heartRate)
 							: deserializedData.heartRate;
+						 
 						return { ...c, data: { ...deserializedData, maxHeartRate } };
 					});
 				}
 			}
+			
 		});
 	}
 

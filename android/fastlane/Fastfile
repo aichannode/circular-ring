@@ -16,7 +16,7 @@
 default_platform(:android)
 
 APPCENTER_APP_PREFIX = "Circular-Android-"
-APPCENTER_OWNER = "BeTomorrow"
+APPCENTER_OWNER = "Circular"
 
 platform :android do
   desc "Build dev version"
