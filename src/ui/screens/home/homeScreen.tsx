@@ -53,8 +53,7 @@ export const HomeScreen: React.FC = () => {
 							refreshing={forceRefreshing}
 							onRefresh={() => forceRefresh()}
 						/>
-					}
-				>
+					}>
 					{homeBanner && <HomeBannerView banner={homeBanner} style={{ margin: 10 }} />}
 				</ScrollView>
 			</FlingGestureHandler>
