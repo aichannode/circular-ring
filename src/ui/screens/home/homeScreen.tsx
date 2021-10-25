@@ -9,11 +9,14 @@ import styled from "styled-components/native";
 import { CirclesBanner } from "./circlesBanner";
 import { HomeBannerView } from "./homeBanner/homeBannerView";
 import { SyncBanner } from "./syncBanner";
+import { DrawerActions, useNavigation } from "@react-navigation/native";
+import { FlingGestureHandler, Directions } from "react-native-gesture-handler";
 
 export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
 	const { ringManagementService } = useServices();
 	const [forceRefreshing, setForceRefreshing] = useState(false);
+	const navigation = useNavigation();
 
 	const forceRefresh = useCallback(() => {
  
@@ -33,22 +36,28 @@ export const HomeScreen: React.FC = () => {
 
 	const homeBanner = useHomeBanner();
 
+	const openDrawer = () => {
+		navigation.dispatch(DrawerActions.openDrawer);
+	};
+
 	return (
 		<Container>
 			<CirclesBanner />
 			<SyncBanner style={{ margin: 10 }} />
-			<ScrollView
-				style={{ flex: 1 }}
-				refreshControl={
-					<RefreshControl
-						enabled={syncState === SyncState.NONE}
-						refreshing={forceRefreshing}
-						onRefresh={() => forceRefresh()}
-					/>
-				}
-			>
-				{homeBanner && <HomeBannerView banner={homeBanner} style={{ margin: 10 }} />}
-			</ScrollView>
+			<FlingGestureHandler direction={Directions.RIGHT} onHandlerStateChange={() => openDrawer()}>
+				<ScrollView
+					style={{ flex: 1 }}
+					refreshControl={
+						<RefreshControl
+							enabled={syncState === SyncState.NONE}
+							refreshing={forceRefreshing}
+							onRefresh={() => forceRefresh()}
+						/>
+					}
+				>
+					{homeBanner && <HomeBannerView banner={homeBanner} style={{ margin: 10 }} />}
+				</ScrollView>
+			</FlingGestureHandler>
 		</Container>
 	);
 };
