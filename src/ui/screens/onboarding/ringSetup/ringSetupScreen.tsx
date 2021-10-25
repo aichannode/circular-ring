@@ -27,8 +27,6 @@ export const RingSetupScreen: React.FC = () => {
 	const setupState = useSetupState();
 	const devices = useScannedDevices();
 
-	console.warn("========== SETUP STATE", setupState);
-
 	const logout = useCallback(async () => {
 		await userService.logout();
 	}, []);
