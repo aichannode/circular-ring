@@ -123,14 +123,14 @@ const ErrorMessage = styled.Text`
 `;
 
 const SixDigitInputField = styled(SixDigitInput)`
-	margin-bottom: 20px;
+	margin-bottom: 0px;
 	padding-left: 66px;
 	padding-right: 66px;
 `;
 
 const ButtonContainer = styled.View`
 	width: 100%;
-	padding: 32px 66px 48px;
+	padding: 32px 66px 80px;
 	align-items: center;
 `;
 
