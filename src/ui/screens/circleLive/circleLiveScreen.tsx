@@ -23,7 +23,7 @@ export const CircleLiveScreen: React.FC = () => {
 	const { format, formatIntensity, formatScoreQuality } = useI18n();
 	const { data, listening, start, stop, flush } = useLiveData();
 
-	const maxHeartRateRatio = data ? (data.heartRate / data.maxHeartRate) * 100 : null;
+	const maxHeartRateRatio = data ? (data.heartRate! / data.maxHeartRate!) * 100 : null;
 	const activityIntensity = getIntensity(maxHeartRateRatio);
 	const dataQuality = data ? getScoreQuality(data?.correlation, 60, 80) : null;
 
