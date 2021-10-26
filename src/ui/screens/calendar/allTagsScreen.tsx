@@ -51,6 +51,7 @@ export const AllTagsScreen: React.FC = () => {
 						placeholder={format("calendar.notes_search.placeholder")}
 						value={search}
 						onChangeText={setSearch}
+						autoFocus={true}
 					/>
 					{!!search && (
 						<CloseWrapper onPress={() => setSearch("")}>

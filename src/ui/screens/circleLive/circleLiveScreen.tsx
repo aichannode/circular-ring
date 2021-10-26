@@ -20,8 +20,8 @@ import { NoRingConnectedBottomSheet } from "./noRingConnectedBottomSheet";
 
 export const CircleLiveScreen: React.FC = () => {
 	const { format, formatIntensity, formatScoreQuality } = useI18n();
-	const { data, listening, start, stop } = useLiveData();
-
+	const { data, listening, start, stop , flush } = useLiveData();
+ 	
 	const maxHeartRateRatio = data ? (data.heartRate / data.maxHeartRate) * 100 : null;
 	const activityIntensity = getIntensity(maxHeartRateRatio);
 	const dataQuality = data ? getScoreQuality(data?.correlation, 60, 80) : null;
@@ -41,6 +41,7 @@ export const CircleLiveScreen: React.FC = () => {
 
 	useEffect(() => {
 		return () => {
+			flush();
 			stop();
 		};
 	}, []);
@@ -59,11 +60,10 @@ export const CircleLiveScreen: React.FC = () => {
 							{dataQuality ? <ColoredDot color={qualityColors[dataQuality]} /> : null}
 						</Row>
 					</Row>
-					<Row gap={20} style={{ height: 155 }}>
+					<Row gap={20} style={{ height: 155 }} align="center">
 						<Stack gap={10} style={{ flex: 1 }}>
 							<InfoCard>
 								<TertiaryText>{format("live.intensity.label")}</TertiaryText>
-								<Row gap={10} align="center">
 									{data ? (
 										<DataValue>{formatIntensity(activityIntensity)}</DataValue>
 									) : listening ? (
@@ -72,7 +72,6 @@ export const CircleLiveScreen: React.FC = () => {
 									{activityIntensity !== Intensity.NONE ? (
 										<ColoredDot color={intensityColors[activityIntensity]} />
 									) : null}
-								</Row>
 							</InfoCard>
 							<InfoCard>
 								<TertiaryText>{format("live.hr_max.label")}</TertiaryText>
@@ -138,6 +137,7 @@ export const CircleLiveScreen: React.FC = () => {
 			<CircularBottomSheet snapPoints={[610]} ref={tutorialBottomSheet}>
 				<LiveTutorialBottomSheet
 					onFinish={async (hideTutorial) => {
+			
 						await tutorialBottomSheet.current?.asyncClose();
 						hideTutorial && userPreferencesService.skipLiveTutorial();
 						start();

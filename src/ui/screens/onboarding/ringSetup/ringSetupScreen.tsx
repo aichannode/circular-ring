@@ -12,12 +12,13 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
 
 export const RingSetupScreen: React.FC = () => {
+	const { userService } = useServices();
 	const { format } = useI18n();
 	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
 
@@ -25,6 +26,10 @@ export const RingSetupScreen: React.FC = () => {
 
 	const setupState = useSetupState();
 	const devices = useScannedDevices();
+
+	const logout = useCallback(async () => {
+		await userService.logout();
+	}, []);
 
 	useEffect(() => {
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
@@ -91,6 +96,12 @@ export const RingSetupScreen: React.FC = () => {
 					case DeviceSetupState.FINISHED:
 						return (
 							<>
+								<CloseContainer>
+									<ClosePressable onPress={logout}>
+										<CloseImage source={require("@assets/images/crossOrange.png")} />
+									</ClosePressable>
+								</CloseContainer>
+
 								<ResponsiveCenterView>
 									<Instructions hidden={isConnecting}>
 										<Image source={require("@assets/images/clock.png")} />
@@ -152,6 +163,19 @@ const Container = styled(ScrollScreen)`
 	justify-content: flex-start;
 	padding-vertical: 50px;
 `;
+
+const CloseContainer = styled.View`
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+`;
+
+const ClosePressable = styled.TouchableOpacity`
+	margin: 0px 40px 40px 0px;
+`;
+
+const CloseImage = styled.Image``;
 
 const DisabledTitle = styled.Text`
 	${textStyles.bigTitle};
