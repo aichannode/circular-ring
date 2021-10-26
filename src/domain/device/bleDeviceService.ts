@@ -483,7 +483,7 @@ export class BleDeviceService {
 					console.log("Deserialized Data", deserializedData);
 					this._currentRingLiveData.update((c) => {
 						console.log("C", c);
-						let maxHeartRate = 0;
+						const maxHeartRate = 0;
 						c.data && deserializedData
 							? Math.max(deserializedData.heartRate!, c.data.heartRate!)
 							: deserializedData.heartRate;
