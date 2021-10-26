@@ -26,6 +26,7 @@ export const CircleLiveScreen: React.FC = () => {
 	const maxHeartRateRatio = data ? (data.heartRate / data.maxHeartRate) * 100 : null;
 	const activityIntensity = getIntensity(maxHeartRateRatio);
 	const dataQuality = data ? getScoreQuality(data?.correlation, 60, 80) : null;
+
 	const autoConnectState = useAutoConnectState();
 
 	const preferences = usePreferences();
@@ -65,7 +66,7 @@ export const CircleLiveScreen: React.FC = () => {
 						<Stack gap={10} style={{ flex: 1 }}>
 							<InfoCard>
 								<TertiaryText>{format("live.intensity.label")}</TertiaryText>
-								{data ? (
+								{data?.maxHeartRate ? (
 									<DataValue>{formatIntensity(activityIntensity)}</DataValue>
 								) : listening ? (
 									<Spinner size={19} />
