@@ -20,11 +20,12 @@ import { NoRingConnectedBottomSheet } from "./noRingConnectedBottomSheet";
 
 export const CircleLiveScreen: React.FC = () => {
 	const { format, formatIntensity, formatScoreQuality } = useI18n();
-	const { data, listening, start, stop , flush } = useLiveData();
- 	
+	const { data, listening, start, stop, flush } = useLiveData();
+
 	const maxHeartRateRatio = data ? (data.heartRate / data.maxHeartRate) * 100 : null;
 	const activityIntensity = getIntensity(maxHeartRateRatio);
 	const dataQuality = data ? getScoreQuality(data?.correlation, 60, 80) : null;
+
 	const autoConnectState = useAutoConnectState();
 
 	const preferences = usePreferences();
@@ -64,14 +65,14 @@ export const CircleLiveScreen: React.FC = () => {
 						<Stack gap={10} style={{ flex: 1 }}>
 							<InfoCard>
 								<TertiaryText>{format("live.intensity.label")}</TertiaryText>
-									{data ? (
-										<DataValue>{formatIntensity(activityIntensity)}</DataValue>
-									) : listening ? (
-										<Spinner size={19} />
-									) : null}
-									{activityIntensity !== Intensity.NONE ? (
-										<ColoredDot color={intensityColors[activityIntensity]} />
-									) : null}
+								{data?.maxHeartRate ? (
+									<DataValue>{formatIntensity(activityIntensity)}</DataValue>
+								) : listening ? (
+									<Spinner size={19} />
+								) : null}
+								{activityIntensity !== Intensity.NONE ? (
+									<ColoredDot color={intensityColors[activityIntensity]} />
+								) : null}
 							</InfoCard>
 							<InfoCard>
 								<TertiaryText>{format("live.hr_max.label")}</TertiaryText>
@@ -137,7 +138,6 @@ export const CircleLiveScreen: React.FC = () => {
 			<CircularBottomSheet snapPoints={[610]} ref={tutorialBottomSheet}>
 				<LiveTutorialBottomSheet
 					onFinish={async (hideTutorial) => {
-			
 						await tutorialBottomSheet.current?.asyncClose();
 						hideTutorial && userPreferencesService.skipLiveTutorial();
 						start();

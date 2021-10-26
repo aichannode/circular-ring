@@ -470,27 +470,41 @@ export class BleDeviceService {
 		LocationEnabler.checkSettings(locationConfig);
 	}
 
-	flushRingLiveData(){
-		 this._currentRingLiveData.set({listening : false,data : null});
+	flushRingLiveData() {
+		this._currentRingLiveData.set({ listening: false, data: null });
 	}
 	listenLiveData() {
 		this._currentRingLiveData.set({ listening: true });
-		 
+
 		return this.listen("FBL1", Channel.LIVE, (value) => {
 			if (value) {
-				 
 				const deserializedData = deserializeLiveData(value);
 				if (deserializedData) {
+					console.log("Deserialized Data", deserializedData);
 					this._currentRingLiveData.update((c) => {
-						const maxHeartRate = c.data
-							? Math.max(deserializedData.heartRate, c.data.heartRate)
-							: deserializedData.heartRate;
-						 
+						console.log("C", c);
+						let maxHeartRate =
+							c.data && deserializedData
+								? Math.max(deserializedData?.heartRate, c.data.heartRate)
+								: deserializedData.heartRate;
+
+						// if (maxHeartRate === undefined || isNaN(maxHeartRate)) maxHeartRate: c?.data?.heartRate;
+						console.log("MAXHEARTRATE", maxHeartRate);
+
+						if (deserializedData?.correlation < 60) {
+							console.log("LOW CORRELATION");
+							console.log("LOW CORRELATION");
+							console.log("LOW CORRELATION");
+							console.log("LOW CORRELATION");
+							console.log("LOW CORRELATION");
+							console.log("LOW CORRELATION");
+
+							return { ...c, data: { ...c?.data, correlation: deserializedData.correlation } };
+						}
 						return { ...c, data: { ...deserializedData, maxHeartRate } };
 					});
 				}
 			}
-			
 		});
 	}
 
