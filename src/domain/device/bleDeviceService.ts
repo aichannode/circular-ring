@@ -485,7 +485,7 @@ export class BleDeviceService {
 						console.log("C", c);
 						let maxHeartRate =
 							c.data && deserializedData
-								? Math.max(deserializedData?.heartRate, c.data.heartRate)
+								? Math.max(deserializedData.heartRate, c.data.heartRate)
 								: deserializedData.heartRate;
 
 						// if (maxHeartRate === undefined || isNaN(maxHeartRate)) maxHeartRate: c?.data?.heartRate;
