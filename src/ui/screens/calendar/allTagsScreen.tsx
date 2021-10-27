@@ -1,6 +1,5 @@
 import { useAllTags } from "@domain/calendar/hooks/useTags";
 import { InfoListHeader } from "@ui/components/infoList";
-import { Row } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
@@ -45,15 +44,15 @@ export const AllTagsScreen: React.FC = () => {
 	return (
 		<ScrollScreen>
 			<View style={{ backgroundColor: colors.lightgray }}>
-				<SearchWrapper gap={8} align="center">
-					<Image source={require("@assets/images/search.png")} />
+				<SearchWrapper>
+					<ImageCenter source={require("@assets/images/search.png")} />
 					<SearchInput
 						placeholder={format("calendar.notes_search.placeholder")}
 						value={search}
 						onChangeText={setSearch}
 						autoFocus={true}
 					/>
-					{!!search && (
+					{search.length > 0 && (
 						<CloseWrapper onPress={() => setSearch("")}>
 							<Image
 								style={{ tintColor: colors.textPrimary, width: 14, height: 13 }}
@@ -106,22 +105,29 @@ export const AllTagsScreen: React.FC = () => {
 	);
 };
 
+const ImageCenter = styled(Image)`
+	align-self: center;
+`;
+
 const TagListContainer = styled.View`
 	padding: 0 20px;
 `;
 
-const SearchWrapper = styled(Row)`
+const SearchWrapper = styled(View)`
 	background-color: ${colors.white};
 	border-radius: 20px;
 	padding-left: 14px;
 	padding-right: 7px;
 	height: 38px;
 	margin: 6px 16px;
+	display: flex;
+	flex-direction: row;
 `;
 
 const SearchInput = styled.TextInput`
 	${textStyles.primary};
 	flex: 1;
+	padding: 0px 10px 0px 10px;
 `;
 
 const CloseWrapper = styled.Pressable`
@@ -131,6 +137,7 @@ const CloseWrapper = styled.Pressable`
 	background-color: ${colors.lightgray};
 	align-items: center;
 	justify-content: center;
+	align-self: center;
 `;
 
 const CheckLogo = styled(Image)`
