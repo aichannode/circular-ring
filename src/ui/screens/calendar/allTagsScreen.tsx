@@ -15,7 +15,6 @@ export const AllTagsScreen: React.FC = () => {
 	const originalSelectedTags = route.params.selectedTags;
 
 	const allTags = useAllTags();
-
 	const navigation = useRoutesNavigation();
 	const navigate = navigation.navigate;
 	const { format } = useI18n();
