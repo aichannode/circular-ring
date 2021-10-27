@@ -88,7 +88,7 @@ export class CalendarService {
 			this.logger.warn("Error registering note : " + JSON.stringify(e));
 			throw e;
 		}
-		await this.calendarStore.fetch(dayjs(startDate).startOf("month").format("YYYY-MM-DD"));
+		  await this.calendarStore.fetch(dayjs(startDate).startOf("month").format("YYYY-MM-DD"));
 	}
 
 	async deleteNote(note: CalendarNote) {
@@ -108,5 +108,16 @@ export class CalendarService {
 			this.logger.warn("Error deleting tag from note : " + JSON.stringify(e));
 			throw e;
 		}
+	}
+
+
+	async updateNote(note: CalendarNote,tagIds: number[]){
+		try {
+			await this.calendarApi.updateNote(note.id, tagIds,note.startTime.toISOString(),note.endTime.toISOString());
+		} catch (e) {
+			this.logger.warn("Error deleting tag from note : " + JSON.stringify(e));
+			throw e;
+		}
+		await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));
 	}
 }
