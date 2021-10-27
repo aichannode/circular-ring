@@ -1,6 +1,5 @@
 import { useAllTags } from "@domain/calendar/hooks/useTags";
 import { InfoListHeader } from "@ui/components/infoList";
-import { Row } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
@@ -45,7 +44,7 @@ export const AllTagsScreen: React.FC = () => {
 	return (
 		<ScrollScreen>
 			<View style={{ backgroundColor: colors.lightgray }}>
-				<SearchWrapper gap={8} align="center">
+				<SearchWrapper>
 					<ImageCenter source={require("@assets/images/search.png")} />
 					<SearchInput
 						placeholder={format("calendar.notes_search.placeholder")}
