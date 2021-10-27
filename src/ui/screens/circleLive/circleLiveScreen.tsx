@@ -17,11 +17,12 @@ import styled from "styled-components/native";
 import { HeartBeatCard } from "./heartBeatCard";
 import { LiveTutorialBottomSheet } from "./liveTutorialBottomSheet";
 import { NoRingConnectedBottomSheet } from "./noRingConnectedBottomSheet";
+import { View } from "react-native";
 
 export const CircleLiveScreen: React.FC = () => {
 	const { format, formatIntensity, formatScoreQuality } = useI18n();
-	const { data, listening, start, stop , flush } = useLiveData();
- 	
+	const { data, listening, start, stop, flush } = useLiveData();
+
 	const maxHeartRateRatio = data ? (data.heartRate / data.maxHeartRate) * 100 : null;
 	const activityIntensity = getIntensity(maxHeartRateRatio);
 	const dataQuality = data ? getScoreQuality(data?.correlation, 60, 80) : null;
@@ -64,14 +65,14 @@ export const CircleLiveScreen: React.FC = () => {
 						<Stack gap={10} style={{ flex: 1 }}>
 							<InfoCard>
 								<TertiaryText>{format("live.intensity.label")}</TertiaryText>
-									{data ? (
-										<DataValue>{formatIntensity(activityIntensity)}</DataValue>
-									) : listening ? (
-										<Spinner size={19} />
-									) : null}
-									{activityIntensity !== Intensity.NONE ? (
-										<ColoredDot color={intensityColors[activityIntensity]} />
-									) : null}
+								{data ? (
+									<DataValue>{formatIntensity(activityIntensity)}</DataValue>
+								) : listening ? (
+									<Spinner size={19} />
+								) : null}
+								{activityIntensity !== Intensity.NONE ? (
+									<ColoredDot color={intensityColors[activityIntensity]} />
+								) : null}
 							</InfoCard>
 							<InfoCard>
 								<TertiaryText>{format("live.hr_max.label")}</TertiaryText>
@@ -82,8 +83,8 @@ export const CircleLiveScreen: React.FC = () => {
 								) : null}
 							</InfoCard>
 						</Stack>
-						<InfoCard style={{ flex: 1, paddingBottom: 30 }}>
-							<TertiaryText>{format("live.hr_max.ratio.label")}</TertiaryText>
+						<InfoCard style={{ flex: 1, paddingBottom: 30, height: "100%" }}>
+							<TertiaryText>{format("live.hr_max.ratio.label")}ss</TertiaryText>
 							{maxHeartRateRatio ? (
 								<>
 									<DataValue style={{ alignSelf: "center" }}>{Math.floor(maxHeartRateRatio)} %</DataValue>
@@ -92,7 +93,9 @@ export const CircleLiveScreen: React.FC = () => {
 									</Gauge>
 								</>
 							) : listening ? (
-								<Spinner size={27} />
+								<View style={{ flex: 1, display: "flex", justifyContent: "center" }}>
+									<Spinner size={27} />
+								</View>
 							) : null}
 						</InfoCard>
 					</Row>
@@ -137,7 +140,6 @@ export const CircleLiveScreen: React.FC = () => {
 			<CircularBottomSheet snapPoints={[610]} ref={tutorialBottomSheet}>
 				<LiveTutorialBottomSheet
 					onFinish={async (hideTutorial) => {
-			
 						await tutorialBottomSheet.current?.asyncClose();
 						hideTutorial && userPreferencesService.skipLiveTutorial();
 						start();
