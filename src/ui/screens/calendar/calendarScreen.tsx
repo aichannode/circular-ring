@@ -14,8 +14,8 @@ import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import dayjs from "dayjs";
 import React, { useEffect, useMemo, useState } from "react";
-import { Pressable } from "react-native";
-import styled from "styled-components/native";
+import { Pressable } from "react-native"; 
+import styled from "styled-components/native"; 
 
 export const CalendarScreen: React.FC = () => {
 	const { measureService, calendarService } = useServices();
@@ -26,6 +26,7 @@ export const CalendarScreen: React.FC = () => {
 	const calendar = useCalendar(selectedDay, FetchStrategy.Never);
 
 	const firstDayOfMonth = useMemo(() => dayjs(selectedDay).startOf("month").format("YYYY-MM-DD"), [selectedDay]);
+ 
 
 	useEffect(() => {
 		const firstOfMonth = new Date(firstDayOfMonth);
@@ -53,7 +54,7 @@ export const CalendarScreen: React.FC = () => {
 				{!calendar
 					? null
 					: calendar.notes.map((note) => {
-							return <CalendarNoteItem key={`${note.id}-${note.tag.name}`} note={note} color={colors.primary} />;
+							return <CalendarNoteItem key={`${note.id}-${note.tag.name}`} note={note}  color={colors.primary} tags={calendar.notes} />;
 					  })}
 			</Stack>
 		</Container>

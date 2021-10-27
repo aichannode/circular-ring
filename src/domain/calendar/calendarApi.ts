@@ -28,6 +28,10 @@ export class CalendarApi {
 		await this.apiService.post("/notes/me/tags", { name, category: "Debug Tags" });
 	}
 
+	async deleteTag(tagId: number) {
+		await this.apiService.delete(`/notes/me/${tagId}`);
+	}
+
 	async getMonthCalendars(date: Date): Promise<Calendar[]> {
 		const result = await this.apiService.get<CalendarDto[]>("/calendar", { params: { date } });
 		return CalendarApi.calendarListFromDto(result.data);
@@ -62,5 +66,14 @@ export class CalendarApi {
 
 	async deleteNote(noteId: number) {
 		await this.apiService.delete(`/notes/me/${noteId}`);
+	}
+
+	async updateNote(noteId : number,tagIds: number[], startTime: string, endTime: string) {
+		const requestParam = {
+				"startTime":  startTime,
+				"endTime": endTime,
+				"tags": tagIds
+		}
+		await this.apiService.put(`/notes/me/${noteId}`,requestParam);
 	}
 }

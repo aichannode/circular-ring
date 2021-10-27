@@ -15,6 +15,7 @@ interface CalendarNoteItemProps {
 	color?: string;
 	style?: StyleProp<ViewStyle>;
 	canDelete?: boolean;
+	tags: CalendarNote[];
 }
 
 interface TimeEditorConfig {
@@ -51,17 +52,32 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, color,
 	const [config, setConfig] = useState<TimeEditorConfig>({ ...startTimeEditionConfig, time: startDate });
 	const timeEditorRef = useRef<TimeEditorRef>(null);
 
-	const deleteNote = useCallback(async () => {
+	const deleteNote = async () => {
 		setErrorMessage(undefined);
 		setLoading(true);
+
 		try {
-			await calendarService.deleteNote(note);
+			const newTags = tags
+				.filter((element) => element.id === note.id)
+				.filter((element) => {
+					return note.tag.id != element.tag.id;
+				});
+
+			if (newTags.length > 0) {
+				await calendarService.updateNote(
+					note,
+					newTags.map((item) => item.tag.id)
+				);
+			} else {
+				await calendarService.deleteNote(note);
+			}
+
 			setLoading(false);
 		} catch (e) {
 			setLoading(false);
 			setErrorMessage(format("global.default_error"));
 		}
-	}, []);
+	};
 
 	return (
 		<>
