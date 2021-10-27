@@ -19,6 +19,7 @@ export const HomeScreen: React.FC = () => {
 	const navigation = useNavigation();
 
 	const forceRefresh = useCallback(() => {
+ 
 		if (syncState !== SyncState.NONE) {
 			return;
 		}
@@ -27,6 +28,7 @@ export const HomeScreen: React.FC = () => {
 	}, [syncState, setForceRefreshing]);
 
 	useEffect(() => {
+		 ringManagementService.submitFirmwareVersion();
 		if (syncState !== SyncState.PREPARING) {
 			setForceRefreshing(false);
 		}
@@ -51,8 +53,7 @@ export const HomeScreen: React.FC = () => {
 							refreshing={forceRefreshing}
 							onRefresh={() => forceRefresh()}
 						/>
-					}
-				>
+					}>
 					{homeBanner && <HomeBannerView banner={homeBanner} style={{ margin: 10 }} />}
 				</ScrollView>
 			</FlingGestureHandler>

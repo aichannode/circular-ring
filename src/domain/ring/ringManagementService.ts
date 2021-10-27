@@ -215,4 +215,12 @@ export class RingManagementService {
 			throw e;
 		}
 	}
+
+	async submitFirmwareVersion() {
+		const firmware = await this.deviceService.getResponse(Channel.FIRMWARE_VERSION);
+		if (firmware){ 
+			const {id} = this._userRings.get()[0];
+			await this.ringApi.submitFirmwareVersion(id,firmware);
+		}	
+ 	}
 }

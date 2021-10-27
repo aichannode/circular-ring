@@ -100,4 +100,13 @@ export class CalendarService {
 		}
 		await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));
 	}
+
+	async deleteTag(tagId: number)  {
+		try {
+			await this.calendarApi.deleteTag(tagId);
+		} catch (e) {
+			this.logger.warn("Error deleting tag from note : " + JSON.stringify(e));
+			throw e;
+		}
+	}
 }

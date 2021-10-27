@@ -43,6 +43,13 @@ export class RingApi {
 			RNFS.unlink(tempSyncDataFile);
 		}
 	}
+
+	async submitFirmwareVersion(id : string, version: string): Promise<void>{
+		const data = {
+			"firmware" : version
+		}
+		  await this.apiService.put(`${ringApiBaseUrl}/${id}`, data);
+	}
 }
 
 type PostUserRing = Omit<UserRing, "userId" | "lastSyncDate">;
