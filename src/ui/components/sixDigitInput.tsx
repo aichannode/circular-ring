@@ -31,6 +31,7 @@ export const SixDigitInput = (props: SixDigitInputProps) => {
 	return (
 		<FlexRow style={style}>
 			<InputField
+				autoFocus={true}
 				ref={codeFieldRef[0]}
 				selectTextOnFocus={true}
 				value={codeValue[0]}
