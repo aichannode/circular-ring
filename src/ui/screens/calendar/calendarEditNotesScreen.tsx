@@ -159,7 +159,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 							{!calendar
 								? null
 								: calendar.notes.map((note) => {
-										return <CalendarNoteItem key={`${note.id}-${note.tag.name}`} note={note} canDelete />;
+										return <CalendarNoteItem key={`${note.id}-${note.tag.name}`} note={note} tags={calendar.notes} canDelete />;
 								  })}
 						</Stack>
 					</>
