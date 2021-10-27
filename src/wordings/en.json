@@ -136,7 +136,7 @@
 	"score.details.sleep_balance.label": "Sleep balance",
 	"score.details.sleep_balance.description": "The Sleep Balance contributor is based on a long term view of your sleep duration patterns. \n\n\nKira compares the past two days of your sleep duration to your long-term sleep history as well as to the ideal amount of sleep duration for people of your chronotype and age. It's advised that for staying healthy and alert, adults typically need 7-9 hours of sleep every night.",
 	"score.details.activity_volume.label": "Activity volume",
-	"score.details.activity_volume.description": "Activity Volume measures the amount of cardio points you've gotten over the past 7 days. It is an essential aspect of maintaining and improving your fitness level. \n\n\nKira bases her calculations on two key components. One is making sure you are respecting the medical recommendations (at least 300 minutes of cardio points per week) and the other is making sure that you have an activity load that is suitable to your activity habits.",
+	"score.details.activity_volume.description": "Activity Volume measures the amount of cardio points you've gotten over the past 7 days. It is an essential aspect of maintaining and improving your fitness level. \n\n\nKira bases her calculations on two key components. One is making sure you are respecting the medical recommendations (at least 150 minutes of cardio points per week) and the other is making sure that you have an activity load that is suitable to your activity habits.",
 	"metric.steps": "Steps taken (nb)",
 	"metric.walking": "Walking equivalency (km)",
 	"metric.calories": "Calories burned (kcal)",
