@@ -1,39 +1,53 @@
 import { useServices } from "@core/services";
-import { CalendarNote } from "@domain/calendar/calendar";
+import { CalendarNote } from "@domain/calendar/calendar"; 
 import { Grow } from "@ui/components/layout";
 import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { Pressable, StyleProp, ViewStyle } from "react-native";
-import styled from "styled-components/native";
-
+import styled from "styled-components/native"; 
 interface CalendarNoteItemProps {
 	note: CalendarNote;
 	color?: string;
 	style?: StyleProp<ViewStyle>;
 	canDelete?: boolean;
+	tags : CalendarNote[]; 
 }
 
-export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, color, canDelete = false, style }) => {
+export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = (props : CalendarNoteItemProps) => {
+	const { note, tags, color, canDelete = false, style } = props
 	const { format, formatDateInterval } = useI18n();
 	const { calendarService } = useServices();
 
 	const [isLoading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+	 
 
-	const deleteNote = useCallback(async () => {
+	const deleteNote = async () => {
 		setErrorMessage(undefined);
 		setLoading(true);
-		try {
-			await calendarService.deleteNote(note);
+	 
+		try {	 
+			const newTags = tags
+			.filter(element => element.id === note.id)
+			.filter(element =>{ return note.tag.id != element.tag.id } )
+			
+			 
+			if (newTags.length > 0) {
+				await calendarService.updateNote(note, newTags.map(item => item.tag.id));
+			 } else { 
+				await calendarService.deleteNote(note);
+			}
+		
 			setLoading(false);
 		} catch (e) {
+			
 			setLoading(false);
 			setErrorMessage(format("global.default_error"));
 		}
-	}, []);
+	};
 
 	return (
 		<>
