@@ -41,7 +41,6 @@ export const SixDigitInput = (props: SixDigitInputProps) => {
 						codeFieldRef[1].current?.focus();
 					}
 				}}
-				autoFocus={true}
 				maxLength={1}
 				keyboardType={"numeric"}
 			/>
