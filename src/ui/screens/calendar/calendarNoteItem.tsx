@@ -5,7 +5,7 @@ import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useCallback, useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { TouchableOpacity, Pressable, StyleProp, ViewStyle, View, Text } from "react-native";
 import styled from "styled-components/native";
 import { TimeEditor, TimeEditorRef } from "@ui/components/timeEditor";
@@ -25,8 +25,8 @@ interface TimeEditorConfig {
 	saveTime: (time: Date) => void;
 }
 
-export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, color, canDelete = false, style }) => {
-	// console.log("note", note);
+export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, color, canDelete = false, style }) => {
+	// console.log(" CIR-397 note", note);
 	const { format, formatHour, formatNoteIntervalLinker } = useI18n();
 	// const dateWithHour = useCallback((hour: number) => dayjs(day).hour(hour).toDate(), [day]);
 	const { calendarService } = useServices();
@@ -52,14 +52,35 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, color,
 	const [config, setConfig] = useState<TimeEditorConfig>({ ...startTimeEditionConfig, time: startDate });
 	const timeEditorRef = useRef<TimeEditorRef>(null);
 
+	useEffect(() => {
+		console.log(
+			"startDate !== note.startTime || endDate !== note.endTime",
+			startDate !== note.startTime,
+			endDate !== note.endTime
+		);
+		if (startDate !== note.startTime || endDate !== note.endTime) {
+			// avoid first Render
+			console.log("CIR-397 Date Edited , TAG= ", note.tag.NoteTag.id);
+			calendarService
+				.updateNoteDate(
+					note,
+					tags.map((item) => item.tag.id),
+					startDate,
+					endDate
+				)
+				.then((res) => console.log("Cir-397 Sucees Update Hour"))
+				.catch((err) => console.log("CIR-397 error pdating date", err));
+		}
+	}, [startDate, endDate]);
+
 	const deleteNote = async () => {
 		setErrorMessage(undefined);
 		setLoading(true);
 
 		try {
 			const newTags = tags
-				.filter((element) => element.id === note.id)
-				.filter((element) => {
+				.filter((element: CalendarNote) => element.id === note.id)
+				.filter((element: CalendarNote) => {
 					return note.tag.id != element.tag.id;
 				});
 
