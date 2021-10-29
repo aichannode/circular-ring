@@ -226,14 +226,14 @@ export const RootNavigator: React.FC = () => {
 		);
 	}
 
-	// if (!deviceStored || !accountLinkedToDevice) {
-	// 	return (
-	// 		<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
-	// 			{!hasUser && <OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />}
-	// 			<OnboardingStack.Screen name={Routes.Pairing} component={RingSetupScreen} />
-	// 		</OnboardingStack.Navigator>
-	// 	);
-	// }
+	if (!deviceStored || !accountLinkedToDevice) {
+		return (
+			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
+				{!hasUser && <OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />}
+				<OnboardingStack.Screen name={Routes.Pairing} component={RingSetupScreen} />
+			</OnboardingStack.Navigator>
+		);
+	}
 
 	return isOnboardingDone ? (
 		<HomeDrawer.Navigator
