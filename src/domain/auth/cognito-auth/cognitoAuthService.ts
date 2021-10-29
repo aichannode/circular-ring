@@ -43,6 +43,7 @@ export class CognitoAuthService implements AuthService {
 						currentUser.getSession((error: Error | null, session: CognitoUserSession | null) => {
 							if (!error && session) {
 								this._accessToken.set(session.getAccessToken());
+								console.log("Auth Token", session.getAccessToken().getJwtToken());
 								resolve();
 							} else {
 								this.logger.warn("Refresh user failed", error);

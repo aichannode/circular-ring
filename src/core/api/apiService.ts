@@ -46,6 +46,11 @@ export class ApiService {
 		return this.instance.put(url, data, config);
 	}
 
+	patch<T = unknown, R = AxiosResponse<T>>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<R> {
+		this.logger.debug("[PATCH] " + url + " -- Data " + JSON.stringify(data));
+		return this.instance.patch(url, data, config);
+	}
+
 	delete<T = unknown, R = AxiosResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R> {
 		this.logger.debug("[DELETE] " + url);
 		return this.instance.delete(url, config);

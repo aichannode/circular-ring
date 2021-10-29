@@ -166,6 +166,11 @@ export function useI18n() {
 				end
 			).format(dateFormat)}`;
 		},
+
+		formatNoteIntervalLinker: () => {
+			return `${intl.formatMessage({ id: "global.date_interval_linker" })}`;
+		},
+
 		formatHour: (date: Date, dateFormat: string | undefined = "hh : mm A") => {
 			return dayjs(date).format(dateFormat);
 		},

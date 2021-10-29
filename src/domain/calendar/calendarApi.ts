@@ -68,12 +68,20 @@ export class CalendarApi {
 		await this.apiService.delete(`/notes/me/${noteId}`);
 	}
 
-	async updateNote(noteId : number,tagIds: number[], startTime: string, endTime: string) {
+	async updateNote(noteId: number, tagIds: number[], startTime: string, endTime: string) {
 		const requestParam = {
-				"startTime":  startTime,
-				"endTime": endTime,
-				"tags": tagIds
-		}
-		await this.apiService.put(`/notes/me/${noteId}`,requestParam);
+			startTime: startTime,
+			endTime: endTime,
+			tags: tagIds,
+		};
+		await this.apiService.put(`/notes/me/${noteId}`, requestParam);
+	}
+
+	async updateNoteDate(noteId: number, startTime: string, endTime: string) {
+		const requestParam = {
+			startTime: startTime,
+			endTime: endTime,
+		};
+		await this.apiService.patch(`/notes/me/${noteId}`, requestParam);
 	}
 }
