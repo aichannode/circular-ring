@@ -1,9 +1,9 @@
 export interface RingLiveData {
-	heartRate: number;
-	spo2: number;
-	hrv: number;
+	heartRate?: number;
+	spo2?: number;
+	hrv?: number;
 	correlation: number;
-	maxHeartRate: number;
+	maxHeartRate?: number;
 }
 
 export function deserializeLiveData(liveData: string) {
@@ -25,7 +25,7 @@ export function deserializeLiveData(liveData: string) {
 		const heartRate = +`0x${heartRateHex}`;
 
 		if (correlation < CORRELATION_GOOD_THRESHOLD || heartRate === 0) {
-			return;
+			return { correlation, heartRate: 0 };
 		}
 		const spo2 = hexToSint16(spo2Hex) / 100;
 		const hrv = +`0x${hrvHex}`;

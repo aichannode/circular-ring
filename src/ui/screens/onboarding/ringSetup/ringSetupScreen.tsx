@@ -38,6 +38,7 @@ export const RingSetupScreen: React.FC = () => {
 		if (setupState === DeviceSetupState.LOCATION_DISABLED) {
 			bleDeviceService.checkSettings();
 		}
+		console.log("setupState", setupState);
 	}, [setupState]);
 
 	const [isConnecting, setConnecting] = useState(false);
