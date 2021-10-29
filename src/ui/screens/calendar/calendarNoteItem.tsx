@@ -6,7 +6,7 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useState, useRef, useEffect } from "react";
-import { TouchableOpacity, Pressable, StyleProp, ViewStyle, View, Text } from "react-native";
+import { TouchableOpacity, Pressable, StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 import { TimeEditor, TimeEditorRef } from "@ui/components/timeEditor";
 
@@ -60,7 +60,6 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 		);
 		if (startDate !== note.startTime || endDate !== note.endTime) {
 			// avoid first Render
-			console.log("CIR-397 Date Edited , TAG= ", note.tag.NoteTag.id);
 			calendarService
 				.updateNoteDate(
 					note,
