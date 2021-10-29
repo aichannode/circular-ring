@@ -26,7 +26,7 @@ interface TimeEditorConfig {
 }
 
 export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, color, canDelete = false, style }) => {
-	// console.log(" CIR-397 note", note);
+	console.log(" CIR-397 note", note);
 	const { format, formatHour, formatNoteIntervalLinker } = useI18n();
 	// const dateWithHour = useCallback((hour: number) => dayjs(day).hour(hour).toDate(), [day]);
 	const { calendarService } = useServices();

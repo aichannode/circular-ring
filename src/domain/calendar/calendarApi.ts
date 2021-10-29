@@ -81,7 +81,6 @@ export class CalendarApi {
 		const requestParam = {
 			startTime: startTime,
 			endTime: endTime,
-			tags: [0],
 		};
 		await this.apiService.patch(`/notes/me/${noteId}`, requestParam);
 	}
