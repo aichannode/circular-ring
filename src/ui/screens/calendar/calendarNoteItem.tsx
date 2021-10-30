@@ -16,8 +16,9 @@ interface CalendarNoteItemProps {
 	style?: StyleProp<ViewStyle>;
 	canDelete?: boolean;
 	tags: CalendarNote[];
+	firstDayOfMonth: string;
+	setUpdateCalendar: (arg0: boolean) => void;
 }
-
 interface TimeEditorConfig {
 	time: Date;
 	title: string;
@@ -25,8 +26,18 @@ interface TimeEditorConfig {
 	saveTime: (time: Date) => void;
 }
 
-export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, color, canDelete = false, style }) => {
+export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({
+	note,
+	firstDayOfMonth,
+	tags,
+	color,
+	canDelete = false,
+	style,
+	setUpdateCalendar,
+}) => {
+	console.log("==================");
 	console.log(" CIR-397 note", note);
+	console.log("==================");
 	const { format, formatHour, formatNoteIntervalLinker } = useI18n();
 	// const dateWithHour = useCallback((hour: number) => dayjs(day).hour(hour).toDate(), [day]);
 	const { calendarService } = useServices();
@@ -67,7 +78,10 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 					startDate,
 					endDate
 				)
-				.then((res) => console.log("Cir-397 Sucees Update Hour"))
+				.then((res) => {
+					console.log("Cir-397 Sucees Update Hour");
+					setUpdateCalendar(true);
+				})
 				.catch((err) => console.log("CIR-397 error pdating date", err));
 		}
 	}, [startDate, endDate]);
@@ -116,7 +130,7 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 							timeEditorRef.current?.present();
 						}}
 					>
-						<Value>{formatHour(startDate)}</Value>
+						<Value>{formatHour(note.startTime)}</Value>
 					</TouchableOpacity>
 					<Value>{formatNoteIntervalLinker()}</Value>
 					<TouchableOpacity
@@ -125,7 +139,7 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 							timeEditorRef.current?.present();
 						}}
 					>
-						<Value>{formatHour(endDate)}</Value>
+						<Value>{formatHour(note.endTime)}</Value>
 					</TouchableOpacity>
 				</EditableNoteHourContainer>
 				{canDelete ? (
