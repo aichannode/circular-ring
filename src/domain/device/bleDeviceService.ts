@@ -483,13 +483,14 @@ export class BleDeviceService {
 					console.log("Deserialized Data", deserializedData);
 					this._currentRingLiveData.update((c) => {
 						console.log("C", c);
-						const maxHeartRate = 0;
-						c.data && deserializedData
-							? Math.max(deserializedData.heartRate!, c.data.heartRate!)
-							: deserializedData.heartRate;
+
+						const maxHeartRate =
+							c.data && !isNaN(Math.max(deserializedData.heartRate!, c.data.heartRate!))
+								? Math.max(deserializedData.heartRate!, c.data.maxHeartRate!)
+								: deserializedData.heartRate;
 
 						// if (maxHeartRate === undefined || isNaN(maxHeartRate)) maxHeartRate: c?.data?.heartRate;
-						console.log("MAXHEARTRATE", maxHeartRate);
+						console.log("MAXHEARTRATE", maxHeartRate, "HEARTRATE", deserializedData.heartRate);
 
 						if (deserializedData?.correlation < CORRELATION_GOOD_THRESHOLD) {
 							console.log("LOW CORRELATION");
@@ -499,7 +500,7 @@ export class BleDeviceService {
 							console.log("LOW CORRELATION");
 							console.log("LOW CORRELATION");
 
-							return { ...c, data: { ...c?.data, correlation: deserializedData.correlation } };
+							return { ...c, data: { ...c?.data, correlation: deserializedData.correlation, maxHeartRate } };
 						}
 						return { ...c, data: { ...deserializedData, maxHeartRate } };
 					});

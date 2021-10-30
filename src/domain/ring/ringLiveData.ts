@@ -23,10 +23,6 @@ export function deserializeLiveData(liveData: string) {
 	if (type === "00") {
 		const correlation = hexToSint16(correlHex);
 		const heartRate = +`0x${heartRateHex}`;
-
-		if (correlation < CORRELATION_GOOD_THRESHOLD || heartRate === 0) {
-			return { correlation, heartRate: 0 };
-		}
 		const spo2 = hexToSint16(spo2Hex) / 100;
 		const hrv = +`0x${hrvHex}`;
 
