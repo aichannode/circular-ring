@@ -226,6 +226,8 @@ export const RootNavigator: React.FC = () => {
 		);
 	}
 
+	console.log(" CIR-375 deviceStored || accountLinkedToDevice", deviceStored, accountLinkedToDevice);
+
 	if (!deviceStored || !accountLinkedToDevice) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>

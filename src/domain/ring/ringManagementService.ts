@@ -90,13 +90,18 @@ export class RingManagementService {
 			try {
 				const userRings = this._userRings.get();
 				const alreadyRegistered = userRings.filter((ring) => ring.id === id).length > 0;
+				console.log("CIR-375 Device Already Registered", alreadyRegistered);
 				if (!alreadyRegistered) {
+					console.log("CIR-375 erreur 1");
 					const userRing = await this.ringApi.addRing({ id, firmware });
+					console.log("CIR-375 erreur 2");
+					console.log("CIR-375 user Ring", userRing);
 					const namedRing = { ...userRing, name: deviceName };
 					this._userRings.update((rings) => [...rings, namedRing]);
 					return userRing;
 				}
 			} catch (e) {
+				console.log("CIR-375 Catch", e);
 				this.deviceService.disconnect();
 				throw e;
 			}
