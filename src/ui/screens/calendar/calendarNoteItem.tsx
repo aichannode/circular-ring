@@ -17,7 +17,6 @@ interface CalendarNoteItemProps {
 	canDelete?: boolean;
 	tags: CalendarNote[];
 }
-
 interface TimeEditorConfig {
 	time: Date;
 	title: string;
@@ -26,7 +25,6 @@ interface TimeEditorConfig {
 }
 
 export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, color, canDelete = false, style }) => {
-	console.log(" CIR-397 note", note);
 	const { format, formatHour, formatNoteIntervalLinker } = useI18n();
 	// const dateWithHour = useCallback((hour: number) => dayjs(day).hour(hour).toDate(), [day]);
 	const { calendarService } = useServices();
@@ -67,7 +65,9 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 					startDate,
 					endDate
 				)
-				.then((res) => console.log("Cir-397 Sucees Update Hour"))
+				.then(() => {
+					console.log("Cir-397 Sucees Update Hour");
+				})
 				.catch((err) => console.log("CIR-397 error pdating date", err));
 		}
 	}, [startDate, endDate]);
@@ -116,7 +116,7 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 							timeEditorRef.current?.present();
 						}}
 					>
-						<Value>{formatHour(startDate)}</Value>
+						<Value>{formatHour(note.startTime)}</Value>
 					</TouchableOpacity>
 					<Value>{formatNoteIntervalLinker()}</Value>
 					<TouchableOpacity
@@ -125,7 +125,7 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 							timeEditorRef.current?.present();
 						}}
 					>
-						<Value>{formatHour(endDate)}</Value>
+						<Value>{formatHour(note.endTime)}</Value>
 					</TouchableOpacity>
 				</EditableNoteHourContainer>
 				{canDelete ? (
