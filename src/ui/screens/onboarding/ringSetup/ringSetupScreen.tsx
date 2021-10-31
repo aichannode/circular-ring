@@ -32,6 +32,11 @@ export const RingSetupScreen: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
+		console.log("CIR-375 RingSetupScreen");
+	}, []);
+
+	useEffect(() => {
+		console.log("CIR-375 SetupState", setupState);
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
 			bleDeviceService.startScan();
 		}
@@ -134,8 +139,10 @@ export const RingSetupScreen: React.FC = () => {
 														setConnecting(false);
 													} catch (e) {
 														setConnecting(false);
+														console.log("CIR-375 error connecting", e);
 														if ((e as { statusCode: number }).statusCode === 409) {
-															pairingFailedBottomSheet.current?.present();
+															console.log("CIR-375 Acc already Registered");
+															pairingFailedBottomSheet?.current?.present();
 														}
 													}
 												}}
