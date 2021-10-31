@@ -21,7 +21,6 @@ export const CalendarScreen: React.FC = () => {
 	const { measureService, calendarService } = useServices();
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
-	// const [updateCalendar, setUpdateCalendar] = useState(false);
 
 	const [selectedDay, setSelectedDay] = useState(dayjs().format("YYYY-MM-DD"));
 	const calendar = useCalendar(selectedDay, FetchStrategy.Never);
