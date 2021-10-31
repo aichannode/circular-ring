@@ -159,7 +159,14 @@ export const CalendarEditNotesScreen: React.FC = () => {
 							{!calendar
 								? null
 								: calendar.notes.map((note) => {
-										return <CalendarNoteItem key={`${note.id}-${note.tag.name}`} note={note} tags={calendar.notes} canDelete />;
+										return (
+											<CalendarNoteItem
+												key={`${note.id}-${note.tag.name}`}
+												note={note}
+												tags={calendar.notes}
+												canDelete
+											/>
+										);
 								  })}
 						</Stack>
 					</>
@@ -225,7 +232,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 				/>
 			</ScrollScreen>
 			{noteAddedText !== undefined && (
-				<NoteAddedHeader >
+				<NoteAddedHeader>
 					<NoteAddedText>{noteAddedText}</NoteAddedText>
 					<PrimaryButton onPress={dismissHeader}>{format("ok")}</PrimaryButton>
 				</NoteAddedHeader>

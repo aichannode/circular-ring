@@ -16,8 +16,6 @@ interface CalendarNoteItemProps {
 	style?: StyleProp<ViewStyle>;
 	canDelete?: boolean;
 	tags: CalendarNote[];
-	firstDayOfMonth: string;
-	setUpdateCalendar: (arg0: boolean) => void;
 }
 interface TimeEditorConfig {
 	time: Date;
@@ -26,18 +24,7 @@ interface TimeEditorConfig {
 	saveTime: (time: Date) => void;
 }
 
-export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({
-	note,
-	firstDayOfMonth,
-	tags,
-	color,
-	canDelete = false,
-	style,
-	setUpdateCalendar,
-}) => {
-	console.log("==================");
-	console.log(" CIR-397 note", note);
-	console.log("==================");
+export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, color, canDelete = false, style }) => {
 	const { format, formatHour, formatNoteIntervalLinker } = useI18n();
 	// const dateWithHour = useCallback((hour: number) => dayjs(day).hour(hour).toDate(), [day]);
 	const { calendarService } = useServices();
@@ -78,9 +65,8 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({
 					startDate,
 					endDate
 				)
-				.then((res) => {
+				.then(() => {
 					console.log("Cir-397 Sucees Update Hour");
-					setUpdateCalendar(true);
 				})
 				.catch((err) => console.log("CIR-397 error pdating date", err));
 		}

@@ -21,7 +21,7 @@ export const CalendarScreen: React.FC = () => {
 	const { measureService, calendarService } = useServices();
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
-	const [updateCalendar, setUpdateCalendar] = useState(false);
+	// const [updateCalendar, setUpdateCalendar] = useState(false);
 
 	const [selectedDay, setSelectedDay] = useState(dayjs().format("YYYY-MM-DD"));
 	const calendar = useCalendar(selectedDay, FetchStrategy.Never);
@@ -33,7 +33,7 @@ export const CalendarScreen: React.FC = () => {
 		measureService.fetchMonthGlobalScores(firstOfMonth);
 		calendarService.calendarStore.fetch(firstDayOfMonth);
 		console.log(" ================== UPDATE CALENDAR");
-	}, [firstDayOfMonth, updateCalendar]);
+	}, [firstDayOfMonth]);
 
 	const { result: dailyScore } = useGlobalScore(selectedDay, FetchStrategy.Never);
 
@@ -58,11 +58,9 @@ export const CalendarScreen: React.FC = () => {
 							return (
 								<CalendarNoteItem
 									key={`${note.id}-${note.tag.name}`}
-									firstDayOfMonth={firstDayOfMonth}
 									note={note}
 									color={colors.primary}
 									tags={calendar.notes}
-									setUpdateCalendar={setUpdateCalendar}
 								/>
 							);
 					  })}
