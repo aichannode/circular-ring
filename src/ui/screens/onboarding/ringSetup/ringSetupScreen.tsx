@@ -33,7 +33,7 @@ export const RingSetupScreen: React.FC = () => {
 
 	useEffect(() => {
 		console.log("CIR-375 RingSetupScreen");
-	}, [])
+	}, []);
 
 	useEffect(() => {
 		console.log("CIR-375 SetupState", setupState);
