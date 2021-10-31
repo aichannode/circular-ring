@@ -16,7 +16,6 @@ interface CalendarNoteItemProps {
 	style?: StyleProp<ViewStyle>;
 	canDelete?: boolean;
 	tags: CalendarNote[];
-	setUpdateCalendar: (arg0: boolean) => void;
 }
 interface TimeEditorConfig {
 	time: Date;
