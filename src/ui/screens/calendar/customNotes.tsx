@@ -1,16 +1,15 @@
-import { useAllTags } from "@domain/calendar/hooks/useTags";
-import { InfoListHeader } from "@ui/components/infoList";
-import { ScrollScreen } from "@ui/components/scrollScreen";
-import { useI18n } from "@ui/i18n";
-import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
-import { TagSelectionView } from "@ui/screens/calendar/tagSelectionView";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useLayoutEffect, useState, useRef } from "react";
-import { Image, Pressable, View, Text, TouchableOpacity } from "react-native";
+import React, { useState, useRef } from "react";
+import { Image, View, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { CreateCustomNoteBottomSheet } from "./createCustomNoteBottomSheet";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
+
+interface ICustomNote {
+	id: number;
+	name: string;
+}
 
 const tagsDebug = [
 	{ id: 1232, name: "dosssrssss" },
@@ -23,7 +22,7 @@ const Cross = require("@assets/images/crossBig.png");
 
 const CustomNote = () => {
 	const [del, setDel] = useState<boolean>(false);
-	const [selectedTags, setSelectedTags] = useState([]);
+	const [selectedTags, setSelectedTags] = useState<ICustomNote[]>([]);
 
 	console.log("Selected", selectedTags);
 	const createCustomNoteRef = useRef<CircularBottomSheetHandle>(null);
@@ -69,7 +68,7 @@ const CustomNote = () => {
 								}
 							}}
 						>
-							<TagText numberOfLines={1} selected={selectedTags.filter((t) => t.id === tag.id).length > 0}>
+							<TagText numberOfLines={1} selected={selectedTags.filter((t: ICustomNote) => t.id === tag.id).length > 0}>
 								{tag.name}
 							</TagText>
 						</Touchable>

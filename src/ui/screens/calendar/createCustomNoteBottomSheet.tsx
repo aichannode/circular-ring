@@ -1,12 +1,10 @@
-import { useServices } from "@core/services";
 import { PrimaryButton, TertiaryButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
-import { Spinner } from "@ui/components/spinner";
-import { MediumTitleText, PrimaryText } from "@ui/components/text";
+import { MediumTitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { View, Image } from "react-native";
 import styled from "styled-components/native";
 
@@ -17,8 +15,6 @@ interface FactoryResetBottomSheetProps {
 export const CreateCustomNoteBottomSheet: React.FC<FactoryResetBottomSheetProps> = ({ onClose }) => {
 	const { format } = useI18n();
 
-	const [isLoading, setLoading] = useState(false);
-	const [errorMessage, setErrorMessage] = useState("");
 	const [search, setSearch] = useState("");
 
 	const createCustomNote = () => {
@@ -48,26 +44,18 @@ export const CreateCustomNoteBottomSheet: React.FC<FactoryResetBottomSheetProps>
 			<Grow />
 
 			<ButtonContainer gap={35} style={{ height: 38 }}>
-				{isLoading ? (
-					<Spinner size={24} />
-				) : (
-					[
-						<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
-							{format("global.cancel")}
-						</TertiaryButton>,
-						<PrimaryButton key={"create"} onPress={createCustomNote}>
-							{format("global.create")}
-						</PrimaryButton>,
-					]
-				)}
+				<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
+					{format("global.cancel")}
+				</TertiaryButton>
+				,
+				<PrimaryButton key={"create"} onPress={createCustomNote}>
+					{format("global.create")}
+				</PrimaryButton>
+				,
 			</ButtonContainer>
 		</Container>
 	);
 };
-
-const ImageCenter = styled(Image)`
-	align-self: center;
-`;
 
 const SearchWrapper = styled(View)`
 	background-color: ${colors.white};
@@ -115,19 +103,6 @@ const Title = styled(MediumTitleText)`
 	margin-top: 120px;
 	font-size: 16px;
 	text-align: center;
-`;
-
-const Description = styled(PrimaryText)`
-	margin-top: 32px;
-	font-size: 14px;
-	text-align: center;
-`;
-
-const ErrorMessage = styled.Text`
-	${textStyles.errorMessage};
-	margin-top: 20px;
-	text-align: center;
-	align-self: center;
 `;
 
 const ButtonContainer = styled(Row)`

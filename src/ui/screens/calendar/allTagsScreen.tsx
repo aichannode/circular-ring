@@ -7,7 +7,7 @@ import { TagSelectionView } from "@ui/screens/calendar/tagSelectionView";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useLayoutEffect, useState } from "react";
-import { Image, Pressable, View, Text } from "react-native";
+import { Image, Pressable, View } from "react-native";
 import styled from "styled-components/native";
 import CustomNote from "./customNotes";
 
