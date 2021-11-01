@@ -7,14 +7,16 @@ import { TagSelectionView } from "@ui/screens/calendar/tagSelectionView";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useLayoutEffect, useState } from "react";
-import { Image, Pressable, View } from "react-native";
+import { Image, Pressable, View, Text } from "react-native";
 import styled from "styled-components/native";
+import CustomNote from "./customNotes";
 
 export const AllTagsScreen: React.FC = () => {
 	const route = useAppRoute<Routes.AllTags>();
 	const originalSelectedTags = route.params.selectedTags;
 
 	const allTags = useAllTags();
+	console.log("CIR-262", allTags);
 	const navigation = useRoutesNavigation();
 	const navigate = navigation.navigate;
 	const { format } = useI18n();
@@ -77,28 +79,48 @@ export const AllTagsScreen: React.FC = () => {
 					/>
 				</View>
 			) : (
-				Array.from(allTags.keys()).map((category) => {
-					const categoryTags = allTags.get(category) ?? [];
-					return categoryTags.length === 0 ? null : (
-						<React.Fragment key={category}>
-							<InfoListHeader>{category}</InfoListHeader>
-							<TagListContainer>
-								<TagSelectionView
-									tags={categoryTags}
-									selectedTags={selectedTags}
-									onClickTag={(tag) => {
-										const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
-										if (isAlreadySelected) {
-											setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
-										} else {
-											setSelectedTags([...selectedTags, tag]);
-										}
-									}}
-								/>
-							</TagListContainer>
-						</React.Fragment>
-					);
-				})
+				<View>
+					<React.Fragment key="Custom Notes">
+						<CustomNote></CustomNote>
+						{/* <InfoListHeader>Custom Notes</InfoListHeader> */}
+						<TagListContainer>
+							<TagSelectionView
+								tags={[]}
+								selectedTags={selectedTags}
+								onClickTag={(tag) => {
+									const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
+									if (isAlreadySelected) {
+										setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
+									} else {
+										setSelectedTags([...selectedTags, tag]);
+									}
+								}}
+							/>
+						</TagListContainer>
+					</React.Fragment>
+					{Array.from(allTags.keys()).map((category) => {
+						const categoryTags = allTags.get(category) ?? [];
+						return categoryTags.length === 0 ? null : (
+							<React.Fragment key={category}>
+								<InfoListHeader>{category}</InfoListHeader>
+								<TagListContainer>
+									<TagSelectionView
+										tags={categoryTags}
+										selectedTags={selectedTags}
+										onClickTag={(tag) => {
+											const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
+											if (isAlreadySelected) {
+												setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
+											} else {
+												setSelectedTags([...selectedTags, tag]);
+											}
+										}}
+									/>
+								</TagListContainer>
+							</React.Fragment>
+						);
+					})}
+				</View>
 			)}
 		</ScrollScreen>
 	);

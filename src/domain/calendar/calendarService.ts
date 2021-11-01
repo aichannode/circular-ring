@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import { observable } from "micro-observables";
 
 export const PopularTagCategory = "Popular";
+export const CustomTagCategory = "Custom";
 
 export class CalendarService {
 	private logger = getLogger("CalendarService");
@@ -36,6 +37,7 @@ export class CalendarService {
 			this.logger.debug("Got calendar : " + JSON.stringify(calendarList));
 
 			const popularTags = this._tagMap.get().get(PopularTagCategory) ?? [];
+			const customTags = this._tagMap.get().get(PopularTagCategory) ?? [];
 
 			calendarList
 				.flatMap((calendar) => calendar.notes)
@@ -45,6 +47,7 @@ export class CalendarService {
 						popularTags.push(tag);
 					}
 				});
+			this._tagMap.update((tagMap) => tagMap.set(CustomTagCategory, customTags));
 			this._tagMap.update((tagMap) => tagMap.set(PopularTagCategory, popularTags));
 
 			return {
@@ -61,14 +64,14 @@ export class CalendarService {
 		try {
 			let tags = await this.calendarApi.getAllTags();
 			if (tags.length === 0) {
-				await this.calendarApi.createTag("Romain");
-				await this.calendarApi.createTag("Tom");
-				await this.calendarApi.createTag("Albrecht");
-				await this.calendarApi.createTag("Pierre");
-				await this.calendarApi.createTag("Laurent L");
-				await this.calendarApi.createTag("Laurent B");
-				await this.calendarApi.createTag("Amaury");
-				await this.calendarApi.createTag("Alexandre");
+				await this.calendarApi.createTag("DEBUG Romain");
+				await this.calendarApi.createTag("DEBUG  Tom");
+				await this.calendarApi.createTag("DEBUG  Albrecht");
+				await this.calendarApi.createTag("DEBUG  Pierre");
+				await this.calendarApi.createTag("DEBUG Laurent L");
+				await this.calendarApi.createTag("DEBUG Laurent B");
+				await this.calendarApi.createTag("DEBUG Amaury");
+				await this.calendarApi.createTag("DEBUG Alexandre");
 				tags = await this.calendarApi.getAllTags();
 			}
 			const categories = tags.map((tag) => tag.category);
@@ -125,7 +128,7 @@ export class CalendarService {
 			console.log("Update note Date", note.id, startDate, endDate);
 			await this.calendarApi.updateNoteDate(note.id, startDate.toISOString(), endDate.toISOString());
 		} catch (e) {
-			this.logger.warn("Error deleting tag from note : " + JSON.stringify(e));
+			this.logger.warn("Error updating note date : " + JSON.stringify(e));
 			throw e;
 		}
 		await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));
