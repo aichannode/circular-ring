@@ -2,7 +2,7 @@ import { AllTagsScreen } from "@ui/screens/calendar/allTagsScreen";
 import { CalendarEditNotesScreen } from "@ui/screens/calendar/calendarEditNotesScreen";
 import { Header } from "@ui/navigation/header/header";
 import { CircleSleepScreen } from "@ui/screens/circleSleep/circleSleepScreen";
-import { useAccountLinked, useDeviceStored, useRingLinkedToAnExistingAcc } from "@domain/device/hooks";
+import { useAccountLinked, useDeviceStored } from "@domain/device/hooks";
 import { useAuthenticatedUserEmail, useUser } from "@domain/user/hooks/useUser";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -207,7 +207,6 @@ export const RootNavigator: React.FC = () => {
 	const isAuthenticated = !!useAuthenticatedUserEmail();
 
 	const accountLinkedToDevice = useAccountLinked();
-	const linked = useRingLinkedToAnExistingAcc();
 	const hasUser = !!useUser();
 	const deviceStored = useDeviceStored();
 
@@ -227,9 +226,7 @@ export const RootNavigator: React.FC = () => {
 		);
 	}
 
-	console.log(" CIR-375 deviceStored || accountLinkedToDevice", deviceStored, accountLinkedToDevice);
-
-	if (!linked || !deviceStored || !accountLinkedToDevice) {
+	if (!deviceStored || !accountLinkedToDevice) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
 				{!hasUser && <OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />}

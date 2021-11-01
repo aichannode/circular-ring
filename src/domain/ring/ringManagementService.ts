@@ -23,12 +23,9 @@ export class RingManagementService {
 	private logger = getLogger("💍 RingService");
 
 	private _userRings = observable<NamedUserRing[]>([]);
-	private _linked = observable<boolean>(false);
 	private _currentRingSyncState = observable<SyncState>(SyncState.NONE);
 
 	userRings = this._userRings.readOnly();
-	linked = this._linked.readOnly();
-
 	currentRingSyncState = this._currentRingSyncState.readOnly();
 	constructor(
 		private readonly userService: UserService,
@@ -65,7 +62,6 @@ export class RingManagementService {
 	async init() {
 		const loadedRings = await this.userRingsStorage.load();
 		this._userRings.set(loadedRings ?? []);
-		this._linked.set(false);
 		this.syncData();
 	}
 
@@ -94,20 +90,13 @@ export class RingManagementService {
 			try {
 				const userRings = this._userRings.get();
 				const alreadyRegistered = userRings.filter((ring) => ring.id === id).length > 0;
-				console.log("CIR-375 Device Already Registered", alreadyRegistered);
 				if (!alreadyRegistered) {
-					console.log("CIR-375 erreur 1");
 					const userRing = await this.ringApi.addRing({ id, firmware });
-					console.log("CIR-375 erreur 2");
-					console.log("CIR-375 user Ring", userRing);
 					const namedRing = { ...userRing, name: deviceName };
 					this._userRings.update((rings) => [...rings, namedRing]);
-					this._linked.set(true);
 					return userRing;
 				}
-				this._linked.set(true);
 			} catch (e) {
-				console.log("CIR-375 Catch", e);
 				this.deviceService.disconnect();
 				throw e;
 			}
@@ -229,9 +218,9 @@ export class RingManagementService {
 
 	async submitFirmwareVersion() {
 		const firmware = await this.deviceService.getResponse(Channel.FIRMWARE_VERSION);
-		if (firmware) {
-			const { id } = this._userRings.get()[0];
-			await this.ringApi.submitFirmwareVersion(id, firmware);
-		}
-	}
+		if (firmware){ 
+			const {id} = this._userRings.get()[0];
+			await this.ringApi.submitFirmwareVersion(id,firmware);
+		}	
+ 	}
 }
