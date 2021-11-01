@@ -39,7 +39,6 @@ export const HomeScreen: React.FC = () => {
 	const openDrawer = () => {
 		navigation.dispatch(DrawerActions.openDrawer);
 	};
-
 	return (
 		<Container>
 			<CirclesBanner />
