@@ -10,11 +10,6 @@ export const useAccountLinked = () => {
 	const faked = useObservable(fakeDeviceService.fakeDeviceEnabled);
 	return userRings.length > 0 || faked;
 };
-export const useRingLinkedToAnExistingAcc = () => {
-	const { ringManagementService } = useServices();
-	const linked = useObservable(ringManagementService.linked);
-	return linked;
-};
 
 export const useDeviceStored = () => useObservable(useServices().bleDeviceService.favoriteDevice);
 export const useScannedDevices = () => useObservable(useServices().bleDeviceService.scannedDevices);
@@ -27,5 +22,5 @@ export function useLiveData() {
 	const start = useCallback(() => bleDeviceService.listenLiveData(), []);
 	const stop = useCallback(() => bleDeviceService.stopLiveData(), []);
 	const flush = useCallback(() => bleDeviceService.flushRingLiveData(), []);
-	return { data, listening, start, stop, flush };
+	return { data, listening, start, stop,flush };
 }

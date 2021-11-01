@@ -208,7 +208,6 @@ export class BleDeviceService {
 	}
 
 	async connect(device: Device) {
-		console.log("CIR-375 Connect ", device)
 		if (!device.name) {
 			this.logger.error("Error: trying to connect to unknown device");
 			return;
@@ -223,7 +222,7 @@ export class BleDeviceService {
 			this._connectedDevice.set(device);
 			this._connectionState.set(DeviceConnectionState.CONNECTED);
 			this._onDeviceDisconnectedSubscription = device.onDisconnected((error, disconnectedDevice) =>
-				{this.handleDeviceDisconnection(error, disconnectedDevice); console.log("CIR-375 ON DISCONNECTING", error, disconnectedDevice)}
+				this.handleDeviceDisconnection(error, disconnectedDevice)
 			);
 			const storedDevice = { name: device.name };
 			this._favoriteDevice.set(storedDevice);
@@ -237,8 +236,7 @@ export class BleDeviceService {
 			this.logger.info("🕒 Time set to device", device.name, getUTCTimestamp());
 			await this.listenBattery();
 		} catch (e) {
-			this.logger.error("CIR-375 Error connecting to device", e);
-			this._favoriteDevice.set(null);
+			this.logger.error("Error connecting to device", e);
 			this._connectionState.set(DeviceConnectionState.DISCONNECTED);
 			throw e;
 		}
