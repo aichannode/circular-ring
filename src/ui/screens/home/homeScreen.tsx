@@ -44,7 +44,7 @@ export const HomeScreen: React.FC = () => {
 		<Container>
 			<CirclesBanner />
 			<SyncBanner style={{ margin: 10 }} />
-			<FlingGestureHandler direction={Directions.RIGHT} onHandlerStateChange={() => openDrawer()}>
+			<FlingGestureHandler direction={Directions.RIGHT} onHandlerStateChange={() => {}}>
 				<ScrollView
 					style={{ flex: 1 }}
 					refreshControl={
