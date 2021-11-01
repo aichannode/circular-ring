@@ -39,12 +39,11 @@ export const HomeScreen: React.FC = () => {
 	const openDrawer = () => {
 		navigation.dispatch(DrawerActions.openDrawer);
 	};
-
 	return (
 		<Container>
 			<CirclesBanner />
 			<SyncBanner style={{ margin: 10 }} />
-			<FlingGestureHandler direction={Directions.RIGHT} onHandlerStateChange={() => openDrawer()}>
+			<FlingGestureHandler direction={Directions.RIGHT} onHandlerStateChange={() => {}}>
 				<ScrollView
 					style={{ flex: 1 }}
 					refreshControl={
