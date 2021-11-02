@@ -4,13 +4,11 @@ import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringManagementService";
 import { colors } from "@ui/styles/colors";
 import React, { useCallback, useEffect, useState } from "react";
-import { RefreshControl, ScrollView } from "react-native";
+import { RefreshControl, ScrollView, Platform } from "react-native";
 import styled from "styled-components/native";
 import { CirclesBanner } from "./circlesBanner";
 import { HomeBannerView } from "./homeBanner/homeBannerView";
 import { SyncBanner } from "./syncBanner";
-import { DrawerActions, useNavigation } from "@react-navigation/native";
-import { FlingGestureHandler, Directions } from "react-native-gesture-handler";
 import { useSetupState } from "@domain/device/hooks";
 import { DeviceSetupState } from "@domain/device/bleDeviceService";
 
@@ -18,7 +16,6 @@ export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
 	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
 	const [forceRefreshing, setForceRefreshing] = useState(false);
-	const navigation = useNavigation();
 
 	const setupState = useSetupState();
 
@@ -27,7 +24,7 @@ export const HomeScreen: React.FC = () => {
 			bluetoothService.enable();
 			bleDeviceService.checkSettings();
 		}
-		if (setupState === DeviceSetupState.LOCATION_DISABLED) {
+		if (setupState === DeviceSetupState.LOCATION_DISABLED && Platform.OS === "android") {
 			bleDeviceService.requestLocation();
 		}
 	}, []);
@@ -49,28 +46,23 @@ export const HomeScreen: React.FC = () => {
 
 	const homeBanner = useHomeBanner();
 
-	const openDrawer = () => {
-		navigation.dispatch(DrawerActions.openDrawer);
-	};
-
 	return (
 		<Container>
 			<CirclesBanner />
 			<SyncBanner style={{ margin: 10 }} />
-			<FlingGestureHandler direction={Directions.RIGHT} onHandlerStateChange={() => openDrawer()}>
-				<ScrollView
-					style={{ flex: 1 }}
-					refreshControl={
-						<RefreshControl
-							enabled={syncState === SyncState.NONE}
-							refreshing={forceRefreshing}
-							onRefresh={() => forceRefresh()}
-						/>
-					}
-				>
-					{homeBanner && <HomeBannerView banner={homeBanner} style={{ margin: 10 }} />}
-				</ScrollView>
-			</FlingGestureHandler>
+
+			<ScrollView
+				style={{ flex: 1 }}
+				refreshControl={
+					<RefreshControl
+						enabled={syncState === SyncState.NONE}
+						refreshing={forceRefreshing}
+						onRefresh={() => forceRefresh()}
+					/>
+				}
+			>
+				{homeBanner && <HomeBannerView banner={homeBanner} style={{ margin: 10 }} />}
+			</ScrollView>
 		</Container>
 	);
 };
