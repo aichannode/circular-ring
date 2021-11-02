@@ -7,7 +7,7 @@ interface CalendarNoteDto {
 	id: number;
 	startTime: string;
 	endTime: string;
-	tags: CalendarTag[];
+	tagId: CalendarTag;
 }
 
 interface CalendarDto {
@@ -39,14 +39,14 @@ export class CalendarApi {
 
 	private static calendarListFromDto(dto: CalendarDto[]): Calendar[] {
 		return dto.map((calendarDto) => {
-			const notes = calendarDto.notes.flatMap((note) =>
-				note.tags.map((tag) => ({
-					id: note.id,
-					startTime: new Date(note.startTime),
-					endTime: new Date(note.endTime),
-					tag: tag,
-				}))
-			);
+			const notes = calendarDto.notes.map((note) => {
+				return {
+				  id: note.id,
+				  startTime: new Date(note.startTime),
+				  endTime: new Date(note.endTime),
+				  tag: note.tagId,
+				}
+			});
 
 			return {
 				day: dayjs(calendarDto.date).format("YYYY-MM-DD"),
