@@ -11,15 +11,28 @@ import { HomeBannerView } from "./homeBanner/homeBannerView";
 import { SyncBanner } from "./syncBanner";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { FlingGestureHandler, Directions } from "react-native-gesture-handler";
+import { useSetupState } from "@domain/device/hooks";
+import { DeviceSetupState } from "@domain/device/bleDeviceService";
 
 export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
-	const { ringManagementService } = useServices();
+	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
 	const [forceRefreshing, setForceRefreshing] = useState(false);
 	const navigation = useNavigation();
 
+	const setupState = useSetupState();
+
+	useEffect(() => {
+		if (setupState === DeviceSetupState.DISABLED) {
+			bluetoothService.enable();
+			bleDeviceService.checkSettings();
+		}
+		if (setupState === DeviceSetupState.LOCATION_DISABLED) {
+			bleDeviceService.requestLocation();
+		}
+	}, []);
+
 	const forceRefresh = useCallback(() => {
- 
 		if (syncState !== SyncState.NONE) {
 			return;
 		}
@@ -28,7 +41,7 @@ export const HomeScreen: React.FC = () => {
 	}, [syncState, setForceRefreshing]);
 
 	useEffect(() => {
-		 ringManagementService.submitFirmwareVersion();
+		ringManagementService.submitFirmwareVersion();
 		if (syncState !== SyncState.PREPARING) {
 			setForceRefreshing(false);
 		}
@@ -52,7 +65,8 @@ export const HomeScreen: React.FC = () => {
 							refreshing={forceRefreshing}
 							onRefresh={() => forceRefresh()}
 						/>
-					}>
+					}
+				>
 					{homeBanner && <HomeBannerView banner={homeBanner} style={{ margin: 10 }} />}
 				</ScrollView>
 			</FlingGestureHandler>
