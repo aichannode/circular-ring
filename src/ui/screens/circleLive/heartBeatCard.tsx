@@ -48,7 +48,7 @@ export const HeartBeatCard: React.FC<HeartBeatCardProps> = ({ listening, heartRa
 		<Container style={style}>
 			<HeartRateCard>
 				<Animated.Image style={{ transform: [{ scale: beat }] }} source={require("@assets/images/heartBeat.png")} />
-				{heartRate !== undefined && (
+				{heartRate !== undefined && heartRate > 0 && (
 					<HeartRateValue>
 						{heartRate}
 						<HeartRateUnit>bpm</HeartRateUnit>

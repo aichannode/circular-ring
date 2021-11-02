@@ -35,6 +35,8 @@ export const CircleLiveScreen: React.FC = () => {
 	const disconnectedBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const tutorialBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
+	console.log("LISTENNING DATA", listening, data);
+
 	useEffect(() => {
 		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
 			disconnectedBottomSheet.current?.close();
@@ -66,14 +68,20 @@ export const CircleLiveScreen: React.FC = () => {
 						<Stack gap={10} style={{ flex: 1 }}>
 							<InfoCard>
 								<TertiaryText>{format("live.intensity.label")}</TertiaryText>
-								{data?.maxHeartRate ? (
-									<DataValue>{formatIntensity(activityIntensity)}</DataValue>
-								) : listening ? (
-									<Spinner size={19} />
-								) : null}
-								{activityIntensity !== Intensity.NONE ? (
-									<ColoredDot color={intensityColors[activityIntensity]} />
-								) : null}
+								<View
+									style={{
+										display: "flex",
+										flexDirection: "row",
+										justifyContent: "space-between",
+										alignContent: "center",
+									}}
+								>
+									{!!data?.maxHeartRate && <DataValue>{formatIntensity(activityIntensity)}</DataValue>}
+									{activityIntensity !== Intensity.NONE ? (
+										<ColoredDot color={intensityColors[activityIntensity]} />
+									) : null}
+								</View>
+								{listening && !data?.maxHeartRate && <Spinner size={19} />}
 							</InfoCard>
 							<InfoCard>
 								<TertiaryText>{format("live.hr_max.label")}</TertiaryText>
