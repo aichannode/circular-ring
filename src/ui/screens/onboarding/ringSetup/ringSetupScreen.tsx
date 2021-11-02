@@ -17,11 +17,19 @@ import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
 
-export const RingSetupScreen: React.FC = ({ route }) => {
+interface IRingSetupScreen {
+	route: {
+		params: {
+			setWait: (arg0: boolean) => void;
+		};
+	};
+}
+
+export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	const { userService } = useServices();
 	const { format } = useI18n();
 	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
-	const { setWait } = route.params;
+	const { setWait } = props.route.params;
 
 	const pairingFailedBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
