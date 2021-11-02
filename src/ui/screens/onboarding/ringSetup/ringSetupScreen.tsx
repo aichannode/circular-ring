@@ -17,10 +17,11 @@ import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
 
-export const RingSetupScreen: React.FC = () => {
+export const RingSetupScreen: React.FC = ({ route }) => {
 	const { userService } = useServices();
 	const { format } = useI18n();
 	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
+	const { setWait } = route.params;
 
 	const pairingFailedBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
@@ -128,12 +129,15 @@ export const RingSetupScreen: React.FC = () => {
 												onPress={async () => {
 													bleDeviceService.stopScan();
 													setConnecting(true);
+													setWait(true);
 													await bleDeviceService.connect(device);
 													try {
 														await ringManagementService.registerConnectedRing();
+														setWait(false);
 														setConnecting(false);
 													} catch (e) {
 														setConnecting(false);
+														setWait(false);
 														if ((e as { statusCode: number }).statusCode === 409) {
 															pairingFailedBottomSheet.current?.present();
 														}

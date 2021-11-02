@@ -37,7 +37,7 @@ import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmat
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
 import styled from "styled-components/native";
 import { WebViewScreen } from "@ui/screens/webViewScreen";
-import React from "react";
+import React, { useState } from "react";
 import { CalendarScreen } from "@ui/screens/calendar/calendarScreen";
 
 const SetupStack = createNativeStackNavigator();
@@ -204,6 +204,7 @@ const CircleIcon = styled.Image`
 `;
 
 export const RootNavigator: React.FC = () => {
+	const [wait, setWait] = useState(false);
 	const isAuthenticated = !!useAuthenticatedUserEmail();
 
 	const accountLinkedToDevice = useAccountLinked();
@@ -226,11 +227,11 @@ export const RootNavigator: React.FC = () => {
 		);
 	}
 
-	if (!deviceStored || !accountLinkedToDevice) {
+	if (wait || !deviceStored || !accountLinkedToDevice) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
 				{!hasUser && <OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />}
-				<OnboardingStack.Screen name={Routes.Pairing} component={RingSetupScreen} />
+				<OnboardingStack.Screen name={Routes.Pairing} initialParams={{ setWait }} component={RingSetupScreen} />
 			</OnboardingStack.Navigator>
 		);
 	}
