@@ -61,14 +61,14 @@ export class CalendarService {
 		try {
 			let tags = await this.calendarApi.getAllTags();
 			if (tags.length === 0) {
-				await this.calendarApi.createTag("Romain");
-				await this.calendarApi.createTag("Tom");
-				await this.calendarApi.createTag("Albrecht");
-				await this.calendarApi.createTag("Pierre");
-				await this.calendarApi.createTag("Laurent L");
-				await this.calendarApi.createTag("Laurent B");
-				await this.calendarApi.createTag("Amaury");
-				await this.calendarApi.createTag("Alexandre");
+				await this.calendarApi.createTag("Romain","debug");
+				await this.calendarApi.createTag("Tom","debug");
+				await this.calendarApi.createTag("Albrecht","debug");
+				await this.calendarApi.createTag("Pierre","debug");
+				await this.calendarApi.createTag("Laurent L","debug");
+				await this.calendarApi.createTag("Laurent B","debug");
+				await this.calendarApi.createTag("Amaury","debug");
+				await this.calendarApi.createTag("Alexandre","debug");
 				tags = await this.calendarApi.getAllTags();
 			}
 			const categories = tags.map((tag) => tag.category);

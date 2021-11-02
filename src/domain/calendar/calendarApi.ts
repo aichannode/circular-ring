@@ -24,8 +24,8 @@ export class CalendarApi {
 		return result.data;
 	}
 
-	async createTag(name: string) {
-		await this.apiService.post("/notes/me/tags", { name, category: "Debug Tags" });
+	async createTag(name: string, category: string) {
+		await this.apiService.post("/notes/me/tags", { name, category});
 	}
 
 	async deleteTag(tagId: number) {
