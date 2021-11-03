@@ -39,6 +39,7 @@ import styled from "styled-components/native";
 import { WebViewScreen } from "@ui/screens/webViewScreen";
 import React, { useState } from "react";
 import { CalendarScreen } from "@ui/screens/calendar/calendarScreen";
+import { Tutorial } from "@ui/screens/onboarding/tutorial/tutorial";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -236,6 +237,10 @@ export const RootNavigator: React.FC = () => {
 		);
 	}
 
+	const isTutorialDone = false;
+
+	console.log("!isTutorialDone && isOnboardingDone", !isTutorialDone && isOnboardingDone);
+
 	return isOnboardingDone ? (
 		<HomeDrawer.Navigator
 			screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
@@ -248,6 +253,7 @@ export const RootNavigator: React.FC = () => {
 			<OnboardingStack.Screen name={Routes.OnboardingWearInfo} component={OnboardingWearInfoScreen} />
 			<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo1} component={OnboardingPersonalInfo1Screen} />
 			<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo2} component={OnboardingPersonalInfo2Screen} />
+			<OnboardingStack.Screen name={Routes.OnboardingTutorial} component={Tutorial} />
 		</OnboardingStack.Navigator>
 	);
 };
