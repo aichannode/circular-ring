@@ -5,7 +5,7 @@ export interface TutorialInfo {
 	lastName: string;
 	country: string;
 	sex: Sex;
-	bornDate: Date;
+	birthDate: Date;
 	weight: number;
 	height: number;
 }

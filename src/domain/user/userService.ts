@@ -193,7 +193,7 @@ export class UserService {
 			height: round2Digits(tutorialInfo.height),
 			weight: round2Digits(tutorialInfo.weight),
 			sex: tutorialInfo.sex.toString(),
-			bornDate: toServerDate(tutorialInfo.bornDate),
+			bornDate: toServerDate(tutorialInfo.birthDate),
 			phoneNumber: null,
 			profilePictureUrl: null,
 			language: "en",

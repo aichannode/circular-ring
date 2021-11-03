@@ -3,6 +3,8 @@ import { RingAlarm } from "@domain/ring/ringAlarm";
 import { useNavigation } from "@react-navigation/core";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { HeightUnit, WeightUnit } from "@domain/units";
+import { Sex } from "@domain/user/user";
 
 export enum Routes {
 	LoginOrSignUp = "LoginOrSignUp",
@@ -18,6 +20,7 @@ export enum Routes {
 	OnboardingWearInfo = "OnboardingWearInfo",
 	OnboardingPersonalInfo1 = "OnboardingPersonalInfo1",
 	OnboardingPersonalInfo2 = "OnboardingPersonalInfo2",
+	OnboardingTutorial = "OnboardingTutorial",
 
 	HomeDrawer = "HomeDrawer",
 	MainHome = "MainHome",
@@ -54,6 +57,17 @@ export type AppRoutesParams = {
 	[Routes.OnboardingWearInfo]: undefined;
 	[Routes.OnboardingPersonalInfo1]: undefined;
 	[Routes.OnboardingPersonalInfo2]: { firstName: string; lastName: string; country: string };
+	[Routes.OnboardingTutorial]: {
+		firstName: string;
+		lastName: string;
+		country: string;
+		birthDate: string;
+		sex: Sex;
+		weight: number;
+		height: number;
+		weightUnit: WeightUnit;
+		heightUnit: HeightUnit;
+	};
 	[Routes.HomeDrawer]: undefined;
 	[Routes.MainHome]: undefined;
 	[Routes.Home]: undefined;
