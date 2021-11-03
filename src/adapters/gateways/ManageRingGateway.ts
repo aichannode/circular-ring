@@ -1,8 +1,10 @@
+import { useServices } from "@core/services";
 import { Storage } from "@core/storage";
 import { DeviceGateway } from "./DeviceGateway";
 const deviceManagementStorageKey = "@deviceManagementStorageKey";
-
+const { bleDeviceService } = useServices();
 export class ManageRingGateway implements DeviceGateway {
+    
     async getAvailableDevices(): Promise<string[]> {
         const devices = await Storage.load<string[]>(deviceManagementStorageKey)
         if (devices){
@@ -20,6 +22,12 @@ export class ManageRingGateway implements DeviceGateway {
         }else{
             Storage.save<string[]>(deviceManagementStorageKey, [deviceId])
         }
+        
+        const device = await bleDeviceService.findFavoriteDevice();
+        if (device?.id === deviceId){
+            bleDeviceService.disconnect()
+        }
+       
      }
     async enableDevice(deviceId: string): Promise<void> {
         const devices = await Storage.load<string[]>(deviceManagementStorageKey)
