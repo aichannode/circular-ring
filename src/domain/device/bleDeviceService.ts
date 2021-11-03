@@ -14,6 +14,7 @@ import { getUTCTimestamp } from "@utils/date";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 import { LocationEnabler } from "./locationEnabler";
 import { NamedDevice } from "./namedDevice";
+import { ManageRingGateway } from "@adapters/gateways/ManageRingGateway";
 
 export enum DeviceConnectionState {
 	DISCONNECTED = "DISCONNECTED",
@@ -208,6 +209,11 @@ export class BleDeviceService {
 	}
 
 	async connect(device: Device) {
+		const manageRingGateway = new ManageRingGateway()
+		if((await manageRingGateway.getAvailableDevices()).includes(device.id)){
+			return
+		}
+
 		if (!device.name) {
 			this.logger.error("Error: trying to connect to unknown device");
 			return;
