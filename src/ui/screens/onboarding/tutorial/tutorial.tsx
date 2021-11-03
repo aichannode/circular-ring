@@ -79,6 +79,7 @@ export const Tutorial = () => {
 			setLoading(false);
 			setErrorMessage(format("onboarding.personal_info.error.default"));
 		}
+		console.log("TUTORIA UPDATE USER ERROR", errorMessage);
 	}, [birthDate, sex, weight, height]);
 
 	return (

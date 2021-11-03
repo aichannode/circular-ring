@@ -1,5 +1,5 @@
 import { colors } from "@ui/styles/colors";
-import { CalendarTheme } from "react-native-calendars";
+// import { CalendarTheme } from "react-native-calendars";
 
 export const circularCalendarTheme = {
 	textDayHeaderFontSize: 14,
