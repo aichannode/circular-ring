@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-class StorageStatic {
+export class StorageStatic {
 	getAllKeys(): Promise<string[]> {
 		return AsyncStorage.getAllKeys();
 	}
