@@ -60,12 +60,7 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 		if (startDate !== note.startTime || endDate !== note.endTime) {
 			// avoid first Render
 			calendarService
-				.updateNoteDate(
-					note,
-					tags.map((item) => item.tag.id),
-					startDate,
-					endDate
-				)
+				.updateNoteDate(note, startDate, endDate)
 				.then(() => {
 					console.log("Cir-397 Sucees Update Hour");
 				})
@@ -77,7 +72,12 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 		setErrorMessage(undefined);
 		setLoading(true);
 
-		await calendarService.deleteNote(note);
+		try {
+			await calendarService.deleteNote(note);
+			setLoading(false);
+		} catch (e) {
+			setLoading(false);
+		}
 		// try {
 		// 	const newTags = tags
 		// 		.filter((element: CalendarNote) => element.id === note.id)

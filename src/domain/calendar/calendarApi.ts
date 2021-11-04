@@ -86,6 +86,6 @@ export class CalendarApi {
 			startTime: startTime,
 			endTime: endTime,
 		};
-		await this.apiService.patch(`/notes/me/${noteId}`, requestParam);
+		await this.apiService.put(`/notes/me/${noteId}`, requestParam);
 	}
 }
