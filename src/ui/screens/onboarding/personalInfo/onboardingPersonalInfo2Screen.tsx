@@ -1,4 +1,3 @@
-import { useServices } from "@core/services";
 import { round2Digits } from "@core/utils";
 import {
 	cmToFt,
@@ -22,10 +21,9 @@ import { Grow } from "@ui/components/layout";
 import { BackButton } from "@ui/components/navigation/backButton";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { SelectableButton } from "@ui/components/selectableButton";
-import { Spinner } from "@ui/components/spinner";
 import { Switch } from "@ui/components/switch";
 import { useI18n } from "@ui/i18n";
-import { Routes, useAppRoute } from "@ui/navigation/routes";
+import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
@@ -39,15 +37,15 @@ import styled from "styled-components/native";
 export const OnboardingPersonalInfo2Screen = () => {
 	const { format } = useI18n();
 	const navigation = useNavigation();
-	const { userService } = useServices();
 	const safeArea = useSafeAreaInsets();
 
 	const route = useAppRoute<Routes.OnboardingPersonalInfo2>();
 	const { firstName, lastName, country } = route.params;
+	const { navigate } = useRoutesNavigation();
 
 	const [sex, setSex] = useState(Sex.Female);
 
-	const [bornDate, setBornDate] = useState("");
+	const [birthDate, setBirthDate] = useState("");
 
 	const [weightUnit, setWeightUnit] = useState<WeightUnit>(WeightUnit.kg);
 	const [weight, setWeight] = useState(UNDEFINED_WEIGHT); // weight always in kg
@@ -57,34 +55,29 @@ export const OnboardingPersonalInfo2Screen = () => {
 
 	const [errorMessage, setErrorMessage] = useState("");
 
-	const [isLoading, setLoading] = useState(false);
-
-	const completeTutorial = useCallback(async () => {
-		setLoading(true);
-		const birthDate = dayjs(bornDate, "DD/MM/YYYY", true).toDate();
-		try {
-			await userService.completeTutorial({ firstName, lastName, country, bornDate: birthDate, sex, weight, height });
-			await userService.updateUserSettings("DD/MM/YYYY", heightUnit, weightUnit);
-			setLoading(false);
-		} catch (error) {
-			setLoading(false);
-			setErrorMessage(format("onboarding.personal_info.error.default"));
-		}
-	}, [bornDate, sex, weight, height]);
-
 	const goNext = useCallback(() => {
 		setErrorMessage("");
-		if (bornDate.length === 0) {
+		if (birthDate.length === 0) {
 			setErrorMessage(format("onboarding.personal_info.error.born_date"));
 		} else {
-			const birthDate = dayjs(bornDate, "DD/MM/YYYY", true);
-			if (!birthDate.isValid() || birthDate.isAfter(dayjs())) {
+			const _birthDate = dayjs(birthDate, "DD/MM/YYYY", true);
+			if (!_birthDate.isValid() || _birthDate.isAfter(dayjs())) {
 				setErrorMessage(format("onboarding.personal_info.error.born_date_invalid"));
 			} else {
-				completeTutorial();
+				navigate(Routes.OnboardingTutorial, {
+					firstName,
+					lastName,
+					country,
+					birthDate,
+					sex,
+					weight,
+					height,
+					heightUnit,
+					weightUnit,
+				});
 			}
 		}
-	}, [bornDate, sex, weight, height]);
+	}, [birthDate, sex, weight, height]);
 
 	return (
 		<StyledScrollScreen>
@@ -116,8 +109,8 @@ export const OnboardingPersonalInfo2Screen = () => {
 						}}
 						placeholder={format("onboarding.personal_info.born_placeholder")}
 						placeholderTextColor={colors.textTertiary}
-						value={bornDate}
-						onChangeText={setBornDate}
+						value={birthDate}
+						onChangeText={setBirthDate}
 						style={{ padding: 0, width: "100%", color: colors.textPrimary }}
 					/>
 				</BornDateContainer>
@@ -167,14 +160,10 @@ export const OnboardingPersonalInfo2Screen = () => {
 			<ErrorMessage>{errorMessage}</ErrorMessage>
 			<Grow />
 			<ButtonContainer>
-				{isLoading ? (
-					<Spinner size={24} />
-				) : (
-					<RowButtonContainer>
-						<StyledSimpleTextButton onPress={navigation.goBack}>{format("global.back")}</StyledSimpleTextButton>
-						<StyledSimpleTextButton onPress={goNext}>{format("global.next")}</StyledSimpleTextButton>
-					</RowButtonContainer>
-				)}
+				<RowButtonContainer>
+					<StyledSimpleTextButton onPress={navigation.goBack}>{format("global.back")}</StyledSimpleTextButton>
+					<StyledSimpleTextButton onPress={goNext}>{format("global.next")}</StyledSimpleTextButton>
+				</RowButtonContainer>
 			</ButtonContainer>
 		</StyledScrollScreen>
 	);

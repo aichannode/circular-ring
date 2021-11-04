@@ -73,6 +73,27 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 		} catch (e) {
 			setLoading(false);
 		}
+		// try {
+		// 	const newTags = tags
+		// 		.filter((element: CalendarNote) => element.id === note.id)
+		// 		.filter((element: CalendarNote) => {
+		// 			return note.tag.id != element.tag.id;
+		// 		});
+
+		// 	if (newTags.length > 0) {
+		// 		await calendarService.updateNote(
+		// 			note,
+		// 			newTags.map((item) => item.tag.id)
+		// 		);
+		// 	} else {
+		// 		await calendarService.deleteNote(note);
+		// 	}
+
+		// 	setLoading(false);
+		// } catch (e) {
+		// 	setLoading(false);
+		// 	setErrorMessage(format("global.default_error"));
+		// }
 	};
 
 	return (

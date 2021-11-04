@@ -22,7 +22,7 @@ import { useUnmount } from "@ui/utils/lifecycleHooks";
 import dayjs from "dayjs";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LayoutAnimation, Pressable, View } from "react-native";
-import { Marking } from "react-native-calendars";
+// import { Marking } from "react-native-calendars";
 import styled from "styled-components/native";
 
 interface TimeEditorConfig {
@@ -149,7 +149,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 							year: date.getFullYear(),
 							timestamp: dateJS.date(),
 						}}
-						marking={{ selected: true } as unknown as Marking[]}
+						marking={{ selected: true } as unknown as []}
 						onPress={() => null}
 						onLongPress={() => null}
 						state={"selected"}
