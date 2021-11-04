@@ -7,22 +7,17 @@ import styled from "styled-components/native";
 import { CreateCustomNoteBottomSheet } from "./createCustomNoteBottomSheet";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { useCustomTags } from "@domain/calendar/hooks/useTags";
+import { CalendarTag } from "@domain/calendar/calendar";
 
-interface ICustomNote {
-	id: number;
-	name: string;
-}
-
-const tagsDebug = [
-	{ id: 1232, name: "dosssrssss" },
-	{ id: 1231, name: "dorssssssssssad" },
-	{ id: 1230, name: "asddorsasd" },
-	{ id: 1235, name: "dorsd" },
-	{ id: 1236, name: "dsadors" },
-];
 const Cross = require("@assets/images/crossBig.png");
 
-const CustomNote = ({ selectedTags, setSelectedTags }) => {
+const CustomNote = ({
+	selectedTags,
+	setSelectedTags,
+}: {
+	selectedTags: CalendarTag[];
+	setSelectedTags: (arg: CalendarTag[]) => void;
+}) => {
 	const [del, setDel] = useState<boolean>(false);
 	// const [selectedTags, setSelectedTags] = useState<ICustomNote[]>([]);
 	const customTags = useCustomTags();
@@ -75,11 +70,11 @@ const CustomNote = ({ selectedTags, setSelectedTags }) => {
 									);
 								} else {
 									console.log("Else", tag);
-									setSelectedTags((tags) => [...tags, tag]);
+									setSelectedTags([...selectedTags, tag]);
 								}
 							}}
 						>
-							<TagText numberOfLines={1} selected={selectedTags.filter((t: ICustomNote) => t.id === tag.id).length > 0}>
+							<TagText numberOfLines={1} selected={selectedTags.filter((t: CalendarTag) => t.id === tag.id).length > 0}>
 								{tag.name}
 							</TagText>
 						</Touchable>
