@@ -3,7 +3,6 @@ import { getLogger } from "@core/logger/logger";
 import { CalendarNote, CalendarTag } from "@domain/calendar/calendar";
 import { CalendarApi } from "@domain/calendar/calendarApi";
 import { UserService } from "@domain/user/userService";
-import { captureEvent } from "@sentry/minimal";
 import dayjs from "dayjs";
 import { observable } from "micro-observables";
 

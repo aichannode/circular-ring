@@ -7,7 +7,7 @@ interface CalendarNoteDto {
 	id: number;
 	startTime: string;
 	endTime: string;
-	tagId: CalendarTag;
+	tag: CalendarTag;
 }
 
 interface CalendarDto {
