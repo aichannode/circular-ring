@@ -21,6 +21,7 @@ export class CalendarApi {
 
 	async getAllTags(): Promise<CalendarTag[]> {
 		const result = await this.apiService.get<CalendarTag[]>("/notes/me/tags");
+		console.log("Result Data", result.data);
 		return result.data;
 	}
 
@@ -65,6 +66,13 @@ export class CalendarApi {
 			startTime: toServerDate(startTime),
 			endTime: toServerDate(endTime),
 			tags: tags.map((t) => t.id),
+		});
+	}
+
+	async createCustomTag(name: string, category: string) {
+		await this.apiService.post<CalendarNote>("/notes/me/tags", {
+			name,
+			category,
 		});
 	}
 

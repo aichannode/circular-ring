@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import { observable } from "micro-observables";
 
 export const PopularTagCategory = "Popular";
+export const CustomTagCategory = "Custom Tags";
 
 export class CalendarService {
 	private logger = getLogger("CalendarService");
@@ -16,6 +17,10 @@ export class CalendarService {
 	private _tagMap = observable<Map<string, CalendarTag[]>>(new Map());
 
 	readonly tagMap = this._tagMap.readOnly();
+
+	// private _userTagMap = observable<Map<string, CalendarTag[]>>(new Map());
+
+	// readonly userTagMap = this._userTagMap.readOnly();
 
 	constructor(private readonly calendarApi: CalendarApi, private readonly userService: UserService) {}
 
@@ -36,6 +41,7 @@ export class CalendarService {
 			this.logger.debug("Got calendar : " + JSON.stringify(calendarList));
 
 			const popularTags = this._tagMap.get().get(PopularTagCategory) ?? [];
+			const customTags = this._tagMap.get().get(CustomTagCategory) ?? [];
 
 			console.log("popularTags", popularTags, "PopularTagCategory", PopularTagCategory);
 
@@ -48,7 +54,8 @@ export class CalendarService {
 						popularTags.push(tag);
 					}
 				});
-			this._tagMap.update((tagMap) => tagMap.set(PopularTagCategory, popularTags));
+			this._tagMap.update((tagMap) => tagMap.set(CustomTagCategory, customTags));
+			// this._tagMap.update((tagMap) => tagMap.set(s, popularTags));
 
 			return {
 				day: dayjs(date).format("YYYY-MM-DD"),
@@ -96,6 +103,17 @@ export class CalendarService {
 		await this.calendarStore.fetch(dayjs(startDate).startOf("month").format("YYYY-MM-DD"));
 	}
 
+	async createCustomTag(name: string, category: string) {
+		try {
+			await this.calendarApi.createCustomTag(name, category);
+		} catch (e) {
+			this.logger.warn("Error registering note : " + JSON.stringify(e));
+			throw e;
+		}
+		// await this.calendarStore.fetch(dayjs(startDate).startOf("month").format("YYYY-MM-DD"));
+		await this.fetchAllTags();
+	}
+
 	async deleteNote(note: CalendarNote) {
 		try {
 			await this.calendarApi.deleteNote(note.id);
@@ -119,6 +137,7 @@ export class CalendarService {
 			this.logger.warn("Error deleting tag from note : " + JSON.stringify(e));
 			throw e;
 		}
+		await this.fetchAllTags();
 	}
 
 	async updateNote(note: CalendarNote, tagIds: number[]) {
@@ -136,7 +155,7 @@ export class CalendarService {
 			console.log("Update note Date", note.id, startDate, endDate);
 			await this.calendarApi.updateNoteDate(note.id, startDate.toISOString(), endDate.toISOString());
 		} catch (e) {
-			this.logger.warn("Error Updating note DAte : " + JSON.stringify(e));
+			this.logger.warn("Error updating note date : " + JSON.stringify(e));
 			throw e;
 		}
 		await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));
