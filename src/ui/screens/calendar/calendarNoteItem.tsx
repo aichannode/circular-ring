@@ -52,11 +52,6 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 	const timeEditorRef = useRef<TimeEditorRef>(null);
 
 	useEffect(() => {
-		console.log(
-			"startDate !== note.startTime || endDate !== note.endTime",
-			startDate !== note.startTime,
-			endDate !== note.endTime
-		);
 		if (startDate !== note.startTime || endDate !== note.endTime) {
 			// avoid first Render
 			calendarService
@@ -78,27 +73,6 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 		} catch (e) {
 			setLoading(false);
 		}
-		// try {
-		// 	const newTags = tags
-		// 		.filter((element: CalendarNote) => element.id === note.id)
-		// 		.filter((element: CalendarNote) => {
-		// 			return note.tag.id != element.tag.id;
-		// 		});
-
-		// 	if (newTags.length > 0) {
-		// 		await calendarService.updateNote(
-		// 			note,
-		// 			newTags.map((item) => item.tag.id)
-		// 		);
-		// 	} else {
-		// 		await calendarService.deleteNote(note);
-		// 	}
-
-		// 	setLoading(false);
-		// } catch (e) {
-		// 	setLoading(false);
-		// 	setErrorMessage(format("global.default_error"));
-		// }
 	};
 
 	return (

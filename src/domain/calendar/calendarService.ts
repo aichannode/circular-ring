@@ -101,15 +101,9 @@ export class CalendarService {
 			await this.calendarApi.deleteNote(note.id);
 		} catch (e) {
 			this.logger.warn("Error deleting note : " + JSON.stringify(e));
-			await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));
 			throw e;
 		}
-		try {
-			await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));
-			console.log("FETCH CALENDAR SUCCESS");
-		} catch (e) {
-			console.log("FETCH CALENDAR", e);
-		}
+		await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));
 	}
 
 	async deleteTag(tagId: number) {
