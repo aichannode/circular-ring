@@ -33,7 +33,8 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 	const [startDate, setStartDate] = useState(note.startTime);
 	const [endDate, setEndDate] = useState(note.endTime);
 
-	console.log(" StartDate ", startDate, " EndDate ", endDate);
+	// console.log(" StartDate ", startDate, " EndDate ", endDate);
+	// console.log("NOTE", note);
 
 	const startTimeEditionConfig = {
 		title: format("calendar.edit_start.title"),
@@ -59,12 +60,7 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 		if (startDate !== note.startTime || endDate !== note.endTime) {
 			// avoid first Render
 			calendarService
-				.updateNoteDate(
-					note,
-					tags.map((item) => item.tag.id),
-					startDate,
-					endDate
-				)
+				.updateNoteDate(note, startDate, endDate)
 				.then(() => {
 					console.log("Cir-397 Sucees Update Hour");
 				})
@@ -77,26 +73,32 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 		setLoading(true);
 
 		try {
-			const newTags = tags
-				.filter((element: CalendarNote) => element.id === note.id)
-				.filter((element: CalendarNote) => {
-					return note.tag.id != element.tag.id;
-				});
-
-			if (newTags.length > 0) {
-				await calendarService.updateNote(
-					note,
-					newTags.map((item) => item.tag.id)
-				);
-			} else {
-				await calendarService.deleteNote(note);
-			}
-
+			await calendarService.deleteNote(note);
 			setLoading(false);
 		} catch (e) {
 			setLoading(false);
-			setErrorMessage(format("global.default_error"));
 		}
+		// try {
+		// 	const newTags = tags
+		// 		.filter((element: CalendarNote) => element.id === note.id)
+		// 		.filter((element: CalendarNote) => {
+		// 			return note.tag.id != element.tag.id;
+		// 		});
+
+		// 	if (newTags.length > 0) {
+		// 		await calendarService.updateNote(
+		// 			note,
+		// 			newTags.map((item) => item.tag.id)
+		// 		);
+		// 	} else {
+		// 		await calendarService.deleteNote(note);
+		// 	}
+
+		// 	setLoading(false);
+		// } catch (e) {
+		// 	setLoading(false);
+		// 	setErrorMessage(format("global.default_error"));
+		// }
 	};
 
 	return (
