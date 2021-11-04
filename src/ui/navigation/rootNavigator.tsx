@@ -37,8 +37,9 @@ import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmat
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
 import styled from "styled-components/native";
 import { WebViewScreen } from "@ui/screens/webViewScreen";
-import React from "react";
+import React, { useState } from "react";
 import { CalendarScreen } from "@ui/screens/calendar/calendarScreen";
+import { Tutorial } from "@ui/screens/onboarding/tutorial/tutorial";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -204,6 +205,7 @@ const CircleIcon = styled.Image`
 `;
 
 export const RootNavigator: React.FC = () => {
+	const [wait, setWait] = useState(false);
 	const isAuthenticated = !!useAuthenticatedUserEmail();
 
 	const accountLinkedToDevice = useAccountLinked();
@@ -226,14 +228,18 @@ export const RootNavigator: React.FC = () => {
 		);
 	}
 
-	if (!deviceStored || !accountLinkedToDevice) {
+	if (wait || !deviceStored || !accountLinkedToDevice) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
 				{!hasUser && <OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />}
-				<OnboardingStack.Screen name={Routes.Pairing} component={RingSetupScreen} />
+				<OnboardingStack.Screen name={Routes.Pairing} initialParams={{ setWait }} component={RingSetupScreen} />
 			</OnboardingStack.Navigator>
 		);
 	}
+
+	const isTutorialDone = false;
+
+	console.log("!isTutorialDone && isOnboardingDone", !isTutorialDone && isOnboardingDone);
 
 	return isOnboardingDone ? (
 		<HomeDrawer.Navigator
@@ -247,6 +253,7 @@ export const RootNavigator: React.FC = () => {
 			<OnboardingStack.Screen name={Routes.OnboardingWearInfo} component={OnboardingWearInfoScreen} />
 			<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo1} component={OnboardingPersonalInfo1Screen} />
 			<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo2} component={OnboardingPersonalInfo2Screen} />
+			<OnboardingStack.Screen name={Routes.OnboardingTutorial} component={Tutorial} />
 		</OnboardingStack.Navigator>
 	);
 };

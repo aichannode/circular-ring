@@ -1,10 +1,12 @@
 import { colors } from "@ui/styles/colors";
+import { useServices } from "@core/services";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useState, useRef } from "react";
 import { Image, View, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { CreateCustomNoteBottomSheet } from "./createCustomNoteBottomSheet";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
+import { useCustomTags } from "@domain/calendar/hooks/useTags";
 
 interface ICustomNote {
 	id: number;
@@ -20,12 +22,19 @@ const tagsDebug = [
 ];
 const Cross = require("@assets/images/crossBig.png");
 
-const CustomNote = () => {
+const CustomNote = ({ selectedTags, setSelectedTags }) => {
 	const [del, setDel] = useState<boolean>(false);
-	const [selectedTags, setSelectedTags] = useState<ICustomNote[]>([]);
+	// const [selectedTags, setSelectedTags] = useState<ICustomNote[]>([]);
+	const customTags = useCustomTags();
+	const { calendarService } = useServices();
 
 	console.log("Selected", selectedTags);
 	const createCustomNoteRef = useRef<CircularBottomSheetHandle>(null);
+
+	const deleteTag = async (tagId: number) => {
+		console.log("Tag", tagId);
+		await calendarService.deleteTag(tagId);
+	};
 
 	return (
 		<>
@@ -35,18 +44,20 @@ const CustomNote = () => {
 					<TouchableOpacity onPress={() => setDel((del) => !del)}>
 						<OrangeText>{!del ? "Delete" : "Cancel"}</OrangeText>
 					</TouchableOpacity>
-					<TouchableOpacity
-						onPress={() => {
-							createCustomNoteRef.current?.present();
-						}}
-					>
-						<OrangeText>Create</OrangeText>
-					</TouchableOpacity>
+					{!del && (
+						<TouchableOpacity
+							onPress={() => {
+								createCustomNoteRef.current?.present();
+							}}
+						>
+							<OrangeText>Create</OrangeText>
+						</TouchableOpacity>
+					)}
 				</View>
 			</Container>
 
 			<Tags>
-				{tagsDebug.map((tag, key) => (
+				{customTags.map((tag, key) => (
 					<TagContainer key={key} selected={selectedTags.filter((t) => t.id === tag.id).length > 0} style={{}}>
 						<Touchable
 							onPress={() => {
@@ -73,7 +84,7 @@ const CustomNote = () => {
 							</TagText>
 						</Touchable>
 						{del && (
-							<TouchableOpacity style={{ height: "100%", width: 20 }}>
+							<TouchableOpacity style={{ height: "100%", width: 20 }} onPress={() => deleteTag(tag.id)}>
 								<Image style={{ height: 10, width: 10, margin: 14 }} resizeMode="contain" source={Cross}></Image>
 							</TouchableOpacity>
 						)}

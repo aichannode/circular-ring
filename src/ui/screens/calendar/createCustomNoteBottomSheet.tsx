@@ -1,3 +1,4 @@
+import { useServices } from "@core/services";
 import { PrimaryButton, TertiaryButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
 import { MediumTitleText } from "@ui/components/text";
@@ -14,11 +15,13 @@ interface FactoryResetBottomSheetProps {
 
 export const CreateCustomNoteBottomSheet: React.FC<FactoryResetBottomSheetProps> = ({ onClose }) => {
 	const { format } = useI18n();
-
+	const { calendarService } = useServices();
 	const [search, setSearch] = useState("");
 
-	const createCustomNote = () => {
+	const createCustomNote = async () => {
 		console.log("Create NOTE");
+		onClose();
+		await calendarService.createCustomTag(search, "Custom Notes");
 	};
 
 	return (
@@ -27,7 +30,7 @@ export const CreateCustomNoteBottomSheet: React.FC<FactoryResetBottomSheetProps>
 			<Grow />
 			<SearchWrapper>
 				<SearchInput
-					placeholder={format("calendar.notes_search.placeholder")}
+					placeholder={format("calendar.add_custom_note")}
 					value={search}
 					onChangeText={setSearch}
 					autoFocus={true}
@@ -42,16 +45,14 @@ export const CreateCustomNoteBottomSheet: React.FC<FactoryResetBottomSheetProps>
 				)}
 			</SearchWrapper>
 			<Grow />
-
-			<ButtonContainer gap={35} style={{ height: 38 }}>
+			<ButtonContainer gap={35}>
 				<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
 					{format("global.cancel")}
 				</TertiaryButton>
-				,
+
 				<PrimaryButton key={"create"} onPress={createCustomNote}>
 					{format("global.create")}
 				</PrimaryButton>
-				,
 			</ButtonContainer>
 		</Container>
 	);
@@ -67,14 +68,13 @@ const SearchWrapper = styled(View)`
 	display: flex;
 	flex-direction: row;
   shadow-color: #000;
-shadow-offset: {
+	shadow-offset: {
 	width: 0px,
 	height: 2px,
-};
-shadow-opacity: 0.25px;
-shadow-Radius: 3.84px;
-
-elevation: 12;
+	};
+	shadow-opacity: 0.25px;
+	shadow-Radius: 3.84px;
+	elevation: 12;
 `;
 
 const SearchInput = styled.TextInput`

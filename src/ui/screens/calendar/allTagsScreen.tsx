@@ -1,4 +1,4 @@
-import { useAllTags } from "@domain/calendar/hooks/useTags";
+import { useAllTags, useCustomTags } from "@domain/calendar/hooks/useTags";
 import { InfoListHeader } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
@@ -16,10 +16,24 @@ export const AllTagsScreen: React.FC = () => {
 	const originalSelectedTags = route.params.selectedTags;
 
 	const allTags = useAllTags();
+	const customTags = useCustomTags();
+
+	console.log("CIR-262 custom", customTags);
 	console.log("CIR-262", allTags);
 	const navigation = useRoutesNavigation();
 	const navigate = navigation.navigate;
 	const { format } = useI18n();
+
+	// const systemTags = allTags ? allTags.keys().filter((tag) => tag.system) : [];
+	// const userTags = allTags ? allTags?.filter((tag) => !tag.system) : [];
+
+	Array.from(allTags.keys()).map((category) => {
+		// const categoryTags = allTags.get(category) ?? [];
+		console.log("category", category);
+	});
+
+	// console.log("System Tags", systemTags);
+	// console.log("User Tags", userTags);
 
 	const [selectedTags, setSelectedTags] = useState(originalSelectedTags);
 	const [search, setSearch] = useState("");
@@ -81,7 +95,7 @@ export const AllTagsScreen: React.FC = () => {
 			) : (
 				<View>
 					<React.Fragment key="Custom Notes">
-						<CustomNote></CustomNote>
+						<CustomNote selectedTags={selectedTags} setSelectedTags={setSelectedTags}></CustomNote>
 						{/* <InfoListHeader>Custom Notes</InfoListHeader> */}
 						<TagListContainer>
 							<TagSelectionView
@@ -100,7 +114,7 @@ export const AllTagsScreen: React.FC = () => {
 					</React.Fragment>
 					{Array.from(allTags.keys()).map((category) => {
 						const categoryTags = allTags.get(category) ?? [];
-						return categoryTags.length === 0 ? null : (
+						return categoryTags.length === 0 || category === "Custom Notes" ? null : (
 							<React.Fragment key={category}>
 								<InfoListHeader>{category}</InfoListHeader>
 								<TagListContainer>
