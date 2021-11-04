@@ -25,27 +25,31 @@ export class CalendarApi {
 	}
 
 	async createTag(name: string, category: string) {
-		await this.apiService.post("/notes/me/tags", { name, category});
+		await this.apiService.post("/notes/me/tags", { name, category });
 	}
 
 	async deleteTag(tagId: number) {
-		await this.apiService.delete(`/notes/me/${tagId}`);
+		await this.apiService.delete(`/notes/me/tags/${tagId}`);
 	}
 
 	async getMonthCalendars(date: Date): Promise<Calendar[]> {
 		const result = await this.apiService.get<CalendarDto[]>("/calendar", { params: { date } });
+		console.log("Result CalendarMonth", result.data);
 		return CalendarApi.calendarListFromDto(result.data);
 	}
 
 	private static calendarListFromDto(dto: CalendarDto[]): Calendar[] {
+		console.log("DTO", dto);
 		return dto.map((calendarDto) => {
+			if (calendarDto.notes.length) console.log("calendarDto", calendarDto, calendarDto.notes[0].tag);
 			const notes = calendarDto.notes.map((note) => {
+				// console.log("Notes", note);
 				return {
-				  id: note.id,
-				  startTime: new Date(note.startTime),
-				  endTime: new Date(note.endTime),
-				  tag: note.tagId,
-				}
+					id: note.id,
+					startTime: new Date(note.startTime),
+					endTime: new Date(note.endTime),
+					tag: note.tag,
+				};
 			});
 
 			return {
