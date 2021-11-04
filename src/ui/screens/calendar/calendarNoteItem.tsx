@@ -52,11 +52,6 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 	const timeEditorRef = useRef<TimeEditorRef>(null);
 
 	useEffect(() => {
-		console.log(
-			"startDate !== note.startTime || endDate !== note.endTime",
-			startDate !== note.startTime,
-			endDate !== note.endTime
-		);
 		if (startDate !== note.startTime || endDate !== note.endTime) {
 			// avoid first Render
 			calendarService
