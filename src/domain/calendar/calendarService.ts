@@ -102,9 +102,15 @@ export class CalendarService {
 			await this.calendarApi.deleteNote(note.id);
 		} catch (e) {
 			this.logger.warn("Error deleting note : " + JSON.stringify(e));
+			await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));
 			throw e;
 		}
-		await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));
+		try {
+			await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));
+			console.log("FETCH CALENDAR SUCCESS");
+		} catch (e) {
+			console.log("FETCH CALENDAR", e);
+		}
 	}
 
 	async deleteTag(tagId: number) {
@@ -126,12 +132,12 @@ export class CalendarService {
 		await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));
 	}
 
-	async updateNoteDate(note: CalendarNote, tagIds: number[], startDate: Date, endDate: Date) {
+	async updateNoteDate(note: CalendarNote, startDate: Date, endDate: Date) {
 		try {
 			console.log("Update note Date", note.id, startDate, endDate);
 			await this.calendarApi.updateNoteDate(note.id, startDate.toISOString(), endDate.toISOString());
 		} catch (e) {
-			this.logger.warn("Error deleting tag from note : " + JSON.stringify(e));
+			this.logger.warn("Error Updating note DAte : " + JSON.stringify(e));
 			throw e;
 		}
 		await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));

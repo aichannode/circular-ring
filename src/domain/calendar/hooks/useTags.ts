@@ -9,7 +9,7 @@ export function useAllTags() {
 
 export function usePopularTags() {
 	const { calendarService } = useServices();
-	console.log("USEPOPULAR", calendarService.tagMap);
+	// console.log("USEPOPULAR", calendarService.tagMap);
 	return useObservable(calendarService.tagMap).get(PopularTagCategory) ?? [];
 }
 
