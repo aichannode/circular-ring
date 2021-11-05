@@ -124,8 +124,8 @@ const RingInfo = styled.Text`
 
 const DeleteContainer = styled.View`
 	position: absolute;
-	top: 10px;
-	right: 10px;
+	top: 15px;
+	right: 15px;
 `;
 
 const DeleteIcon = styled.Image<{ tintColor: string }>`
