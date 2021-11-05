@@ -1,10 +1,11 @@
 import { NamedUserRing } from "@domain/ring/ring";
+import { Switch } from "@ui/components/switch";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import dayjs from "dayjs";
-import React from "react";
+import React, { useState } from "react";
 import { Pressable, StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
@@ -12,14 +13,39 @@ interface RingCardProps {
 	ring: NamedUserRing;
 	style?: StyleProp<ViewStyle>;
 	onDeleteClicked: () => void;
+	selected?: boolean;
 }
 
-export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked }) => {
+export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked, selected }) => {
 	const { format } = useI18n();
+	const options = ["Turn on", "Turn off"];
+	const [currentOption, setCurrentOption] = useState(selected ? options[0] : options[1]);
 
 	return (
 		<Container style={style}>
 			<Card>
+				<DeleteContainer>
+					<Pressable onPress={onDeleteClicked}>
+						<DeleteIcon source={require("@assets/images/close.png")} tintColor={colors.primary} />
+					</Pressable>
+				</DeleteContainer>
+				<TopContainer>
+					<Switch
+						styles={{ width: 120 }}
+						options={options}
+						containerBgColor={colors.white}
+						currentOption={currentOption}
+						onSelectOption={() => {
+							currentOption === options[0] ? setCurrentOption(options[1]) : setCurrentOption(options[0]);
+						}}
+						disabled={false}
+					/>
+					{currentOption === options[0] && (
+						<Vibrate>
+							<VibrateText>Vibrate</VibrateText>
+						</Vibrate>
+					)}
+				</TopContainer>
 				<RingInfoContainer>
 					<RingImage source={require("@assets/images/ring.png")} />
 					<RingRightInfoContainer>
@@ -34,16 +60,32 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 							{format("manage_rings.ring.snu_prefix")} {ring.id}
 						</RingInfo>
 					</RingRightInfoContainer>
-					<DeleteContainer>
-						<Pressable onPress={onDeleteClicked}>
-							<DeleteIcon source={require("@assets/images/close.png")} tintColor={colors.primary} />
-						</Pressable>
-					</DeleteContainer>
 				</RingInfoContainer>
 			</Card>
 		</Container>
 	);
 };
+
+const Vibrate = styled.TouchableOpacity`
+	border: 1px solid ${colors.gray};
+	height: 26px;
+	border-radius: 13px;
+	margin-left: 13px;
+	width: 57px;
+`;
+
+const VibrateText = styled.Text`
+	font-size: 12px;
+	line-height: 26px;
+	color: ${colors.gray};
+	text-align: center;
+`;
+
+const TopContainer = styled.View`
+	margin-bottom: 20px;
+	display: flex;
+	flex-direction: row;
+`;
 
 const Container = styled.View``;
 
@@ -82,8 +124,8 @@ const RingInfo = styled.Text`
 
 const DeleteContainer = styled.View`
 	position: absolute;
-	top: -7px;
-	right: -3px;
+	top: 10px;
+	right: 10px;
 `;
 
 const DeleteIcon = styled.Image<{ tintColor: string }>`

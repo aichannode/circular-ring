@@ -9,6 +9,7 @@ interface SwitchProps<T> {
 	onSelectOption: (option: T) => void;
 	containerBgColor: string;
 	disabled?: boolean;
+	styles?: any;
 }
 
 export function Switch<T>({
@@ -17,12 +18,14 @@ export function Switch<T>({
 	onSelectOption,
 	containerBgColor,
 	disabled = false,
+	styles,
 }: SwitchProps<T>) {
 	const leftSelected = currentOption === options[0];
 	const rightSelected = currentOption === options[1];
 
 	return (
 		<Container
+			style={styles}
 			start={{ x: 0, y: 1 }}
 			end={{ x: 1, y: 0.5 }}
 			colors={
