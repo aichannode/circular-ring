@@ -14,7 +14,7 @@ import { getUTCTimestamp } from "@utils/date";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 import { LocationEnabler } from "./locationEnabler";
 import { NamedDevice } from "./namedDevice";
-import { ManageRingGateway } from "@adapters/gateways/ManageRingGateway";
+// import { ManageRingGateway } from "@adapters/gateways/ManageRingGateway";
 
 export enum DeviceConnectionState {
 	DISCONNECTED = "DISCONNECTED",
