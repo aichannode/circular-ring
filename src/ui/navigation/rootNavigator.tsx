@@ -72,7 +72,7 @@ const MainHomeNavigator = () => {
 			<MainStack.Screen
 				name={Routes.ManageMyRings}
 				component={ManageMyRingsScreen}
-				options={{ title: format("header.manage_my_rings"), headerRight: undefined }}
+				options={{ title: format("header.manage_my_rings"), headerRight: () => <MyRingBattery stalled /> }}
 			/>
 			<MainStack.Screen
 				name={Routes.Activity}

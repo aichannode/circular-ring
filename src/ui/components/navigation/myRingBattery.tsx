@@ -11,12 +11,14 @@ import { Spinner } from "../spinner";
 
 interface MyRingBatteryProps {
 	full?: boolean;
+	stalled?: boolean;
 }
 
-export const MyRingBattery: React.FC<MyRingBatteryProps> = ({ full }) => {
+export const MyRingBattery: React.FC<MyRingBatteryProps> = ({ full, stalled }) => {
 	const { format } = useI18n();
 	const navigation = useRoutesNavigation();
 	const autoConnectState = useAutoConnectState();
+	console.log("Stalled", stalled);
 
 	switch (autoConnectState) {
 		case DeviceAutoConnectState.DISABLED:
@@ -25,7 +27,9 @@ export const MyRingBattery: React.FC<MyRingBatteryProps> = ({ full }) => {
 		case DeviceAutoConnectState.CONNECTING:
 		case DeviceAutoConnectState.DISCONNECTED:
 			return (
-				<Container onPress={() => navigation.navigate(Routes.MyRing)}>
+				<Container
+					onPress={() => (stalled !== true ? navigation.navigate(Routes.MyRing) : console.log("Stalled true", stalled))}
+				>
 					<Spinner size={24} />
 				</Container>
 			);
