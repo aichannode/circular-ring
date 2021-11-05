@@ -1,7 +1,7 @@
 import { useServices } from "@core/services";
 import { NamedUserRing } from "@domain/ring/ring";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
-import { InfoListHeader } from "@ui/components/infoList";
+import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
@@ -21,13 +21,14 @@ export const ManageMyRingsScreen = () => {
 
 	return (
 		<ScrollScreen contentContainerStyle={{ paddingHorizontal: 20 }}>
-			{/*<InfoListHeader>{format("manage_rings.general")}</InfoListHeader>*/}
-			{/*<InfoListItem*/}
-			{/*	name={format("manage_rings.setup_new_ring")}*/}
-			{/*	hasDisclosure*/}
-			{/*	action={() => {*/}
-			{/*	}}*/}
-			{/*/>*/}
+			<InfoListHeader>{format("manage_rings.general")}</InfoListHeader>
+			<InfoListItem
+				name={format("manage_rings.setup_new_ring")}
+				hasDisclosure={true}
+				action={() => {
+					console.log("SETUP NEW RING");
+				}}
+			/>
 			<InfoListHeader>{format("manage_rings.paired_rings_title")}</InfoListHeader>
 			<Stack gap={25}>
 				{userRings.map((ring) => {

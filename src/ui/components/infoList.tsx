@@ -4,7 +4,7 @@ import { Switch } from "@ui/components/switch";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React from "react";
-import { Pressable, ViewProps, ViewStyle } from "react-native";
+import { TouchableOpacity, Pressable, ViewProps, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
 export const InfoListHeader: React.FC<ViewProps> = ({ children, style }) => {
@@ -58,7 +58,7 @@ export function InfoListItem<T>({
 }: InfoListItemProps<T>) {
 	return (
 		<>
-			<Pressable onPress={() => (disabled ? null : action?.())}>
+			<TouchableOpacity onPress={() => (disabled ? null : action?.())}>
 				<Container style={style}>
 					<Name emphasize={emphasize} disabled={disabled}>
 						{name}
@@ -97,7 +97,7 @@ export function InfoListItem<T>({
 						/>
 					)}
 				</Container>
-			</Pressable>
+			</TouchableOpacity>
 			{errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 		</>
 	);
