@@ -209,10 +209,10 @@ export class BleDeviceService {
 	}
 
 	async connect(device: Device) {
-		const manageRingGateway = new ManageRingGateway()
-		if((await manageRingGateway.getAvailableDevices()).includes(device.id)){
-			return
-		}
+		// const manageRingGateway = new ManageRingGateway()
+		// if((await manageRingGateway.getAvailableDevices()).includes(device.id)){
+		// 	return
+		// }
 
 		if (!device.name) {
 			this.logger.error("Error: trying to connect to unknown device");
