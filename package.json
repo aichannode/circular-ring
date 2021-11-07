@@ -87,5 +87,8 @@
 	},
 	"jest": {
 		"preset": "react-native"
+	},
+	"optionalDependencies": {
+		"fsevents": "^2.3.2"
 	}
 }
