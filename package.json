@@ -53,14 +53,21 @@
 		"react-native-mail": "^6.0.0",
 		"react-native-masked-text": "^1.13.0",
 		"react-native-reanimated": "^2.2.2",
+<<<<<<< HEAD
 		"react-native-redash": "^16.2.2",
+=======
+		"react-native-reanimated-switch-ts": "^0.2.1",
+>>>>>>> 9fb4fde... Almost finished QuickAccess on Home Page
 		"react-native-safe-area-context": "^3.3.0",
 		"react-native-screens": "^3.6.0",
 		"react-native-smooth-picker": "^1.1.5",
 		"react-native-splash-screen": "^3.2.0",
 		"react-native-svg": "^12.1.1",
 		"react-native-webview": "^11.13.0",
+<<<<<<< HEAD
 		"react-native-wheely": "^0.3.2",
+=======
+>>>>>>> 9fb4fde... Almost finished QuickAccess on Home Page
 		"rmc-date-picker": "^6.0.10",
 		"styled-components": "^5.3.1",
 		"victory-native": "^35.5.5"
