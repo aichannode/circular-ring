@@ -1,19 +1,16 @@
-import { PrimaryText, TitleText } from "@ui/components/text";
-import { useI18n } from "@ui/i18n";
+// import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
 import React, { useState, useEffect, useRef } from "react";
-import { Image, StyleProp, ViewStyle, TouchableOpacity, View, Text, Switch } from "react-native";
-import { WordingKey } from "src/wordings";
-import { Stack, ResponsiveCenterView, Row } from "@ui/components/layout";
+import { TouchableOpacity } from "react-native";
+import { Stack, ResponsiveCenterView } from "@ui/components/layout";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import styled from "styled-components/native";
 import RNSiwtch from "react-native-reanimated-switch-ts";
-import { color } from "react-native-reanimated";
 import TimePicker from "rmc-date-picker";
 
 const SleepTile = () => {
-	const { format } = useI18n();
+	// const { format } = useI18n();
 	const [sleepMode, setSleepMode] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -41,7 +38,7 @@ interface AlarmBottomSheetProps {
 	onClose: () => void;
 }
 
-const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = ({ onClose }) => {
+const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = () => {
 	const [alarm, setAlarm] = useState(false);
 	const [date, setDate] = useState(new Date());
 
@@ -124,7 +121,7 @@ const TextAndSwitchContainer = styled.View`
 
 const AlarmTile = () => {
 	const AlarmBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
-	const [date, setDate] = useState(new Date());
+	// const [date, setDate] = useState(new Date());
 
 	return (
 		<>
@@ -157,9 +154,9 @@ const CalendarTile = () => {
 };
 
 export const QuickAccess: React.FC = () => {
-	const { format } = useI18n();
+	// const { format } = useI18n();
 
-	const quickAccess = ["sleep", "alarm", "calendar"]; // timer;
+	// const quickAccess = ["sleep", "alarm", "calendar"]; // timer;
 
 	return (
 		<>
