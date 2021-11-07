@@ -9,11 +9,11 @@ import React, { useState } from "react";
 import { View, Image } from "react-native";
 import styled from "styled-components/native";
 
-interface FactoryResetBottomSheetProps {
+interface CreateCustomNoteBottomSheetProps {
 	onClose: () => void;
 }
 
-export const CreateCustomNoteBottomSheet: React.FC<FactoryResetBottomSheetProps> = ({ onClose }) => {
+export const CreateCustomNoteBottomSheet: React.FC<CreateCustomNoteBottomSheetProps> = ({ onClose }) => {
 	const { format } = useI18n();
 	const { calendarService } = useServices();
 	const [search, setSearch] = useState("");
