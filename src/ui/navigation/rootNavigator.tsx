@@ -40,6 +40,7 @@ import { WebViewScreen } from "@ui/screens/webViewScreen";
 import React, { useState } from "react";
 import { CalendarScreen } from "@ui/screens/calendar/calendarScreen";
 import { Tutorial } from "@ui/screens/onboarding/tutorial/tutorial";
+import { QuickAccess } from "@ui/screens/quickaccess/quickAccess";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -194,6 +195,16 @@ const MainHomeNavigator = () => {
 					headerBackImageSource: require("@assets/images/crossBig.png"),
 				}}
 			/>
+
+			<MainStack.Screen
+				name={Routes.QuickAccess}
+				component={QuickAccess}
+				options={{
+					title: format("header.quickaccess"),
+					headerRight: () => <MyRingBattery />,
+				}}
+			/>
+
 			<MainStack.Screen name={Routes.WebView} component={WebViewScreen} />
 		</MainStack.Navigator>
 	);
