@@ -25,7 +25,7 @@ export const Header = ({ options, navigation }: NativeStackHeaderProps) => {
 						</Pressable>
 					)}
 					<Spacer size={8} />
-					{options.headerLeft ? options.headerLeft({}) : null}
+					{options.headerLeft ? options.headerLeft({ canGoBack: true }) : null}
 					<Spacer size={16} />
 					{options.title ? <Title>{options.title}</Title> : <Image source={require("@assets/images/logoHeader.png")} />}
 					<Grow />

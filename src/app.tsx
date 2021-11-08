@@ -49,6 +49,7 @@ export const App = () => {
 				monthNamesShort: intl.formatMessage({ id: "months_short" }).split(","),
 				dayNames: intl.formatMessage({ id: "days" }).split(","),
 				dayNamesShort: intl.formatMessage({ id: "days_short" }).split(","),
+				//@ts-ignore
 				today: intl.formatMessage({ id: "today" }),
 			};
 		}

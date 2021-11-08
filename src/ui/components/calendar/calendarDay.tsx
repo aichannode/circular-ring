@@ -4,10 +4,10 @@ import { Row } from "@ui/components/layout";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import { Image } from "react-native";
-import { DayComponentProps } from "react-native-calendars";
+// import { DayComponentProps } from "react-native-calendars";
 import styled from "styled-components/native";
 
-export const CalendarDay: React.FC<DayComponentProps> = React.memo(({ date, marking, onPress, state }) => {
+export const CalendarDay: React.FC<any> = React.memo(({ date, marking, onPress, state }) => {
 	const fixedMarking = marking as unknown as { selected?: boolean } | undefined;
 	const dayCalendar = useCalendar(date.dateString, FetchStrategy.Never);
 

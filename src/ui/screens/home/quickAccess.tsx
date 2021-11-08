@@ -6,7 +6,7 @@ import { TouchableOpacity } from "react-native";
 import { Stack, ResponsiveCenterView } from "@ui/components/layout";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import styled from "styled-components/native";
-import RNSiwtch from "react-native-reanimated-switch-ts";
+import RNSiwtch from "@estebanleclet/react-native-reanimated-switch-ts";
 import TimePicker from "rmc-date-picker";
 
 const SleepTile = () => {
