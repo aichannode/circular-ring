@@ -45,7 +45,8 @@ export const CalendarView: React.FC<CalendarProps> = ({
 			disableArrowLeft={isFirstMonth}
 			disableArrowRight={isLastMonth}
 			onDayPress={(day) => onDaySelected(day.dateString)}
-			onMonthChange={(date) => {
+			//@ts-ignore
+			onMonthChange={(date: any) => {
 				setVisibleMonthDay(date.dateString);
 				autoSelectDayOnMonthChange && autoSelectDay(date.dateString);
 			}}
