@@ -14,11 +14,6 @@ import { getUTCTimestamp } from "@utils/date";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 import { LocationEnabler } from "./locationEnabler";
 import { NamedDevice } from "./namedDevice";
-<<<<<<< HEAD
- 
-=======
-// import { ManageRingGateway } from "@adapters/gateways/ManageRingGateway";
->>>>>>> 150e0e8... Almost finished QuickAccess on Home Page
 
 export enum DeviceConnectionState {
 	DISCONNECTED = "DISCONNECTED",
