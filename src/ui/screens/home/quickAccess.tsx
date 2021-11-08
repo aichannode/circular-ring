@@ -7,9 +7,13 @@ import { Stack, ResponsiveCenterView } from "@ui/components/layout";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import styled from "styled-components/native";
 import RNSiwtch from "@estebanleclet/react-native-reanimated-switch-ts";
+<<<<<<< HEAD
 import DatePicker from "react-native-date-picker";
 
 import { TimerTile } from "./Timer";
+=======
+import TimePicker from "rmc-date-picker";
+>>>>>>> fixed all ts err
 
 const SleepTile = () => {
 	// const { format } = useI18n();
