@@ -40,7 +40,7 @@ interface AlarmBottomSheetProps {
 	onClose: () => void;
 }
 
-const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = () => {
+const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = ({ onClose }) => {
 	const [alarm, setAlarm] = useState(false);
 	const [date, setDate] = useState(new Date());
 
@@ -59,7 +59,16 @@ const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = () => {
 				></RNSiwtch>
 			</TextAndSwitchContainer>
 			<Divider />
-			<DatePicker mode="time" date={date} onDateChange={setDate} />
+			<TimePicker
+				use12Hours={true}
+				date={date}
+				onDateChange={(date) => setDate(date)}
+				onValueChange={(value) => {
+					console.log("DATE", value);
+					// setDate(value);
+				}}
+				mode="time"
+			></TimePicker>
 			<Divider />
 			<TextAndSwitchContainer>
 				<Label>Smart Alarm</Label>
@@ -114,7 +123,7 @@ const TextAndSwitchContainer = styled.View`
 
 const AlarmTile = () => {
 	const AlarmBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
-	// const [date, setDate] = useState(new Date());
+	const [date, setDate] = useState(new Date());
 
 	return (
 		<>
@@ -147,9 +156,9 @@ const CalendarTile = () => {
 };
 
 export const QuickAccess: React.FC = () => {
-	// const { format } = useI18n();
+	const { format } = useI18n();
 
-	// const quickAccess = ["sleep", "alarm", "calendar"]; // timer;
+	const quickAccess = ["sleep", "alarm", "calendar"]; // timer;
 
 	return (
 		<>
@@ -157,7 +166,6 @@ export const QuickAccess: React.FC = () => {
 				<SleepTile />
 				<AlarmTile />
 				<CalendarTile />
-				<TimerTile />
 			</Container>
 		</>
 	);
