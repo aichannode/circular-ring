@@ -23,6 +23,8 @@ export const DrawerContent = () => {
 			</Pressable>
 			<ScrollView>
 				<Separator />
+				<DrawerEntry route={Routes.QuickAccess}>{format("drawer.quickaccess")}</DrawerEntry>
+				<Separator />
 				<DrawerEntry route={Routes.Profile}>{format("drawer.profile")}</DrawerEntry>
 				<Separator />
 				<DrawerEntry route={Routes.Calendar}>{format("drawer.calendar")}</DrawerEntry>

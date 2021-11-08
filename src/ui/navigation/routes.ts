@@ -42,6 +42,8 @@ export enum Routes {
 	Calendar = "Calendar",
 	CalendarEditNotes = "CalendarEditNotes",
 	AllTags = "AllTags",
+
+	QuickAccess = "QuickAccess",
 }
 
 export type AppRoutesParams = {
@@ -88,6 +90,7 @@ export type AppRoutesParams = {
 	[Routes.Calendar]: undefined;
 	[Routes.CalendarEditNotes]: { day: string; selectedTags?: CalendarTag[] };
 	[Routes.AllTags]: { day: string; selectedTags: CalendarTag[] };
+	[Routes.QuickAccess]: undefined;
 };
 
 export const useRoutesNavigation = () => useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
