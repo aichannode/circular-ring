@@ -346,6 +346,7 @@
 	"manage_rings.ring.turn_on": "Turn on",
 	"manage_rings.ring.turn_off": "Turn off",
 	"manage_rings.ring.vibrate": "Vibrate",
+	"manage_rings.ring.rename" : "Please enter new name",
 	"manage_rings.ring.default_name": "Circular",
 	"manage_rings.ring.sync_date_prefix": "Last Synced",
 	"manage_rings.ring.version_prefix": "Version",
