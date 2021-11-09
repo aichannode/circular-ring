@@ -28,7 +28,6 @@ export const MyRingScreen: React.FC = () => {
 		Alert.prompt(format("manage_rings.ring.rename"), "", [
 			{
 				text: format("global.cancel"),
-				onPress: () => {},
 				style: "cancel",
 			},
 			{
@@ -51,7 +50,9 @@ export const MyRingScreen: React.FC = () => {
 		]);
 	};
 
-	useEffect(() => {}, [currentRing]);
+	useEffect(() => {
+		console.log('display ring name')
+	}, [currentRing]);
 	return (
 		<Container>
 			<RingBatteryView size={140} detailed />
