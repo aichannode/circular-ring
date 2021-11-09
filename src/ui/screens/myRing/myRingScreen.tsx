@@ -6,27 +6,62 @@ import { PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { FactoryResetBottomSheet } from "@ui/screens/myRing/factoryResetBottomSheet";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
 import styled from "styled-components/native";
+import { Channel } from "@domain/device/channels";
+import { useObservable } from "micro-observables";
+import { NamedUserRing } from "@domain/ring/ring";
+import { RingViewModel } from "@ui/screens/myRing/viewModel/RingViewModel";
 
 export const MyRingScreen: React.FC = () => {
 	const { bleDeviceService } = useServices();
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
-
+	const { ringManagementService } = useServices();
+	const userRings = useObservable(ringManagementService.userRings);
 	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
+	const viewModel = new RingViewModel();
+	const [currentRing, setCurrentRing] = useState<NamedUserRing>(userRings[0]);
 
+	const renameAlert = () => {
+		Alert.prompt(format("manage_rings.ring.rename"), "", [
+			{
+				text: format("global.cancel"),
+				style: "cancel",
+			},
+			{
+				text: format("global.edit"),
+				onPress: (newName) => {
+					if (newName && newName !== "") {
+						bleDeviceService.write(`${Channel.RENAME}${newName.toUpperCase()}`);
+						userRings.map((ring) => {
+							if (ring.id === currentRing.id) {
+								const upTodateRing = { ...ring, name: "Circular " + viewModel.formatRingName(newName) };
+								setCurrentRing(upTodateRing);
+								ringManagementService.updateStoredRings(upTodateRing);
+								return { ...ring, name: viewModel.formatRingName(newName) };
+							}
+							return ring;
+						});
+					}
+				},
+			},
+		]);
+	};
+
+	useEffect(() => {
+		console.log('display ring name')
+	}, [currentRing]);
 	return (
 		<Container>
 			<RingBatteryView size={140} detailed />
 			<StyledPrimaryText
-				onLongPress={() => {
-					bleDeviceService.write("RWF1S10");
-					Alert.alert("Data added");
+				onPress={() => {
+					renameAlert();
 				}}
 			>
-				My Ring
+				{currentRing.name}
 			</StyledPrimaryText>
 			<InfoListItem
 				name={format("ring.manage")}
@@ -57,5 +92,6 @@ const Container = styled.View`
 `;
 
 const StyledPrimaryText = styled(PrimaryText)`
+	margin-top: 20px;
 	margin-bottom: 80px;
 `;

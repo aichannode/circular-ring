@@ -8,5 +8,7 @@ export enum Channel {
 	SNU = "SNU",
 	SRS = "SRS",
 	FRS = "FRS",
-	CALENDAR = "CAL"
+	CALENDAR = "CAL", 
+	NAME  = "NAM",
+	RENAME = "NAM",
 }

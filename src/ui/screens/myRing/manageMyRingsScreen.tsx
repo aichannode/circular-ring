@@ -21,13 +21,6 @@ export const ManageMyRingsScreen = () => {
 
 	return (
 		<ScrollScreen contentContainerStyle={{ paddingHorizontal: 20 }}>
-			{/*<InfoListHeader>{format("manage_rings.general")}</InfoListHeader>*/}
-			{/*<InfoListItem*/}
-			{/*	name={format("manage_rings.setup_new_ring")}*/}
-			{/*	hasDisclosure*/}
-			{/*	action={() => {*/}
-			{/*	}}*/}
-			{/*/>*/}
 			<InfoListHeader>{format("manage_rings.paired_rings_title")}</InfoListHeader>
 			<Stack gap={25}>
 				{userRings.map((ring) => {
