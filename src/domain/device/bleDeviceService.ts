@@ -14,7 +14,6 @@ import { getUTCTimestamp } from "@utils/date";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 import { LocationEnabler } from "./locationEnabler";
 import { NamedDevice } from "./namedDevice";
- 
 
 export enum DeviceConnectionState {
 	DISCONNECTED = "DISCONNECTED",

@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, Platform } from "react-native";
 import styled from "styled-components/native";
 import { CirclesBanner } from "./circlesBanner";
+import { QuickAccess } from "./quickAccess";
 import { HomeBannerView } from "./homeBanner/homeBannerView";
 import { SyncBanner } from "./syncBanner";
 import { useSetupState } from "@domain/device/hooks";
@@ -49,6 +50,7 @@ export const HomeScreen: React.FC = () => {
 	return (
 		<Container>
 			<CirclesBanner />
+			<QuickAccess />
 			<SyncBanner style={{ margin: 10 }} />
 
 			<ScrollView

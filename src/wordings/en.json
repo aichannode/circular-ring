@@ -41,6 +41,7 @@
 	"header.birth_control": "BIRTH CONTROL TYPE",
 	"header.manage_my_rings": "MANAGE MY RINGS",
 	"header.all_tags": "Search Notes",
+	"header.quickaccess": "QUICK ACCESS",
 	"ring.battery.label": "BATTERY",
 	"ring.manage": "Manage my Rings",
 	"ring.factory_reset": "Factory Reset",
@@ -185,6 +186,7 @@
 	"intensity.medium": "Medium",
 	"intensity.high": "High",
 	"intensity.none": "-",
+	"drawer.quickaccess": "Quick access",
 	"drawer.profile": "Profile",
 	"drawer.calendar": "Calendar",
 	"drawer.settings": "Settings",
@@ -426,5 +428,10 @@
 	"months_short": "Jan,Mar,Feb,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
 	"days": "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
 	"days_short": "S,M,T,W,T,F,S",
-	"today": "Today"
+	"today": "Today",
+	"quickaccess.sleeptitle": "Sleep mode",
+	"quickaccess.sleepdesc": "Disable the ring's communication and vibrations except for the alarm clock.",
+	"quickaccess.displayed": "DISPLAYED",
+	"quickaccess.hidden": "HIDDEN",
+	"quickaccess.description": "Add and organize shortcuts to appear in the quick access menu"
 }
