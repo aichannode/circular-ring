@@ -12,6 +12,7 @@ import styled from "styled-components/native";
 import { Channel } from "@domain/device/channels";
 import { useObservable } from "micro-observables";
 import { NamedUserRing } from "@domain/ring/ring";
+import { RingViewModel } from "@ui/screens/myRing/viewModel/RingViewModel";
 
 export const MyRingScreen: React.FC = () => {
 	const { bleDeviceService } = useServices();
@@ -20,8 +21,9 @@ export const MyRingScreen: React.FC = () => {
 	const { ringManagementService } = useServices();
 	const userRings = useObservable(ringManagementService.userRings);
 	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
-
+	const viewModel = new RingViewModel();
 	const [currentRing, setCurrentRing] = useState<NamedUserRing>(userRings[0]);
+
 	const renameAlert = () => {
 		Alert.prompt(format("manage_rings.ring.rename"), "", [
 			{
@@ -31,13 +33,15 @@ export const MyRingScreen: React.FC = () => {
 			},
 			{
 				text: format("global.edit"),
-				onPress: (newnName) => {
-					if (newnName && newnName !== ""){
-						bleDeviceService.write(`${Channel.RENAME}${newnName}`);
+				onPress: (newName) => {
+					if (newName && newName !== "") {
+						bleDeviceService.write(`${Channel.RENAME}${newName.toUpperCase()}`);
 						userRings.map((ring) => {
 							if (ring.id === currentRing.id) {
-								setCurrentRing({ ...ring, name: newnName });
-								return { ...ring, name: newnName };
+								const upTodateRing = { ...ring, name: "Circular " + viewModel.formatRingName(newName) };
+								setCurrentRing(upTodateRing);
+								ringManagementService.updateStoredRings(upTodateRing);
+								return { ...ring, name: viewModel.formatRingName(newName) };
 							}
 							return ring;
 						});
@@ -46,16 +50,17 @@ export const MyRingScreen: React.FC = () => {
 			},
 		]);
 	};
+
 	useEffect(() => {}, [currentRing]);
 	return (
 		<Container>
 			<RingBatteryView size={140} detailed />
 			<StyledPrimaryText
-				onLongPress={() => {
+				onPress={() => {
 					renameAlert();
 				}}
 			>
-				{userRings[0].name}
+				{currentRing.name}
 			</StyledPrimaryText>
 			<InfoListItem
 				name={format("ring.manage")}
@@ -86,5 +91,6 @@ const Container = styled.View`
 `;
 
 const StyledPrimaryText = styled(PrimaryText)`
+	margin-top: 20px;
 	margin-bottom: 80px;
 `;

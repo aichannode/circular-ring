@@ -223,4 +223,9 @@ export class RingManagementService {
 			await this.ringApi.submitFirmwareVersion(id,firmware);
 		}	
  	}
+
+	 async updateStoredRings(updatedRing: NamedUserRing ){
+		this._userRings.update((oldRings) => oldRings.filter((r) => r.id !== updatedRing.id));
+		this._userRings.update((rings) => [updatedRing, ...rings]);
+	 }
 }
