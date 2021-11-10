@@ -77,29 +77,10 @@ export const QuickAccess: React.FC = () => {
 									onReceiveDragDrop={({ dragged: { payload } }) => {
 										console.log(`CIR-275  received ${payload}`);
 
-										// const beginning = quickAccess.slice(0, payload);
-										// const end = quickAccess.slice(payload + 1, quickAccess.length);
-										// const newArrayWithoutTile = [...beginning, ...end];
-
-										// const newBeginning = newArrayWithoutTile.slice(0, i);
-										// const newEnd = newArrayWithoutTile.slice(i, quickAccess.length);
-										// console.log("CIR-275 NEW BEGINGIN", newBeginning);
-										// console.log("CIR-275 NEW END", newEnd);
-
-										// setQuickAccess([...newBeginning, quickAccess[payload], ...newEnd]);
-										// setDragged(-1);
-
-										// console.log("CIR-275 Begin", beginning);
-										// console.log("CIR-275 End", end);
-
 										const isInQuickAccess = quickAccess.findIndex((el) => el.id === payload.tile.id);
 
 										if (isInQuickAccess !== -1) {
 											console.log("CIR-275 From QUICK ACCESS");
-											// const newBeginning = disabledQuickAccess.slice(0, i + 1);
-											// const newEnd = disabledQuickAccess.slice(i + 1, quickAccess.length);
-											// setDisabledQuickAccess([...newBeginning, quickAccess[payload.i], ...newEnd]);
-											// setQuickAccess(quickAccess.filter((t) => t.id != payload.tile.id));
 
 											const newArrayWithoutTile = quickAccess.filter((t) => t.id != payload.tile.id);
 
@@ -150,7 +131,7 @@ export const QuickAccess: React.FC = () => {
 										<Draggable source={require("@assets/images/group.png")}></Draggable>
 										<RightContainer>
 											<Title>{tile.title}</Title>
-											<TileDesc>{tile.desc}</TileDesc>
+											<TileDesc white>{tile.desc}</TileDesc>
 										</RightContainer>
 									</InnerContainer>
 								</QuickAccessContainer>
@@ -160,12 +141,12 @@ export const QuickAccess: React.FC = () => {
 									style={receiver === i + 1 ? styles.receiverfocus : styles.receiver}
 									onReceiveDragEnter={({ dragged: { payload } }) => {
 										console.log(`CIR-275  OnDragENterReceive ${payload}`);
-										// setDragged(i);
+
 										setReceiver(i + 1);
 									}}
 									onReceiveDragExit={({ dragged: { payload } }) => {
 										console.log(`CIR-275  DragExitReceive ${payload}`);
-										// setDragged(-1);
+
 										setReceiver(-1);
 									}}
 									onReceiveDragDrop={({ dragged: { payload } }) => {
@@ -175,10 +156,6 @@ export const QuickAccess: React.FC = () => {
 
 										if (isInQuickAccess !== -1) {
 											console.log("CIR-275 From QUICK ACCESS");
-											// const newBeginning = disabledQuickAccess.slice(0, i + 1);
-											// const newEnd = disabledQuickAccess.slice(i + 1, quickAccess.length);
-											// setDisabledQuickAccess([...newBeginning, quickAccess[payload.i], ...newEnd]);
-											// setQuickAccess(quickAccess.filter((t) => t.id != payload.tile.id));
 
 											const newArrayWithoutTile = quickAccess.filter((t) => t.id != payload.tile.id);
 
@@ -202,15 +179,6 @@ export const QuickAccess: React.FC = () => {
 
 										setDragged(-1);
 										setDisabledDragged(-1);
-
-										// const newArrayWithoutTile = quickAccess.filter((t) => t.id != payload.tile.id);
-
-										// const newBeginning = newArrayWithoutTile.slice(0, i + 1);
-										// const newEnd = newArrayWithoutTile.slice(i + 1, quickAccess.length);
-										// console.log("CIR-275 NEW BEGINGIN", newBeginning);
-										// console.log("CIR-275 NEW END", newEnd);
-										// setQuickAccess([...newBeginning, quickAccess[payload.i], ...newEnd]);
-										// setDragged(-1);
 									}}
 								/>
 							)}
@@ -227,12 +195,10 @@ export const QuickAccess: React.FC = () => {
 										style={disabledReceiver === i ? styles.receiverfocus : styles.receiver}
 										onReceiveDragEnter={({ dragged: { payload } }) => {
 											console.log(`CIR-275  OnDragENterReceive ${payload}`);
-											// setDragged(i);
 											setDisabledReceiver(i);
 										}}
 										onReceiveDragExit={({ dragged: { payload } }) => {
 											console.log(`CIR-275  DragExitReceive ${payload}`);
-											// setDragged(-1);
 											setDisabledReceiver(-1);
 											setReceiver(-1);
 										}}
@@ -283,15 +249,31 @@ export const QuickAccess: React.FC = () => {
 								payload={{ tile, i }}
 								animateSnapback={false}
 							>
-								<QuickAccessContainer key={i} colors={[colors.orangeGradientEnd, colors.orangeGradientStart]}>
-									<InnerContainer>
-										<Draggable source={require("@assets/images/group.png")}></Draggable>
-										<RightContainer>
-											<Title>{tile.title}</Title>
-											<TileDesc>{tile.desc}</TileDesc>
-										</RightContainer>
-									</InnerContainer>
-								</QuickAccessContainer>
+								<View
+									style={{
+										borderRadius: 8,
+										shadowColor: "#000",
+										shadowOffset: {
+											width: 0,
+											height: 7,
+										},
+										shadowOpacity: 0.43,
+										shadowRadius: 9.51,
+
+										elevation: 15,
+										marginVertical: 5,
+									}}
+								>
+									<DisabledQuickAccessContainer key={i}>
+										<InnerContainer>
+											<Draggable source={require("@assets/images/groupblack.png")}></Draggable>
+											<DisabledRightContainer>
+												<DisabledTitle>{tile.title}</DisabledTitle>
+												<DisabledTileDesc>{tile.desc}</DisabledTileDesc>
+											</DisabledRightContainer>
+										</InnerContainer>
+									</DisabledQuickAccessContainer>
+								</View>
 							</DraxView>
 							{((disabledDragged !== -1 && disabledDragged != i && disabledDragged != i + 1) || dragged != -1) && (
 								<DraxView
@@ -378,8 +360,27 @@ const Title = styled.Text`
 	margin-vertical: 4;
 `;
 
+const DisabledTitle = styled.Text`
+	font-size: 18px;
+	color: black;
+	font-weight: 500;
+	margin-vertical: 4;
+`;
+
 const TileDesc = styled.Text`
 	color: white;
+`;
+
+const DisabledTileDesc = styled.Text`
+	color: ${colors.gray};
+`;
+
+const DisabledRightContainer = styled.View`
+	flex: 1;
+	border-left-width: 1;
+	border-left-color: ${colors.gray};
+	margin-vertical: 8;
+	padding-left: 10;
 `;
 
 const RightContainer = styled.View`
@@ -420,6 +421,15 @@ const QuickAccessContainer = styled(LinearGradient)`
 	width: 100%;
 	border-radius: 8px;
 	margin-vertical: 5;
+`;
+
+const DisabledQuickAccessContainer = styled(View)`
+	height: 84px;
+	width: 100%;
+	border-radius: 8px;
+
+	overflow: hidden;
+	background-color: white;
 `;
 
 const Container = styled(ScrollScreen)`
