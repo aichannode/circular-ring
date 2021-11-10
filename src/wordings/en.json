@@ -431,6 +431,12 @@
 	"today": "Today",
 	"quickaccess.sleeptitle": "Sleep mode",
 	"quickaccess.sleepdesc": "Disable the ring's communication and vibrations except for the alarm clock.",
+	"quickaccess.alarmtitle": "Alarm clock",
+	"quickaccess.alarmdesc": "Access the alarm clock basic settings for the following morning.",
+	"quickaccess.calendartitle": "Calendar",
+	"quickaccess.calendardesc": "Quickly check what's happening.",
+	"quickaccess.timertitle": "Timer",
+	"quickaccess.timerdesc": "Make the ring vibrate after a specified delay.",
 	"quickaccess.displayed": "DISPLAYED",
 	"quickaccess.hidden": "HIDDEN",
 	"quickaccess.description": "Add and organize shortcuts to appear in the quick access menu"
