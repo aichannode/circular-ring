@@ -142,7 +142,7 @@ export const QuickAccess: React.FC = () => {
 										<Draggable source={require("@assets/images/group.png")}></Draggable>
 										<RightContainer>
 											<Title>{tile.title}</Title>
-											<TileDesc>{tile.desc}</TileDesc>
+											<TileDesc white>{tile.desc}</TileDesc>
 										</RightContainer>
 									</InnerContainer>
 								</QuickAccessContainer>
