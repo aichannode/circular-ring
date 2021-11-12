@@ -1,7 +1,7 @@
 import { Storage } from "@core/storage";
 import { I_QuickAccess } from "./quickAccess";
 
-const userQuickAccessStorageKey = "@userQuickAccess9";
+const userQuickAccessStorageKey = "@userQuickAccess";
 
 export class QuickAccessStorage {
 	save(data: any) {
