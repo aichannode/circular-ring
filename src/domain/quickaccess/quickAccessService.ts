@@ -8,7 +8,11 @@ export class UserQuickAccess {
 	constructor(private readonly quickaccessStorage: QuickAccessStorage) {}
 
 	async init() {
-		this.quickaccess.set({ active: [], disabled: [] });
+		const data = await this.quickaccessStorage.load();
+		if (data) {
+			const { active, disabled } = data;
+			this.quickaccess.set({ active, disabled });
+		}
 	}
 
 	update({ active, disabled }: I_QuickAccess) {
