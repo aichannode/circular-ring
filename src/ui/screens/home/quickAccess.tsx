@@ -8,7 +8,11 @@ import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/b
 import styled from "styled-components/native";
 import RNSiwtch from "@estebanleclet/react-native-reanimated-switch-ts";
 import DatePicker from "react-native-date-picker";
+import { useServices } from "@core/services";
+import { I_Active } from "@domain/quickaccess/quickAccess";
+
 import { TimerTile } from "./Timer";
+import { useI18n } from "@ui/i18n";
 
 const SleepTile = () => {
 	// const { format } = useI18n();
@@ -146,17 +150,52 @@ const CalendarTile = () => {
 };
 
 export const QuickAccess: React.FC = () => {
-	// const { format } = useI18n();
+	const { format } = useI18n();
+	const [active, setActive] = useState<I_Active[] | undefined>([]);
 
-	// const quickAccess = ["sleep", "alarm", "calendar"]; // timer;
+	const _quickAccess = [
+		{
+			title: format("quickaccess.sleeptitle"),
+			desc: format("quickaccess.sleepdesc"),
+			id: "sleep",
+		},
+		{
+			title: format("quickaccess.alarmtitle"),
+			desc: format("quickaccess.alarmdesc"),
+			id: "alarm",
+		},
+		{
+			title: format("quickaccess.calendartitle"),
+			desc: format("quickaccess.calendardesc"),
+			id: "calendar",
+		},
+	];
+
+	const { userQuickAccess } = useServices();
+
+	useEffect(() => {
+		setActive(
+			userQuickAccess.quickaccess.get().active.length ? userQuickAccess.quickaccess.get()?.active : _quickAccess
+		);
+		userQuickAccess.quickaccess.subscribe((data) => {
+			if (data?.active) {
+				setActive(data?.active);
+			}
+		});
+	}, []);
+
+	const displaySleep = active?.map((t) => t.id).indexOf("sleep") !== -1;
+	const displayAlarm = active?.map((t) => t.id).indexOf("alarm") !== -1;
+	const displayTimer = active?.map((t) => t.id).indexOf("timer") !== -1;
+	const displayCalendar = active?.map((t) => t.id).indexOf("calendar") !== -1;
 
 	return (
 		<>
 			<Container gap={15}>
-				<SleepTile />
-				<AlarmTile />
-				<CalendarTile />
-				<TimerTile />
+				{displaySleep && <SleepTile />}
+				{displayAlarm && <AlarmTile />}
+				{displayCalendar && <CalendarTile />}
+				{displayTimer && <TimerTile />}
 			</Container>
 		</>
 	);
@@ -192,4 +231,7 @@ const Tile = styled.View`
 	flex: 1;
 	height: 50px;
 	justify-content: center;
+	border-right-width: 0.25;
+	border-left-width: 0.25;
+	border-color: ${colors.gray};
 `;
