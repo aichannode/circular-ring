@@ -114,7 +114,7 @@ export const AllTagsScreen: React.FC = () => {
 					</React.Fragment>
 					{Array.from(allTags.keys()).map((category) => {
 						const categoryTags = allTags.get(category) ?? [];
-						return categoryTags.length === 0 || category === "Custom Notes" ? null : (
+						return categoryTags.length === 0 || category === "custom" ? null : (
 							<React.Fragment key={category}>
 								<InfoListHeader>{category}</InfoListHeader>
 								<TagListContainer>

@@ -16,7 +16,7 @@ export function usePopularTags() {
 export function useCustomTags() {
 	const { calendarService } = useServices();
 	// console.log("USEPOPULAR", calendarService.tagMap);
-	return useObservable(calendarService.tagMap).get("Custom Notes") ?? [];
+	return useObservable(calendarService.tagMap).get("custom") ?? [];
 }
 
 export function useDebugTags() {
