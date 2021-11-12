@@ -1,30 +1,352 @@
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components/native";
 import LinearGradient from "react-native-linear-gradient";
+import { StyleSheet, View } from "react-native";
+import { DraxProvider, DraxView } from "react-native-drax";
+import { useServices } from "@core/services";
+import { I_Active } from "@domain/quickaccess/quickAccess";
 
 export const QuickAccess: React.FC = () => {
 	const { format } = useI18n();
+	const _quickAccess = [
+		{
+			title: format("quickaccess.sleeptitle"),
+			desc: format("quickaccess.sleepdesc"),
+			id: "sleep",
+		},
+		{
+			title: format("quickaccess.alarmtitle"),
+			desc: format("quickaccess.alarmdesc"),
+			id: "alarm",
+		},
+		{
+			title: format("quickaccess.calendartitle"),
+			desc: format("quickaccess.calendardesc"),
+			id: "calendar",
+		},
+	];
+
+	const _disabledQuickAccess = [
+		{
+			title: format("quickaccess.timertitle"),
+			desc: format("quickaccess.timerdesc"),
+			id: "timer",
+		},
+	];
+
+	const [dragged, setDragged] = useState(-1);
+	const [disabledDragged, setDisabledDragged] = useState(-1);
+
+	const [receiver, setReceiver] = useState(-1);
+	const [disabledReceiver, setDisabledReceiver] = useState(-1);
+	const [quickAccess, setQuickAccess] = useState<I_Active[]>(_quickAccess);
+	const [disabledQuickAccess, setDisabledQuickAccess] = useState<I_Active[]>(_disabledQuickAccess);
+	const { userQuickAccess } = useServices();
+
+	console.log(quickAccess, disabledQuickAccess);
+
+	console.log("## QuickAccess", userQuickAccess.quickaccess.get()?.active);
+	useEffect(() => {
+		if (userQuickAccess.quickaccess.get().active.length && userQuickAccess.quickaccess.get().disabled.length) {
+			console.log(
+				"## INITIAL RUN",
+				userQuickAccess.quickaccess.get()?.active.map((t) => t.id)
+			);
+			setQuickAccess(userQuickAccess.quickaccess.get()?.active);
+			setDisabledQuickAccess(userQuickAccess.quickaccess.get()?.disabled);
+		}
+	}, []);
+
+	console.log("CIR-275 DRAGGED", dragged);
+	console.log("CIR-275 DISABLED", disabledDragged);
+
+	console.log(
+		"CIR-275 QuickAccess",
+		quickAccess.map((q) => q.id)
+	);
+	console.log(
+		"CIR-275 disabledQuickAccess",
+		disabledQuickAccess.map((q) => q.id)
+	);
 
 	return (
 		<Container>
-			<Description>{format("quickaccess.description")}</Description>
-			<Label>{format("quickaccess.displayed")}</Label>
-			<QuickAccessContainer colors={[colors.orangeGradientEnd, colors.orangeGradientStart]}>
-				<InnerContainer>
-					<Draggable source={require("@assets/images/group.png")}></Draggable>
-					<RightContainer>
-						<Title>{format("quickaccess.sleeptitle")}</Title>
-						<TileDesc>{format("quickaccess.sleepdesc")}</TileDesc>
-					</RightContainer>
-				</InnerContainer>
-			</QuickAccessContainer>
-			<Label>{format("quickaccess.hidden")}</Label>
+			<DraxProvider>
+				<Description>{format("quickaccess.description")}</Description>
+				<Label>{format("quickaccess.displayed")}</Label>
+				{quickAccess.map((tile, i) => {
+					return (
+						<>
+							{((0 == i && dragged !== -1 && dragged != i) || (disabledDragged !== -1 && i == 0)) && ( // FIRST RECEIVER
+								<DraxView
+									style={receiver === i ? styles.receiverfocus : styles.receiver}
+									onReceiveDragEnter={({ dragged: { payload } }) => {
+										setReceiver(i);
+									}}
+									onReceiveDragExit={({ dragged: { payload } }) => {
+										setReceiver(-1);
+									}}
+									onReceiveDragDrop={({ dragged: { payload } }) => {
+										const isInQuickAccess = quickAccess.findIndex((el) => el.id === payload.tile.id) !== -1;
+
+										if (isInQuickAccess) {
+											const newArrayWithoutTile = quickAccess.filter((t) => t.id != payload.tile.id);
+											const newBeginning = newArrayWithoutTile.slice(0, i);
+											const newEnd = newArrayWithoutTile.slice(i, quickAccess.length);
+											userQuickAccess.update({
+												active: [...newBeginning, quickAccess[payload.i], ...newEnd],
+												disabled: disabledQuickAccess,
+											});
+											setQuickAccess([...newBeginning, quickAccess[payload.i], ...newEnd]);
+										} else {
+											const newBeginning = quickAccess.slice(0, i);
+											const newEnd = quickAccess.slice(i, disabledQuickAccess.length);
+											userQuickAccess.update({
+												active: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
+												disabled: disabledQuickAccess.filter((t) => t.id != payload.tile.id),
+											});
+											setQuickAccess([...newBeginning, disabledQuickAccess[payload.i], ...newEnd]);
+											setDisabledQuickAccess(disabledQuickAccess.filter((t) => t.id != payload.tile.id));
+										}
+										setDragged(-1);
+										setDisabledDragged(-1);
+									}}
+								/>
+							)}
+							<DraxView
+								key={i}
+								onDragStart={() => {
+									setDragged(i);
+									setReceiver(-1);
+									setDisabledReceiver(-1);
+									console.log("CIR-275 start drag", i);
+								}}
+								onDragEnd={() => {
+									console.log("CIR-275 OnDragEnd");
+									setDragged(-1);
+								}}
+								onDragExit={() => {
+									console.log("CIR-275 OnDragExit");
+									setReceiver(-1);
+								}}
+								payload={{ tile, i }}
+								animateSnapback={false}
+								draggable={quickAccess.length > 1}
+							>
+								<QuickAccessContainer key={i} colors={[colors.orangeGradientEnd, colors.orangeGradientStart]}>
+									<InnerContainer>
+										<Draggable source={require("@assets/images/group.png")}></Draggable>
+										<RightContainer>
+											<Title>{tile.title}</Title>
+											<TileDesc>{tile.desc}</TileDesc>
+										</RightContainer>
+									</InnerContainer>
+								</QuickAccessContainer>
+							</DraxView>
+							{((dragged !== -1 && dragged != i && dragged != i + 1) || disabledDragged !== -1) && ( // SECOND REICEVIER
+								<DraxView
+									style={receiver === i + 1 ? styles.receiverfocus : styles.receiver}
+									onReceiveDragEnter={({ dragged: { payload } }) => {
+										console.log(`CIR-275  OnDragENterReceive ${payload}`);
+										setReceiver(i + 1);
+									}}
+									onReceiveDragExit={({ dragged: { payload } }) => {
+										console.log(`CIR-275  DragExitReceive ${payload}`);
+										setReceiver(-1);
+									}}
+									onReceiveDragDrop={({ dragged: { payload } }) => {
+										const isInQuickAccess = quickAccess.findIndex((el) => el.id === payload.tile.id) !== -1;
+
+										if (isInQuickAccess) {
+											const newArrayWithoutTile = quickAccess.filter((t) => t.id != payload.tile.id);
+											const newBeginning = newArrayWithoutTile.slice(0, i + 1);
+											const newEnd = newArrayWithoutTile.slice(i + 1, quickAccess.length);
+											userQuickAccess.update({
+												active: [...newBeginning, quickAccess[payload.i], ...newEnd],
+												disabled: disabledQuickAccess,
+											});
+											setQuickAccess([...newBeginning, quickAccess[payload.i], ...newEnd]);
+										} else {
+											const newBeginning = quickAccess.slice(0, i + 1);
+											const newEnd = quickAccess.slice(i + 1, disabledQuickAccess.length);
+											userQuickAccess.update({
+												active: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
+												disabled: disabledQuickAccess.filter((t) => t.id != payload.tile.id),
+											});
+											setQuickAccess([...newBeginning, disabledQuickAccess[payload.i], ...newEnd]);
+											setDisabledQuickAccess(disabledQuickAccess.filter((t) => t.id != payload.tile.id));
+										}
+
+										setDragged(-1);
+										setDisabledDragged(-1);
+									}}
+								/>
+							)}
+						</>
+					);
+				})}
+				<Label>{format("quickaccess.hidden")}</Label>
+				{disabledQuickAccess.map((tile, i) => {
+					return (
+						<>
+							{(disabledDragged !== -1 && disabledDragged != i + 1 && disabledDragged != i) || // THIRD REICEIVER
+								(dragged !== -1 && i == 0 && (
+									<DraxView
+										style={disabledReceiver === i ? styles.receiverfocus : styles.receiver}
+										onReceiveDragEnter={({ dragged: { payload } }) => {
+											console.log(`CIR-275  OnDragENterReceive ${payload}`);
+											setDisabledReceiver(i);
+										}}
+										onReceiveDragExit={({ dragged: { payload } }) => {
+											console.log(`CIR-275  DragExitReceive ${payload}`);
+											setDisabledReceiver(-1);
+											setReceiver(-1);
+										}}
+										onReceiveDragDrop={({ dragged: { payload } }) => {
+											const isInQuickAccess = quickAccess.findIndex((el) => el.id === payload.tile.id) !== -1;
+
+											if (isInQuickAccess) {
+												const newBeginning = disabledQuickAccess.slice(0, i);
+												const newEnd = disabledQuickAccess.slice(i, quickAccess.length);
+												userQuickAccess.update({
+													active: quickAccess.filter((t) => t.id != payload.tile.id),
+													disabled: [...newBeginning, quickAccess[payload.i], ...newEnd],
+												});
+												setDisabledQuickAccess([...newBeginning, quickAccess[payload.i], ...newEnd]);
+												setQuickAccess(quickAccess.filter((t) => t.id != payload.tile.id));
+											} else {
+												const newBeginning = disabledQuickAccess.slice(0, i);
+												const newEnd = disabledQuickAccess.slice(i, disabledQuickAccess.length);
+												userQuickAccess.update({
+													active: quickAccess,
+													disabled: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
+												});
+												setDisabledQuickAccess([...newBeginning, disabledQuickAccess[payload.i], ...newEnd]);
+											}
+											setDragged(-1);
+										}}
+									/>
+								))}
+							<DraxView
+								key={i}
+								onDragStart={() => {
+									setDisabledDragged(i);
+									setDisabledReceiver(-1);
+									setReceiver(-1);
+								}}
+								onDragEnd={() => {
+									console.log("CIR-275 OnDragEnd");
+									setDragged(-1);
+									setDisabledDragged(-1);
+								}}
+								payload={{ tile, i }}
+								animateSnapback={false}
+								draggable={disabledQuickAccess.length > 1}
+							>
+								<View style={styles.shadow}>
+									<DisabledQuickAccessContainer key={i}>
+										<InnerContainer>
+											<Draggable source={require("@assets/images/groupblack.png")}></Draggable>
+											<DisabledRightContainer>
+												<DisabledTitle>{tile.title}</DisabledTitle>
+												<DisabledTileDesc>{tile.desc}</DisabledTileDesc>
+											</DisabledRightContainer>
+										</InnerContainer>
+									</DisabledQuickAccessContainer>
+								</View>
+							</DraxView>
+							{((disabledDragged !== -1 && disabledDragged != i && disabledDragged != i + 1) || dragged != -1) && (
+								<DraxView
+									style={disabledReceiver === i + 1 ? styles.receiverfocus : styles.receiver}
+									onReceiveDragEnter={({ dragged: { payload } }) => {
+										console.log(`CIR-275  OnDragENterReceive ${payload}`);
+										setDisabledReceiver(i + 1);
+									}}
+									onReceiveDragExit={({ dragged: { payload } }) => {
+										console.log(`CIR-275  DragExitReceive ${payload}`);
+										setDisabledReceiver(-1);
+										setReceiver(-1);
+									}}
+									onReceiveDragDrop={({ dragged: { payload } }) => {
+										console.log(`CIR-275  received ${payload}`);
+
+										const isInQuickAccess = quickAccess.findIndex((el) => el.id === payload.tile.id) !== -1;
+										if (isInQuickAccess) {
+											const newBeginning = disabledQuickAccess.slice(0, i + 1);
+											const newEnd = disabledQuickAccess.slice(i + 1, quickAccess.length);
+											setDisabledQuickAccess([...newBeginning, quickAccess[payload.i], ...newEnd]);
+											setQuickAccess(quickAccess.filter((t) => t.id != payload.tile.id));
+											userQuickAccess.update({
+												active: quickAccess.filter((t) => t.id != payload.tile.id),
+												disabled: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
+											});
+										} else {
+											const newArrayWithoutTile = disabledQuickAccess.filter((t) => t.id != payload.tile.id);
+											const newBeginning = newArrayWithoutTile.slice(0, i);
+											const newEnd = newArrayWithoutTile.slice(i, disabledQuickAccess.length);
+											userQuickAccess.update({
+												active: quickAccess,
+												disabled: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
+											});
+											setDisabledQuickAccess([...newBeginning, disabledQuickAccess[payload.i], ...newEnd]);
+										}
+										setDragged(-1);
+										setDisabledDragged(-1);
+									}}
+								/>
+							)}
+						</>
+					);
+				})}
+			</DraxProvider>
 		</Container>
 	);
 };
+
+const styles = StyleSheet.create({
+	shadow: {
+		borderRadius: 8,
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 7,
+		},
+		shadowOpacity: 0.43,
+		shadowRadius: 9.51,
+
+		elevation: 15,
+		marginVertical: 5,
+	},
+	container: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	draggable: {
+		width: "100%",
+		height: 100,
+		backgroundColor: "blue",
+	},
+	receiver: {
+		width: "100%",
+		height: 20,
+		backgroundColor: "#EEE",
+		borderWidth: 0.5,
+		borderColor: colors.gray,
+		borderRadius: 8,
+	},
+	receiverfocus: {
+		width: "100%",
+		height: 100,
+		backgroundColor: "#EEE",
+		borderWidth: 0.5,
+		borderColor: colors.gray,
+		borderRadius: 8,
+	},
+});
 
 const Title = styled.Text`
 	font-size: 18px;
@@ -33,8 +355,27 @@ const Title = styled.Text`
 	margin-vertical: 4;
 `;
 
+const DisabledTitle = styled.Text`
+	font-size: 18px;
+	color: black;
+	font-weight: 500;
+	margin-vertical: 4;
+`;
+
 const TileDesc = styled.Text`
 	color: white;
+`;
+
+const DisabledTileDesc = styled.Text`
+	color: ${colors.gray};
+`;
+
+const DisabledRightContainer = styled.View`
+	flex: 1;
+	border-left-width: 1;
+	border-left-color: ${colors.gray};
+	margin-vertical: 8;
+	padding-left: 10;
 `;
 
 const RightContainer = styled.View`
@@ -74,6 +415,16 @@ const QuickAccessContainer = styled(LinearGradient)`
 	height: 84px;
 	width: 100%;
 	border-radius: 8px;
+	margin-vertical: 5;
+`;
+
+const DisabledQuickAccessContainer = styled(View)`
+	height: 84px;
+	width: 100%;
+	border-radius: 8px;
+
+	overflow: hidden;
+	background-color: white;
 `;
 
 const Container = styled(ScrollScreen)`

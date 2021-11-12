@@ -23,8 +23,10 @@ import { UserRingsStorage } from "@domain/ring/userRingsStorage";
 import { UserApi } from "@domain/user/userApi";
 import { UserService } from "@domain/user/userService";
 import { UserStorage } from "@domain/user/userStorage";
+import { UserQuickAccess } from "@domain/quickaccess/quickAccessService";
 import React, { createContext, useContext } from "react";
 import { Config } from "react-native-config";
+import { QuickAccessStorage } from "@domain/quickaccess/quickAccessStorage";
 
 const fakeDeviceService = Config.ENVIRONNEMENT === "dev" ? new DevFakeDeviceService() : new EmptyFakeDeviceService();
 
@@ -58,6 +60,10 @@ const measureService = new MeasureService(measureApi);
 
 const userPreferencesStorage = new UserPreferencesStorage();
 const userPreferencesService = new UserPreferencesService(userPreferencesStorage);
+
+const quickAccessStorage = new QuickAccessStorage();
+const userQuickAccess = new UserQuickAccess(quickAccessStorage);
+
 const calibrationApi = new CalibrationApi(apiService);
 const calibrationService = new CalibrationService(calibrationApi);
 
@@ -81,6 +87,7 @@ export const services = {
 	homeBannerService,
 	fakeDeviceService,
 	calendarService,
+	userQuickAccess,
 };
 
 export type Services = typeof services;
