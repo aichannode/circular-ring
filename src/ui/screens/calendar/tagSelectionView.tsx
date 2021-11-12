@@ -8,16 +8,31 @@ interface CalendarTagListViewProps {
 	tags: CalendarTag[];
 	selectedTags: CalendarTag[];
 	onClickTag: (tag: CalendarTag) => void;
+	displayCount?: number;
 }
 
-export const TagSelectionView: React.FC<CalendarTagListViewProps> = ({ tags, selectedTags, onClickTag }) => {
-	const visibleTags = tags
+export const TagSelectionView: React.FC<CalendarTagListViewProps> = ({
+	tags,
+	selectedTags,
+	onClickTag,
+	displayCount,
+}) => {
+	let visibleTags = tags
 		.filter((item, pos) => {
 			return tags.map((t) => t.id).indexOf(item.id) == pos;
 		})
 		.sort((t1, t2) => {
 			return t1.name.localeCompare(t2.name);
+		})
+		.sort((a, b) => {
+			if (selectedTags.findIndex((el) => el.name == a.name) > selectedTags.findIndex((el) => el.name == b.name))
+				return -1;
+			else return 1;
 		});
+
+	if (displayCount) {
+		visibleTags = visibleTags.slice(0, displayCount);
+	}
 
 	return (
 		<Container gap={8} wrap={"wrap"}>

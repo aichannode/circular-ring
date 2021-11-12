@@ -21,5 +21,5 @@ export function useCustomTags() {
 
 export function useDebugTags() {
 	const { calendarService } = useServices();
-	return useObservable(calendarService.tagMap).get("Debug Tags") ?? [];
+	return useObservable(calendarService.tagMap).get("test") ?? [];
 }
