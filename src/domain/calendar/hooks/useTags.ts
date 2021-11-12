@@ -16,10 +16,10 @@ export function usePopularTags() {
 export function useCustomTags() {
 	const { calendarService } = useServices();
 	// console.log("USEPOPULAR", calendarService.tagMap);
-	return useObservable(calendarService.tagMap).get("Custom Notes") ?? [];
+	return useObservable(calendarService.tagMap).get("custom") ?? [];
 }
 
 export function useDebugTags() {
 	const { calendarService } = useServices();
-	return useObservable(calendarService.tagMap).get("Debug Tags") ?? [];
+	return useObservable(calendarService.tagMap).get("test") ?? [];
 }

@@ -56,6 +56,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 	const [isLoading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [noteAddedText, setNoteAddedText] = useState<string | undefined>(undefined);
+	const [visibleTags, setVisibleTags] = useState<CalendarTag[]>([]);
 
 	const startTimeEditionConfig = {
 		title: format("calendar.edit_start.title"),
@@ -125,11 +126,33 @@ export const CalendarEditNotesScreen: React.FC = () => {
 		return t1.name.localeCompare(t2.name);
 	});
 
-	console.log("allRawTags", allRawTags, popularTags, selectedTags, debugTags);
+	// console.log("allRawTags", allRawTags, popularTags, selectedTags, debugTags);
 
-	const visibleTags = allRawTags.filter((item, pos) => {
-		return allRawTags.indexOf(item) == pos;
-	});
+	useEffect(() => {
+		let _allRawTags = allRawTags.filter((item, pos) => {
+			return allRawTags.indexOf(item) == pos;
+		});
+
+		_allRawTags = _allRawTags.sort((a, b) => {
+			console.log(
+				"CIR-402",
+				selectedTags.findIndex((el) => el.name == a.name)
+			);
+			if (selectedTags.findIndex((el) => el.name == a.name) > selectedTags.findIndex((el) => el.name == b.name))
+				return 1;
+			else return -1;
+		});
+
+		console.log();
+
+		setVisibleTags(_allRawTags);
+	}, [selectedTags]);
+
+	console.log(
+		"CIR-402 visibleTags",
+		visibleTags.map((i) => i.name)
+	);
+	// console.log("CIR-402 allRawTags", allRawTags);
 
 	const disableRegisterNote = endDate < startDate || selectedTags.length === 0;
 	console.log("Calendar", calendar);
@@ -185,6 +208,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 					</PopularTagHeader>
 					{visibleTags ? (
 						<TagSelectionView
+							displayCount={14}
 							tags={visibleTags}
 							selectedTags={selectedTags}
 							onClickTag={(tag) => {
