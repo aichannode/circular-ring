@@ -45,7 +45,6 @@ export const QuickAccess: React.FC = () => {
 	const [quickAccess, setQuickAccess] = useState<I_Active[]>(_quickAccess);
 	const [disabledQuickAccess, setDisabledQuickAccess] = useState<I_Active[]>(_disabledQuickAccess);
 	const { userQuickAccess } = useServices();
-	// userQuickAccess.init();
 
 	console.log(quickAccess, disabledQuickAccess);
 
