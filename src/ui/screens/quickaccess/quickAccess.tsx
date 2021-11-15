@@ -4,93 +4,10 @@ import { colors } from "@ui/styles/colors";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components/native";
 import LinearGradient from "react-native-linear-gradient";
-import { StyleSheet, View, Text } from "react-native";
-import { DraxProvider, DraxView, DraxList } from "react-native-drax";
+import { StyleSheet, View } from "react-native";
+import { DraxProvider, DraxView } from "react-native-drax";
 import { useServices } from "@core/services";
 import { I_Active } from "@domain/quickaccess/quickAccess";
-
-const alphabet = "ABCDEFGH".split("");
-
-const getBackgroundColor = (alphaIndex) => {
-	switch (alphaIndex % 6) {
-		case 0:
-			return "#ffaaaa";
-		case 1:
-			return "#aaffaa";
-		case 2:
-			return "#aaaaff";
-		case 3:
-			return "#ffffaa";
-		case 4:
-			return "#ffaaff";
-		case 5:
-			return "#aaffff";
-		default:
-			return "#aaaaaa";
-	}
-};
-
-const getHeight = (alphaIndex) => {
-	let height = 50;
-	if (alphaIndex % 2 === 0) {
-		height += 10;
-	}
-	if (alphaIndex % 3 === 0) {
-		height += 20;
-	}
-	return height;
-};
-
-const getItemStyleTweaks = (alphaItem) => {
-	const alphaIndex = alphabet.indexOf(alphaItem);
-	return {
-		backgroundColor: getBackgroundColor(alphaIndex),
-		height: getHeight(alphaIndex),
-	};
-};
-
-export const QuickAccess3: React.FC = () => {
-	const [alphaData, setAlphaData] = React.useState(alphabet);
-	return (
-		<DraxProvider>
-			<View style={styles2.container}>
-				<DraxList
-					data={alphaData}
-					renderItemContent={({ item }) => (
-						<View style={[styles2.alphaItem, getItemStyleTweaks(item)]}>
-							<Text style={styles2.alphaText}>{item}</Text>
-						</View>
-					)}
-					onItemReorder={({ fromIndex, toIndex }) => {
-						const newData = alphaData.slice();
-						newData.splice(toIndex, 0, newData.splice(fromIndex, 1)[0]);
-						setAlphaData(newData);
-					}}
-					keyExtractor={(item) => item}
-				/>
-			</View>
-		</DraxProvider>
-	);
-};
-
-const styles2 = StyleSheet.create({
-	container: {
-		flex: 1,
-		padding: 12,
-		paddingTop: 40,
-	},
-	alphaItem: {
-		backgroundColor: "#aaaaff",
-		borderRadius: 8,
-		margin: 4,
-		padding: 4,
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	alphaText: {
-		fontSize: 28,
-	},
-});
 
 export const QuickAccess: React.FC = () => {
 	const { format } = useI18n();
