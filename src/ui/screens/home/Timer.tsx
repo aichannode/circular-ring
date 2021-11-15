@@ -1,13 +1,14 @@
 // import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import { TouchableOpacity, View, Text } from "react-native";
 import { ResponsiveCenterView } from "@ui/components/layout";
-import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
+import { CircularBottomSheetHandle, CircularBottomScrollSheet } from "@ui/components/bottomSheet/bottomSheet";
 import styled from "styled-components/native";
 import WheelPicker2 from "react-native-wheely";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
+import { useServices } from "@core/services";
 
 interface TimerBottomSheetProps {
 	onClose: () => void;
@@ -28,15 +29,17 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 	const [showCountdown, setShowCountdown] = useState(false);
 	const [isPlaying, setPlaying] = useState(true);
 
-	console.log("Selected Second", selectedSeconde);
+	// console.log("Selected Second", selectedSeconde);
 
 	const sixty = useMemo(() => Array.from({ length: 60 }, (_, i) => ("0" + i).slice(-2)), []);
 	const secondes = useMemo(() => Array.from({ length: 12 }, (_, i) => ("0" + i * 5).slice(-2)), []);
 	const twelve = useMemo(() => Array.from({ length: 12 }, (_, i) => ("0" + i).slice(-2)), []);
 
+	const { timerService } = useServices();
+
 	if (showCountdown) {
 		return (
-			<View style={{ width: 250, display: "flex", marginTop: 70 }}>
+			<View style={{ width: 250, display: "flex", marginTop: 30 }}>
 				<CountdownCircleTimer
 					isPlaying={isPlaying}
 					duration={selectedMinute * 60 + selectedSeconde * 5 + selectedHour * 60 * 60}
@@ -50,16 +53,29 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 					style={{ display: "flex", flexDirection: "row", width: 250, justifyContent: "space-evenly", paddingTop: 70 }}
 				>
 					<SecondaryButton onPress={onClose}>Cancel</SecondaryButton>
-					<PrimaryButton onPress={() => setPlaying(!isPlaying)}>{isPlaying ? "Pause" : "Play"}</PrimaryButton>
+					<PrimaryButton
+						onPress={() => {
+							setPlaying(!isPlaying);
+							timerService.stop();
+						}}
+					>
+						{isPlaying ? "Pause" : "Play"}
+					</PrimaryButton>
 				</View>
 			</View>
 		);
 	}
 
 	return (
-		<View style={{ width: 250 }}>
+		<View style={{ display: "flex", flex: 1, width: "100%" }}>
 			<View
-				style={{ display: "flex", flexDirection: "row", width: "100%", justifyContent: "space-evenly", zIndex: 100 }}
+				style={{
+					display: "flex",
+					flexDirection: "row",
+					width: "100%",
+					justifyContent: "space-evenly",
+					zIndex: 100,
+				}}
 			>
 				<WheelPicker2
 					selectedIndex={selectedHour}
@@ -104,6 +120,7 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 			<PrimaryButton
 				onPress={() => {
 					setShowCountdown(true);
+					timerService.play(selectedMinute * 60 + selectedSeconde * 5 + selectedHour * 60 * 60);
 				}}
 				style={{ marginTop: 30, width: 90, alignSelf: "center" }}
 			>
@@ -129,16 +146,29 @@ const TimerBottomSheet: React.FC<TimerBottomSheetProps> = ({ onClose }) => {
 
 export const TimerTile = () => {
 	const TimerBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
+	const [timer, setTimer] = useState<null | number>(null);
+
+	const { timerService } = useServices();
+	useEffect(() => {
+		const timer = timerService.timer.get();
+		if (timer !== null) setTimer(timer.remainingSecondes);
+	}, []);
+
+	timerService.timer.subscribe((timer) => {
+		setTimer(timer.remainingSecondes);
+	});
+
 	return (
 		<>
 			<Tile>
 				<TouchableOpacity onPress={() => TimerBottomSheetRef.current?.present()}>
 					<Bold>Timer</Bold>
+					<Light>{timer ? timer : "off"}</Light>
 				</TouchableOpacity>
 			</Tile>
-			<CircularBottomSheet snapPoints={[480]} ref={TimerBottomSheetRef}>
+			<CircularBottomScrollSheet snapPoints={[480]} ref={TimerBottomSheetRef} allowSwipeDownToClose={false}>
 				<TimerBottomSheet onClose={() => TimerBottomSheetRef.current?.close()} />
-			</CircularBottomSheet>
+			</CircularBottomScrollSheet>
 		</>
 	);
 };
@@ -159,4 +189,10 @@ const SheetContainer = styled(ResponsiveCenterView)`
 const Bold = styled.Text`
 	text-align: center;
 	font-size: 14px;
+`;
+
+const Light = styled.Text`
+	color: ${colors.gray};
+	text-align: center;
+	font-size: 12px;
 `;
