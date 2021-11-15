@@ -42,7 +42,7 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 					{() => <Text style={{ fontSize: 35 }}>{countdown(timerService.timer.get().remainingSecondes)}</Text>}
 				</CountdownCircleTimer>
 				<View
-					style={{ display: "flex", flexDirection: "row", width: 250, justifyContent: "space-evenly", paddingTop: 70 }}
+					style={{ display: "flex", flexDirection: "row", width: 250, justifyContent: "space-evenly", paddingTop: 40 }}
 				>
 					<SecondaryButton
 						onPress={() => {
