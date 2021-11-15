@@ -211,6 +211,7 @@ const SheetContainer = styled(ResponsiveCenterView)`
 	justify-content: space-between;
 	align-items: center;
 	padding-top: 30px;
+	padding-bottom: 50px;
 `;
 
 const Container = styled(Stack)`
