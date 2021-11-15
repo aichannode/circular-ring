@@ -14,14 +14,6 @@ interface TimerBottomSheetProps {
 	onClose: () => void;
 }
 
-const Countdown = ({ remainingTime }: { remainingTime: number }) => {
-	const hours = ("0" + Math.floor(remainingTime / 3600)).slice(-2);
-	const minutes = ("0" + Math.floor((remainingTime % 3600) / 60)).slice(-2);
-	const seconds = ("0" + (remainingTime % 60)).slice(-2);
-
-	return <Text style={{ fontSize: 35 }}>{`${hours}:${minutes}:${seconds}`}</Text>;
-};
-
 const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 	const [selectedHour, setSelectedHour] = useState(0);
 	const [selectedMinute, setSelectedMinute] = useState(0);
@@ -37,7 +29,7 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 
 	const { timerService } = useServices();
 
-	if (showCountdown) {
+	if (showCountdown || timerService.timer.get().remainingSecondes) {
 		return (
 			<View style={{ width: 250, display: "flex", marginTop: 30 }}>
 				<CountdownCircleTimer
@@ -47,16 +39,24 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 					size={250}
 					strokeWidth={8}
 				>
-					{({ remainingTime }) => <Countdown remainingTime={remainingTime}></Countdown>}
+					{() => <Text style={{ fontSize: 35 }}>{countdown(timerService.timer.get().remainingSecondes)}</Text>}
 				</CountdownCircleTimer>
 				<View
 					style={{ display: "flex", flexDirection: "row", width: 250, justifyContent: "space-evenly", paddingTop: 70 }}
 				>
-					<SecondaryButton onPress={onClose}>Cancel</SecondaryButton>
+					<SecondaryButton
+						onPress={() => {
+							setShowCountdown(false);
+							timerService.stop();
+						}}
+					>
+						Cancel
+					</SecondaryButton>
 					<PrimaryButton
 						onPress={() => {
 							setPlaying(!isPlaying);
-							timerService.stop();
+							if (isPlaying) timerService.pause();
+							else timerService.play(timerService.timer.get().remainingSecondes);
 						}}
 					>
 						{isPlaying ? "Pause" : "Play"}
@@ -144,6 +144,14 @@ const TimerBottomSheet: React.FC<TimerBottomSheetProps> = ({ onClose }) => {
 	);
 };
 
+const countdown = (remainingTime: number) => {
+	const hours = ("0" + Math.floor(remainingTime / 3600)).slice(-2);
+	const minutes = ("0" + Math.floor((remainingTime % 3600) / 60)).slice(-2);
+	const seconds = ("0" + (remainingTime % 60)).slice(-2);
+
+	return `${hours}:${minutes}:${seconds}`;
+};
+
 export const TimerTile = () => {
 	const TimerBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const [timer, setTimer] = useState<null | number>(null);
@@ -163,7 +171,7 @@ export const TimerTile = () => {
 			<Tile>
 				<TouchableOpacity onPress={() => TimerBottomSheetRef.current?.present()}>
 					<Bold>Timer</Bold>
-					<Light>{timer ? timer : "off"}</Light>
+					<Light>{timer ? countdown(timer) : "off"}</Light>
 				</TouchableOpacity>
 			</Tile>
 			<CircularBottomScrollSheet snapPoints={[480]} ref={TimerBottomSheetRef} allowSwipeDownToClose={false}>
