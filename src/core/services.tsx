@@ -27,6 +27,7 @@ import { UserQuickAccess } from "@domain/quickaccess/quickAccessService";
 import React, { createContext, useContext } from "react";
 import { Config } from "react-native-config";
 import { QuickAccessStorage } from "@domain/quickaccess/quickAccessStorage";
+import { TimerService } from "@domain/timer/timerService";
 
 const fakeDeviceService = Config.ENVIRONNEMENT === "dev" ? new DevFakeDeviceService() : new EmptyFakeDeviceService();
 
@@ -73,6 +74,7 @@ const homeBannerService = new HomeBannerService(homeBannerStorage, homeBannerApi
 
 const calendarApi = new CalendarApi(apiService);
 const calendarService = new CalendarService(calendarApi, userService);
+const timerService = new TimerService();
 
 export const services = {
 	cognitoAuthService,
@@ -88,6 +90,7 @@ export const services = {
 	fakeDeviceService,
 	calendarService,
 	userQuickAccess,
+	timerService,
 };
 
 export type Services = typeof services;
