@@ -62,7 +62,7 @@ export class RingManagementService {
 	async init() {
 		const loadedRings = await this.userRingsStorage.load();
 		this._userRings.set(loadedRings ?? []);
-		this.syncData();
+		await this.syncData();
 	}
 
 	async getRings() {
@@ -97,11 +97,11 @@ export class RingManagementService {
 					return userRing;
 				}
 			} catch (e) {
-				this.deviceService.disconnect();
+				await this.deviceService.disconnect();
 				throw e;
 			}
 		} else {
-			this.deviceService.disconnect();
+			await this.deviceService.disconnect();
 		}
 	}
 
@@ -181,16 +181,15 @@ export class RingManagementService {
 
 				const unsubscribe = await this.deviceService.listen(Channel.DATA, Channel.DATA, (value) => {
 					this.logger.debug("FBC value", value);
-					data = data + "\n" + value;
-					if (data !== ringDataEOF) {
-						// There has been data since start
-						this._currentRingSyncState.set(SyncState.SYNCING);
-					} else {
-						this.logger.info("Nothing to sync");
-					}
-					if (value === ringDataEOF) {
+					if (value === ringDataEOF)
+					{
 						unsubscribe();
 						resolve(data);
+					}
+					else
+					{
+						data += value + "\n";
+						this._currentRingSyncState.set(SyncState.SYNCING);
 					}
 				});
 			});
@@ -202,11 +201,11 @@ export class RingManagementService {
 					this.logger.info("Successfully sent data...");
 					setTimeout(() => this._currentRingSyncState.set(SyncState.NONE), syncFinishedTimeout);
 				}
-				this.ringDataStorage.clear();
+				await this.ringDataStorage.clear();
 				this._currentRingSyncState.set(allData !== ringDataEOF ? SyncState.SUCCESS : SyncState.NONE);
 			} catch (e) {
 				this.logger.warn("An error occured during save. Storing data, length:", allData.length);
-				this.ringDataStorage.save(allData);
+				await this.ringDataStorage.save(allData);
 				throw e;
 			}
 		} catch (e) {
