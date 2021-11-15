@@ -190,6 +190,8 @@ export const QuickAccess: React.FC = () => {
 	const displayTimer = active?.map((t) => t.id).indexOf("timer") !== -1;
 	const displayCalendar = active?.map((t) => t.id).indexOf("calendar") !== -1;
 
+	if (active?.length === 0) return null;
+
 	return (
 		<>
 			<Container gap={15}>
