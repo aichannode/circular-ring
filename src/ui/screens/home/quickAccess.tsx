@@ -131,7 +131,7 @@ const AlarmTile = () => {
 					<Light>off</Light>
 				</TouchableOpacity>
 			</Tile>
-			<CircularBottomSheet allowSwipeDownToClose={false} snapPoints={[480]} ref={AlarmBottomSheetRef}>
+			<CircularBottomSheet snapPoints={[480]} ref={AlarmBottomSheetRef}>
 				<AlarmBottomSheet onClose={() => AlarmBottomSheetRef.current?.close()} />
 			</CircularBottomSheet>
 		</>

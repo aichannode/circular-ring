@@ -80,7 +80,7 @@ export const QuickAccess: React.FC = () => {
 				{quickAccess.map((tile, i) => {
 					return (
 						<>
-							{((0 == i && dragged !== -1 && dragged != i) || (disabledDragged !== -1 && i == 0)) && ( // FIRST RECEIVER
+							{(0 == i && dragged !== -1 && dragged != i) || (disabledDragged !== -1 && i == 0) ? ( // FIRST RECEIVER
 								<DraxView
 									style={receiver === i ? styles.receiverfocus : styles.receiver}
 									onReceiveDragEnter={({ dragged: { payload } }) => {
@@ -115,7 +115,9 @@ export const QuickAccess: React.FC = () => {
 										setDisabledDragged(-1);
 									}}
 								/>
-							)}
+							) : i == 0 ? (
+								<View style={styles.receiver}></View>
+							) : null}
 							<DraxView
 								key={i}
 								onDragStart={() => {
@@ -146,7 +148,7 @@ export const QuickAccess: React.FC = () => {
 									</InnerContainer>
 								</QuickAccessContainer>
 							</DraxView>
-							{((dragged !== -1 && dragged != i && dragged != i + 1) || disabledDragged !== -1) && ( // SECOND REICEVIER
+							{(dragged !== -1 && dragged != i && dragged != i + 1) || disabledDragged !== -1 ? ( // SECOND REICEVIER
 								<DraxView
 									style={receiver === i + 1 ? styles.receiverfocus : styles.receiver}
 									onReceiveDragEnter={({ dragged: { payload } }) => {
@@ -184,6 +186,8 @@ export const QuickAccess: React.FC = () => {
 										setDisabledDragged(-1);
 									}}
 								/>
+							) : (
+								<View style={styles.receiver}></View>
 							)}
 						</>
 					);
@@ -193,7 +197,7 @@ export const QuickAccess: React.FC = () => {
 					return (
 						<>
 							{(disabledDragged !== -1 && disabledDragged != i + 1 && disabledDragged != i) || // THIRD REICEIVER
-								(dragged !== -1 && i == 0 && (
+								(dragged !== -1 && i == 0 ? (
 									<DraxView
 										style={disabledReceiver === i ? styles.receiverfocus : styles.receiver}
 										onReceiveDragEnter={({ dragged: { payload } }) => {
@@ -229,7 +233,9 @@ export const QuickAccess: React.FC = () => {
 											setDragged(-1);
 										}}
 									/>
-								))}
+								) : i === 0 ? (
+									<View style={styles.receiver}></View>
+								) : null)}
 							<DraxView
 								key={i}
 								onDragStart={() => {
@@ -258,7 +264,7 @@ export const QuickAccess: React.FC = () => {
 									</DisabledQuickAccessContainer>
 								</View>
 							</DraxView>
-							{((disabledDragged !== -1 && disabledDragged != i && disabledDragged != i + 1) || dragged != -1) && (
+							{(disabledDragged !== -1 && disabledDragged != i && disabledDragged != i + 1) || dragged != -1 ? (
 								<DraxView
 									style={disabledReceiver === i + 1 ? styles.receiverfocus : styles.receiver}
 									onReceiveDragEnter={({ dragged: { payload } }) => {
@@ -297,6 +303,8 @@ export const QuickAccess: React.FC = () => {
 										setDisabledDragged(-1);
 									}}
 								/>
+							) : (
+								<View style={styles.receiver}></View>
 							)}
 						</>
 					);
@@ -316,9 +324,7 @@ const styles = StyleSheet.create({
 		},
 		shadowOpacity: 0.43,
 		shadowRadius: 9.51,
-
 		elevation: 15,
-		marginVertical: 5,
 	},
 	container: {
 		flex: 1,
@@ -332,18 +338,18 @@ const styles = StyleSheet.create({
 	},
 	receiver: {
 		width: "100%",
-		height: 20,
-		backgroundColor: "#EEE",
-		borderWidth: 0.5,
-		borderColor: colors.gray,
+		height: 15,
+		// backgroundColor: "#EEE",
+		// borderWidth: 0.5,
+		// borderColor: colors.gray,
 		borderRadius: 8,
 	},
 	receiverfocus: {
 		width: "100%",
 		height: 100,
-		backgroundColor: "#EEE",
-		borderWidth: 0.5,
-		borderColor: colors.gray,
+		// backgroundColor: "#EEE",
+		// borderWidth: 0.5,
+		// borderColor: colors.gray,
 		borderRadius: 8,
 	},
 });
@@ -415,16 +421,15 @@ const QuickAccessContainer = styled(LinearGradient)`
 	height: 84px;
 	width: 100%;
 	border-radius: 8px;
-	margin-vertical: 5;
 `;
 
 const DisabledQuickAccessContainer = styled(View)`
 	height: 84px;
 	width: 100%;
 	border-radius: 8px;
-
 	overflow: hidden;
 	background-color: white;
+	margin: 0;
 `;
 
 const Container = styled(ScrollScreen)`
