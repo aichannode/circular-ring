@@ -4,10 +4,93 @@ import { colors } from "@ui/styles/colors";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components/native";
 import LinearGradient from "react-native-linear-gradient";
-import { StyleSheet, View } from "react-native";
-import { DraxProvider, DraxView } from "react-native-drax";
+import { StyleSheet, View, Text } from "react-native";
+import { DraxProvider, DraxView, DraxList } from "react-native-drax";
 import { useServices } from "@core/services";
 import { I_Active } from "@domain/quickaccess/quickAccess";
+
+const alphabet = "ABCDEFGH".split("");
+
+const getBackgroundColor = (alphaIndex) => {
+	switch (alphaIndex % 6) {
+		case 0:
+			return "#ffaaaa";
+		case 1:
+			return "#aaffaa";
+		case 2:
+			return "#aaaaff";
+		case 3:
+			return "#ffffaa";
+		case 4:
+			return "#ffaaff";
+		case 5:
+			return "#aaffff";
+		default:
+			return "#aaaaaa";
+	}
+};
+
+const getHeight = (alphaIndex) => {
+	let height = 50;
+	if (alphaIndex % 2 === 0) {
+		height += 10;
+	}
+	if (alphaIndex % 3 === 0) {
+		height += 20;
+	}
+	return height;
+};
+
+const getItemStyleTweaks = (alphaItem) => {
+	const alphaIndex = alphabet.indexOf(alphaItem);
+	return {
+		backgroundColor: getBackgroundColor(alphaIndex),
+		height: getHeight(alphaIndex),
+	};
+};
+
+export const QuickAccess3: React.FC = () => {
+	const [alphaData, setAlphaData] = React.useState(alphabet);
+	return (
+		<DraxProvider>
+			<View style={styles2.container}>
+				<DraxList
+					data={alphaData}
+					renderItemContent={({ item }) => (
+						<View style={[styles2.alphaItem, getItemStyleTweaks(item)]}>
+							<Text style={styles2.alphaText}>{item}</Text>
+						</View>
+					)}
+					onItemReorder={({ fromIndex, toIndex }) => {
+						const newData = alphaData.slice();
+						newData.splice(toIndex, 0, newData.splice(fromIndex, 1)[0]);
+						setAlphaData(newData);
+					}}
+					keyExtractor={(item) => item}
+				/>
+			</View>
+		</DraxProvider>
+	);
+};
+
+const styles2 = StyleSheet.create({
+	container: {
+		flex: 1,
+		padding: 12,
+		paddingTop: 40,
+	},
+	alphaItem: {
+		backgroundColor: "#aaaaff",
+		borderRadius: 8,
+		margin: 4,
+		padding: 4,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	alphaText: {
+		fontSize: 28,
+	},
+});
 
 export const QuickAccess: React.FC = () => {
 	const { format } = useI18n();
@@ -80,7 +163,7 @@ export const QuickAccess: React.FC = () => {
 				{quickAccess.map((tile, i) => {
 					return (
 						<>
-							{((0 == i && dragged !== -1 && dragged != i) || (disabledDragged !== -1 && i == 0)) && ( // FIRST RECEIVER
+							{(0 == i && dragged !== -1 && dragged != i) || (disabledDragged !== -1 && i == 0) ? ( // FIRST RECEIVER
 								<DraxView
 									style={receiver === i ? styles.receiverfocus : styles.receiver}
 									onReceiveDragEnter={({ dragged: { payload } }) => {
@@ -115,7 +198,9 @@ export const QuickAccess: React.FC = () => {
 										setDisabledDragged(-1);
 									}}
 								/>
-							)}
+							) : i == 0 ? (
+								<View style={styles.receiver}></View>
+							) : null}
 							<DraxView
 								key={i}
 								onDragStart={() => {
@@ -146,7 +231,7 @@ export const QuickAccess: React.FC = () => {
 									</InnerContainer>
 								</QuickAccessContainer>
 							</DraxView>
-							{((dragged !== -1 && dragged != i && dragged != i + 1) || disabledDragged !== -1) && ( // SECOND REICEVIER
+							{(dragged !== -1 && dragged != i && dragged != i + 1) || disabledDragged !== -1 ? ( // SECOND REICEVIER
 								<DraxView
 									style={receiver === i + 1 ? styles.receiverfocus : styles.receiver}
 									onReceiveDragEnter={({ dragged: { payload } }) => {
@@ -184,6 +269,8 @@ export const QuickAccess: React.FC = () => {
 										setDisabledDragged(-1);
 									}}
 								/>
+							) : (
+								<View style={styles.receiver}></View>
 							)}
 						</>
 					);
@@ -193,7 +280,7 @@ export const QuickAccess: React.FC = () => {
 					return (
 						<>
 							{(disabledDragged !== -1 && disabledDragged != i + 1 && disabledDragged != i) || // THIRD REICEIVER
-								(dragged !== -1 && i == 0 && (
+								(dragged !== -1 && i == 0 ? (
 									<DraxView
 										style={disabledReceiver === i ? styles.receiverfocus : styles.receiver}
 										onReceiveDragEnter={({ dragged: { payload } }) => {
@@ -229,7 +316,9 @@ export const QuickAccess: React.FC = () => {
 											setDragged(-1);
 										}}
 									/>
-								))}
+								) : i === 0 ? (
+									<View style={styles.receiver}></View>
+								) : null)}
 							<DraxView
 								key={i}
 								onDragStart={() => {
@@ -258,7 +347,7 @@ export const QuickAccess: React.FC = () => {
 									</DisabledQuickAccessContainer>
 								</View>
 							</DraxView>
-							{((disabledDragged !== -1 && disabledDragged != i && disabledDragged != i + 1) || dragged != -1) && (
+							{(disabledDragged !== -1 && disabledDragged != i && disabledDragged != i + 1) || dragged != -1 ? (
 								<DraxView
 									style={disabledReceiver === i + 1 ? styles.receiverfocus : styles.receiver}
 									onReceiveDragEnter={({ dragged: { payload } }) => {
@@ -297,6 +386,8 @@ export const QuickAccess: React.FC = () => {
 										setDisabledDragged(-1);
 									}}
 								/>
+							) : (
+								<View style={styles.receiver}></View>
 							)}
 						</>
 					);
@@ -316,9 +407,7 @@ const styles = StyleSheet.create({
 		},
 		shadowOpacity: 0.43,
 		shadowRadius: 9.51,
-
 		elevation: 15,
-		marginVertical: 5,
 	},
 	container: {
 		flex: 1,
@@ -332,18 +421,18 @@ const styles = StyleSheet.create({
 	},
 	receiver: {
 		width: "100%",
-		height: 20,
-		backgroundColor: "#EEE",
-		borderWidth: 0.5,
-		borderColor: colors.gray,
+		height: 15,
+		// backgroundColor: "#EEE",
+		// borderWidth: 0.5,
+		// borderColor: colors.gray,
 		borderRadius: 8,
 	},
 	receiverfocus: {
 		width: "100%",
 		height: 100,
-		backgroundColor: "#EEE",
-		borderWidth: 0.5,
-		borderColor: colors.gray,
+		// backgroundColor: "#EEE",
+		// borderWidth: 0.5,
+		// borderColor: colors.gray,
 		borderRadius: 8,
 	},
 });
@@ -415,16 +504,15 @@ const QuickAccessContainer = styled(LinearGradient)`
 	height: 84px;
 	width: 100%;
 	border-radius: 8px;
-	margin-vertical: 5;
 `;
 
 const DisabledQuickAccessContainer = styled(View)`
 	height: 84px;
 	width: 100%;
 	border-radius: 8px;
-
 	overflow: hidden;
 	background-color: white;
+	margin: 0;
 `;
 
 const Container = styled(ScrollScreen)`

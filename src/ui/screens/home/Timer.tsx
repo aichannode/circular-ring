@@ -58,7 +58,9 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 
 	return (
 		<View style={{ width: 250 }}>
-			<View style={{ display: "flex", flexDirection: "row", width: "100%", justifyContent: "space-evenly" }}>
+			<View
+				style={{ display: "flex", flexDirection: "row", width: "100%", justifyContent: "space-evenly", zIndex: 100 }}
+			>
 				<WheelPicker2
 					selectedIndex={selectedHour}
 					options={twelve}
@@ -134,7 +136,7 @@ export const TimerTile = () => {
 					<Bold>Timer</Bold>
 				</TouchableOpacity>
 			</Tile>
-			<CircularBottomSheet allowSwipeDownToClose={false} snapPoints={[480]} ref={TimerBottomSheetRef}>
+			<CircularBottomSheet snapPoints={[480]} ref={TimerBottomSheetRef}>
 				<TimerBottomSheet onClose={() => TimerBottomSheetRef.current?.close()} />
 			</CircularBottomSheet>
 		</>
