@@ -83,10 +83,10 @@ export const QuickAccess: React.FC = () => {
 				{quickAccess.length === 0 && (
 					<DraxView
 						style={{ height: 110 }}
-						onReceiveDragEnter={({ dragged: { payload } }) => {
+						onReceiveDragEnter={() => {
 							setReceiver(-1);
 						}}
-						onReceiveDragExit={({ dragged: { payload } }) => {
+						onReceiveDragExit={() => {
 							setReceiver(-1);
 						}}
 						onReceiveDragDrop={({ dragged: { payload } }) => {
@@ -107,10 +107,10 @@ export const QuickAccess: React.FC = () => {
 							{(0 == i && dragged !== -1 && dragged != i) || (disabledDragged !== -1 && i == 0) ? ( // FIRST RECEIVER
 								<DraxView
 									style={receiver === i ? styles.receiverfocus : styles.receiver}
-									onReceiveDragEnter={({ dragged: { payload } }) => {
+									onReceiveDragEnter={() => {
 										setReceiver(i);
 									}}
-									onReceiveDragExit={({ dragged: { payload } }) => {
+									onReceiveDragExit={() => {
 										setReceiver(-1);
 									}}
 									onReceiveDragDrop={({ dragged: { payload } }) => {

@@ -76,6 +76,7 @@
 		"@types/flat": "^5.0.2",
 		"@types/react": "^17.0.19",
 		"@types/react-native": "^0.64.13",
+		"@types/react-native-background-timer": "^2.0.0",
 		"@types/react-native-calendars": "^1.1264.2",
 		"@types/styled-components": "^5.1.13",
 		"@types/styled-components-react-native": "^5.1.1",

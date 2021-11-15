@@ -22,7 +22,7 @@ export class TimerService {
 					BackgroundTimer.stopBackgroundTimer();
 					return { status: "stop", remainingSecondes: 0, startDate: null, endDate: null };
 				}
-				if (status === "play") {
+				if (status === "play" && endDate) {
 					return {
 						status: "play",
 						remainingSecondes: endDate.diff(startDate, "seconds"),
@@ -39,10 +39,6 @@ export class TimerService {
 		BackgroundTimer.stopBackgroundTimer();
 		this.timer.update(() => ({ status: "stop", remainingSecondes: 0, startDate: null, endDate: null }));
 	}
-
-	// resume() {
-
-	// }
 
 	pause() {
 		BackgroundTimer.stopBackgroundTimer();
