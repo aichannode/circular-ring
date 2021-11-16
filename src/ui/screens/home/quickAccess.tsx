@@ -176,7 +176,9 @@ export const QuickAccess: React.FC = () => {
 	useEffect(() => {
 		console.log("CIR-275 Get quickaccess", userQuickAccess.quickaccess.get().active);
 		setActive(
-			userQuickAccess.quickaccess.get().active.length ? userQuickAccess.quickaccess.get()?.active : _quickAccess
+			userQuickAccess.quickaccess.get().active.length || userQuickAccess.quickaccess.get().disabled.length
+				? userQuickAccess.quickaccess.get()?.active
+				: _quickAccess
 		);
 		userQuickAccess.quickaccess.subscribe((data) => {
 			if (data?.active) {
