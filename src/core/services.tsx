@@ -74,7 +74,7 @@ const homeBannerService = new HomeBannerService(homeBannerStorage, homeBannerApi
 
 const calendarApi = new CalendarApi(apiService);
 const calendarService = new CalendarService(calendarApi, userService);
-const timerService = new TimerService();
+const timerService = new TimerService(bleDeviceService);
 
 export const services = {
 	cognitoAuthService,
