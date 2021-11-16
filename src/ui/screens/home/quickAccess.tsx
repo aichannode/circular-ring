@@ -10,6 +10,12 @@ import RNSiwtch from "@estebanleclet/react-native-reanimated-switch-ts";
 import DatePicker from "react-native-date-picker";
 import { useServices } from "@core/services";
 import { I_Active } from "@domain/quickaccess/quickAccess";
+import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
+import { useAlarms } from "@domain/circleAlarm/alarmHooks";
+import { WarningBottomSheet } from "@ui/screens/circleAlarm/warningBottomSheet";
+import { Weekdays, dateToAlarmTime, Melody } from "@domain/ring/ringAlarm";
+import { useAutoConnectState } from "@domain/device/hooks";
+import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
 
 import { TimerTile } from "./Timer";
 import { useI18n } from "@ui/i18n";
@@ -47,6 +53,66 @@ const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = () => {
 	const [alarm, setAlarm] = useState(false);
 	const [date, setDate] = useState(new Date());
 
+	const [weekdays, setWeekdays] = useState<Weekdays[]>([
+		Weekdays.MONDAY,
+		Weekdays.TUESDAY,
+		Weekdays.WEDNESDAY,
+		Weekdays.THURSDAY,
+		Weekdays.FRIDAY,
+	]);
+	const [snooze, setSnooze] = useState(0);
+	const [smart, setSmart] = useState(0);
+	const [isSmart, setIsSmart] = useState(false);
+	const { circleAlarmService } = useServices();
+	// const [date, setDate] = useState(new Date());
+	const { loading, alarms, loadAlarms } = useAlarms();
+	const autoConnectState = useAutoConnectState();
+
+	const quickAccessAlarm = circleAlarmService.quickAccessRingAlarmId.get();
+
+	useEffect(() => {
+		if (quickAccessAlarm) {
+			// setDate();
+		}
+	}, []);
+
+	useEffect(() => {
+		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
+			loadAlarms();
+		}
+	}, [loadAlarms, autoConnectState]);
+
+	console.log("ALARMS", alarms);
+
+	const checkForExistingQuickAccessAlarm = async () => {
+		const newAlarm = {
+			snooze,
+			smart,
+			isSmart,
+			weekdays,
+			time: dateToAlarmTime(date),
+			vibrationPower: 50,
+			vibrationRepetition: 4,
+			melody: Melody.ALERT,
+			label: "QuickAccess",
+		};
+
+		if (alarm) {
+			if (quickAccessAlarm) {
+				console.log("UPDATE QUICKACCESS ALARM", { ...quickAccessAlarm, ...newAlarm });
+				circleAlarmService.quickAccessRingAlarmId.set({ ...quickAccessAlarm });
+				circleAlarmService.updateAlarm({ ...quickAccessAlarm, ...newAlarm });
+			} else {
+				const response = await circleAlarmService.createAlarm(newAlarm);
+				circleAlarmService.quickAccessRingAlarmId.set(response);
+			}
+		}
+	};
+
+	useEffect(() => {
+		checkForExistingQuickAccessAlarm();
+	}, [alarm, date]);
+
 	return (
 		<SheetContainer>
 			<TextAndSwitchContainer>
@@ -67,13 +133,13 @@ const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = () => {
 			<TextAndSwitchContainer>
 				<Label>Smart Alarm</Label>
 				<RNSiwtch
-					handleOnPress={() => setAlarm(!alarm)}
+					handleOnPress={() => setSmart(!smart)}
 					activeTrackColor={colors.orangeRed}
 					thumbStyle={{ borderWidth: 1, borderColor: colors.orangeRed }}
 					containerStyle={{ borderWidth: 1, borderColor: colors.orangeRed }}
 					inActiveTrackColor="white"
 					thumbColor="white"
-					value={alarm}
+					value={smart}
 				></RNSiwtch>
 			</TextAndSwitchContainer>
 			<TextAndSwitchContainer>
@@ -117,22 +183,37 @@ const TextAndSwitchContainer = styled.View`
 
 const AlarmTile = () => {
 	const AlarmBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
-	// const [date, setDate] = useState(new Date());
+	const warningBottomSheet = useRef<CircularBottomSheetHandle>(null);
+	const { loading, alarms, loadAlarms } = useAlarms();
+	const { format } = useI18n();
+	const { circleAlarmService } = useServices();
+
+	const quickAccessAlarm = circleAlarmService.quickAccessRingAlarmId.get();
 
 	return (
 		<>
 			<Tile style={{ borderLeftWidth: 0.5, borderRightWidth: 0.5, borderColor: colors.gray }}>
 				<TouchableOpacity
 					onPress={() => {
-						AlarmBottomSheetRef.current?.present();
+						alarms.length >= MAX_ALARMS
+							? warningBottomSheet.current?.present()
+							: AlarmBottomSheetRef.current?.present();
 					}}
 				>
-					<Bold>9:00 AM</Bold>
+					<Bold>{quickAccessAlarm ? `${quickAccessAlarm.time.hour}:${quickAccessAlarm.time.minute}` : "Alarm"}</Bold>
 					<Light>off</Light>
 				</TouchableOpacity>
 			</Tile>
 			<CircularBottomSheet snapPoints={[480]} ref={AlarmBottomSheetRef}>
 				<AlarmBottomSheet onClose={() => AlarmBottomSheetRef.current?.close()} />
+			</CircularBottomSheet>
+			<CircularBottomSheet snapPoints={[500]} ref={warningBottomSheet}>
+				<WarningBottomSheet
+					message={format("alarm.new.warning.description")}
+					onClose={() => {
+						warningBottomSheet.current?.close();
+					}}
+				/>
 			</CircularBottomSheet>
 		</>
 	);
