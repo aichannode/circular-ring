@@ -23,8 +23,6 @@ export class TimerService {
 				const { status, remainingSecondes, startDate, endDate } = previousState;
 
 				if (remainingSecondes <= 0 && status === "play") {
-					console.log("VIBRATE");
-					console.log("status", status);
 					this.playMelody(Melody.SOS, 32);
 					BackgroundTimer.stopBackgroundTimer();
 					return { status: "stop", remainingSecondes: 0, startDate: null, endDate: null };
