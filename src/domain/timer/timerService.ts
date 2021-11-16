@@ -2,9 +2,13 @@ import { observable } from "micro-observables";
 import { I_Timer } from "./timer";
 import BackgroundTimer from "react-native-background-timer";
 import moment from "moment";
+import { BleDeviceService } from "@domain/device/bleDeviceService";
+import { Melody, serializeMelody } from "@domain/ring/ringAlarm";
 
 export class TimerService {
 	timer = observable<I_Timer>({ status: "stop", remainingSecondes: 0, startDate: null, endDate: null });
+
+	constructor(private readonly deviceService: BleDeviceService) {}
 
 	play(remainingSecondes: number) {
 		console.log("## Play", remainingSecondes);
@@ -18,7 +22,8 @@ export class TimerService {
 			this.timer.update((previousState) => {
 				const { status, remainingSecondes, startDate, endDate } = previousState;
 
-				if (remainingSecondes <= 0) {
+				if (remainingSecondes <= 0 && status === "play") {
+					this.playMelody(Melody.SOS, 32);
 					BackgroundTimer.stopBackgroundTimer();
 					return { status: "stop", remainingSecondes: 0, startDate: null, endDate: null };
 				}
@@ -51,5 +56,9 @@ export class TimerService {
 				endDate,
 			};
 		});
+	}
+
+	playMelody(melody: Melody, power: number) {
+		return this.deviceService.write(serializeMelody(melody, power));
 	}
 }
