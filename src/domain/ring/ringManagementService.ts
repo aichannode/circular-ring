@@ -62,7 +62,7 @@ export class RingManagementService {
 	async init() {
 		const loadedRings = await this.userRingsStorage.load();
 		this._userRings.set(loadedRings ?? []);
-		await this.syncData();
+		this.syncData();
 	}
 
 	async getRings() {
@@ -71,10 +71,17 @@ export class RingManagementService {
 		const oldNamedRings = this._userRings.get();
 		const connectedRingId = this.deviceService.favoriteDeviceSNU.get();
 		const connectedRingName = this.deviceService.favoriteDevice.get()?.name;
+		const connected = this.deviceService.connectedDevice.get();
+
+		console.log("connected", connected);
+		console.log("oldNamedRings", oldNamedRings);
+		console.log("connectedRingId", connectedRingId);
+		console.log("connectedRingName", connectedRingName);
 
 		const newNamedRings: NamedUserRing[] = rings.map((r) => {
 			const oldRingName = oldNamedRings.filter((oldRing) => oldRing.id === r.id)[0]?.name;
 			return {
+				connected: connectedRingId === r.id ? true : false,
 				...r,
 				name: connectedRingName && connectedRingId && connectedRingId === r.id ? connectedRingName : oldRingName,
 			};
@@ -97,7 +104,7 @@ export class RingManagementService {
 					return userRing;
 				}
 			} catch (e) {
-				await this.deviceService.disconnect();
+				this.deviceService.disconnect();
 				throw e;
 			}
 		} else {
@@ -181,13 +188,10 @@ export class RingManagementService {
 
 				const unsubscribe = await this.deviceService.listen(Channel.DATA, Channel.DATA, (value) => {
 					this.logger.debug("FBC value", value);
-					if (value === ringDataEOF)
-					{
+					if (value === ringDataEOF) {
 						unsubscribe();
 						resolve(data);
-					}
-					else
-					{
+					} else {
 						data += value + "\n";
 						this._currentRingSyncState.set(SyncState.SYNCING);
 					}
@@ -217,14 +221,14 @@ export class RingManagementService {
 
 	async submitFirmwareVersion() {
 		const firmware = await this.deviceService.getResponse(Channel.FIRMWARE_VERSION);
-		if (firmware){ 
-			const {id} = this._userRings.get()[0];
-			await this.ringApi.submitFirmwareVersion(id,firmware);
-		}	
- 	}
+		if (firmware) {
+			const { id } = this._userRings.get()[0];
+			await this.ringApi.submitFirmwareVersion(id, firmware);
+		}
+	}
 
-	 async updateStoredRings(updatedRing: NamedUserRing ){
+	async updateStoredRings(updatedRing: NamedUserRing) {
 		this._userRings.update((oldRings) => oldRings.filter((r) => r.id !== updatedRing.id));
 		this._userRings.update((rings) => [updatedRing, ...rings]);
-	 }
+	}
 }

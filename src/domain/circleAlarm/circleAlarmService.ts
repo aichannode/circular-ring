@@ -11,7 +11,9 @@ import {
 } from "@domain/ring/ringAlarm";
 import { alarmDataEOF } from "@domain/ring/ringData";
 import { observable } from "micro-observables";
+import { Storage } from "@core/storage";
 
+const quickAccessAlarmStorageKey = "@quickAccessAlarm";
 const ID_FOR_CREATION = 255;
 export const MAX_ALARMS = 16;
 
@@ -19,9 +21,22 @@ export class CircleAlarmService {
 	private logger = getLogger("⏰ CircleAlarmService");
 
 	private _ringAlarms = observable<RingAlarm[]>([]);
+	quickAccessRingAlarmId = observable<RingAlarm | null>(null);
 	ringAlarms = this._ringAlarms.readOnly();
 
-	constructor(private readonly deviceService: BleDeviceService) {}
+	constructor(private readonly deviceService: BleDeviceService) {
+		this.loadQuickAccessAlarmFromStorage();
+	}
+
+	saveQuickAccessAlarm(quickAccessAlarm: RingAlarm) {
+		this.quickAccessRingAlarmId.update(() => ({ ...quickAccessAlarm }));
+		Storage.save(quickAccessAlarmStorageKey, quickAccessAlarm);
+	}
+
+	async loadQuickAccessAlarmFromStorage() {
+		const quickAccessAlarmStorage = await Storage.load<RingAlarm | null>(quickAccessAlarmStorageKey);
+		this.quickAccessRingAlarmId.set(quickAccessAlarmStorage);
+	}
 
 	async fetchAlarmList() {
 		this.logger.info("Retrieving alarm data...");
@@ -42,6 +57,7 @@ export class CircleAlarmService {
 		const newAlarmList: RingAlarm[] = [];
 		for (let i = 1; i < encodeAlarmList.length; i++) {
 			const data = deserializeAlarmData(encodeAlarmList[i]);
+
 			if (data) {
 				newAlarmList.push(data);
 			}
@@ -54,12 +70,15 @@ export class CircleAlarmService {
 			serializeAlarmData({ ...alarm, id: ID_FOR_CREATION, isExisting: true, isActivated: true }),
 			Channel.ALARM
 		);
+		console.log("Create Alarm", response);
 		if (!response) {
 			this.logger.warn("No response after alarm creation");
 			throw Error("Invalid alarm data message " + response);
 		}
+		console.log("getAlarmId(response)", response);
 		const id = getAlarmId(response);
 		this._ringAlarms.update((alarms) => [...alarms, { ...alarm, id, isExisting: true, isActivated: true }]);
+		return { ...alarm, id, isExisting: true, isActivated: true };
 	}
 
 	playMelody(melody: Melody, power: number) {

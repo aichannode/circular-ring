@@ -3,6 +3,7 @@ export interface UserRing {
 	firmware: string;
 	userId: number;
 	lastSyncDate: Date;
+	connected?: boolean;
 }
 
 export interface NamedUserRing extends UserRing {
