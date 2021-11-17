@@ -198,7 +198,7 @@ export const AlarmTile = () => {
 					<Light>{isAlarmOn ? "on" : "off"}</Light>
 				</TouchableOpacity>
 			</Tile>
-			<CircularBottomSheet snapPoints={[480]} ref={AlarmBottomSheetRef}>
+			<CircularBottomSheet snapPoints={[500]} ref={AlarmBottomSheetRef}>
 				<AlarmBottomSheet onClose={() => AlarmBottomSheetRef.current?.close()} />
 			</CircularBottomSheet>
 			<CircularBottomSheet snapPoints={[500]} ref={warningBottomSheet}>
@@ -227,6 +227,7 @@ const SheetContainer = styled(ResponsiveCenterView)`
 	justify-content: space-between;
 	align-items: center;
 	padding-top: 30px;
+	padding-bottom: 30px;
 `;
 
 const Light = styled.Text`
