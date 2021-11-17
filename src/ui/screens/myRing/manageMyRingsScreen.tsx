@@ -21,7 +21,7 @@ export const ManageMyRingsScreen = () => {
 
 	return (
 		<ScrollScreen contentContainerStyle={{ paddingHorizontal: 20 }}>
-			<InfoListHeader>{format("manage_rings.paired_rings_title")}</InfoListHeader>
+			<InfoListHeader style={{ marginLeft:0 }}>{format("manage_rings.paired_rings_title")}</InfoListHeader>
 			<Stack gap={25}>
 				{userRings.map((ring) => {
 					return (

@@ -3,7 +3,7 @@ import { colors } from "@ui/styles/colors";
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import { TouchableOpacity, View, Text } from "react-native";
 import { ResponsiveCenterView } from "@ui/components/layout";
-import { CircularBottomSheetHandle, CircularBottomScrollSheet } from "@ui/components/bottomSheet/bottomSheet";
+import { CircularBottomScrollSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import styled from "styled-components/native";
 import WheelPicker2 from "react-native-wheely";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
@@ -42,7 +42,7 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 					{() => <Text style={{ fontSize: 35 }}>{countdown(timerService.timer.get().remainingSecondes)}</Text>}
 				</CountdownCircleTimer>
 				<View
-					style={{ display: "flex", flexDirection: "row", width: 250, justifyContent: "space-evenly", paddingTop: 70 }}
+					style={{ display: "flex", flexDirection: "row", width: 250, justifyContent: "space-evenly", paddingTop: 40 }}
 				>
 					<SecondaryButton
 						onPress={() => {
@@ -106,7 +106,6 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 			</View>
 			<View
 				style={{
-					display: "flex",
 					flexDirection: "row",
 					width: "100%",
 					justifyContent: "space-between",
@@ -122,7 +121,7 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 					setShowCountdown(true);
 					timerService.play(selectedMinute * 60 + selectedSeconde * 5 + selectedHour * 60 * 60);
 				}}
-				style={{ marginTop: 30, width: 90, alignSelf: "center" }}
+				style={{ marginTop: 55, width: 90, alignSelf: "center" }}
 			>
 				Start
 			</PrimaryButton>
@@ -174,7 +173,7 @@ export const TimerTile = () => {
 					<Light>{timer ? countdown(timer) : "off"}</Light>
 				</TouchableOpacity>
 			</Tile>
-			<CircularBottomScrollSheet snapPoints={[480]} ref={TimerBottomSheetRef} allowSwipeDownToClose={false}>
+			<CircularBottomScrollSheet snapPoints={[480]} ref={TimerBottomSheetRef}  allowSwipeDownToClose={false}>
 				<TimerBottomSheet onClose={() => TimerBottomSheetRef.current?.close()} />
 			</CircularBottomScrollSheet>
 		</>
@@ -191,7 +190,6 @@ const SheetContainer = styled(ResponsiveCenterView)`
 	flex: 1;
 	justify-content: space-between;
 	align-items: center;
-	padding-top: 30px;
 `;
 
 const Bold = styled.Text`

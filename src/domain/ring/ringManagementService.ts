@@ -62,7 +62,7 @@ export class RingManagementService {
 	async init() {
 		const loadedRings = await this.userRingsStorage.load();
 		this._userRings.set(loadedRings ?? []);
-		await this.syncData();
+		this.syncData();
 	}
 
 	async getRings() {
@@ -97,7 +97,7 @@ export class RingManagementService {
 					return userRing;
 				}
 			} catch (e) {
-				await this.deviceService.disconnect();
+				this.deviceService.disconnect();
 				throw e;
 			}
 		} else {
