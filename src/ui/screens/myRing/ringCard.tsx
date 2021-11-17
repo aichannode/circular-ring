@@ -5,9 +5,11 @@ import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import dayjs from "dayjs";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
+import { Melody, serializeMelody } from "@domain/ring/ringAlarm";
+import { useServices } from "@core/services";
 
 interface RingCardProps {
 	ring: NamedUserRing;
@@ -19,7 +21,12 @@ interface RingCardProps {
 export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked, selected }) => {
 	const { format } = useI18n();
 	const options = ["Turn on", "Turn off"];
-	const [currentOption, setCurrentOption] = useState(selected ? options[0] : options[1]);
+	const [currentOption, setCurrentOption] = useState(ring.connected ? options[0] : options[1]);
+	const { bleDeviceService } = useServices();
+
+	useEffect(() => {
+		setCurrentOption(ring.connected ? options[0] : options[1]);
+	}, [ring.connected]);
 
 	return (
 		<Container style={style}>
@@ -41,7 +48,11 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 						disabled={false}
 					/>
 					{currentOption === options[0] && (
-						<Vibrate>
+						<Vibrate
+							onPress={() => {
+								bleDeviceService.write(serializeMelody(Melody.SYMPHONY, 50));
+							}}
+						>
 							<VibrateText>Vibrate</VibrateText>
 						</Vibrate>
 					)}
