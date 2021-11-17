@@ -66,6 +66,7 @@ export class BleDeviceService {
 
 	scannedDevices = this._scannedDevices.select((devicesMap) => [...devicesMap.values()]);
 
+	readonly connectedDevice = this._connectedDevice.readOnly();
 	readonly setupState: Observable<DeviceSetupState>;
 	readonly autoConnectState: Observable<DeviceAutoConnectState>;
 	readonly favoriteDevice = this._favoriteDevice.readOnly();
@@ -208,7 +209,6 @@ export class BleDeviceService {
 	}
 
 	async connect(device: Device) {
-		 
 		if (!device.name) {
 			this.logger.error("Error: trying to connect to unknown device");
 			return;
