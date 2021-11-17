@@ -12,7 +12,6 @@ import {
 import { alarmDataEOF } from "@domain/ring/ringData";
 import { observable } from "micro-observables";
 import { Storage } from "@core/storage";
-import { thisExpression } from "@babel/types";
 
 const quickAccessAlarmStorageKey = "@quickAccessAlarm";
 const ID_FOR_CREATION = 255;

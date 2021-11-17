@@ -6,14 +6,13 @@ import { WarningBottomSheet } from "@ui/screens/circleAlarm/warningBottomSheet";
 import { Weekdays, dateToAlarmTime, Melody, RingAlarm } from "@domain/ring/ringAlarm";
 import { useAutoConnectState } from "@domain/device/hooks";
 import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
-import RNSiwtch from "@estebanleclet/react-native-reanimated-switch-ts";
 import DatePicker from "react-native-date-picker";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { useServices } from "@core/services";
 import styled from "styled-components/native";
 import { colors } from "@ui/styles/colors";
 import { useI18n } from "@ui/i18n";
-import { Stack, ResponsiveCenterView } from "@ui/components/layout";
+import { ResponsiveCenterView } from "@ui/components/layout";
 
 interface AlarmBottomSheetProps {
 	onClose: () => void;
@@ -34,7 +33,7 @@ const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = () => {
 	const [smart, setSmart] = useState(false);
 	const { circleAlarmService } = useServices();
 
-	const { loading, alarms, loadAlarms } = useAlarms();
+	const { alarms, loadAlarms } = useAlarms();
 	const autoConnectState = useAutoConnectState();
 	const [quickAccessAlarm, setQuickAccessAlarm] = useState<RingAlarm | null>(null);
 
@@ -89,9 +88,7 @@ const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = () => {
 			}
 		} else if (isAlarmOn && alarm !== isAlarmOn) {
 			// put the existing alarm to off;
-			circleAlarmService.quickAccessRingAlarmId.update((previous) => {
-				return { ...previous, isActivated: false };
-			});
+			circleAlarmService.updateAlarm({ ...quickAccessAlarm, isActivated: true });
 		}
 	};
 
@@ -172,7 +169,7 @@ const TextAndSwitchContainer = styled.View`
 export const AlarmTile = () => {
 	const AlarmBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const warningBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const { loading, alarms, loadAlarms } = useAlarms();
+	const { alarms } = useAlarms();
 	const { format } = useI18n();
 	const { circleAlarmService } = useServices();
 	const [quickAccessAlarm, setQuickAccessAlarm] = useState<RingAlarm | null>(null);
@@ -230,14 +227,6 @@ const SheetContainer = styled(ResponsiveCenterView)`
 	justify-content: space-between;
 	align-items: center;
 	padding-top: 30px;
-`;
-
-const Container = styled(Stack)`
-	background-color: ${colors.white};
-	height: 50px;
-	margin-top: 10px;
-	display: flex;
-	flex-direction: row;
 `;
 
 const Light = styled.Text`
