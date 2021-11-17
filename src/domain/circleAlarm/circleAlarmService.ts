@@ -11,7 +11,10 @@ import {
 } from "@domain/ring/ringAlarm";
 import { alarmDataEOF } from "@domain/ring/ringData";
 import { observable } from "micro-observables";
+import { Storage } from "@core/storage";
+import { thisExpression } from "@babel/types";
 
+const quickAccessAlarmStorageKey = "@quickAccessAlarm";
 const ID_FOR_CREATION = 255;
 export const MAX_ALARMS = 16;
 
@@ -22,7 +25,19 @@ export class CircleAlarmService {
 	quickAccessRingAlarmId = observable<RingAlarm | null>(null);
 	ringAlarms = this._ringAlarms.readOnly();
 
-	constructor(private readonly deviceService: BleDeviceService) {}
+	constructor(private readonly deviceService: BleDeviceService) {
+		this.loadQuickAccessAlarmFromStorage();
+	}
+
+	saveQuickAccessAlarm(quickAccessAlarm: RingAlarm) {
+		this.quickAccessRingAlarmId.update(() => ({ ...quickAccessAlarm }));
+		Storage.save(quickAccessAlarmStorageKey, quickAccessAlarm);
+	}
+
+	async loadQuickAccessAlarmFromStorage() {
+		const quickAccessAlarmStorage = await Storage.load<RingAlarm | null>(quickAccessAlarmStorageKey);
+		this.quickAccessRingAlarmId.set(quickAccessAlarmStorage);
+	}
 
 	async fetchAlarmList() {
 		this.logger.info("Retrieving alarm data...");

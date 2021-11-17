@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, Platform } from "react-native";
 import styled from "styled-components/native";
 import { CirclesBanner } from "./circlesBanner";
-import { QuickAccess } from "./quickAccess";
+import { QuickAccess } from "./quickAccess/quickAccess";
 import { HomeBannerView } from "./homeBanner/homeBannerView";
 import { SyncBanner } from "./syncBanner";
 import { useSetupState } from "@domain/device/hooks";

@@ -8,7 +8,9 @@ import { Melody, serializeMelody } from "@domain/ring/ringAlarm";
 export class TimerService {
 	timer = observable<I_Timer>({ status: "stop", remainingSecondes: 0, startDate: null, endDate: null });
 
-	constructor(private readonly deviceService: BleDeviceService) {}
+	constructor(private readonly deviceService: BleDeviceService) {
+		console.log("TIMER SERVICE CONSTRUCT");
+	}
 
 	play(remainingSecondes: number) {
 		console.log("## Play", remainingSecondes);
