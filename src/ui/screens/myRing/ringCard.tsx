@@ -50,7 +50,7 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 					{currentOption === options[0] && (
 						<Vibrate
 							onPress={() => {
-								bleDeviceService.write(serializeMelody(Melody.SYMPHONY, 50));
+								bleDeviceService.write(serializeMelody(Melody.NOTIF1, 50));
 							}}
 						>
 							<VibrateText>Vibrate</VibrateText>
