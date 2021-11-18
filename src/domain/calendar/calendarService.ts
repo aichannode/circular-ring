@@ -86,7 +86,6 @@ export class CalendarService {
 			const categoryMap = new Map(
 				categories.map((category) => [category, tags.filter((tag) => tag.category === category)])
 			);
-			console.log("CategoryMap", categoryMap);
 			this._tagMap.set(categoryMap);
 		} catch (e) {
 			this.logger.warn("Error retrieving tags :", e);
