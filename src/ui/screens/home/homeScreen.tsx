@@ -46,6 +46,7 @@ export const HomeScreen: React.FC = () => {
 	}, [syncState]);
 
 	const homeBanner = useHomeBanner();
+	console.log("HomeBanner", homeBanner);
 
 	return (
 		<Container>
