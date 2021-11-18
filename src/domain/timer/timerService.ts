@@ -8,11 +8,10 @@ import { Melody, serializeMelody } from "@domain/ring/ringAlarm";
 export class TimerService {
 	timer = observable<I_Timer>({ status: "stop", remainingSecondes: 0, startDate: null, endDate: null });
 
-	constructor(private readonly deviceService: BleDeviceService) {
-		console.log("TIMER SERVICE CONSTRUCT");
-	}
+	constructor(private readonly deviceService: BleDeviceService) {}
 
 	play(remainingSecondes: number) {
+		this.deviceService.write("TMR" + remainingSecondes);
 		console.log("## Play", remainingSecondes);
 		this.timer.set({
 			status: "play",
@@ -25,7 +24,7 @@ export class TimerService {
 				const { status, remainingSecondes, startDate, endDate } = previousState;
 
 				if (remainingSecondes <= 0 && status === "play") {
-					this.playMelody(Melody.SOS, 32);
+					// this.playMelody(Melody.SOS, 32);
 					BackgroundTimer.stopBackgroundTimer();
 					return { status: "stop", remainingSecondes: 0, startDate: null, endDate: null };
 				}
@@ -45,9 +44,11 @@ export class TimerService {
 	stop() {
 		BackgroundTimer.stopBackgroundTimer();
 		this.timer.update(() => ({ status: "stop", remainingSecondes: 0, startDate: null, endDate: null }));
+		this.deviceService.write("TMR0");
 	}
 
 	pause() {
+		this.deviceService.write("TMR0");
 		BackgroundTimer.stopBackgroundTimer();
 		this.timer.update((previousState) => {
 			const { remainingSecondes, startDate, endDate } = previousState;
