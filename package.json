@@ -55,6 +55,7 @@
 		"react-native-location-enabler": "^4.1.0",
 		"react-native-mail": "^6.0.0",
 		"react-native-masked-text": "^1.13.0",
+		"react-native-nordic-dfu": "^3.2.1",
 		"react-native-reanimated": "^2.2.2",
 		"react-native-redash": "^16.2.2",
 		"react-native-safe-area-context": "^3.3.0",

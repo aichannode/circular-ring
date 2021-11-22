@@ -27,6 +27,7 @@ export enum Routes {
 	Home = "Home",
 	MyRing = "MyRing",
 	ManageMyRings = "ManageMyRings",
+	RingFirmwareUpdate = "RingFirmwareUpdate",
 	Activity = "Activity",
 	Sleep = "Sleep",
 	Alarm = "Alarm",
@@ -91,6 +92,7 @@ export type AppRoutesParams = {
 	[Routes.CalendarEditNotes]: { day: string; selectedTags?: CalendarTag[] };
 	[Routes.AllTags]: { day: string; selectedTags: CalendarTag[] };
 	[Routes.QuickAccess]: undefined;
+	[Routes.RingFirmwareUpdate]: undefined;
 };
 
 export const useRoutesNavigation = () => useNavigation<NativeStackNavigationProp<AppRoutesParams>>();

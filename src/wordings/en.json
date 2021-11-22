@@ -42,6 +42,7 @@
 	"header.manage_my_rings": "MANAGE MY RINGS",
 	"header.all_tags": "Search Notes",
 	"header.quickaccess": "QUICK ACCESS",
+	"header.ringUpdateFirmware": "RING FIRMWARE UPDATE",
 	"ring.battery.label": "BATTERY",
 	"ring.manage": "Manage my Rings",
 	"ring.factory_reset": "Factory Reset",
@@ -348,7 +349,7 @@
 	"manage_rings.ring.turn_on": "Turn on",
 	"manage_rings.ring.turn_off": "Turn off",
 	"manage_rings.ring.vibrate": "Vibrate",
-	"manage_rings.ring.rename" : "Please enter new name",
+	"manage_rings.ring.rename": "Please enter new name",
 	"manage_rings.ring.default_name": "Circular",
 	"manage_rings.ring.sync_date_prefix": "Last Synced",
 	"manage_rings.ring.version_prefix": "Version",
@@ -439,5 +440,9 @@
 	"quickaccess.timerdesc": "Make the ring vibrate after a specified delay.",
 	"quickaccess.displayed": "DISPLAYED",
 	"quickaccess.hidden": "HIDDEN",
-	"quickaccess.description": "Add and organize shortcuts to appear in the quick access menu"
+	"quickaccess.description": "Add and organize shortcuts to appear in the quick access menu",
+	"ring.firmware": "Firmware",
+	"updateFirmware.uptodate": "Up to date",
+	"updateFirmware.outofdate": "Out of date",
+	"updateFirmware.newVersionAvailable": "A new version is available. Please update in order to access the newest features and bug fixes."
 }

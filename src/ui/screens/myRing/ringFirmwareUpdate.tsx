@@ -14,8 +14,10 @@ import { useObservable } from "micro-observables";
 import { NamedUserRing } from "@domain/ring/ring";
 import { RingViewModel } from "@ui/screens/myRing/viewModel/RingViewModel";
 import { colors } from "@ui/styles/colors";
+import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
+import { NordicDFU, DFUEmitter } from "react-native-nordic-dfu";
 
-export const MyRingScreen: React.FC = () => {
+export const RingFirmwareUpdate: React.FC = () => {
 	const { bleDeviceService } = useServices();
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
@@ -25,77 +27,78 @@ export const MyRingScreen: React.FC = () => {
 	const viewModel = new RingViewModel();
 	const [currentRing, setCurrentRing] = useState<NamedUserRing>(userRings[0]);
 
-	const renameAlert = () => {
-		Alert.prompt(format("manage_rings.ring.rename"), "", [
-			{
-				text: format("global.cancel"),
-				style: "cancel",
-			},
-			{
-				text: format("global.edit"),
-				onPress: (newName) => {
-					if (newName && newName !== "") {
-						bleDeviceService.write(`${Channel.RENAME}${newName.toUpperCase()}`);
-						userRings.map((ring) => {
-							if (ring.id === currentRing.id) {
-								const upTodateRing = { ...ring, name: "Circular " + viewModel.formatRingName(newName) };
-								setCurrentRing(upTodateRing);
-								ringManagementService.updateStoredRings(upTodateRing);
-								return { ...ring, name: viewModel.formatRingName(newName) };
-							}
-							return ring;
-						});
-					}
-				},
-			},
-		]);
+	const updateFirmware = () => {
+		console.log("FIrmwareUpdate");
 	};
 
-	useEffect(() => {
-		console.log("display ring name");
-	}, [currentRing]);
 	return (
 		<Container>
-			<RingBatteryView size={140} detailed />
-			<StyledPrimaryText
-				onPress={() => {
-					renameAlert();
+			<StyledPrimaryText>Current version</StyledPrimaryText>
+			<VersionContainer
+				style={{
+					shadowColor: "#000",
+					shadowOffset: {
+						width: 0,
+						height: 3,
+					},
+					shadowOpacity: 0.29,
+					shadowRadius: 4.65,
+
+					elevation: 7,
 				}}
 			>
-				{currentRing.name}
-			</StyledPrimaryText>
-			<InfoListItem
-				name={format("ring.firmware")}
-				hasDisclosure
-				action={() => {
-					navigate(Routes.RingFirmwareUpdate);
-				}}
-			>
-				<FirmwareVersionText>0.32.1</FirmwareVersionText>
-			</InfoListItem>
-
-			<InfoListItem
-				name={format("ring.manage")}
-				hasDisclosure
-				action={() => {
-					navigate(Routes.ManageMyRings);
-				}}
-			/>
-
-			<InfoListItem
-				style={{ marginTop: 20 }}
-				name={format("ring.factory_reset")}
-				hasDisclosure
-				action={() => {
-					factoryResetBottomSheetRef.current?.present();
-				}}
-			/>
+				<VersionText>0.32.1</VersionText>
+				<OutOfDate>{format("updateFirmware.outofdate")}</OutOfDate>
+			</VersionContainer>
+			<VersionInfo>{format("updateFirmware.newVersionAvailable")}</VersionInfo>
+			<PrimaryButton onPress={updateFirmware} style={{ position: "absolute", bottom: "10%" }}>
+				{" "}
+				Update
+			</PrimaryButton>
 			<CircularBottomSheet snapPoints={[480]} ref={factoryResetBottomSheetRef}>
 				<FactoryResetBottomSheet onClose={() => factoryResetBottomSheetRef.current?.close()} />
 			</CircularBottomSheet>
 		</Container>
 	);
 };
+
+const VersionInfo = styled.Text`
+	text-align: center;
+	margin-horizontal: 60px;
+	color: ${colors.textPlaceholder};
+	margin-top: 20%;
+`;
+
+const VersionContainer = styled.View`
+  overflow-hidden;
+  background-color: white;
+       justify-content: center;
+       border-radius: 10px;
+  margin-top: 24px;
+`;
+
+const VersionText = styled.Text`
+	margin-top: 16px;
+	margin-horizontal: 24px;
+	font-size: 41px;
+	text-align: center;
+`;
+
+const UpToDate = styled.Text`
+	font-size: 18px;
+	color: ${colors.orangeRed};
+	margin: auto;
+	margin-top: 12px;
+	margin-bottom: 22px;
+`;
+
+const OutOfDate = styled.Text`
+	font-size: 18px;
+	color: ${colors.orangeRed};
+	margin: auto;
+	margin-top: 12px;
+	margin-bottom: 22px;
+`;
 
 const Container = styled.View`
 	flex: 1;
@@ -104,11 +107,6 @@ const Container = styled.View`
 `;
 
 const StyledPrimaryText = styled(PrimaryText)`
-	margin-top: 20px;
-	margin-bottom: 80px;
-`;
-
-const FirmwareVersionText = styled.Text`
-	font-size: 14px;
-	color: ${colors.textPlaceholder};
+       color: ${colors.textPlaceholder}
+  font-size: 14px;
 `;
