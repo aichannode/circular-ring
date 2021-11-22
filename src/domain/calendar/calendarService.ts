@@ -70,7 +70,6 @@ export class CalendarService {
 	private async fetchAllTags() {
 		try {
 			let tags = await this.calendarApi.getAllTags();
-			console.log("Tags", tags);
 			if (tags.length === 0) {
 				await this.calendarApi.createTag("Romain", "debug");
 				await this.calendarApi.createTag("Tom", "debug");

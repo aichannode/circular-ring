@@ -281,6 +281,7 @@ export class BleDeviceService {
 				this._connectionState.set(DeviceConnectionState.CONNECTED);
 			}
 			const device = await this.findFavoriteDevice();
+			console.log("Favorite Devecies");
 			if (device) {
 				return this.connect(device);
 			}

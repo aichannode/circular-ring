@@ -21,7 +21,6 @@ export class CalendarApi {
 
 	async getAllTags(): Promise<CalendarTag[]> {
 		const result = await this.apiService.get<CalendarTag[]>("/notes/me/tags");
-		console.log("Result Data", result.data);
 		return result.data;
 	}
 
@@ -35,7 +34,6 @@ export class CalendarApi {
 
 	async getMonthCalendars(date: Date): Promise<Calendar[]> {
 		const result = await this.apiService.get<CalendarDto[]>("/calendar", { params: { date } });
-		console.log("Result CalendarMonth", result.data);
 		return CalendarApi.calendarListFromDto(result.data);
 	}
 
