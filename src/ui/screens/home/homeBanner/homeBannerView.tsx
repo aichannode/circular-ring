@@ -21,7 +21,7 @@ export const HomeBannerView: React.FC<HomeBannerViewProps> = ({ banner, style })
 	return (
 		<Pressable
 			onPress={() => {
-				const action = banner.clientActions[0];
+				const action = banner.actions[0];
 				if (action) {
 					switch (action.type) {
 						case BannerAction.OPEN_WEB:
@@ -40,11 +40,10 @@ export const HomeBannerView: React.FC<HomeBannerViewProps> = ({ banner, style })
 		>
 			<Container>
 				<View style={{ marginRight: 30 }}>
-					{banner.iconType === IconType.URL ? <Image source={{ uri: banner.icon }} /> : null}
+					{banner.icon.type === IconType.URL ? <Image source={{ uri: banner.icon.type }} /> : null}
 				</View>
 				<Stack gap={10} style={{ flex: 1 }}>
 					<SecondaryText style={{ color: colors.white, fontWeight: "500" }}>{banner.title}</SecondaryText>
-					<SecondaryText style={{ color: colors.white }}>{banner.body}</SecondaryText>
 				</Stack>
 				<CloseButton padding={16} onClose={() => homeBannerService.dismiss(banner)} />
 			</Container>
