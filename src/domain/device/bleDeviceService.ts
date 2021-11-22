@@ -262,33 +262,6 @@ export class BleDeviceService {
 		}
 		const manager = this.bluetoothService.manager;
 		this.logger.info("DFU SCAN STARTED");
-		// this._scanning.set(true);
-		// manager.startDeviceScan([DFUNUServiceUUID, NUServiceUUID], null, (error, device) => {
-		// 	console.log("Scanned Device CIR-141", device?.name, device?.id);
-		// 	if (error) {
-		// 		this.logger.error(error);
-		// 		this.stopScan();
-		// 		return;
-		// 	}
-		// 	if (!device) {
-		// 		this.logger.error("Unknown device found");
-		// 		return;
-		// 	}
-		// 	if (device.name === "Circular Update") {
-		// 		console.log("CIR-141 founc CIRCULAR UPDATE DEVICE");
-
-		// NordicDFU.startDFU({
-		// 	deviceAddress: device?.id,
-		// 	deviceName: device.name,
-		// 	filePath: "/",
-		// })
-		// 	.then((res) => console.log("Transfer done: ", res))
-		// 	.catch(console.log);
-		// 		this.stopScan();
-		// 	}
-		// });
-
-		// const manager = this.bluetoothService.manager;
 
 		const scanPromise = new Promise<Device>((resolve, reject) => {
 			if (this._scanning.get()) {
@@ -315,12 +288,18 @@ export class BleDeviceService {
 		try {
 			const dfuDevice = await timedPromise(scanPromise, findDeviceTimeout);
 			console.log("DFU MODE Scanned Device", dfuDevice);
-			FB.fetch("GET", "http://localhost:1234/app.zip").then((res) => {
+			FB.fetch("GET", "http://192.168.1.104/firmware.zip").then((res) => {
 				console.log("file saved to", res.path());
+				console.log(
+					"Device Name",
+					dfuDevice?.name !== undefined ? dfuDevice?.name : null,
+					" Device ID = ",
+					dfuDevice?.id
+				);
 				NordicDFU.startDFU({
 					deviceAddress: dfuDevice?.id,
 					deviceName: dfuDevice?.name !== undefined ? dfuDevice?.name : null,
-					filePath: res.patch(),
+					filePath: res.path(),
 				})
 					.then((res) => console.log("Transfer done: ", res))
 					.catch(console.log);
@@ -331,12 +310,6 @@ export class BleDeviceService {
 			await delay(scanRetryTimeout);
 			return this.findFavoriteDevice();
 		}
-
-		// const currentDevices = this._scannedDevices.get();
-		// if (!currentDevices.has(device.id)) {
-		// 	this._scannedDevices.set(new Map(currentDevices).set(device.id, device));
-		// 	this.logger.info("New device", device?.name, device?.id);
-		// }
 	}
 
 	stopScan() {
