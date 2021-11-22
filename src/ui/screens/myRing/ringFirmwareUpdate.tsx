@@ -17,6 +17,20 @@ import { colors } from "@ui/styles/colors";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { NordicDFU, DFUEmitter } from "react-native-nordic-dfu";
 
+const startDFU = async (device_id: string, bleService) => {
+	await bleService.write("CTR1");
+	await bleService.disconnect();
+
+	console.log("Starting DFU");
+	// NordicDFU.startDFU({
+	// 	deviceAddress: device_id,
+	// 	deviceName: "Circular Update",
+	// 	filePath: "/",
+	// })
+	// 	.then((res) => console.log("Transfer done: ", res))
+	// 	.catch(console.log);
+};
+
 export const RingFirmwareUpdate: React.FC = () => {
 	const { bleDeviceService } = useServices();
 	const { navigate } = useRoutesNavigation();
@@ -26,10 +40,7 @@ export const RingFirmwareUpdate: React.FC = () => {
 	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const viewModel = new RingViewModel();
 	const [currentRing, setCurrentRing] = useState<NamedUserRing>(userRings[0]);
-
-	const updateFirmware = () => {
-		console.log("FIrmwareUpdate");
-	};
+	const connectedRing = useObservable(bleDeviceService.connectedDevice);
 
 	return (
 		<Container>
@@ -51,7 +62,15 @@ export const RingFirmwareUpdate: React.FC = () => {
 				<OutOfDate>{format("updateFirmware.outofdate")}</OutOfDate>
 			</VersionContainer>
 			<VersionInfo>{format("updateFirmware.newVersionAvailable")}</VersionInfo>
-			<PrimaryButton onPress={updateFirmware} style={{ position: "absolute", bottom: "10%" }}>
+			<PrimaryButton
+				onPress={() => {
+					if (connectedRing) {
+						console.log("Current Rings", connectedRing?.id);
+						startDFU(connectedRing?.id, bleDeviceService);
+					}
+				}}
+				style={{ position: "absolute", bottom: "10%" }}
+			>
 				{" "}
 				Update
 			</PrimaryButton>

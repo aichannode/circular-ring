@@ -36,6 +36,8 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	const setupState = useSetupState();
 	const devices = useScannedDevices();
 
+	console.log("CIR-141 SCANNED DEVICES -> ", devices);
+
 	const logout = useCallback(async () => {
 		await userService.logout();
 	}, []);

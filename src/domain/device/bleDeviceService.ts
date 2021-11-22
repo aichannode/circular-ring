@@ -184,6 +184,7 @@ export class BleDeviceService {
 		this.logger.info("SCAN STARTED");
 		this._scanning.set(true);
 		manager.startDeviceScan([NUServiceUUID], null, (error, device) => {
+			console.log("Scanned Device CIR-141", device);
 			if (error) {
 				this.logger.error(error);
 				this.stopScan();

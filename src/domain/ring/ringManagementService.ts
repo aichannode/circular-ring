@@ -46,7 +46,7 @@ export class RingManagementService {
 			this._userRings.update((rings) => {
 				return rings.map((r) => {
 					if (r.id === snu) {
-						return { ...r, name: this.deviceService.favoriteDevice.get()?.name ?? r.name };
+						return { ...r, name: this.deviceService.favoriteDevice.get()?.name ?? r.name, connected: true };
 					} else {
 						return r;
 					}
