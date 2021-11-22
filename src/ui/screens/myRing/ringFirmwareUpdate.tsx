@@ -18,8 +18,7 @@ import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { NordicDFU, DFUEmitter } from "react-native-nordic-dfu";
 
 const startDFU = async (device_id: string, bleService) => {
-	await bleService.write("CTR1");
-	await bleService.disconnect();
+	await bleService.startDfuMode();
 
 	console.log("Starting DFU");
 	// NordicDFU.startDFU({

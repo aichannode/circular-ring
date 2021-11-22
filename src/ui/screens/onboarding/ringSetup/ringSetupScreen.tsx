@@ -36,7 +36,7 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	const setupState = useSetupState();
 	const devices = useScannedDevices();
 
-	console.log("CIR-141 SCANNED DEVICES -> ", devices);
+	// console.log("CIR-141 SCANNED DEVICES -> ", devices);
 
 	const logout = useCallback(async () => {
 		await userService.logout();
@@ -44,6 +44,7 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 
 	useEffect(() => {
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
+			console.log("CIR-141 START SCAN");
 			bleDeviceService.startScan();
 		}
 		if (setupState === DeviceSetupState.LOCATION_DISABLED) {

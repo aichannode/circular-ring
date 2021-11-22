@@ -42,6 +42,8 @@ import { CalendarScreen } from "@ui/screens/calendar/calendarScreen";
 import { Tutorial } from "@ui/screens/onboarding/tutorial/tutorial";
 import { QuickAccess } from "@ui/screens/quickaccess/quickAccess";
 import { RingFirmwareUpdate } from "@ui/screens/myRing/ringFirmwareUpdate";
+import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
+import { useAutoConnectState } from "@domain/device/hooks";
 
 const SetupStack = createNativeStackNavigator();
 

@@ -26,6 +26,7 @@ export const MyRingBattery: React.FC<MyRingBatteryProps> = ({ full, stalled }) =
 		case DeviceAutoConnectState.SEARCHING:
 		case DeviceAutoConnectState.CONNECTING:
 		case DeviceAutoConnectState.DISCONNECTED:
+		case DeviceAutoConnectState.UPDATE:
 			return (
 				<Container
 					onPress={() => (stalled !== true ? navigation.navigate(Routes.MyRing) : console.log("Stalled true", stalled))}

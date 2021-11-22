@@ -14,11 +14,19 @@ import { getUTCTimestamp } from "@utils/date";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 import { LocationEnabler } from "./locationEnabler";
 import { NamedDevice } from "./namedDevice";
+import { NordicDFU, DFUEmitter } from "react-native-nordic-dfu";
+import RNFetchBlob from "rn-fetch-blob";
+
+const FB = RNFetchBlob.config({
+	fileCache: true,
+	appendExt: "zip",
+});
 
 export enum DeviceConnectionState {
 	DISCONNECTED = "DISCONNECTED",
 	CONNECTING = "CONNECTING",
 	CONNECTED = "CONNECTED",
+	UPDATE = "UPDATE",
 }
 export enum DeviceSetupState {
 	FINISHED = "FINISHED",
@@ -34,7 +42,10 @@ export enum DeviceAutoConnectState {
 	SEARCHING = "SEARCHING",
 	CONNECTING = "CONNECTING",
 	CONNECTED = "CONNECTED",
+	UPDATE = "UPDATE",
 }
+
+const DFUNUServiceUUID = "0000FE59-0000-1000-8000-00805F9B34FB";
 
 const NUServiceUUID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
 const RXCharacteristicUUID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
@@ -76,6 +87,7 @@ export class BleDeviceService {
 	readonly currentRingLiveData = this._currentRingLiveData.readOnly();
 
 	private onMessageReceived = new Signal<string>();
+	connectionState = this._connectionState;
 
 	constructor(
 		private readonly bluetoothService: BluetoothService,
@@ -128,6 +140,9 @@ export class BleDeviceService {
 				if (connectionState === DeviceConnectionState.CONNECTING) {
 					return DeviceAutoConnectState.CONNECTING;
 				}
+				if (connectionState === DeviceConnectionState.UPDATE) {
+					return DeviceAutoConnectState.UPDATE;
+				}
 				if (looking) {
 					return DeviceAutoConnectState.SEARCHING;
 				}
@@ -150,7 +165,9 @@ export class BleDeviceService {
 		const loadedDevice = await this.favoriteDeviceStorage.load();
 		this.checkSettings();
 		this._favoriteDevice.set(loadedDevice);
+		console.log("CIR-141 INIT");
 		if (loadedDevice) {
+			console.log("CIR-141 init LOADED DEVICE");
 			this.autoConnectFavoriteDevice();
 		}
 		this.userService.user.subscribe(async (user) => {
@@ -184,7 +201,7 @@ export class BleDeviceService {
 		this.logger.info("SCAN STARTED");
 		this._scanning.set(true);
 		manager.startDeviceScan([NUServiceUUID], null, (error, device) => {
-			console.log("Scanned Device CIR-141", device);
+			console.log("Scanned Device CIR-141", device?.name, device?.id);
 			if (error) {
 				this.logger.error(error);
 				this.stopScan();
@@ -200,6 +217,126 @@ export class BleDeviceService {
 				this.logger.info("New device", device?.name, device?.id);
 			}
 		});
+	}
+
+	async startDfuMode() {
+		// const device = this._connectedDevice.get();
+		this.logger.info("START DFU MODE");
+		this._connectionState.set(DeviceConnectionState.UPDATE);
+		await this.write("CTR1"); // send DFU signal
+		// this._connectedDevice.set(null);
+		// this._onDeviceDisconnectedSubscription?.remove();
+		// this._onDeviceDisconnectedSubscription = null;
+		// this._currentRingBattery.set(null);
+		// this._batteryListenerUnsubscribe?.();
+		this.startDFUScan();
+		// if (!device) {
+		// 	this.logger.info("Already disconnected");
+		// 	return;
+		// }
+		// this.logger.info("Disconnecting from device", device.name);
+		// await device.cancelConnection();
+		// this.logger.info(`Disconnection from device ${device.name} succeeded`);
+	}
+
+	async startDFUScan() {
+		console.log("Start DFU Scan");
+		if (this._scanning.get()) {
+			this.logger.warn("Cannot scan: Already scanning");
+			return;
+		}
+		await this.bluetoothService.enable();
+		if (Platform.OS === "android") {
+			this.checkSettings();
+			if (!this._locationEnabledAndroid.get()) {
+				await new Promise<void>((resolve) => {
+					this.requestLocation();
+					const unsub = this._locationEnabledAndroid.subscribe((enabled) => {
+						if (enabled) {
+							resolve();
+							unsub();
+						}
+					});
+				});
+			}
+		}
+		const manager = this.bluetoothService.manager;
+		this.logger.info("DFU SCAN STARTED");
+		// this._scanning.set(true);
+		// manager.startDeviceScan([DFUNUServiceUUID, NUServiceUUID], null, (error, device) => {
+		// 	console.log("Scanned Device CIR-141", device?.name, device?.id);
+		// 	if (error) {
+		// 		this.logger.error(error);
+		// 		this.stopScan();
+		// 		return;
+		// 	}
+		// 	if (!device) {
+		// 		this.logger.error("Unknown device found");
+		// 		return;
+		// 	}
+		// 	if (device.name === "Circular Update") {
+		// 		console.log("CIR-141 founc CIRCULAR UPDATE DEVICE");
+
+		// NordicDFU.startDFU({
+		// 	deviceAddress: device?.id,
+		// 	deviceName: device.name,
+		// 	filePath: "/",
+		// })
+		// 	.then((res) => console.log("Transfer done: ", res))
+		// 	.catch(console.log);
+		// 		this.stopScan();
+		// 	}
+		// });
+
+		// const manager = this.bluetoothService.manager;
+
+		const scanPromise = new Promise<Device>((resolve, reject) => {
+			if (this._scanning.get()) {
+				this.logger.error("Cannot find device: Already scanning");
+				reject("Already Scanning");
+			}
+			this.logger.info("Scanning to autoconnect to", "Circular Update");
+			this._scanning.set(true);
+			manager.startDeviceScan([DFUNUServiceUUID, NUServiceUUID], { scanMode: ScanMode.LowLatency }, (error, device) => {
+				if (error) {
+					this.logger.error("Error during scan", error);
+					this.stopScan();
+					reject(error);
+				} else if (device) {
+					this.logger.info(`Discovered device named ${device.name} with id ${device.id} ... ${JSON.stringify(device)}`);
+					if (device.name === "Circular Update") {
+						this.stopScan();
+						resolve(device);
+					}
+				}
+			});
+		});
+
+		try {
+			const dfuDevice = await timedPromise(scanPromise, findDeviceTimeout);
+			console.log("DFU MODE Scanned Device", dfuDevice);
+			FB.fetch("GET", "http://localhost:1234/app.zip").then((res) => {
+				console.log("file saved to", res.path());
+				NordicDFU.startDFU({
+					deviceAddress: dfuDevice?.id,
+					deviceName: dfuDevice?.name !== undefined ? dfuDevice?.name : null,
+					filePath: res.patch(),
+				})
+					.then((res) => console.log("Transfer done: ", res))
+					.catch(console.log);
+			});
+		} catch (e) {
+			this.logger.warn("Device not found:", e, "retrying in 10 seconds ");
+			this.stopScan();
+			await delay(scanRetryTimeout);
+			return this.findFavoriteDevice();
+		}
+
+		// const currentDevices = this._scannedDevices.get();
+		// if (!currentDevices.has(device.id)) {
+		// 	this._scannedDevices.set(new Map(currentDevices).set(device.id, device));
+		// 	this.logger.info("New device", device?.name, device?.id);
+		// }
 	}
 
 	stopScan() {
@@ -258,7 +395,9 @@ export class BleDeviceService {
 			this._batteryListenerUnsubscribe?.();
 			this._currentRingBattery.set(null);
 			this.logger.info("Trying to reconnect to", connectedDevice.name);
-			this.autoConnectFavoriteDevice();
+			if (this._connectionState.get() === DeviceConnectionState.UPDATE) {
+				this.startDFUScan();
+			} else this.autoConnectFavoriteDevice();
 		} else {
 			this.logger.warn("Disconnected from unknown device");
 		}
