@@ -31,6 +31,8 @@ const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = () => {
 		Weekdays.WEDNESDAY,
 		Weekdays.THURSDAY,
 		Weekdays.FRIDAY,
+		Weekdays.SATURDAY,
+		Weekdays.SUNDAY,
 	];
 
 	const newAlarm = {
