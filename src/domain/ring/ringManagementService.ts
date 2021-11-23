@@ -221,8 +221,9 @@ export class RingManagementService {
 
 	async submitFirmwareVersion() {
 		const firmware = await this.deviceService.getResponse(Channel.FIRMWARE_VERSION);
-		if (firmware) {
-			const { id } = this._userRings.get()[0];
+		if (firmware && this._userRings.get().filter((r) => r.connected === true).length) {
+			const { id } = this._userRings.get().filter((r) => r.connected === true)[0];
+			this.logger.info("Submit User Ring", this._userRings.get());
 			await this.ringApi.submitFirmwareVersion(id, firmware);
 		}
 	}

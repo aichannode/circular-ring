@@ -51,7 +51,6 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 						<Vibrate
 							onPress={() => {
 								bleDeviceService.write(serializeMelody(Melody.NOTIF1, 50));
-								bleDeviceService.write("FWV");
 							}}
 						>
 							<VibrateText>Vibrate</VibrateText>
