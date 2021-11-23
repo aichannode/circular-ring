@@ -1,3 +1,5 @@
+import { WordingKey } from "src/wordings"
+
 export enum IconType {
 	URL = "URL",
 	LOCAL = "LOCAL",
@@ -27,12 +29,25 @@ export enum BannerComponentType {
 	USER_INPUT = "USER_INPUT"
 }
 
-type ParagraphComponentConfigurationDto = {
+export enum BannerStyle {
+	ORANGE_GRADIENT = "ORANGE_GRADIENT",
+	WHITE_WITH_ORANGE_BORDER = "WHITE_WITH_ORANGE_BORDER",
+	WHITE_WITH_LIGHT_BLUE_BORDER = "WHITE_WITH_LIGHT_BLUE_BORDER",
+	WHITE_WITH_DARK_BLUE_BORDER = "WHITE_WITH_DARK_BLUE_BORDER",
+	WHITE_WITH_RED_BORDER = "WHITE_WITH_RED_BORDER",
+	WHITE_WITH_PURPLE_GRADIENT = "WHITE_WITH_PURPLE_GRADIENT"
+}
+
+export enum ParagraphStyle {
+	DEFAULT = "DEFAULT"
+}
+
+export type ParagraphComponentConfigurationDto = {
 	type: BannerComponentType.PARAGRAPH;
 	configuration: {
-		style: string;
-		translationKey: string;
-		properties: Record<string, string>;
+		style: ParagraphStyle;
+		translationKey: WordingKey;
+		properties?: Record<string, string | number | boolean | Date | null | undefined>;
 	}
 }
 
@@ -70,9 +85,9 @@ export interface HomeBanner {
 	id: number;
 	title: string;
 	icon: Icon;
-	priority: 0;
+	priority: number;
 	actions: ClientAction[];
-	components: BannerComponentDto
+	components: BannerComponentDto[];
 }
 
 export interface ReadBannersInfo {

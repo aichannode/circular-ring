@@ -1,5 +1,6 @@
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
+import { TextStyle } from "react-native";
 import styled from "styled-components/native";
 
 export const PrimaryText = styled.Text`
@@ -21,8 +22,8 @@ export const Strong = styled.Text`
 	font-weight: bold;
 	color: ${colors.primary};
 `;
-export const Colored = styled.Text`
-	color: ${colors.primary};
+export const Colored = styled.Text<TextStyle>`
+	${props => props.color?.toString() ?? `color: ${colors.primary}`};
 `;
 export const Bold = styled.Text`
 	font-weight: bold;
