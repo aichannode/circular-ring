@@ -1,6 +1,7 @@
 {
 	"app_name": "Circular Ring",
 	"ok": "Ok",
+	"retry": "Retry",
 	"back": "Back",
 	"create": "Create",
 	"continue": "Continue",
@@ -444,5 +445,7 @@
 	"ring.firmware": "Firmware",
 	"updateFirmware.uptodate": "Up to date",
 	"updateFirmware.outofdate": "Out of date",
-	"updateFirmware.newVersionAvailable": "A new version is available. Please update in order to access the newest features and bug fixes."
+	"updateFirmware.newVersionAvailable": "A new version is available. Please update in order to access the newest features and bug fixes.",
+	"updateFirmware.updateFailed": "Update Failed",
+	"updateFirmware.updateFailed.description": "The firmware update coudn’t be completed. Please check that your ring’s battery is above 20% or that is is charging. \n\n\n It also might of failed for another reason such as your ring being too far away from your phone."
 }

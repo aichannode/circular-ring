@@ -5,7 +5,7 @@ import { RingBatteryView } from "@ui/components/ring/ringBatteryView";
 import { PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
-import { FactoryResetBottomSheet } from "@ui/screens/myRing/factoryResetBottomSheet";
+import { UpdateFailedBottomSheet } from "@ui/screens/myRing/UpdateFailedBottomSheet";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
 import styled from "styled-components/native";
@@ -21,13 +21,6 @@ const startDFU = async (device_id: string, bleService) => {
 	await bleService.startDfuMode();
 
 	console.log("Starting DFU");
-	// NordicDFU.startDFU({
-	// 	deviceAddress: device_id,
-	// 	deviceName: "Circular Update",
-	// 	filePath: "/",
-	// })
-	// 	.then((res) => console.log("Transfer done: ", res))
-	// 	.catch(console.log);
 };
 
 export const RingFirmwareUpdate: React.FC = () => {
@@ -36,7 +29,7 @@ export const RingFirmwareUpdate: React.FC = () => {
 	const { format } = useI18n();
 	const { ringManagementService } = useServices();
 	const userRings = useObservable(ringManagementService.userRings);
-	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
+	const UpdateFailedBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const viewModel = new RingViewModel();
 	const [currentRing, setCurrentRing] = useState<NamedUserRing>(userRings[0]);
 	const connectedRing = useObservable(bleDeviceService.connectedDevice);
@@ -65,7 +58,8 @@ export const RingFirmwareUpdate: React.FC = () => {
 				onPress={() => {
 					if (connectedRing) {
 						console.log("Current Rings", connectedRing?.id);
-						startDFU(connectedRing?.id, bleDeviceService);
+						// startDFU(connectedRing?.id, bleDeviceService);
+						UpdateFailedBottomSheetRef.current.present();
 					}
 				}}
 				style={{ position: "absolute", bottom: "10%" }}
@@ -73,8 +67,8 @@ export const RingFirmwareUpdate: React.FC = () => {
 				{" "}
 				Update
 			</PrimaryButton>
-			<CircularBottomSheet snapPoints={[480]} ref={factoryResetBottomSheetRef}>
-				<FactoryResetBottomSheet onClose={() => factoryResetBottomSheetRef.current?.close()} />
+			<CircularBottomSheet snapPoints={[580]} ref={UpdateFailedBottomSheetRef}>
+				<UpdateFailedBottomSheet onClose={() => UpdateFailedBottomSheetRef.current?.close()} />
 			</CircularBottomSheet>
 		</Container>
 	);
