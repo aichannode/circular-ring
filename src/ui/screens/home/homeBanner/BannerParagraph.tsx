@@ -1,9 +1,9 @@
 import { ParagraphComponentConfigurationDto, ParagraphStyle } from "@domain/homeBanner/homeBanner";
+import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import { ColorValue } from "react-native";
-import styled from "styled-components/native";
 
 type Props = ParagraphComponentConfigurationDto["configuration"] & {
     /**
@@ -16,27 +16,22 @@ type Props = ParagraphComponentConfigurationDto["configuration"] & {
     coloredTagColor?: ColorValue
 }
 
-const Text = styled.Text<{style: ParagraphStyle, useContrastColor?: boolean}>`
-    font-size: 14px;
-    color: ${({style, useContrastColor}) => {
-        switch(style) {
-            default: return useContrastColor
-                ? colors.white
-                : colors.textPrimary
-        }
-    }}
-`;
+
+function getTextColor(style: ParagraphStyle, useContrastColor?: boolean) {
+    switch(style) {
+        default: return useContrastColor
+            ? colors.white
+            : colors.textPrimary
+    }
+}
 
 function BannerParagraph({coloredTagColor, translationKey, style, properties, useContrastColor}: Props) {
     const { format } = useI18n({color: coloredTagColor})
 
     return (
-        <Text
-            style={style}
-            useContrastColor={useContrastColor}
-        >
+        <SecondaryText style={{color: getTextColor(style, useContrastColor)}}>
             {format(translationKey, properties)}
-        </Text>
+        </SecondaryText>
     )
 }
 

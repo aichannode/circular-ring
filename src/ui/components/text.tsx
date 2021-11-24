@@ -15,6 +15,12 @@ export const TertiaryText = styled.Text`
 export const TitleText = styled.Text`
 	${textStyles.title};
 `;
+export const SubTitleText = styled.Text`
+	${textStyles.subtitle};
+`
+export const MetaDataText = styled.Text`
+	${textStyles.meta};
+`
 export const MediumTitleText = styled.Text`
 	${textStyles.mediumTitle};
 `;

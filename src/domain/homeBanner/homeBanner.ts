@@ -10,6 +10,12 @@ export enum BannerAction {
 	APP_PAGE = "APP_PAGE",
 }
 
+export enum BannerType {
+	NOTIFICATION = "NOTIFICATION",
+	RECOMMENDATION = "RECOMMENDATION",
+	CALIBRATION = "CALIBRATION",
+}
+
 type Icon = {
 	type: IconType;
 	icon: string;
@@ -59,20 +65,23 @@ type OptionDto = {
 	id: number
 	label: string
 	icon: Icon
-	actions: ClientAction
-	internalActions: any // TODO typing
+	actions: ClientAction[]
 }
 
-type UserInputComponentConfigurationDto = {
+export enum UserInputStyle {
+	DEFAULT = "DEFAULT"
+}
+
+export type UserInputComponentConfigurationDto = {
 	type: BannerComponentType.USER_INPUT;
 	configuration: {
-		style: string;
-		inputType: string;
+		style: UserInputStyle;
+		inputType: InputType;
 		inputConfig: {
 			label: string
 			minCount: number
 			maxCount: number
-			options: OptionDto
+			options: OptionDto[]
 		}
 	}
 }
@@ -83,7 +92,11 @@ export type BannerComponentDto =
 
 export interface HomeBanner {
 	id: number;
-	title: string;
+	title: WordingKey;
+	secondaryTitle: WordingKey;
+	type: BannerType;
+	style: BannerStyle;
+	startDate: string;
 	icon: Icon;
 	priority: number;
 	actions: ClientAction[];
