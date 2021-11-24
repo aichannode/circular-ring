@@ -201,8 +201,12 @@ export class RingManagementService {
 				// Api call
 				if (allData !== ringDataEOF) {
 					this.logger.info("Sending data to server...");
-					await this.ringApi.sendData(ring, allData);
-					this.logger.info("Successfully sent data...");
+					try {
+						await this.ringApi.sendData(ring, allData);
+						this.logger.info("Successfully sent data...");
+					} catch (err) {
+						this.logger.warn("Error sent data...", err);
+					}
 					setTimeout(() => this._currentRingSyncState.set(SyncState.NONE), syncFinishedTimeout);
 				}
 				await this.ringDataStorage.clear();
@@ -221,10 +225,15 @@ export class RingManagementService {
 
 	async submitFirmwareVersion() {
 		const firmware = await this.deviceService.getResponse(Channel.FIRMWARE_VERSION);
-		if (firmware && this._userRings.get().filter((r) => r.connected === true).length) {
-			const { id } = this._userRings.get().filter((r) => r.connected === true)[0];
-			this.logger.info("Submit User Ring", this._userRings.get());
-			await this.ringApi.submitFirmwareVersion(id, firmware);
+		const connectedRing = this._userRings.get().filter((r) => r.connected === true);
+		if (firmware && connectedRing.length) {
+			const { id } = connectedRing[0];
+			this.logger.info("Submit User Ring", connectedRing);
+			try {
+				await this.ringApi.submitFirmwareVersion(id, firmware);
+			} catch (err) {
+				this.logger.warn("Error Submiting User Ring", err);
+			}
 		}
 	}
 
