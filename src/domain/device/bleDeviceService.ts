@@ -241,10 +241,10 @@ export class BleDeviceService {
 
 	async startDFUScan() {
 		console.log("Start DFU Scan");
-		if (this._scanning.get()) {
-			this.logger.warn("Cannot scan: Already scanning");
-			return;
-		}
+		// if (this._scanning.get()) {
+		// 	this.logger.warn("Cannot scan: Already scanning");
+		// 	return;
+		// }
 		await this.bluetoothService.enable();
 		if (Platform.OS === "android") {
 			this.checkSettings();
@@ -264,7 +264,7 @@ export class BleDeviceService {
 		this.logger.info("DFU SCAN STARTED");
 
 		const scanPromise = new Promise<Device>((resolve, reject) => {
-			if (this._scanning.get()) {
+			if (!this._scanning.get()) {
 				this.logger.error("Cannot find device: Already scanning");
 				reject("Already Scanning");
 			}
@@ -302,7 +302,7 @@ export class BleDeviceService {
 					filePath: res.path(),
 				})
 					.then((res) => console.log("Transfer done: ", res))
-					.catch(console.log);
+					.catch((e) => console.log("Error", e));
 			});
 		} catch (e) {
 			this.logger.warn("Device not found:", e, "retrying in 10 seconds ");
@@ -418,6 +418,7 @@ export class BleDeviceService {
 			this.logger.info("Scanning to autoconnect to", name);
 			this._scanning.set(true);
 			manager.startDeviceScan([NUServiceUUID], { scanMode: ScanMode.LowLatency }, (error, device) => {
+				console.log("Device Found", device);
 				if (error) {
 					this.logger.error("Error during scan", error);
 					this.stopScan();
