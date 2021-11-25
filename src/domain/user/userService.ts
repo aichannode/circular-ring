@@ -1,7 +1,7 @@
 import { getLogger } from "@core/logger/logger";
 import { round2Digits, toServerDate } from "@core/utils";
 import { AuthService } from "@domain/auth/authService";
-import { DateFormat, HeightUnit, WeightUnit } from "@domain/units";
+import { DateFormat, HeightUnit, HourFormat, WeightUnit } from "@domain/units";
 import {
 	AdvancedInfo,
 	ChronoType,
@@ -26,6 +26,7 @@ const defaultSettings = {
 	dateFormat: DateFormat.DMY,
 	heightFormat: HeightUnit.cm,
 	weightFormat: WeightUnit.kg,
+	hourFormat: "12" as HourFormat,
 	id: "default_settings",
 };
 

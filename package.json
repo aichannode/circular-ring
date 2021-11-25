@@ -74,6 +74,7 @@
 		"@betomorrow/sync-wording": "^1.2.1",
 		"@react-native-community/eslint-config": "^3.0.0",
 		"@types/flat": "^5.0.2",
+		"@types/jest": "^27.0.3",
 		"@types/react": "^17.0.19",
 		"@types/react-native": "^0.64.13",
 		"@types/react-native-background-timer": "^2.0.0",
@@ -90,6 +91,7 @@
 		"typescript-styled-plugin": "^0.18.1"
 	},
 	"jest": {
-		"preset": "react-native"
+		"preset": "react-native",
+		"globalSetup": "./jest-setup.js"
 	}
 }
