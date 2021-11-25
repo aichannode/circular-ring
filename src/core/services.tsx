@@ -11,7 +11,6 @@ import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
 import { DevFakeDeviceService, EmptyFakeDeviceService } from "@domain/fake/fakeDeviceService";
 import { HomeBannerApi } from "@domain/homeBanner/homeBannerApi";
 import { HomeBannerService } from "@domain/homeBanner/homeBannerService";
-import { HomeBannerStorage } from "@domain/homeBanner/homeBannerStorage";
 import { MeasureApi } from "@domain/measure/measureApi";
 import { MeasureService } from "@domain/measure/measureService";
 import { UserPreferencesService } from "@domain/preferences/userPreferencesService";
@@ -68,9 +67,8 @@ const userQuickAccess = new UserQuickAccess(quickAccessStorage);
 const calibrationApi = new CalibrationApi(apiService);
 const calibrationService = new CalibrationService(calibrationApi);
 
-const homeBannerStorage = new HomeBannerStorage();
 const homeBannerApi = new HomeBannerApi(apiService);
-const homeBannerService = new HomeBannerService(homeBannerStorage, homeBannerApi);
+const homeBannerService = new HomeBannerService(homeBannerApi);
 
 const calendarApi = new CalendarApi(apiService);
 const calendarService = new CalendarService(calendarApi, userService);

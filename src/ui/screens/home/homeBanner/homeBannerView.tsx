@@ -1,4 +1,3 @@
-import { useServices } from "@core/services";
 import { BannerAction, BannerStyle, HomeBanner, IconType } from "@domain/homeBanner/homeBanner";
 import { CloseButton } from "@ui/components/closeButton";
 import { Row, row, Stack } from "@ui/components/layout";
@@ -11,6 +10,8 @@ import { ColorValue, Image, Linking, Pressable, StyleProp, View, ViewStyle } fro
 import styled from "styled-components/native";
 import BannerParagraph from "./BannerParagraph";
 import { ParagraphComponentConfigurationDto } from "@domain/homeBanner/homeBanner"
+import { useUserSettings } from "@domain/user/hooks/useUser";
+import moment from "moment";
 
 interface HomeBannerViewProps {
 	banner: HomeBanner;
@@ -27,10 +28,10 @@ function getColorFromBannerStyle(bannerStyle: BannerStyle): ColorValue | undefin
 }
 
 export const HomeBannerView: React.FC<HomeBannerViewProps> = ({ banner, style }) => {
-	const { homeBannerService } = useServices();
 	const { navigate } = useRoutesNavigation();
 	const highlightColor = getColorFromBannerStyle(banner.style)
 	const useContrastColor = banner.style === BannerStyle.ORANGE_GRADIENT
+	const userSettings = useUserSettings()
 
 	return (
 		<Pressable
@@ -47,7 +48,8 @@ export const HomeBannerView: React.FC<HomeBannerViewProps> = ({ banner, style })
 						default:
 							throw Error("Unhandled client action");
 					}
-					homeBannerService.dismiss(banner);
+					// Wait landing of CIR-444
+					// homeBannerService.dismiss(banner);
 				}
 			}}
 			style={style}
@@ -66,7 +68,7 @@ export const HomeBannerView: React.FC<HomeBannerViewProps> = ({ banner, style })
 								{...(banner.components[0] as ParagraphComponentConfigurationDto).configuration}
 							/>
 						</Stack>
-						<CloseButton padding={16} onClose={() => homeBannerService.dismiss(banner)} />
+						<CloseButton padding={16} onClose={() => {/* homeBannerService.dismiss(banner) */}} />
 					</OrangeDiagonalGradientContainer>
 				) : (
 					<WhiteWithColoredBorderContainer bannerStyle={banner.style}>
@@ -75,7 +77,7 @@ export const HomeBannerView: React.FC<HomeBannerViewProps> = ({ banner, style })
 							<View style={{paddingTop: 20, paddingRight: 26, paddingBottom: 10, paddingLeft: 38}}>
 								<Row style={{alignItems: "center", justifyContent: "space-between"}}>
 									<TitleText>{banner.title.toUpperCase()}</TitleText>
-									<SubTitleText style={{color: highlightColor}}>zdzd</SubTitleText>
+									<SubTitleText style={{color: highlightColor}}>{banner.secondaryTitle}</SubTitleText>
 								</Row>	
 							</View>
 							<Separator/>
@@ -85,8 +87,7 @@ export const HomeBannerView: React.FC<HomeBannerViewProps> = ({ banner, style })
 										style={{width: 14, height: 14, marginRight: 8}}
 										source={require("@assets/images/clockGrey.png")}
 									/>
-									{/* Wait for CIR-448 to format the date*/}
-									<MetaDataText>{banner.startDate}</MetaDataText>
+									<MetaDataText>{moment(banner.startDate).format(userSettings?.dateFormat)}</MetaDataText>
 								</Row>
 								<BannerParagraph
 									coloredTagColor={highlightColor}
