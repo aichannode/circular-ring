@@ -22,7 +22,7 @@ export const textStyles = {
 
 	meta: css`
 		font-size: 14px;
-		color: ${colors.textPlaceholder};
+		color: ${colors.darkGray};
 	`,
 
 	errorMessage: css`
