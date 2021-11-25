@@ -1,5 +1,5 @@
 import { ApiService } from "@core/api/apiService";
-import { DateFormat, HeightUnit, WeightUnit } from "@domain/units";
+import { DateFormat, HeightUnit, HourFormat, WeightUnit } from "@domain/units";
 import { AdvancedInfo } from "@domain/user/advancedInfo";
 import { Sex, User } from "@domain/user/user";
 import { UserSettings } from "@domain/user/userSettings";
@@ -33,6 +33,7 @@ interface UserSettingsDto {
 	id: string;
 	dateFormat: DateFormat;
 	heightFormat: string;
+	hourFormat: HourFormat;
 	weightFormat: string;
 }
 
@@ -81,6 +82,7 @@ export class UserApi {
 	private static userSettingsFromDto(userSettingsDto: UserSettingsDto): UserSettings {
 		return {
 			...userSettingsDto,
+			hourFormat: (userSettingsDto.hourFormat === "12" ? "12" : "24") as HourFormat,
 			weightFormat: userSettingsDto.weightFormat === "kg" ? WeightUnit.kg : WeightUnit.lbs,
 			heightFormat: userSettingsDto.heightFormat === "cm" ? HeightUnit.cm : HeightUnit.ft,
 		};

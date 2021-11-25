@@ -11,7 +11,7 @@ import styled from "styled-components/native";
 import BannerParagraph from "./BannerParagraph";
 import { ParagraphComponentConfigurationDto } from "@domain/homeBanner/homeBanner"
 import { useUserSettings } from "@domain/user/hooks/useUser";
-import moment from "moment";
+import { getBannerDate } from "@domain/homeBanner/business";
 
 interface HomeBannerViewProps {
 	banner: HomeBanner;
@@ -32,6 +32,7 @@ export const HomeBannerView: React.FC<HomeBannerViewProps> = ({ banner, style })
 	const highlightColor = getColorFromBannerStyle(banner.style)
 	const useContrastColor = banner.style === BannerStyle.ORANGE_GRADIENT
 	const userSettings = useUserSettings()
+	const todayIso = new Date().toISOString();
 
 	return (
 		<Pressable
@@ -87,7 +88,7 @@ export const HomeBannerView: React.FC<HomeBannerViewProps> = ({ banner, style })
 										style={{width: 14, height: 14, marginRight: 8}}
 										source={require("@assets/images/clockGrey.png")}
 									/>
-									<MetaDataText>{moment(banner.startDate).format(userSettings?.dateFormat)}</MetaDataText>
+									<MetaDataText>{getBannerDate(banner.startDate, todayIso, userSettings?.hourFormat)}</MetaDataText>
 								</Row>
 								<BannerParagraph
 									coloredTagColor={highlightColor}

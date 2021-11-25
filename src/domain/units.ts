@@ -87,3 +87,5 @@ export enum DateFormat {
 	DMY = "DD/MM/YYYY",
 	MDY = "MM/DD/YYYY",
 }
+
+export type HourFormat = "12" | "24"
