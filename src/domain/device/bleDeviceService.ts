@@ -14,7 +14,7 @@ import { getUTCTimestamp } from "@utils/date";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 import { LocationEnabler } from "./locationEnabler";
 import { NamedDevice } from "./namedDevice";
-import { NordicDFU, DFUEmitter } from "react-native-nordic-dfu";
+import { NordicDFU } from "react-native-nordic-dfu";
 import RNFetchBlob from "rn-fetch-blob";
 
 const FB = RNFetchBlob.config({
@@ -277,8 +277,7 @@ export class BleDeviceService {
 		}
 	}
 
-	async startDFUScan(firmwareFile: string | null) {
-		console.log("firmwareFile 3", firmwareFile);
+	async startDFUScan<I_startDFUScan>(firmwareFile: string | null): Promise<I_startDFUScan | undefined> {
 		// check for enaled Geoloc
 		if (Platform.OS === "android") {
 			this.checkSettings();
@@ -405,7 +404,7 @@ export class BleDeviceService {
 			this._onDeviceDisconnectedSubscription = null;
 			this._batteryListenerUnsubscribe?.();
 			this._currentRingBattery.set(null);
-			if (this.updateState.get() !== UpdateState.IDLE.status) {
+			if (this.updateState.get().status !== UpdateState.IDLE.status) {
 				// this.startDFUScan();
 				console.log("UPDATE STATE", this.updateState.get());
 			} else {

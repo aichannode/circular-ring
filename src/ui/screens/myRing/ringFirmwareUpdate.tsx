@@ -1,26 +1,21 @@
 import { useServices } from "@core/services";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
-import { InfoListItem } from "@ui/components/infoList";
-import { RingBatteryView } from "@ui/components/ring/ringBatteryView";
 import { PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
-import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { UpdateFailedBottomSheet } from "@ui/screens/myRing/UpdateFailedBottomSheet";
 import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import styled from "styled-components/native";
-import { Channel } from "@domain/device/channels";
 import { useObservable } from "micro-observables";
-import { NamedUserRing } from "@domain/ring/ring";
-import { RingViewModel } from "@ui/screens/myRing/viewModel/RingViewModel";
 import { colors } from "@ui/styles/colors";
-import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
-import { NordicDFU, DFUEmitter } from "react-native-nordic-dfu";
+import { PrimaryButton } from "@ui/components/buttons";
+import { DFUEmitter } from "react-native-nordic-dfu";
 import { ChunkedCircle, CircleGradient } from "@ui/components/shapes/chunkedCircle";
 import { Device } from "react-native-ble-plx";
 import { SecondaryText } from "@ui/components/text";
+import { BleDeviceService } from "@domain/device/bleDeviceService";
 
-const startDFU = async (device_id: string, bleService) => {
+const startDFU = async (bleService: BleDeviceService) => {
 	await bleService.startDfuMode();
 
 	console.log("Starting DFU");
@@ -28,9 +23,6 @@ const startDFU = async (device_id: string, bleService) => {
 
 export const RingFirmwareUpdate: React.FC = () => {
 	const { bleDeviceService } = useServices();
-	const { ringManagementService } = useServices();
-	const userRings = useObservable(ringManagementService.userRings);
-
 	const UpdateFailedBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const connectedRing = useObservable(bleDeviceService.connectedDevice);
 	const [isUpdating, setIsUpdating] = useState(false);
@@ -46,7 +38,11 @@ export const RingFirmwareUpdate: React.FC = () => {
 					setIsUpdating={setIsUpdating}
 				></NeedToUpdateComponent>
 			) : (
-				<UpdatingComponent setIsUpdating={setIsUpdating}></UpdatingComponent>
+				<UpdatingComponent
+					setIsUpdating={setIsUpdating}
+					connectedRing={null}
+					showUpdateFailed={() => UpdateFailedBottomSheetRef.current?.present()}
+				></UpdatingComponent>
 			)}
 			<CircularBottomSheet snapPoints={[580]} ref={UpdateFailedBottomSheetRef}>
 				<UpdateFailedBottomSheet onClose={() => UpdateFailedBottomSheetRef.current?.close()} />
@@ -58,14 +54,13 @@ export const RingFirmwareUpdate: React.FC = () => {
 interface I_NeedToUpdateComponent {
 	connectedRing: Device | null;
 	showUpdateFailed: () => void;
-	setIsUpdating: () => void;
+	setIsUpdating: (arg0: boolean) => void;
 }
 
 const UpdatingComponent: React.FC<I_NeedToUpdateComponent> = ({ showUpdateFailed, setIsUpdating }) => {
 	const { format } = useI18n();
 	const [uploadPercent, setUploadPercent] = useState<number>(0);
 	const [progress, setProgress] = useState(0);
-	const [uploadState, setUploadState] = useState(null);
 	const { bleDeviceService } = useServices();
 	const connectedRing = useObservable(bleDeviceService.connectedDevice);
 	console.log("DFU Connected RIng", connectedRing?.name);
@@ -73,8 +68,9 @@ const UpdatingComponent: React.FC<I_NeedToUpdateComponent> = ({ showUpdateFailed
 	console.log("UPDATE STATE", updateState);
 
 	useEffect(() => {
-		if (updateState.status === "RECONNECTED" && connectedRing !== undefined) setIsUpdating(false);
-	}, [connectedRing, updateState]);
+		if (updateState.progress === -1) showUpdateFailed();
+		if (updateState.status === "RECONNECTED") setIsUpdating(false);
+	}, [updateState]);
 
 	useEffect(() => {
 		setProgress(uploadPercent * 0.8);
@@ -83,12 +79,11 @@ const UpdatingComponent: React.FC<I_NeedToUpdateComponent> = ({ showUpdateFailed
 	useEffect(() => {
 		DFUEmitter.addListener("DFUProgress", ({ percent, currentPart, partsTotal, avgSpeed, speed }) => {
 			console.log("DFU progress: " + percent + "%");
-			setUploadPercent(percent);
+			if (percent) setUploadPercent(percent);
 		});
 
 		DFUEmitter.addListener("DFUStateChanged", ({ state }) => {
 			console.log("DFU State:", state);
-			setUploadState(state);
 		});
 	}, []);
 
@@ -129,11 +124,7 @@ const CenterView = styled.View`
 	flex-direction: column;
 `;
 
-const NeedToUpdateComponent: React.FC<I_NeedToUpdateComponent> = ({
-	connectedRing,
-	showUpdateFailed,
-	setIsUpdating,
-}) => {
+const NeedToUpdateComponent: React.FC<I_NeedToUpdateComponent> = ({ connectedRing, setIsUpdating }) => {
 	const { bleDeviceService } = useServices();
 	const { format } = useI18n();
 
@@ -159,16 +150,12 @@ const NeedToUpdateComponent: React.FC<I_NeedToUpdateComponent> = ({
 			<VersionInfo>{format("updateFirmware.newVersionAvailable")}</VersionInfo>
 			<PrimaryButton
 				onPress={() => {
-					// if (connectedRing) {
 					console.log("Current Rings", connectedRing?.id);
 					setIsUpdating(true);
-					startDFU(connectedRing?.id, bleDeviceService);
-					// showUpdateFailed();
-					// }
+					startDFU(bleDeviceService);
 				}}
 				style={{ position: "absolute", bottom: "10%" }}
 			>
-				{" "}
 				Update
 			</PrimaryButton>
 		</>
