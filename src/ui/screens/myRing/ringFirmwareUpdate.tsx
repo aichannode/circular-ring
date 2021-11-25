@@ -30,11 +30,12 @@ export const RingFirmwareUpdate: React.FC = () => {
 	const { bleDeviceService } = useServices();
 	const { ringManagementService } = useServices();
 	const userRings = useObservable(ringManagementService.userRings);
+
 	const UpdateFailedBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const connectedRing = useObservable(bleDeviceService.connectedDevice);
 	const [isUpdating, setIsUpdating] = useState(false);
 
-	console.log("CONNECTED RING", connectedRing);
+	console.log("CONNECTED RING", connectedRing?.name);
 
 	return (
 		<Container>
@@ -57,23 +58,26 @@ export const RingFirmwareUpdate: React.FC = () => {
 interface I_NeedToUpdateComponent {
 	connectedRing: Device | null;
 	showUpdateFailed: () => void;
+	setIsUpdating: () => void;
 }
 
 const UpdatingComponent: React.FC<I_NeedToUpdateComponent> = ({ showUpdateFailed, setIsUpdating }) => {
 	const { format } = useI18n();
-	const [uploadPercent, setUploadPercent] = useState<number | undefined>(0);
+	const [uploadPercent, setUploadPercent] = useState<number>(0);
 	const [progress, setProgress] = useState(0);
 	const [uploadState, setUploadState] = useState(null);
 	const { bleDeviceService } = useServices();
 	const connectedRing = useObservable(bleDeviceService.connectedDevice);
-	console.log("DFU Connected RIng", connectedRing);
+	console.log("DFU Connected RIng", connectedRing?.name);
+	const updateState = useObservable(bleDeviceService.updateState);
+	console.log("UPDATE STATE", updateState);
 
 	useEffect(() => {
-		if (uploadState === "DFU_COMPLETED" && connectedRing !== undefined) setIsUpdating(false);
-	}, [connectedRing, uploadState]);
+		if (updateState.status === "RECONNECTED" && connectedRing !== undefined) setIsUpdating(false);
+	}, [connectedRing, updateState]);
 
 	useEffect(() => {
-		setProgress(uploadPercent * 0.9);
+		setProgress(uploadPercent * 0.8);
 	}, [uploadPercent]);
 
 	useEffect(() => {
@@ -92,15 +96,20 @@ const UpdatingComponent: React.FC<I_NeedToUpdateComponent> = ({ showUpdateFailed
 		<>
 			<Description>{format("updateFirmware.updating.description")}</Description>
 			<View style={{ marginTop: 80 }}>
-				<ChunkedCircle size={140} strokeWidth={12} gradient={CircleGradient.PURPLE} pathRatio={progress / 100} />
+				<ChunkedCircle
+					size={140}
+					strokeWidth={12}
+					gradient={CircleGradient.PURPLE}
+					pathRatio={Math.round(progress + updateState.progress) / 100}
+				/>
 				<CenterView>
 					<BatteryValue style={{ fontSize: 35 }}>
-						{Math.round(progress) ?? "?"}
+						{Math.round(progress + updateState.progress) ?? "?"}
 						{"%"}
 					</BatteryValue>
 				</CenterView>
 			</View>
-			<SecondaryText style={{ marginTop: 50 }}>UPDATING</SecondaryText>
+			<SecondaryText style={{ marginTop: 50 }}>{updateState.status}</SecondaryText>
 		</>
 	);
 };
@@ -150,12 +159,12 @@ const NeedToUpdateComponent: React.FC<I_NeedToUpdateComponent> = ({
 			<VersionInfo>{format("updateFirmware.newVersionAvailable")}</VersionInfo>
 			<PrimaryButton
 				onPress={() => {
-					if (!connectedRing) {
-						console.log("Current Rings", connectedRing?.id);
-						setIsUpdating(true);
-						startDFU(connectedRing?.id, bleDeviceService);
-						// showUpdateFailed();
-					}
+					// if (connectedRing) {
+					console.log("Current Rings", connectedRing?.id);
+					setIsUpdating(true);
+					startDFU(connectedRing?.id, bleDeviceService);
+					// showUpdateFailed();
+					// }
 				}}
 				style={{ position: "absolute", bottom: "10%" }}
 			>

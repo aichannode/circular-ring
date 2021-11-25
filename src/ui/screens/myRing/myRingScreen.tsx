@@ -71,7 +71,7 @@ export const MyRingScreen: React.FC = () => {
 					navigate(Routes.RingFirmwareUpdate);
 				}}
 			>
-				<FirmwareVersionText>0.32.1</FirmwareVersionText>
+				<FirmwareVersionText>{currentRing.firmware}</FirmwareVersionText>
 			</InfoListItem>
 
 			<InfoListItem

@@ -20,6 +20,7 @@ import RNFetchBlob from "rn-fetch-blob";
 const FB = RNFetchBlob.config({
 	fileCache: true,
 	appendExt: "zip",
+	timeout: 3000,
 });
 
 export enum DeviceConnectionState {
@@ -44,6 +45,33 @@ export enum DeviceAutoConnectState {
 	CONNECTED = "CONNECTED",
 	UPDATE = "UPDATE",
 }
+
+interface I_UpdateState {
+	status: string;
+	progress: number;
+}
+
+export const UpdateState = {
+	IDLE: { status: "IDLE", progress: 0 },
+	START_UPDATE_FLOW: { status: "START_UPDATE_FLOW", progress: 1 },
+	DOWNLOADING_FIRMWARE: { status: "DOWNLOADING_FIRMWARE", progress: 2 },
+	SETTING_RING_IN_DFU_MODE: { status: "SETTING_RING_IN_DFU_MODE", progress: 4 },
+	SCANNING_DFU_RING: { status: "SCANNING_DFU_RING", progress: 6 },
+	FOUND_DFU_RING: { status: "FOUND_DFU_RING", progress: 8 },
+	SENDING_FIRMWARE_OVER_BLUETOOTH: { status: "SENDING_FIRMWARE_OVER_BLUETOOTH", progress: 10 },
+	RECONNECTING: { status: "RECONNECTING", progress: 15 },
+	RECONNECTED: { status: "RECONNECTED", progress: 20 },
+	UPDATE_SUCCESS: { status: "UPDATE_SUCCESS", progress: 10 },
+	UPDATE_ERROR_SCANNING: { status: "UPDATE_ERROR_SCANNING", progress: -1 },
+	UPDATE_ERROR_DOWNLOAD_FAILED: { status: "UPDATE_ERROR_DOWNLOAD_FAILED", progress: -1 },
+	UPDATE_ERROR_SHA1_INVALID: { status: "UPDATE_ERROR_SHA1_INVALID", progress: -1 },
+	UPDATE_ERROR_RING_DISCONNECTION: { status: "UPDATE_ERROR_RING_DISCONNECTION", progress: -1 },
+	UPDATE_ERROR_SETTING_RING_IN_DFU_MODE: { status: "UPDATE_ERROR_SETTING_RING_IN_DFU_MODE", progress: -1 },
+	UPDATE_ERROR_SENDING_FIRMWARE_OVER_BLUETOOTH: {
+		status: "UPDATE_ERROR_SENDING_FIRMWARE_OVER_BLUETOOTH",
+		progress: -1,
+	},
+};
 
 const DFUNUServiceUUID = "0000FE59-0000-1000-8000-00805F9B34FB";
 
@@ -75,6 +103,7 @@ export class BleDeviceService {
 	private _batteryListenerUnsubscribe: (() => void) | undefined = undefined;
 	private _currentRingLiveData = observable<{ listening: boolean; data?: RingLiveData | null }>({ listening: false });
 
+	updateState = observable<I_UpdateState>(UpdateState.IDLE);
 	scannedDevices = this._scannedDevices.select((devicesMap) => [...devicesMap.values()]);
 
 	readonly connectedDevice = this._connectedDevice.readOnly();
@@ -220,32 +249,37 @@ export class BleDeviceService {
 	}
 
 	async startDfuMode() {
-		// const device = this._connectedDevice.get();
+		let firmwareFile = null;
+
+		this.updateState.set(UpdateState.START_UPDATE_FLOW);
 		this.logger.info("START DFU MODE");
 		this._connectionState.set(DeviceConnectionState.UPDATE);
-		await this.write("CTR1"); // send DFU signal
-		// this._connectedDevice.set(null);
-		// this._onDeviceDisconnectedSubscription?.remove();
-		// this._onDeviceDisconnectedSubscription = null;
-		// this._currentRingBattery.set(null);
-		// this._batteryListenerUnsubscribe?.();
-		this.startDFUScan();
-		// if (!device) {
-		// 	this.logger.info("Already disconnected");
-		// 	return;
-		// }
-		// this.logger.info("Disconnecting from device", device.name);
-		// await device.cancelConnection();
-		// this.logger.info(`Disconnection from device ${device.name} succeeded`);
+
+		try {
+			await this.write("CTR1"); // send DFU signal
+			this.updateState.set(UpdateState.SETTING_RING_IN_DFU_MODE);
+		} catch (err) {
+			this.updateState.set(UpdateState.UPDATE_ERROR_SETTING_RING_IN_DFU_MODE);
+		}
+		this.updateState.set(UpdateState.DOWNLOADING_FIRMWARE);
+
+		const TODELETE =
+			"https://firmware-updates.cdn.stg.circular.xyz/client/1.0.15-release%2B414907626.7f6b4e87bcc/patch?Expires=1637866470&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9maXJtd2FyZS11cGRhdGVzLmNkbi5zdGcuY2lyY3VsYXIueHl6L2NsaWVudC8xLjAuMTUtcmVsZWFzZSUyQjQxNDkwNzYyNi43ZjZiNGU4N2JjYy9wYXRjaCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTYzNzg2NjQ3MH19fV19&Signature=IExibFHGur55djY8Z4OcQrRHt2ZaRZXFw2yrDBIndux05Mcuqo5lH-N2VS1j34XDq8qy4gghwmOLYlj~APJ3U6XF83dWtdPNgNw75k0Sf-lblFLW9aGCB6JuTYKasdU1T-SB-lnWTLAaVgnG6bGOd-j9Wrtq6HQh3qP0jITUnhYJ6YHKiAAEhYsaNsbV0Wpdm-K191OpJZn3ZtjIkfApsbNorXu34zSF-g8~BCiV2Yvy3A9sidCJevrn4SXUskEVgjMznCtF9-UU6wEuw3R8tPEm8NNr5KVfr5VoKWOVkkjGS--3WuY~DO2BMCtkboU3rdwM-De0L~PQixG5w~TQ~w__&Key-Pair-Id=K10R2G20ZBIPJW";
+
+		try {
+			firmwareFile = (await FB.fetch("GET", TODELETE)).path();
+			console.log("firmwareFile 1", firmwareFile);
+			this.startDFUScan(firmwareFile);
+		} catch (err) {
+			this.updateState.set(UpdateState.UPDATE_ERROR_DOWNLOAD_FAILED);
+			console.log("firmwareFile 2", firmwareFile);
+			return null;
+		}
 	}
 
-	async startDFUScan() {
-		console.log("Start DFU Scan");
-		// if (this._scanning.get()) {
-		// 	this.logger.warn("Cannot scan: Already scanning");
-		// 	return;
-		// }
-		await this.bluetoothService.enable();
+	async startDFUScan(firmwareFile: string | null) {
+		console.log("firmwareFile 3", firmwareFile);
+		// check for enaled Geoloc
 		if (Platform.OS === "android") {
 			this.checkSettings();
 			if (!this._locationEnabledAndroid.get()) {
@@ -260,25 +294,30 @@ export class BleDeviceService {
 				});
 			}
 		}
-		const manager = this.bluetoothService.manager;
-		this.logger.info("DFU SCAN STARTED");
+		await this.bluetoothService.enable();
 
-		const scanPromise = new Promise<Device>((resolve, reject) => {
-			if (!this._scanning.get()) {
-				this.logger.error("Cannot find device: Already scanning");
-				reject("Already Scanning");
+		const DFUScanPromise = new Promise<Device>((resolve, reject) => {
+			this.updateState.set(UpdateState.SCANNING_DFU_RING);
+			if (this._scanning.get()) {
+				this.logger.error("DFU Cannot find device: Already scanning");
+				reject("DFU  Already Scanning");
 			}
-			this.logger.info("Scanning to autoconnect to", "Circular Update");
+			this.logger.info("DFU  Scanning to autoconnect to", "Circular Update");
 			this._scanning.set(true);
-			manager.startDeviceScan([DFUNUServiceUUID, NUServiceUUID], { scanMode: ScanMode.LowLatency }, (error, device) => {
+			const manager = this.bluetoothService.manager;
+
+			manager.startDeviceScan([DFUNUServiceUUID], { scanMode: ScanMode.LowLatency }, (error, device) => {
 				if (error) {
-					this.logger.error("Error during scan", error);
 					this.stopScan();
+					this.updateState.set(UpdateState.UPDATE_ERROR_SCANNING);
 					reject(error);
 				} else if (device) {
-					this.logger.info(`Discovered device named ${device.name} with id ${device.id} ... ${JSON.stringify(device)}`);
+					this.logger.info(
+						`DFU Discovered device named ${device.name} with id ${device.id} ... ${JSON.stringify(device)}`
+					);
 					if (device.name === "Circular Update") {
 						this.stopScan();
+						this.updateState.set(UpdateState.FOUND_DFU_RING);
 						resolve(device);
 					}
 				}
@@ -286,29 +325,28 @@ export class BleDeviceService {
 		});
 
 		try {
-			const dfuDevice = await timedPromise(scanPromise, findDeviceTimeout);
-			console.log("DFU MODE Scanned Device", dfuDevice);
-			FB.fetch("GET", "http://192.168.1.104/firmware.zip").then((res) => {
-				console.log("file saved to", res.path());
-				console.log(
-					"Device Name",
-					dfuDevice?.name !== undefined ? dfuDevice?.name : null,
-					" Device ID = ",
-					dfuDevice?.id
-				);
-				NordicDFU.startDFU({
+			const dfuDevice = await timedPromise(DFUScanPromise, findDeviceTimeout);
+			console.log("DFU MODE Scanned Device", dfuDevice.name);
+			try {
+				console.log("firmwareFile 4", firmwareFile);
+				this.updateState.set(UpdateState.SENDING_FIRMWARE_OVER_BLUETOOTH);
+				const dfu = await NordicDFU.startDFU({
 					deviceAddress: dfuDevice?.id,
-					deviceName: dfuDevice?.name !== undefined ? dfuDevice?.name : null,
-					filePath: res.path(),
-				})
-					.then((res) => console.log("Transfer done: ", res))
-					.catch((e) => console.log("Error", e));
-			});
+					deviceName: dfuDevice?.name ? dfuDevice.name : "Circular Update",
+					filePath: firmwareFile,
+				});
+				this.updateState.set(UpdateState.RECONNECTING);
+				this.autoConnectFavoriteDevice();
+				console.log(" DFU ", dfu);
+			} catch (err) {
+				this.updateState.set(UpdateState.UPDATE_ERROR_SENDING_FIRMWARE_OVER_BLUETOOTH);
+				console.log("FIRMWARE ERROR ", err);
+			}
 		} catch (e) {
 			this.logger.warn("Device not found:", e, "retrying in 10 seconds ");
 			this.stopScan();
 			await delay(scanRetryTimeout);
-			return this.findFavoriteDevice();
+			return this.startDFUScan(firmwareFile);
 		}
 	}
 
@@ -367,10 +405,13 @@ export class BleDeviceService {
 			this._onDeviceDisconnectedSubscription = null;
 			this._batteryListenerUnsubscribe?.();
 			this._currentRingBattery.set(null);
-			this.logger.info("Trying to reconnect to", connectedDevice.name);
-			if (this._connectionState.get() === DeviceConnectionState.UPDATE) {
-				this.startDFUScan();
-			} else this.autoConnectFavoriteDevice();
+			if (this.updateState.get() !== UpdateState.IDLE.status) {
+				// this.startDFUScan();
+				console.log("UPDATE STATE", this.updateState.get());
+			} else {
+				this.logger.info("Trying to reconnect to", connectedDevice.name);
+				this.autoConnectFavoriteDevice();
+			}
 		} else {
 			this.logger.warn("Disconnected from unknown device");
 		}
@@ -405,7 +446,7 @@ export class BleDeviceService {
 
 	async findFavoriteDevice(): Promise<Device | undefined> {
 		const name = this._favoriteDevice.get()?.name;
-		if (name === undefined) {
+		if (name === undefined || this._connectionState.get() === DeviceConnectionState.UPDATE) {
 			return undefined;
 		}
 		const manager = this.bluetoothService.manager;
@@ -426,6 +467,8 @@ export class BleDeviceService {
 				} else if (device) {
 					this.logger.info(`Discovered device named ${device.name} with id ${device.id} ... ${JSON.stringify(device)}`);
 					if (device.name === name) {
+						if (this.updateState.get().status === UpdateState.RECONNECTING.status)
+							this.updateState.set(UpdateState.RECONNECTED);
 						this.stopScan();
 						resolve(device);
 					}
