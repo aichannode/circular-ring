@@ -72,7 +72,7 @@ export const HomeScreen: React.FC = () => {
 						{date !== "today" && (
 							<View style={{ alignItems: "center" }}>
 								<Separator />
-								<MetaDataText style={{ fontSize: 8, backgroundColor: colors.lightgray }}>
+								<MetaDataText style={{ paddingHorizontal: 11, fontSize: 8, backgroundColor: colors.lightgray }}>
 									{date.toUpperCase()}
 								</MetaDataText>
 							</View>
@@ -94,7 +94,6 @@ const Container = styled.View`
 
 const Separator = styled.View`
 	height: 1px;
-
 	position: absolute;
 	left: 20;
 	top: 5;
