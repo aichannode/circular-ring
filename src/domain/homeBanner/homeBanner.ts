@@ -90,18 +90,28 @@ export type BannerComponentDto =
 	| ParagraphComponentConfigurationDto
 	| UserInputComponentConfigurationDto
 
-export interface HomeBanner {
+export type Activity = {
+	type: BannerType.NOTIFICATION;
+	style: BannerStyle.ORANGE_GRADIENT;
+}
+
+export type Notification = {
+	type: Omit<BannerType, BannerType.NOTIFICATION>;
+	style: Omit<BannerStyle, BannerStyle.ORANGE_GRADIENT>;
+}
+
+export type Banner<T> = T & {
 	id: number;
 	title: WordingKey;
 	secondaryTitle: WordingKey;
-	type: BannerType;
-	style: BannerStyle;
 	startDate: string;
 	icon: Icon;
 	priority: number;
 	actions: ClientAction[];
 	components: BannerComponentDto[];
 }
+
+export type HomeBanner = Banner<Notification> | Banner<Activity>
 
 export interface ReadBannersInfo {
 	bannerIds: number[];
