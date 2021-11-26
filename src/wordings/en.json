@@ -106,6 +106,7 @@
 	"global.date_interval_linker": "to",
 	"global.edit": "Edit",
 	"global.add": "Add",
+	"global.update": "Update",
 	"global.yesterday": "Yesterday",
 	"home.sync.syncing": "Refreshing...",
 	"home.sync.error": "Sync failed",
@@ -450,5 +451,6 @@
 	"updateFirmware.updateFailed": "Update Failed",
 	"updateFirmware.updateFailed.description": "The firmware update coudn’t be completed. Please check that your ring’s battery is above 20% or that is is charging. \n\n\n It also might of failed for another reason such as your ring being too far away from your phone.",
 	"updateFirmware.updating.description": "Please keep your ring and phone close to each other during the firmware update. Do not disconnect your ring or kill the app during this process.\n\nThe update might take up to a couple of minutes.",
-	"updateFirmware.versionIsUptodate": "You ring runs the latest firmware. No further action is required."
+	"updateFirmware.versionIsUptodate": "You ring runs the latest firmware. No further action is required.",
+	"updateFirmware.updateSuccess": "Firmware update complete"
 }
