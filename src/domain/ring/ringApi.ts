@@ -22,6 +22,7 @@ function isTaskRunning(status: string) {
 interface I_latestFirmware {
 	fileUrl: string;
 	hash: string;
+	version: string;
 }
 
 export class RingApi {
