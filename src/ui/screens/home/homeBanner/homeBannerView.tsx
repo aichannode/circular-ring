@@ -60,7 +60,7 @@ export const HomeBannerView: React.FC<HomeBannerViewProps> = ({ banner, style })
 			{banner.style === BannerStyle.ORANGE_GRADIENT
 				? (
 					<OrangeDiagonalGradientContainer>
-						<View style={{ marginRight: 30 }}>
+						<View style={{ marginRight: 27 }}>
 							{banner.icon.type === IconType.URL ? <Image source={{ uri: banner.icon.type }} /> : null}
 						</View>
 						<Stack gap={10} style={{ flex: 1 }}>
@@ -77,14 +77,14 @@ export const HomeBannerView: React.FC<HomeBannerViewProps> = ({ banner, style })
 					<WhiteWithColoredBorderContainer bannerStyle={banner.style}>
 						<Stack gap={10} style={{ flex: 1 }}>
 							{/* Use a wrapper to set the gutter so hat Separator will be at full width */}
-							<View style={{paddingTop: 20, paddingRight: 26, paddingBottom: 10, paddingLeft: 38}}>
+							<View style={{paddingTop: 20, paddingRight: 26, paddingBottom: 10, paddingLeft: 30}}>
 								<Row style={{alignItems: "center", justifyContent: "space-between"}}>
 									<TitleText>{format(banner.title).toUpperCase()}</TitleText>
 									<SubTitleText style={{color: highlightColor}}>{format(banner.secondaryTitle)}</SubTitleText>
 								</Row>	
 							</View>
 							<Separator/>
-							<View style={{paddingRight: 26, paddingBottom: 17, paddingLeft: 38}}>
+							<View style={{paddingRight: 26, paddingBottom: 17, paddingLeft: 30}}>
 								<Row style={{alignItems: "center", marginBottom: 8}}>
 									<Image
 										style={{width: 14, height: 14, marginRight: 8}}
@@ -107,7 +107,7 @@ export const HomeBannerView: React.FC<HomeBannerViewProps> = ({ banner, style })
 };
 
 const OrangeDiagonalGradientContainer = styled(OrangeDiagonalGradient)`
-	padding: 20px 40px 20px 28px;
+	padding: 20px 40px 20px 20px;
 	${row("center")};
 	background-color: black;
 	border-radius: 2px;
