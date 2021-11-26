@@ -155,7 +155,7 @@ const NeedToUpdateComponent: React.FC<I_NeedToUpdateComponent> = ({ connectedRin
 		if (ringFirmware.version !== currentRing.firmware) setOutOfDate(true);
 		else {
 			console.log("FIRMWARE UPTODATE");
-			setOutOfDate(!false);
+			setOutOfDate(false);
 		}
 	};
 
@@ -202,14 +202,23 @@ const NeedToUpdateComponent: React.FC<I_NeedToUpdateComponent> = ({ connectedRin
 					Update
 				</PrimaryButton>
 			) : (
-				<PrimaryButton
-					onPress={() => {
-						goBack();
-					}}
-					style={{ position: "absolute", bottom: "10%" }}
-				>
-					Back
-				</PrimaryButton>
+				<View style={{ display: "flex", flexDirection: "row", position: "absolute", bottom: "10%" }}>
+					<PrimaryButton
+						onPress={() => {
+							console.log("Current Rings", connectedRing?.id);
+							startDFU(bleDeviceService);
+						}}
+					>
+						Update Again
+					</PrimaryButton>
+					<PrimaryButton
+						onPress={() => {
+							goBack();
+						}}
+					>
+						Back
+					</PrimaryButton>
+				</View>
 			)}
 		</>
 	);
