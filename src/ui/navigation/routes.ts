@@ -95,6 +95,8 @@ export type AppRoutesParams = {
 	[Routes.RingFirmwareUpdate]: undefined;
 };
 
+export type Navigate = NativeStackNavigationProp<AppRoutesParams, keyof AppRoutesParams>["navigate"]
+
 export const useRoutesNavigation = () => useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
 
 export const useAppRoute = <Route extends Routes>() => useRoute<RouteProp<AppRoutesParams, Route>>();

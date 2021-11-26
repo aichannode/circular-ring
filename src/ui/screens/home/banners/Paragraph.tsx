@@ -25,7 +25,7 @@ function getTextColor(style: ParagraphStyle, useContrastColor?: boolean) {
     }
 }
 
-function BannerParagraph({coloredTagColor, translationKey, style, properties, useContrastColor}: Props) {
+export function Paragraph({coloredTagColor, translationKey, style, properties, useContrastColor}: Props) {
     const { format } = useI18n({color: coloredTagColor})
 
     return (
@@ -34,5 +34,3 @@ function BannerParagraph({coloredTagColor, translationKey, style, properties, us
         </SecondaryText>
     )
 }
-
-export default BannerParagraph

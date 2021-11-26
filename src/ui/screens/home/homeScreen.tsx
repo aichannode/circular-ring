@@ -8,11 +8,12 @@ import { RefreshControl, ScrollView, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { CirclesBanner } from "./circlesBanner";
 import { QuickAccess } from "./quickAccess/quickAccess";
-import { HomeBannerView } from "./homeBanner/homeBannerView";
+import { NotificationBanner } from "./banners/Notification";
 import { SyncBanner } from "./syncBanner";
 import { useSetupState } from "@domain/device/hooks";
 import { DeviceSetupState } from "@domain/device/bleDeviceService";
 import { MetaDataText } from "@ui/components/text";
+import { ActivityBanner } from "./banners/Activity";
 
 export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
@@ -46,10 +47,7 @@ export const HomeScreen: React.FC = () => {
 		}
 	}, [syncState]);
 
-	// Workaround to display all banners.
-	// Will be updated with CIR-444
-	// const homeBanner = useHomeBanner();
-	const groupedBanners = useBanners();
+	const banners = useBanners();
 
 	return (
 		<Container>
@@ -67,7 +65,8 @@ export const HomeScreen: React.FC = () => {
 					/>
 				}
 			>
-				{Array.from(groupedBanners.keys()).map((date) => (
+				{banners.notifications[0] && <NotificationBanner key={banners.notifications[0].id} banner={banners.notifications[0]} style={{ margin: 10 }} />}
+				{Object.keys(banners.activities).map((date) => (
 					<>
 						{date !== "today" && (
 							<View style={{ alignItems: "center" }}>
@@ -77,8 +76,8 @@ export const HomeScreen: React.FC = () => {
 								</MetaDataText>
 							</View>
 						)}
-						{groupedBanners.get(date)?.map((banner) => (
-							<HomeBannerView key={banner.id} banner={banner} style={{ margin: 10 }} />
+						{banners.activities[date].map((banner) => (
+							<ActivityBanner key={banner.id} banner={banner} style={{ margin: 10 }} />
 						))}
 					</>
 				))}
