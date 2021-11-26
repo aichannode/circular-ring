@@ -21,7 +21,7 @@ export const UpdatingComponent: React.FC<I_UpdatingComponent> = ({ showUpdateFai
 	const { format } = useI18n();
 	const [uploadPercent, setUploadPercent] = useState<number>(0);
 	const [progress, setProgress] = useState(0);
-	const { bleDeviceService } = useServices();
+	const { bleDeviceService, ringManagementService } = useServices();
 	const updateState = useObservable(bleDeviceService.updateState);
 	const { goBack } = useNavigation();
 
@@ -59,6 +59,7 @@ export const UpdatingComponent: React.FC<I_UpdatingComponent> = ({ showUpdateFai
 					</CenterView>
 					<PrimaryButton
 						onPress={() => {
+							ringManagementService.submitFirmwareVersion();
 							bleDeviceService.updateState.set(UpdateState.IDLE);
 							goBack();
 						}}
