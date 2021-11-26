@@ -13,7 +13,8 @@ import { DFUEmitter } from "react-native-nordic-dfu";
 import { ChunkedCircle, CircleGradient } from "@ui/components/shapes/chunkedCircle";
 import { Device } from "react-native-ble-plx";
 import { SecondaryText } from "@ui/components/text";
-import { BleDeviceService } from "@domain/device/bleDeviceService";
+import { BleDeviceService, UpdateState } from "@domain/device/bleDeviceService";
+import { useNavigation } from "@react-navigation/core";
 
 const startDFU = async (bleService: BleDeviceService) => {
 	await bleService.startDfuMode();
@@ -26,12 +27,14 @@ export const RingFirmwareUpdate: React.FC = () => {
 	const UpdateFailedBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const connectedRing = useObservable(bleDeviceService.connectedDevice);
 	const [isUpdating, setIsUpdating] = useState(false);
+	const updateState = useObservable(bleDeviceService.updateState);
 
-	console.log("CONNECTED RING", connectedRing?.name);
+	console.log("updateState", updateState);
+	console.log("CONNECTED RING", connectedRing);
 
 	return (
 		<Container>
-			{!isUpdating ? (
+			{updateState.status === UpdateState.IDLE.status ? (
 				<NeedToUpdateComponent
 					connectedRing={connectedRing}
 					showUpdateFailed={() => UpdateFailedBottomSheetRef.current?.present()}
@@ -62,13 +65,18 @@ const UpdatingComponent: React.FC<I_NeedToUpdateComponent> = ({ showUpdateFailed
 	const [uploadPercent, setUploadPercent] = useState<number>(0);
 	const [progress, setProgress] = useState(0);
 	const { bleDeviceService } = useServices();
-	const connectedRing = useObservable(bleDeviceService.connectedDevice);
-	console.log("DFU Connected RIng", connectedRing?.name);
 	const updateState = useObservable(bleDeviceService.updateState);
+	const connectedRing = useObservable(bleDeviceService.connectedDevice);
+	const { goBack } = useNavigation();
+	console.log("DFU Connected RIng", connectedRing?.name);
 	console.log("UPDATE STATE", updateState);
 
 	useEffect(() => {
-		if (updateState.progress === -1) showUpdateFailed();
+		console.log("UPDATEING COMPONENT updateState", updateState);
+		if (updateState.error) {
+			console.log("SHOW FUCKING BOTTOM SHEET");
+			showUpdateFailed();
+		}
 		if (updateState.status === "RECONNECTED") setIsUpdating(false);
 	}, [updateState]);
 
@@ -77,7 +85,7 @@ const UpdatingComponent: React.FC<I_NeedToUpdateComponent> = ({ showUpdateFailed
 	}, [uploadPercent]);
 
 	useEffect(() => {
-		DFUEmitter.addListener("DFUProgress", ({ percent, currentPart, partsTotal, avgSpeed, speed }) => {
+		DFUEmitter.addListener("DFUProgress", ({ percent }) => {
 			console.log("DFU progress: " + percent + "%");
 			if (percent) setUploadPercent(percent);
 		});
@@ -88,7 +96,7 @@ const UpdatingComponent: React.FC<I_NeedToUpdateComponent> = ({ showUpdateFailed
 	}, []);
 
 	return (
-		<>
+		<UpdatingContainer>
 			<Description>{format("updateFirmware.updating.description")}</Description>
 			<View style={{ marginTop: 80 }}>
 				<ChunkedCircle
@@ -105,7 +113,18 @@ const UpdatingComponent: React.FC<I_NeedToUpdateComponent> = ({ showUpdateFailed
 				</CenterView>
 			</View>
 			<SecondaryText style={{ marginTop: 50 }}>{updateState.status}</SecondaryText>
-		</>
+			{updateState.status === UpdateState.UPDATE_SUCCESS.status && (
+				<PrimaryButton
+					onPress={() => {
+						bleDeviceService.updateState.set(UpdateState.IDLE);
+						goBack();
+					}}
+					style={{ position: "absolute", bottom: "10%" }}
+				>
+					Back
+				</PrimaryButton>
+			)}
+		</UpdatingContainer>
 	);
 };
 
@@ -206,11 +225,11 @@ const OutOfDate = styled.Text`
 	margin-bottom: 22px;
 `;
 
-// const Container = styled.View`
-// 	flex: 1;
-// 	align-items: center;
-// 	padding: 60px 50px;
-// `;
+const UpdatingContainer = styled.View`
+	flex: 1;
+	align-items: center;
+	padding: 0px 50px;
+`;
 
 const Container = styled.View`
 	flex: 1;

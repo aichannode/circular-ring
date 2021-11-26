@@ -46,7 +46,13 @@ const userApi = new UserApi(apiService);
 const userService = new UserService(cognitoAuthService, userApi, userStorage);
 
 const bluetoothService = new BluetoothService();
-const bleDeviceService = new BleDeviceService(bluetoothService, fakeDeviceService, favoriteDeviceStorage, userService);
+const bleDeviceService = new BleDeviceService(
+	bluetoothService,
+	fakeDeviceService,
+	favoriteDeviceStorage,
+	userService,
+	ringApi
+);
 const circleAlarmService = new CircleAlarmService(bleDeviceService);
 const ringManagementService = new RingManagementService(
 	userService,

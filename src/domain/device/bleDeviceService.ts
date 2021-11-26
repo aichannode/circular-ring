@@ -12,10 +12,12 @@ import { Platform } from "react-native";
 import { BleError, Device, ScanMode, State, Subscription } from "react-native-ble-plx";
 import { getUTCTimestamp } from "@utils/date";
 import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
+import { RingApi } from "@domain/ring/ringApi";
 import { LocationEnabler } from "./locationEnabler";
 import { NamedDevice } from "./namedDevice";
 import { NordicDFU } from "react-native-nordic-dfu";
 import RNFetchBlob from "rn-fetch-blob";
+import RNFS from "react-native-fs";
 
 const FB = RNFetchBlob.config({
 	fileCache: true,
@@ -49,27 +51,30 @@ export enum DeviceAutoConnectState {
 interface I_UpdateState {
 	status: string;
 	progress: number;
+	error: boolean;
 }
 
 export const UpdateState = {
-	IDLE: { status: "IDLE", progress: 0 },
-	START_UPDATE_FLOW: { status: "START_UPDATE_FLOW", progress: 1 },
-	DOWNLOADING_FIRMWARE: { status: "DOWNLOADING_FIRMWARE", progress: 2 },
-	SETTING_RING_IN_DFU_MODE: { status: "SETTING_RING_IN_DFU_MODE", progress: 4 },
-	SCANNING_DFU_RING: { status: "SCANNING_DFU_RING", progress: 6 },
-	FOUND_DFU_RING: { status: "FOUND_DFU_RING", progress: 8 },
-	SENDING_FIRMWARE_OVER_BLUETOOTH: { status: "SENDING_FIRMWARE_OVER_BLUETOOTH", progress: 10 },
-	RECONNECTING: { status: "RECONNECTING", progress: 15 },
-	RECONNECTED: { status: "RECONNECTED", progress: 20 },
-	UPDATE_SUCCESS: { status: "UPDATE_SUCCESS", progress: 10 },
-	UPDATE_ERROR_SCANNING: { status: "UPDATE_ERROR_SCANNING", progress: -1 },
-	UPDATE_ERROR_DOWNLOAD_FAILED: { status: "UPDATE_ERROR_DOWNLOAD_FAILED", progress: -1 },
-	UPDATE_ERROR_SHA1_INVALID: { status: "UPDATE_ERROR_SHA1_INVALID", progress: -1 },
-	UPDATE_ERROR_RING_DISCONNECTION: { status: "UPDATE_ERROR_RING_DISCONNECTION", progress: -1 },
-	UPDATE_ERROR_SETTING_RING_IN_DFU_MODE: { status: "UPDATE_ERROR_SETTING_RING_IN_DFU_MODE", progress: -1 },
+	IDLE: { status: "IDLE", progress: 0, error: false },
+	START_UPDATE_FLOW: { status: "START_UPDATE_FLOW", progress: 1, error: false },
+	DOWNLOADING_FIRMWARE: { status: "DOWNLOADING_FIRMWARE", progress: 2, error: false },
+	SETTING_RING_IN_DFU_MODE: { status: "SETTING_RING_IN_DFU_MODE", progress: 4, error: false },
+	SCANNING_DFU_RING: { status: "SCANNING_DFU_RING", progress: 6, error: false },
+	FOUND_DFU_RING: { status: "FOUND_DFU_RING", progress: 8, error: false },
+	SENDING_FIRMWARE_OVER_BLUETOOTH: { status: "SENDING_FIRMWARE_OVER_BLUETOOTH", progress: 10, error: false },
+	RECONNECTING: { status: "RECONNECTING", progress: 15, error: false },
+	RECONNECTED: { status: "RECONNECTED", progress: 20, error: false },
+	UPDATE_SUCCESS: { status: "UPDATE_SUCCESS", progress: 20, error: false },
+	UPDATE_ERROR_SCANNING: { status: "UPDATE_ERROR_SCANNING", progress: -1, error: true },
+	UPDATE_ERROR_DOWNLOAD_FAILED: { status: "UPDATE_ERROR_DOWNLOAD_FAILED", progress: -1, error: true },
+	UPDATE_ERROR_SHA1_INVALID: { status: "UPDATE_ERROR_SHA1_INVALID", progress: -1, error: true },
+	UPDATE_ERROR_RING_DISCONNECTION: { status: "UPDATE_ERROR_RING_DISCONNECTION", progress: -1, error: true },
+	UPDATE_ERROR_SETTING_RING_IN_DFU_MODE: { status: "UPDATE_ERROR_SETTING_RING_IN_DFU_MODE", progress: -1, error: true },
+
 	UPDATE_ERROR_SENDING_FIRMWARE_OVER_BLUETOOTH: {
 		status: "UPDATE_ERROR_SENDING_FIRMWARE_OVER_BLUETOOTH",
 		progress: -1,
+		error: true,
 	},
 };
 
@@ -122,7 +127,8 @@ export class BleDeviceService {
 		private readonly bluetoothService: BluetoothService,
 		private readonly fakeDeviceService: FakeDeviceService,
 		private readonly favoriteDeviceStorage: FavoriteDeviceStorage,
-		private readonly userService: UserService
+		private readonly userService: UserService,
+		private readonly ringApi: RingApi
 	) {
 		LocationEnabler.addListener(({ locationEnabled }) => {
 			this._locationEnabledAndroid.set(locationEnabled);
@@ -250,7 +256,10 @@ export class BleDeviceService {
 
 	async startDfuMode() {
 		let firmwareFile = null;
-
+		if (this.updateState.get().error) {
+			await this.updateState.set(UpdateState.IDLE);
+			return;
+		}
 		this.updateState.set(UpdateState.START_UPDATE_FLOW);
 		this.logger.info("START DFU MODE");
 		this._connectionState.set(DeviceConnectionState.UPDATE);
@@ -267,12 +276,21 @@ export class BleDeviceService {
 			"https://firmware-updates.cdn.stg.circular.xyz/client/1.0.15-release%2B414907626.7f6b4e87bcc/patch?Expires=1637866470&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9maXJtd2FyZS11cGRhdGVzLmNkbi5zdGcuY2lyY3VsYXIueHl6L2NsaWVudC8xLjAuMTUtcmVsZWFzZSUyQjQxNDkwNzYyNi43ZjZiNGU4N2JjYy9wYXRjaCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTYzNzg2NjQ3MH19fV19&Signature=IExibFHGur55djY8Z4OcQrRHt2ZaRZXFw2yrDBIndux05Mcuqo5lH-N2VS1j34XDq8qy4gghwmOLYlj~APJ3U6XF83dWtdPNgNw75k0Sf-lblFLW9aGCB6JuTYKasdU1T-SB-lnWTLAaVgnG6bGOd-j9Wrtq6HQh3qP0jITUnhYJ6YHKiAAEhYsaNsbV0Wpdm-K191OpJZn3ZtjIkfApsbNorXu34zSF-g8~BCiV2Yvy3A9sidCJevrn4SXUskEVgjMznCtF9-UU6wEuw3R8tPEm8NNr5KVfr5VoKWOVkkjGS--3WuY~DO2BMCtkboU3rdwM-De0L~PQixG5w~TQ~w__&Key-Pair-Id=K10R2G20ZBIPJW";
 
 		try {
-			firmwareFile = (await FB.fetch("GET", TODELETE)).path();
-			console.log("firmwareFile 1", firmwareFile);
+			const latestFirmware = await this.ringApi.getLatestFirmware();
+			console.log("134 latest Firmware", latestFirmware.data);
+			firmwareFile = (await FB.fetch("GET", latestFirmware.data.fileUrl)).path();
+			const hashOfFMW = await RNFS.hash(firmwareFile, "sha1");
+			console.log("134 hashOfFMW", hashOfFMW, latestFirmware.data.hash);
+			if (hashOfFMW !== latestFirmware.data.hash) {
+				console.log("FWM DOESNT MATCH");
+				this.updateState.set(UpdateState.UPDATE_ERROR_DOWNLOAD_FAILED);
+				throw Error("FIRMWARE DONT MATCH");
+			}
+			console.log("134 irmwareFile 1", firmwareFile);
 			this.startDFUScan(firmwareFile);
 		} catch (err) {
+			console.log("134 firmwareFile 2", firmwareFile, err);
 			this.updateState.set(UpdateState.UPDATE_ERROR_DOWNLOAD_FAILED);
-			console.log("firmwareFile 2", firmwareFile);
 			return null;
 		}
 	}
@@ -467,7 +485,7 @@ export class BleDeviceService {
 					this.logger.info(`Discovered device named ${device.name} with id ${device.id} ... ${JSON.stringify(device)}`);
 					if (device.name === name) {
 						if (this.updateState.get().status === UpdateState.RECONNECTING.status)
-							this.updateState.set(UpdateState.RECONNECTED);
+							this.updateState.set(UpdateState.UPDATE_SUCCESS);
 						this.stopScan();
 						resolve(device);
 					}

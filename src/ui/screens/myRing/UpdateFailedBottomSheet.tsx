@@ -6,9 +6,11 @@ import { MediumTitleText, PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, Image } from "react-native";
 import styled from "styled-components/native";
+import { BleDeviceService, UpdateState } from "@domain/device/bleDeviceService";
+import { useObservable } from "micro-observables";
 
 interface UpdateFailedBottomSheetProps {
 	onClose: () => void;
@@ -16,22 +18,8 @@ interface UpdateFailedBottomSheetProps {
 
 export const UpdateFailedBottomSheet: React.FC<UpdateFailedBottomSheetProps> = ({ onClose }) => {
 	const { format } = useI18n();
-	const { ringManagementService } = useServices();
-
-	const [isLoading, setLoading] = useState(false);
-	const [errorMessage, setErrorMessage] = useState("");
-
-	const performFactoryReset = useCallback(async () => {
-		setErrorMessage("");
-		setLoading(true);
-		try {
-			await ringManagementService.factoryResetCurrentRing();
-			setLoading(false);
-		} catch (error) {
-			setLoading(false);
-			setErrorMessage(format("global.default_error"));
-		}
-	}, []);
+	const { bleDeviceService } = useServices();
+	const updateState = useObservable(bleDeviceService.updateState);
 
 	return (
 		<Container horizontalPadding={0}>
@@ -43,21 +31,24 @@ export const UpdateFailedBottomSheet: React.FC<UpdateFailedBottomSheetProps> = (
 			</View>
 			<Title>{format("updateFirmware.updateFailed")}</Title>
 			<Description>{format("updateFirmware.updateFailed.description")}</Description>
-			<ErrorMessage>{errorMessage}</ErrorMessage>
+			<ErrorMessage>{updateState.status}</ErrorMessage>
 			<Grow />
 			<ButtonContainer gap={35} style={{ height: 38 }}>
-				{isLoading ? (
-					<Spinner size={24} />
-				) : (
-					[
-						<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
-							{format("global.back")}
-						</TertiaryButton>,
-						<PrimaryButton key={"ok"} onPress={performFactoryReset}>
-							{format("retry")}
-						</PrimaryButton>,
-					]
-				)}
+				<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
+					{format("global.back")}
+				</TertiaryButton>
+
+				<PrimaryButton
+					key={"ok"}
+					onPress={async () => {
+						console.log("ASYNC SET IDLE");
+						bleDeviceService.updateState.set(UpdateState.IDLE);
+						onClose();
+						// await bleDeviceService.startDfuMode();
+					}}
+				>
+					{format("retry")}
+				</PrimaryButton>
 			</ButtonContainer>
 		</Container>
 	);

@@ -23,7 +23,9 @@ export const MyRingScreen: React.FC = () => {
 	const userRings = useObservable(ringManagementService.userRings);
 	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const viewModel = new RingViewModel();
-	const [currentRing, setCurrentRing] = useState<NamedUserRing>(userRings[0]);
+	const [currentRing, setCurrentRing] = useState<NamedUserRing>(userRings.filter((ring) => ring.connected)[0]);
+
+	console.log("Current Rings", userRings);
 
 	const renameAlert = () => {
 		Alert.prompt(format("manage_rings.ring.rename"), "", [
