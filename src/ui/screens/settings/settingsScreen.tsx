@@ -7,8 +7,7 @@ import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
-import React, { useCallback, useMemo, useRef, useState } from "react";
-import { getVersion } from "react-native-device-info";
+import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components/native";
 import { DateFormatBottomSheet } from "./dateFormatBottomSheet";
 import { useObservable } from "micro-observables";
@@ -22,8 +21,6 @@ export const SettingsScreen: React.FC = () => {
 
 	const [heightFormat, setHeightFormat] = useState(userSettings?.heightFormat);
 	const [weightFormat, setWeightFormat] = useState(userSettings?.weightFormat);
-
-	const appVersion = useMemo(() => getVersion(), []);
 
 	const updateSettings = useCallback(() => {
 		if (heightFormat === userSettings?.heightFormat && weightFormat === userSettings?.weightFormat) {
