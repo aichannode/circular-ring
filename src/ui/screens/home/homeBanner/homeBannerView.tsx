@@ -123,6 +123,5 @@ const WhiteWithColoredBorderContainer = styled.View<{bannerStyle: BannerStyle}>`
 
 const Separator = styled.View`
 	height: 1px;
-	opacity: .5;
-	background-color: ${colors.lightgray};
+	background-color: ${colors.midGray};
 `;
