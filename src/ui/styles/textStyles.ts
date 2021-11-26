@@ -20,6 +20,11 @@ export const textStyles = {
 		color: ${colors.textPlaceholder};
 	`,
 
+	meta: css`
+		font-size: 14px;
+		color: ${colors.darkGray};
+	`,
+
 	errorMessage: css`
 		font-size: 14px;
 		font-weight: bold;

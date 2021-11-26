@@ -4,23 +4,30 @@ import { Intensity } from "@domain/ring/ringLiveData";
 import dayjs from "dayjs";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
+import { ColorValue } from "react-native";
 import { WordingKey } from "../wordings";
 import { Bold, Colored, Strong } from "./components/text";
 
-const xmlFormatters = {
-	strong: (...chunks: string[]) => <Strong>{chunks}</Strong>,
-	colored: (...chunks: string[]) => <Colored>{chunks}</Colored>,
-	bold: (...chunks: string[]) => <Bold>{chunks}</Bold>,
-} as const;
+export type FormatterOptions = Partial<{
+	color: ColorValue
+}>
 
-export function useI18n() {
+function createXmlFormatters(options?: FormatterOptions) {
+	return {
+		strong: (...chunks: string[]) => <Strong>{chunks}</Strong>,
+		colored: (...chunks: string[]) => <Colored style={{color: options?.color}}>{chunks}</Colored>,
+		bold: (...chunks: string[]) => <Bold>{chunks}</Bold>,
+	} as const;
+}
+
+export function useI18n(options?: FormatterOptions) {
 	const intl = useIntl();
 
 	return {
 		...intl,
 		format: useCallback(
 			(key: WordingKey, values?: Record<string, string | number | boolean | Date | null | undefined> | undefined) => {
-				return intl.formatMessage({ id: key }, { ...values, ...xmlFormatters }) as string;
+				return intl.formatMessage({ id: key }, { ...values, ...createXmlFormatters(options) }) as string;
 			},
 			[intl]
 		),

@@ -1,5 +1,6 @@
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
+import { TextStyle } from "react-native";
 import styled from "styled-components/native";
 
 export const PrimaryText = styled.Text`
@@ -14,6 +15,12 @@ export const TertiaryText = styled.Text`
 export const TitleText = styled.Text`
 	${textStyles.title};
 `;
+export const SubTitleText = styled.Text`
+	${textStyles.subtitle};
+`
+export const MetaDataText = styled.Text`
+	${textStyles.meta};
+`
 export const MediumTitleText = styled.Text`
 	${textStyles.mediumTitle};
 `;
@@ -21,8 +28,8 @@ export const Strong = styled.Text`
 	font-weight: bold;
 	color: ${colors.primary};
 `;
-export const Colored = styled.Text`
-	color: ${colors.primary};
+export const Colored = styled.Text<TextStyle>`
+	${props => props.color?.toString() ?? `color: ${colors.primary}`};
 `;
 export const Bold = styled.Text`
 	font-weight: bold;

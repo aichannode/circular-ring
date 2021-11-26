@@ -71,12 +71,6 @@ export class RingManagementService {
 		const oldNamedRings = this._userRings.get();
 		const connectedRingId = this.deviceService.favoriteDeviceSNU.get();
 		const connectedRingName = this.deviceService.favoriteDevice.get()?.name;
-		const connected = this.deviceService.connectedDevice.get();
-
-		console.log("connected", connected);
-		console.log("oldNamedRings", oldNamedRings);
-		console.log("connectedRingId", connectedRingId);
-		console.log("connectedRingName", connectedRingName);
 
 		const newNamedRings: NamedUserRing[] = rings.map((r) => {
 			const oldRingName = oldNamedRings.filter((oldRing) => oldRing.id === r.id)[0]?.name;
