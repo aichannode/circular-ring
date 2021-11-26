@@ -155,7 +155,7 @@ const NeedToUpdateComponent: React.FC<I_NeedToUpdateComponent> = ({ connectedRin
 		if (ringFirmware.version !== currentRing.firmware) setOutOfDate(true);
 		else {
 			console.log("FIRMWARE UPTODATE");
-			setOutOfDate(false);
+			setOutOfDate(!false);
 		}
 	};
 
