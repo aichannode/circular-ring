@@ -95,6 +95,7 @@ export const services = {
 	calendarService,
 	userQuickAccess,
 	timerService,
+	ringApi,
 };
 
 export type Services = typeof services;
