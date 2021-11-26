@@ -11,12 +11,14 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import { getVersion } from "react-native-device-info";
 import styled from "styled-components/native";
 import { DateFormatBottomSheet } from "./dateFormatBottomSheet";
+import { useObservable } from "micro-observables";
 
 export const SettingsScreen: React.FC = () => {
 	const { format } = useI18n();
 	const userSettings = useUserSettings();
-	const { userService } = useServices();
+	const { userService, ringApi } = useServices();
 	const { navigate } = useRoutesNavigation();
+	const firwareVersion = useObservable(ringApi.firmwareVersion);
 
 	const [heightFormat, setHeightFormat] = useState(userSettings?.heightFormat);
 	const [weightFormat, setWeightFormat] = useState(userSettings?.weightFormat);
@@ -78,7 +80,7 @@ export const SettingsScreen: React.FC = () => {
 				hasDisclosure
 				action={() => navigate(Routes.WebView, { uri: format("url.privacy"), label: format("settings.privacy") })}
 			/>
-			<InfoListItem name={format("settings.app_version")} value={appVersion} />
+			<InfoListItem name={format("settings.app_version")} value={firwareVersion} />
 			<InfoListHeader>{format("settings.help")}</InfoListHeader>
 			<InfoListItem
 				name={format("settings.faq")}

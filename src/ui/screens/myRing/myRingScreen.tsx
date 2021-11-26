@@ -20,10 +20,10 @@ export const MyRingScreen: React.FC = () => {
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
 	const { ringManagementService } = useServices();
+	const userRings = useObservable(ringManagementService.userRings);
+	const [currentRing, setCurrentRing] = useState<NamedUserRing>(userRings?.filter((ring) => ring.connected)[0]);
 	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const viewModel = new RingViewModel();
-	const userRings = useObservable(ringManagementService.userRings);
-	const [currentRing, setCurrentRing] = useState<NamedUserRing>(userRings.filter((ring) => ring.connected)[0]);
 
 	console.log("Current Rings", userRings);
 
@@ -39,7 +39,7 @@ export const MyRingScreen: React.FC = () => {
 					if (newName && newName !== "") {
 						bleDeviceService.write(`${Channel.RENAME}${newName.toUpperCase()}`);
 						userRings.map((ring) => {
-							if (ring.id === currentRing.id) {
+							if (ring.id === currentRing?.id) {
 								const upTodateRing = { ...ring, name: "Circular " + viewModel.formatRingName(newName) };
 								setCurrentRing(upTodateRing);
 								ringManagementService.updateStoredRings(upTodateRing);
@@ -64,7 +64,7 @@ export const MyRingScreen: React.FC = () => {
 					renameAlert();
 				}}
 			>
-				{currentRing.name}
+				{currentRing?.name}
 			</StyledPrimaryText>
 			<InfoListItem
 				name={format("ring.firmware")}
@@ -73,7 +73,7 @@ export const MyRingScreen: React.FC = () => {
 					navigate(Routes.RingFirmwareUpdate);
 				}}
 			>
-				<FirmwareVersionText>{currentRing.firmware}</FirmwareVersionText>
+				<FirmwareVersionText>{currentRing?.firmware}</FirmwareVersionText>
 			</InfoListItem>
 
 			<InfoListItem
