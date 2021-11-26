@@ -38,6 +38,7 @@ interface InfoListItemProps<T> {
 	errorMessage?: string;
 	loading?: boolean;
 	disabled?: boolean;
+	children?: React.ReactElement;
 }
 
 export function InfoListItem<T>({
@@ -55,6 +56,7 @@ export function InfoListItem<T>({
 	errorMessage,
 	loading,
 	disabled = false,
+	children,
 }: InfoListItemProps<T>) {
 	return (
 		<>
@@ -89,6 +91,7 @@ export function InfoListItem<T>({
 							{!!checked && <CheckIcon source={require("@assets/images/checkSmall.png")} tintColor={colors.white} />}
 						</Check>
 					)}
+					{children}
 					{hasDisclosure && (
 						<Disclosure
 							source={require("@assets/images/disclosure.png")}

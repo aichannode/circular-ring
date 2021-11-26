@@ -1,6 +1,7 @@
 {
 	"app_name": "Circular Ring",
 	"ok": "Ok",
+	"retry": "Retry",
 	"back": "Back",
 	"create": "Create",
 	"continue": "Continue",
@@ -42,6 +43,7 @@
 	"header.manage_my_rings": "MANAGE MY RINGS",
 	"header.all_tags": "Search Notes",
 	"header.quickaccess": "QUICK ACCESS",
+	"header.ringUpdateFirmware": "RING FIRMWARE UPDATE",
 	"ring.battery.label": "BATTERY",
 	"ring.manage": "Manage my Rings",
 	"ring.factory_reset": "Factory Reset",
@@ -349,7 +351,7 @@
 	"manage_rings.ring.turn_on": "Turn on",
 	"manage_rings.ring.turn_off": "Turn off",
 	"manage_rings.ring.vibrate": "Vibrate",
-	"manage_rings.ring.rename" : "Please enter new name",
+	"manage_rings.ring.rename": "Please enter new name",
 	"manage_rings.ring.default_name": "Circular",
 	"manage_rings.ring.sync_date_prefix": "Last Synced",
 	"manage_rings.ring.version_prefix": "Version",
@@ -440,5 +442,12 @@
 	"quickaccess.timerdesc": "Make the ring vibrate after a specified delay.",
 	"quickaccess.displayed": "DISPLAYED",
 	"quickaccess.hidden": "HIDDEN",
-	"quickaccess.description": "Add and organize shortcuts to appear in the quick access menu"
+	"quickaccess.description": "Add and organize shortcuts to appear in the quick access menu",
+	"ring.firmware": "Firmware",
+	"updateFirmware.uptodate": "Up to date",
+	"updateFirmware.outofdate": "Out of date",
+	"updateFirmware.newVersionAvailable": "A new version is available. Please update in order to access the newest features and bug fixes.",
+	"updateFirmware.updateFailed": "Update Failed",
+	"updateFirmware.updateFailed.description": "The firmware update coudn’t be completed. Please check that your ring’s battery is above 20% or that is is charging. \n\n\n It also might of failed for another reason such as your ring being too far away from your phone.",
+	"updateFirmware.updating.description": "Please keep your ring and phone close to each other during the firmware update.\n\nThe update might take up to a couple of minutes."
 }

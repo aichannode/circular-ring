@@ -50,7 +50,7 @@ export const HomeScreen: React.FC = () => {
 	// Will be updated with CIR-444
 	// const homeBanner = useHomeBanner();
 	const groupedBanners = useBanners();
-	
+
 	return (
 		<Container>
 			<CirclesBanner />
@@ -67,16 +67,19 @@ export const HomeScreen: React.FC = () => {
 					/>
 				}
 			>
-				{Array.from(groupedBanners.keys()).map(date => (
+				{Array.from(groupedBanners.keys()).map((date) => (
 					<>
 						{date !== "today" && (
-							<View style={{alignItems: "center"}}>
-								<Separator/>
-								<MetaDataText style={{fontSize: 8, backgroundColor: colors.lightgray}}>{date.toUpperCase()}</MetaDataText>
-								
+							<View style={{ alignItems: "center" }}>
+								<Separator />
+								<MetaDataText style={{ fontSize: 8, backgroundColor: colors.lightgray }}>
+									{date.toUpperCase()}
+								</MetaDataText>
 							</View>
 						)}
-						{groupedBanners.get(date)?.map(banner => <HomeBannerView key={banner.id} banner={banner} style={{ margin: 10 }} />)}
+						{groupedBanners.get(date)?.map((banner) => (
+							<HomeBannerView key={banner.id} banner={banner} style={{ margin: 10 }} />
+						))}
 					</>
 				))}
 			</ScrollView>
@@ -91,10 +94,10 @@ const Container = styled.View`
 
 const Separator = styled.View`
 	height: 1px;
-	
+
 	position: absolute;
 	left: 20;
 	top: 5;
 	right: 20;
 	background-color: ${colors.gray};
-`
+`;

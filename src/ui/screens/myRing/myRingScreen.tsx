@@ -13,6 +13,7 @@ import { Channel } from "@domain/device/channels";
 import { useObservable } from "micro-observables";
 import { NamedUserRing } from "@domain/ring/ring";
 import { RingViewModel } from "@ui/screens/myRing/viewModel/RingViewModel";
+import { colors } from "@ui/styles/colors";
 
 export const MyRingScreen: React.FC = () => {
 	const { bleDeviceService } = useServices();
@@ -22,7 +23,9 @@ export const MyRingScreen: React.FC = () => {
 	const userRings = useObservable(ringManagementService.userRings);
 	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const viewModel = new RingViewModel();
-	const [currentRing, setCurrentRing] = useState<NamedUserRing>(userRings[0]);
+	const [currentRing, setCurrentRing] = useState<NamedUserRing>(userRings.filter((ring) => ring.connected)[0]);
+
+	console.log("Current Rings", userRings);
 
 	const renameAlert = () => {
 		Alert.prompt(format("manage_rings.ring.rename"), "", [
@@ -51,7 +54,7 @@ export const MyRingScreen: React.FC = () => {
 	};
 
 	useEffect(() => {
-		console.log('display ring name')
+		console.log("display ring name");
 	}, [currentRing]);
 	return (
 		<Container>
@@ -64,12 +67,23 @@ export const MyRingScreen: React.FC = () => {
 				{currentRing.name}
 			</StyledPrimaryText>
 			<InfoListItem
+				name={format("ring.firmware")}
+				hasDisclosure
+				action={() => {
+					navigate(Routes.RingFirmwareUpdate);
+				}}
+			>
+				<FirmwareVersionText>{currentRing.firmware}</FirmwareVersionText>
+			</InfoListItem>
+
+			<InfoListItem
 				name={format("ring.manage")}
 				hasDisclosure
 				action={() => {
 					navigate(Routes.ManageMyRings);
 				}}
 			/>
+
 			<InfoListItem
 				style={{ marginTop: 20 }}
 				name={format("ring.factory_reset")}
@@ -94,4 +108,9 @@ const Container = styled.View`
 const StyledPrimaryText = styled(PrimaryText)`
 	margin-top: 20px;
 	margin-bottom: 80px;
+`;
+
+const FirmwareVersionText = styled.Text`
+	font-size: 14px;
+	color: ${colors.textPlaceholder};
 `;

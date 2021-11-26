@@ -41,6 +41,7 @@ import React, { useState } from "react";
 import { CalendarScreen } from "@ui/screens/calendar/calendarScreen";
 import { Tutorial } from "@ui/screens/onboarding/tutorial/tutorial";
 import { QuickAccess } from "@ui/screens/quickaccess/quickAccess";
+import { RingFirmwareUpdate } from "@ui/screens/myRing/ringFirmwareUpdate";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -70,6 +71,12 @@ const MainHomeNavigator = () => {
 				component={MyRingScreen}
 				options={{ title: format("header.my_ring"), headerRight: undefined }}
 			/>
+			<MainStack.Screen
+				name={Routes.RingFirmwareUpdate}
+				component={RingFirmwareUpdate}
+				options={{ title: format("header.ringUpdateFirmware"), headerRight: undefined }}
+			/>
+
 			<MainStack.Screen
 				name={Routes.ManageMyRings}
 				component={ManageMyRingsScreen}

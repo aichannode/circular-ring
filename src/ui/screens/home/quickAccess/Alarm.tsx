@@ -193,8 +193,8 @@ const Tile = styled.View`
 	flex: 1;
 	height: 50px;
 	justify-content: center;
-	border-right-width: 0.25;
-	border-left-width: 0.25;
+	border-right-width: 0.25px;
+	border-left-width: 0.25px;
 	border-color: ${colors.gray};
 `;
 

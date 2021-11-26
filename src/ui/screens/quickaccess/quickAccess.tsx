@@ -378,17 +378,11 @@ const styles = StyleSheet.create({
 	receiver: {
 		width: "100%",
 		height: 15,
-		// backgroundColor: "#EEE",
-		// borderWidth: 0.5,
-		// borderColor: colors.gray,
 		borderRadius: 8,
 	},
 	receiverfocus: {
 		width: "100%",
 		height: 100,
-		// backgroundColor: "#EEE",
-		// borderWidth: 0.5,
-		// borderColor: colors.gray,
 		borderRadius: 8,
 	},
 });
