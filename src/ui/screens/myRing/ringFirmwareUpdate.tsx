@@ -15,6 +15,7 @@ import { Device } from "react-native-ble-plx";
 import { SecondaryText } from "@ui/components/text";
 import { BleDeviceService, UpdateState } from "@domain/device/bleDeviceService";
 import { useNavigation } from "@react-navigation/core";
+import { UserRing } from "@domain/ring/ring";
 
 const startDFU = async (bleService: BleDeviceService) => {
 	await bleService.startDfuMode();
@@ -141,6 +142,28 @@ const CenterView = styled.View`
 const NeedToUpdateComponent: React.FC<I_NeedToUpdateComponent> = ({ connectedRing }) => {
 	const { bleDeviceService } = useServices();
 	const { format } = useI18n();
+	const { ringManagementService, ringApi } = useServices();
+	const [outOfDate, setOutOfDate] = useState(true);
+	const userRings = useObservable(ringManagementService.userRings);
+	const { goBack } = useNavigation();
+
+	const currentRing: UserRing = userRings.filter((ring) => ring.connected)[0];
+
+	const firmwareDiff = async () => {
+		const ringFirmware = await ringApi.getLatestFirmware();
+
+		if (ringFirmware.version !== currentRing.firmware) setOutOfDate(true);
+		else {
+			console.log("FIRMWARE UPTODATE");
+			setOutOfDate(false);
+		}
+	};
+
+	useEffect(() => {
+		firmwareDiff();
+	}, [userRings]);
+
+	console.log("FIRMWARE UPDATE CURRENT RING", currentRing);
 
 	return (
 		<>
@@ -158,19 +181,36 @@ const NeedToUpdateComponent: React.FC<I_NeedToUpdateComponent> = ({ connectedRin
 					elevation: 7,
 				}}
 			>
-				<VersionText>0.32.1</VersionText>
-				<OutOfDate>{format("updateFirmware.outofdate")}</OutOfDate>
+				<VersionText>{currentRing?.firmware?.split("-")[0]}</VersionText>
+				{outOfDate ? (
+					<OutOfDate>{format("updateFirmware.outofdate")}</OutOfDate>
+				) : (
+					<UpToDate>{format("updateFirmware.uptodate")}</UpToDate>
+				)}
 			</VersionContainer>
-			<VersionInfo>{format("updateFirmware.newVersionAvailable")}</VersionInfo>
-			<PrimaryButton
-				onPress={() => {
-					console.log("Current Rings", connectedRing?.id);
-					startDFU(bleDeviceService);
-				}}
-				style={{ position: "absolute", bottom: "10%" }}
-			>
-				Update
-			</PrimaryButton>
+			<VersionInfo>
+				{outOfDate ? format("updateFirmware.newVersionAvailable") : format("updateFirmware.versionIsUptodate")}
+			</VersionInfo>
+			{outOfDate ? (
+				<PrimaryButton
+					onPress={() => {
+						console.log("Current Rings", connectedRing?.id);
+						startDFU(bleDeviceService);
+					}}
+					style={{ position: "absolute", bottom: "10%" }}
+				>
+					Update
+				</PrimaryButton>
+			) : (
+				<PrimaryButton
+					onPress={() => {
+						goBack();
+					}}
+					style={{ position: "absolute", bottom: "10%" }}
+				>
+					Back
+				</PrimaryButton>
+			)}
 		</>
 	);
 };
@@ -203,13 +243,13 @@ const VersionText = styled.Text`
 	text-align: center;
 `;
 
-// const UpToDate = styled.Text`
-// 	font-size: 18px;
-// 	color: ${colors.orangeRed};
-// 	margin: auto;
-// 	margin-top: 12px;
-// 	margin-bottom: 22px;
-// `;
+const UpToDate = styled.Text`
+	font-size: 18px;
+	color: ${colors.green};
+	margin: auto;
+	margin-top: 12px;
+	margin-bottom: 22px;
+`;
 
 const OutOfDate = styled.Text`
 	font-size: 18px;

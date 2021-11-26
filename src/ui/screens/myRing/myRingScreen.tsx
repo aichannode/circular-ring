@@ -20,9 +20,9 @@ export const MyRingScreen: React.FC = () => {
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
 	const { ringManagementService } = useServices();
-	const userRings = useObservable(ringManagementService.userRings);
 	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const viewModel = new RingViewModel();
+	const userRings = useObservable(ringManagementService.userRings);
 	const [currentRing, setCurrentRing] = useState<NamedUserRing>(userRings.filter((ring) => ring.connected)[0]);
 
 	console.log("Current Rings", userRings);
