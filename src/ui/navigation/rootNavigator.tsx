@@ -41,7 +41,7 @@ import React, { useState } from "react";
 import { CalendarScreen } from "@ui/screens/calendar/calendarScreen";
 import { Tutorial } from "@ui/screens/onboarding/tutorial/tutorial";
 import { QuickAccess } from "@ui/screens/quickaccess/quickAccess";
-import { RingFirmwareUpdate } from "@ui/screens/myRing/ringFirmwareUpdate";
+import { RingFirmwareUpdate } from "@ui/screens/myRing/firmwareUpdate/ringFirmwareUpdate";
 
 const SetupStack = createNativeStackNavigator();
 

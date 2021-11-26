@@ -10,6 +10,7 @@ import { Logger } from "@betomorrow/logging-core";
 import { getLogger } from "@core/logger/logger";
 import { Task } from "@domain/task/task.model";
 import { sleep } from "@utils/timing-utils";
+import { observable } from "micro-observables";
 
 const ringApiBaseUrl = "/rings";
 
@@ -28,11 +29,26 @@ interface I_latestFirmware {
 export class RingApi {
 	private logger: Logger = getLogger("RingApi");
 	private readonly instance: AxiosInstance;
+	private _firmwareVersion = observable<string | undefined>(undefined);
+	readonly firmwareVersion = this._firmwareVersion.readOnly();
 
 	constructor(private readonly apiService: ApiService) {
 		this.instance = axios.create();
 		addRequestInterceptor(this.instance, serializeArrayParametersInterceptor);
 		addResponseInterceptor(this.instance, logResponseInterceptor(this.logger));
+	}
+
+	async init() {
+		if (this._firmwareVersion.get() === undefined) {
+			try {
+				const firmware = await this.getLatestFirmware();
+				console.log("success 1234", firmware);
+				this._firmwareVersion.set(firmware.version);
+			} catch (err) {
+				console.log("Error 1234");
+				this._firmwareVersion.set(undefined);
+			}
+		}
 	}
 
 	async getRings(): Promise<UserRing[]> {
