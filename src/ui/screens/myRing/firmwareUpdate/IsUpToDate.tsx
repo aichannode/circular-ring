@@ -27,14 +27,13 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 	const { ringManagementService, ringApi } = useServices();
 	const [outOfDate, setOutOfDate] = useState(true);
 	const userRings = useObservable(ringManagementService.userRings);
+	const lastFirmwareVersion = useObservable(ringApi.firmwareVersion);
 	const { goBack } = useNavigation();
 
 	const currentRing: UserRing = userRings.filter((ring) => ring.connected)[0];
 
 	const firmwareDiff = async () => {
-		const ringFirmware = await ringApi.getLatestFirmware();
-
-		if (ringFirmware.version !== currentRing.firmware) setOutOfDate(true);
+		if (lastFirmwareVersion !== currentRing.firmware) setOutOfDate(true);
 		else {
 			console.log("FIRMWARE UPTODATE");
 			setOutOfDate(false);
