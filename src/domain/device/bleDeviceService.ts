@@ -272,16 +272,13 @@ export class BleDeviceService {
 		}
 		this.updateState.set(UpdateState.DOWNLOADING_FIRMWARE);
 
-		const TODELETE =
-			"https://firmware-updates.cdn.stg.circular.xyz/client/1.0.15-release%2B414907626.7f6b4e87bcc/patch?Expires=1637866470&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9maXJtd2FyZS11cGRhdGVzLmNkbi5zdGcuY2lyY3VsYXIueHl6L2NsaWVudC8xLjAuMTUtcmVsZWFzZSUyQjQxNDkwNzYyNi43ZjZiNGU4N2JjYy9wYXRjaCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTYzNzg2NjQ3MH19fV19&Signature=IExibFHGur55djY8Z4OcQrRHt2ZaRZXFw2yrDBIndux05Mcuqo5lH-N2VS1j34XDq8qy4gghwmOLYlj~APJ3U6XF83dWtdPNgNw75k0Sf-lblFLW9aGCB6JuTYKasdU1T-SB-lnWTLAaVgnG6bGOd-j9Wrtq6HQh3qP0jITUnhYJ6YHKiAAEhYsaNsbV0Wpdm-K191OpJZn3ZtjIkfApsbNorXu34zSF-g8~BCiV2Yvy3A9sidCJevrn4SXUskEVgjMznCtF9-UU6wEuw3R8tPEm8NNr5KVfr5VoKWOVkkjGS--3WuY~DO2BMCtkboU3rdwM-De0L~PQixG5w~TQ~w__&Key-Pair-Id=K10R2G20ZBIPJW";
-
 		try {
 			const latestFirmware = await this.ringApi.getLatestFirmware();
-			console.log("134 latest Firmware", latestFirmware.data);
-			firmwareFile = (await FB.fetch("GET", latestFirmware.data.fileUrl)).path();
+			console.log("134 latest Firmware", latestFirmware);
+			firmwareFile = (await FB.fetch("GET", latestFirmware.fileUrl)).path();
 			const hashOfFMW = await RNFS.hash(firmwareFile, "sha1");
-			console.log("134 hashOfFMW", hashOfFMW, latestFirmware.data.hash);
-			if (hashOfFMW !== latestFirmware.data.hash) {
+			console.log("134 hashOfFMW", hashOfFMW, latestFirmware.hash);
+			if (hashOfFMW !== latestFirmware.hash) {
 				console.log("FWM DOESNT MATCH");
 				this.updateState.set(UpdateState.UPDATE_ERROR_DOWNLOAD_FAILED);
 				throw Error("FIRMWARE DONT MATCH");

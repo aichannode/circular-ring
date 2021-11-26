@@ -19,6 +19,11 @@ function isTaskRunning(status: string) {
 	return status !== "ENDED" && status !== "CANCELLED" && status !== "FAILED";
 }
 
+interface I_latestFirmware {
+	fileUrl: string;
+	hash: string;
+}
+
 export class RingApi {
 	private logger: Logger = getLogger("RingApi");
 	private readonly instance: AxiosInstance;
@@ -107,8 +112,9 @@ export class RingApi {
 		}
 	}
 
-	async getLatestFirmware(): Promise<void> {
-		return await this.apiService.get("/firmware/latest");
+	async getLatestFirmware(): Promise<I_latestFirmware> {
+		const result = await this.apiService.get<I_latestFirmware>("/firmware/latest");
+		return result.data;
 	}
 
 	async submitFirmwareVersion(id: string, version: string): Promise<void> {

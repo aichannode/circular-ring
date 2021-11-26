@@ -26,7 +26,6 @@ export const RingFirmwareUpdate: React.FC = () => {
 	const { bleDeviceService } = useServices();
 	const UpdateFailedBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const connectedRing = useObservable(bleDeviceService.connectedDevice);
-	const [isUpdating, setIsUpdating] = useState(false);
 	const updateState = useObservable(bleDeviceService.updateState);
 
 	console.log("updateState", updateState);
@@ -38,11 +37,9 @@ export const RingFirmwareUpdate: React.FC = () => {
 				<NeedToUpdateComponent
 					connectedRing={connectedRing}
 					showUpdateFailed={() => UpdateFailedBottomSheetRef.current?.present()}
-					setIsUpdating={setIsUpdating}
 				></NeedToUpdateComponent>
 			) : (
 				<UpdatingComponent
-					setIsUpdating={setIsUpdating}
 					connectedRing={null}
 					showUpdateFailed={() => UpdateFailedBottomSheetRef.current?.present()}
 				></UpdatingComponent>
@@ -57,10 +54,9 @@ export const RingFirmwareUpdate: React.FC = () => {
 interface I_NeedToUpdateComponent {
 	connectedRing: Device | null;
 	showUpdateFailed: () => void;
-	setIsUpdating: (arg0: boolean) => void;
 }
 
-const UpdatingComponent: React.FC<I_NeedToUpdateComponent> = ({ showUpdateFailed, setIsUpdating }) => {
+const UpdatingComponent: React.FC<I_NeedToUpdateComponent> = ({ showUpdateFailed }) => {
 	const { format } = useI18n();
 	const [uploadPercent, setUploadPercent] = useState<number>(0);
 	const [progress, setProgress] = useState(0);
@@ -74,10 +70,9 @@ const UpdatingComponent: React.FC<I_NeedToUpdateComponent> = ({ showUpdateFailed
 	useEffect(() => {
 		console.log("UPDATEING COMPONENT updateState", updateState);
 		if (updateState.error) {
-			console.log("SHOW FUCKING BOTTOM SHEET");
+			console.log("SHOW BOTTOM SHEET");
 			showUpdateFailed();
 		}
-		if (updateState.status === "RECONNECTED") setIsUpdating(false);
 	}, [updateState]);
 
 	useEffect(() => {
@@ -143,7 +138,7 @@ const CenterView = styled.View`
 	flex-direction: column;
 `;
 
-const NeedToUpdateComponent: React.FC<I_NeedToUpdateComponent> = ({ connectedRing, setIsUpdating }) => {
+const NeedToUpdateComponent: React.FC<I_NeedToUpdateComponent> = ({ connectedRing }) => {
 	const { bleDeviceService } = useServices();
 	const { format } = useI18n();
 
@@ -170,7 +165,6 @@ const NeedToUpdateComponent: React.FC<I_NeedToUpdateComponent> = ({ connectedRin
 			<PrimaryButton
 				onPress={() => {
 					console.log("Current Rings", connectedRing?.id);
-					setIsUpdating(true);
 					startDFU(bleDeviceService);
 				}}
 				style={{ position: "absolute", bottom: "10%" }}
@@ -209,13 +203,13 @@ const VersionText = styled.Text`
 	text-align: center;
 `;
 
-const UpToDate = styled.Text`
-	font-size: 18px;
-	color: ${colors.orangeRed};
-	margin: auto;
-	margin-top: 12px;
-	margin-bottom: 22px;
-`;
+// const UpToDate = styled.Text`
+// 	font-size: 18px;
+// 	color: ${colors.orangeRed};
+// 	margin: auto;
+// 	margin-top: 12px;
+// 	margin-bottom: 22px;
+// `;
 
 const OutOfDate = styled.Text`
 	font-size: 18px;

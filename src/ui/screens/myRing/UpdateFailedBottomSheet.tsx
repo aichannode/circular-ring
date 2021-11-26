@@ -1,15 +1,14 @@
 import { useServices } from "@core/services";
 import { PrimaryButton, TertiaryButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
-import { Spinner } from "@ui/components/spinner";
 import { MediumTitleText, PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import { View, Image } from "react-native";
 import styled from "styled-components/native";
-import { BleDeviceService, UpdateState } from "@domain/device/bleDeviceService";
+import { UpdateState } from "@domain/device/bleDeviceService";
 import { useObservable } from "micro-observables";
 
 interface UpdateFailedBottomSheetProps {
