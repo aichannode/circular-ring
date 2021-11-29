@@ -107,7 +107,7 @@ export class BleDeviceService {
 	private _currentRingBattery = observable<RingBattery | null>(null);
 	private _batteryListenerUnsubscribe: (() => void) | undefined = undefined;
 	private _currentRingLiveData = observable<{ listening: boolean; data?: RingLiveData | null }>({ listening: false });
-
+	monitoring = this._monitoring.readOnly();
 	updateState = observable<I_UpdateState>(UpdateState.IDLE);
 	scannedDevices = this._scannedDevices.select((devicesMap) => [...devicesMap.values()]);
 

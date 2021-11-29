@@ -13,23 +13,19 @@ import { UpdateState } from "@domain/device/bleDeviceService";
 import { useNavigation } from "@react-navigation/core";
 import { Image } from "react-native";
 
-interface I_UpdatingComponent {
-	showUpdateFailed: () => void;
-}
-
-export const UpdatingComponent: React.FC<I_UpdatingComponent> = ({ showUpdateFailed }) => {
+export const UpdatingComponent: React.FC = () => {
 	const { format } = useI18n();
 	const [uploadPercent, setUploadPercent] = useState<number>(0);
 	const [progress, setProgress] = useState(0);
 	const { bleDeviceService, ringManagementService } = useServices();
 	const updateState = useObservable(bleDeviceService.updateState);
+	const monitoring = useObservable(bleDeviceService.monitoring);
 	const { goBack } = useNavigation();
 
 	useEffect(() => {
 		console.log("UPDATEING COMPONENT updateState", updateState);
 		if (updateState.error) {
 			console.log("SHOW BOTTOM SHEET");
-			showUpdateFailed();
 		}
 	}, [updateState]);
 
@@ -49,7 +45,7 @@ export const UpdatingComponent: React.FC<I_UpdatingComponent> = ({ showUpdateFai
 
 	return (
 		<UpdatingContainer>
-			{updateState.status === UpdateState.UPDATE_SUCCESS.status ? (
+			{updateState.status === UpdateState.UPDATE_SUCCESS.status && monitoring ? (
 				<>
 					<PrimaryText style={{ fontWeight: "bold", fontSize: 25, textAlign: "center", marginTop: 50 }}>
 						{format("updateFirmware.updateSuccess")}
