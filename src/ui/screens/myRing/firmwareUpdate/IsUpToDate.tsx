@@ -1,25 +1,22 @@
 import { useServices } from "@core/services";
 import { PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { View } from "react-native";
 import styled from "styled-components/native";
 import { useObservable } from "micro-observables";
 import { colors } from "@ui/styles/colors";
 import { PrimaryButton } from "@ui/components/buttons";
 import { Device } from "react-native-ble-plx";
-import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { useNavigation } from "@react-navigation/core";
 import { UserRing } from "@domain/ring/ring";
+import { useRingBattery } from "@domain/device/hooks";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
+import { UpdateFailedBottomSheet } from "@ui/screens/myRing/firmwareUpdate/UpdateFailedBottomSheet";
 
 interface I_IsUpToDate {
-	showUpdateFailed: () => void;
 	connectedRing: Device | null;
 }
-
-const startUpdate = async (bleService: BleDeviceService) => {
-	await bleService.startDfuMode();
-};
 
 export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 	const { bleDeviceService } = useServices();
@@ -29,8 +26,19 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 	const userRings = useObservable(ringManagementService.userRings);
 	const lastFirmwareVersion = useObservable(ringApi.firmwareVersion);
 	const { goBack } = useNavigation();
+	const ringBattery = useRingBattery();
 
 	const currentRing: UserRing = userRings.filter((ring) => ring.connected)[0];
+	const UpdateFailedBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
+
+	const startUpdate = async () => {
+		await UpdateFailedBottomSheetRef.current?.close();
+		if (ringBattery && ringBattery?.charge >= 20) {
+			setTimeout(() => {
+				UpdateFailedBottomSheetRef.current?.present();
+			}, 250);
+		} else await bleDeviceService.startDfuMode();
+	};
 
 	const firmwareDiff = async () => {
 		if (lastFirmwareVersion !== currentRing.firmware) setOutOfDate(true);
@@ -39,6 +47,8 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 			setOutOfDate(false);
 		}
 	};
+
+	console.log("Ring BATTERY", ringBattery);
 
 	useEffect(() => {
 		firmwareDiff();
@@ -76,18 +86,19 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 				<PrimaryButton
 					onPress={() => {
 						console.log("Current Rings", connectedRing?.id);
-						startUpdate(bleDeviceService);
+						startUpdate();
 					}}
 					style={{ position: "absolute", bottom: "10%" }}
 				>
 					{format("global.update")}
 				</PrimaryButton>
 			) : (
+				// use to debug need to be deleted
 				<View style={{ display: "flex", flexDirection: "row", position: "absolute", bottom: "10%" }}>
 					<PrimaryButton
 						onPress={() => {
 							console.log("Current Rings", connectedRing?.id);
-							startUpdate(bleDeviceService);
+							startUpdate();
 						}}
 					>
 						Update Again
@@ -101,13 +112,19 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 					</PrimaryButton>
 				</View>
 			)}
+			<CircularBottomSheet snapPoints={[580]} ref={UpdateFailedBottomSheetRef}>
+				<UpdateFailedBottomSheet
+					startUpdate={startUpdate}
+					onClose={() => UpdateFailedBottomSheetRef.current?.close()}
+				/>
+			</CircularBottomSheet>
 		</>
 	);
 };
 
 const StyledPrimaryText = styled(PrimaryText)`
-       color: ${colors.textPlaceholder}
-  font-size: 14px;
+	color: ${colors.textPlaceholder};
+	font-size: 14px;
 `;
 
 const VersionInfo = styled.Text`

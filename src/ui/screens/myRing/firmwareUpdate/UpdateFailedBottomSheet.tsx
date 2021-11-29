@@ -1,24 +1,19 @@
-import { useServices } from "@core/services";
 import { PrimaryButton, TertiaryButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
 import { MediumTitleText, PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import { textStyles } from "@ui/styles/textStyles";
 import React from "react";
 import { View, Image } from "react-native";
 import styled from "styled-components/native";
-import { UpdateState } from "@domain/device/bleDeviceService";
-import { useObservable } from "micro-observables";
 
 interface UpdateFailedBottomSheetProps {
 	onClose: () => void;
+	startUpdate: () => Promise<void>;
 }
 
-export const UpdateFailedBottomSheet: React.FC<UpdateFailedBottomSheetProps> = ({ onClose }) => {
+export const UpdateFailedBottomSheet: React.FC<UpdateFailedBottomSheetProps> = ({ startUpdate, onClose }) => {
 	const { format } = useI18n();
-	const { bleDeviceService } = useServices();
-	const updateState = useObservable(bleDeviceService.updateState);
 
 	return (
 		<Container horizontalPadding={0}>
@@ -30,7 +25,6 @@ export const UpdateFailedBottomSheet: React.FC<UpdateFailedBottomSheetProps> = (
 			</View>
 			<Title>{format("updateFirmware.updateFailed")}</Title>
 			<Description>{format("updateFirmware.updateFailed.description")}</Description>
-			<ErrorMessage>{updateState.status}</ErrorMessage>
 			<Grow />
 			<ButtonContainer gap={35} style={{ height: 38 }}>
 				<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
@@ -41,9 +35,7 @@ export const UpdateFailedBottomSheet: React.FC<UpdateFailedBottomSheetProps> = (
 					key={"ok"}
 					onPress={async () => {
 						console.log("ASYNC SET IDLE");
-						bleDeviceService.updateState.set(UpdateState.IDLE);
-						onClose();
-						// await bleDeviceService.startDfuMode();
+						startUpdate();
 					}}
 				>
 					{format("retry")}
@@ -80,13 +72,6 @@ const Description = styled(PrimaryText)`
 	margin-top: 32px;
 	font-size: 14px;
 	text-align: center;
-`;
-
-const ErrorMessage = styled.Text`
-	${textStyles.errorMessage};
-	margin-top: 20px;
-	text-align: center;
-	align-self: center;
 `;
 
 const ButtonContainer = styled(Row)`
