@@ -11,7 +11,7 @@ import { Alert } from "react-native";
 import styled from "styled-components/native";
 import { Channel } from "@domain/device/channels";
 import { useObservable } from "micro-observables";
-import { NamedUserRing } from "@domain/ring/ring";
+import { NamedUserRing, UserRing } from "@domain/ring/ring";
 import { RingViewModel } from "@ui/screens/myRing/viewModel/RingViewModel";
 import { colors } from "@ui/styles/colors";
 
@@ -20,10 +20,11 @@ export const MyRingScreen: React.FC = () => {
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
 	const { ringManagementService } = useServices();
-	const userRings = useObservable(ringManagementService.userRings);
-	const [currentRing, setCurrentRing] = useState<NamedUserRing>(userRings?.filter((ring) => ring.connected)[0]);
 	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const viewModel = new RingViewModel();
+	const userRings = useObservable(ringManagementService.userRings);
+
+	const currentRing: UserRing = userRings.filter((ring) => ring.connected)[0];
 
 	console.log("Current Rings", userRings);
 
@@ -41,7 +42,6 @@ export const MyRingScreen: React.FC = () => {
 						userRings.map((ring) => {
 							if (ring.id === currentRing?.id) {
 								const upTodateRing = { ...ring, name: "Circular " + viewModel.formatRingName(newName) };
-								setCurrentRing(upTodateRing);
 								ringManagementService.updateStoredRings(upTodateRing);
 								return { ...ring, name: viewModel.formatRingName(newName) };
 							}
@@ -53,9 +53,6 @@ export const MyRingScreen: React.FC = () => {
 		]);
 	};
 
-	useEffect(() => {
-		console.log("display ring name");
-	}, [currentRing]);
 	return (
 		<Container>
 			<RingBatteryView size={140} detailed />

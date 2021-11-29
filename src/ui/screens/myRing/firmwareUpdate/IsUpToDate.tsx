@@ -118,11 +118,10 @@ const VersionInfo = styled.Text`
 `;
 
 const VersionContainer = styled.View`
-  overflow-hidden;
-  background-color: white;
-       justify-content: center;
-       border-radius: 10px;
-  margin-top: 24px;
+	background-color: white;
+	justify-content: center;
+	border-radius: 10px;
+	margin-top: 24px;
 `;
 
 const VersionText = styled.Text`

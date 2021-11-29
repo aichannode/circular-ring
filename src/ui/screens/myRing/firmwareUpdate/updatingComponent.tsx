@@ -12,6 +12,7 @@ import { SecondaryText } from "@ui/components/text";
 import { UpdateState } from "@domain/device/bleDeviceService";
 import { useNavigation } from "@react-navigation/core";
 import { Image } from "react-native";
+import { UserRing } from "@domain/ring/ring";
 
 interface I_UpdatingComponent {
 	showUpdateFailed: () => void;
@@ -23,7 +24,11 @@ export const UpdatingComponent: React.FC<I_UpdatingComponent> = ({ showUpdateFai
 	const [progress, setProgress] = useState(0);
 	const { bleDeviceService, ringManagementService } = useServices();
 	const updateState = useObservable(bleDeviceService.updateState);
+	const monitoring = useObservable(bleDeviceService.monitoring);
+	const userRings = useObservable(ringManagementService.userRings);
 	const { goBack } = useNavigation();
+
+	const currentRing: UserRing = userRings.filter((ring) => ring.connected)[0];
 
 	useEffect(() => {
 		console.log("UPDATEING COMPONENT updateState", updateState);
@@ -49,7 +54,7 @@ export const UpdatingComponent: React.FC<I_UpdatingComponent> = ({ showUpdateFai
 
 	return (
 		<UpdatingContainer>
-			{updateState.status === UpdateState.UPDATE_SUCCESS.status ? (
+			{updateState.status === UpdateState.UPDATE_SUCCESS.status && monitoring ? (
 				<>
 					<PrimaryText style={{ fontWeight: "bold", fontSize: 25, textAlign: "center", marginTop: 50 }}>
 						{format("updateFirmware.updateSuccess")}
