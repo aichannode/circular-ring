@@ -13,9 +13,7 @@ import { UpdateState } from "@domain/device/bleDeviceService";
 import { useNavigation } from "@react-navigation/core";
 import { Image } from "react-native";
 
-interface I_UpdatingComponent {}
-
-export const UpdatingComponent: React.FC<I_UpdatingComponent> = () => {
+export const UpdatingComponent: React.FC = () => {
 	const { format } = useI18n();
 	const [uploadPercent, setUploadPercent] = useState<number>(0);
 	const [progress, setProgress] = useState(0);
