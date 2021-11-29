@@ -22,7 +22,7 @@ type Icon = {
 }
 
 // TODO extract when action architecture will be defined
-type ClientAction = {
+export type ClientAction = {
 	type: BannerAction;
 	data: any; // TODO to tag type
 }
@@ -113,7 +113,6 @@ export type Banner<T> = T & {
 
 export type HomeBanner = Banner<Notification> | Banner<Activity>
 
-export interface ReadBannersInfo {
-	bannerIds: number[];
-	lastRead?: Date;
+export interface ReadNotificationInfo {
+	clientSideClosed: number[];
 }

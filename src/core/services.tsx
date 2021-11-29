@@ -11,6 +11,7 @@ import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
 import { DevFakeDeviceService, EmptyFakeDeviceService } from "@domain/fake/fakeDeviceService";
 import { HomeBannerApi } from "@domain/homeBanner/homeBannerApi";
 import { HomeBannerService } from "@domain/homeBanner/homeBannerService";
+import { NotificationStorage } from "@domain/homeBanner/notificationStorage";
 import { MeasureApi } from "@domain/measure/measureApi";
 import { MeasureService } from "@domain/measure/measureService";
 import { UserPreferencesService } from "@domain/preferences/userPreferencesService";
@@ -27,6 +28,7 @@ import React, { createContext, useContext } from "react";
 import { Config } from "react-native-config";
 import { QuickAccessStorage } from "@domain/quickaccess/quickAccessStorage";
 import { TimerService } from "@domain/timer/timerService";
+import { TokenPayload } from "@domain/auth/type";
 
 const fakeDeviceService = Config.ENVIRONNEMENT === "dev" ? new DevFakeDeviceService() : new EmptyFakeDeviceService();
 
@@ -39,7 +41,7 @@ const apiService = new ApiService();
 
 const ringApi = new RingApi(apiService);
 
-const cognitoAuthService = new CognitoAuthService();
+const cognitoAuthService = new CognitoAuthService<TokenPayload>();
 
 const userApi = new UserApi(apiService);
 const userService = new UserService(cognitoAuthService, userApi, userStorage);
@@ -73,8 +75,9 @@ const userQuickAccess = new UserQuickAccess(quickAccessStorage);
 const calibrationApi = new CalibrationApi(apiService);
 const calibrationService = new CalibrationService(calibrationApi);
 
+const homeBannerStorage = new NotificationStorage();
 const homeBannerApi = new HomeBannerApi(apiService);
-const homeBannerService = new HomeBannerService(homeBannerApi);
+const homeBannerService = new HomeBannerService(homeBannerStorage, homeBannerApi);
 
 const calendarApi = new CalendarApi(apiService);
 const calendarService = new CalendarService(calendarApi, userService);

@@ -28,7 +28,6 @@ export function useBanners(): SortedBanners {
 			.reduce<Record<string, Banner<Activity>[]>>(function(groups, banner) {
 				const today = new Date().toISOString()
 				// Upsert in today group
-				console.log(banner.id)
 				if (isToday(banner.startDate, today)) {
 					if (groups["today"]) {
 						groups["today"].push(banner)
