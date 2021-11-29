@@ -12,7 +12,6 @@ import { SecondaryText } from "@ui/components/text";
 import { UpdateState } from "@domain/device/bleDeviceService";
 import { useNavigation } from "@react-navigation/core";
 import { Image } from "react-native";
-import { UserRing } from "@domain/ring/ring";
 
 interface I_UpdatingComponent {
 	showUpdateFailed: () => void;
@@ -25,10 +24,7 @@ export const UpdatingComponent: React.FC<I_UpdatingComponent> = ({ showUpdateFai
 	const { bleDeviceService, ringManagementService } = useServices();
 	const updateState = useObservable(bleDeviceService.updateState);
 	const monitoring = useObservable(bleDeviceService.monitoring);
-	const userRings = useObservable(ringManagementService.userRings);
 	const { goBack } = useNavigation();
-
-	const currentRing: UserRing = userRings.filter((ring) => ring.connected)[0];
 
 	useEffect(() => {
 		console.log("UPDATEING COMPONENT updateState", updateState);
