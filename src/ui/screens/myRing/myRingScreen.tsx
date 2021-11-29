@@ -6,12 +6,12 @@ import { PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { FactoryResetBottomSheet } from "@ui/screens/myRing/factoryResetBottomSheet";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { Alert } from "react-native";
 import styled from "styled-components/native";
 import { Channel } from "@domain/device/channels";
 import { useObservable } from "micro-observables";
-import { NamedUserRing, UserRing } from "@domain/ring/ring";
+import { NamedUserRing } from "@domain/ring/ring";
 import { RingViewModel } from "@ui/screens/myRing/viewModel/RingViewModel";
 import { colors } from "@ui/styles/colors";
 
@@ -24,7 +24,7 @@ export const MyRingScreen: React.FC = () => {
 	const viewModel = new RingViewModel();
 	const userRings = useObservable(ringManagementService.userRings);
 
-	const currentRing: UserRing = userRings.filter((ring) => ring.connected)[0];
+	const currentRing: NamedUserRing = userRings.filter((ring) => ring.connected)[0];
 
 	console.log("Current Rings", userRings);
 
