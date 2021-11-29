@@ -14,12 +14,14 @@ import { useSetupState } from "@domain/device/hooks";
 import { DeviceSetupState } from "@domain/device/bleDeviceService";
 import { MetaDataText } from "@ui/components/text";
 import { ActivityBanner } from "./banners/Activity";
+import { PrimaryButton } from "@ui/components/buttons";
+import { IfAdmin } from "@ui/containers/IfAdmin";
 
 export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
-	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
+	const { homeBannerService, bluetoothService, bleDeviceService, ringManagementService } = useServices();
 	const [forceRefreshing, setForceRefreshing] = useState(false);
-
+	
 	const setupState = useSetupState();
 
 	useEffect(() => {
@@ -54,7 +56,9 @@ export const HomeScreen: React.FC = () => {
 			<CirclesBanner />
 			<QuickAccess />
 			<SyncBanner style={{ margin: 10 }} />
-
+			<IfAdmin>
+				<PrimaryButton onPress={homeBannerService._DEBUG_reset}>RESET</PrimaryButton>
+			</IfAdmin>
 			<ScrollView
 				style={{ flex: 1 }}
 				refreshControl={

@@ -12,6 +12,7 @@ import { Paragraph } from "./Paragraph";
 import { ParagraphComponentConfigurationDto } from "@domain/homeBanner/homeBanner"
 import { useI18n } from "@ui/i18n";
 import { getActionHandler } from "./common";
+import { useServices } from "@core/services";
 
 interface Props {
 	banner: Banner<Notification>;
@@ -20,6 +21,7 @@ interface Props {
 
 export const NotificationBanner: React.FC<Props> = ({ banner, style }) => {
 	const { navigate } = useRoutesNavigation();
+	const { homeBannerService } = useServices()
 	const useContrastColor = banner.style === BannerStyle.ORANGE_GRADIENT
 	const { format } = useI18n();
 
@@ -39,7 +41,7 @@ export const NotificationBanner: React.FC<Props> = ({ banner, style }) => {
 						{...(banner.components[0] as ParagraphComponentConfigurationDto).configuration}
 					/>
 				</Stack>
-				<CloseButton padding={16} onClose={() => {/* homeBannerService.dismiss(banner) */}} />
+				<CloseButton padding={16} onClose={() => {homeBannerService.closeNotification(banner.id)}} />
 			</Container>
 		</Pressable>
 	);
