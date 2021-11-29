@@ -13,11 +13,9 @@ import { UpdateState } from "@domain/device/bleDeviceService";
 import { useNavigation } from "@react-navigation/core";
 import { Image } from "react-native";
 
-interface I_UpdatingComponent {
-	showUpdateFailed: () => void;
-}
+interface I_UpdatingComponent {}
 
-export const UpdatingComponent: React.FC<I_UpdatingComponent> = ({ showUpdateFailed }) => {
+export const UpdatingComponent: React.FC<I_UpdatingComponent> = () => {
 	const { format } = useI18n();
 	const [uploadPercent, setUploadPercent] = useState<number>(0);
 	const [progress, setProgress] = useState(0);
@@ -30,7 +28,6 @@ export const UpdatingComponent: React.FC<I_UpdatingComponent> = ({ showUpdateFai
 		console.log("UPDATEING COMPONENT updateState", updateState);
 		if (updateState.error) {
 			console.log("SHOW BOTTOM SHEET");
-			showUpdateFailed();
 		}
 	}, [updateState]);
 
