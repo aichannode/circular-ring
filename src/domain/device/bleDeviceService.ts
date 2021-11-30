@@ -16,7 +16,7 @@ import { RingApi } from "@domain/ring/ringApi";
 import { LocationEnabler } from "./locationEnabler";
 import { NamedDevice } from "./namedDevice";
 import { NordicDFU } from "react-native-nordic-dfu";
-import RNFetchBlob from "rn-fetch-blob";
+import RNFetchBlob from "react-native-blob-util";
 import RNFS from "react-native-fs";
 
 const FB = RNFetchBlob.config({
