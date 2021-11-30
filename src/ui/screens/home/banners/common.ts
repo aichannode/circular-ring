@@ -1,6 +1,6 @@
 import { BannerAction, HomeBanner } from "@domain/homeBanner/homeBanner";
 import { Navigate, Routes } from "@ui/navigation/routes";
-import { Linking } from "react-native";
+import { openURL } from "@ui/utils/urlUtils";
 
 export function getActionHandler(banner: HomeBanner, navigate: Navigate) {
 	return () => {
@@ -8,7 +8,7 @@ export function getActionHandler(banner: HomeBanner, navigate: Navigate) {
 		if (action) {
 			switch (action.type) {
 				case BannerAction.OPEN_WEB:
-					Linking.openURL(action.data);
+					openURL(action.data);
 					break;
 				case BannerAction.APP_PAGE:
 					navigate(Routes.Activity); // TODO Handle routing with backend when we got specs
