@@ -14,6 +14,7 @@ import { useObservable } from "micro-observables";
 import { NamedUserRing } from "@domain/ring/ring";
 import { RingViewModel } from "@ui/screens/myRing/viewModel/RingViewModel";
 import { colors } from "@ui/styles/colors";
+import { DeviceConnectionState } from "@domain/device/bleDeviceService";
 
 export const MyRingScreen: React.FC = () => {
 	const { bleDeviceService } = useServices();
@@ -23,6 +24,9 @@ export const MyRingScreen: React.FC = () => {
 	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const viewModel = new RingViewModel();
 	const userRings = useObservable(ringManagementService.userRings);
+	const connected = useObservable(bleDeviceService.connectionState);
+
+	console.log("CONNECTED", connected);
 
 	const currentRing: NamedUserRing = userRings.filter((ring) => ring.connected)[0];
 
@@ -63,15 +67,17 @@ export const MyRingScreen: React.FC = () => {
 			>
 				{currentRing?.name}
 			</StyledPrimaryText>
-			<InfoListItem
-				name={format("ring.firmware")}
-				hasDisclosure
-				action={() => {
-					navigate(Routes.RingFirmwareUpdate);
-				}}
-			>
-				<FirmwareVersionText>{currentRing?.firmware}</FirmwareVersionText>
-			</InfoListItem>
+			{connected === DeviceConnectionState.CONNECTED && (
+				<InfoListItem
+					name={format("ring.firmware")}
+					hasDisclosure
+					action={() => {
+						navigate(Routes.RingFirmwareUpdate);
+					}}
+				>
+					<FirmwareVersionText>{currentRing?.firmware}</FirmwareVersionText>
+				</InfoListItem>
+			)}
 
 			<InfoListItem
 				name={format("ring.manage")}
