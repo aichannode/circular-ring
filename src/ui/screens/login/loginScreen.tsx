@@ -33,7 +33,6 @@ export const LoginScreen = () => {
 			setLoading(true);
 			try {
 				await userService.loginWithEmail(email, password);
-				setLoading(false);
 			} catch ({ code }) {
 				setLoading(false);
 				if (code === "NotAuthorizedException") {

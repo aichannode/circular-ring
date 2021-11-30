@@ -1,7 +1,7 @@
 stages:
   - check
   - android
-  - ios
+  # - ios    // disabled ios for now
 
 variables:
   LC_ALL: "en_US.UTF-8"
