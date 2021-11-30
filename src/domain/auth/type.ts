@@ -1,7 +1,7 @@
 /**
  * Cognito token payload type
  */
-export type TokenPayload = {
+export type TokenPayload = Partial<{
     sub:string,
     device_key:string,
     "cognito:groups": string[],
@@ -15,4 +15,4 @@ export type TokenPayload = {
     iat:string,
     jti:string,
     username:string,
-}
+}>
