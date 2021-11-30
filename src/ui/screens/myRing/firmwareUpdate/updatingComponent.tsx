@@ -51,7 +51,7 @@ export const UpdatingComponent: React.FC = () => {
 						{format("updateFirmware.updateSuccess")}
 					</PrimaryText>
 					<CenterView>
-						<Image style={{ height: 100, width: 100, borderWidth: 1 }} source={require("@assets/images/check.png")} />
+						<Image style={{ height: 100, width: 100 }} source={require("@assets/images/check.png")} />
 					</CenterView>
 					<PrimaryButton
 						onPress={() => {
