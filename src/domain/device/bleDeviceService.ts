@@ -18,6 +18,7 @@ import { NamedDevice } from "./namedDevice";
 import { NordicDFU } from "react-native-nordic-dfu";
 import RNFetchBlob from "react-native-blob-util";
 import RNFS from "react-native-fs";
+import BleManager from "react-native-ble-manager";
 
 const FB = RNFetchBlob.config({
 	fileCache: true,
@@ -309,6 +310,7 @@ export class BleDeviceService {
 			}
 		}
 		await this.bluetoothService.enable();
+		await BleManager.start({ showAlert: false});
 
 		const DFUScanPromise = new Promise<Device>((resolve, reject) => {
 			this.updateState.set(UpdateState.SCANNING_DFU_RING);
@@ -347,7 +349,7 @@ export class BleDeviceService {
 				const dfu = await NordicDFU.startDFU({
 					deviceAddress: dfuDevice?.id,
 					deviceName: dfuDevice?.name ? dfuDevice.name : "Circular Update",
-					filePath: firmwareFile,
+					filePath: Platform.OS === "android" ? firmwareFile : "file://" + firmwareFile,
 				});
 				this.updateState.set(UpdateState.RECONNECTING);
 				this.autoConnectFavoriteDevice();

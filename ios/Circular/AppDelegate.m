@@ -5,6 +5,8 @@
 #import <React/RCTRootView.h>
 
 #import "RNSplashScreen.h"
+#import "RNNordicDfu.h"
+#import "BleManager.h"
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -29,6 +31,23 @@ static void InitializeFlipper(UIApplication *application) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+
+[RNNordicDfu setCentralManagerGetter:^() {
+    return [BleManager getCentralManager];
+  }];
+
+  [RNNordicDfu setOnDFUComplete:^() {
+    NSLog(@"onDFUComplete");
+    CBCentralManager * manager = [BleManager getCentralManager];
+    manager.delegate = [BleManager getInstance];
+  }];
+
+  [RNNordicDfu setOnDFUError:^() {
+    NSLog(@"onDFUError");
+    CBCentralManager * manager = [BleManager getCentralManager];
+    manager.delegate = [BleManager getInstance];
+  }];
+
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif
