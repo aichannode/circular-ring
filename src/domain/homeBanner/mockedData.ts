@@ -33,7 +33,7 @@ export function createRecommendation(id: number): UpdateUserFeedEntityDto {
 		"actions": [
 			{
 				"type": BannerAction.OPEN_WEB,
-				"data": ""
+				"data": "https://expo.io"
 			}
 		],
 		"startDate": moment().toISOString(),
