@@ -1,3 +1,4 @@
+//import * as Sentry from "@sentry/react";
 import { useServices } from "@core/services";
 import { useBanners } from "@domain/homeBanner/hooks";
 import { useSyncState } from "@domain/ring/hooks";
@@ -16,6 +17,8 @@ import { MetaDataText } from "@ui/components/text";
 import { ActivityBanner } from "./banners/Activity";
 import { PrimaryButton } from "@ui/components/buttons";
 import { IfAdmin } from "@ui/containers/IfAdmin";
+
+declare const alert: any;
 
 export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
@@ -39,11 +42,13 @@ export const HomeScreen: React.FC = () => {
 			return;
 		}
 		setForceRefreshing(true);
+		alert("FORCE REFRESH")
 		ringManagementService.syncData();
 	}, [syncState, setForceRefreshing]);
 
 	useEffect(() => {
 		ringManagementService.submitFirmwareVersion();
+		alert("SET FORCE REFRESHING", syncState)
 		if (syncState !== SyncState.PREPARING) {
 			setForceRefreshing(false);
 		}
@@ -51,6 +56,9 @@ export const HomeScreen: React.FC = () => {
 
 	const banners = useBanners();
 
+	alert("REFRESH HOME SCREEN", banners)
+
+	//Sentry.captureMessage("REFRESH HOME SCREEN", Sentry.Severity.Debug);
 	return (
 		<Container>
 			<CirclesBanner />
