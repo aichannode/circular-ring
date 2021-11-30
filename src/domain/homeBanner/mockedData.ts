@@ -23,12 +23,12 @@ type UpdateUserFeedEntityDto = {
 /**
  * Factory for the notification banner data post query.
  */
-export function createRecommendation(title: string): UpdateUserFeedEntityDto {
+export function createRecommendation(id: number): UpdateUserFeedEntityDto {
 	return {
 		"type": BannerType.NOTIFICATION,
 		"style": BannerStyle.ORANGE_GRADIENT,
-		"title": title,
-		"secondaryTitle": "stay.safe.outside",
+		"title": "banner.calibration.title",
+		"secondaryTitle": "",
 		"priority": 10,
 		"actions": [
 			{
@@ -41,11 +41,14 @@ export function createRecommendation(title: string): UpdateUserFeedEntityDto {
 		"iconId": 1,
 		"components": [
 			{
-			"type": BannerComponentType.PARAGRAPH,
-			"configuration": {
-				"style": ParagraphStyle.DEFAULT,
-				"translationKey": "stay.safe.outside" as any
-			}
+				"type": BannerComponentType.PARAGRAPH,
+				"configuration": {
+					"style": ParagraphStyle.DEFAULT,
+					"translationKey": "banner.calibration.message",
+					"properties": {
+						"days": id
+					}
+				}
 			}
 		]
 	}

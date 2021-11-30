@@ -21,14 +21,8 @@ export class HomeBannerApi {
 	 * Creates 5 new home banners.
 	 */
 	async _DEBUG_insertData() {
-		await Promise.all([
-			"Notification 0",
-			"Notification 1",
-			"Notification 2",
-			"Notification 3",
-			"Notification 4"
-		].map(async(title) => {
-			return await this.apiService.post(homeBannerBaseUrl, createRecommendation(title), {_useBackOffice: true} as any)
+		await Promise.all([0, 1, 2, 3, 5].map(async(id) => {
+			return await this.apiService.post(homeBannerBaseUrl, createRecommendation(id), {_useBackOffice: true} as any)
 		}))
 	}
 	
