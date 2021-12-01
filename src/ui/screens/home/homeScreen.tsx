@@ -43,15 +43,18 @@ export const HomeScreen: React.FC = () => {
 			return;
 		}
 		setForceRefreshing(true);
+		console.log("One SYNC", )
 		ringManagementService.syncData();
+		ringManagementService.submitFirmwareVersion();
 	}, [syncState, setForceRefreshing]);
 
-	useEffect(() => {
-		ringManagementService.submitFirmwareVersion();
-		if (syncState !== SyncState.PREPARING) {
-			setForceRefreshing(false);
-		}
-	}, [syncState]);
+	// useEffect(() => {
+	// 	console.log("syncState", syncState);
+	// 	// ringManagementService.submitFirmwareVersion();
+	// 	if (syncState !== SyncState.PREPARING) {
+	// 		setForceRefreshing(false);
+	// 	}
+	// }, [syncState]);
 
 	const userSettings = useUserSettings();
 	const { format } = useI18n()
