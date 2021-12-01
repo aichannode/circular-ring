@@ -8,6 +8,7 @@ import { Grow, ResponsiveCenterView, Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { PrimaryText, SecondaryText } from "@ui/components/text";
+import { IfAdmin } from "@ui/containers/IfAdmin";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
@@ -21,6 +22,10 @@ interface IRingSetupScreen {
 	route: {
 		params: {
 			setWait: (arg0: boolean) => void;
+			/**
+			 * 	CIR-467: will by pass the ring setup for debuging puropose
+			 */
+			onByPass: () => void;
 		};
 	};
 }
@@ -57,6 +62,12 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 
 	return (
 		<Container>
+			<IfAdmin>
+				<PrimaryButton onPress={() => {
+					console.log(props.route.params.onByPass)
+					props.route.params.onByPass()
+				}}>By pass ring setup</PrimaryButton>
+			</IfAdmin>
 			{(() => {
 				switch (setupState) {
 					case DeviceSetupState.DISABLED:

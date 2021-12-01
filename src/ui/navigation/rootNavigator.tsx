@@ -230,6 +230,9 @@ export const RootNavigator: React.FC = () => {
 	const hasUser = !!useUser();
 	const deviceStored = useDeviceStored();
 
+	// CIR-467: will by pass the ring setup for debuging puropose
+	const [useByPass, setByPass] = useState(false);
+
 	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
 
 	if (!isAuthenticated) {
@@ -246,11 +249,11 @@ export const RootNavigator: React.FC = () => {
 		);
 	}
 
-	if (wait || !deviceStored || !accountLinkedToDevice) {
+	if (!useByPass && (wait || !deviceStored || !accountLinkedToDevice)) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
 				{!hasUser && <OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />}
-				<OnboardingStack.Screen name={Routes.Pairing} initialParams={{ setWait }} component={RingSetupScreen} />
+				<OnboardingStack.Screen name={Routes.Pairing} initialParams={{ setWait, onByPass: () => setByPass(true) }} component={RingSetupScreen} />
 			</OnboardingStack.Navigator>
 		);
 	}
@@ -259,7 +262,7 @@ export const RootNavigator: React.FC = () => {
 
 	console.log("!isTutorialDone && isOnboardingDone", !isTutorialDone && isOnboardingDone);
 
-	return isOnboardingDone ? (
+	return isOnboardingDone || useByPass ? (
 		<HomeDrawer.Navigator
 			screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
 			drawerContent={() => <DrawerContent />}

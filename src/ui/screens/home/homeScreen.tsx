@@ -53,7 +53,7 @@ export const HomeScreen: React.FC = () => {
 	const userSettings = useUserSettings();
 	const { format } = useI18n()
 	const groupedBanners = useBanners();
-	
+
 	return (
 		<Container>
 			<CirclesBanner />
