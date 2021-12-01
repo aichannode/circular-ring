@@ -43,15 +43,10 @@ export const HomeScreen: React.FC = () => {
 			return;
 		}
 		setForceRefreshing(true);
+		console.log("One SYNC", )
 		ringManagementService.syncData();
-	}, [syncState, setForceRefreshing]);
-
-	useEffect(() => {
 		ringManagementService.submitFirmwareVersion();
-		if (syncState !== SyncState.PREPARING) {
-			setForceRefreshing(false);
-		}
-	}, [syncState]);
+	}, [syncState, setForceRefreshing]);
 
 	const userSettings = useUserSettings();
 	const { format } = useI18n()
