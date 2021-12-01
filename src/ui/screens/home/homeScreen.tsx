@@ -48,14 +48,6 @@ export const HomeScreen: React.FC = () => {
 		ringManagementService.submitFirmwareVersion();
 	}, [syncState, setForceRefreshing]);
 
-	// useEffect(() => {
-	// 	console.log("syncState", syncState);
-	// 	// ringManagementService.submitFirmwareVersion();
-	// 	if (syncState !== SyncState.PREPARING) {
-	// 		setForceRefreshing(false);
-	// 	}
-	// }, [syncState]);
-
 	const userSettings = useUserSettings();
 	const { format } = useI18n()
 	const groupedBanners = useBanners();
