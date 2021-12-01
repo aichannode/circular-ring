@@ -1,4 +1,3 @@
-//import * as Sentry from "@sentry/react";
 import { useServices } from "@core/services";
 import { useBanners } from "@domain/homeBanner/hooks";
 import { useSyncState } from "@domain/ring/hooks";
@@ -18,7 +17,9 @@ import { ActivityBanner } from "./banners/Activity";
 import { PrimaryButton } from "@ui/components/buttons";
 import { IfAdmin } from "@ui/containers/IfAdmin";
 
-declare const alert: any;
+import moment from "moment";
+import { useUserSettings } from "@domain/user/hooks/useUser";
+import { useI18n } from "@ui/i18n";
 
 export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
@@ -42,23 +43,20 @@ export const HomeScreen: React.FC = () => {
 			return;
 		}
 		setForceRefreshing(true);
-		alert("FORCE REFRESH")
 		ringManagementService.syncData();
 	}, [syncState, setForceRefreshing]);
 
 	useEffect(() => {
 		ringManagementService.submitFirmwareVersion();
-		alert("SET FORCE REFRESHING", syncState)
 		if (syncState !== SyncState.PREPARING) {
 			setForceRefreshing(false);
 		}
 	}, [syncState]);
 
-	const banners = useBanners();
-
-	alert("REFRESH HOME SCREEN", banners)
-
-	//Sentry.captureMessage("REFRESH HOME SCREEN", Sentry.Severity.Debug);
+	const userSettings = useUserSettings();
+	const { format } = useI18n()
+	const groupedBanners = useBanners();
+	
 	return (
 		<Container>
 			<CirclesBanner />
@@ -77,18 +75,19 @@ export const HomeScreen: React.FC = () => {
 					/>
 				}
 			>
-				{banners.notifications[0] && <NotificationBanner key={banners.notifications[0].id} banner={banners.notifications[0]} style={{ margin: 10 }} />}
-				{Object.keys(banners.activities).map((date) => (
+				{groupedBanners.notifications[0] && <NotificationBanner key={groupedBanners.notifications[0].id} banner={groupedBanners.notifications[0]} style={{ margin: 10 }} />}
+				{Object.keys(groupedBanners.activities).map((date) => (
 					<>
 						{date !== "today" && (
-							<View style={{ alignItems: "center" }}>
-								<Separator />
-								<MetaDataText style={{ paddingHorizontal: 11, fontSize: 8, backgroundColor: colors.lightgray }}>
-									{date.toUpperCase()}
-								</MetaDataText>
+							<View style={{alignItems: "center"}}>
+								<Separator/>
+								<MetaDataText style={{paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray}}>{date === "yesterday"
+									? format("global.yesterday").toUpperCase()
+									: moment(date).format(userSettings?.dateFormat)
+								}</MetaDataText>
 							</View>
 						)}
-						{banners.activities[date].map((banner) => (
+						{groupedBanners.activities[date].map((banner) => (
 							<ActivityBanner key={banner.id} banner={banner} style={{ margin: 10 }} />
 						))}
 					</>
