@@ -16,10 +16,12 @@ import { MetaDataText } from "@ui/components/text";
 import { ActivityBanner } from "./banners/Activity";
 import { PrimaryButton } from "@ui/components/buttons";
 import { IfAdmin } from "@ui/containers/IfAdmin";
-
 import moment from "moment";
 import { useUserSettings } from "@domain/user/hooks/useUser";
 import { useI18n } from "@ui/i18n";
+import Fade from "@ui/components/fade";
+
+declare const alert: any;
 
 export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
@@ -70,7 +72,15 @@ export const HomeScreen: React.FC = () => {
 					/>
 				}
 			>
-				{groupedBanners.notifications[0] && <NotificationBanner key={groupedBanners.notifications[0].id} banner={groupedBanners.notifications[0]} style={{ margin: 10 }} />}
+				{groupedBanners.notifications[0] && (
+					<Fade
+						key={groupedBanners.notifications[0].id} 
+						isVisible
+						isAnimatedOnMount
+					>
+						<NotificationBanner banner={groupedBanners.notifications[0]} style={{ margin: 10 }} />
+					</Fade>
+				)}
 				{Object.keys(groupedBanners.activities).map((date) => (
 					<>
 						{date !== "today" && (
