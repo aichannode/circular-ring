@@ -63,7 +63,7 @@ export enum InputType {
 
 type OptionDto = {
 	id: number
-	label: string
+	label: WordingKey
 	icon: Icon
 	actions: ClientAction[]
 }
@@ -72,18 +72,25 @@ export enum UserInputStyle {
 	DEFAULT = "DEFAULT"
 }
 
+type InputTypeConfig<T extends InputType, C> = {
+	style: UserInputStyle;
+	title: WordingKey;
+	inputType: T;
+	inputConfig: C
+}
+
+export type SelectInputTypeConfig = InputTypeConfig<InputType.SELECT, {
+	label: WordingKey
+	minCount: number
+	maxCount: number
+	options: OptionDto[]
+}>
+
+export type UserInputConfiguration = SelectInputTypeConfig & {isAnswered: boolean}
+
 export type UserInputComponentConfigurationDto = {
 	type: BannerComponentType.USER_INPUT;
-	configuration: {
-		style: UserInputStyle;
-		inputType: InputType;
-		inputConfig: {
-			label: string
-			minCount: number
-			maxCount: number
-			options: OptionDto[]
-		}
-	}
+	configuration: UserInputConfiguration
 }
 
 export type BannerComponentDto =
@@ -92,12 +99,12 @@ export type BannerComponentDto =
 
 export type Activity = {
 	type: BannerType.NOTIFICATION;
-	style: BannerStyle.ORANGE_GRADIENT;
+	style: Omit<BannerStyle, BannerStyle.ORANGE_GRADIENT>;
 }
 
 export type Notification = {
 	type: Omit<BannerType, BannerType.NOTIFICATION>;
-	style: Omit<BannerStyle, BannerStyle.ORANGE_GRADIENT>;
+	style: BannerStyle.ORANGE_GRADIENT;
 }
 
 export type Banner<T> = T & {

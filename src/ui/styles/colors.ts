@@ -22,6 +22,8 @@ export const colors = {
 	lightBlue: "#AEBBF0",
 	orangeGradientStart: "#f44a59",
 	orangeGradientEnd: "#f97444",
+	purpleGarientStart: "#AD7CD4",
+	purpleGarientEnd: "#FC7F81",
 	disabled: "#bfbfbf",
 };
 

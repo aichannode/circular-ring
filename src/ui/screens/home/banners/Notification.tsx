@@ -48,6 +48,7 @@ export const NotificationBanner: React.FC<Props> = ({ banner, style }) => {
 };
 
 const Container = styled(OrangeDiagonalGradient)`
+	margin-top: 15px;
 	padding: 20px 40px 20px 20px;
 	${row("center")};
 	background-color: black;
