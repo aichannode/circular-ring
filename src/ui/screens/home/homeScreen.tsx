@@ -21,8 +21,6 @@ import { useUserSettings } from "@domain/user/hooks/useUser";
 import { useI18n } from "@ui/i18n";
 import Fade from "@ui/components/fade";
 
-declare const alert: any;
-
 export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
 	const { homeBannerService, bluetoothService, bleDeviceService, ringManagementService } = useServices();
@@ -63,7 +61,7 @@ export const HomeScreen: React.FC = () => {
 				<PrimaryButton onPress={homeBannerService._DEBUG_reset}>RESET</PrimaryButton>
 			</IfAdmin>
 			<ScrollView
-				style={{ flex: 1 }}
+				style={{ flex: 1, paddingHorizontal: 6 }}
 				refreshControl={
 					<RefreshControl
 						enabled={syncState === SyncState.NONE}
@@ -78,13 +76,13 @@ export const HomeScreen: React.FC = () => {
 						isVisible
 						isAnimatedOnMount
 					>
-						<NotificationBanner banner={groupedBanners.notifications[0]} style={{ margin: 10 }} />
+						<NotificationBanner banner={groupedBanners.notifications[0]} />
 					</Fade>
 				)}
 				{Object.keys(groupedBanners.activities).map((date) => (
 					<>
 						{date !== "today" && (
-							<View style={{alignItems: "center"}}>
+							<View style={{alignItems: "center", marginTop: 15}}>
 								<Separator/>
 								<MetaDataText style={{paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray}}>{date === "yesterday"
 									? format("global.yesterday").toUpperCase()
@@ -104,6 +102,7 @@ export const HomeScreen: React.FC = () => {
 
 const Container = styled.View`
 	flex: 1;
+	margin-top: 15px;
 	background-color: ${colors.lightgray};
 `;
 
