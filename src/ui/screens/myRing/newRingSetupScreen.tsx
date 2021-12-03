@@ -51,12 +51,13 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	useFocusEffect(() => {
 		console.log("CIR-141 START SCAN");
 		bleDeviceService.startScan();
+		return bleDeviceService.stopScan();
 	});
 
 	useEffect(() => {
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
 			console.log("CIR-141 START SCAN 2");
-			bleDeviceService.startScan();
+			// bleDeviceService.startScan();
 		}
 		if (setupState === DeviceSetupState.LOCATION_DISABLED) {
 			bleDeviceService.checkSettings();

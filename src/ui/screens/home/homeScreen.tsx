@@ -75,8 +75,8 @@ export const HomeScreen: React.FC = () => {
 						<NotificationBanner banner={groupedBanners.notifications[0]} />
 					</Fade>
 				)}
-				{Object.keys(groupedBanners.activities).map((date) => (
-					<>
+				{Object.keys(groupedBanners.activities).map((date, key) => (
+					<View key={key}>
 						{date !== "today" && (
 							<View style={{ alignItems: "center", marginTop: 15 }}>
 								<Separator />
@@ -90,7 +90,7 @@ export const HomeScreen: React.FC = () => {
 						{groupedBanners.activities[date].map((banner) => (
 							<ActivityBanner key={banner.id} banner={banner} style={{ margin: 10 }} />
 						))}
-					</>
+					</View>
 				))}
 			</ScrollView>
 		</Container>

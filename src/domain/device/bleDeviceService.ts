@@ -102,8 +102,8 @@ export class BleDeviceService {
 	private _lookingForDevice = observable(false);
 	private _monitoring = observable(false);
 
-	private _favoriteDevice = observable<NamedDevice | null>(null);
-	private _favoriteDeviceSNU = observable<string | null>(null);
+	private _favoriteDevice = observable<NamedDevice[] | null>(null);
+	private _favoriteDeviceSNU = observable<string[] | null>(null);
 
 	private _currentRingBattery = observable<RingBattery | null>(null);
 	private _batteryListenerUnsubscribe: (() => void) | undefined = undefined;
@@ -186,24 +186,25 @@ export class BleDeviceService {
 			}
 		);
 
-		this.fakeDeviceService.fakeDeviceEnabled.subscribe(async (enabled) => {
-			if (enabled) {
-				const debugDevice = "Circular_BeTomorrow";
-				this._favoriteDevice.set({ name: debugDevice });
-				this._favoriteDeviceSNU.set("fake_snu");
-				this.stopScan();
-				this.autoConnectFavoriteDevice();
-			}
-		});
+		// this.fakeDeviceService.fakeDeviceEnabled.subscribe(async (enabled) => {
+		// 	if (enabled) {
+		// 		const debugDevice = "Circular_BeTomorrow";
+		// 		this._favoriteDevice.set({ name: debugDevice });
+		// 		this._favoriteDeviceSNU.set("fake_snu");
+		// 		this.stopScan();
+		// 		this.autoConnectFavoriteDevice();
+		// 	}
+		// });
 	}
 
 	async init() {
 		const loadedDevice = await this.favoriteDeviceStorage.load();
+		console.log(" CIR-266 BLE DEVICE INIT LOADED DEVICE", loadedDevice);
 		this.checkSettings();
 		this._favoriteDevice.set(loadedDevice);
-		console.log("CIR-141 INIT");
+		console.log("CIR-266 INIT");
 		if (loadedDevice) {
-			console.log("CIR-141 init LOADED DEVICE");
+			console.log("CIR-266 init LOADED DEVICE");
 			this.autoConnectFavoriteDevice();
 		}
 		this.userService.user.subscribe(async (user) => {
@@ -392,17 +393,30 @@ export class BleDeviceService {
 			this.logger.info("Services discovered for device", device.name);
 			this._connectedDevice.set(device);
 			this._connectionState.set(DeviceConnectionState.CONNECTED);
-			this._onDeviceDisconnectedSubscription = device.onDisconnected((error, disconnectedDevice) =>
-				this.handleDeviceDisconnection(error, disconnectedDevice)
-			);
+			this._onDeviceDisconnectedSubscription = device.onDisconnected((error, disconnectedDevice) => {
+				console.log("CIR-266 Device disconnection");
+				this.handleDeviceDisconnection(error, disconnectedDevice);
+			});
 			const storedDevice = { name: device.name };
-			this._favoriteDevice.set(storedDevice);
-			await this.favoriteDeviceStorage.save(storedDevice);
+			const favDevices = this._favoriteDevice.get();
+			const storedDevices = await this.favoriteDeviceStorage.load();
+			console.log("CIR-266 11");
+			if (favDevices && storedDevices) {
+				console.log("CIR-266 favDevices && storedDevices", favDevices, storedDevices);
+				await this.favoriteDeviceStorage.save([storedDevice, ...storedDevices]);
+				this._favoriteDevice.set([storedDevice, ...favDevices]);
+			} else {
+				console.log("ELSE CIR-266 favDevices && storedDevices", favDevices, storedDevices);
+				await this.favoriteDeviceStorage.save([storedDevice]);
+				this._favoriteDevice.set([storedDevice]);
+			}
+			console.log("CIR-266 22");
 			await this.startMonitoring();
 			const snu = await this.getResponse(Channel.SNU);
 			if (snu) {
-				this._favoriteDeviceSNU.set(snu);
+				this._favoriteDeviceSNU.set([snu]);
 			}
+			console.log("CIR-266 3");
 			await this.write(`${Channel.CALENDAR}${getUTCTimestamp()}`);
 			this.logger.info("🕒 Time set to device", device.name, getUTCTimestamp());
 			await this.listenBattery();
@@ -440,7 +454,7 @@ export class BleDeviceService {
 	}
 
 	async autoConnectFavoriteDevice() {
-		const name = this._favoriteDevice.get()?.name;
+		const name = this._favoriteDevice.get()[0]?.name;
 		if (name === undefined) {
 			return;
 		}
@@ -587,6 +601,7 @@ export class BleDeviceService {
 
 	private async startMonitoring() {
 		const device = this._connectedDevice.get() ?? (await observableToPromise(this._connectedDevice));
+		console.log("CIR-266 Monitoring device ->", device);
 
 		if (!device) {
 			this.logger.error("Error : no device connected");
@@ -633,6 +648,7 @@ export class BleDeviceService {
 	}
 
 	private async forgetBeforeDisconnection() {
+		console.log("CIR-266 Forget Before Disconnection");
 		this._connectedDevice.set(null);
 		this._connectionState.set(DeviceConnectionState.DISCONNECTED);
 		this._onDeviceDisconnectedSubscription?.remove();

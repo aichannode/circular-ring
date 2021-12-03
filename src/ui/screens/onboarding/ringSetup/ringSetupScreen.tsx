@@ -49,7 +49,7 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 
 	useEffect(() => {
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
-			console.log("CIR-141 START SCAN");
+			console.log("CIR-266 setupScreen START SCAN");
 			bleDeviceService.startScan();
 		}
 		if (setupState === DeviceSetupState.LOCATION_DISABLED) {
@@ -63,10 +63,14 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	return (
 		<Container>
 			<IfAdmin>
-				<PrimaryButton onPress={() => {
-					console.log(props.route.params.onByPass)
-					props.route.params.onByPass()
-				}}>By pass ring setup</PrimaryButton>
+				<PrimaryButton
+					onPress={() => {
+						console.log(props.route.params.onByPass);
+						props.route.params.onByPass();
+					}}
+				>
+					By pass ring setup
+				</PrimaryButton>
 			</IfAdmin>
 			{(() => {
 				switch (setupState) {

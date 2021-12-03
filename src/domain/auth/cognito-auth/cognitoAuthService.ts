@@ -13,20 +13,23 @@ import Config from "react-native-config";
 
 const SEC_TO_MILLISEC = 1000;
 
-export class CognitoAuthService<P = {
-    [id: string]: unknown;
-}> implements AuthService {
+export class CognitoAuthService<
+	P = {
+		[id: string]: unknown;
+	}
+> implements AuthService
+{
 	private readonly logger = getLogger("CognitoAuthService");
 
 	private readonly _userPool: CognitoUserPool;
 
 	private _accessToken = observable<CognitoAccessToken | null>(null);
 	private _cognitoUser = observable<CognitoUser | null>(null);
-	
+
 	/**
 	 * Access to the token payload as a reactive source.
 	 */
-	payload = this._accessToken.readOnly().select<P | undefined>((token) => token?.decodePayload() as P)
+	payload = this._accessToken.readOnly().select<P | undefined>((token) => token?.decodePayload() as P);
 	authToken = this._accessToken.readOnly().select((token) => token?.getJwtToken());
 	userEmail = this._cognitoUser.readOnly().select((user) => user?.getUsername());
 
@@ -49,7 +52,7 @@ export class CognitoAuthService<P = {
 						currentUser.getSession((error: Error | null, session: CognitoUserSession | null) => {
 							if (!error && session) {
 								this._accessToken.set(session.getAccessToken());
-								console.log("Auth Token", session.getAccessToken().getJwtToken());
+								// console.log("Auth Token", session.getAccessToken().getJwtToken());
 								resolve();
 							} else {
 								this.logger.warn("Refresh user failed", error);

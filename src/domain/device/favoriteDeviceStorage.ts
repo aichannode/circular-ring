@@ -4,12 +4,12 @@ import { NamedDevice } from "./namedDevice";
 const favoriteDeviceStorageKey = "@favoriteDevice";
 
 export class FavoriteDeviceStorage {
-	save(device: NamedDevice) {
-		return Storage.save<NamedDevice>(favoriteDeviceStorageKey, device);
+	save(devices: NamedDevice[]) {
+		return Storage.save<NamedDevice[]>(favoriteDeviceStorageKey, devices);
 	}
 
 	load() {
-		return Storage.load<NamedDevice>(favoriteDeviceStorageKey);
+		return Storage.load<NamedDevice[]>(favoriteDeviceStorageKey);
 	}
 
 	clear() {
