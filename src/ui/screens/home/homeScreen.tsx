@@ -1,14 +1,14 @@
 import { useServices } from "@core/services";
-import { useFeed } from "@domain/feed/hooks";
+import { useNotifications, useRecommendations } from "@domain/feed/hooks";
 import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringManagementService";
 import { colors } from "@ui/styles/colors";
 import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, Platform, View } from "react-native";
 import styled from "styled-components/native";
-import { Circles } from "./circles";
+import { CirclesBanner } from "./circlesBanner";
 import { QuickAccess } from "./quickAccess/quickAccess";
-import { Banner } from "./feedEntities/Banner";
+import { Notification } from "./feedEntities/Notification";
 import { SyncBanner } from "./syncBanner";
 import { useSetupState } from "@domain/device/hooks";
 import { DeviceSetupState } from "@domain/device/bleDeviceService";
@@ -23,7 +23,7 @@ import Fade from "@ui/components/fade";
 
 export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
-	const { homeBannerService, bluetoothService, bleDeviceService, ringManagementService } = useServices();
+	const { feedService, bluetoothService, bleDeviceService, ringManagementService } = useServices();
 	const [forceRefreshing, setForceRefreshing] = useState(false);
 	
 	const setupState = useSetupState();
@@ -50,16 +50,26 @@ export const HomeScreen: React.FC = () => {
 
 	const userSettings = useUserSettings();
 	const { format } = useI18n()
-	const groupedBanners = useFeed();
+	const notifications = useNotifications();
+	const recommendations = useRecommendations();
 
 	return (
 		<Container>
-			<Circles />
+			<CirclesBanner />
 			<QuickAccess />
 			<SyncBanner style={{ margin: 10 }} />
 			<IfAdmin>
-				<PrimaryButton onPress={homeBannerService._DEBUG_reset}>RESET</PrimaryButton>
+				<PrimaryButton onPress={feedService._DEBUG_reset}>RESET</PrimaryButton>
 			</IfAdmin>
+			{notifications[0] && (
+				<Fade
+					key={notifications[0].id} 
+					isVisible
+					isAnimatedOnMount
+				>
+					<Notification notification={notifications[0]} />
+				</Fade>
+			)}
 			<ScrollView
 				style={{ flex: 1, paddingHorizontal: 6 }}
 				refreshControl={
@@ -70,16 +80,7 @@ export const HomeScreen: React.FC = () => {
 					/>
 				}
 			>
-				{groupedBanners.notifications[0] && (
-					<Fade
-						key={groupedBanners.notifications[0].id} 
-						isVisible
-						isAnimatedOnMount
-					>
-						<Banner banner={groupedBanners.notifications[0]} />
-					</Fade>
-				)}
-				{Object.keys(groupedBanners.activities).map((date) => (
+				{Object.keys(recommendations).map((date) => (
 					<>
 						{date !== "today" && (
 							<View style={{alignItems: "center", marginTop: 15}}>
@@ -90,8 +91,8 @@ export const HomeScreen: React.FC = () => {
 								}</MetaDataText>
 							</View>
 						)}
-						{groupedBanners.activities[date].map((banner) => (
-							<Recommendation key={banner.id} banner={banner} style={{ margin: 10 }} />
+						{recommendations[date].map((banner) => (
+							<Recommendation key={banner.id} recommendation={banner} style={{ margin: 10 }} />
 						))}
 					</>
 				))}
@@ -109,8 +110,8 @@ const Container = styled.View`
 const Separator = styled.View`
 	height: 1px;
 	position: absolute;
-	left: 20;
-	top: 5;
-	right: 20;
+	left: 20px;
+	top: 5px;
+	right: 20px;
 	background-color: ${colors.gray};
 `;

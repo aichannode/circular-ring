@@ -1,22 +1,22 @@
 import { Storage } from "@core/storage";
-import { ReadBannerInfo as ReadBannerInfo } from "./type";
+import { ReadNotifInfo } from "./type";
 
-const homeBannerStorageKey = "@homeBanners";
+const feed = "@feed";
 
 /**
- * Simple storage for notification banner closed state.
+ * Simple storage for notification closed state.
  */
 export class FeedStorage {
 	async save(clientSideClosed: number[]) {
-		await Storage.save<ReadBannerInfo>(homeBannerStorageKey, { clientSideClosed });
+		await Storage.save<ReadNotifInfo>(feed, { clientSideClosed });
 	}
 
-	async load(): Promise<ReadBannerInfo | null> {
-		const infos = await Storage.load<ReadBannerInfo>(homeBannerStorageKey);
+	async load(): Promise<ReadNotifInfo | null> {
+		const infos = await Storage.load<ReadNotifInfo>(feed);
 		return infos && { ...infos };
 	}
 
 	clear() {
-		return Storage.remove(homeBannerStorageKey);
+		return Storage.remove(feed);
 	}
 }

@@ -75,9 +75,9 @@ const userQuickAccess = new UserQuickAccess(quickAccessStorage);
 const calibrationApi = new CalibrationApi(apiService);
 const calibrationService = new CalibrationService(calibrationApi);
 
-const homeBannerStorage = new FeedStorage();
-const homeBannerApi = new FeedApi(apiService);
-const homeBannerService = new FeedService(homeBannerStorage, homeBannerApi);
+const feedStorage = new FeedStorage();
+const feedApi = new FeedApi(apiService);
+const feedService = new FeedService(feedStorage, feedApi);
 
 const calendarApi = new CalendarApi(apiService);
 const calendarService = new CalendarService(calendarApi, userService);
@@ -93,7 +93,7 @@ export const services = {
 	circleAlarmService,
 	userPreferencesService,
 	calibrationService,
-	homeBannerService,
+	feedService,
 	fakeDeviceService,
 	calendarService,
 	userQuickAccess,

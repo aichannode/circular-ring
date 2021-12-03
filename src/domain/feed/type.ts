@@ -11,7 +11,7 @@ export enum FeedEntityAction {
 }
 
 export enum FeedEntityType {
-	BANNER = "NOTIFICATION",
+	NOTIFICATION = "NOTIFICATION",
 	RECOMMENDATION = "RECOMMENDATION",
 	CALIBRATION = "CALIBRATION",
 }
@@ -98,12 +98,12 @@ export type FeedEntityComponentDto =
 	| UserInputComponentConfigurationDto
 
 export type Activity = {
-	type: FeedEntityType.BANNER;
+	type: FeedEntityType.NOTIFICATION;
 	style: Omit<FeedEntityStyle, FeedEntityStyle.ORANGE_GRADIENT>;
 }
 
 export type Notification = {
-	type: Omit<FeedEntityType, FeedEntityType.BANNER>;
+	type: Omit<FeedEntityType, FeedEntityType.NOTIFICATION>;
 	style: FeedEntityStyle.ORANGE_GRADIENT;
 }
 
@@ -118,13 +118,13 @@ type CommonFeedEntityProps = {
 	components: FeedEntityComponentDto[];
 }
 
-export type FeedBanner = CommonFeedEntityProps & Notification
+export type FeedNotification = CommonFeedEntityProps & Notification
 export type FeedRecommendation = CommonFeedEntityProps  & Activity
 
 export type FeedEntity =
-	| FeedBanner
+	| FeedNotification
 	| FeedRecommendation
 
-export interface ReadBannerInfo {
+export interface ReadNotifInfo {
 	clientSideClosed: number[];
 }
