@@ -97,6 +97,10 @@ export class UserService {
 		await this.authService.newPassword(email, resetToken, newPassword);
 	}
 
+	async changePassword(oldPassword: string, newPassword: string): Promise<void> {
+		await this.authService.changePassword(oldPassword, newPassword);
+	}
+
 	async logout() {
 		await this.authService.logout();
 		this._user.set(null);

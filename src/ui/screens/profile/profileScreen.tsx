@@ -1,3 +1,4 @@
+import { useServices } from "@core/services";
 import { useGlobalScore } from "@domain/measure/hooks";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
@@ -7,21 +8,37 @@ import { ScrollScreen } from "@ui/components/scrollScreen";
 import { UserAvatar } from "@ui/components/userAvatar";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { ChangePasswordBottomSheet } from "@ui/screens/profile/changePasswordBottomSheet";
 import { LogoutBottomSheet } from "@ui/screens/profile/logoutBottomSheet";
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components/native";
 
 export const ProfileScreen = () => {
 	const { format } = useI18n();
 	const { navigate } = useRoutesNavigation();
+	const { cognitoAuthService } = useServices();
 
 	const { result: dailyScore } = useGlobalScore();
+	const [isConnectedByEmail, setIsConnectedByEmail] = useState(false);
 
 	const goToProfileInformation = useCallback(() => {
 		navigate(Routes.ProfileInformation);
 	}, []);
 
+	const goToProfileChangePassword = useCallback(() => {
+		navigate(Routes.ChangePassword);
+	}, []);
+
+	useEffect(() => {
+		//currentPasswordRef.current?.focus();
+		cognitoAuthService
+			.isConnectedByEmail()
+			.then(setIsConnectedByEmail)
+			.catch(() => setIsConnectedByEmail(false));
+	}, []);
+
 	const logoutBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
+	const changePasswordBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 
 	return (
 		<ScrollScreen
@@ -34,6 +51,11 @@ export const ProfileScreen = () => {
 			</ResponsiveCenterView>
 			<InfoListHeader>{format("profile.list_header.profile")}</InfoListHeader>
 			<InfoListItem name={format("profile.list.profile_information")} hasDisclosure action={goToProfileInformation} />
+			<InfoListItem
+				name={format("profile.changePassword")}
+				hasDisclosure
+				action={isConnectedByEmail ? goToProfileChangePassword : () => changePasswordBottomSheetRef.current?.present()}
+			/>
 			<SeparatedItem
 				name={format("profile.logout")}
 				action={() => logoutBottomSheetRef.current?.present()}
@@ -41,6 +63,9 @@ export const ProfileScreen = () => {
 			/>
 			<CircularBottomSheet snapPoints={[480]} ref={logoutBottomSheetRef}>
 				<LogoutBottomSheet onClose={() => logoutBottomSheetRef.current?.close()} />
+			</CircularBottomSheet>
+			<CircularBottomSheet snapPoints={[340]} ref={changePasswordBottomSheetRef}>
+				<ChangePasswordBottomSheet onClose={() => changePasswordBottomSheetRef.current?.close()} />
 			</CircularBottomSheet>
 		</ScrollScreen>
 	);
