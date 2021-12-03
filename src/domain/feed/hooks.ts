@@ -3,16 +3,16 @@ import { useObservable } from "micro-observables";
 import moment from "moment";
 import { useEffect } from "react";
 import { isToday, isYesterday } from "./business";
-import { Activity, Banner, BannerType, HomeBanner, Notification } from "./homeBanner";
+import { FeedRecommendation, FeedBanner, FeedEntityType, FeedEntity } from "./type";
 
-export type SortedBanners = {
-	notifications: Banner<Notification>[]
-	activities: Record<string, Banner<Activity>[]>
+export type SortedFeedEntities = {
+	notifications: FeedBanner[]
+	activities: Record<string, FeedRecommendation[]>
 }
-const isNotification = (banner: HomeBanner): banner is Banner<Notification> => banner.type === BannerType.NOTIFICATION
-const isActivity = (banner: HomeBanner): banner is Banner<Activity> => banner.type !== BannerType.NOTIFICATION
+const isNotification = (banner: FeedEntity): banner is FeedBanner => banner.type === FeedEntityType.BANNER
+const isActivity = (banner: FeedEntity): banner is FeedRecommendation => banner.type !== FeedEntityType.BANNER
 
-export function useBanners(): SortedBanners {
+export function useFeed(): SortedFeedEntities {
 	const { homeBannerService } = useServices();
 	const banners = useObservable(homeBannerService.banners)
 	
@@ -20,12 +20,12 @@ export function useBanners(): SortedBanners {
 		homeBannerService.fetchBanners();
 	}, []);
 
-	// Split NOTIFICATION from other banners type and groups activities by date.
+	// Split BANNER from other banners type and groups activities by date.
 	return {
 		notifications: banners.filter(isNotification),
 		activities: banners
 			.filter(isActivity)
-			.reduce<Record<string, Banner<Activity>[]>>(function(groups, banner) {
+			.reduce<Record<string, FeedRecommendation[]>>(function(groups, banner) {
 				const today = new Date().toISOString()
 				// Upsert in today group
 				if (isToday(banner.startDate, today)) {

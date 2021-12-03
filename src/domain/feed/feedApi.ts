@@ -1,18 +1,18 @@
 import { ApiService } from "@core/api/apiService";
 import moment from "moment";
-import { HomeBanner } from "./homeBanner";
+import { FeedEntity } from "./type";
 import { createRecommendation } from "./mockedData";
 
-const homeBannerBaseUrl = "/banners";
+const homeBannerBaseUrl = "/feed";
 
-export class HomeBannerApi {
+export class FeedApi {
 	constructor(private readonly apiService: ApiService) {}
 
 	/**
 	 * Fetch the banners
 	 */
 	async getBanners(from: Date = new Date(moment().subtract(1, "month").toISOString())) {
-		const res = await this.apiService.get<{ data: HomeBanner[] }>(`${homeBannerBaseUrl}/me`, { params: { from } });
+		const res = await this.apiService.get<{ data: FeedEntity[] }>(`${homeBannerBaseUrl}/me`, { params: { from } });
 		return res.data.data
 	}
 

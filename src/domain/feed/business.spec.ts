@@ -1,4 +1,4 @@
-import { getBannerDate, isToday } from "./business"
+import { getFeedEntityDate, isToday } from "./business"
 
 const today = "2021-10-11T14:31:06.585Z"
 
@@ -15,10 +15,10 @@ it('should be a yesterday date', function() {
 })
 
 it('Date < 24h: should get the delta from current date in hours', function() {
-    expect(getBannerDate("2021-10-11T11:31:06.585Z", today)).toEqual("3 hours ago")
+    expect(getFeedEntityDate("2021-10-11T11:31:06.585Z", today)).toEqual("3 hours ago")
 })
 
 it('Date >= 24h: should extract the hour of the corresponding day', function() {
-    expect(getBannerDate("2021-09-11T11:14:00.585Z", today, "12")).toEqual("11:14 AM")
-    expect(getBannerDate("2021-09-11T14:14:00.585Z", today, "24")).toEqual("14:14")
+    expect(getFeedEntityDate("2021-09-11T11:14:00.585Z", today, "12")).toEqual("11:14 AM")
+    expect(getFeedEntityDate("2021-09-11T14:14:00.585Z", today, "24")).toEqual("14:14")
 })

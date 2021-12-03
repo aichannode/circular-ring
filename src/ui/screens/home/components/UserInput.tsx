@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
-import { BannerStyle, InputType, SelectInputTypeConfig, UserInputConfiguration, UserInputComponentConfigurationDto, Activity } from "@domain/homeBanner/homeBanner";
+import { FeedEntityStyle, InputType, SelectInputTypeConfig, UserInputConfiguration, UserInputComponentConfigurationDto, Activity } from "@domain/feed/type";
 import ringGradient from "@assets/images/ringGradient.png"
 import chevronTop from "@assets/images/topArrowBlack.png"
 import { Image, LayoutChangeEvent, Pressable, View, ViewStyle } from "react-native";
@@ -35,7 +35,7 @@ function Header({title, isClosed}: UserInputConfiguration & {isClosed: boolean})
 }
 
 type SelectProps = SelectInputTypeConfig["inputConfig"] & {
-    palette: BannerStyle
+    palette: FeedEntityStyle
     onLayout: (e: LayoutChangeEvent) => void
 }
 
@@ -190,7 +190,7 @@ export function UserInput({ configuration, palette }: Props) {
                     borderBottomEndRadius: 2
                 }}
             >
-                {inputType === InputType.SELECT && <Select onLayout={e => paperHeightRef.value = e.nativeEvent.layout.height} {...inputConfig} palette={palette as BannerStyle}/>}
+                {inputType === InputType.SELECT && <Select onLayout={e => paperHeightRef.value = e.nativeEvent.layout.height} {...inputConfig} palette={palette as FeedEntityStyle}/>}
             </Foldable>
             <Pressable onPress={() => setIsClosed(!isClosed)}>
                 <Header isClosed={isClosed} {...configuration}/>

@@ -1,15 +1,15 @@
 import { Observable, observable } from "micro-observables";
-import { HomeBanner } from "./homeBanner";
-import { HomeBannerApi } from "./homeBannerApi";
-import { NotificationStorage } from "./notificationStorage";
+import { FeedEntity } from "./type";
+import { FeedApi } from "./feedApi";
+import { FeedStorage } from "./feedStorage";
 
-export class HomeBannerService {
-	private serverBanners = observable<HomeBanner[]>([]);
+export class FeedService {
+	private serverBanners = observable<FeedEntity[]>([]);
 	private clientSideClosed = observable<number[]>([]);
 
-	banners: Observable<HomeBanner[]>
+	banners: Observable<FeedEntity[]>
 	
-	constructor(private readonly notificationStorage: NotificationStorage, private readonly homeBannerApi: HomeBannerApi) {
+	constructor(private readonly notificationStorage: FeedStorage, private readonly homeBannerApi: FeedApi) {
 		// This is a little optimistic UI for the notification.
 		// This compute a view of the banners.
 		// It get the server banners and remove closed banners which are on the client side.

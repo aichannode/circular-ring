@@ -1,19 +1,19 @@
 import { useServices } from "@core/services";
-import { useBanners } from "@domain/homeBanner/hooks";
+import { useFeed } from "@domain/feed/hooks";
 import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringManagementService";
 import { colors } from "@ui/styles/colors";
 import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, Platform, View } from "react-native";
 import styled from "styled-components/native";
-import { CirclesBanner } from "./circlesBanner";
+import { Circles } from "./circles";
 import { QuickAccess } from "./quickAccess/quickAccess";
-import { NotificationBanner } from "./banners/Notification";
+import { Banner } from "./feedEntities/Banner";
 import { SyncBanner } from "./syncBanner";
 import { useSetupState } from "@domain/device/hooks";
 import { DeviceSetupState } from "@domain/device/bleDeviceService";
 import { MetaDataText } from "@ui/components/text";
-import { ActivityBanner } from "./banners/Activity";
+import { Recommendation } from "./feedEntities/Recommendation";
 import { PrimaryButton } from "@ui/components/buttons";
 import { IfAdmin } from "@ui/containers/IfAdmin";
 import moment from "moment";
@@ -50,11 +50,11 @@ export const HomeScreen: React.FC = () => {
 
 	const userSettings = useUserSettings();
 	const { format } = useI18n()
-	const groupedBanners = useBanners();
+	const groupedBanners = useFeed();
 
 	return (
 		<Container>
-			<CirclesBanner />
+			<Circles />
 			<QuickAccess />
 			<SyncBanner style={{ margin: 10 }} />
 			<IfAdmin>
@@ -76,7 +76,7 @@ export const HomeScreen: React.FC = () => {
 						isVisible
 						isAnimatedOnMount
 					>
-						<NotificationBanner banner={groupedBanners.notifications[0]} />
+						<Banner banner={groupedBanners.notifications[0]} />
 					</Fade>
 				)}
 				{Object.keys(groupedBanners.activities).map((date) => (
@@ -91,7 +91,7 @@ export const HomeScreen: React.FC = () => {
 							</View>
 						)}
 						{groupedBanners.activities[date].map((banner) => (
-							<ActivityBanner key={banner.id} banner={banner} style={{ margin: 10 }} />
+							<Recommendation key={banner.id} banner={banner} style={{ margin: 10 }} />
 						))}
 					</>
 				))}
