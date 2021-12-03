@@ -1,15 +1,16 @@
 import { CalendarTag } from "@domain/calendar/calendar";
 import { RingAlarm } from "@domain/ring/ringAlarm";
+import { HeightUnit, WeightUnit } from "@domain/units";
+import { Sex } from "@domain/user/user";
 import { useNavigation } from "@react-navigation/core";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { HeightUnit, WeightUnit } from "@domain/units";
-import { Sex } from "@domain/user/user";
 
 export enum Routes {
 	LoginOrSignUp = "LoginOrSignUp",
 	Login = "Login",
 	ForgotPassword = "ForgotPassword",
+	ChangePassword = "ChangePassword",
 	ResetToken = "ResetCode",
 	SignUpEmail = "SignUpEmail",
 	SignUpConfirmationCode = "SignUpConfirmationCode",
@@ -51,6 +52,7 @@ export type AppRoutesParams = {
 	[Routes.LoginOrSignUp]: undefined;
 	[Routes.Login]: undefined;
 	[Routes.ForgotPassword]: { email: string };
+	[Routes.ChangePassword]: undefined;
 	[Routes.ResetToken]: { email: string };
 	[Routes.SignUpEmail]: undefined;
 	[Routes.SignUpConfirmationCode]: undefined;
