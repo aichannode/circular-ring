@@ -66,7 +66,7 @@ export const Notification: React.FC<Props> = ({ notification, style }) => {
 };
 
 const Container = styled(OrangeDiagonalGradient)`
-	margin: 15px 6px 0;
+	margin-top: 15px;
 	padding: 20px 40px 20px 20px;
 	${row("center")};
 	background-color: black;
