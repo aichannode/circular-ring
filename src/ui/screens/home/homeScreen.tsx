@@ -61,15 +61,7 @@ export const HomeScreen: React.FC = () => {
 			<IfAdmin>
 				<PrimaryButton onPress={feedService._DEBUG_reset}>RESET</PrimaryButton>
 			</IfAdmin>
-			{notifications[0] && (
-				<Fade
-					key={notifications[0].id} 
-					isVisible
-					isAnimatedOnMount
-				>
-					<Notification notification={notifications[0]} />
-				</Fade>
-			)}
+			
 			<ScrollView
 				style={{ flex: 1, paddingHorizontal: 6 }}
 				refreshControl={
@@ -80,6 +72,15 @@ export const HomeScreen: React.FC = () => {
 					/>
 				}
 			>
+				{notifications[0] && (
+					<Fade
+						key={notifications[0].id} 
+						isVisible
+						isAnimatedOnMount
+					>
+						<Notification notification={notifications[0]} />
+					</Fade>
+				)}
 				{Object.keys(recommendations).map((date) => (
 					<>
 						{date !== "today" && (
