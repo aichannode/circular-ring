@@ -1,5 +1,9 @@
 import { HourFormat } from "@domain/units";
 import moment from "moment";
+import { FeedEntity, FeedNotification, FeedEntityType, FeedRecommendation } from "./type";
+
+export const isNotification = (entity: FeedEntity): entity is FeedNotification => entity.type === FeedEntityType.NOTIFICATION
+export const isRecommendation = (entity: FeedEntity): entity is FeedRecommendation => entity.type !== FeedEntityType.NOTIFICATION
 
 export function isToday(dateIso: string, todayIso: string) {
     const today = moment(todayIso).startOf("day")

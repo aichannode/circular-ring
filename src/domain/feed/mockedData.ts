@@ -21,11 +21,11 @@ type UpdateUserFeedEntityDto = {
 }
 
 /**
- * Factory for the notification banner data post query.
+ * Factory for the notification data post query.
  */
 export function createRecommendation(id: number): UpdateUserFeedEntityDto {
 	return {
-		"type": FeedEntityType.BANNER,
+		"type": FeedEntityType.NOTIFICATION,
 		"style": FeedEntityStyle.ORANGE_GRADIENT,
 		"title": "banner.calibration.title",
 		"secondaryTitle": "",

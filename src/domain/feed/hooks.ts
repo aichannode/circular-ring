@@ -3,59 +3,60 @@ import { useObservable } from "micro-observables";
 import moment from "moment";
 import { useEffect } from "react";
 import { isToday, isYesterday } from "./business";
-import { FeedRecommendation, FeedBanner, FeedEntityType, FeedEntity } from "./type";
+import { FeedRecommendation, FeedNotification } from "./type";
 
-export type SortedFeedEntities = {
-	notifications: FeedBanner[]
-	activities: Record<string, FeedRecommendation[]>
-}
-const isNotification = (banner: FeedEntity): banner is FeedBanner => banner.type === FeedEntityType.BANNER
-const isActivity = (banner: FeedEntity): banner is FeedRecommendation => banner.type !== FeedEntityType.BANNER
-
-export function useFeed(): SortedFeedEntities {
-	const { homeBannerService } = useServices();
-	const banners = useObservable(homeBannerService.banners)
+export function useRecommendations(): Record<string, FeedRecommendation[]> {
+	const { feedService } = useServices();
+	const recommendations = useObservable(feedService.recommendations)
 	
 	useEffect(() => {
-		homeBannerService.fetchBanners();
+		feedService.fetchRecommendations();
 	}, []);
 
-	// Split BANNER from other banners type and groups activities by date.
-	return {
-		notifications: banners.filter(isNotification),
-		activities: banners
-			.filter(isActivity)
-			.reduce<Record<string, FeedRecommendation[]>>(function(groups, banner) {
-				const today = new Date().toISOString()
-				// Upsert in today group
-				if (isToday(banner.startDate, today)) {
-					if (groups["today"]) {
-						groups["today"].push(banner)
-					} else {
-						groups["today"] = [banner]
-					}
+	// Groups activities by date.
+	return recommendations
+		.reduce<Record<string, FeedRecommendation[]>>(function(groups, reco) {
+			const today = new Date().toISOString()
+			// Upsert in today group
+			if (isToday(reco.startDate, today)) {
+				if (groups["today"]) {
+					groups["today"].push(reco)
+				} else {
+					groups["today"] = [reco]
 				}
+			}
 
-				// Upsert in yesterday group
-				else if (isYesterday(banner.startDate, today)) {
-					if (groups["yesterday"]) {
-						groups["yesterday"].push(banner)
-					} else {
-						groups["yesterday"] = [banner]
-					}
+			// Upsert in yesterday group
+			else if (isYesterday(reco.startDate, today)) {
+				if (groups["yesterday"]) {
+					groups["yesterday"].push(reco)
+				} else {
+					groups["yesterday"] = [reco]
 				}
+			}
 
-				// Upsert in exact date
-				
-				else {
-					const newDate = moment(banner.startDate).format("YYYY-MM-DD")
-					if (groups[newDate]) {
-						groups[newDate].push(banner)
-					} else {
-						groups[newDate] = [banner]
-					}
+			// Upsert in exact date
+			
+			else {
+				const newDate = moment(reco.startDate).format("YYYY-MM-DD")
+				if (groups[newDate]) {
+					groups[newDate].push(reco)
+				} else {
+					groups[newDate] = [reco]
 				}
-				return groups
-			}, {})
-	}
+			}
+			return groups
+		}, {})
+}
+
+export function useNotifications(): FeedNotification[] {
+	const { feedService } = useServices();
+	
+	useEffect(() => {
+		feedService.fetchNotifications();
+	}, []);
+
+	return useObservable(feedService.notifications)
+		// Sort by priority CIR-473
+		.sort((a, b) => b.priority - a.priority)
 }

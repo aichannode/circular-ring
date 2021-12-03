@@ -39,7 +39,7 @@ const circles: CircleInfo[] = [
 interface CirclesProps {
 	style?: StyleProp<ViewStyle>;
 }
-export const Circles: React.FC<CirclesProps> = ({ style }) => {
+export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 	const { format } = useI18n();
 	const navigation = useRoutesNavigation();
 

@@ -1,4 +1,4 @@
-import { FeedEntityStyle, FeedBanner, IconType, FeedEntity, FeedEntityAction } from "@domain/feed/type";
+import { FeedEntityStyle, FeedNotification, IconType, FeedEntityAction } from "@domain/feed/type";
 import { CloseButton } from "@ui/components/closeButton";
 import { row, Stack } from "@ui/components/layout";
 import { OrangeDiagonalGradient } from "@ui/components/shapes/gradients";
@@ -15,13 +15,13 @@ import { useServices } from "@core/services";
 import { openURL } from "@ui/utils/urlUtils";
 
 interface Props {
-	banner: FeedBanner;
+	notification: FeedNotification;
 	style?: StyleProp<ViewStyle>;
 }
 
-function getActionHandler(banner: FeedEntity, navigate: Navigate) {
+function getActionHandler(notif: FeedNotification, navigate: Navigate) {
 	return () => {
-		const action = banner.actions[0];
+		const action = notif.actions[0];
 		if (action) {
 			switch (action.type) {
 				case FeedEntityAction.OPEN_WEB:
@@ -37,36 +37,36 @@ function getActionHandler(banner: FeedEntity, navigate: Navigate) {
 	};
 }
 
-export const Banner: React.FC<Props> = ({ banner, style }) => {
+export const Notification: React.FC<Props> = ({ notification, style }) => {
 	const { navigate } = useRoutesNavigation();
-	const { homeBannerService } = useServices()
-	const useContrastColor = banner.style === FeedEntityStyle.ORANGE_GRADIENT
+	const { feedService } = useServices()
+	const useContrastColor = notification.style === FeedEntityStyle.ORANGE_GRADIENT
 	const { format } = useI18n();
 
 	return (
 		<Pressable
-			onPress={getActionHandler(banner, navigate)}
+			onPress={getActionHandler(notification, navigate)}
 			style={style}
 		>
 			<Container>
 				<View style={{ marginRight: 27 }}>
-					{banner.icon.type === IconType.URL ? <Image source={{ uri: banner.icon.type }} /> : null}
+					{notification.icon.type === IconType.URL ? <Image source={{ uri: notification.icon.type }} /> : null}
 				</View>
 				<Stack gap={10} style={{ flex: 1 }}>
-					<SecondaryText style={{ color: colors.white, fontWeight: "500" }}>{format(banner.title)}</SecondaryText>
+					<SecondaryText style={{ color: colors.white, fontWeight: "500" }}>{format(notification.title)}</SecondaryText>
 					<Paragraph
 						useContrastColor={useContrastColor}
-						{...(banner.components[0] as ParagraphComponentConfigurationDto).configuration}
+						{...(notification.components[0] as ParagraphComponentConfigurationDto).configuration}
 					/>
 				</Stack>
-				<CloseButton padding={16} onClose={() => {homeBannerService.closeNotification(banner.id)}} />
+				<CloseButton padding={16} onClose={() => {feedService.closeNotification(notification.id)}} />
 			</Container>
 		</Pressable>
 	);
 };
 
 const Container = styled(OrangeDiagonalGradient)`
-	margin-top: 15px;
+	margin: 15px 6px 0;
 	padding: 20px 40px 20px 20px;
 	${row("center")};
 	background-color: black;
