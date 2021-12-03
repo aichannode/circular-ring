@@ -30,7 +30,12 @@ export const MyRingScreen: React.FC = () => {
 
 	const currentRing: NamedUserRing = userRings.filter((ring) => ring.connected)[0];
 
-	console.log("Current Rings", userRings);
+	console.log(
+		"Current Rings\n",
+		userRings.map((ring) => {
+			return `name: ${ring.name} connected: ${ring.connected} id: ${ring.id}`;
+		})
+	);
 
 	const renameAlert = () => {
 		Alert.prompt(format("manage_rings.ring.rename"), "", [

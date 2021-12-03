@@ -28,6 +28,12 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 		setCurrentOption(ring.connected ? options[0] : options[1]);
 	}, [ring.connected]);
 
+	useEffect(() => {
+		if (ring.connected && currentOption === options[1]) {
+			bleDeviceService.disconnect();
+		}
+	}, [currentOption]);
+
 	return (
 		<Container style={style}>
 			<Card>

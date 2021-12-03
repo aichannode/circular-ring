@@ -42,6 +42,7 @@ import { CalendarScreen } from "@ui/screens/calendar/calendarScreen";
 import { Tutorial } from "@ui/screens/onboarding/tutorial/tutorial";
 import { QuickAccess } from "@ui/screens/quickaccess/quickAccess";
 import { RingFirmwareUpdate } from "@ui/screens/myRing/firmwareUpdate/ringFirmwareUpdate";
+import { NewRingSetupScreen } from "@ui/screens/myRing/newRingSetupScreen";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -211,6 +212,7 @@ const MainHomeNavigator = () => {
 					headerRight: () => <MyRingBattery />,
 				}}
 			/>
+			<MainStack.Screen name={Routes.NewRingSetupScreen} component={NewRingSetupScreen} />
 
 			<MainStack.Screen name={Routes.WebView} component={WebViewScreen} />
 		</MainStack.Navigator>
@@ -253,7 +255,11 @@ export const RootNavigator: React.FC = () => {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
 				{!hasUser && <OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />}
-				<OnboardingStack.Screen name={Routes.Pairing} initialParams={{ setWait, onByPass: () => setByPass(true) }} component={RingSetupScreen} />
+				<OnboardingStack.Screen
+					name={Routes.Pairing}
+					initialParams={{ setWait, onByPass: () => setByPass(true) }}
+					component={RingSetupScreen}
+				/>
 			</OnboardingStack.Navigator>
 		);
 	}

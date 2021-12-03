@@ -310,7 +310,7 @@ export class BleDeviceService {
 			}
 		}
 		await this.bluetoothService.enable();
-		await BleManager.start({ showAlert: false});
+		await BleManager.start({ showAlert: false });
 
 		const DFUScanPromise = new Promise<Device>((resolve, reject) => {
 			this.updateState.set(UpdateState.SCANNING_DFU_RING);
@@ -409,6 +409,7 @@ export class BleDeviceService {
 	}
 
 	private handleDeviceDisconnection(error: BleError | null, device: Device) {
+		console.log("HANDLE DISCONNECTION");
 		const connectedDevice = this._connectedDevice.get();
 		if (!connectedDevice) {
 			return;
@@ -475,13 +476,13 @@ export class BleDeviceService {
 			this.logger.info("Scanning to autoconnect to", name);
 			this._scanning.set(true);
 			manager.startDeviceScan([NUServiceUUID], { scanMode: ScanMode.LowLatency }, (error, device) => {
-				console.log("Device Found", device);
+				// console.log("Device Found", device);
 				if (error) {
 					this.logger.error("Error during scan", error);
 					this.stopScan();
 					reject(error);
 				} else if (device) {
-					this.logger.info(`Discovered device named ${device.name} with id ${device.id} ... ${JSON.stringify(device)}`);
+					this.logger.info(`Discovered device named ${device.name} with id ${device.id}`);
 					if (device.name === name) {
 						if (this.updateState.get().status === UpdateState.RECONNECTING.status)
 							this.updateState.set(UpdateState.UPDATE_SUCCESS);

@@ -25,7 +25,7 @@ export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
 	const { homeBannerService, bluetoothService, bleDeviceService, ringManagementService } = useServices();
 	const [forceRefreshing, setForceRefreshing] = useState(false);
-	
+
 	const setupState = useSetupState();
 
 	useEffect(() => {
@@ -43,13 +43,13 @@ export const HomeScreen: React.FC = () => {
 			return;
 		}
 		setForceRefreshing(true);
-		console.log("One SYNC", )
+		console.log("One SYNC");
 		ringManagementService.syncData();
 		ringManagementService.submitFirmwareVersion();
 	}, [syncState, setForceRefreshing]);
 
 	const userSettings = useUserSettings();
-	const { format } = useI18n()
+	const { format } = useI18n();
 	const groupedBanners = useBanners();
 
 	return (
@@ -71,23 +71,20 @@ export const HomeScreen: React.FC = () => {
 				}
 			>
 				{groupedBanners.notifications[0] && (
-					<Fade
-						key={groupedBanners.notifications[0].id} 
-						isVisible
-						isAnimatedOnMount
-					>
+					<Fade key={groupedBanners.notifications[0].id} isVisible isAnimatedOnMount>
 						<NotificationBanner banner={groupedBanners.notifications[0]} />
 					</Fade>
 				)}
 				{Object.keys(groupedBanners.activities).map((date) => (
 					<>
 						{date !== "today" && (
-							<View style={{alignItems: "center", marginTop: 15}}>
-								<Separator/>
-								<MetaDataText style={{paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray}}>{date === "yesterday"
-									? format("global.yesterday").toUpperCase()
-									: moment(date).format(userSettings?.dateFormat)
-								}</MetaDataText>
+							<View style={{ alignItems: "center", marginTop: 15 }}>
+								<Separator />
+								<MetaDataText style={{ paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray }}>
+									{date === "yesterday"
+										? format("global.yesterday").toUpperCase()
+										: moment(date).format(userSettings?.dateFormat)}
+								</MetaDataText>
 							</View>
 						)}
 						{groupedBanners.activities[date].map((banner) => (
@@ -109,8 +106,8 @@ const Container = styled.View`
 const Separator = styled.View`
 	height: 1px;
 	position: absolute;
-	left: 20;
-	top: 5;
-	right: 20;
+	left: 20px;
+	top: 5px;
+	right: 20px;
 	background-color: ${colors.gray};
 `;

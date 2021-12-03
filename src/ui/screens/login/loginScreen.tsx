@@ -17,9 +17,9 @@ export const LoginScreen = () => {
 	const { userService } = useServices();
 	const { navigate } = useRoutesNavigation();
 
-	const [email, setEmail] = useState("");
+	const [email, setEmail] = useState("estebanleclet+circular@gmail.com");
 
-	const [password, setPassword] = useState("");
+	const [password, setPassword] = useState("Qwerty@12345");
 	const passwordFieldRef = useRef<TextInput | null>(null);
 
 	const [errorMessage, setErrorMessage] = useState<string>("");
