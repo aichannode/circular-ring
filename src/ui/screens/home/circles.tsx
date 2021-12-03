@@ -36,10 +36,10 @@ const circles: CircleInfo[] = [
 		key: "home.circles.live.label",
 	},
 ];
-interface CirclesBannerProps {
+interface CirclesProps {
 	style?: StyleProp<ViewStyle>;
 }
-export const CirclesBanner: React.FC<CirclesBannerProps> = ({ style }) => {
+export const Circles: React.FC<CirclesProps> = ({ style }) => {
 	const { format } = useI18n();
 	const navigation = useRoutesNavigation();
 

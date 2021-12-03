@@ -5,13 +5,13 @@ export enum IconType {
 	LOCAL = "LOCAL",
 	OPEN_SELECTION = "OPEN_SELECTION"
 }
-export enum BannerAction {
+export enum FeedEntityAction {
 	OPEN_WEB = "OPEN_WEB",
 	APP_PAGE = "APP_PAGE",
 }
 
-export enum BannerType {
-	NOTIFICATION = "NOTIFICATION",
+export enum FeedEntityType {
+	BANNER = "NOTIFICATION",
 	RECOMMENDATION = "RECOMMENDATION",
 	CALIBRATION = "CALIBRATION",
 }
@@ -23,11 +23,11 @@ type Icon = {
 
 // TODO extract when action architecture will be defined
 export type ClientAction = {
-	type: BannerAction;
+	type: FeedEntityAction;
 	data: any; // TODO to tag type
 }
 
-export enum BannerComponentType {
+export enum FeedEntityComponentType {
 	PARAGRAPH = "PARAGRAPH",
 	GRAPH = "GRAPH",
 	SCORES = "SCORES",
@@ -35,7 +35,7 @@ export enum BannerComponentType {
 	USER_INPUT = "USER_INPUT"
 }
 
-export enum BannerStyle {
+export enum FeedEntityStyle {
 	ORANGE_GRADIENT = "ORANGE_GRADIENT",
 	WHITE_WITH_ORANGE_BORDER = "WHITE_WITH_ORANGE_BORDER",
 	WHITE_WITH_LIGHT_BLUE_BORDER = "WHITE_WITH_LIGHT_BLUE_BORDER",
@@ -49,7 +49,7 @@ export enum ParagraphStyle {
 }
 
 export type ParagraphComponentConfigurationDto = {
-	type: BannerComponentType.PARAGRAPH;
+	type: FeedEntityComponentType.PARAGRAPH;
 	configuration: {
 		style: ParagraphStyle;
 		translationKey: WordingKey;
@@ -89,25 +89,25 @@ export type SelectInputTypeConfig = InputTypeConfig<InputType.SELECT, {
 export type UserInputConfiguration = SelectInputTypeConfig & {isAnswered: boolean}
 
 export type UserInputComponentConfigurationDto = {
-	type: BannerComponentType.USER_INPUT;
+	type: FeedEntityComponentType.USER_INPUT;
 	configuration: UserInputConfiguration
 }
 
-export type BannerComponentDto =
+export type FeedEntityComponentDto =
 	| ParagraphComponentConfigurationDto
 	| UserInputComponentConfigurationDto
 
 export type Activity = {
-	type: BannerType.NOTIFICATION;
-	style: Omit<BannerStyle, BannerStyle.ORANGE_GRADIENT>;
+	type: FeedEntityType.BANNER;
+	style: Omit<FeedEntityStyle, FeedEntityStyle.ORANGE_GRADIENT>;
 }
 
 export type Notification = {
-	type: Omit<BannerType, BannerType.NOTIFICATION>;
-	style: BannerStyle.ORANGE_GRADIENT;
+	type: Omit<FeedEntityType, FeedEntityType.BANNER>;
+	style: FeedEntityStyle.ORANGE_GRADIENT;
 }
 
-export type Banner<T> = T & {
+type CommonFeedEntityProps = {
 	id: number;
 	title: WordingKey;
 	secondaryTitle: WordingKey;
@@ -115,11 +115,16 @@ export type Banner<T> = T & {
 	icon: Icon;
 	priority: number;
 	actions: ClientAction[];
-	components: BannerComponentDto[];
+	components: FeedEntityComponentDto[];
 }
 
-export type HomeBanner = Banner<Notification> | Banner<Activity>
+export type FeedBanner = CommonFeedEntityProps & Notification
+export type FeedRecommendation = CommonFeedEntityProps  & Activity
 
-export interface ReadNotificationInfo {
+export type FeedEntity =
+	| FeedBanner
+	| FeedRecommendation
+
+export interface ReadBannerInfo {
 	clientSideClosed: number[];
 }

@@ -15,16 +15,16 @@ export function isYesterday(dateIso: string, todayIso: string) {
 }
 
 
-export function getBannerDate(isoDate: string, todayIsoDate: string, format?: HourFormat) {
+export function getFeedEntityDate(isoDate: string, todayIsoDate: string, format?: HourFormat) {
     const date = moment(isoDate)
     const today = moment(todayIsoDate)
 
-    // The banner appeared today, return the relative time
+    // The entry appeared today, return the relative time
     if (isToday(isoDate, todayIsoDate)) {
         return date.from(today);
     }
 
-    // The banner is older than one day, return the hours
+    // The entry is older than one day, return the hours
     return date.format(format === "12"
         ? "hh:mm A"
         : "HH:mm"

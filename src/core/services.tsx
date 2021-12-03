@@ -9,9 +9,9 @@ import { CircleAlarmService } from "@domain/circleAlarm/circleAlarmService";
 import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
 import { DevFakeDeviceService, EmptyFakeDeviceService } from "@domain/fake/fakeDeviceService";
-import { HomeBannerApi } from "@domain/homeBanner/homeBannerApi";
-import { HomeBannerService } from "@domain/homeBanner/homeBannerService";
-import { NotificationStorage } from "@domain/homeBanner/notificationStorage";
+import { FeedApi } from "@domain/feed/feedApi";
+import { FeedService } from "@domain/feed/feedService";
+import { FeedStorage } from "@domain/feed/feedStorage";
 import { MeasureApi } from "@domain/measure/measureApi";
 import { MeasureService } from "@domain/measure/measureService";
 import { UserPreferencesService } from "@domain/preferences/userPreferencesService";
@@ -75,9 +75,9 @@ const userQuickAccess = new UserQuickAccess(quickAccessStorage);
 const calibrationApi = new CalibrationApi(apiService);
 const calibrationService = new CalibrationService(calibrationApi);
 
-const homeBannerStorage = new NotificationStorage();
-const homeBannerApi = new HomeBannerApi(apiService);
-const homeBannerService = new HomeBannerService(homeBannerStorage, homeBannerApi);
+const homeBannerStorage = new FeedStorage();
+const homeBannerApi = new FeedApi(apiService);
+const homeBannerService = new FeedService(homeBannerStorage, homeBannerApi);
 
 const calendarApi = new CalendarApi(apiService);
 const calendarService = new CalendarService(calendarApi, userService);
