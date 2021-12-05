@@ -61,7 +61,14 @@ export class RingManagementService {
 
 	async init() {
 		const loadedRings = await this.userRingsStorage.load();
-		this._userRings.set(loadedRings ?? []);
+		if (!loadedRings) this._userRings.set([]);
+		else
+			this._userRings.set(
+				loadedRings.map((ring) => {
+					if (ring.name === this.deviceService.favoriteDevice.get()?.name) return { ...ring, connected: true };
+					else return { ...ring, connected: false };
+				})
+			);
 		console.log("CIR-266  Loaded Rings", loadedRings);
 		this.syncData();
 	}
@@ -86,15 +93,17 @@ export class RingManagementService {
 
 	async registerConnectedRing() {
 		const firmware = await this.deviceService.getResponse(Channel.FIRMWARE_VERSION);
-		const deviceName = this.deviceService.favoriteDevice.get()[0].name;
-		const id = await this.deviceService.favoriteDeviceSNU.get()[0];
+		const deviceName = this.deviceService.favoriteDevice.get()?.name;
+		const id = await this.deviceService.favoriteDeviceSNU.get();
 		if (id && firmware && deviceName) {
 			try {
 				const userRings = this._userRings.get();
+				console.log("CIR-266 USER RING Booting", [...userRings]);
 				const alreadyRegistered = userRings.filter((ring) => ring.id === id).length > 0;
 				if (!alreadyRegistered) {
 					const userRing = await this.ringApi.addRing({ id, firmware });
 					const namedRing = { ...userRing, name: deviceName, connected: true };
+					console.log("CIR-266 USER RING REGISTERING", [...userRings, namedRing]);
 					this._userRings.update((rings) => [...rings, namedRing]);
 					return userRing;
 				}

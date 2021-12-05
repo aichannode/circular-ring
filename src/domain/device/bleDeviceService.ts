@@ -1,3 +1,4 @@
+import { UserDevicesStorage } from "./userDevicesStorage";
 import { getLogger } from "@core/logger/logger";
 import { base64decode, base64encode, delay, observableToPromise, timedPromise } from "@core/utils";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
@@ -19,6 +20,7 @@ import { NordicDFU } from "react-native-nordic-dfu";
 import RNFetchBlob from "react-native-blob-util";
 import RNFS from "react-native-fs";
 import BleManager from "react-native-ble-manager";
+import { UserDevice } from "./userDevice";
 
 const FB = RNFetchBlob.config({
 	fileCache: true,
@@ -102,8 +104,10 @@ export class BleDeviceService {
 	private _lookingForDevice = observable(false);
 	private _monitoring = observable(false);
 
-	private _favoriteDevice = observable<NamedDevice[] | null>(null);
-	private _favoriteDeviceSNU = observable<string[] | null>(null);
+	private _favoriteDevice = observable<NamedDevice | null>(null);
+	private _favoriteDeviceSNU = observable<string | null>(null);
+
+	private _userDevices = observable<UserDevice[] | null>(null);
 
 	private _currentRingBattery = observable<RingBattery | null>(null);
 	private _batteryListenerUnsubscribe: (() => void) | undefined = undefined;
@@ -117,6 +121,7 @@ export class BleDeviceService {
 	readonly autoConnectState: Observable<DeviceAutoConnectState>;
 	readonly favoriteDevice = this._favoriteDevice.readOnly();
 	readonly favoriteDeviceSNU = this._favoriteDeviceSNU.readOnly();
+	readonly userDevices = this._userDevices.readOnly();
 
 	readonly currentRingBattery = this._currentRingBattery.readOnly();
 	readonly currentRingLiveData = this._currentRingLiveData.readOnly();
@@ -129,7 +134,8 @@ export class BleDeviceService {
 		private readonly fakeDeviceService: FakeDeviceService,
 		private readonly favoriteDeviceStorage: FavoriteDeviceStorage,
 		private readonly userService: UserService,
-		private readonly ringApi: RingApi
+		private readonly ringApi: RingApi,
+		private readonly userDevicesStorage: UserDevicesStorage
 	) {
 		LocationEnabler.addListener(({ locationEnabled }) => {
 			this._locationEnabledAndroid.set(locationEnabled);
@@ -185,16 +191,6 @@ export class BleDeviceService {
 				return DeviceAutoConnectState.DISCONNECTED;
 			}
 		);
-
-		// this.fakeDeviceService.fakeDeviceEnabled.subscribe(async (enabled) => {
-		// 	if (enabled) {
-		// 		const debugDevice = "Circular_BeTomorrow";
-		// 		this._favoriteDevice.set({ name: debugDevice });
-		// 		this._favoriteDeviceSNU.set("fake_snu");
-		// 		this.stopScan();
-		// 		this.autoConnectFavoriteDevice();
-		// 	}
-		// });
 	}
 
 	async init() {
@@ -401,20 +397,14 @@ export class BleDeviceService {
 			const favDevices = this._favoriteDevice.get();
 			const storedDevices = await this.favoriteDeviceStorage.load();
 			console.log("CIR-266 11");
-			if (favDevices && storedDevices) {
-				console.log("CIR-266 favDevices && storedDevices", favDevices, storedDevices);
-				await this.favoriteDeviceStorage.save([storedDevice, ...storedDevices]);
-				this._favoriteDevice.set([storedDevice, ...favDevices]);
-			} else {
-				console.log("ELSE CIR-266 favDevices && storedDevices", favDevices, storedDevices);
-				await this.favoriteDeviceStorage.save([storedDevice]);
-				this._favoriteDevice.set([storedDevice]);
-			}
+			console.log("ELSE CIR-266 favDevices && storedDevices", favDevices, storedDevices);
+			await this.favoriteDeviceStorage.save(storedDevice);
+			this._favoriteDevice.set(storedDevice);
 			console.log("CIR-266 22");
 			await this.startMonitoring();
 			const snu = await this.getResponse(Channel.SNU);
 			if (snu) {
-				this._favoriteDeviceSNU.set([snu]);
+				this._favoriteDeviceSNU.set(snu);
 			}
 			console.log("CIR-266 3");
 			await this.write(`${Channel.CALENDAR}${getUTCTimestamp()}`);
@@ -454,7 +444,7 @@ export class BleDeviceService {
 	}
 
 	async autoConnectFavoriteDevice() {
-		const name = this._favoriteDevice.get()[0]?.name;
+		const name = this._favoriteDevice.get()?.name;
 		if (name === undefined) {
 			return;
 		}
