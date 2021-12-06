@@ -25,13 +25,6 @@ export class FeedStorage {
 		await Storage.save<RecommendationState>(`${StorageKeys.RECOMMENDATIONS}/${state.id}`, state);
 	}
 
-	/**
-	 * This returns a Recommendation state
-	 */
-	 async getRecommendationState(id: string) {
-		return Storage.load<RecommendationState>(`${StorageKeys.RECOMMENDATIONS}/${id}`);
-	}
-
 	async load(): Promise<NotificationsState | null> {
 		const infos = await Storage.load<NotificationsState>(StorageKeys.NOTIFICATIONS);
 		return infos && { ...infos };
