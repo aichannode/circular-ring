@@ -55,6 +55,7 @@ export const HomeScreen: React.FC = () => {
 
 	return (
 		<Container>
+			<CirclesBanner />
 			<ScrollView
 				style={{ flex: 1 }}
 				refreshControl={
@@ -65,7 +66,6 @@ export const HomeScreen: React.FC = () => {
 					/>
 				}
 			>
-				<CirclesBanner />
 				<QuickAccess />
 				<SyncBanner style={{ margin: 10 }} />
 

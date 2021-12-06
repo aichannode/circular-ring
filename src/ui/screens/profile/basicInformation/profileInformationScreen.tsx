@@ -1,3 +1,4 @@
+import { useServices } from "@core/services";
 import { round2Digits } from "@core/utils";
 import { cmToFt, HeightUnit, kgToLbs, UNDEFINED_HEIGHT, UNDEFINED_WEIGHT, WeightUnit } from "@domain/units";
 import { useUser, useUserSettings } from "@domain/user/hooks/useUser";
@@ -8,6 +9,7 @@ import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { ConfirmSexBottomSheet } from "@ui/screens/profile/basicInformation/confirmSexBottomSheet";
+import { DeleteAccountBottomSheet } from "@ui/screens/profile/basicInformation/deleteAccountBottomSheet";
 import { HeightBottomSheet } from "@ui/screens/profile/basicInformation/heightBottomSheet";
 import { WeightBottomSheet } from "@ui/screens/profile/basicInformation/weightBottomSheet";
 import dayjs from "dayjs";
@@ -18,6 +20,7 @@ export const ProfileInformationScreen = () => {
 	const { navigate } = useRoutesNavigation();
 	const userSettings = useUserSettings();
 	const user = useUser();
+	const { userService } = useServices();
 
 	const displayedBirthday = dayjs(user?.bornDate || new Date()).format(userSettings?.dateFormat);
 
@@ -30,10 +33,12 @@ export const ProfileInformationScreen = () => {
 	const displayedWeight = (weightUnit === WeightUnit.lbs ? Math.round(kgToLbs(weight)) : weight).toFixed(0);
 
 	const [newSex, setNewSex] = useState(user?.sex ?? Sex.Male);
+	const [isAccountDeleted, setAccountDeleted] = useState(false);
 
 	const heightBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const weightBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const confirmSexBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
+	const deleteAccountBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 
 	return !user ? null : (
 		<ScrollScreen contentContainerStyle={{ paddingVertical: 0 }}>
@@ -78,12 +83,35 @@ export const ProfileInformationScreen = () => {
 				hasDisclosure={true}
 				action={() => navigate(Routes.ProfileAdvancedInformation)}
 			/>
+			<InfoListItem
+				name={format("profile_info.delete")}
+				emphasize={true}
+				action={() => deleteAccountBottomSheetRef.current?.present()}
+			/>
 
 			<CircularBottomSheet snapPoints={[480]} ref={heightBottomSheetRef}>
 				<HeightBottomSheet onSaved={() => heightBottomSheetRef.current?.close()} />
 			</CircularBottomSheet>
 			<CircularBottomSheet snapPoints={[480]} ref={weightBottomSheetRef}>
 				<WeightBottomSheet onSaved={() => weightBottomSheetRef.current?.close()} />
+			</CircularBottomSheet>
+			<CircularBottomSheet
+				allowSwipeDownToClose={false}
+				snapPoints={[450]}
+				onChange={(index) => {
+					if (index == -1 && isAccountDeleted) {
+						userService.logout();
+					}
+				}}
+				ref={deleteAccountBottomSheetRef}
+			>
+				<DeleteAccountBottomSheet
+					setAccountDeleted={setAccountDeleted}
+					isAccountDeleted={isAccountDeleted}
+					onClose={() => {
+						deleteAccountBottomSheetRef.current?.close();
+					}}
+				/>
 			</CircularBottomSheet>
 			<CircularBottomSheet snapPoints={[480]} ref={confirmSexBottomSheetRef}>
 				<ConfirmSexBottomSheet

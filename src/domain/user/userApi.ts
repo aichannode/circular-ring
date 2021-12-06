@@ -52,6 +52,11 @@ export class UserApi {
 		return UserApi.userFromDto(result.data);
 	}
 
+	async deleteMe(): Promise<any> {
+		const result = await this.apiService.delete("/user/me");
+		return result.data;
+	}
+
 	private static userFromDto(userDto: UserDto): User {
 		return {
 			...userDto,

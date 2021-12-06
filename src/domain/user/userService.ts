@@ -110,6 +110,11 @@ export class UserService {
 		await this.userStorage.removeUserAdvancedInfo();
 	}
 
+	async deleteMe() {
+		await this.userApi.deleteMe();
+		this.logout();
+	}
+
 	/** Sign Up **/
 
 	async signUpWithEmail(email: string, password: string) {
