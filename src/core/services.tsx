@@ -54,8 +54,7 @@ const bleDeviceService = new BleDeviceService(
 	fakeDeviceService,
 	favoriteDeviceStorage,
 	userService,
-	ringApi,
-	userDevicesStorage
+	ringApi
 );
 const circleAlarmService = new CircleAlarmService(bleDeviceService);
 const ringManagementService = new RingManagementService(

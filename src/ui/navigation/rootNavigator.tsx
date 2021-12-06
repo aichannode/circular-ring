@@ -45,8 +45,6 @@ import { RingFirmwareUpdate } from "@ui/screens/myRing/firmwareUpdate/ringFirmwa
 import { NewRingSetupScreen } from "@ui/screens/myRing/newRingSetupScreen";
 import { useObservable } from "micro-observables";
 import { useServices } from "@core/services";
-import { BleDeviceService } from "@domain/device/bleDeviceService";
-import { RingManagementService } from "@domain/ring/ringManagementService";
 
 const SetupStack = createNativeStackNavigator();
 

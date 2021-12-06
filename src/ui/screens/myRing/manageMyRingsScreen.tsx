@@ -19,7 +19,7 @@ export const ManageMyRingsScreen = () => {
 	const { ringManagementService } = useServices();
 	const userRings = useObservable(ringManagementService.userRings);
 	const { navigate } = useRoutesNavigation();
-	const [wait, setWait] = useState(true);
+	// const [wait, setWait] = useState(true);
 
 	useEffect(() => {
 		ringManagementService.getRings();
@@ -39,7 +39,7 @@ export const ManageMyRingsScreen = () => {
 				name={format("manage_rings.setup_new_ring")}
 				hasDisclosure
 				action={() => {
-					navigate(Routes.NewRingSetupScreen, setWait);
+					navigate(Routes.NewRingSetupScreen);
 				}}
 			></InfoListItem>
 			<InfoListHeader style={{ marginLeft: 0 }}>{format("manage_rings.paired_rings_title")}</InfoListHeader>

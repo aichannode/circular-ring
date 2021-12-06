@@ -1,4 +1,3 @@
-import { UserDevicesStorage } from "./userDevicesStorage";
 import { getLogger } from "@core/logger/logger";
 import { base64decode, base64encode, delay, observableToPromise, timedPromise } from "@core/utils";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
@@ -134,8 +133,7 @@ export class BleDeviceService {
 		private readonly fakeDeviceService: FakeDeviceService,
 		private readonly favoriteDeviceStorage: FavoriteDeviceStorage,
 		private readonly userService: UserService,
-		private readonly ringApi: RingApi,
-		private readonly userDevicesStorage: UserDevicesStorage
+		private readonly ringApi: RingApi
 	) {
 		LocationEnabler.addListener(({ locationEnabled }) => {
 			this._locationEnabledAndroid.set(locationEnabled);
@@ -383,7 +381,7 @@ export class BleDeviceService {
 		try {
 			this.logger.info("Connecting to device", device.name);
 			this._connectionState.set(DeviceConnectionState.CONNECTING);
-			await device.connect({ timeout: 20000 });
+			await device.connect({ timeout: 4000 });
 			this.logger.info("Connection successful to device", device.name);
 			await device.discoverAllServicesAndCharacteristics();
 			this.logger.info("Services discovered for device", device.name);
@@ -493,6 +491,7 @@ export class BleDeviceService {
 					reject(error);
 				} else if (device) {
 					this.logger.info(`Discovered device named ${device.name} with id ${device.id}`);
+					console.log("device", device);
 					if (device.name === name) {
 						if (this.updateState.get().status === UpdateState.RECONNECTING.status)
 							this.updateState.set(UpdateState.UPDATE_SUCCESS);
