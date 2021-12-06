@@ -22,7 +22,7 @@ export enum SyncState {
 export class RingManagementService {
 	private logger = getLogger("💍 RingService");
 
-	private _userRings = observable<NamedUserRing[]>([]);
+	_userRings = observable<NamedUserRing[]>([]);
 	private _currentRingSyncState = observable<SyncState>(SyncState.NONE);
 
 	userRings = this._userRings.readOnly();
@@ -44,6 +44,7 @@ export class RingManagementService {
 		// once device is connected, retrieve its name and set it to our ring info
 		this.deviceService.favoriteDeviceSNU.subscribe((snu) => {
 			this._userRings.update((rings) => {
+				console.log("USERRINGS UPDATE", rings);
 				return rings.map((ring) => {
 					if (ring.id === snu) {
 						return { ...ring, name: this.deviceService.favoriteDevice.get()?.name ?? ring.name, connected: true };

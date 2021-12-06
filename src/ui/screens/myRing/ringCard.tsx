@@ -32,6 +32,14 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 		if (ring.connected && currentOption === options[1]) {
 			bleDeviceService.disconnect();
 		}
+		if (ring.name && currentOption === options[0]) {
+			console.log("Reconnect to ring", ring.name);
+			bleDeviceService.favoriteDevice.set({ name: ring.name });
+			bleDeviceService.favoriteDeviceSNU.set(ring.id);
+			setTimeout(() => {
+				bleDeviceService.autoConnectFavoriteDevice();
+			}, 100);
+		}
 	}, [currentOption]);
 
 	return (

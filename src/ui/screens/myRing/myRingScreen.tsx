@@ -33,7 +33,7 @@ export const MyRingScreen: React.FC = () => {
 	console.log(
 		"Current Rings\n",
 		userRings.map((ring) => {
-			return `name: ${ring.name} connected: ${ring.connected} id: ${ring.id}`;
+			return `name: |${ring.name}| connected: |${ring.connected}| id: |${ring.id}|`;
 		})
 	);
 

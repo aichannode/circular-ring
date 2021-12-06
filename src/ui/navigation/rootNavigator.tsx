@@ -43,6 +43,10 @@ import { Tutorial } from "@ui/screens/onboarding/tutorial/tutorial";
 import { QuickAccess } from "@ui/screens/quickaccess/quickAccess";
 import { RingFirmwareUpdate } from "@ui/screens/myRing/firmwareUpdate/ringFirmwareUpdate";
 import { NewRingSetupScreen } from "@ui/screens/myRing/newRingSetupScreen";
+import { useObservable } from "micro-observables";
+import { useServices } from "@core/services";
+import { BleDeviceService } from "@domain/device/bleDeviceService";
+import { RingManagementService } from "@domain/ring/ringManagementService";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -232,6 +236,9 @@ export const RootNavigator: React.FC = () => {
 	console.log("CIR-266 NAVIGATOR ACCOUNT LINKED TO DEVICE", accountLinkedToDevice);
 	const hasUser = !!useUser();
 	const deviceStored = useDeviceStored(); // useObservable(useServices().bleDeviceService.favoriteDevice);
+	const { ringManagementService } = useServices();
+	const userDevicesLength = useObservable(ringManagementService._userRings).length;
+	console.log("userDevicesLength", userDevicesLength);
 	console.log("CIR-266 NAVIGATOR Device Stored", deviceStored);
 
 	// CIR-467: will by pass the ring setup for debuging puropose

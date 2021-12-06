@@ -29,6 +29,8 @@ export const ManageMyRingsScreen = () => {
 
 	const [ringToDelete, setRingToDelete] = useState<NamedUserRing | undefined>(undefined);
 
+	console.log("USERRINGS", userRings);
+
 	return (
 		<ScrollScreen contentContainerStyle={{ paddingHorizontal: 20 }}>
 			<InfoListHeader style={{ marginLeft: 0 }}>{format("manage_rings.general")}</InfoListHeader>

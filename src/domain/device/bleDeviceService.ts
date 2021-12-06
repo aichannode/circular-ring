@@ -119,8 +119,8 @@ export class BleDeviceService {
 	readonly connectedDevice = this._connectedDevice.readOnly();
 	readonly setupState: Observable<DeviceSetupState>;
 	readonly autoConnectState: Observable<DeviceAutoConnectState>;
-	readonly favoriteDevice = this._favoriteDevice.readOnly();
-	readonly favoriteDeviceSNU = this._favoriteDeviceSNU.readOnly();
+	favoriteDevice = this._favoriteDevice;
+	favoriteDeviceSNU = this._favoriteDeviceSNU;
 	readonly userDevices = this._userDevices.readOnly();
 
 	readonly currentRingBattery = this._currentRingBattery.readOnly();
@@ -446,6 +446,7 @@ export class BleDeviceService {
 	async autoConnectFavoriteDevice() {
 		const name = this._favoriteDevice.get()?.name;
 		if (name === undefined) {
+			console.log("favorite device null", name);
 			return;
 		}
 		this.logger.info("Trying to autoconnect to", name);
@@ -643,11 +644,11 @@ export class BleDeviceService {
 		this._connectionState.set(DeviceConnectionState.DISCONNECTED);
 		this._onDeviceDisconnectedSubscription?.remove();
 		this._onDeviceDisconnectedSubscription = null;
-		this._favoriteDevice.set(null);
-		this._favoriteDeviceSNU.set(null);
+		// this._favoriteDevice.set(null);
+		// this._favoriteDeviceSNU.set(null);
 		this._currentRingBattery.set(null);
 		this._batteryListenerUnsubscribe?.();
-		await this.favoriteDeviceStorage.clear();
+		// await this.favoriteDeviceStorage.clear();
 	}
 
 	requestLocation() {

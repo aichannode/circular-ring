@@ -52,6 +52,7 @@ export class RingApi {
 
 	async getRings(): Promise<UserRing[]> {
 		const result = await this.apiService.get<UserRing[]>(`${ringApiBaseUrl}`);
+		console.log("GETRINGS", result.data);
 		return result.data;
 	}
 
