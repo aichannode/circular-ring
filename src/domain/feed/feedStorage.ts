@@ -1,22 +1,36 @@
 import { Storage } from "@core/storage";
-import { ReadNotifInfo } from "./type";
+import { NotificationsState, RecommendationState } from "./type";
 
-const feed = "@feed";
+enum StorageKeys {
+	NOTIFICATIONS = "@feed/notifications",
+	RECOMMENDATIONS = "@feed/recommendations",
+}
+
 
 /**
- * Simple storage for notification closed state.
+ * Simple storage for feed optimistic UI
+ * This class is aware of the different business entities
+ * for facilitate the implementation.
  */
 export class FeedStorage {
-	async save(clientSideClosed: number[]) {
-		await Storage.save<ReadNotifInfo>(feed, { clientSideClosed });
+	async saveNotificationsState(clientSideClosed: number[]) {
+		await Storage.save<NotificationsState>(StorageKeys.NOTIFICATIONS, { clientSideClosed });
 	}
 
-	async load(): Promise<ReadNotifInfo | null> {
-		const infos = await Storage.load<ReadNotifInfo>(feed);
+	/**
+	 * This upsert a new entry to the local storage for the given
+	 * Recommandation
+	 */
+	async saveRecommendationState(state: RecommendationState) {
+		await Storage.save<RecommendationState>(`${StorageKeys.RECOMMENDATIONS}/${state.id}`, state);
+	}
+
+	async load(): Promise<NotificationsState | null> {
+		const infos = await Storage.load<NotificationsState>(StorageKeys.NOTIFICATIONS);
 		return infos && { ...infos };
 	}
 
 	clear() {
-		return Storage.remove(feed);
+		return Storage.remove(StorageKeys.NOTIFICATIONS);
 	}
 }
