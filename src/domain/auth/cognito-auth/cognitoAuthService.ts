@@ -255,8 +255,13 @@ export class CognitoAuthService<P = {
 	}
 
 	async logout(): Promise<void> {
-		await this._cognitoUser.get()?.signOut();
-		this._cognitoUser.set(null);
-		this._accessToken.set(null);
+		try {
+			this._cognitoUser.get()?.signOut();
+		} catch (e) {
+			console.error(e)
+		} finally {
+			this._cognitoUser.set(null);
+			this._accessToken.set(null);
+		}
 	}
 }
