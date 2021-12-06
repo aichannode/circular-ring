@@ -55,15 +55,8 @@ export const HomeScreen: React.FC = () => {
 
 	return (
 		<Container>
-			<CirclesBanner />
-			<QuickAccess />
-			<SyncBanner style={{ margin: 10 }} />
-			<IfAdmin>
-				<PrimaryButton onPress={feedService._DEBUG_reset}>RESET</PrimaryButton>
-			</IfAdmin>
-			
 			<ScrollView
-				style={{ flex: 1, paddingHorizontal: 6 }}
+				style={{ flex: 1 }}
 				refreshControl={
 					<RefreshControl
 						enabled={syncState === SyncState.NONE}
@@ -72,31 +65,40 @@ export const HomeScreen: React.FC = () => {
 					/>
 				}
 			>
-				{notifications[0] && (
-					<Fade
+				<CirclesBanner />
+				<QuickAccess />
+				<SyncBanner style={{ margin: 10 }} />
+
+				<View style={{paddingHorizontal: 6}}>
+					<IfAdmin>
+						<PrimaryButton onPress={feedService._DEBUG_reset}>RESET</PrimaryButton>
+					</IfAdmin>
+					{notifications[0] && (
+						<Fade
 						key={notifications[0].id} 
 						isVisible
 						isAnimatedOnMount
-					>
-						<Notification notification={notifications[0]} />
-					</Fade>
-				)}
-				{Object.keys(recommendations).map((date) => (
-					<>
-						{date !== "today" && (
-							<View style={{alignItems: "center", marginTop: 15}}>
-								<Separator/>
-								<MetaDataText style={{paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray}}>{date === "yesterday"
-									? format("global.yesterday").toUpperCase()
-									: moment(date).format(userSettings?.dateFormat)
-								}</MetaDataText>
-							</View>
-						)}
-						{recommendations[date].map((banner) => (
-							<Recommendation key={banner.id} recommendation={banner} style={{ margin: 10 }} />
-						))}
-					</>
-				))}
+						>
+							<Notification notification={notifications[0]} />
+						</Fade>
+					)}
+					{Object.keys(recommendations).map((date) => (
+						<>
+							{date !== "today" && (
+								<View style={{alignItems: "center", marginTop: 15}}>
+									<Separator/>
+									<MetaDataText style={{paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray}}>{date === "yesterday"
+										? format("global.yesterday").toUpperCase()
+										: moment(date).format(userSettings?.dateFormat)
+									}</MetaDataText>
+								</View>
+							)}
+							{recommendations[date].map((banner) => (
+								<Recommendation key={banner.id} recommendation={banner} style={{ margin: 10 }} />
+								))}
+						</>
+					))}
+				</View>
 			</ScrollView>
 		</Container>
 	);
@@ -104,7 +106,6 @@ export const HomeScreen: React.FC = () => {
 
 const Container = styled.View`
 	flex: 1;
-	margin-top: 15px;
 	background-color: ${colors.lightgray};
 `;
 
