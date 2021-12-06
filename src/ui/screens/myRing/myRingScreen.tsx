@@ -6,8 +6,7 @@ import { PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { FactoryResetBottomSheet } from "@ui/screens/myRing/factoryResetBottomSheet";
-import React, { useRef } from "react";
-import { Alert } from "react-native";
+import React, { useRef, useState } from "react";
 import styled from "styled-components/native";
 import { Channel } from "@domain/device/channels";
 import { useObservable } from "micro-observables";
@@ -15,6 +14,8 @@ import { NamedUserRing } from "@domain/ring/ring";
 import { RingViewModel } from "@ui/screens/myRing/viewModel/RingViewModel";
 import { colors } from "@ui/styles/colors";
 import { DeviceConnectionState } from "@domain/device/bleDeviceService";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import Dialog from "react-native-dialog";
 
 export const MyRingScreen: React.FC = () => {
 	const { bleDeviceService } = useServices();
@@ -25,6 +26,8 @@ export const MyRingScreen: React.FC = () => {
 	const viewModel = new RingViewModel();
 	const userRings = useObservable(ringManagementService.userRings);
 	const connected = useObservable(bleDeviceService.connectionState);
+	const [showPrompt, setShowPrompt] = useState<boolean>(false);
+	const [editedName, setEditedName] = useState<string>("");
 
 	console.log("CONNECTED", connected);
 
@@ -37,41 +40,70 @@ export const MyRingScreen: React.FC = () => {
 		})
 	);
 
-	const renameAlert = () => {
-		Alert.prompt(format("manage_rings.ring.rename"), "", [
-			{
-				text: format("global.cancel"),
-				style: "cancel",
-			},
-			{
-				text: format("global.edit"),
-				onPress: (newName) => {
-					if (newName && newName !== "") {
-						bleDeviceService.write(`${Channel.RENAME}${newName.toUpperCase()}`);
-						userRings.map((ring) => {
-							if (ring.id === currentRing?.id) {
-								const upTodateRing = { ...ring, name: "Circular " + viewModel.formatRingName(newName) };
-								ringManagementService.updateStoredRings(upTodateRing);
-								return { ...ring, name: viewModel.formatRingName(newName) };
-							}
-							return ring;
-						});
-					}
-				},
-			},
-		]);
+	// const renameAlert = () => {
+	// 	console.log("Rename Alert");
+	// 	return Alert.prompt(format("manage_rings.ring.rename"), "", [
+	// 		{
+	// 			text: format("global.cancel"),
+	// 			style: "cancel",
+	// 		},
+	// 		{
+	// 			text: format("global.edit"),
+	// 			onPress: (newName) => {
+	// 				if (newName && newName !== "") {
+	// 					bleDeviceService.write(`${Channel.RENAME}${newName.toUpperCase()}`);
+	// 					userRings.map((ring) => {
+	// 						if (ring.id === currentRing?.id) {
+	// 							const upTodateRing = { ...ring, name: "Circular " + viewModel.formatRingName(newName) };
+	// 							ringManagementService.updateStoredRings(upTodateRing);
+	// 							return { ...ring, name: viewModel.formatRingName(newName) };
+	// 						}
+	// 						return ring;
+	// 					});
+	// 				}
+	// 			},
+	// 		},
+	// 	]);
+	// };
+
+	const renameRing = () => {
+		if (editedName && editedName !== "") {
+			bleDeviceService.write(`${Channel.RENAME}${editedName.toUpperCase()}`);
+			bleDeviceService.favoriteDevice.set({ name: "Circular " + viewModel.formatRingName(editedName.toUpperCase()) });
+			// userRings.map((ring) => {
+			// 	if (ring.id === currentRing?.id) {
+			// 		const upTodateRing = { ...ring, name: "Circular " + viewModel.formatRingName(editedName) };
+			// 		ringManagementService.updateStoredRings(upTodateRing);
+			// 		return { ...ring, name: viewModel.formatRingName(editedName) };
+			// 	}
+			// 	return ring;
+			// });
+		}
 	};
 
 	return (
 		<Container>
+			<Dialog.Container visible={showPrompt}>
+				<Dialog.Title>{format("manage_rings.ring.rename")}</Dialog.Title>
+				<Dialog.Input value={editedName} onChangeText={setEditedName}></Dialog.Input>
+				<Dialog.Button onPress={() => setShowPrompt(false)} label={format("global.cancel")} />
+				<Dialog.Button
+					label={format("global.edit")}
+					onPress={() => {
+						setShowPrompt(false);
+						renameRing();
+					}}
+				/>
+			</Dialog.Container>
 			<RingBatteryView size={140} detailed />
-			<StyledPrimaryText
+			<TouchableOpacity
 				onPress={() => {
-					renameAlert();
+					console.log("Edit");
+					setShowPrompt(true);
 				}}
 			>
-				{currentRing?.name}
-			</StyledPrimaryText>
+				<StyledPrimaryText>{currentRing?.name}</StyledPrimaryText>
+			</TouchableOpacity>
 			{connected === DeviceConnectionState.CONNECTED && (
 				<InfoListItem
 					name={format("ring.firmware")}
