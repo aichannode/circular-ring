@@ -10,7 +10,7 @@ export class FeedService {
 	notifications: Observable<FeedNotification[]>
 	recommendations = observable<FeedRecommendation[]>([]);
 	
-	constructor(private readonly feedStorage: FeedStorage, private readonly feedApi: FeedApi) {
+	constructor(private readonly notificationStorage: FeedStorage, private readonly feedApi: FeedApi) {
 		// This is a little optimistic UI for the notification.
 		// This compute a view of the notifications.
 		// It get the server notifications and remove closed notifications which are on the client side.
@@ -21,7 +21,7 @@ export class FeedService {
 	}
 
 	async init() {
-		const infos = await this.feedStorage.load();
+		const infos = await this.notificationStorage.load();
 		if (infos) {
 			this.clientSideClosedNotificationsIds.set(infos.clientSideClosed);
 		}
@@ -42,7 +42,7 @@ export class FeedService {
 
 	_DEBUG_reset = async () => {
 		console.log('reset')
-		this.feedStorage.saveNotificationsState([])
+		this.notificationStorage.save([])
 		this.clientSideClosedNotificationsIds.set([])
 		await this.feedApi._DEBUG_insertData();
 		this.fetchNotifications()
@@ -68,7 +68,7 @@ export class FeedService {
 				 // keep notification which are still on the server
 				this.clientSideClosedNotificationsIds.update(ids => ids.filter(id => serverNotificationsIds.includes(id)))
 				// store the remaining ids which are not close yet on the server
-				this.feedStorage.saveNotificationsState(this.clientSideClosedNotificationsIds.get())
+				this.notificationStorage.save(this.clientSideClosedNotificationsIds.get())
 			})
 		
 	}

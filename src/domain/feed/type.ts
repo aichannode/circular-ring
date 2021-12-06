@@ -125,14 +125,6 @@ export type FeedEntity =
 	| FeedNotification
 	| FeedRecommendation
 
-export type NotificationsState = {
+export interface ReadNotifInfo {
 	clientSideClosed: number[];
 }
-
-export type RecommendationState = {
-	id: string
-	answeredAt: number
-	answer: Record<string, unknown>
-}
-
-export type RecommendationsState = Array<RecommendationState>
