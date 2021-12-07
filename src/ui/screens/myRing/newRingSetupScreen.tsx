@@ -37,11 +37,22 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	const { format } = useI18n();
 	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
 	const { goBack } = useNavigation();
+	const scannedDevices = useScannedDevices();
+	const [devices, setDevices] = useState(scannedDevices);
 
 	const pairingFailedBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
 	const setupState = useSetupState();
-	const devices = useScannedDevices();
+
+	useEffect(() => {
+		const knownDevices = ringManagementService.userRings.get();
+		let devicesWithoutKnownOnes = scannedDevices;
+
+		for (const device of knownDevices) {
+			devicesWithoutKnownOnes = devicesWithoutKnownOnes.filter((d) => device.name !== d.name);
+		}
+		setDevices(devicesWithoutKnownOnes);
+	}, [scannedDevices]);
 
 	// console.log("CIR-141 SCANNED DEVICES -> ", devices);
 
@@ -132,12 +143,6 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 					case DeviceSetupState.FINISHED:
 						return (
 							<>
-								<CloseContainer>
-									<ClosePressable onPress={logout}>
-										<CloseImage source={require("@assets/images/crossOrange.png")} />
-									</ClosePressable>
-								</CloseContainer>
-
 								<ResponsiveCenterView>
 									<Instructions hidden={isConnecting}>
 										<Image source={require("@assets/images/clock.png")} />
@@ -164,7 +169,6 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 													console.log("OnPress device :", device);
 													bleDeviceService.stopScan();
 													setConnecting(true);
-													// setWait(true);
 													try {
 														await bleDeviceService.disconnect();
 														const rings = ringManagementService.userRings.get();

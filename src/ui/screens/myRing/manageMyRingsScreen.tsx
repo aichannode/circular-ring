@@ -19,11 +19,6 @@ export const ManageMyRingsScreen = () => {
 	const { ringManagementService } = useServices();
 	const userRings = useObservable(ringManagementService.userRings);
 	const { navigate } = useRoutesNavigation();
-	// const [wait, setWait] = useState(true);
-
-	// useEffect(() => {
-	// 	ringManagementService.getRings();
-	// }, []);
 
 	const deleteRingBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 
