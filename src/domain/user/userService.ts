@@ -1,3 +1,4 @@
+import { Storage } from "@core/storage";
 import { getLogger } from "@core/logger/logger";
 import { round2Digits, toServerDate } from "@core/utils";
 import { AuthService } from "@domain/auth/authService";
@@ -98,6 +99,8 @@ export class UserService {
 	}
 
 	async logout() {
+		const appDataIds = await Storage.getAllKeys();
+		Storage.multiRemove(appDataIds);
 		await this.authService.logout();
 		this._user.set(null);
 		this._authenticatedUserEmail.set(null);
