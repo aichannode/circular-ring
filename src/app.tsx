@@ -61,7 +61,11 @@ export const App = () => {
 			locale={locale}
 			messages={translations[locale]}
 			onError={() => {
+<<<<<<< HEAD
 				console.log("intlError");
+=======
+				console.log("err intl format");
+>>>>>>> 7556d4c100380b11e8da2160616dcc2871874d71
 			}}
 		>
 			<GestureHandlerRootView style={{ flex: 1 }}>

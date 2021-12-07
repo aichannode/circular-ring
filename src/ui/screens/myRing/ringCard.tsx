@@ -22,7 +22,17 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 	const { format } = useI18n();
 	const options = ["Turn on", "Turn off"];
 	const [currentOption, setCurrentOption] = useState(ring.connected ? options[0] : options[1]);
-	const { bleDeviceService } = useServices();
+	const { bleDeviceService, ringManagementService } = useServices();
+
+	const disconnectAllRings = () => {
+		const rings = ringManagementService.userRings.get();
+		const updatedRings = rings.map((ring) => ({
+			...ring,
+			connected: false,
+		}));
+		ringManagementService.userRings.set(updatedRings);
+		bleDeviceService.disconnect();
+	};
 
 	useEffect(() => {
 		setCurrentOption(ring.connected ? options[0] : options[1]);
@@ -30,10 +40,11 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 
 	useEffect(() => {
 		if (ring.connected && currentOption === options[1]) {
-			bleDeviceService.disconnect();
+			disconnectAllRings();
 		}
-		if (ring.name && currentOption === options[0]) {
+		if (!ring.connected && ring.name && currentOption === options[0]) {
 			console.log("Reconnect to ring", ring.name);
+			disconnectAllRings();
 			bleDeviceService.favoriteDevice.set({ name: ring.name });
 			bleDeviceService.favoriteDeviceSNU.set(ring.id);
 			setTimeout(() => {

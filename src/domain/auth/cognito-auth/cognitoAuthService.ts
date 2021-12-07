@@ -189,6 +189,41 @@ export class CognitoAuthService<
 		});
 	}
 
+	async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const cognitoUser = this._cognitoUser.get();
+			if (cognitoUser)
+				cognitoUser.changePassword(currentPassword, newPassword, (err) => {
+					if (err) {
+						this.logger.debug("Updating password failed");
+						this.logger.warn(err.message || JSON.stringify(err));
+						reject(err);
+					}
+					resolve();
+				});
+		});
+	}
+
+	async isConnectedByEmail(): Promise<boolean> {
+		return new Promise((resolve, reject) => {
+			if (this._cognitoUser !== null)
+				this._cognitoUser.get()?.getSession((error: Error | null, session: CognitoUserSession | null) => {
+					if (error) reject(error);
+					else {
+						//console.log("session", session);
+						if (session) {
+							const idToken = session.getIdToken();
+							console.log("idToken", idToken);
+							if (idToken.payload.email && idToken.payload.email_verified) {
+								resolve(true);
+							}
+						}
+					}
+					resolve(false);
+				});
+		});
+	}
+
 	async getToken(): Promise<string | undefined> {
 		const token = this._accessToken.get();
 		if (token && token.getExpiration() * SEC_TO_MILLISEC > Date.now()) {
@@ -197,7 +232,7 @@ export class CognitoAuthService<
 		return this.authToken.get();
 	}
 
-	private async refreshToken(): Promise<void> {
+	private refreshToken(): Promise<void> {
 		return new Promise((resolve, reject) => {
 			const currentUser = this._cognitoUser.get();
 			if (currentUser) {
@@ -223,8 +258,13 @@ export class CognitoAuthService<
 	}
 
 	async logout(): Promise<void> {
-		await this._cognitoUser.get()?.signOut();
-		this._cognitoUser.set(null);
-		this._accessToken.set(null);
+		try {
+			this._cognitoUser.get()?.signOut();
+		} catch (e) {
+			console.error(e)
+		} finally {
+			this._cognitoUser.set(null);
+			this._accessToken.set(null);
+		}
 	}
 }

@@ -13,11 +13,12 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
 import { useFocusEffect } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/core";
 
 interface IRingSetupScreen {
 	route: {
@@ -32,21 +33,25 @@ interface IRingSetupScreen {
 }
 
 export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
-	const { userService } = useServices();
 	const { format } = useI18n();
 	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
-	const { setWait } = props.route.params;
+	const { goBack } = useNavigation();
+	const scannedDevices = useScannedDevices();
+	const [devices, setDevices] = useState(scannedDevices);
 
 	const pairingFailedBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
 	const setupState = useSetupState();
-	const devices = useScannedDevices();
 
-	// console.log("CIR-141 SCANNED DEVICES -> ", devices);
+	useEffect(() => {
+		const knownDevices = ringManagementService.userRings.get();
+		let devicesWithoutKnownOnes = scannedDevices;
 
-	const logout = useCallback(async () => {
-		await userService.logout();
-	}, []);
+		for (const device of knownDevices) {
+			devicesWithoutKnownOnes = devicesWithoutKnownOnes.filter((d) => device.name !== d.name);
+		}
+		setDevices(devicesWithoutKnownOnes);
+	}, [scannedDevices]);
 
 	useFocusEffect(() => {
 		console.log("CIR-141 START SCAN");
@@ -131,12 +136,6 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 					case DeviceSetupState.FINISHED:
 						return (
 							<>
-								<CloseContainer>
-									<ClosePressable onPress={logout}>
-										<CloseImage source={require("@assets/images/crossOrange.png")} />
-									</ClosePressable>
-								</CloseContainer>
-
 								<ResponsiveCenterView>
 									<Instructions hidden={isConnecting}>
 										<Image source={require("@assets/images/clock.png")} />
@@ -163,15 +162,23 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 													console.log("OnPress device :", device);
 													bleDeviceService.stopScan();
 													setConnecting(true);
-													setWait(true);
 													try {
+														await bleDeviceService.disconnect();
+														const rings = ringManagementService.userRings.get();
+														const updatedRings = rings.map((ring) => ({
+															...ring,
+															connected: false,
+														}));
+														ringManagementService.userRings.set(updatedRings);
 														await bleDeviceService.connect(device);
 														await ringManagementService.registerConnectedRing();
-														setWait(false);
+														console.log("RINGS", rings);
+														goBack();
+														// setWait(false);
 														setConnecting(false);
 													} catch (e) {
 														setConnecting(false);
-														setWait(false);
+														// setWait(false);
 														if ((e as { statusCode: number }).statusCode === 409) {
 															pairingFailedBottomSheet.current?.present();
 														}
@@ -202,19 +209,6 @@ const Container = styled(ScrollScreen)`
 	justify-content: flex-start;
 	padding-vertical: 50px;
 `;
-
-const CloseContainer = styled.View`
-	width: 100%;
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-end;
-`;
-
-const ClosePressable = styled.TouchableOpacity`
-	margin: 0px 40px 40px 0px;
-`;
-
-const CloseImage = styled.Image``;
 
 const DisabledTitle = styled.Text`
 	${textStyles.bigTitle};

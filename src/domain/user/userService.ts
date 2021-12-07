@@ -1,3 +1,4 @@
+import { Storage } from "@core/storage";
 import { getLogger } from "@core/logger/logger";
 import { round2Digits, toServerDate } from "@core/utils";
 import { AuthService } from "@domain/auth/authService";
@@ -97,13 +98,24 @@ export class UserService {
 		await this.authService.newPassword(email, resetToken, newPassword);
 	}
 
+	async changePassword(oldPassword: string, newPassword: string): Promise<void> {
+		await this.authService.changePassword(oldPassword, newPassword);
+	}
+
 	async logout() {
+		const appDataIds = await Storage.getAllKeys();
+		Storage.multiRemove(appDataIds);
 		await this.authService.logout();
 		this._user.set(null);
 		this._authenticatedUserEmail.set(null);
 		await this.userStorage.removeUser();
 		await this.userStorage.removeUserSettings();
 		await this.userStorage.removeUserAdvancedInfo();
+	}
+
+	async deleteMe() {
+		await this.userApi.deleteMe();
+		this.logout();
 	}
 
 	/** Sign Up **/

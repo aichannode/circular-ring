@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { useBanners } from "@domain/homeBanner/hooks";
+import { useNotifications, useRecommendations } from "@domain/feed/hooks";
 import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringManagementService";
 import { colors } from "@ui/styles/colors";
@@ -8,12 +8,12 @@ import { RefreshControl, ScrollView, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { CirclesBanner } from "./circlesBanner";
 import { QuickAccess } from "./quickAccess/quickAccess";
-import { NotificationBanner } from "./banners/Notification";
+import { Notification } from "./feedEntities/Notification";
 import { SyncBanner } from "./syncBanner";
 import { useSetupState } from "@domain/device/hooks";
 import { DeviceSetupState } from "@domain/device/bleDeviceService";
 import { MetaDataText } from "@ui/components/text";
-import { ActivityBanner } from "./banners/Activity";
+import { Recommendation } from "./feedEntities/Recommendation";
 import { PrimaryButton } from "@ui/components/buttons";
 import { IfAdmin } from "@ui/containers/IfAdmin";
 import moment from "moment";
@@ -23,7 +23,7 @@ import Fade from "@ui/components/fade";
 
 export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
-	const { homeBannerService, bluetoothService, bleDeviceService, ringManagementService } = useServices();
+	const { feedService, bluetoothService, bleDeviceService, ringManagementService } = useServices();
 	const [forceRefreshing, setForceRefreshing] = useState(false);
 
 	const setupState = useSetupState();
@@ -50,18 +50,14 @@ export const HomeScreen: React.FC = () => {
 
 	const userSettings = useUserSettings();
 	const { format } = useI18n();
-	const groupedBanners = useBanners();
+	const notifications = useNotifications();
+	const recommendations = useRecommendations();
 
 	return (
 		<Container>
 			<CirclesBanner />
-			<QuickAccess />
-			<SyncBanner style={{ margin: 10 }} />
-			<IfAdmin>
-				<PrimaryButton onPress={homeBannerService._DEBUG_reset}>RESET</PrimaryButton>
-			</IfAdmin>
 			<ScrollView
-				style={{ flex: 1, paddingHorizontal: 6 }}
+				style={{ flex: 1 }}
 				refreshControl={
 					<RefreshControl
 						enabled={syncState === SyncState.NONE}
@@ -70,28 +66,36 @@ export const HomeScreen: React.FC = () => {
 					/>
 				}
 			>
-				{groupedBanners.notifications[0] && (
-					<Fade key={groupedBanners.notifications[0].id} isVisible isAnimatedOnMount>
-						<NotificationBanner banner={groupedBanners.notifications[0]} />
-					</Fade>
-				)}
-				{Object.keys(groupedBanners.activities).map((date, key) => (
-					<View key={key}>
-						{date !== "today" && (
-							<View style={{ alignItems: "center", marginTop: 15 }}>
-								<Separator />
-								<MetaDataText style={{ paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray }}>
-									{date === "yesterday"
-										? format("global.yesterday").toUpperCase()
-										: moment(date).format(userSettings?.dateFormat)}
-								</MetaDataText>
-							</View>
-						)}
-						{groupedBanners.activities[date].map((banner) => (
-							<ActivityBanner key={banner.id} banner={banner} style={{ margin: 10 }} />
-						))}
-					</View>
-				))}
+				<QuickAccess />
+				<SyncBanner style={{ margin: 10 }} />
+
+				<View style={{ paddingHorizontal: 6 }}>
+					<IfAdmin>
+						<PrimaryButton onPress={feedService._DEBUG_reset}>RESET</PrimaryButton>
+					</IfAdmin>
+					{notifications[0] && (
+						<Fade key={notifications[0].id} isVisible isAnimatedOnMount>
+							<Notification notification={notifications[0]} />
+						</Fade>
+					)}
+					{Object.keys(recommendations).map((date) => (
+						<>
+							{date !== "today" && (
+								<View style={{ alignItems: "center", marginTop: 15 }}>
+									<Separator />
+									<MetaDataText style={{ paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray }}>
+										{date === "yesterday"
+											? format("global.yesterday").toUpperCase()
+											: moment(date).format(userSettings?.dateFormat)}
+									</MetaDataText>
+								</View>
+							)}
+							{recommendations[date].map((banner) => (
+								<Recommendation key={banner.id} recommendation={banner} style={{ margin: 10 }} />
+							))}
+						</>
+					))}
+				</View>
 			</ScrollView>
 		</Container>
 	);
@@ -99,7 +103,6 @@ export const HomeScreen: React.FC = () => {
 
 const Container = styled.View`
 	flex: 1;
-	margin-top: 15px;
 	background-color: ${colors.lightgray};
 `;
 

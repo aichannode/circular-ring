@@ -11,7 +11,9 @@ export interface AuthService {
 
 	loginEmail(email: string, password: string): Promise<void>;
 	forgotPassword(email: string): Promise<void>;
+	isConnectedByEmail(): Promise<boolean>;
 	newPassword(email: string, resetToken: string, newPassword: string): Promise<void>;
+	changePassword(currentPassword: string, newPassword: string): Promise<void>;
 	getToken(): Promise<string | undefined>;
 	logout(): Promise<void>;
 }

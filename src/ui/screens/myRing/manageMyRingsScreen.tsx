@@ -9,7 +9,7 @@ import { DeleteRingBottomSheet } from "@ui/screens/myRing/deleteRingBottomSheet"
 import { RingCard } from "@ui/screens/myRing/ringCard";
 import { useObservable } from "micro-observables";
 import { Dimensions } from "react-native";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 
 const width = Dimensions.get("window").width;
@@ -19,11 +19,11 @@ export const ManageMyRingsScreen = () => {
 	const { ringManagementService } = useServices();
 	const userRings = useObservable(ringManagementService.userRings);
 	const { navigate } = useRoutesNavigation();
-	// const [wait, setWait] = useState(true);
+	const [rings, setRings] = useState(userRings);
 
 	useEffect(() => {
-		ringManagementService.getRings();
-	}, []);
+		setRings(userRings);
+	}, userRings);
 
 	const deleteRingBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 
@@ -44,7 +44,7 @@ export const ManageMyRingsScreen = () => {
 			></InfoListItem>
 			<InfoListHeader style={{ marginLeft: 0 }}>{format("manage_rings.paired_rings_title")}</InfoListHeader>
 			<Stack gap={25}>
-				{userRings.map((ring) => {
+				{rings.map((ring) => {
 					return (
 						<RingCard
 							key={ring.id}

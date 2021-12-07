@@ -1,13 +1,13 @@
 import moment from "moment";
-import { BannerAction, BannerComponentDto, BannerComponentType, BannerStyle, BannerType, ClientAction, ParagraphStyle } from "./homeBanner";
+import { FeedEntityAction, FeedEntityComponentDto, FeedEntityComponentType, FeedEntityStyle, FeedEntityType, ClientAction, ParagraphStyle } from "./type";
 
 /**
  * For debuging purpose only
  */
 type UpdateUserFeedEntityDto = {
 	id?: number,
-	type: BannerType
-	style?: BannerStyle
+	type: FeedEntityType
+	style?: FeedEntityStyle
 	title?: string
 	secondaryTitle: string
 	priority: number
@@ -17,22 +17,22 @@ type UpdateUserFeedEntityDto = {
 	endDate?: string
 	templateId?: number
 	iconId?: number
-	components: BannerComponentDto[]
+	components: FeedEntityComponentDto[]
 }
 
 /**
- * Factory for the notification banner data post query.
+ * Factory for the notification data post query.
  */
 export function createRecommendation(id: number): UpdateUserFeedEntityDto {
 	return {
-		"type": BannerType.NOTIFICATION,
-		"style": BannerStyle.ORANGE_GRADIENT,
+		"type": FeedEntityType.NOTIFICATION,
+		"style": FeedEntityStyle.ORANGE_GRADIENT,
 		"title": "banner.calibration.title",
 		"secondaryTitle": "",
 		"priority": 10,
 		"actions": [
 			{
-				"type": BannerAction.OPEN_WEB,
+				"type": FeedEntityAction.OPEN_WEB,
 				"data": "https://expo.io"
 			}
 		],
@@ -41,7 +41,7 @@ export function createRecommendation(id: number): UpdateUserFeedEntityDto {
 		"iconId": 1,
 		"components": [
 			{
-				"type": BannerComponentType.PARAGRAPH,
+				"type": FeedEntityComponentType.PARAGRAPH,
 				"configuration": {
 					"style": ParagraphStyle.DEFAULT,
 					"translationKey": "banner.calibration.message",
