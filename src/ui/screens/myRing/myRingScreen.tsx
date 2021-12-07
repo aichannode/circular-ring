@@ -40,32 +40,6 @@ export const MyRingScreen: React.FC = () => {
 		})
 	);
 
-	// const renameAlert = () => {
-	// 	console.log("Rename Alert");
-	// 	return Alert.prompt(format("manage_rings.ring.rename"), "", [
-	// 		{
-	// 			text: format("global.cancel"),
-	// 			style: "cancel",
-	// 		},
-	// 		{
-	// 			text: format("global.edit"),
-	// 			onPress: (newName) => {
-	// 				if (newName && newName !== "") {
-	// 					bleDeviceService.write(`${Channel.RENAME}${newName.toUpperCase()}`);
-	// 					userRings.map((ring) => {
-	// 						if (ring.id === currentRing?.id) {
-	// 							const upTodateRing = { ...ring, name: "Circular " + viewModel.formatRingName(newName) };
-	// 							ringManagementService.updateStoredRings(upTodateRing);
-	// 							return { ...ring, name: viewModel.formatRingName(newName) };
-	// 						}
-	// 						return ring;
-	// 					});
-	// 				}
-	// 			},
-	// 		},
-	// 	]);
-	// };
-
 	const renameRing = async () => {
 		if (editedName && editedName !== "") {
 			try {
@@ -74,14 +48,6 @@ export const MyRingScreen: React.FC = () => {
 			} catch (err) {
 				console.log("error");
 			}
-			// userRings.map((ring) => {
-			// 	if (ring.id === currentRing?.id) {
-			// 		const upTodateRing = { ...ring, name: "Circular " + viewModel.formatRingName(editedName) };
-			// 		ringManagementService.updateStoredRings(upTodateRing);
-			// 		return { ...ring, name: viewModel.formatRingName(editedName) };
-			// 	}
-			// 	return ring;
-			// });
 		}
 	};
 
@@ -100,14 +66,15 @@ export const MyRingScreen: React.FC = () => {
 				/>
 			</Dialog.Container>
 			<RingBatteryView size={140} detailed />
-			<TouchableOpacity
+			<EditText
 				onPress={() => {
 					console.log("Edit");
 					setShowPrompt(true);
 				}}
 			>
 				<StyledPrimaryText>{currentRing?.name}</StyledPrimaryText>
-			</TouchableOpacity>
+				<Pen source={require("@assets/images/pen.png")}></Pen>
+			</EditText>
 			{connected === DeviceConnectionState.CONNECTED && (
 				<InfoListItem
 					name={format("ring.firmware")}
@@ -143,6 +110,16 @@ export const MyRingScreen: React.FC = () => {
 	);
 };
 
+const EditText = styled.TouchableOpacity`
+	display: flex;
+	flex-direction: row;
+	margin-bottom: 0px;
+	height: 30px;
+	margin-top: 30px;
+`;
+
+const Pen = styled.Image``;
+
 const Container = styled.View`
 	flex: 1;
 	align-items: center;
@@ -150,8 +127,7 @@ const Container = styled.View`
 `;
 
 const StyledPrimaryText = styled(PrimaryText)`
-	margin-top: 20px;
-	margin-bottom: 80px;
+	margin-right: 10px;
 `;
 
 const FirmwareVersionText = styled.Text`
