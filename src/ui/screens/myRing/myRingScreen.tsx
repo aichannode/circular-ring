@@ -14,7 +14,6 @@ import { NamedUserRing } from "@domain/ring/ring";
 import { RingViewModel } from "@ui/screens/myRing/viewModel/RingViewModel";
 import { colors } from "@ui/styles/colors";
 import { DeviceConnectionState } from "@domain/device/bleDeviceService";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import Dialog from "react-native-dialog";
 
 export const MyRingScreen: React.FC = () => {
