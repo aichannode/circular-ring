@@ -25,7 +25,7 @@ export class RingManagementService {
 	_userRings = observable<NamedUserRing[]>([]);
 	private _currentRingSyncState = observable<SyncState>(SyncState.NONE);
 
-	userRings = this._userRings.readOnly();
+	userRings = this._userRings;
 	currentRingSyncState = this._currentRingSyncState.readOnly();
 	constructor(
 		private readonly userService: UserService,
@@ -36,7 +36,7 @@ export class RingManagementService {
 	) {
 		const unsubscribe = this.userService.user.subscribe((user) => {
 			if (user) {
-				this.getRings();
+				// this.getRings();
 				unsubscribe();
 			}
 		});

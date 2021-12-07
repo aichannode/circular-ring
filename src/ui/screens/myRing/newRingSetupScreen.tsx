@@ -18,6 +18,7 @@ import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
 import { useFocusEffect } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/core";
 
 interface IRingSetupScreen {
 	route: {
@@ -35,7 +36,7 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	const { userService } = useServices();
 	const { format } = useI18n();
 	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
-	const { setWait } = props.route.params;
+	const { goBack } = useNavigation();
 
 	const pairingFailedBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
@@ -163,15 +164,24 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 													console.log("OnPress device :", device);
 													bleDeviceService.stopScan();
 													setConnecting(true);
-													setWait(true);
+													// setWait(true);
 													try {
+														await bleDeviceService.disconnect();
+														const rings = ringManagementService.userRings.get();
+														const updatedRings = rings.map((ring) => ({
+															...ring,
+															connected: false,
+														}));
+														ringManagementService.userRings.set(updatedRings);
 														await bleDeviceService.connect(device);
 														await ringManagementService.registerConnectedRing();
-														setWait(false);
+														console.log("RINGS", rings);
+														goBack();
+														// setWait(false);
 														setConnecting(false);
 													} catch (e) {
 														setConnecting(false);
-														setWait(false);
+														// setWait(false);
 														if ((e as { statusCode: number }).statusCode === 409) {
 															pairingFailedBottomSheet.current?.present();
 														}

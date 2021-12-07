@@ -21,9 +21,9 @@ export const ManageMyRingsScreen = () => {
 	const { navigate } = useRoutesNavigation();
 	// const [wait, setWait] = useState(true);
 
-	useEffect(() => {
-		ringManagementService.getRings();
-	}, []);
+	// useEffect(() => {
+	// 	ringManagementService.getRings();
+	// }, []);
 
 	const deleteRingBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 

@@ -442,6 +442,7 @@ export class BleDeviceService {
 	}
 
 	async autoConnectFavoriteDevice() {
+		this.logger.info("autoConnectFavoriteDevice");
 		const name = this._favoriteDevice.get()?.name;
 		if (name === undefined) {
 			console.log("favorite device null", name);
@@ -470,6 +471,8 @@ export class BleDeviceService {
 	}
 
 	async findFavoriteDevice(): Promise<Device | undefined> {
+		this.logger.info("findFavoriteDevice");
+		9;
 		const name = this._favoriteDevice.get()?.name;
 		if (name === undefined || this._connectionState.get() === DeviceConnectionState.UPDATE) {
 			return undefined;
