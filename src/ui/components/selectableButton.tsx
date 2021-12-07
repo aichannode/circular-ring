@@ -1,4 +1,4 @@
-import { BannerStyle } from "@domain/homeBanner/homeBanner";
+import { FeedEntityStyle } from "@domain/feed/type";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React from "react";
@@ -11,23 +11,23 @@ interface SelectableButtonProps {
 	onPress: () => void;
 	bgColor: string;
 	isDisabled?: boolean;
-	palette?: BannerStyle
+	palette?: FeedEntityStyle
 	style?: StyleProp<ViewStyle>;
 }
 
-function getGradient(palette?: BannerStyle): [string, string] {
+function getGradient(palette?: FeedEntityStyle): [string, string] {
 	switch(palette) {
-		case BannerStyle.WHITE_WITH_PURPLE_GRADIENT:
+		case FeedEntityStyle.WHITE_WITH_PURPLE_GRADIENT:
 			return [colors.purpleGarientStart, colors.purpleGarientEnd]
-		case BannerStyle.WHITE_WITH_DARK_BLUE_BORDER:
+		case FeedEntityStyle.WHITE_WITH_DARK_BLUE_BORDER:
 			return [colors.darkBlue, colors.darkBlue]
-		case BannerStyle.WHITE_WITH_LIGHT_BLUE_BORDER:
+		case FeedEntityStyle.WHITE_WITH_LIGHT_BLUE_BORDER:
 			return [colors.lightBlue, colors.lightBlue]
-		case BannerStyle.WHITE_WITH_ORANGE_BORDER:
+		case FeedEntityStyle.WHITE_WITH_ORANGE_BORDER:
 			return [colors.orange, colors.orange]
-		case BannerStyle.WHITE_WITH_RED_BORDER:
+		case FeedEntityStyle.WHITE_WITH_RED_BORDER:
 			return [colors.orangeRed, colors.orangeRed]
-		case BannerStyle.ORANGE_GRADIENT:
+		case FeedEntityStyle.ORANGE_GRADIENT:
 		default:
 			return [colors.orangeGradientStart, colors.orangeGradientEnd]
 	}

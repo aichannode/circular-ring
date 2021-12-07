@@ -98,6 +98,10 @@ export class UserService {
 		await this.authService.newPassword(email, resetToken, newPassword);
 	}
 
+	async changePassword(oldPassword: string, newPassword: string): Promise<void> {
+		await this.authService.changePassword(oldPassword, newPassword);
+	}
+
 	async logout() {
 		const appDataIds = await Storage.getAllKeys();
 		Storage.multiRemove(appDataIds);
@@ -107,6 +111,11 @@ export class UserService {
 		await this.userStorage.removeUser();
 		await this.userStorage.removeUserSettings();
 		await this.userStorage.removeUserAdvancedInfo();
+	}
+
+	async deleteMe() {
+		await this.userApi.deleteMe();
+		this.logout();
 	}
 
 	/** Sign Up **/

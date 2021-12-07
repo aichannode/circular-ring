@@ -1,7 +1,3 @@
-import { AllTagsScreen } from "@ui/screens/calendar/allTagsScreen";
-import { CalendarEditNotesScreen } from "@ui/screens/calendar/calendarEditNotesScreen";
-import { Header } from "@ui/navigation/header/header";
-import { CircleSleepScreen } from "@ui/screens/circleSleep/circleSleepScreen";
 import { useAccountLinked, useDeviceStored } from "@domain/device/hooks";
 import { useAuthenticatedUserEmail, useUser } from "@domain/user/hooks/useUser";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -9,16 +5,22 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { MyRingBattery } from "@ui/components/navigation/myRingBattery";
 import { useI18n } from "@ui/i18n";
 import { DrawerContent } from "@ui/navigation/drawer/drawerContent";
+import { Header } from "@ui/navigation/header/header";
 import { Routes } from "@ui/navigation/routes";
+import { AllTagsScreen } from "@ui/screens/calendar/allTagsScreen";
+import { CalendarEditNotesScreen } from "@ui/screens/calendar/calendarEditNotesScreen";
+import { CalendarScreen } from "@ui/screens/calendar/calendarScreen";
 import { CircleActivityScreen } from "@ui/screens/circleActivity/circleActivityScreen";
 import { CircleAlarmScreen } from "@ui/screens/circleAlarm/circleAlarmScreen";
 import { EditAlarmScreen } from "@ui/screens/circleAlarm/editAlarmScreen";
 import { CircleLiveScreen } from "@ui/screens/circleLive/circleLiveScreen";
+import { CircleSleepScreen } from "@ui/screens/circleSleep/circleSleepScreen";
 import { HomeScreen } from "@ui/screens/home/homeScreen";
 import { ForgotPasswordScreen } from "@ui/screens/login/forgotPasswordScreen";
 import { LoginScreen } from "@ui/screens/login/loginScreen";
 import { ResetTokenScreen } from "@ui/screens/login/resetTokenScreen";
 import { LoginOrSignUpScreen } from "@ui/screens/loginOrRegister/loginOrSignUpScreen";
+import { RingFirmwareUpdate } from "@ui/screens/myRing/firmwareUpdate/ringFirmwareUpdate";
 import { ManageMyRingsScreen } from "@ui/screens/myRing/manageMyRingsScreen";
 import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
 import { OnboardingPersonalInfo1Screen } from "@ui/screens/onboarding/personalInfo/onboardingPersonalInfo1Screen";
@@ -26,25 +28,22 @@ import { OnboardingPersonalInfo2Screen } from "@ui/screens/onboarding/personalIn
 import { OnboardingWearInfoScreen } from "@ui/screens/onboarding/personalInfo/onboardingWearInfoScreen";
 import { RingSetupScreen } from "@ui/screens/onboarding/ringSetup/ringSetupScreen";
 import { RingSetupStartScreen } from "@ui/screens/onboarding/ringSetup/ringSetupStartScreen";
+import { Tutorial } from "@ui/screens/onboarding/tutorial/tutorial";
 import { BirthControlEditionScreen } from "@ui/screens/profile/advancedInformation/birthControlEditionScreen";
 import { ProfileAdvancedInformationScreen } from "@ui/screens/profile/advancedInformation/profileAdvancedInformationScreen";
 import { ProfileEditBirthdayScreen } from "@ui/screens/profile/basicInformation/profileEditBirthdayScreen";
 import { ProfileEditNameScreen } from "@ui/screens/profile/basicInformation/profileEditNameScreen";
 import { ProfileInformationScreen } from "@ui/screens/profile/basicInformation/profileInformationScreen";
+import { ChangePasswordScreen } from "@ui/screens/profile/changePasswordScreen";
 import { ProfileScreen } from "@ui/screens/profile/profileScreen";
+import { QuickAccess } from "@ui/screens/quickaccess/quickAccess";
 import { SettingsScreen } from "@ui/screens/settings/settingsScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
-import styled from "styled-components/native";
 import { WebViewScreen } from "@ui/screens/webViewScreen";
 import React, { useState } from "react";
-import { CalendarScreen } from "@ui/screens/calendar/calendarScreen";
-import { Tutorial } from "@ui/screens/onboarding/tutorial/tutorial";
-import { QuickAccess } from "@ui/screens/quickaccess/quickAccess";
-import { RingFirmwareUpdate } from "@ui/screens/myRing/firmwareUpdate/ringFirmwareUpdate";
+import styled from "styled-components/native";
 import { NewRingSetupScreen } from "@ui/screens/myRing/newRingSetupScreen";
-import { useObservable } from "micro-observables";
-import { useServices } from "@core/services";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -158,6 +157,14 @@ const MainHomeNavigator = () => {
 				options={{ headerShown: false }}
 			/>
 			<MainStack.Screen
+				name={Routes.ChangePassword}
+				component={ChangePasswordScreen}
+				options={{
+					title: format("change_password.title"),
+					headerRight: () => <MyRingBattery />,
+				}}
+			/>
+			<MainStack.Screen
 				name={Routes.ProfileAdvancedInformation}
 				component={ProfileAdvancedInformationScreen}
 				options={{
@@ -234,9 +241,6 @@ export const RootNavigator: React.FC = () => {
 	console.log("CIR-266 NAVIGATOR ACCOUNT LINKED TO DEVICE", accountLinkedToDevice);
 	const hasUser = !!useUser();
 	const deviceStored = useDeviceStored(); // useObservable(useServices().bleDeviceService.favoriteDevice);
-	const { ringManagementService } = useServices();
-	const userDevicesLength = useObservable(ringManagementService._userRings).length;
-	console.log("userDevicesLength", userDevicesLength);
 	console.log("CIR-266 NAVIGATOR Device Stored", deviceStored);
 
 	// CIR-467: will by pass the ring setup for debuging puropose
