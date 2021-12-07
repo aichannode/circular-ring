@@ -66,10 +66,14 @@ export const MyRingScreen: React.FC = () => {
 	// 	]);
 	// };
 
-	const renameRing = () => {
+	const renameRing = async () => {
 		if (editedName && editedName !== "") {
-			bleDeviceService.write(`${Channel.RENAME}${editedName.toUpperCase()}`);
-			bleDeviceService.favoriteDevice.set({ name: "Circular " + viewModel.formatRingName(editedName.toUpperCase()) });
+			try {
+				await bleDeviceService.write(`${Channel.RENAME}${editedName.toUpperCase()}`);
+				bleDeviceService.favoriteDevice.set({ name: "Circular " + viewModel.formatRingName(editedName.toUpperCase()) });
+			} catch (err) {
+				console.log("error");
+			}
 			// userRings.map((ring) => {
 			// 	if (ring.id === currentRing?.id) {
 			// 		const upTodateRing = { ...ring, name: "Circular " + viewModel.formatRingName(editedName) };
