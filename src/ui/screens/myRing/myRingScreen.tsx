@@ -112,7 +112,7 @@ export const MyRingScreen: React.FC = () => {
 const EditText = styled.TouchableOpacity`
 	display: flex;
 	flex-direction: row;
-	margin-bottom: 0px;
+	margin-bottom: 70px;
 	height: 30px;
 	margin-top: 30px;
 `;
