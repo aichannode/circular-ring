@@ -13,7 +13,7 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
@@ -33,7 +33,6 @@ interface IRingSetupScreen {
 }
 
 export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
-	const { userService } = useServices();
 	const { format } = useI18n();
 	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
 	const { goBack } = useNavigation();
@@ -53,12 +52,6 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 		}
 		setDevices(devicesWithoutKnownOnes);
 	}, [scannedDevices]);
-
-	// console.log("CIR-141 SCANNED DEVICES -> ", devices);
-
-	const logout = useCallback(async () => {
-		await userService.logout();
-	}, []);
 
 	useFocusEffect(() => {
 		console.log("CIR-141 START SCAN");
@@ -216,19 +209,6 @@ const Container = styled(ScrollScreen)`
 	justify-content: flex-start;
 	padding-vertical: 50px;
 `;
-
-const CloseContainer = styled.View`
-	width: 100%;
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-end;
-`;
-
-const ClosePressable = styled.TouchableOpacity`
-	margin: 0px 40px 40px 0px;
-`;
-
-const CloseImage = styled.Image``;
 
 const DisabledTitle = styled.Text`
 	${textStyles.bigTitle};

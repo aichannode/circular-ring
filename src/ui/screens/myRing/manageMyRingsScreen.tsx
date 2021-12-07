@@ -9,7 +9,7 @@ import { DeleteRingBottomSheet } from "@ui/screens/myRing/deleteRingBottomSheet"
 import { RingCard } from "@ui/screens/myRing/ringCard";
 import { useObservable } from "micro-observables";
 import { Dimensions } from "react-native";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 
 const width = Dimensions.get("window").width;
