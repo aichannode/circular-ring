@@ -42,7 +42,6 @@ export class RingApi {
 		if (this._firmwareVersion.get() === undefined) {
 			try {
 				const firmware = await this.getLatestFirmware();
-				console.log("success 1234", firmware);
 				this._firmwareVersion.set(firmware.version);
 			} catch (err) {
 				console.log("Error 1234");
@@ -53,6 +52,7 @@ export class RingApi {
 
 	async getRings(): Promise<UserRing[]> {
 		const result = await this.apiService.get<UserRing[]>(`${ringApiBaseUrl}`);
+		console.log("GETRINGS", result.data);
 		return result.data;
 	}
 

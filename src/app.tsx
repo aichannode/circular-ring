@@ -57,7 +57,13 @@ export const App = () => {
 	}, []);
 
 	return initialized ? (
-		<IntlProvider locale={locale} messages={translations[locale]}>
+		<IntlProvider
+			locale={locale}
+			messages={translations[locale]}
+			onError={() => {
+				console.log("err intl format");
+			}}
+		>
 			<GestureHandlerRootView style={{ flex: 1 }}>
 				<StatusBar translucent={true} barStyle="dark-content" backgroundColor="transparent" />
 				<SafeAreaProvider>

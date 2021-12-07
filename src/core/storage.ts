@@ -40,6 +40,9 @@ export class StorageStatic {
 	removeWithId(key: string, id: string | number): Promise<void> {
 		return this.remove(`${key}/${id}`);
 	}
+	multiRemove(key: string[]): Promise<void> {
+		return AsyncStorage.multiRemove(key);
+	}
 }
 
 export const Storage = new StorageStatic();

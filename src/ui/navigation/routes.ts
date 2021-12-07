@@ -44,6 +44,7 @@ export enum Routes {
 	Calendar = "Calendar",
 	CalendarEditNotes = "CalendarEditNotes",
 	AllTags = "AllTags",
+	NewRingSetupScreen = "NewRingSetupScreen",
 
 	QuickAccess = "QuickAccess",
 }
@@ -95,9 +96,10 @@ export type AppRoutesParams = {
 	[Routes.AllTags]: { day: string; selectedTags: CalendarTag[] };
 	[Routes.QuickAccess]: undefined;
 	[Routes.RingFirmwareUpdate]: undefined;
+	[Routes.NewRingSetupScreen]: undefined;
 };
 
-export type Navigate = NativeStackNavigationProp<AppRoutesParams, keyof AppRoutesParams>["navigate"]
+export type Navigate = NativeStackNavigationProp<AppRoutesParams, keyof AppRoutesParams>["navigate"];
 
 export const useRoutesNavigation = () => useNavigation<NativeStackNavigationProp<AppRoutesParams>>();
 

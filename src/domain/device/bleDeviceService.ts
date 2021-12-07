@@ -19,6 +19,7 @@ import { NordicDFU } from "react-native-nordic-dfu";
 import RNFetchBlob from "react-native-blob-util";
 import RNFS from "react-native-fs";
 import BleManager from "react-native-ble-manager";
+import { UserDevice } from "./userDevice";
 
 const FB = RNFetchBlob.config({
 	fileCache: true,
@@ -105,6 +106,8 @@ export class BleDeviceService {
 	private _favoriteDevice = observable<NamedDevice | null>(null);
 	private _favoriteDeviceSNU = observable<string | null>(null);
 
+	private _userDevices = observable<UserDevice[] | null>(null);
+
 	private _currentRingBattery = observable<RingBattery | null>(null);
 	private _batteryListenerUnsubscribe: (() => void) | undefined = undefined;
 	private _currentRingLiveData = observable<{ listening: boolean; data?: RingLiveData | null }>({ listening: false });
@@ -115,8 +118,9 @@ export class BleDeviceService {
 	readonly connectedDevice = this._connectedDevice.readOnly();
 	readonly setupState: Observable<DeviceSetupState>;
 	readonly autoConnectState: Observable<DeviceAutoConnectState>;
-	readonly favoriteDevice = this._favoriteDevice.readOnly();
-	readonly favoriteDeviceSNU = this._favoriteDeviceSNU.readOnly();
+	favoriteDevice = this._favoriteDevice;
+	favoriteDeviceSNU = this._favoriteDeviceSNU;
+	readonly userDevices = this._userDevices.readOnly();
 
 	readonly currentRingBattery = this._currentRingBattery.readOnly();
 	readonly currentRingLiveData = this._currentRingLiveData.readOnly();
@@ -185,25 +189,16 @@ export class BleDeviceService {
 				return DeviceAutoConnectState.DISCONNECTED;
 			}
 		);
-
-		this.fakeDeviceService.fakeDeviceEnabled.subscribe(async (enabled) => {
-			if (enabled) {
-				const debugDevice = "Circular_BeTomorrow";
-				this._favoriteDevice.set({ name: debugDevice });
-				this._favoriteDeviceSNU.set("fake_snu");
-				this.stopScan();
-				this.autoConnectFavoriteDevice();
-			}
-		});
 	}
 
 	async init() {
 		const loadedDevice = await this.favoriteDeviceStorage.load();
+		console.log(" CIR-266 BLE DEVICE INIT LOADED DEVICE", loadedDevice);
 		this.checkSettings();
 		this._favoriteDevice.set(loadedDevice);
-		console.log("CIR-141 INIT");
+		console.log("CIR-266 INIT");
 		if (loadedDevice) {
-			console.log("CIR-141 init LOADED DEVICE");
+			console.log("CIR-266 init LOADED DEVICE");
 			this.autoConnectFavoriteDevice();
 		}
 		this.userService.user.subscribe(async (user) => {
@@ -310,7 +305,7 @@ export class BleDeviceService {
 			}
 		}
 		await this.bluetoothService.enable();
-		await BleManager.start({ showAlert: false});
+		await BleManager.start({ showAlert: false });
 
 		const DFUScanPromise = new Promise<Device>((resolve, reject) => {
 			this.updateState.set(UpdateState.SCANNING_DFU_RING);
@@ -374,6 +369,11 @@ export class BleDeviceService {
 	}
 
 	async connect(device: Device) {
+		// const manageRingGateway = new ManageRingGateway()
+		// if((await manageRingGateway.getAvailableDevices()).includes(device.id)){
+		// 	return
+		// }
+
 		if (!device.name) {
 			this.logger.error("Error: trying to connect to unknown device");
 			return;
@@ -381,23 +381,30 @@ export class BleDeviceService {
 		try {
 			this.logger.info("Connecting to device", device.name);
 			this._connectionState.set(DeviceConnectionState.CONNECTING);
-			await device.connect({ timeout: 20000 });
+			await device.connect({ timeout: 4000 });
 			this.logger.info("Connection successful to device", device.name);
 			await device.discoverAllServicesAndCharacteristics();
 			this.logger.info("Services discovered for device", device.name);
 			this._connectedDevice.set(device);
 			this._connectionState.set(DeviceConnectionState.CONNECTED);
-			this._onDeviceDisconnectedSubscription = device.onDisconnected((error, disconnectedDevice) =>
-				this.handleDeviceDisconnection(error, disconnectedDevice)
-			);
+			this._onDeviceDisconnectedSubscription = device.onDisconnected((error, disconnectedDevice) => {
+				console.log("CIR-266 Device disconnection");
+				this.handleDeviceDisconnection(error, disconnectedDevice);
+			});
 			const storedDevice = { name: device.name };
-			this._favoriteDevice.set(storedDevice);
+			const favDevices = this._favoriteDevice.get();
+			const storedDevices = await this.favoriteDeviceStorage.load();
+			console.log("CIR-266 11");
+			console.log("ELSE CIR-266 favDevices && storedDevices", favDevices, storedDevices);
 			await this.favoriteDeviceStorage.save(storedDevice);
+			this._favoriteDevice.set(storedDevice);
+			console.log("CIR-266 22");
 			await this.startMonitoring();
 			const snu = await this.getResponse(Channel.SNU);
 			if (snu) {
 				this._favoriteDeviceSNU.set(snu);
 			}
+			console.log("CIR-266 3");
 			await this.write(`${Channel.CALENDAR}${getUTCTimestamp()}`);
 			this.logger.info("🕒 Time set to device", device.name, getUTCTimestamp());
 			await this.listenBattery();
@@ -409,6 +416,7 @@ export class BleDeviceService {
 	}
 
 	private handleDeviceDisconnection(error: BleError | null, device: Device) {
+		console.log("HANDLE DISCONNECTION");
 		const connectedDevice = this._connectedDevice.get();
 		if (!connectedDevice) {
 			return;
@@ -434,8 +442,10 @@ export class BleDeviceService {
 	}
 
 	async autoConnectFavoriteDevice() {
+		this.logger.info("autoConnectFavoriteDevice");
 		const name = this._favoriteDevice.get()?.name;
 		if (name === undefined) {
+			console.log("favorite device null", name);
 			return;
 		}
 		this.logger.info("Trying to autoconnect to", name);
@@ -461,6 +471,8 @@ export class BleDeviceService {
 	}
 
 	async findFavoriteDevice(): Promise<Device | undefined> {
+		this.logger.info("findFavoriteDevice");
+		9;
 		const name = this._favoriteDevice.get()?.name;
 		if (name === undefined || this._connectionState.get() === DeviceConnectionState.UPDATE) {
 			return undefined;
@@ -475,13 +487,14 @@ export class BleDeviceService {
 			this.logger.info("Scanning to autoconnect to", name);
 			this._scanning.set(true);
 			manager.startDeviceScan([NUServiceUUID], { scanMode: ScanMode.LowLatency }, (error, device) => {
-				console.log("Device Found", device);
+				// console.log("Device Found", device);
 				if (error) {
 					this.logger.error("Error during scan", error);
 					this.stopScan();
 					reject(error);
 				} else if (device) {
-					this.logger.info(`Discovered device named ${device.name} with id ${device.id} ... ${JSON.stringify(device)}`);
+					this.logger.info(`Discovered device named ${device.name} with id ${device.id}`);
+					console.log("device", device);
 					if (device.name === name) {
 						if (this.updateState.get().status === UpdateState.RECONNECTING.status)
 							this.updateState.set(UpdateState.UPDATE_SUCCESS);
@@ -581,6 +594,7 @@ export class BleDeviceService {
 
 	private async startMonitoring() {
 		const device = this._connectedDevice.get() ?? (await observableToPromise(this._connectedDevice));
+		console.log("CIR-266 Monitoring device ->", device);
 
 		if (!device) {
 			this.logger.error("Error : no device connected");
@@ -627,15 +641,16 @@ export class BleDeviceService {
 	}
 
 	private async forgetBeforeDisconnection() {
+		console.log("CIR-266 Forget Before Disconnection");
 		this._connectedDevice.set(null);
 		this._connectionState.set(DeviceConnectionState.DISCONNECTED);
 		this._onDeviceDisconnectedSubscription?.remove();
 		this._onDeviceDisconnectedSubscription = null;
-		this._favoriteDevice.set(null);
-		this._favoriteDeviceSNU.set(null);
+		// this._favoriteDevice.set(null);
+		// this._favoriteDeviceSNU.set(null);
 		this._currentRingBattery.set(null);
 		this._batteryListenerUnsubscribe?.();
-		await this.favoriteDeviceStorage.clear();
+		// await this.favoriteDeviceStorage.clear();
 	}
 
 	requestLocation() {

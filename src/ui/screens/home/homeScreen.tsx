@@ -25,7 +25,7 @@ export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
 	const { feedService, bluetoothService, bleDeviceService, ringManagementService } = useServices();
 	const [forceRefreshing, setForceRefreshing] = useState(false);
-	
+
 	const setupState = useSetupState();
 
 	useEffect(() => {
@@ -43,13 +43,13 @@ export const HomeScreen: React.FC = () => {
 			return;
 		}
 		setForceRefreshing(true);
-		console.log("One SYNC", )
+		console.log("One SYNC");
 		ringManagementService.syncData();
 		ringManagementService.submitFirmwareVersion();
 	}, [syncState, setForceRefreshing]);
 
 	const userSettings = useUserSettings();
-	const { format } = useI18n()
+	const { format } = useI18n();
 	const notifications = useNotifications();
 	const recommendations = useRecommendations();
 
@@ -69,33 +69,30 @@ export const HomeScreen: React.FC = () => {
 				<QuickAccess />
 				<SyncBanner style={{ margin: 10 }} />
 
-				<View style={{paddingHorizontal: 6}}>
+				<View style={{ paddingHorizontal: 6 }}>
 					<IfAdmin>
 						<PrimaryButton onPress={feedService._DEBUG_reset}>RESET</PrimaryButton>
 					</IfAdmin>
 					{notifications[0] && (
-						<Fade
-						key={notifications[0].id} 
-						isVisible
-						isAnimatedOnMount
-						>
+						<Fade key={notifications[0].id} isVisible isAnimatedOnMount>
 							<Notification notification={notifications[0]} />
 						</Fade>
 					)}
 					{Object.keys(recommendations).map((date) => (
 						<>
 							{date !== "today" && (
-								<View style={{alignItems: "center", marginTop: 15}}>
-									<Separator/>
-									<MetaDataText style={{paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray}}>{date === "yesterday"
-										? format("global.yesterday").toUpperCase()
-										: moment(date).format(userSettings?.dateFormat)
-									}</MetaDataText>
+								<View style={{ alignItems: "center", marginTop: 15 }}>
+									<Separator />
+									<MetaDataText style={{ paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray }}>
+										{date === "yesterday"
+											? format("global.yesterday").toUpperCase()
+											: moment(date).format(userSettings?.dateFormat)}
+									</MetaDataText>
 								</View>
 							)}
 							{recommendations[date].map((banner) => (
 								<Recommendation key={banner.id} recommendation={banner} style={{ margin: 10 }} />
-								))}
+							))}
 						</>
 					))}
 				</View>

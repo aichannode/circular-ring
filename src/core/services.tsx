@@ -29,6 +29,7 @@ import { Config } from "react-native-config";
 import { QuickAccessStorage } from "@domain/quickaccess/quickAccessStorage";
 import { TimerService } from "@domain/timer/timerService";
 import { TokenPayload } from "@domain/auth/type";
+import { UserDevicesStorage } from "@domain/device/userDevicesStorage";
 
 const fakeDeviceService = Config.ENVIRONNEMENT === "dev" ? new DevFakeDeviceService() : new EmptyFakeDeviceService();
 
@@ -36,6 +37,7 @@ const userStorage = new UserStorage();
 const favoriteDeviceStorage = new FavoriteDeviceStorage();
 const ringDataStorage = new RingDataStorage();
 const userRingsStorage = new UserRingsStorage();
+const userDevicesStorage = new UserDevicesStorage();
 
 const apiService = new ApiService();
 
@@ -99,6 +101,7 @@ export const services = {
 	userQuickAccess,
 	timerService,
 	ringApi,
+	userDevicesStorage,
 };
 
 export type Services = typeof services;

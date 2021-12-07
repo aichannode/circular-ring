@@ -43,6 +43,7 @@ import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
 import { WebViewScreen } from "@ui/screens/webViewScreen";
 import React, { useState } from "react";
 import styled from "styled-components/native";
+import { NewRingSetupScreen } from "@ui/screens/myRing/newRingSetupScreen";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -220,6 +221,7 @@ const MainHomeNavigator = () => {
 					headerRight: () => <MyRingBattery />,
 				}}
 			/>
+			<MainStack.Screen name={Routes.NewRingSetupScreen} component={NewRingSetupScreen} />
 
 			<MainStack.Screen name={Routes.WebView} component={WebViewScreen} />
 		</MainStack.Navigator>
@@ -235,9 +237,11 @@ export const RootNavigator: React.FC = () => {
 	const [wait, setWait] = useState(false);
 	const isAuthenticated = !!useAuthenticatedUserEmail();
 
-	const accountLinkedToDevice = useAccountLinked();
+	const accountLinkedToDevice = useAccountLinked(); //  == useRing not empty
+	console.log("CIR-266 NAVIGATOR ACCOUNT LINKED TO DEVICE", accountLinkedToDevice);
 	const hasUser = !!useUser();
-	const deviceStored = useDeviceStored();
+	const deviceStored = useDeviceStored(); // useObservable(useServices().bleDeviceService.favoriteDevice);
+	console.log("CIR-266 NAVIGATOR Device Stored", deviceStored);
 
 	// CIR-467: will by pass the ring setup for debuging puropose
 	const [useByPass, setByPass] = useState(false);
@@ -259,10 +263,15 @@ export const RootNavigator: React.FC = () => {
 	}
 
 	if (!useByPass && (wait || !deviceStored || !accountLinkedToDevice)) {
+		// if (!useByPass && (wait || !deviceStored || !accountLinkedToDevice)) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
 				{!hasUser && <OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />}
-				<OnboardingStack.Screen name={Routes.Pairing} initialParams={{ setWait, onByPass: () => setByPass(true) }} component={RingSetupScreen} />
+				<OnboardingStack.Screen
+					name={Routes.Pairing}
+					initialParams={{ setWait, onByPass: () => setByPass(true) }}
+					component={RingSetupScreen}
+				/>
 			</OnboardingStack.Navigator>
 		);
 	}
