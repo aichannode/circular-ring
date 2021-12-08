@@ -29,6 +29,7 @@ export const ManageMyRingsScreen = () => {
 
 	const [ringToDelete, setRingToDelete] = useState<NamedUserRing | undefined>(undefined);
 
+	console.log("Rings", rings);
 	console.log("USERRINGS", userRings);
 	console.log("FAV DEVICE", bleDeviceService.favoriteDevice);
 
