@@ -44,6 +44,7 @@ export const MyRingScreen: React.FC = () => {
 			try {
 				await bleDeviceService.write(`${Channel.RENAME}${editedName.toUpperCase()}`);
 				bleDeviceService.favoriteDevice.set({ name: "Circular " + viewModel.formatRingName(editedName.toUpperCase()) });
+				await bleDeviceService.disconnect();
 			} catch (err) {
 				console.log("error");
 			}
