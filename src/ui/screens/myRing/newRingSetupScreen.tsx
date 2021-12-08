@@ -13,11 +13,10 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState} from "react";
 import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
-import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/core";
 
 interface IRingSetupScreen {
@@ -44,6 +43,12 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	const setupState = useSetupState();
 
 	useEffect(() => {
+		console.log("MANAGE MY RING SCAN");
+		bleDeviceService.startScan();
+
+	}, [])
+
+	useEffect(() => {
 		const knownDevices = ringManagementService.userRings.get();
 		let devicesWithoutKnownOnes = scannedDevices;
 
@@ -53,15 +58,6 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 		setDevices(devicesWithoutKnownOnes);
 	}, [scannedDevices]);
 
-	useFocusEffect(
-		useCallback(() => {
-			console.log("useFocusEffect CIR-141 START SCAN", setupState);
-			if (setupState === DeviceSetupState.READY_TO_SCAN || setupState === DeviceSetupState.FINISHED) {
-				console.log("START SCAN USEFOCUSEFFECT")
-				bleDeviceService.startScan();
-			}
-		}, [setupState])
-	);
 
 	useEffect(() => {
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
@@ -166,10 +162,9 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 													console.log("OnPress device :", device);
 													bleDeviceService.stopScan();
 													setConnecting(true);
+													// store current device, because connect function overwrite it, then check if the ring belong to the user, then throw and error if not, then try to reconnect to fav device but name is not the right one
+													const currentDevice = await bleDeviceService.favoriteDevice.get(); 	
 													try {
-														await bleDeviceService.stopScan();
-														await bleDeviceService.favoriteDevice.set({name: null});
-														await bleDeviceService.disconnect();
 														const rings = ringManagementService.userRings.get();
 														const updatedRings = rings.map((ring) => ({
 															...ring,
@@ -178,14 +173,15 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 														ringManagementService.userRings.set(updatedRings);
 														await bleDeviceService.connect(device);
 														await ringManagementService.registerConnectedRing();
-														console.log("RINGS", rings);
+
+														console.log("RINGS AFTER ADD NEW RING", updatedRings);
 														
 														goBack();
-														// setWait(false);
 														setConnecting(false);
 													} catch (e) {
 														setConnecting(false);
-														// setWait(false);
+														bleDeviceService.favoriteDevice.set(currentDevice);
+														bleDeviceService.startScan();
 														if ((e as { statusCode: number }).statusCode === 409) {
 															pairingFailedBottomSheet.current?.present();
 														}

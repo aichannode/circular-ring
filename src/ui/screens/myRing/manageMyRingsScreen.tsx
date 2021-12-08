@@ -9,8 +9,9 @@ import { DeleteRingBottomSheet } from "@ui/screens/myRing/deleteRingBottomSheet"
 import { RingCard } from "@ui/screens/myRing/ringCard";
 import { useObservable } from "micro-observables";
 import { Dimensions } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { useFocusEffect } from "@react-navigation/native";
 
 const width = Dimensions.get("window").width;
 
@@ -21,17 +22,26 @@ export const ManageMyRingsScreen = () => {
 	const { navigate } = useRoutesNavigation();
 	const [rings, setRings] = useState(userRings);
 
+
 	useEffect(() => {
 		setRings(userRings);
-	}, userRings);
+	}, [userRings]);
+
+	useFocusEffect(
+		useCallback(() => {
+				console.log("STOP SCAN MANAGE MY RING");
+				bleDeviceService.stopScan();
+			
+		}, [])
+	);
 
 	const deleteRingBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 
 	const [ringToDelete, setRingToDelete] = useState<NamedUserRing | undefined>(undefined);
 
-	console.log("Rings", rings);
-	console.log("USERRINGS", userRings);
-	console.log("FAV DEVICE", bleDeviceService.favoriteDevice);
+	console.log("MANAGE MY RING Rings", rings);
+	console.log("MANAGE MY RING  USERRINGS", userRings);
+	console.log("MANAGE MY RING FAV DEVICE", bleDeviceService.favoriteDevice.get());
 
 
 	return (
@@ -47,7 +57,7 @@ export const ManageMyRingsScreen = () => {
 			></InfoListItem>
 			<InfoListHeader style={{ marginLeft: 0 }}>{format("manage_rings.paired_rings_title")}</InfoListHeader>
 			<Stack gap={25}>
-				{userRings.map((ring) => {
+				{rings.map((ring) => {
 					return (
 						<RingCard
 							key={ring.id}

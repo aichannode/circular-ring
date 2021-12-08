@@ -25,13 +25,13 @@ export const MyRingScreen: React.FC = () => {
 	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const viewModel = new RingViewModel();
 	const userRings = useObservable(ringManagementService.userRings);
+	const currentRing: NamedUserRing = userRings.filter((ring) => ring.connected)[0];
 	const connected = useObservable(bleDeviceService.connectionState);
 	const [showPrompt, setShowPrompt] = useState<boolean>(false);
-	const [editedName, setEditedName] = useState<string>("");
+	const [editedName, setEditedName] = useState<string>(currentRing?.name ? currentRing.name : '');
 
 	console.log("CONNECTED", connected);
 
-	const currentRing: NamedUserRing = userRings.filter((ring) => ring.connected)[0];
 
 	console.log(
 		"Current Rings\n",

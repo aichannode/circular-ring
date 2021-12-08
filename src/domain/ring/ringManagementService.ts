@@ -99,13 +99,16 @@ export class RingManagementService {
 		if (id && firmware && deviceName) {
 			try {
 				const userRings = this._userRings.get();
-				console.log("CIR-266 USER RING Booting", [...userRings]);
+				console.log("987 CIR-266 USER RING Booting", [...userRings]);
 				const alreadyRegistered = userRings.filter((ring) => ring.id === id).length > 0;
 				if (!alreadyRegistered) {
 					const userRing = await this.ringApi.addRing({ id, firmware });
 					const namedRing = { ...userRing, name: deviceName, connected: true };
 					console.log("CIR-266 USER RING REGISTERING", [...userRings, namedRing]);
-					this._userRings.update((rings) => [...rings, namedRing]);
+					// this.userRings.update((rings) => {
+					// 	console.log("UPDATE SHIT", [...rings], namedRing); 
+					// 	return [...rings, namedRing]});
+					this.userRings.set([...userRings, namedRing])
 					return userRing;
 				}
 			} catch (e) {
@@ -236,7 +239,7 @@ export class RingManagementService {
 			const { id } = connectedRing[0];
 			this.logger.info("Submit User Ring", connectedRing);
 			try {
-				await this.updateStoredRings({ ...connectedRing[0], firmware });
+				// await this.updateStoredRings({ ...connectedRing[0], firmware });
 				await this.ringApi.submitFirmwareVersion(id, firmware);
 			} catch (err) {
 				this.logger.warn("Error Submiting User Ring", err);

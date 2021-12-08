@@ -161,9 +161,11 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 														await ringManagementService.registerConnectedRing();
 														setWait(false);
 														setConnecting(false);
+														bleDeviceService.stopScan();
 													} catch (e) {
 														setConnecting(false);
 														setWait(false);
+														await bleDeviceService.disconnect();
 														if ((e as { statusCode: number }).statusCode === 409) {
 															pairingFailedBottomSheet.current?.present();
 														}
