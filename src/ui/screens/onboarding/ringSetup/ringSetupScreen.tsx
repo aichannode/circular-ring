@@ -156,8 +156,8 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 													bleDeviceService.stopScan();
 													setConnecting(true);
 													setWait(true);
-													await bleDeviceService.connect(device);
 													try {
+														await bleDeviceService.connect(device);
 														await ringManagementService.registerConnectedRing();
 														setWait(false);
 														setConnecting(false);
