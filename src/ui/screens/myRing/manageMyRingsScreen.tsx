@@ -57,7 +57,10 @@ export const ManageMyRingsScreen = () => {
 		useCallback(() => {
 			ringManagementService.userRings.update((rings) => {
 				const updatedRings = rings.map((ring) => {
-					if (ring.name === bleDeviceService.favoriteDevice.get()?.name) {
+					if (
+						ring.name === bleDeviceService.favoriteDevice.get()?.name &&
+						autoConnectState === DeviceAutoConnectState.CONNECTED
+					) {
 						return { ...ring, connected: true };
 					} else {
 						return { ...ring, connected: false };
