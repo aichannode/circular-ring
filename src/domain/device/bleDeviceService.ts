@@ -547,7 +547,7 @@ export class BleDeviceService {
 		const device = this._connectedDevice.get();
 		if (!device) {
 			this.logger.error("Error : no device connected");
-			throw TypeError("Error : no device connected");
+			throw Error("Error : no device connected");
 		}
 		 await this.writeToDevice(device, message);
 	}
