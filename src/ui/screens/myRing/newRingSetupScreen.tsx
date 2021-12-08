@@ -13,7 +13,7 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
@@ -45,8 +45,9 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	useEffect(() => {
 		console.log("MANAGE MY RING SCAN");
 		bleDeviceService.startScan();
+	}, []);
 
-	}, [])
+	console.log("Scanned Devic", scannedDevices);
 
 	useEffect(() => {
 		const knownDevices = ringManagementService.userRings.get();
@@ -57,7 +58,6 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 		}
 		setDevices(devicesWithoutKnownOnes);
 	}, [scannedDevices]);
-
 
 	useEffect(() => {
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
@@ -163,7 +163,7 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 													bleDeviceService.stopScan();
 													setConnecting(true);
 													// store current device, because connect function overwrite it, then check if the ring belong to the user, then throw and error if not, then try to reconnect to fav device but name is not the right one
-													const currentDevice = await bleDeviceService.favoriteDevice.get(); 	
+													const currentDevice = await bleDeviceService.favoriteDevice.get();
 													try {
 														const rings = ringManagementService.userRings.get();
 														const updatedRings = rings.map((ring) => ({
@@ -175,7 +175,7 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 														await ringManagementService.registerConnectedRing();
 
 														console.log("RINGS AFTER ADD NEW RING", updatedRings);
-														
+
 														goBack();
 														setConnecting(false);
 													} catch (e) {

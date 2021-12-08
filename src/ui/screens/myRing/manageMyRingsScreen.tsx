@@ -30,6 +30,7 @@ export const ManageMyRingsScreen = () => {
 
 	useEffect(() => {
 		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
+			console.log("GONNA UPDATE RINGS");
 			ringManagementService.userRings.update((rings) => {
 				const updatedRings = rings.map((ring) => {
 					if (ring.name === bleDeviceService.favoriteDevice.get()?.name) {
@@ -54,6 +55,21 @@ export const ManageMyRingsScreen = () => {
 
 	useFocusEffect(
 		useCallback(() => {
+			ringManagementService.userRings.update((rings) => {
+				const updatedRings = rings.map((ring) => {
+					if (ring.name === bleDeviceService.favoriteDevice.get()?.name) {
+						return { ...ring, connected: true };
+					} else {
+						return { ...ring, connected: false };
+					}
+				});
+				updatedRings.sort((a: NamedUserRing, b: NamedUserRing) => {
+					if (a.connected) return -1;
+					if (b.connected) return 1;
+					return 0;
+				});
+				return updatedRings;
+			});
 			console.log("STOP SCAN MANAGE MY RING");
 			bleDeviceService.stopScan();
 		}, [])
