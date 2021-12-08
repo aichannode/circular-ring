@@ -6,8 +6,8 @@ import { PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { FactoryResetBottomSheet } from "@ui/screens/myRing/factoryResetBottomSheet";
-import React, { useRef } from "react";
-import { Alert } from "react-native";
+import React, { useRef, useState } from "react";
+import {Alert} from "react-native";
 import styled from "styled-components/native";
 import { Channel } from "@domain/device/channels";
 import { useObservable } from "micro-observables";
@@ -15,6 +15,7 @@ import { NamedUserRing } from "@domain/ring/ring";
 import { RingViewModel } from "@ui/screens/myRing/viewModel/RingViewModel";
 import { colors } from "@ui/styles/colors";
 import { DeviceConnectionState } from "@domain/device/bleDeviceService";
+import Dialog from "react-native-dialog";
 
 export const MyRingScreen: React.FC = () => {
 	const { bleDeviceService } = useServices();
@@ -25,6 +26,8 @@ export const MyRingScreen: React.FC = () => {
 	const viewModel = new RingViewModel();
 	const userRings = useObservable(ringManagementService.userRings);
 	const connected = useObservable(bleDeviceService.connectionState);
+	const [showPrompt, setShowPrompt] = useState<boolean>(false);
+	const [editedName, setEditedName] = useState<string>("");
 
 	console.log("CONNECTED", connected);
 
@@ -37,41 +40,52 @@ export const MyRingScreen: React.FC = () => {
 		})
 	);
 
-	const renameAlert = () => {
-		Alert.prompt(format("manage_rings.ring.rename"), "", [
-			{
-				text: format("global.cancel"),
-				style: "cancel",
-			},
-			{
-				text: format("global.edit"),
-				onPress: (newName) => {
-					if (newName && newName !== "") {
-						bleDeviceService.write(`${Channel.RENAME}${newName.toUpperCase()}`);
-						userRings.map((ring) => {
-							if (ring.id === currentRing?.id) {
-								const upTodateRing = { ...ring, name: "Circular " + viewModel.formatRingName(newName) };
-								ringManagementService.updateStoredRings(upTodateRing);
-								return { ...ring, name: viewModel.formatRingName(newName) };
-							}
-							return ring;
-						});
-					}
-				},
-			},
-		]);
+	const renameRing = async () => {
+		if (editedName && editedName !== "") {
+			try {
+				await bleDeviceService.write(`${Channel.RENAME}${editedName.toUpperCase()}`);
+				bleDeviceService.favoriteDevice.set({ name: "Circular " + viewModel.formatRingName(editedName.toUpperCase()) });
+				ringManagementService.userRings.set(userRings.map((ring) => {
+					if (ring.connected)
+						return ({
+						...ring, name: "Circular " + viewModel.formatRingName(editedName.toUpperCase())
+						})
+					else return ring;
+				}))
+			} catch (err) {
+				console.log("error");
+				Alert.alert("Error", "An error occured while trying to change ring name (no ring connected)",  [
+					{ text: "OK", onPress: () => console.log("OK Pressed") }
+				  ]);
+				
+			}
+		}
 	};
 
 	return (
 		<Container>
+			<Dialog.Container visible={showPrompt}>
+				<Dialog.Title>{format("manage_rings.ring.rename")}</Dialog.Title>
+				<Dialog.Input value={editedName} onChangeText={setEditedName}></Dialog.Input>
+				<Dialog.Button onPress={() => setShowPrompt(false)} label={format("global.cancel")} />
+				<Dialog.Button
+					label={format("global.edit")}
+					onPress={() => {
+						setShowPrompt(false);
+						renameRing();
+					}}
+				/>
+			</Dialog.Container>
 			<RingBatteryView size={140} detailed />
-			<StyledPrimaryText
+			<EditText
 				onPress={() => {
-					renameAlert();
+					console.log("Edit");
+					setShowPrompt(true);
 				}}
 			>
-				{currentRing?.name}
-			</StyledPrimaryText>
+				<StyledPrimaryText>{currentRing?.name}</StyledPrimaryText>
+				<Pen source={require("@assets/images/pen.png")}></Pen>
+			</EditText>
 			{connected === DeviceConnectionState.CONNECTED && (
 				<InfoListItem
 					name={format("ring.firmware")}
@@ -107,6 +121,16 @@ export const MyRingScreen: React.FC = () => {
 	);
 };
 
+const EditText = styled.TouchableOpacity`
+	display: flex;
+	flex-direction: row;
+	margin-bottom: 70px;
+	height: 30px;
+	margin-top: 30px;
+`;
+
+const Pen = styled.Image``;
+
 const Container = styled.View`
 	flex: 1;
 	align-items: center;
@@ -114,8 +138,7 @@ const Container = styled.View`
 `;
 
 const StyledPrimaryText = styled(PrimaryText)`
-	margin-top: 20px;
-	margin-bottom: 80px;
+	margin-right: 10px;
 `;
 
 const FirmwareVersionText = styled.Text`
