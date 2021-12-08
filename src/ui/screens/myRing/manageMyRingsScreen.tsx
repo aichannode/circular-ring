@@ -12,6 +12,8 @@ import { Dimensions } from "react-native";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { useFocusEffect } from "@react-navigation/native";
+import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
+import { useAutoConnectState } from "@domain/device/hooks";
 
 const width = Dimensions.get("window").width;
 
@@ -22,6 +24,20 @@ export const ManageMyRingsScreen = () => {
 	const { navigate } = useRoutesNavigation();
 	const [rings, setRings] = useState(userRings);
 
+	const autoConnectState = useAutoConnectState();
+
+	useEffect(() => {
+		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
+			ringManagementService.userRings.update((rings) => rings.map((ring) => {
+				if (ring.name === bleDeviceService.favoriteDevice.get().name) {
+					return ({...ring, connected: true});
+				}
+				else {
+					return ({...ring, connected: false});
+				}
+		}))
+		}
+	}, [autoConnectState])
 
 	useEffect(() => {
 		setRings(userRings);
