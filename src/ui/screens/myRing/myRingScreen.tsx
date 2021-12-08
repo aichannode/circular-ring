@@ -7,6 +7,7 @@ import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { FactoryResetBottomSheet } from "@ui/screens/myRing/factoryResetBottomSheet";
 import React, { useRef, useState } from "react";
+import {Alert} from "react-native";
 import styled from "styled-components/native";
 import { Channel } from "@domain/device/channels";
 import { useObservable } from "micro-observables";
@@ -44,9 +45,19 @@ export const MyRingScreen: React.FC = () => {
 			try {
 				await bleDeviceService.write(`${Channel.RENAME}${editedName.toUpperCase()}`);
 				bleDeviceService.favoriteDevice.set({ name: "Circular " + viewModel.formatRingName(editedName.toUpperCase()) });
-				await bleDeviceService.disconnect();
+				ringManagementService.userRings.set(userRings.map((ring) => {
+					if (ring.connected)
+						return ({
+						...ring, name: "Circular " + viewModel.formatRingName(editedName.toUpperCase())
+						})
+					else return ring;
+				}))
 			} catch (err) {
 				console.log("error");
+				Alert.alert("Error", "An error occured while trying to change ring name (no ring connected)",  [
+					{ text: "OK", onPress: () => console.log("OK Pressed") }
+				  ]);
+				
 			}
 		}
 	};
