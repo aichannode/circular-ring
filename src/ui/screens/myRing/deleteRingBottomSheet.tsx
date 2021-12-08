@@ -32,7 +32,7 @@ export const DeleteRingBottomSheet: React.FC<DeleteRingBottomSheetProps> = ({ ri
 			// TODO uncomment this line when we will stay in current screen
 			// setSuccess(true);
 			// TODO and remove this one
-			onClose();
+			setTimeout(() => onClose(), 100);
 		} catch (error) {
 			console.log("Error disssiociating", error);
 			setLoading(false);
