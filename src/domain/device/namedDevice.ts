@@ -1,3 +1,3 @@
 export interface NamedDevice {
-	name: string;
+	name: string | null;
 }
