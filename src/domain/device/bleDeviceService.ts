@@ -411,6 +411,7 @@ export class BleDeviceService {
 		} catch (e) {
 			this.logger.error("Error connecting to device", e);
 			this._connectionState.set(DeviceConnectionState.DISCONNECTED);
+			this.autoConnectFavoriteDevice();
 			throw e;
 		}
 	}

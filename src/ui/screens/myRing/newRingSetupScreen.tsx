@@ -13,7 +13,7 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
@@ -53,15 +53,19 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 		setDevices(devicesWithoutKnownOnes);
 	}, [scannedDevices]);
 
-	useFocusEffect(() => {
-		console.log("CIR-141 START SCAN");
-		bleDeviceService.startScan();
-		return bleDeviceService.stopScan();
-	});
+	useFocusEffect(
+		useCallback(() => {
+			console.log("useFocusEffect CIR-141 START SCAN", setupState);
+			if (setupState === DeviceSetupState.READY_TO_SCAN || setupState === DeviceSetupState.FINISHED) {
+				console.log("START SCAN USEFOCUSEFFECT")
+				bleDeviceService.startScan();
+			}
+		}, [setupState])
+	);
 
 	useEffect(() => {
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
-			console.log("CIR-141 START SCAN 2");
+			console.log("useEffect setupState", setupState);
 			// bleDeviceService.startScan();
 		}
 		if (setupState === DeviceSetupState.LOCATION_DISABLED) {
@@ -163,6 +167,8 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 													bleDeviceService.stopScan();
 													setConnecting(true);
 													try {
+														await bleDeviceService.stopScan();
+														await bleDeviceService.favoriteDevice.set({name: null});
 														await bleDeviceService.disconnect();
 														const rings = ringManagementService.userRings.get();
 														const updatedRings = rings.map((ring) => ({
@@ -173,6 +179,7 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 														await bleDeviceService.connect(device);
 														await ringManagementService.registerConnectedRing();
 														console.log("RINGS", rings);
+														
 														goBack();
 														// setWait(false);
 														setConnecting(false);

@@ -16,7 +16,7 @@ const width = Dimensions.get("window").width;
 
 export const ManageMyRingsScreen = () => {
 	const { format } = useI18n();
-	const { ringManagementService } = useServices();
+	const { ringManagementService, bleDeviceService } = useServices();
 	const userRings = useObservable(ringManagementService.userRings);
 	const { navigate } = useRoutesNavigation();
 	const [rings, setRings] = useState(userRings);
@@ -30,6 +30,8 @@ export const ManageMyRingsScreen = () => {
 	const [ringToDelete, setRingToDelete] = useState<NamedUserRing | undefined>(undefined);
 
 	console.log("USERRINGS", userRings);
+	console.log("FAV DEVICE", bleDeviceService.favoriteDevice);
+
 
 	return (
 		<ScrollScreen contentContainerStyle={{ paddingHorizontal: 20 }}>
@@ -44,7 +46,7 @@ export const ManageMyRingsScreen = () => {
 			></InfoListItem>
 			<InfoListHeader style={{ marginLeft: 0 }}>{format("manage_rings.paired_rings_title")}</InfoListHeader>
 			<Stack gap={25}>
-				{rings.map((ring) => {
+				{userRings.map((ring) => {
 					return (
 						<RingCard
 							key={ring.id}
