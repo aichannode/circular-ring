@@ -9,8 +9,11 @@ import { DeleteRingBottomSheet } from "@ui/screens/myRing/deleteRingBottomSheet"
 import { RingCard } from "@ui/screens/myRing/ringCard";
 import { useObservable } from "micro-observables";
 import { Dimensions } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { useFocusEffect } from "@react-navigation/native";
+import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
+import { useAutoConnectState } from "@domain/device/hooks";
 
 const width = Dimensions.get("window").width;
 
@@ -21,18 +24,67 @@ export const ManageMyRingsScreen = () => {
 	const { navigate } = useRoutesNavigation();
 	const [rings, setRings] = useState(userRings);
 
+	const autoConnectState = useAutoConnectState();
+
+	console.log("autoConnectState", autoConnectState);
+
+	useEffect(() => {
+		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
+			console.log("GONNA UPDATE RINGS");
+			ringManagementService.userRings.update((rings) => {
+				const updatedRings = rings.map((ring) => {
+					if (ring.name === bleDeviceService.favoriteDevice.get()?.name) {
+						return { ...ring, connected: true };
+					} else {
+						return { ...ring, connected: false };
+					}
+				});
+				updatedRings.sort((a: NamedUserRing, b: NamedUserRing) => {
+					if (a.connected) return -1;
+					if (b.connected) return 1;
+					return 0;
+				});
+				return updatedRings;
+			});
+		}
+	}, [autoConnectState]);
+
 	useEffect(() => {
 		setRings(userRings);
-	}, userRings);
+	}, [userRings]);
+
+	useFocusEffect(
+		useCallback(() => {
+			ringManagementService.userRings.update((rings) => {
+				const updatedRings = rings.map((ring) => {
+					if (
+						ring.name === bleDeviceService.favoriteDevice.get()?.name &&
+						autoConnectState === DeviceAutoConnectState.CONNECTED
+					) {
+						return { ...ring, connected: true };
+					} else {
+						return { ...ring, connected: false };
+					}
+				});
+				updatedRings.sort((a: NamedUserRing, b: NamedUserRing) => {
+					if (a.connected) return -1;
+					if (b.connected) return 1;
+					return 0;
+				});
+				return updatedRings;
+			});
+			console.log("STOP SCAN MANAGE MY RING");
+			bleDeviceService.stopScan();
+		}, [])
+	);
 
 	const deleteRingBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 
 	const [ringToDelete, setRingToDelete] = useState<NamedUserRing | undefined>(undefined);
 
-	console.log("Rings", rings);
-	console.log("USERRINGS", userRings);
-	console.log("FAV DEVICE", bleDeviceService.favoriteDevice);
-
+	console.log("MANAGE MY RING Rings", rings);
+	console.log("MANAGE MY RING  USERRINGS", userRings);
+	console.log("MANAGE MY RING FAV DEVICE", bleDeviceService.favoriteDevice.get());
 
 	return (
 		<ScrollScreen contentContainerStyle={{ paddingHorizontal: 20 }}>
@@ -47,7 +99,7 @@ export const ManageMyRingsScreen = () => {
 			></InfoListItem>
 			<InfoListHeader style={{ marginLeft: 0 }}>{format("manage_rings.paired_rings_title")}</InfoListHeader>
 			<Stack gap={25}>
-				{userRings.map((ring) => {
+				{rings.map((ring) => {
 					return (
 						<RingCard
 							key={ring.id}

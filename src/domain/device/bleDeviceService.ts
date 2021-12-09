@@ -381,7 +381,7 @@ export class BleDeviceService {
 		try {
 			this.logger.info("Connecting to device", device.name);
 			this._connectionState.set(DeviceConnectionState.CONNECTING);
-			await device.connect({ timeout: 4000 });
+			await device.connect({ timeout: 20000 });
 			this.logger.info("Connection successful to device", device.name);
 			await device.discoverAllServicesAndCharacteristics();
 			this.logger.info("Services discovered for device", device.name);
@@ -455,6 +455,7 @@ export class BleDeviceService {
 		const manager = this.bluetoothService.manager;
 		try {
 			const connectedDevices = await manager.connectedDevices([NUServiceUUID]);
+			console.log("autoConnectFavoriteDevice  CONNECTED DEVICES = ", connectedDevices);
 			if (connectedDevices.length > 0) {
 				const alreadyConnectedDevice = connectedDevices[0];
 				this.logger.info("Already connected to", alreadyConnectedDevice.name);
@@ -472,10 +473,9 @@ export class BleDeviceService {
 	}
 
 	async findFavoriteDevice(): Promise<Device | undefined> {
-		this.logger.info("findFavoriteDevice");
-		9;
+		this.logger.info("findFavoriteDevice", this.connectedDevice.get());
 		const name = this._favoriteDevice.get()?.name;
-		if (name === undefined || this._connectionState.get() === DeviceConnectionState.UPDATE) {
+		if (name === undefined || this._connectionState.get() === DeviceConnectionState.UPDATE || this.connectedDevice.get()) {
 			return undefined;
 		}
 		const manager = this.bluetoothService.manager;

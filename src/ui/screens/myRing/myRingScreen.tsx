@@ -7,7 +7,7 @@ import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { FactoryResetBottomSheet } from "@ui/screens/myRing/factoryResetBottomSheet";
 import React, { useRef, useState } from "react";
-import {Alert} from "react-native";
+import { Alert } from "react-native";
 import styled from "styled-components/native";
 import { Channel } from "@domain/device/channels";
 import { useObservable } from "micro-observables";
@@ -25,13 +25,12 @@ export const MyRingScreen: React.FC = () => {
 	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const viewModel = new RingViewModel();
 	const userRings = useObservable(ringManagementService.userRings);
+	const currentRing: NamedUserRing = userRings.filter((ring) => ring.connected)[0];
 	const connected = useObservable(bleDeviceService.connectionState);
 	const [showPrompt, setShowPrompt] = useState<boolean>(false);
-	const [editedName, setEditedName] = useState<string>("");
+	const [editedName, setEditedName] = useState<string>(currentRing?.name ? currentRing.name : "");
 
 	console.log("CONNECTED", connected);
-
-	const currentRing: NamedUserRing = userRings.filter((ring) => ring.connected)[0];
 
 	console.log(
 		"Current Rings\n",
@@ -45,19 +44,21 @@ export const MyRingScreen: React.FC = () => {
 			try {
 				await bleDeviceService.write(`${Channel.RENAME}${editedName.toUpperCase()}`);
 				bleDeviceService.favoriteDevice.set({ name: "Circular " + viewModel.formatRingName(editedName.toUpperCase()) });
-				ringManagementService.userRings.set(userRings.map((ring) => {
-					if (ring.connected)
-						return ({
-						...ring, name: "Circular " + viewModel.formatRingName(editedName.toUpperCase())
-						})
-					else return ring;
-				}))
+				ringManagementService.userRings.set(
+					userRings.map((ring) => {
+						if (ring.connected)
+							return {
+								...ring,
+								name: "Circular " + viewModel.formatRingName(editedName.toUpperCase()),
+							};
+						else return ring;
+					})
+				);
 			} catch (err) {
 				console.log("error");
-				Alert.alert("Error", "An error occured while trying to change ring name (no ring connected)",  [
-					{ text: "OK", onPress: () => console.log("OK Pressed") }
-				  ]);
-				
+				Alert.alert("Error", "An error occured while trying to change ring name (no ring connected)", [
+					{ text: "OK", onPress: () => console.log("OK Pressed") },
+				]);
 			}
 		}
 	};
@@ -76,26 +77,28 @@ export const MyRingScreen: React.FC = () => {
 					}}
 				/>
 			</Dialog.Container>
-			<RingBatteryView size={140} detailed />
-			<EditText
-				onPress={() => {
-					console.log("Edit");
-					setShowPrompt(true);
-				}}
-			>
-				<StyledPrimaryText>{currentRing?.name}</StyledPrimaryText>
-				<Pen source={require("@assets/images/pen.png")}></Pen>
-			</EditText>
+			<RingBatteryView size={140} detailed style={{ marginBottom: 30 }} />
 			{connected === DeviceConnectionState.CONNECTED && (
-				<InfoListItem
-					name={format("ring.firmware")}
-					hasDisclosure
-					action={() => {
-						navigate(Routes.RingFirmwareUpdate);
-					}}
-				>
-					<FirmwareVersionText>{currentRing?.firmware}</FirmwareVersionText>
-				</InfoListItem>
+				<>
+					<EditText
+						onPress={() => {
+							console.log("Edit");
+							setShowPrompt(true);
+						}}
+					>
+						<StyledPrimaryText>{currentRing?.name}</StyledPrimaryText>
+						<Pen source={require("@assets/images/pen.png")}></Pen>
+					</EditText>
+					<InfoListItem
+						name={format("ring.firmware")}
+						hasDisclosure
+						action={() => {
+							navigate(Routes.RingFirmwareUpdate);
+						}}
+					>
+						<FirmwareVersionText>{currentRing?.firmware}</FirmwareVersionText>
+					</InfoListItem>
+				</>
 			)}
 
 			<InfoListItem
@@ -126,7 +129,6 @@ const EditText = styled.TouchableOpacity`
 	flex-direction: row;
 	margin-bottom: 70px;
 	height: 30px;
-	margin-top: 30px;
 `;
 
 const Pen = styled.Image``;
