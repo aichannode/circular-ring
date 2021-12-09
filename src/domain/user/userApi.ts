@@ -4,8 +4,7 @@ import { AdvancedInfo } from "@domain/user/advancedInfo";
 import { Sex, User } from "@domain/user/user";
 import { UserSettings } from "@domain/user/userSettings";
 import axios, { AxiosInstance } from "axios";
-import { addRequestInterceptor, addResponseInterceptor } from "@core/api/interceptors/interceptor";
-import { serializeArrayParametersInterceptor } from "@core/api/interceptors/serializeArrayParametersInterceptor";
+import { addAuthorizationInterceptor } from "@core/api/interceptors/addAuthorizationInterceptor";
 import { logResponseInterceptor } from "@core/api/interceptors/logResponseInterceptor";
 import { getLogger } from "@core/logger/logger";
 import { Logger } from "@betomorrow/logging-core";
@@ -48,9 +47,10 @@ export class UserApi {
 	private logger: Logger = getLogger("UserApi");
 
 	constructor(private readonly apiService: ApiService) {
-		this.instance = axios.create();
-		addRequestInterceptor(this.instance, serializeArrayParametersInterceptor);
-		addResponseInterceptor(this.instance, logResponseInterceptor(this.logger));
+		// this.instance = axios.create();
+		// addRequestInterceptor(this.instance, serializeArrayParametersInterceptor);
+		// addAuthorizationInterceptor(this.instance);
+		// addResponseInterceptor(this.instance, logResponseInterceptor(this.logger));
 	}
 
 	/** User **/
@@ -122,6 +122,7 @@ export class UserApi {
 		console.log("type.split('/')[1]", type.split("/")[1]);
 		try {
 			const splitType = type.split("/")[1];
+			console.log("Type", type);
 			const data = (
 				await this.apiService.post<{ url: string; fields: Record<string, any>; taskId: string }>("/user/me/avatar", {
 					type: splitType,
@@ -139,9 +140,9 @@ export class UserApi {
 				name,
 			});
 			console.log("Data.url", data.url, " formData", formData);
-			await this.instance.post(data.url, formData);
+			await this.apiService.post(data.url, formData);
 		} catch (err) {
-			console.log("Err", err);
+			console.log("Err", JSON.stringify(err));
 			throw err;
 		}
 	}
