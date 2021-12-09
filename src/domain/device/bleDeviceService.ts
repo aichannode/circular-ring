@@ -475,7 +475,11 @@ export class BleDeviceService {
 	async findFavoriteDevice(): Promise<Device | undefined> {
 		this.logger.info("findFavoriteDevice", this.connectedDevice.get());
 		const name = this._favoriteDevice.get()?.name;
-		if (name === undefined || this._connectionState.get() === DeviceConnectionState.UPDATE || this.connectedDevice.get()) {
+		if (
+			name === undefined ||
+			this._connectionState.get() === DeviceConnectionState.UPDATE ||
+			this.connectedDevice.get()
+		) {
 			return undefined;
 		}
 		const manager = this.bluetoothService.manager;
@@ -495,7 +499,7 @@ export class BleDeviceService {
 					reject(error);
 				} else if (device) {
 					this.logger.info(`Discovered device named ${device.name} with id ${device.id}`);
-					console.log("device", device);
+					// console.log("device", device);
 					if (device.name === name) {
 						if (this.updateState.get().status === UpdateState.RECONNECTING.status)
 							this.updateState.set(UpdateState.UPDATE_SUCCESS);
@@ -549,7 +553,7 @@ export class BleDeviceService {
 			this.logger.error("Error : no device connected");
 			throw Error("Error : no device connected");
 		}
-		 await this.writeToDevice(device, message);
+		await this.writeToDevice(device, message);
 	}
 
 	private async writeToDevice(device: Device, message: string) {

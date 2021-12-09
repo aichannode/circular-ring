@@ -6,10 +6,24 @@ import dayjs from "dayjs";
 import React from "react";
 import LinearGradient from "react-native-linear-gradient";
 import styled from "styled-components/native";
+import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+import { TouchableOpacity } from "react-native";
+import { useServices } from "@core/services";
+
+const selectImage = async (userService) => {
+	const image = await launchImageLibrary({ mediaType: "photo" });
+	if (image.didCancel) return;
+	console.log("USER Image", image);
+	const { uri, fileName, type } = image.assets[0];
+
+	userService.uploadProfilPicture(uri, fileName, type);
+};
 
 export const UserAvatar = () => {
+	const { userService } = useServices();
 	const user = useUser();
 	const { format } = useI18n();
+	console.log("USER", user);
 
 	const userCreationDate = user?.createdAt || new Date();
 	const date = dayjs(userCreationDate);
@@ -17,15 +31,22 @@ export const UserAvatar = () => {
 
 	return !user ? null : (
 		<UserInfo>
-			<AvatarBorder
-				colors={[colors.orangeGradientStart, colors.orangeGradientEnd]}
-				start={{ x: 0.5, y: 0 }}
-				end={{ x: 0.5, y: 1 }}
-			>
-				<AvatarBackground>
-					{user.profilePictureUrl ? null : <DefaultAvatar source={require("@assets/images/man.png")} />}
-				</AvatarBackground>
-			</AvatarBorder>
+			<TouchableOpacity onPress={() => selectImage(userService)}>
+				<AvatarBorder
+					colors={[colors.orangeGradientStart, colors.orangeGradientEnd]}
+					start={{ x: 0.5, y: 0 }}
+					end={{ x: 0.5, y: 1 }}
+				>
+					<AvatarBackground>
+						{user.profilePictureUrl ? (
+							<DefaultAvatar resizeMode="cover" source={{ uri: user.profilePictureUrl }} />
+						) : (
+							// <DefaultAvatar source={require("@assets/images/man.png")} />
+							<DefaultAvatar source={require("@assets/images/man.png")} />
+						)}
+					</AvatarBackground>
+				</AvatarBorder>
+			</TouchableOpacity>
 			<UserName>
 				{user.firstName} <BoldUserName>{user.lastName}</BoldUserName>
 			</UserName>
@@ -38,6 +59,8 @@ const UserInfo = styled.View`
 	align-items: center;
 `;
 
+const DefaultAvatar = styled.Image``;
+
 const AvatarBorder = styled(LinearGradient)`
 	width: 119px;
 	height: 119px;
@@ -49,6 +72,7 @@ const AvatarBorder = styled(LinearGradient)`
 `;
 
 const AvatarBackground = styled.View`
+	border: 1px solid black;
 	flex: 1;
 	border-radius: 56px;
 	background-color: ${colors.lightgray};
@@ -56,8 +80,6 @@ const AvatarBackground = styled.View`
 	align-items: center;
 	margin-bottom: 0;
 `;
-
-const DefaultAvatar = styled.Image``;
 
 const UserName = styled.Text`
 	${textStyles.primary};
