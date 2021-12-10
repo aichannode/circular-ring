@@ -6,18 +6,9 @@ import dayjs from "dayjs";
 import React from "react";
 import LinearGradient from "react-native-linear-gradient";
 import styled from "styled-components/native";
-import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+import { launchImageLibrary } from "react-native-image-picker";
 import { TouchableOpacity } from "react-native";
 import { useServices } from "@core/services";
-
-const selectImage = async (userService) => {
-	const image = await launchImageLibrary({ mediaType: "photo" });
-	if (image.didCancel) return;
-	console.log("USER Image", image);
-	const { uri, fileName, type } = image.assets[0];
-
-	userService.uploadProfilPicture(uri, fileName, type);
-};
 
 export const UserAvatar = () => {
 	const { userService } = useServices();
@@ -28,6 +19,15 @@ export const UserAvatar = () => {
 	const userCreationDate = user?.createdAt || new Date();
 	const date = dayjs(userCreationDate);
 	const displayedDate = date.format("MMM. YYYY");
+
+	const selectImage = async () => {
+		const image = await launchImageLibrary({ mediaType: "photo" });
+		if (image.didCancel) return;
+		console.log("USER Image", image);
+		const { uri, fileName, type } = image.assets[0];
+
+		userService.uploadProfilPicture(uri, fileName, type);
+	};
 
 	return !user ? null : (
 		<UserInfo>

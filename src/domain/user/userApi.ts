@@ -3,11 +3,12 @@ import { DateFormat, HeightUnit, HourFormat, WeightUnit } from "@domain/units";
 import { AdvancedInfo } from "@domain/user/advancedInfo";
 import { Sex, User } from "@domain/user/user";
 import { UserSettings } from "@domain/user/userSettings";
-import axios, { AxiosInstance } from "axios";
-import { addAuthorizationInterceptor } from "@core/api/interceptors/addAuthorizationInterceptor";
-import { logResponseInterceptor } from "@core/api/interceptors/logResponseInterceptor";
-import { getLogger } from "@core/logger/logger";
-import { Logger } from "@betomorrow/logging-core";
+// import axios, { AxiosInstance } from "axios";
+
+// import { addAuthorizationInterceptor } from "@core/api/interceptors/addAuthorizationInterceptor";
+// import { logResponseInterceptor } from "@core/api/interceptors/logResponseInterceptor";
+// import { getLogger } from "@core/logger/logger";
+// import { Logger } from "@betomorrow/logging-core";
 
 interface UserDtoBase {
 	firstName: string;
@@ -43,8 +44,8 @@ interface UserSettingsDto {
 }
 
 export class UserApi {
-	private readonly instance: AxiosInstance;
-	private logger: Logger = getLogger("UserApi");
+	// private readonly instance: AxiosInstance;
+	// private logger: Logger = getLogger("UserApi");
 
 	constructor(private readonly apiService: ApiService) {
 		// this.instance = axios.create();
