@@ -6,24 +6,28 @@ import dayjs from "dayjs";
 import React from "react";
 import LinearGradient from "react-native-linear-gradient";
 import styled from "styled-components/native";
-import { launchCamera, launchImageLibrary } from "react-native-image-picker";
-import { TouchableOpacity } from "react-native";
+import { launchImageLibrary } from "react-native-image-picker";
+import { TouchableOpacity, Alert } from "react-native";
 import { useServices } from "@core/services";
-
-const selectImage = async (userService) => {
-	const image = await launchImageLibrary({ mediaType: "photo" });
-	if (image.didCancel) return;
-	console.log("USER Image", image);
-	const { uri, fileName, type } = image.assets[0];
-
-	userService.uploadProfilPicture(uri, fileName, type);
-};
 
 export const UserAvatar = () => {
 	const { userService } = useServices();
 	const user = useUser();
 	const { format } = useI18n();
-	console.log("USER", user);
+
+	const selectImage = async () => {
+		const image = await launchImageLibrary({ mediaType: "photo" });
+		if (image.didCancel) return;
+		if (image?.assets?.length === 0) return;
+		// @ts-ignore
+		const { uri, fileName, type } = image.assets[0];
+		try {
+			// @ts-ignore
+			await userService.uploadProfilPicture(uri, fileName, type);
+		} catch (err) {
+			Alert.alert("Error", "Error uploading picture");
+		}
+	};
 
 	const userCreationDate = user?.createdAt || new Date();
 	const date = dayjs(userCreationDate);
@@ -31,7 +35,7 @@ export const UserAvatar = () => {
 
 	return !user ? null : (
 		<UserInfo>
-			<TouchableOpacity onPress={() => selectImage(userService)}>
+			<TouchableOpacity onPress={() => selectImage()}>
 				<AvatarBorder
 					colors={[colors.orangeGradientStart, colors.orangeGradientEnd]}
 					start={{ x: 0.5, y: 0 }}
@@ -39,9 +43,13 @@ export const UserAvatar = () => {
 				>
 					<AvatarBackground>
 						{user.profilePictureUrl ? (
-							<DefaultAvatar resizeMode="cover" source={{ uri: user.profilePictureUrl }} />
+							<DefaultAvatar
+								resizeMode="cover"
+								source={{
+									uri: user.profilePictureUrl,
+								}}
+							/>
 						) : (
-							// <DefaultAvatar source={require("@assets/images/man.png")} />
 							<DefaultAvatar source={require("@assets/images/man.png")} />
 						)}
 					</AvatarBackground>
@@ -59,19 +67,24 @@ const UserInfo = styled.View`
 	align-items: center;
 `;
 
-const DefaultAvatar = styled.Image``;
+const DefaultAvatar = styled.Image`
+	width: 119px;
+	height: 119px;
+`;
 
 const AvatarBorder = styled(LinearGradient)`
+	overflow: hidden;
 	width: 119px;
 	height: 119px;
 	padding: 4px;
 	border-radius: 60px;
 	align-items: stretch;
 	justify-content: center;
-	margin-bottom: 12px;
 `;
 
 const AvatarBackground = styled.View`
+	overflow: hidden;
+	margin-bottom: 12px;
 	border: 1px solid black;
 	flex: 1;
 	border-radius: 56px;

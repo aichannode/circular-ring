@@ -292,7 +292,8 @@ export class UserService {
 
 	async uploadProfilPicture(uri: string, name: string, type: string) {
 		try {
-			this.userApi.uploadUserProfilPic(uri, name, type);
+			await this.userApi.uploadUserProfilPic(uri, name, type);
+			this.retrieveUser();
 		} catch (err) {
 			throw err;
 		}

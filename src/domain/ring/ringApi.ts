@@ -87,6 +87,7 @@ export class RingApi {
 				formData.append(k, v);
 			});
 			formData.append("Content-Type", "text/plain");
+			console.log("tempSyncDataFile", tempSyncDataFile);
 			formData.append("file", {
 				uri: tempSyncDataFile,
 				type: "text/plain",

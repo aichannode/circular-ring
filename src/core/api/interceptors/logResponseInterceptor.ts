@@ -9,6 +9,7 @@ export function isAxiosError(error: unknown): error is AxiosError {
 
 export const logResponseInterceptor: (logger: Logger) => Interceptor<AxiosResponse> = (logger) => ({
 	onRejected: (error) => {
+		console.log("Error", error);
 		if (isAxiosError(error)) {
 			logger.debug(
 				"Error",
