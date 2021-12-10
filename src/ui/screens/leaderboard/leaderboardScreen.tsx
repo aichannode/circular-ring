@@ -1,8 +1,10 @@
 import { ScrollScreen } from "@ui/components/scrollScreen";
-import React from "react";
+import React, { useRef } from "react";
 import styled from "styled-components/native";
 import LinearGradient from "react-native-linear-gradient";
 import { colors } from "@ui/styles/colors";
+import { Dimensions } from "react-native";
+import moment from "moment";
 
 interface I_Data {
 	rank: number;
@@ -15,6 +17,77 @@ interface I_Data {
 }
 
 const data: I_Data[] = [
+	{
+		rank: 1,
+		firstname: "William",
+		lastname: "Doe",
+		score: 99.78,
+		progress: true,
+		subscore: 45,
+	},
+	{
+		rank: 2,
+		firstname: "Rose",
+		lastname: "Jose",
+		score: 99.23,
+		progress: true,
+		subscore: 45,
+		country: "france",
+	},
+	{
+		rank: 3,
+		firstname: "Gale",
+		lastname: "Blue",
+		score: 99.21,
+		progress: false,
+		subscore: 34,
+		country: "france",
+	},
+	{
+		rank: 4,
+		firstname: "William",
+		lastname: "Bowlow",
+		score: 98.41,
+		progress: false,
+		subscore: 39,
+		country: "france",
+	},
+	{
+		rank: 5,
+		firstname: "John",
+		lastname: "Lee",
+		score: 98.09,
+		progress: true,
+		subscore: 51,
+		country: "france",
+	},
+	{
+		rank: 6,
+		firstname: "Simone",
+		lastname: "Roger",
+		score: 98.01,
+		progress: true,
+		subscore: 51,
+		country: "france",
+	},
+	{
+		rank: 7,
+		firstname: "Elen",
+		lastname: "Love",
+		score: 97.99,
+		progress: false,
+		subscore: 32,
+		country: "france",
+	},
+	{
+		rank: 8,
+		firstname: "Clara",
+		lastname: "Ocean",
+		score: 97.93,
+		progress: true,
+		subscore: 46,
+		country: "france",
+	},
 	{
 		rank: 1,
 		firstname: "William",
@@ -198,7 +271,17 @@ const LightScore = styled.Text<{ color: string }>`
 	margin-top: 17px;
 `;
 
-const LeaderboardTile = ({ data, gradient, color }: { data: I_Data; gradient: boolean; color: string }) => {
+const LeaderboardTile = ({
+	data,
+	gradient,
+	color,
+	i,
+}: {
+	data: I_Data;
+	gradient: boolean;
+	color: string;
+	i: number;
+}) => {
 	const { rank, firstname, lastname, score, progress, subscore } = data;
 
 	return (
@@ -217,7 +300,7 @@ const LeaderboardTile = ({ data, gradient, color }: { data: I_Data; gradient: bo
 				elevation: 5,
 			}}
 		>
-			<Rank color={color}>{rank}</Rank>
+			<Rank color={color}>{i + 1}</Rank>
 			<PictureContainer>
 				<UserPic resizeMode="contain" source={require("@assets/images/man.png")}></UserPic>
 			</PictureContainer>
@@ -247,26 +330,64 @@ const LeaderboardTile = ({ data, gradient, color }: { data: I_Data; gradient: bo
 };
 
 export const LeaderboardScreen: React.FC = () => {
+	const scrollRef = useRef();
+
+	const ScrollToPosition = (position: number) => {
+		let y = position * 67;
+		scrollRef.current?.scrollTo({
+			x: 0,
+			y: y,
+			animated: true,
+		});
+	};
+
 	return (
-		<Container>
-			<TitleContainer>
-				<Title>Leaderboard</Title>
-				<SubTitle>November - updated daily</SubTitle>
-			</TitleContainer>
-			<LeaderboardContainer>
-				{data.map((d, key) => (
-					<LeaderboardTile color="black" gradient={false} data={d} key={key} />
-				))}
-				<LeaderboardTile color="white" gradient={true} data={data[0]} />
-			</LeaderboardContainer>
-		</Container>
+		<>
+			<Container ref={scrollRef}>
+				<TitleContainer>
+					<Title>Leaderboard</Title>
+					<SubTitle>{moment().format("MMMM")} - updated daily</SubTitle>
+				</TitleContainer>
+				<LeaderboardContainer>
+					{data.map((d, key) =>
+						key !== 12 ? (
+							<LeaderboardTile color="black" gradient={false} data={d} i={key} key={key} />
+						) : (
+							<LeaderboardTile color="white" gradient={true} data={d} i={key} key={key} />
+						)
+					)}
+				</LeaderboardContainer>
+			</Container>
+			<MyScore onPress={() => ScrollToPosition(12)}>
+				<>
+					<Separator></Separator>
+					<LeaderboardTile color="white" gradient={true} data={data[12]} i={12} />
+				</>
+			</MyScore>
+		</>
 	);
 };
+
+const Separator = styled.View`
+	border-top-width: 0.5px;
+	border-top-color: #38454c;
+	padding-bottom: 15px;
+`;
+
+const MyScore = styled.Pressable`
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	padding-horizontal: 20px;
+
+	background-color: #efefef;
+`;
 
 const LeaderboardContainer = styled.View`
 	flex: 1;
 	background-color: #efefef;
 	padding: 30px 20px;
+	padding-bottom: 90px;
 `;
 
 const TitleContainer = styled.View`
@@ -289,4 +410,7 @@ const SubTitle = styled.Text`
 	font-size: 14px;
 `;
 
-const Container = styled(ScrollScreen)``;
+const Container = styled.ScrollView`
+	flex: 1;
+	background-color: #efefef;
+`;
