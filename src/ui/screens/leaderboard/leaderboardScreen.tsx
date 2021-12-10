@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { Text } from "react-native";
+import React, { createRef } from "react";
+import { ScrollView } from "react-native";
 import styled from "styled-components/native";
 import LinearGradient from "react-native-linear-gradient";
 import { colors } from "@ui/styles/colors";
@@ -236,13 +236,6 @@ const Star = styled.Image`
 	width: 11px;
 `;
 
-const Country = styled.Image`
-	height: 14px;
-	width: 14px;
-	margin-left: 13px;
-	margin-top: -2px;
-`;
-
 const CountryEmoji = styled.Text`
 	font-size: 14px;
 	margin-left: 13px;
@@ -295,7 +288,7 @@ const LeaderboardTile = ({
 	color: string;
 	i: number;
 }) => {
-	const { rank, firstname, lastname, score, progress, subscore, country } = data;
+	const { firstname, lastname, score, progress, subscore, country } = data;
 
 	return (
 		<Tile
@@ -344,10 +337,10 @@ const LeaderboardTile = ({
 };
 
 export const LeaderboardScreen: React.FC = () => {
-	const scrollRef = useRef();
+	const scrollRef = createRef<ScrollView>();
 
 	const ScrollToPosition = (position: number) => {
-		let y = position * 67;
+		const y = position * 67;
 		scrollRef.current?.scrollTo({
 			x: 0,
 			y: y,

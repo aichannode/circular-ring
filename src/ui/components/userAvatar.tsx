@@ -6,12 +6,12 @@ import dayjs from "dayjs";
 import React from "react";
 import LinearGradient from "react-native-linear-gradient";
 import styled from "styled-components/native";
-import { launchImageLibrary } from "react-native-image-picker";
+// import { launchImageLibrary } from "react-native-image-picker";
 import { TouchableOpacity } from "react-native";
-import { useServices } from "@core/services";
+// import { useServices } from "@core/services";
 
 export const UserAvatar = () => {
-	const { userService } = useServices();
+	// const { userService } = useServices();
 	const user = useUser();
 	const { format } = useI18n();
 	console.log("USER", user);
@@ -20,18 +20,19 @@ export const UserAvatar = () => {
 	const date = dayjs(userCreationDate);
 	const displayedDate = date.format("MMM. YYYY");
 
-	const selectImage = async () => {
-		const image = await launchImageLibrary({ mediaType: "photo" });
-		if (image.didCancel) return;
-		console.log("USER Image", image);
-		const { uri, fileName, type } = image.assets[0];
+	// const selectImage = async () => {
+	// 	const image = await launchImageLibrary({ mediaType: "photo" });
+	// 	if (image.didCancel) return;
+	// 	console.log("USER Image", image);
+	// 	// const { uri, fileName, type } = image.assets[0];
 
-		userService.uploadProfilPicture(uri, fileName, type);
-	};
+	// 	// userService.uploadProfilPicture(uri, fileName, type);
+	// };
 
 	return !user ? null : (
 		<UserInfo>
-			<TouchableOpacity onPress={() => selectImage(userService)}>
+			{/* <TouchableOpacity onPress={() => selectImage(userService)}> */}
+			<TouchableOpacity>
 				<AvatarBorder
 					colors={[colors.orangeGradientStart, colors.orangeGradientEnd]}
 					start={{ x: 0.5, y: 0 }}
