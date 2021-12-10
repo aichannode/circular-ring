@@ -1,10 +1,10 @@
-import { ScrollScreen } from "@ui/components/scrollScreen";
 import React, { useRef } from "react";
+import { Text } from "react-native";
 import styled from "styled-components/native";
 import LinearGradient from "react-native-linear-gradient";
 import { colors } from "@ui/styles/colors";
-import { Dimensions } from "react-native";
 import moment from "moment";
+import emoji from "node-emoji";
 
 interface I_Data {
 	rank: number;
@@ -32,7 +32,7 @@ const data: I_Data[] = [
 		score: 99.23,
 		progress: true,
 		subscore: 45,
-		country: "france",
+		country: "flag-fr",
 	},
 	{
 		rank: 3,
@@ -41,7 +41,7 @@ const data: I_Data[] = [
 		score: 99.21,
 		progress: false,
 		subscore: 34,
-		country: "france",
+		country: "flag-fi",
 	},
 	{
 		rank: 4,
@@ -50,7 +50,7 @@ const data: I_Data[] = [
 		score: 98.41,
 		progress: false,
 		subscore: 39,
-		country: "france",
+		country: "flag-ru",
 	},
 	{
 		rank: 5,
@@ -59,7 +59,7 @@ const data: I_Data[] = [
 		score: 98.09,
 		progress: true,
 		subscore: 51,
-		country: "france",
+		country: "flag-us",
 	},
 	{
 		rank: 6,
@@ -68,7 +68,7 @@ const data: I_Data[] = [
 		score: 98.01,
 		progress: true,
 		subscore: 51,
-		country: "france",
+		country: "flag-cw",
 	},
 	{
 		rank: 7,
@@ -77,7 +77,7 @@ const data: I_Data[] = [
 		score: 97.99,
 		progress: false,
 		subscore: 32,
-		country: "france",
+		country: "flag-fr",
 	},
 	{
 		rank: 8,
@@ -86,7 +86,7 @@ const data: I_Data[] = [
 		score: 97.93,
 		progress: true,
 		subscore: 46,
-		country: "france",
+		country: "flag-fr",
 	},
 	{
 		rank: 1,
@@ -103,7 +103,7 @@ const data: I_Data[] = [
 		score: 99.23,
 		progress: true,
 		subscore: 45,
-		country: "france",
+		country: "flag-fr",
 	},
 	{
 		rank: 3,
@@ -112,7 +112,7 @@ const data: I_Data[] = [
 		score: 99.21,
 		progress: false,
 		subscore: 34,
-		country: "france",
+		country: "flag-fr",
 	},
 	{
 		rank: 4,
@@ -121,7 +121,7 @@ const data: I_Data[] = [
 		score: 98.41,
 		progress: false,
 		subscore: 39,
-		country: "france",
+		country: "flag-fr",
 	},
 	{
 		rank: 5,
@@ -130,7 +130,7 @@ const data: I_Data[] = [
 		score: 98.09,
 		progress: true,
 		subscore: 51,
-		country: "france",
+		country: "flag-fr",
 	},
 	{
 		rank: 6,
@@ -139,7 +139,7 @@ const data: I_Data[] = [
 		score: 98.01,
 		progress: true,
 		subscore: 51,
-		country: "france",
+		country: "flag-fr",
 	},
 	{
 		rank: 7,
@@ -148,7 +148,7 @@ const data: I_Data[] = [
 		score: 97.99,
 		progress: false,
 		subscore: 32,
-		country: "france",
+		country: "flag-fr",
 	},
 	{
 		rank: 8,
@@ -157,7 +157,7 @@ const data: I_Data[] = [
 		score: 97.93,
 		progress: true,
 		subscore: 46,
-		country: "france",
+		country: "flag-fr",
 	},
 ];
 
@@ -243,6 +243,12 @@ const Country = styled.Image`
 	margin-top: -2px;
 `;
 
+const CountryEmoji = styled.Text`
+	font-size: 14px;
+	margin-left: 13px;
+	margin-top: -4px;
+`;
+
 const SubScore = styled.Text<{ color: string }>`
 	font-size: 10px;
 	color: ${(props) => props.color};
@@ -271,6 +277,13 @@ const LightScore = styled.Text<{ color: string }>`
 	margin-top: 17px;
 `;
 
+const ColoredStar = ({ position }: { position: number }) => {
+	if (position === 0) return <Star resizeMode="contain" source={require("@assets/images/goldStar.png")} />;
+	if (position === 1) return <Star resizeMode="contain" source={require("@assets/images/starSilver.png")} />;
+	if (position === 2) return <Star resizeMode="contain" source={require("@assets/images/starCopper.png")} />;
+	return <Star resizeMode="contain" source={require("@assets/images/starOrange.png")} />;
+};
+
 const LeaderboardTile = ({
 	data,
 	gradient,
@@ -282,7 +295,7 @@ const LeaderboardTile = ({
 	color: string;
 	i: number;
 }) => {
-	const { rank, firstname, lastname, score, progress, subscore } = data;
+	const { rank, firstname, lastname, score, progress, subscore, country } = data;
 
 	return (
 		<Tile
@@ -310,9 +323,10 @@ const LeaderboardTile = ({
 					<LastName color={color}>{lastname}</LastName>
 				</UserName>
 				<MiddleBottomContainer>
-					<Star resizeMode="contain" source={require("@assets/images/goldStar.png")}></Star>
+					<ColoredStar position={i}></ColoredStar>
 					<SubScore color={color}>{subscore}</SubScore>
-					<Country resizeMode="contain" source={require("@assets/images/france.png")}></Country>
+					{/* <Country resizeMode="contain" source={require("@assets/images/france.png")}></Country> */}
+					{country && <CountryEmoji>{emoji.get(country)}</CountryEmoji>}
 				</MiddleBottomContainer>
 			</MiddleTileContainer>
 			<TileRightContainer color={color}>
