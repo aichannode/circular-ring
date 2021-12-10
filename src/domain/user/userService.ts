@@ -289,4 +289,12 @@ export class UserService {
 			}
 		}
 	}
+
+	async uploadProfilPicture(uri: string, name: string, type: string) {
+		try {
+			this.userApi.uploadUserProfilPic(uri, name, type);
+		} catch (err) {
+			throw err;
+		}
+	}
 }

@@ -47,6 +47,7 @@ export enum Routes {
 	NewRingSetupScreen = "NewRingSetupScreen",
 
 	QuickAccess = "QuickAccess",
+	Leaderboard = "Leaderboard",
 }
 
 export type AppRoutesParams = {
@@ -97,6 +98,7 @@ export type AppRoutesParams = {
 	[Routes.QuickAccess]: undefined;
 	[Routes.RingFirmwareUpdate]: undefined;
 	[Routes.NewRingSetupScreen]: undefined;
+	[Routes.Leaderboard]: undefined;
 };
 
 export type Navigate = NativeStackNavigationProp<AppRoutesParams, keyof AppRoutesParams>["navigate"];

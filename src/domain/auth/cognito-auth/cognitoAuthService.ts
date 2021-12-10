@@ -52,7 +52,7 @@ export class CognitoAuthService<
 						currentUser.getSession((error: Error | null, session: CognitoUserSession | null) => {
 							if (!error && session) {
 								this._accessToken.set(session.getAccessToken());
-								// console.log("Auth Token", session.getAccessToken().getJwtToken());
+								console.log("Auth Token", session.getAccessToken().getJwtToken());
 								resolve();
 							} else {
 								this.logger.warn("Refresh user failed", error);
@@ -261,7 +261,7 @@ export class CognitoAuthService<
 		try {
 			this._cognitoUser.get()?.signOut();
 		} catch (e) {
-			console.error(e)
+			console.error(e);
 		} finally {
 			this._cognitoUser.set(null);
 			this._accessToken.set(null);

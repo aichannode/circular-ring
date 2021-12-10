@@ -1,3 +1,6 @@
 {
-	"name": "@ui"
+	"name": "@ui",
+	"devDependencies": {
+		"@types/node-emoji": "^1.8.1"
+	}
 }

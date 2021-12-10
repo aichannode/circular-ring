@@ -3,6 +3,12 @@ import { DateFormat, HeightUnit, HourFormat, WeightUnit } from "@domain/units";
 import { AdvancedInfo } from "@domain/user/advancedInfo";
 import { Sex, User } from "@domain/user/user";
 import { UserSettings } from "@domain/user/userSettings";
+// import axios, { AxiosInstance } from "axios";
+
+// import { addAuthorizationInterceptor } from "@core/api/interceptors/addAuthorizationInterceptor";
+// import { logResponseInterceptor } from "@core/api/interceptors/logResponseInterceptor";
+// import { getLogger } from "@core/logger/logger";
+// import { Logger } from "@betomorrow/logging-core";
 
 interface UserDtoBase {
 	firstName: string;
@@ -38,7 +44,15 @@ interface UserSettingsDto {
 }
 
 export class UserApi {
-	constructor(private readonly apiService: ApiService) {}
+	// private readonly instance: AxiosInstance;
+	// private logger: Logger = getLogger("UserApi");
+
+	constructor(private readonly apiService: ApiService) {
+		// this.instance = axios.create();
+		// addRequestInterceptor(this.instance, serializeArrayParametersInterceptor);
+		// addAuthorizationInterceptor(this.instance);
+		// addResponseInterceptor(this.instance, logResponseInterceptor(this.logger));
+	}
 
 	/** User **/
 
@@ -103,5 +117,34 @@ export class UserApi {
 	async updateAdvancedInfo(info: AdvancedInfo): Promise<AdvancedInfo> {
 		const result = await this.apiService.put<AdvancedInfo>("/user/advanced", info);
 		return result.data;
+	}
+
+	async uploadUserProfilPic(uri: string, name: string, type: string) {
+		console.log("type.split('/')[1]", type.split("/")[1]);
+		try {
+			const splitType = type.split("/")[1];
+			console.log("Type", type);
+			const data = (
+				await this.apiService.post<{ url: string; fields: Record<string, any>; taskId: string }>("/user/me/avatar", {
+					type: splitType,
+				})
+			).data;
+			console.log("data", data);
+			const formData = new FormData();
+			Object.entries(data.fields).forEach(([k, v]) => {
+				formData.append(k, v);
+			});
+			formData.append("Content-Type", type);
+			formData.append("file", {
+				uri,
+				type,
+				name,
+			});
+			console.log("Data.url", data.url, " formData", formData);
+			await this.apiService.post(data.url, formData);
+		} catch (err) {
+			console.log("Err", JSON.stringify(err));
+			throw err;
+		}
 	}
 }

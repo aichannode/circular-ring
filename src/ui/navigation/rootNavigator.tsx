@@ -44,6 +44,7 @@ import { WebViewScreen } from "@ui/screens/webViewScreen";
 import React, { useState } from "react";
 import styled from "styled-components/native";
 import { NewRingSetupScreen } from "@ui/screens/myRing/newRingSetupScreen";
+import { LeaderboardScreen } from "@ui/screens/leaderboard/leaderboardScreen";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -222,6 +223,15 @@ const MainHomeNavigator = () => {
 				}}
 			/>
 			<MainStack.Screen name={Routes.NewRingSetupScreen} component={NewRingSetupScreen} />
+
+			<MainStack.Screen
+				name={Routes.Leaderboard}
+				component={LeaderboardScreen}
+				options={{
+					title: format("header.leaderboard"),
+					headerRight: () => <MyRingBattery />,
+				}}
+			/>
 
 			<MainStack.Screen name={Routes.WebView} component={WebViewScreen} />
 		</MainStack.Navigator>
