@@ -18,14 +18,14 @@ export const UserAvatar = () => {
 	const selectImage = async () => {
 		const image = await launchImageLibrary({ mediaType: "photo" });
 		if (image.didCancel) return;
-		if (image?.assets?.length === 0) return;
-		// @ts-ignore
-		const { uri, fileName, type } = image.assets[0];
-		try {
-			// @ts-ignore
-			await userService.uploadProfilPicture(uri, fileName, type);
-		} catch (err) {
-			Alert.alert("Error", "Error uploading picture");
+		if (image.assets !== undefined) {
+			const { uri, fileName, type } = image?.assets[0];
+			try {
+				if (uri !== undefined && fileName !== undefined && type !== undefined)
+					await userService.uploadProfilPicture(uri, fileName, type);
+			} catch (err) {
+				Alert.alert("Error", "Error uploading picture");
+			}
 		}
 	};
 
@@ -36,11 +36,7 @@ export const UserAvatar = () => {
 	return !user ? null : (
 		<UserInfo>
 			<TouchableOpacity onPress={() => selectImage()}>
-				<PenBorder
-				// colors={[colors.orangeGradientStart, colors.orangeGradientEnd]}
-				// start={{ x: 0.5, y: 0 }}
-				// end={{ x: 0.5, y: 1 }}
-				>
+				<PenBorder>
 					<PenBackground>
 						<PenImage resizeMode="contain" source={require("@assets/images/pen.png")}></PenImage>
 					</PenBackground>
