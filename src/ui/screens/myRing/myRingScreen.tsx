@@ -29,7 +29,7 @@ export const MyRingScreen: React.FC = () => {
 	const connected = useObservable(bleDeviceService.connectionState);
 	const [showPrompt, setShowPrompt] = useState<boolean>(false);
 	const [editedName, setEditedName] = useState<string>(
-		currentRing?.name ? viewModel.formatRingName(currentRing.name).slice(9) : ""
+		currentRing?.name ? viewModel.formatRingName(currentRing.name).slice(8) : ""
 	);
 
 	console.log("CONNECTED", connected);
