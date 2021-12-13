@@ -54,8 +54,8 @@ export const UpdatingComponent: React.FC = () => {
 						<Image style={{ height: 100, width: 100 }} source={require("@assets/images/check.png")} />
 					</CenterView>
 					<PrimaryButton
-						onPress={() => {
-							ringManagementService.submitFirmwareVersion();
+						onPress={async () => {
+							await ringManagementService.submitFirmwareVersion();
 							bleDeviceService.updateState.set(UpdateState.IDLE);
 							goBack();
 						}}

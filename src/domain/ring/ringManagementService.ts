@@ -239,7 +239,7 @@ export class RingManagementService {
 			const { id } = connectedRing[0];
 			this.logger.info("Submit User Ring", connectedRing);
 			try {
-				// await this.updateStoredRings({ ...connectedRing[0], firmware });
+				await this.updateStoredRings({ ...connectedRing[0], firmware });
 				await this.ringApi.submitFirmwareVersion(id, firmware);
 			} catch (err) {
 				this.logger.warn("Error Submiting User Ring", err);
