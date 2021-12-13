@@ -135,6 +135,12 @@ export class BleDeviceService {
 		private readonly userService: UserService,
 		private readonly ringApi: RingApi
 	) {
+		this._favoriteDevice.subscribe((device) => {
+			console.log("SAVE DEVICE");
+			if (device) this.favoriteDeviceStorage.save(device);
+			return device;
+		});
+
 		LocationEnabler.addListener(({ locationEnabled }) => {
 			this._locationEnabledAndroid.set(locationEnabled);
 		});
@@ -369,11 +375,6 @@ export class BleDeviceService {
 	}
 
 	async connect(device: Device) {
-		// const manageRingGateway = new ManageRingGateway()
-		// if((await manageRingGateway.getAvailableDevices()).includes(device.id)){
-		// 	return
-		// }
-
 		if (!device.name) {
 			this.logger.error("Error: trying to connect to unknown device");
 			return;
@@ -492,14 +493,12 @@ export class BleDeviceService {
 			this.logger.info("Scanning to autoconnect to", name);
 			this._scanning.set(true);
 			manager.startDeviceScan([NUServiceUUID], { scanMode: ScanMode.LowLatency }, (error, device) => {
-				// console.log("Device Found", device);
 				if (error) {
 					this.logger.error("Error during scan", error);
 					this.stopScan();
 					reject(error);
 				} else if (device) {
 					this.logger.info(`Discovered device named ${device.name} with id ${device.id}`);
-					// console.log("device", device);
 					if (device.name === name) {
 						if (this.updateState.get().status === UpdateState.RECONNECTING.status)
 							this.updateState.set(UpdateState.UPDATE_SUCCESS);

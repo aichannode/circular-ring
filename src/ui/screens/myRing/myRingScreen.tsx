@@ -28,7 +28,9 @@ export const MyRingScreen: React.FC = () => {
 	const currentRing: NamedUserRing = userRings.filter((ring) => ring.connected)[0];
 	const connected = useObservable(bleDeviceService.connectionState);
 	const [showPrompt, setShowPrompt] = useState<boolean>(false);
-	const [editedName, setEditedName] = useState<string>(currentRing?.name ? currentRing.name : "");
+	const [editedName, setEditedName] = useState<string>(
+		currentRing?.name ? viewModel.formatRingName(currentRing.name).slice(8) : ""
+	);
 
 	console.log("CONNECTED", connected);
 
@@ -42,14 +44,15 @@ export const MyRingScreen: React.FC = () => {
 	const renameRing = async () => {
 		if (editedName && editedName !== "") {
 			try {
-				await bleDeviceService.write(`${Channel.RENAME}${editedName.toUpperCase()}`);
-				bleDeviceService.favoriteDevice.set({ name: "Circular " + viewModel.formatRingName(editedName.toUpperCase()) });
+				bleDeviceService.favoriteDevice.set({ name: "Circular " + viewModel.formatRingName(editedName) });
+				await bleDeviceService.write(`${Channel.RENAME}${viewModel.formatRingName(editedName)}`);
+				console.log("Circular ", viewModel.formatRingName(editedName));
 				ringManagementService.userRings.set(
 					userRings.map((ring) => {
 						if (ring.connected)
 							return {
 								...ring,
-								name: "Circular " + viewModel.formatRingName(editedName.toUpperCase()),
+								name: viewModel.formatRingName(editedName),
 							};
 						else return ring;
 					})
@@ -67,7 +70,7 @@ export const MyRingScreen: React.FC = () => {
 		<Container>
 			<Dialog.Container visible={showPrompt}>
 				<Dialog.Title>{format("manage_rings.ring.rename")}</Dialog.Title>
-				<Dialog.Input value={editedName} onChangeText={setEditedName}></Dialog.Input>
+				<Dialog.Input value={viewModel.formatRingName(editedName)} onChangeText={setEditedName}></Dialog.Input>
 				<Dialog.Button onPress={() => setShowPrompt(false)} label={format("global.cancel")} />
 				<Dialog.Button
 					label={format("global.edit")}
@@ -78,17 +81,17 @@ export const MyRingScreen: React.FC = () => {
 				/>
 			</Dialog.Container>
 			<RingBatteryView size={140} detailed style={{ marginBottom: 30 }} />
+			<EditText
+				onPress={() => {
+					console.log("Edit");
+					setShowPrompt(true);
+				}}
+			>
+				<StyledPrimaryText>{currentRing?.name}</StyledPrimaryText>
+				<Pen source={require("@assets/images/pen.png")}></Pen>
+			</EditText>
 			{connected === DeviceConnectionState.CONNECTED && (
 				<>
-					<EditText
-						onPress={() => {
-							console.log("Edit");
-							setShowPrompt(true);
-						}}
-					>
-						<StyledPrimaryText>{currentRing?.name}</StyledPrimaryText>
-						<Pen source={require("@assets/images/pen.png")}></Pen>
-					</EditText>
 					<InfoListItem
 						name={format("ring.firmware")}
 						hasDisclosure
