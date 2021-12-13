@@ -106,9 +106,9 @@ export class RingManagementService {
 					const namedRing = { ...userRing, name: deviceName, connected: true };
 					console.log("CIR-266 USER RING REGISTERING", [...userRings, namedRing]);
 					// this.userRings.update((rings) => {
-					// 	console.log("UPDATE SHIT", [...rings], namedRing); 
+					// 	console.log("UPDATE SHIT", [...rings], namedRing);
 					// 	return [...rings, namedRing]});
-					this.userRings.set([...userRings, namedRing])
+					this.userRings.set([...userRings, namedRing]);
 					return userRing;
 				}
 			} catch (e) {
