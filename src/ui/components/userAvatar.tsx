@@ -36,6 +36,15 @@ export const UserAvatar = () => {
 	return !user ? null : (
 		<UserInfo>
 			<TouchableOpacity onPress={() => selectImage()}>
+				<PenBorder
+				// colors={[colors.orangeGradientStart, colors.orangeGradientEnd]}
+				// start={{ x: 0.5, y: 0 }}
+				// end={{ x: 0.5, y: 1 }}
+				>
+					<PenBackground>
+						<PenImage resizeMode="contain" source={require("@assets/images/pen.png")}></PenImage>
+					</PenBackground>
+				</PenBorder>
 				<AvatarBorder
 					colors={[colors.orangeGradientStart, colors.orangeGradientEnd]}
 					start={{ x: 0.5, y: 0 }}
@@ -81,11 +90,35 @@ const AvatarBorder = styled(LinearGradient)`
 	align-items: stretch;
 	justify-content: center;
 `;
+const PenImage = styled.Image``;
+
+const PenBorder = styled.View`
+	position: absolute;
+	right: 0px;
+	z-index: 20;
+	background-color: white;
+	overflow: hidden;
+	width: 27px;
+	height: 27px;
+	padding: 4px;
+	border-radius: 14px;
+	align-items: stretch;
+	justify-content: center;
+	border: 2px solid ${colors.orangeGradientStart};
+`;
+
+const PenBackground = styled.View`
+	overflow: hidden;
+	flex: 1;
+	background-color: ${colors.lightgray};
+	justify-content: flex-end;
+	align-items: center;
+	margin-bottom: 0;
+`;
 
 const AvatarBackground = styled.View`
 	overflow: hidden;
 	margin-bottom: 12px;
-	border: 1px solid black;
 	flex: 1;
 	border-radius: 56px;
 	background-color: ${colors.lightgray};
