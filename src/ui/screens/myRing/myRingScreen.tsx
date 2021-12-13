@@ -70,7 +70,7 @@ export const MyRingScreen: React.FC = () => {
 		<Container>
 			<Dialog.Container visible={showPrompt}>
 				<Dialog.Title>{format("manage_rings.ring.rename")}</Dialog.Title>
-				<Dialog.Input value={editedName.toUpperCase()} onChangeText={setEditedName}></Dialog.Input>
+				<Dialog.Input value={viewModel.formatRingName(editedName)} onChangeText={setEditedName}></Dialog.Input>
 				<Dialog.Button onPress={() => setShowPrompt(false)} label={format("global.cancel")} />
 				<Dialog.Button
 					label={format("global.edit")}
