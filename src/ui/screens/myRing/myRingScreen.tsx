@@ -29,7 +29,7 @@ export const MyRingScreen: React.FC = () => {
 	const connected = useObservable(bleDeviceService.connectionState);
 	const [showPrompt, setShowPrompt] = useState<boolean>(false);
 	const [editedName, setEditedName] = useState<string>(
-		currentRing?.name ? currentRing.name.toUpperCase().slice(9) : ""
+		currentRing?.name ? viewModel.formatRingName(currentRing.name).slice(9) : ""
 	);
 
 	console.log("CONNECTED", connected);
@@ -44,15 +44,15 @@ export const MyRingScreen: React.FC = () => {
 	const renameRing = async () => {
 		if (editedName && editedName !== "") {
 			try {
-				bleDeviceService.favoriteDevice.set({ name: "Circular " + viewModel.formatRingName(editedName.toUpperCase()) });
-				await bleDeviceService.write(`${Channel.RENAME}${editedName.toUpperCase()}`);
-				console.log("Circular ", viewModel.formatRingName(editedName.toUpperCase()));
+				bleDeviceService.favoriteDevice.set({ name: "Circular " + viewModel.formatRingName(editedName) });
+				await bleDeviceService.write(`${Channel.RENAME}${viewModel.formatRingName(editedName)}`);
+				console.log("Circular ", viewModel.formatRingName(editedName));
 				ringManagementService.userRings.set(
 					userRings.map((ring) => {
 						if (ring.connected)
 							return {
 								...ring,
-								name: viewModel.formatRingName(editedName.toUpperCase()),
+								name: viewModel.formatRingName(editedName),
 							};
 						else return ring;
 					})
