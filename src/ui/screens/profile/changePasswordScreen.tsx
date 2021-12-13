@@ -37,7 +37,10 @@ export const ChangePasswordScreen = () => {
 			setErrorMessage("");
 			confirmChangePasswordBottomSheetRef.current?.present();
 		} catch (e: any) {
-			if (e.message) setErrorMessage(e.message);
+			if (e.code === "NotAuthorizedException") {
+				setErrorMessage(format("change_password.current.error"));
+			}
+			else if (e.message) setErrorMessage(e.message);
 			else setErrorMessage(format("login.error.default"));
 		} finally {
 			setLoading(false);
