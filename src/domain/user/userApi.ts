@@ -3,12 +3,9 @@ import { DateFormat, HeightUnit, HourFormat, WeightUnit } from "@domain/units";
 import { AdvancedInfo } from "@domain/user/advancedInfo";
 import { Sex, User } from "@domain/user/user";
 import { UserSettings } from "@domain/user/userSettings";
-// import axios, { AxiosInstance } from "axios";
-
-// import { addAuthorizationInterceptor } from "@core/api/interceptors/addAuthorizationInterceptor";
-// import { logResponseInterceptor } from "@core/api/interceptors/logResponseInterceptor";
-// import { getLogger } from "@core/logger/logger";
-// import { Logger } from "@betomorrow/logging-core";
+import axios, { AxiosInstance } from "axios";
+import { addRequestInterceptor } from "@core/api/interceptors/interceptor";
+import { serializeArrayParametersInterceptor } from "@core/api/interceptors/serializeArrayParametersInterceptor";
 
 interface UserDtoBase {
 	firstName: string;
@@ -44,14 +41,11 @@ interface UserSettingsDto {
 }
 
 export class UserApi {
-	// private readonly instance: AxiosInstance;
-	// private logger: Logger = getLogger("UserApi");
+	private readonly instance: AxiosInstance;
 
 	constructor(private readonly apiService: ApiService) {
-		// this.instance = axios.create();
-		// addRequestInterceptor(this.instance, serializeArrayParametersInterceptor);
-		// addAuthorizationInterceptor(this.instance);
-		// addResponseInterceptor(this.instance, logResponseInterceptor(this.logger));
+		this.instance = axios.create();
+		addRequestInterceptor(this.instance, serializeArrayParametersInterceptor);
 	}
 
 	/** User **/
@@ -141,7 +135,8 @@ export class UserApi {
 				name,
 			});
 			console.log("Data.url", data.url, " formData", formData);
-			await this.apiService.post(data.url, formData);
+			const res = await this.instance.post(data.url, formData);
+			console.log("REs", res);
 		} catch (err) {
 			console.log("Err", JSON.stringify(err));
 			throw err;
