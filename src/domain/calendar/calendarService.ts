@@ -1,22 +1,21 @@
 import { Store } from "@betomorrow/micro-stores";
 import { getLogger } from "@core/logger/logger";
-import { CalendarNote, CalendarTag } from "@domain/calendar/calendar";
+import { CalendarNote, CalendarTag, CalendarTagCategory } from "@domain/calendar/calendar";
 import { CalendarApi } from "@domain/calendar/calendarApi";
 import { UserService } from "@domain/user/userService";
 import dayjs from "dayjs";
 import { observable } from "micro-observables";
-
-export const PopularTagCategory = "Popular";
-export const CustomTagCategory = "Custom Tags";
 
 export class CalendarService {
 	private logger = getLogger("CalendarService");
 
 	calendarStore = new Store((day) => this.fetchMonthCalendars(dayjs(day).toDate()), "day");
 
-	private _tagMap = observable<Map<string, CalendarTag[]>>(new Map());
+	private _tagMap = observable<Map<number, CalendarTag[]>>(new Map());
+	private _categories = observable<CalendarTagCategory[]>([]);
 
 	readonly tagMap = this._tagMap.readOnly();
+	readonly categories = this._categories.readOnly()
 
 	// private _userTagMap = observable<Map<string, CalendarTag[]>>(new Map());
 
@@ -29,7 +28,6 @@ export class CalendarService {
 			if (user) {
 				this.fetchAllTags();
 			} else {
-				this._tagMap.set(new Map());
 				this.calendarStore.clear();
 			}
 		});
@@ -39,23 +37,6 @@ export class CalendarService {
 		try {
 			const calendarList = await this.calendarApi.getMonthCalendars(date);
 			this.logger.debug("Got calendar : " + JSON.stringify(calendarList));
-
-			const popularTags = this._tagMap.get().get(PopularTagCategory) ?? [];
-			const customTags = this._tagMap.get().get(CustomTagCategory) ?? [];
-
-			console.log("popularTags", popularTags, "PopularTagCategory", PopularTagCategory);
-
-			calendarList
-				.flatMap((calendar) => calendar.notes)
-				.map((note) => note.tag)
-				.forEach((tag) => {
-					console.log("TAG", tag);
-					if (tag && popularTags.findIndex((t) => t.id === tag.id) < 0) {
-						popularTags.push(tag);
-					}
-				});
-			this._tagMap.update((tagMap) => tagMap.set(CustomTagCategory, customTags));
-			// this._tagMap.update((tagMap) => tagMap.set(s, popularTags));
 
 			return {
 				day: dayjs(date).format("YYYY-MM-DD"),
@@ -69,23 +50,14 @@ export class CalendarService {
 
 	private async fetchAllTags() {
 		try {
-			let tags = await this.calendarApi.getAllTags();
-			if (tags.length === 0) {
-				await this.calendarApi.createTag("Romain", "debug");
-				await this.calendarApi.createTag("Tom", "debug");
-				await this.calendarApi.createTag("Albrecht", "debug");
-				await this.calendarApi.createTag("Pierre", "debug");
-				await this.calendarApi.createTag("Laurent L", "debug");
-				await this.calendarApi.createTag("Laurent B", "debug");
-				await this.calendarApi.createTag("Amaury", "debug");
-				await this.calendarApi.createTag("Alexandre", "debug");
-				tags = await this.calendarApi.getAllTags();
-			}
-			const categories = tags.map((tag) => tag.category);
-			const categoryMap = new Map(
-				categories.map((category) => [category, tags.filter((tag) => tag.category === category)])
-			);
-			this._tagMap.set(categoryMap);
+			const tags = await this.calendarApi.getAllTags();
+			const categories = await this.calendarApi.getCategories(
+				[...new Set(tags.map(({categoryId: category}) => category))] // extract deduplicated category ids
+			)
+			this._tagMap.set(new Map(
+				categories.map((category) => [category.id, tags.filter((tag) => tag.categoryId === category.id)])
+			));
+			this._categories.set(categories.sort((a, b) => a.order - b.order)); // Order categories
 		} catch (e) {
 			this.logger.warn("Error retrieving tags :", e);
 		}

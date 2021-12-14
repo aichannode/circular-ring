@@ -1,8 +1,16 @@
+import { WordingKey } from "src/wordings";
+
 export interface CalendarTag {
 	id: number;
 	name: string;
 	system: boolean;
-	category: string;
+	categoryId: number;
+}
+
+export type CalendarTagCategory = {
+	id:	number
+	label: WordingKey
+	order: number
 }
 
 export interface CalendarNote {
