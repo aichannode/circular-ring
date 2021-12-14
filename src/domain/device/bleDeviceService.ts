@@ -209,7 +209,8 @@ export class BleDeviceService {
 		}
 		this.userService.user.subscribe(async (user) => {
 			if (!user) {
-				this.disconnect();
+				await this.disconnect();
+				this._favoriteDevice.set(null);
 			}
 		});
 	}

@@ -34,10 +34,9 @@ export class RingManagementService {
 		private readonly ringDataStorage: RingDataStorage,
 		private readonly ringApi: RingApi
 	) {
-		const unsubscribe = this.userService.user.subscribe((user) => {
-			if (user) {
-				// this.getRings();
-				unsubscribe();
+		this.userService.user.subscribe((user) => {
+			if (!user) {
+				this._userRings.set([]);
 			}
 		});
 
