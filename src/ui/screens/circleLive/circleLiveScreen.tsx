@@ -3,7 +3,7 @@ import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
 import { useAutoConnectState, useLiveData } from "@domain/device/hooks";
 import { getScoreQuality } from "@domain/measure/score";
 import { usePreferences } from "@domain/preferences/hooks";
-import { getIntensity, Intensity } from "@domain/ring/ringLiveData";
+import { getIntensity, Intensity, getMaxHr } from "@domain/ring/ringLiveData";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
@@ -18,12 +18,19 @@ import { HeartBeatCard } from "./heartBeatCard";
 import { LiveTutorialBottomSheet } from "./liveTutorialBottomSheet";
 import { NoRingConnectedBottomSheet } from "./noRingConnectedBottomSheet";
 import { View } from "react-native";
+import { useUser } from "@domain/user/hooks/useUser";
+import moment from "moment";
 
 export const CircleLiveScreen: React.FC = () => {
 	const { format, formatIntensity, formatScoreQuality } = useI18n();
 	const { data, listening, start, stop, flush } = useLiveData();
+	const user = useUser();
+
+	const maxHrPercent = getMaxHr(user?.sex, moment().diff(user?.bornDate, "years"), data?.heartRate);
+	console.log("maxHr", maxHrPercent);
 
 	const maxHeartRateRatio = data ? (data.heartRate! / data.maxHeartRate!) * 100 : null;
+	console.log("maxHeartRatio", maxHeartRateRatio, user);
 	const activityIntensity = getIntensity(maxHeartRateRatio);
 	const dataQuality = getScoreQuality(85, 60, 80);
 
@@ -77,9 +84,6 @@ export const CircleLiveScreen: React.FC = () => {
 									}}
 								>
 									{!!data?.maxHeartRate && <DataValue>{formatIntensity(activityIntensity)}</DataValue>}
-									{activityIntensity !== Intensity.NONE ? (
-										<ColoredDot color={intensityColors[activityIntensity]} />
-									) : null}
 								</View>
 								{listening && !data?.maxHeartRate && <Spinner size={19} />}
 							</InfoCard>
@@ -94,11 +98,11 @@ export const CircleLiveScreen: React.FC = () => {
 						</Stack>
 						<InfoCard style={{ flex: 1, paddingBottom: 30, height: "100%" }}>
 							<TertiaryText>{format("live.hr_max.ratio.label")}</TertiaryText>
-							{maxHeartRateRatio ? (
+							{maxHrPercent ? (
 								<>
-									<DataValue style={{ alignSelf: "center" }}>{Math.floor(maxHeartRateRatio)} %</DataValue>
+									<DataValue style={{ alignSelf: "center" }}>{Math.floor(maxHrPercent * 100)} %</DataValue>
 									<Gauge>
-										<GaugeValue intensity={activityIntensity} rate={maxHeartRateRatio} />
+										<GaugeValue intensity={activityIntensity} rate={maxHrPercent} />
 									</Gauge>
 								</>
 							) : listening ? (

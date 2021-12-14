@@ -1,3 +1,4 @@
+import { Sex } from "./../user/user";
 export interface RingLiveData {
 	heartRate?: number;
 	spo2?: number;
@@ -44,6 +45,13 @@ export enum Intensity {
 	MEDIUM = "MEDIUM",
 	LOW = "LOW",
 	NONE = "NONE",
+}
+
+export function getMaxHr(sex: Sex | undefined, age: number | undefined, hr: number | undefined) {
+	console.log("sex", sex, "hr", hr);
+	if (sex === undefined || age === undefined || hr === undefined) return hr;
+	if (sex === "female") return hr / (201 - 0.63 * age);
+	return hr / (208 - 0.8 * age);
 }
 
 export function getIntensity(ratio: number | null) {
