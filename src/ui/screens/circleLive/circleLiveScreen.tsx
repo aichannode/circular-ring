@@ -31,7 +31,7 @@ export const CircleLiveScreen: React.FC = () => {
 
 	const maxHeartRateRatio = data ? (data.heartRate! / data.maxHeartRate!) * 100 : null;
 	console.log("maxHeartRatio", maxHeartRateRatio, user);
-	const activityIntensity = getIntensity(maxHrPercent * 100);
+	const activityIntensity = getIntensity(maxHrPercent);
 	const dataQuality = getScoreQuality(85, 60, 80);
 
 	const autoConnectState = useAutoConnectState();
@@ -100,9 +100,9 @@ export const CircleLiveScreen: React.FC = () => {
 							<TertiaryText>{format("live.hr_max.ratio.label")}</TertiaryText>
 							{maxHrPercent ? (
 								<>
-									<DataValue style={{ alignSelf: "center" }}>{Math.floor(maxHrPercent * 100)} %</DataValue>
+									<DataValue style={{ alignSelf: "center" }}>{Math.floor(maxHrPercent)} %</DataValue>
 									<Gauge>
-										<GaugeValue intensity={activityIntensity} rate={maxHrPercent} />
+										<GaugeValue intensity={activityIntensity} rate={maxHrPercent / 100} />
 									</Gauge>
 								</>
 							) : listening ? (
