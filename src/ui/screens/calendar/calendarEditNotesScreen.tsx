@@ -2,7 +2,6 @@ import { FetchStrategy } from "@betomorrow/micro-stores";
 import { useServices } from "@core/services";
 import { CalendarTag } from "@domain/calendar/calendar";
 import { useCalendar } from "@domain/calendar/hooks/useCalendar";
-import { useDebugTags, usePopularTags } from "@domain/calendar/hooks/useTags";
 import { PrimaryButton } from "@ui/components/buttons";
 import { CalendarDay } from "@ui/components/calendar/calendarDay";
 import { circularCalendarTheme } from "@ui/components/calendar/circularCalendarTheme";
@@ -45,8 +44,6 @@ export const CalendarEditNotesScreen: React.FC = () => {
 
 	const { calendarService } = useServices();
 	const calendar = useCalendar(day, FetchStrategy.Never);
-	const popularTags = usePopularTags();
-	const debugTags = useDebugTags();
 
 	const dateWithHour = useCallback((hour: number) => dayjs(day).hour(hour).toDate(), [day]);
 
@@ -122,7 +119,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 		}
 	}, [selectedTags, startDate, endDate, dismissHeader]);
 
-	const allRawTags = [...selectedTags, ...popularTags, ...debugTags].sort((t1, t2) => {
+	const allRawTags = selectedTags.sort((t1, t2) => {
 		return t1.name.localeCompare(t2.name);
 	});
 
