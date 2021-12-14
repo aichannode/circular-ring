@@ -54,7 +54,7 @@ export function getMaxHr(sex: Sex | undefined, age: number | undefined, hr: numb
 	return hr / (208 - 0.8 * age);
 }
 
-export function getIntensity(ratio: number | null) {
+export function getIntensity(ratio: number | null | undefined) {
 	return ratio
 		? ratio > 70
 			? Intensity.HIGH
