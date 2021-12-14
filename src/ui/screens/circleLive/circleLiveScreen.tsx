@@ -93,7 +93,7 @@ export const CircleLiveScreen: React.FC = () => {
 							</InfoCard>
 						</Stack>
 						<InfoCard style={{ flex: 1, paddingBottom: 30, height: "100%" }}>
-							<TertiaryText>{format("live.hr_max.ratio.label")}ss</TertiaryText>
+							<TertiaryText>{format("live.hr_max.ratio.label")}</TertiaryText>
 							{maxHeartRateRatio ? (
 								<>
 									<DataValue style={{ alignSelf: "center" }}>{Math.floor(maxHeartRateRatio)} %</DataValue>
