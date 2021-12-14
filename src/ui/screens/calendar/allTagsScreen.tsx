@@ -1,4 +1,4 @@
-import { useAllTags, useCustomTags } from "@domain/calendar/hooks/useTags";
+import { useTagCategories, useTags } from "@domain/calendar/hooks/useTags";
 import { InfoListHeader } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
@@ -9,16 +9,14 @@ import { textStyles } from "@ui/styles/textStyles";
 import React, { useLayoutEffect, useState } from "react";
 import { Image, Pressable, View } from "react-native";
 import styled from "styled-components/native";
-import CustomNote from "./customNotes";
 
 export const AllTagsScreen: React.FC = () => {
 	const route = useAppRoute<Routes.AllTags>();
 	const originalSelectedTags = route.params.selectedTags;
 
-	const allTags = useAllTags();
-	const customTags = useCustomTags();
-
-	console.log("CIR-262 custom", customTags);
+	const allTags = useTags();
+	const allCategories = useTagCategories()
+	
 	console.log("CIR-262", allTags);
 	const navigation = useRoutesNavigation();
 	const navigate = navigation.navigate;
@@ -65,7 +63,6 @@ export const AllTagsScreen: React.FC = () => {
 						placeholder={format("calendar.notes_search.placeholder")}
 						value={search}
 						onChangeText={setSearch}
-						autoFocus={true}
 					/>
 					{search.length > 0 && (
 						<CloseWrapper onPress={() => setSearch("")}>
@@ -94,29 +91,11 @@ export const AllTagsScreen: React.FC = () => {
 				</View>
 			) : (
 				<View>
-					<React.Fragment key="Custom Notes">
-						<CustomNote selectedTags={selectedTags} setSelectedTags={setSelectedTags}></CustomNote>
-						{/* <InfoListHeader>Custom Notes</InfoListHeader> */}
-						<TagListContainer>
-							<TagSelectionView
-								tags={[]}
-								selectedTags={selectedTags}
-								onClickTag={(tag) => {
-									const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
-									if (isAlreadySelected) {
-										setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
-									} else {
-										setSelectedTags([...selectedTags, tag]);
-									}
-								}}
-							/>
-						</TagListContainer>
-					</React.Fragment>
-					{Array.from(allTags.keys()).map((category) => {
-						const categoryTags = allTags.get(category) ?? [];
-						return categoryTags.length === 0 || category === "custom" ? null : (
-							<React.Fragment key={category}>
-								<InfoListHeader>{category}</InfoListHeader>
+					{allCategories.map(({id: categoryId, label: categoryLabel}) => {
+						const categoryTags = allTags.get(categoryId) ?? [];
+						return categoryTags.length === 0 ? null : (
+							<React.Fragment key={categoryId}>
+								<InfoListHeader>{format(categoryLabel)}</InfoListHeader>
 								<TagListContainer>
 									<TagSelectionView
 										tags={categoryTags}
