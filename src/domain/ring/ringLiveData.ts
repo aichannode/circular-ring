@@ -11,6 +11,8 @@ export function deserializeLiveData(liveData: string) {
 		/FBL(\w\w\w\w\w\w\w\w)(\w\w)(\w\w)(\w\w\w\w)(\w\w)(\w\w)(\w\w\w\w)(\w\w\w\w)(\w\w)(\w\w\w\w)/;
 	const matches = liveData.match(liveDataMessageRegex);
 
+	console.log("LIve DATA matches => ", matches);
+
 	if (liveData === "FBLEOS") {
 		return;
 	}
@@ -25,6 +27,8 @@ export function deserializeLiveData(liveData: string) {
 		const heartRate = +`0x${heartRateHex}`;
 		const spo2 = hexToSint16(spo2Hex) / 100;
 		const hrv = +`0x${hrvHex}`;
+
+		console.log(`Live DATA => correlation : ${correlation} heartRate : ${heartRate} spo2 : ${spo2} hrv : ${hrv}`);
 
 		return {
 			heartRate,
