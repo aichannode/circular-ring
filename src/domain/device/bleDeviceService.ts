@@ -4,7 +4,7 @@ import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { Channel } from "@domain/device/channels";
 import { FakeDeviceService } from "@domain/fake/fakeDeviceService";
 import { deserializeBattery, RingBattery } from "@domain/ring/ringBattery";
-import { deserializeLiveData, RingLiveData, CORRELATION_GOOD_THRESHOLD } from "@domain/ring/ringLiveData";
+import { deserializeLiveData, RingLiveData } from "@domain/ring/ringLiveData";
 import { UserService } from "@domain/user/userService";
 import { observable, Observable } from "micro-observables";
 import { Signal } from "micro-signals";
@@ -686,16 +686,16 @@ export class BleDeviceService {
 						// if (maxHeartRate === undefined || isNaN(maxHeartRate)) maxHeartRate: c?.data?.heartRate;
 						console.log("MAXHEARTRATE", maxHeartRate, "HEARTRATE", deserializedData.heartRate);
 
-						if (deserializedData?.correlation < CORRELATION_GOOD_THRESHOLD) {
-							console.log("LOW CORRELATION");
-							console.log("LOW CORRELATION");
-							console.log("LOW CORRELATION");
-							console.log("LOW CORRELATION");
-							console.log("LOW CORRELATION");
-							console.log("LOW CORRELATION");
+						// if (deserializedData?.correlation < CORRELATION_GOOD_THRESHOLD) {
+						// 	console.log("LOW CORRELATION");
+						// 	console.log("LOW CORRELATION");
+						// 	console.log("LOW CORRELATION");
+						// 	console.log("LOW CORRELATION");
+						// 	console.log("LOW CORRELATION");
+						// 	console.log("LOW CORRELATION");
 
-							return { ...c, data: { ...c?.data, correlation: deserializedData.correlation, maxHeartRate } };
-						}
+						// 	return { ...c, data: { ...c?.data, correlation: deserializedData.correlation, maxHeartRate } };
+						// }
 						return { ...c, data: { ...deserializedData, maxHeartRate } };
 					});
 				}
