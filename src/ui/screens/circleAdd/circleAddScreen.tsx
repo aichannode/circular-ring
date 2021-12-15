@@ -20,40 +20,67 @@ import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 // 	style?: StyleProp<ViewStyle>;
 // }
 
+
+
 export const CircleAddScreen: React.FC = () => {
 	const { circlesService } = useServices()
 	
 	const circles = useObservable(circlesService.circles)
-	
+
 	const { format } = useI18n();
-	const boxViews = circles.map((circle, i) => {
-		return (
-			// eslint-disable-next-line react/jsx-key
-				
+	const circlesVibration = circles.filter((circle) => circle.type === "Vibration")
+	const circlesWellness = circles.filter((circle) => circle.type === "Wellness")
+	const boxViewsWellness = circlesWellness.map((circle, i) => {	
+
+		const titleString = format(circle.key)
+		const title = titleString.replace(/(\r\n|\n|\r)/gm," ");
+		return (	
 				<BoxContainer key={i}>
 					<InnerContainer>
 						<Draggable source={circle.source}></Draggable>
 						<RightContainer>
-							<Title>{format(circle.key)}</Title>
-							<TileDesc>{format(circle.desc)}</TileDesc>
+							<Bold>{title}</Bold>
+							<Light>{format(circle.desc)}</Light>
 						</RightContainer>
-						<TouchableOpacity onPress={() => circlesService.toggleCircle(i)}>
+						<TouchableOpacity onPress={() => circlesService.toggleCircle(circle.id)}>
 							<Status>{circle.on ? "ON" : "OFF"}</Status>
-						</TouchableOpacity>
-							
-						
-						
+						</TouchableOpacity>		
 					</InnerContainer>
-				</BoxContainer>
-									
-			
+				</BoxContainer>	
+		);
+	})
+
+	const boxViewsVibration = circlesVibration.map((circle, i) => {
+
+		const titleString = format(circle.key)
+		const title = titleString.replace(/(\r\n|\n|\r)/gm," ");
+
+		return (	
+				<BoxContainer key={i}>
+					<InnerContainer>
+						<Draggable source={circle.source}></Draggable>
+						<RightContainer>
+							<Bold>{title}</Bold>
+							<Light>{format(circle.desc)}</Light>
+						</RightContainer>
+						<TouchableOpacity onPress={() => circlesService.toggleCircle(circle.id)}>
+							<Status>{circle.on ? "ON" : "OFF"}</Status>
+						</TouchableOpacity>		
+					</InnerContainer>
+				</BoxContainer>	
 		);
 	})
 
 	return(
 		<Container>
-			<PageTile>Add, delete or discover new circles</PageTile>
-			{boxViews}
+			<View style={{borderBottomWidth: 0.25, borderColor: colors.gray}}>
+				<PageTile>Add, delete or discover new circles</PageTile>
+			</View>			
+			<TypeTile>Vibration</TypeTile>
+			{boxViewsVibration}
+			<TypeTile>Wellness</TypeTile>
+			{boxViewsWellness}
+			
 		</Container>
 	)
 
@@ -86,7 +113,7 @@ const InnerContainer = styled.View`
 const RightContainer = styled.View`
 	flex: 1;	
 	border-left-color: ${colors.gray};
-	margin-vertical: 8px;
+	justify-content: center;
 	padding-left: 10px;
 `;
 
@@ -98,20 +125,19 @@ const Title = styled.Text`
 `;
 
 
-const TileDesc = styled.Text`
-	color: ${colors.gray};
-
-`;
-
 const PageTile = styled.Text`
-	font-size: 18px;
-	color: black;
+	font-size: 18px;	
 	font-weight: 500;
 	margin-left: 15px;
-	margin-vertical: 4px;
-	
-	
-	
+	margin-vertical: 20px;
+	border-bottom-width: 1px;
+`;
+
+const TypeTile = styled.Text`
+	font-size: 18px;	
+	font-weight: 500;
+	margin-left: 15px;
+	margin-vertical: 20px;
 `;
 
 
@@ -121,23 +147,20 @@ const Status = styled.Text`
 	margin-right: 4;
 `;
 
-const Draggable = styled.Image`
-	
+const Draggable = styled.Image`	
 	margin-vertical: 22px;
 `;
-// const ElementStack = styled(Stack)`
-// 	padding: 25px 20px;
-// 	background-color: ${colors.lightgray};
-// `;
-// const Tile = styled.View`
-// 	flex: 1;
-// 	height: 50px;
-// 	justify-content: center;
-// 	border-right-width: 0.25px;
-// 	border-left-width: 0.25px;
-// 	border-color: ${colors.gray};
-// `;
-// const Bold = styled.Text`
-// 	text-align: center;
-// 	font-size: 14px;
-// `;
+
+const Bold = styled.Text`	
+	font-size: 14px;
+	paddingBottom: 5px;
+	font-weight: 500,
+`;
+
+const Light = styled.Text`
+	color: ${colors.gray};	
+	font-size: 12px;
+	paddingTop: 5px
+`;
+
+

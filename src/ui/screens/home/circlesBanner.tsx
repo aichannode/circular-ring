@@ -68,7 +68,8 @@ export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 			source: require("@assets/images/circleAdd.png"),
 			key: "home.circles.add.label",
 			on: true,
-			desc: "home.circles.alarm.description"
+			desc: "home.circles.alarm.description",
+			type: ""
 		}
 
 	const circlesBanner = [addCircle].concat(circles)

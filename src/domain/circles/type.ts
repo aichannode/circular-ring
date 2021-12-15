@@ -20,7 +20,8 @@ export type CircleEntity = {
 	source: number;
 	key: WordingKey;
 	desc: WordingKey;
-	on: boolean
+	on: boolean,
+	type: string
 }
 
  

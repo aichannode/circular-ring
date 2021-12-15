@@ -11,7 +11,8 @@ export class CirclesService {
             desc: "home.circles.alarm.description",		
             source: require("@assets/images/circleAlarm.png"),
             route: Routes.Alarm,
-            on: true
+            on: true,
+            type: "Vibration"
             
         },
         {
@@ -20,7 +21,8 @@ export class CirclesService {
             desc: "home.circles.sleep.description",	
             route: Routes.Sleep,
             source: require("@assets/images/circleSleep.png"),
-            on: true
+            on: true,
+            type: "Wellness"
         },
         
         {
@@ -29,7 +31,8 @@ export class CirclesService {
             desc: "home.circles.activity.description",
             route: Routes.Activity,	
             source: require("@assets/images/circleActivity.png"),
-            on: true
+            on: true,
+            type: "Wellness"
         },
         {
             id: 4,
@@ -37,7 +40,8 @@ export class CirclesService {
             desc: "home.circles.live.description",
             route: Routes.Live,	
             source: require("@assets/images/circleLive.png"),
-            on: true
+            on: true,
+            type: "Wellness"
         },
     ]);
 
@@ -46,8 +50,8 @@ export class CirclesService {
 
     // }
 
-    toggleCircle(index: number) {
-        this._circles.update(circles => circles.map((circle, i) => (i === index ? { ...circle, on: !circle.on } : circle)));
+    toggleCircle(id: number) {
+        this._circles.update(circles => circles.map((circle) => (circle.id === id ? { ...circle, on: !circle.on } : circle)));
       }
     
 	// async fetchUserCircles() {
