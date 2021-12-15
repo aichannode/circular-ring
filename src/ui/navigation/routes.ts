@@ -31,6 +31,7 @@ export enum Routes {
 	RingFirmwareUpdate = "RingFirmwareUpdate",
 	Activity = "Activity",
 	Sleep = "Sleep",
+	CircleAdd ="CircleAdd",
 	Alarm = "Alarm",
 	EditAlarm = "EditAlarm",
 	Profile = "Profile",
@@ -82,6 +83,7 @@ export type AppRoutesParams = {
 	[Routes.ManageMyRings]: undefined;
 	[Routes.Activity]: undefined;
 	[Routes.Sleep]: undefined;
+	[Routes.CircleAdd]: undefined;
 	[Routes.Alarm]: undefined;
 	[Routes.EditAlarm]: { initialAlarm: RingAlarm } | undefined;
 	[Routes.Profile]: undefined;

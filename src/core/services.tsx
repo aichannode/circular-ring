@@ -5,6 +5,8 @@ import { CalendarApi } from "@domain/calendar/calendarApi";
 import { CalendarService } from "@domain/calendar/calendarService";
 import { CalibrationApi } from "@domain/calibration/calibrationApi";
 import { CalibrationService } from "@domain/calibration/calibrationService";
+import { CirclesService } from "@domain/circles/circlesService";
+import { CirclesApi } from "@domain/circles/circlesApi";
 import { CircleAlarmService } from "@domain/circleAlarm/circleAlarmService";
 import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
@@ -65,6 +67,8 @@ const ringManagementService = new RingManagementService(
 	ringApi
 );
 
+const circlesApi = new CirclesApi(apiService)
+const circlesService = new CirclesService(circlesApi)
 const measureApi = new MeasureApi(apiService);
 const measureService = new MeasureService(measureApi);
 
@@ -96,6 +100,7 @@ export const services = {
 	userPreferencesService,
 	calibrationService,
 	feedService,
+	circlesService,
 	fakeDeviceService,
 	calendarService,
 	userQuickAccess,
