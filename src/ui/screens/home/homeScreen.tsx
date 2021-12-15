@@ -38,15 +38,17 @@ export const HomeScreen: React.FC = () => {
 		}
 	}, []);
 
-	const forceRefresh = useCallback(() => {
+	const forceRefresh = useCallback(async () => {
 		if (syncState !== SyncState.NONE) {
 			return;
 		}
 		setForceRefreshing(true);
 		console.log("One SYNC");
-		ringManagementService.syncData();
-		ringManagementService.submitFirmwareVersion();
-	}, [syncState, setForceRefreshing]);
+		ringManagementService.submitFirmwareVersion(); // TODO extract, sending firmware version is not needed at each pull
+		await ringManagementService.syncData();
+		await feedService.fetchAll();
+		setForceRefreshing(false);
+	}, [syncState, setForceRefreshing]); // TODO why having setForceRefreshing as a dependency ?
 
 	const userSettings = useUserSettings();
 	const { format } = useI18n();
