@@ -78,13 +78,15 @@ export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 			<TitleText style={{paddingLeft: 10}}>{format("home.circles.title")}</TitleText>
 			<Row align="flex-start" gap={3}>
 				{circlesBanner.map((circle) => (
-					
+					circle.on ?
 					<CircleView key={circle.route} onPress={() => navigation.navigate(circle.route)}>
 						<Stack gap={10} align="center">
 							<Image source={circle.source} />
 							<CircleLabel>{format(circle.key)}</CircleLabel>
 						</Stack>
 					</CircleView>
+					:
+					null
 					
 				))}
 			</Row>
