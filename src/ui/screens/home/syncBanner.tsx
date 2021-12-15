@@ -1,4 +1,3 @@
-import { useServices } from "@core/services";
 import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringManagementService";
 import { PrimaryButton } from "@ui/components/buttons";
@@ -13,11 +12,11 @@ import styled from "styled-components/native";
 
 interface SyncBannerProps {
 	style?: StyleProp<ViewStyle>;
+	onRetry: () => void;
 }
-export const SyncBanner: React.FC<SyncBannerProps> = ({ style }) => {
+export const SyncBanner: React.FC<SyncBannerProps> = ({ style, onRetry }) => {
 	const syncState = useSyncState();
 	const { format } = useI18n();
-	const { ringManagementService } = useServices();
 
 	if (syncState === SyncState.NONE || syncState === SyncState.PREPARING) {
 		return null;
@@ -39,7 +38,7 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({ style }) => {
 								<Icon source={require("@assets/images/sync.png")} />
 								<SyncInfo>{format("home.sync.error")}</SyncInfo>
 								<Grow />
-								<PrimaryButton light onPress={() => ringManagementService.syncData()}>
+								<PrimaryButton light onPress={onRetry}>
 									{format("home.sync.retry")}
 								</PrimaryButton>
 							</>
