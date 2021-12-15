@@ -53,7 +53,7 @@ export function useNotifications(): FeedNotification[] {
 	const { feedService } = useServices();
 	
 	useEffect(() => {
-		feedService.fetchNotifications();  
+		feedService.fetchNotifications(); 
 	}, []);
 
 	return useObservable(feedService.notifications)

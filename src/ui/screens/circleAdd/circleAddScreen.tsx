@@ -1,76 +1,47 @@
 
-import { Stack } from "@ui/components/layout";
-import { Image, StyleProp, ViewStyle } from "react-native";
+import React from "react";
+import { View } from "react-native";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { useServices } from "@core/services";
-// import { useCircles } from "@domain/circles/hooks";
-import dayjs from "dayjs";
-import React, { useRef, useState, useEffect } from "react";
-import { LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
-import { WordingKey } from "src/wordings";
 import { TouchableOpacity } from "react-native";
 import { useObservable } from "micro-observables";
-import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { CircleEntity } from "../../../domain/circles/type";
 
-
-// interface CirclesProps {
-// 	style?: StyleProp<ViewStyle>;
-// }
-
+function createViews(myArray: CircleEntity[]) {
+	const { circlesService } = useServices()	
+	const { format} = useI18n()	
+	return myArray.map((circle, i) => {
+		const titleString = format(circle.key)
+		const title = titleString.replace(/(\r\n|\n|\r)/gm," ");
+		return (	
+				<BoxContainer key={i}>
+					<InnerContainer>
+						<Draggable source={circle.source}></Draggable>
+						<RightContainer>
+							<Bold>{title}</Bold>
+							<Light>{format(circle.desc)}</Light>
+						</RightContainer>
+						<TouchableOpacity onPress={() => circlesService.toggleCircle(circle.id)}>
+							<Status>{circle.on ? "ON" : "OFF"}</Status>
+						</TouchableOpacity>		
+					</InnerContainer>
+				</BoxContainer>	
+		);
+	})
+}
 
 
 export const CircleAddScreen: React.FC = () => {
-	const { circlesService } = useServices()
-	
-	const circles = useObservable(circlesService.circles)
 
-	const { format } = useI18n();
+	const { circlesService } = useServices()	
+	const circles = useObservable(circlesService.circles)	
 	const circlesVibration = circles.filter((circle) => circle.type === "Vibration")
 	const circlesWellness = circles.filter((circle) => circle.type === "Wellness")
-	const boxViewsWellness = circlesWellness.map((circle, i) => {	
-
-		const titleString = format(circle.key)
-		const title = titleString.replace(/(\r\n|\n|\r)/gm," ");
-		return (	
-				<BoxContainer key={i}>
-					<InnerContainer>
-						<Draggable source={circle.source}></Draggable>
-						<RightContainer>
-							<Bold>{title}</Bold>
-							<Light>{format(circle.desc)}</Light>
-						</RightContainer>
-						<TouchableOpacity onPress={() => circlesService.toggleCircle(circle.id)}>
-							<Status>{circle.on ? "ON" : "OFF"}</Status>
-						</TouchableOpacity>		
-					</InnerContainer>
-				</BoxContainer>	
-		);
-	})
-
-	const boxViewsVibration = circlesVibration.map((circle, i) => {
-
-		const titleString = format(circle.key)
-		const title = titleString.replace(/(\r\n|\n|\r)/gm," ");
-
-		return (	
-				<BoxContainer key={i}>
-					<InnerContainer>
-						<Draggable source={circle.source}></Draggable>
-						<RightContainer>
-							<Bold>{title}</Bold>
-							<Light>{format(circle.desc)}</Light>
-						</RightContainer>
-						<TouchableOpacity onPress={() => circlesService.toggleCircle(circle.id)}>
-							<Status>{circle.on ? "ON" : "OFF"}</Status>
-						</TouchableOpacity>		
-					</InnerContainer>
-				</BoxContainer>	
-		);
-	})
-
+	const boxViewsWellness = createViews(circlesWellness)
+	const boxViewsVibration = createViews(circlesVibration)
 	return(
 		<Container>
 			<View style={{borderBottomWidth: 0.25, borderColor: colors.gray}}>
@@ -79,12 +50,9 @@ export const CircleAddScreen: React.FC = () => {
 			<TypeTile>Vibration</TypeTile>
 			{boxViewsVibration}
 			<TypeTile>Wellness</TypeTile>
-			{boxViewsWellness}
-			
+			{boxViewsWellness}			
 		</Container>
-	)
-
-	
+	)	
 };
 
 const Container = styled(ScrollScreen)`
@@ -93,8 +61,7 @@ const Container = styled(ScrollScreen)`
 	width: 100%;
 `;
 
-const BoxContainer = styled(View)`
-	
+const BoxContainer = styled(View)`	
 	width: 100%;
 	border-radius: 8px;
 	overflow: hidden;	
@@ -117,14 +84,6 @@ const RightContainer = styled.View`
 	padding-left: 10px;
 `;
 
-const Title = styled.Text`
-	font-size: 18px;
-	color: black;
-	font-weight: 500;
-	margin-vertical: 4px;
-`;
-
-
 const PageTile = styled.Text`
 	font-size: 18px;	
 	font-weight: 500;
@@ -140,11 +99,11 @@ const TypeTile = styled.Text`
 	margin-vertical: 20px;
 `;
 
-
 const Status = styled.Text`
 	color: ${colors.gray};
 	margin-top: 4;
 	margin-right: 4;
+	font-size: 14px;
 `;
 
 const Draggable = styled.Image`	
@@ -152,14 +111,14 @@ const Draggable = styled.Image`
 `;
 
 const Bold = styled.Text`	
-	font-size: 14px;
+	font-size: 18px;
 	paddingBottom: 5px;
 	font-weight: 500,
 `;
 
 const Light = styled.Text`
 	color: ${colors.gray};	
-	font-size: 12px;
+	font-size: 14px;
 	paddingTop: 5px
 `;
 

@@ -1,5 +1,4 @@
-import { CirclesApi } from "./circlesApi";
-import { Observable, observable } from "micro-observables";
+import { observable } from "micro-observables";
 import { CircleEntity } from "./type";
 import { Routes } from "@ui/navigation/routes";
 
@@ -46,24 +45,10 @@ export class CirclesService {
     ]);
 
     readonly circles = this._circles.readOnly()
-	// constructor(private readonly circlesApi: CirclesApi) {
-
-    // }
-
+	
     toggleCircle(id: number) {
         this._circles.update(circles => circles.map((circle) => (circle.id === id ? { ...circle, on: !circle.on } : circle)));
       }
-    
-	// async fetchUserCircles() {
-        
-	//     this.circlesApi.fetchUserCircles().then(c => this.circles.set(c))
-    // }
-    // addCircle(text: string) {
-    //     this._circles.update(circles => [...circles, { text, done: false }]);
-    //   }
- 
-
-        
-	    // this.circlesApi.addCircle(circleId)
+   
     }
 
