@@ -57,6 +57,7 @@ const Title = styled.Text`
 
 const InfoBlock = styled.View`
 	${whiteCardStyle};
+	width: 100%;
 	margin-bottom: 12px;
 `;
 

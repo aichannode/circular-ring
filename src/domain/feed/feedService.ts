@@ -36,8 +36,7 @@ export class FeedService {
 	}
 
 	async fetchAll() {
-		this.fetchRecommendations()
-		this.fetchNotifications()
+		return Promise.all([this.fetchRecommendations(), this.fetchNotifications()])
 	}
 
 	_DEBUG_reset = async () => {
