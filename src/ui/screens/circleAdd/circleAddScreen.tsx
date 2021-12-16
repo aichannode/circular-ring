@@ -73,7 +73,7 @@ const InnerContainer = styled.View`
 	display: flex;
 	flex-direction: row;
 	background-color: ${colors.lightgray};
-	padding-left: 10px;
+	padding: 0px 15px;
 	margin-bottom: 1px;
 `;
 
