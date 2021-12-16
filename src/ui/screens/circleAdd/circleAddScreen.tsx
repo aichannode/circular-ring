@@ -17,7 +17,7 @@ function createViews(myArray: CircleEntity[]) {
 		const titleString = format(circle.key)
 		const title = titleString.replace(/(\r\n|\n|\r)/gm," ");
 		return (	
-				<BoxContainer key={i}>
+				<BoxContainer key={circle.id}>
 					<InnerContainer>
 						<Draggable source={circle.source}></Draggable>
 						<RightContainer>
