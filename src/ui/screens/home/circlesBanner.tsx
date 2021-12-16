@@ -35,7 +35,6 @@ export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 			<TitleText style={{paddingLeft: 10}}>{format("home.circles.title")}</TitleText>
 			<Row align="flex-start" gap={3}>
 				{circlesBanner.map((circle) => (
-					
 					circle.on ?
 					<CircleView  key={circle.route} onPress={() => navigation.navigate(circle.route)}>
 						<Stack style={{marginTop: circle.id === 0 ? -9 : 0}} gap={circle.id === 0 ? -3 : 10} align="center">
