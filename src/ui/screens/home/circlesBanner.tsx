@@ -38,7 +38,7 @@ export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 					
 					circle.on ?
 					<CircleView  key={circle.route} onPress={() => navigation.navigate(circle.route)}>
-						<Stack style={{marginTop: circle.id === 0 ? -9 : 0}} gap={circle.id === 0 ? 0 : 10} align="center">
+						<Stack style={{marginTop: circle.id === 0 ? -9 : 0}} gap={circle.id === 0 ? -3 : 10} align="center">
 							<Image source={circle.source} />
 							<CircleLabel>{format(circle.key)}</CircleLabel>
 						</Stack>
