@@ -56,7 +56,7 @@ export const CircleAddScreen: React.FC = () => {
 };
 
 const Container = styled(ScrollScreen)`
-	padding-top: 20px;
+	padding-top: 0px;
 	background-color: ${colors.white};
 	width: 100%;
 `;
@@ -88,6 +88,7 @@ const PageTile = styled.Text`
 	font-size: 18px;	
 	font-weight: 500;
 	margin-left: 15px;
+	justify-content: center;
 	margin-vertical: 20px;
 	border-bottom-width: 1px;
 `;
