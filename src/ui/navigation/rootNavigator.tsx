@@ -109,8 +109,7 @@ const MainHomeNavigator = () => {
 				component={CircleAddScreen}
 				options={{
 					title: format("header.circle_add"),
-					headerRight: undefined,
-					headerLeft: () => <CircleIcon source={require("@assets/images/circleAdd.png")} />,
+					headerRight: undefined,					
 				}}
 			/>
 			<MainStack.Screen
