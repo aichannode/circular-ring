@@ -1,22 +1,60 @@
 import { Storage } from "@core/storage";
-import { ReadNotifInfo } from "./type";
+import { NotificationsState, UserInputStates, UserInputState } from "./type";
 
-const feed = "@feed";
+enum StorageKeys {
+	NOTIFICATIONS = "@feed/notifications",
+	RECOMMENDATIONS = "@feed/recommendations",
+}
+
 
 /**
- * Simple storage for notification closed state.
+ * Simple storage for feed optimistic UI
+ * This class is aware of the different business entities
+ * for facilitate the implementation.
  */
 export class FeedStorage {
-	async save(clientSideClosed: number[]) {
-		await Storage.save<ReadNotifInfo>(feed, { clientSideClosed });
+    async removeById(id: number) {
+        await Storage.removeWithId(StorageKeys.RECOMMENDATIONS, id)
+    }
+	async saveNotificationsState(clientSideClosed: number[]) {
+		await Storage.save<NotificationsState>(StorageKeys.NOTIFICATIONS, { clientSideClosed });
 	}
 
-	async load(): Promise<ReadNotifInfo | null> {
-		const infos = await Storage.load<ReadNotifInfo>(feed);
-		return infos && { ...infos };
+	/**
+	 * This upsert a new entry to the local storage for the given
+	 * Recommandation
+	 */
+	async saveRecommendationState(state: UserInputState) {
+		await Storage.saveWithId<UserInputState>(StorageKeys.RECOMMENDATIONS, state.id, state);
+	}
+
+	/**
+	 * This returns a Recommendation state
+	 */
+	 async getRecommendationState(id: string) {
+		return Storage.loadWithId<UserInputState>(StorageKeys.RECOMMENDATIONS, id);
+	}
+
+	/**
+	 * Returns all Recommendation states
+	 */
+	 async loadRecommendationsState() {
+		const data = await Storage.getAllIdsForKey(StorageKeys.RECOMMENDATIONS)
+		/* await Promise.all(data.map(id => Storage.removeWithId(StorageKeys.RECOMMENDATIONS, id)))
+		console.log("removed") */
+		const recos = await Promise.all(
+			// Aggregate all stored recommandations
+			data.map(id => Storage.loadWithId<UserInputState>(StorageKeys.RECOMMENDATIONS, id))
+		)
+		return recos.filter(Boolean) as UserInputStates
+	}
+
+	async loadNotificationsState(): Promise<NotificationsState | null> {
+		const state = await Storage.load<NotificationsState>(StorageKeys.NOTIFICATIONS);
+		return state && { ...state };
 	}
 
 	clear() {
-		return Storage.remove(feed);
+		return Storage.remove(StorageKeys.NOTIFICATIONS);
 	}
 }

@@ -5,6 +5,7 @@ import { createRecommendation } from "./mockedData";
 import { isNotification, isRecommendation } from "./business";
 
 const feedBaseUrl = "/feed";
+const interactionsBaseUrl = "/interactions"
 
 export class FeedApi {
 	constructor(private readonly apiService: ApiService) {}
@@ -41,4 +42,12 @@ export class FeedApi {
 	async closeNotification(notificationIds: number[]) {
 		return await this.apiService.put(`${feedBaseUrl}/me/closed`, { bannerIds: notificationIds })
 	}
+
+	/**
+	 * Answer to a Kira question which uses a Select user input.
+	 */
+	async answerQuestion(selections: number[]) {
+		return await this.apiService.post(`${interactionsBaseUrl}/selections`, { selections })
+	}
+
 }

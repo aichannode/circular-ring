@@ -41,6 +41,7 @@ export function createRecommendation(id: number): UpdateUserFeedEntityDto {
 		"iconId": 1,
 		"components": [
 			{
+				"id": 0,
 				"type": FeedEntityComponentType.PARAGRAPH,
 				"configuration": {
 					"style": ParagraphStyle.DEFAULT,

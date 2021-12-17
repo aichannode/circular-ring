@@ -31,6 +31,7 @@
 		"buffer": "^6.0.3",
 		"dayjs": "^1.10.7",
 		"flat": "^5.0.2",
+		"immer": "^9.0.7",
 		"jsc-android": "^250230.2.1",
 		"micro-observables": "^1.7.0",
 		"micro-signals": "^2.4.0",
