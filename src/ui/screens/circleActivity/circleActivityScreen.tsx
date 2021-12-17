@@ -12,10 +12,11 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import dayjs from "dayjs";
 import React, { useRef, useState } from "react";
-import { LayoutAnimation, ScrollView, View } from "react-native";
+import { Image, LayoutAnimation, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import { DailyMetric } from "./dailyMetric";
 import { dailyMetricsDataInfos, scoreDetailsDataInfos } from "./measureDisplayInfos";
+import activity_duration from "@assets/images/activity_duration.png"
 
 const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
@@ -50,6 +51,9 @@ export const CircleActivityScreen: React.FC = () => {
 				</View>
 				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
 				<ElementStack gap={10}>
+					<View style={{justifyContent: "center", alignItems: "center"}}>
+						<Image source={activity_duration}/>
+					</View>
 					{alldailyActivityMetrics.map((metric) => {
 						const dataInfos = dailyMetricsDataInfos[metric];
 						const value = dailyData?.data.metrics[metric];
