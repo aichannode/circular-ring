@@ -49,6 +49,7 @@ export enum ParagraphStyle {
 }
 
 export type ParagraphComponentConfigurationDto = {
+	id: number
 	type: FeedEntityComponentType.PARAGRAPH;
 	configuration: {
 		style: ParagraphStyle;
@@ -76,7 +77,9 @@ type InputTypeConfig<T extends InputType, C> = {
 	style: UserInputStyle;
 	title: WordingKey;
 	inputType: T;
-	inputConfig: C
+	inputConfig: {
+		answeredAt: string | null
+	} & C
 }
 
 export type SelectInputTypeConfig = InputTypeConfig<InputType.SELECT, {
@@ -84,11 +87,13 @@ export type SelectInputTypeConfig = InputTypeConfig<InputType.SELECT, {
 	minCount: number
 	maxCount: number
 	options: OptionDto[]
+	selectedOptions?: number[]
 }>
 
-export type UserInputConfiguration = SelectInputTypeConfig & {isAnswered: boolean}
+export type UserInputConfiguration = SelectInputTypeConfig
 
 export type UserInputComponentConfigurationDto = {
+	id: number
 	type: FeedEntityComponentType.USER_INPUT;
 	configuration: UserInputConfiguration
 }
@@ -98,12 +103,12 @@ export type FeedEntityComponentDto =
 	| UserInputComponentConfigurationDto
 
 export type Activity = {
-	type: FeedEntityType.NOTIFICATION;
+	type: Omit<FeedEntityType, FeedEntityType.NOTIFICATION>;
 	style: Omit<FeedEntityStyle, FeedEntityStyle.ORANGE_GRADIENT>;
 }
 
 export type Notification = {
-	type: Omit<FeedEntityType, FeedEntityType.NOTIFICATION>;
+	type: FeedEntityType.NOTIFICATION;
 	style: FeedEntityStyle.ORANGE_GRADIENT;
 }
 
@@ -119,12 +124,24 @@ type CommonFeedEntityProps = {
 }
 
 export type FeedNotification = CommonFeedEntityProps & Notification
-export type FeedRecommendation = CommonFeedEntityProps  & Activity
+export type FeedRecommendation = CommonFeedEntityProps & Activity
 
 export type FeedEntity =
 	| FeedNotification
 	| FeedRecommendation
 
-export interface ReadNotifInfo {
+export type NotificationsState = {
 	clientSideClosed: number[];
 }
+
+export type InputAnswer<T extends InputType = never> = T extends InputType.SELECT
+	? number[]
+	: never
+
+export type UserInputState<T extends InputType = any> = {
+	id: number
+	answeredAt: string
+	answer: InputAnswer<T>
+}
+
+export type UserInputStates = Array<UserInputState>

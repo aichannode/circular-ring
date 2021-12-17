@@ -14,13 +14,15 @@ import { PrimaryText, Strong } from "@ui/components/text";
 import { SelectableButton } from "@ui/components/selectableButton";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useServices } from "@core/services";
 
 type Props = UserInputComponentConfigurationDto & {
-	palette: Activity["style"];
-};
+    palette: Activity["style"]
+    compId: number
+}
 
-function Header({ title, isClosed }: UserInputConfiguration & { isClosed: boolean }) {
+function Header({ title, isAnswered, isClosed }: UserInputConfiguration & { isClosed: boolean, isAnswered: boolean }) {
 	const { format } = useI18n();
 	return (
 		<View
@@ -38,7 +40,7 @@ function Header({ title, isClosed }: UserInputConfiguration & { isClosed: boolea
 		>
 			<Image style={{ marginRight: 20 }} source={ringGradient} />
 			<Strong style={{ flex: 1 }}>
-				<PrimaryText>{format(title ?? "CR-472 add title")}</PrimaryText>
+				<PrimaryText>{isAnswered ? format("home.kira.question.answered") : format(title)}</PrimaryText>
 			</Strong>
 			<Image source={chevronTop} style={{ transform: [{ rotate: isClosed ? "180deg" : "0deg" }] }} />
 		</View>
@@ -50,10 +52,25 @@ type SelectProps = SelectInputTypeConfig["inputConfig"] & {
 	onLayout: (e: LayoutChangeEvent) => void;
 };
 
-function Select({ label, maxCount, options, palette, onLayout }: SelectProps) {
-	const { format } = useI18n();
-	const [selectedIds, setSelectedIds] = useState<number[]>([]);
-	const hasReachedMaxSelectionCount = selectedIds.length === maxCount;
+function Select({
+        label,
+        maxCount,
+        options,
+		selectedOptions,
+        palette,
+        compId,
+        onLayout,
+    }: SelectProps & {compId: number}
+) {
+    const { format } = useI18n()
+    const [selectedIds, setSelectedIds] = useState<number[]>(selectedOptions ?? [])
+    const hasReachedMaxSelectionCount = selectedIds.length === maxCount
+    const { feedService } = useServices()
+
+    // Send answer to server
+    useEffect(function() {
+        feedService.answerRecommendation(compId, selectedIds)
+    }, [selectedIds])
 
 	return (
 		<View
@@ -74,7 +91,11 @@ function Select({ label, maxCount, options, palette, onLayout }: SelectProps) {
 							isDisabled={hasReachedMaxSelectionCount && !isSelected}
 							key={key}
 							onPress={function () {
-								if (selectedIds.includes(option.id)) {
+								if (
+									selectedIds.includes(option.id)
+								) {
+									// CIR-429 need at least one option
+									if (selectedIds.length === 1) return
 									// Unselect
 									setSelectedIds(selectedIds.filter((id) => id !== option.id));
 								} else {
@@ -161,10 +182,13 @@ function animate(
 	);
 }
 
-export function UserInput({ configuration, palette }: Props) {
-	const { inputType, inputConfig, isAnswered } = configuration;
-	const [isClosed, setIsClosed] = useState(isAnswered);
-	const paperHeightRef = useSharedValue(0);
+export function UserInput({ compId, configuration, palette }: Props) {
+    const {
+        inputType,
+        inputConfig,
+    } = configuration
+    const [isClosed, setIsClosed] = useState(!!inputConfig.answeredAt)
+    const paperHeightRef = useSharedValue(0)
 
 	/**
 	 * Note on layout.
@@ -175,28 +199,33 @@ export function UserInput({ configuration, palette }: Props) {
 	 * but the internal agency will remain. Making the paper sliding under the header. You are welcome.
 	 */
 
-	return (
-		<View style={{ marginHorizontal: 5, overflow: "hidden", display: "flex", flexDirection: "column-reverse" }}>
-			<Foldable
-				heightRef={paperHeightRef}
-				isClosed={isClosed}
-				style={{
-					backgroundColor: "white",
-					borderBottomStartRadius: 2,
-					borderBottomEndRadius: 2,
-				}}
-			>
-				{inputType === InputType.SELECT && (
-					<Select
-						onLayout={(e) => (paperHeightRef.value = e.nativeEvent.layout.height)}
-						{...inputConfig}
-						palette={palette as FeedEntityStyle}
-					/>
-				)}
-			</Foldable>
-			<Pressable onPress={() => setIsClosed(!isClosed)}>
-				<Header isClosed={isClosed} {...configuration} />
-			</Pressable>
-		</View>
-	);
+    return (
+        <View style={{ marginHorizontal: 5, overflow: "hidden", display: "flex", flexDirection: "column-reverse"}}>
+            <Foldable
+                heightRef={paperHeightRef}
+                isClosed={isClosed}
+                style={{
+                    backgroundColor: "white",
+                    borderBottomStartRadius: 2,
+                    borderBottomEndRadius: 2
+                }}
+            >
+                {inputType === InputType.SELECT && (
+                    <Select
+                        compId={compId}
+                        onLayout={e => paperHeightRef.value = e.nativeEvent.layout.height}
+                        palette={palette as FeedEntityStyle}
+                        {...inputConfig}
+                    />
+                )}
+            </Foldable>
+            <Pressable onPress={() => setIsClosed(!isClosed)}>
+                <Header
+					isClosed={isClosed}
+					isAnswered={!!inputConfig.answeredAt}
+					{...configuration}
+				/>
+            </Pressable>
+        </View>
+    )
 }
