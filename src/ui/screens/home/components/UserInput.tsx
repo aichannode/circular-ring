@@ -54,6 +54,7 @@ type SelectProps = SelectInputTypeConfig["inputConfig"] & {
 
 function Select({
         label,
+		minCount,
         maxCount,
         options,
 		selectedOptions,
@@ -64,7 +65,8 @@ function Select({
 ) {
     const { format } = useI18n()
     const [selectedIds, setSelectedIds] = useState<number[]>(selectedOptions ?? [])
-    const hasReachedMaxSelectionCount = selectedIds.length === maxCount
+	const isRadio = minCount === 1 && maxCount === 1
+    const hasReachedMaxSelectionCount = selectedIds.length === maxCount && !isRadio
     const { feedService } = useServices()
 
     // Send answer to server
@@ -100,6 +102,11 @@ function Select({
 									setSelectedIds(selectedIds.filter((id) => id !== option.id));
 								} else {
 									// Select
+									// It is a radio selection, we can pick just one
+									if (isRadio) {
+										setSelectedIds([option.id])
+										return
+									}
 									if (!hasReachedMaxSelectionCount) {
 										setSelectedIds([...selectedIds, option.id]);
 									}
