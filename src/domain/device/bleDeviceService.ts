@@ -208,9 +208,13 @@ export class BleDeviceService {
 			this.autoConnectFavoriteDevice();
 		}
 		this.userService.user.subscribe(async (user) => {
+			console.log("BLESERVICES USER", user);
 			if (!user) {
-				await this.disconnect();
+				console.log("DISCONNECTION");
+				this.disconnect();
 				this._favoriteDevice.set(null);
+				this._favoriteDeviceSNU.set(null);
+				await this.favoriteDeviceStorage.clear();
 			}
 		});
 	}
@@ -653,9 +657,9 @@ export class BleDeviceService {
 		this._onDeviceDisconnectedSubscription = null;
 		// this._favoriteDevice.set(null);
 		// this._favoriteDeviceSNU.set(null);
+		// await this.favoriteDeviceStorage.clear();
 		this._currentRingBattery.set(null);
 		this._batteryListenerUnsubscribe?.();
-		// await this.favoriteDeviceStorage.clear();
 	}
 
 	requestLocation() {
