@@ -17,6 +17,8 @@ import { colors } from "@ui/styles/colors";
 import { DeviceConnectionState } from "@domain/device/bleDeviceService";
 import Dialog from "react-native-dialog";
 
+const RING_NAME_PREFIX = "Circular ";
+
 export const MyRingScreen: React.FC = () => {
 	const { bleDeviceService } = useServices();
 	const { navigate } = useRoutesNavigation();
@@ -29,30 +31,20 @@ export const MyRingScreen: React.FC = () => {
 	const connected = useObservable(bleDeviceService.connectionState);
 	const [showPrompt, setShowPrompt] = useState<boolean>(false);
 	const [editedName, setEditedName] = useState<string>(
-		currentRing?.name ? viewModel.formatRingName(currentRing.name).slice(8) : ""
-	);
-
-	console.log("CONNECTED", connected);
-
-	console.log(
-		"Current Rings\n",
-		userRings.map((ring) => {
-			return `name: |${ring.name}| connected: |${ring.connected}| id: |${ring.id}|`;
-		})
+		currentRing?.name ? currentRing?.name.slice(RING_NAME_PREFIX.length) : ""
 	);
 
 	const renameRing = async () => {
 		if (editedName && editedName !== "") {
 			try {
-				bleDeviceService.favoriteDevice.set({ name: "Circular " + viewModel.formatRingName(editedName) });
+				bleDeviceService.favoriteDevice.set({ name: RING_NAME_PREFIX + viewModel.formatRingName(editedName) });
 				await bleDeviceService.write(`${Channel.RENAME}${viewModel.formatRingName(editedName)}`);
-				console.log("Circular ", viewModel.formatRingName(editedName));
 				ringManagementService.userRings.set(
 					userRings.map((ring) => {
 						if (ring.connected)
 							return {
 								...ring,
-								name: viewModel.formatRingName(editedName),
+								name: RING_NAME_PREFIX + viewModel.formatRingName(editedName),
 							};
 						else return ring;
 					})
@@ -70,7 +62,13 @@ export const MyRingScreen: React.FC = () => {
 		<Container>
 			<Dialog.Container visible={showPrompt}>
 				<Dialog.Title>{format("manage_rings.ring.rename")}</Dialog.Title>
-				<Dialog.Input value={viewModel.formatRingName(editedName)} onChangeText={setEditedName}></Dialog.Input>
+				<Dialog.Input
+					autoCapitalize="characters"
+					autoCompleteType="off"
+					autoCorrect={false}
+					value={viewModel.formatRingName(editedName)}
+					onChangeText={setEditedName}
+				></Dialog.Input>
 				<Dialog.Button onPress={() => setShowPrompt(false)} label={format("global.cancel")} />
 				<Dialog.Button
 					label={format("global.edit")}
