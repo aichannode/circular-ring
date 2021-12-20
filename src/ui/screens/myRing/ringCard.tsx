@@ -127,6 +127,7 @@ const Container = styled.View``;
 
 const Card = styled.View`
 	${whiteCardStyle};
+	width: 100%;
 	padding: 22px 18px;
 `;
 

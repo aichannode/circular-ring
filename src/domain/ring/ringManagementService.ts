@@ -34,10 +34,9 @@ export class RingManagementService {
 		private readonly ringDataStorage: RingDataStorage,
 		private readonly ringApi: RingApi
 	) {
-		const unsubscribe = this.userService.user.subscribe((user) => {
-			if (user) {
-				// this.getRings();
-				unsubscribe();
+		this.userService.user.subscribe((user) => {
+			if (!user) {
+				this._userRings.set([]);
 			}
 		});
 
@@ -239,7 +238,7 @@ export class RingManagementService {
 			const { id } = connectedRing[0];
 			this.logger.info("Submit User Ring", connectedRing);
 			try {
-				// await this.updateStoredRings({ ...connectedRing[0], firmware });
+				await this.updateStoredRings({ ...connectedRing[0], firmware });
 				await this.ringApi.submitFirmwareVersion(id, firmware);
 			} catch (err) {
 				this.logger.warn("Error Submiting User Ring", err);

@@ -11,6 +11,7 @@ import { AllTagsScreen } from "@ui/screens/calendar/allTagsScreen";
 import { CalendarEditNotesScreen } from "@ui/screens/calendar/calendarEditNotesScreen";
 import { CalendarScreen } from "@ui/screens/calendar/calendarScreen";
 import { CircleActivityScreen } from "@ui/screens/circleActivity/circleActivityScreen";
+import { CircleAddScreen } from "@ui/screens/circleAdd/circleAddScreen";
 import { CircleAlarmScreen } from "@ui/screens/circleAlarm/circleAlarmScreen";
 import { EditAlarmScreen } from "@ui/screens/circleAlarm/editAlarmScreen";
 import { CircleLiveScreen } from "@ui/screens/circleLive/circleLiveScreen";
@@ -101,6 +102,14 @@ const MainHomeNavigator = () => {
 					title: format("header.live"),
 					headerRight: undefined,
 					headerLeft: () => <CircleIcon source={require("@assets/images/circleLive.png")} />,
+				}}
+			/>
+			<MainStack.Screen
+				name={Routes.CircleAdd}
+				component={CircleAddScreen}
+				options={{
+					title: format("header.circle_add"),
+					headerRight: undefined,					
 				}}
 			/>
 			<MainStack.Screen

@@ -14,9 +14,10 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import dayjs from "dayjs";
 import React, { useRef, useState } from "react";
-import { LayoutAnimation, View } from "react-native";
+import { Image, LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
 import { scoreDetailsDataInfos } from "./measureDisplayInfos";
+import { sleep_duration } from "@assets/images/sleep_duration.png"
 
 const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
@@ -54,6 +55,9 @@ export const CircleSleepScreen: React.FC = () => {
 			<View>{sleepDurationData && <DailyPhasesPie sleepDurationData={sleepDurationData.infos} />}</View>
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
+				<View style={{justifyContent: "center", alignItems: "center"}}>
+					<Image source={sleep_duration}/>
+				</View>
 				{
 					allSleepQualityMetrics
 						.map((metric, index) => {

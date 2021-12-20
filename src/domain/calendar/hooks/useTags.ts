@@ -1,25 +1,12 @@
 import { useServices } from "@core/services";
-import { PopularTagCategory } from "@domain/calendar/calendarService";
 import { useObservable } from "micro-observables";
 
-export function useAllTags() {
+export function useTags() {
 	const { calendarService } = useServices();
 	return useObservable(calendarService.tagMap);
 }
 
-export function usePopularTags() {
+export function useTagCategories() {
 	const { calendarService } = useServices();
-	// console.log("USEPOPULAR", calendarService.tagMap);
-	return useObservable(calendarService.tagMap).get(PopularTagCategory) ?? [];
-}
-
-export function useCustomTags() {
-	const { calendarService } = useServices();
-	// console.log("USEPOPULAR", calendarService.tagMap);
-	return useObservable(calendarService.tagMap).get("custom") ?? [];
-}
-
-export function useDebugTags() {
-	const { calendarService } = useServices();
-	return useObservable(calendarService.tagMap).get("test") ?? [];
+	return useObservable(calendarService.categories);
 }

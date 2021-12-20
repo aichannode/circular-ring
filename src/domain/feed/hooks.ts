@@ -21,6 +21,7 @@ export function useRecommendations(): Record<string, FeedRecommendation[]> {
 			if (isToday(reco.startDate, today)) {
 				if (groups["today"]) {
 					groups["today"].push(reco)
+					groups["today"].sort((a, b) => b.priority - a.priority)
 				} else {
 					groups["today"] = [reco]
 				}
@@ -30,6 +31,7 @@ export function useRecommendations(): Record<string, FeedRecommendation[]> {
 			else if (isYesterday(reco.startDate, today)) {
 				if (groups["yesterday"]) {
 					groups["yesterday"].push(reco)
+					groups["yesterday"].sort((a, b) => b.priority - a.priority)
 				} else {
 					groups["yesterday"] = [reco]
 				}
@@ -41,6 +43,7 @@ export function useRecommendations(): Record<string, FeedRecommendation[]> {
 				const newDate = moment(reco.startDate).format("YYYY-MM-DD")
 				if (groups[newDate]) {
 					groups[newDate].push(reco)
+					groups[newDate].sort((a, b) => b.priority - a.priority)
 				} else {
 					groups[newDate] = [reco]
 				}
