@@ -1,4 +1,3 @@
-
 import React from "react";
 import { View } from "react-native";
 import { ScrollScreen } from "@ui/components/scrollScreen";
@@ -11,48 +10,46 @@ import { useObservable } from "micro-observables";
 import { CircleEntity } from "../../../domain/circles/type";
 
 function createViews(myArray: CircleEntity[]) {
-	const { circlesService } = useServices()	
-	const { format} = useI18n()	
+	const { circlesService } = useServices();
+	const { format } = useI18n();
 	return myArray.map((circle, i) => {
-		const titleString = format(circle.key)
-		const title = titleString.replace(/(\r\n|\n|\r)/gm," ");
-		return (	
-				<BoxContainer key={circle.id}>
-					<InnerContainer>
-						<Draggable source={circle.source}></Draggable>
-						<RightContainer>
-							<Bold>{title}</Bold>
-							<Light>{format(circle.desc)}</Light>
-						</RightContainer>
-						<TouchableOpacity onPress={() => circlesService.toggleCircle(circle.id)}>
-							<Status>{circle.on ? "ON" : "OFF"}</Status>
-						</TouchableOpacity>		
-					</InnerContainer>
-				</BoxContainer>	
+		const titleString = format(circle.key);
+		const title = titleString.replace(/(\r\n|\n|\r)/gm, " ");
+		return (
+			<BoxContainer key={circle.id}>
+				<InnerContainer>
+					<Draggable source={circle.source}></Draggable>
+					<RightContainer>
+						<Bold>{title}</Bold>
+						<Light>{format(circle.desc)}</Light>
+					</RightContainer>
+					<TouchableOpacity onPress={() => circlesService.toggleCircle(circle.id)}>
+						<Status>{circle.on ? "ON" : "OFF"}</Status>
+					</TouchableOpacity>
+				</InnerContainer>
+			</BoxContainer>
 		);
-	})
+	});
 }
 
-
 export const CircleAddScreen: React.FC = () => {
-
-	const { circlesService } = useServices()	
-	const circles = useObservable(circlesService.circles)	
-	const circlesVibration = circles.filter((circle) => circle.type === "Vibration")
-	const circlesWellness = circles.filter((circle) => circle.type === "Wellness")
-	const boxViewsWellness = createViews(circlesWellness)
-	const boxViewsVibration = createViews(circlesVibration)
-	return(
+	const { circlesService } = useServices();
+	const circles = useObservable(circlesService.circles);
+	const circlesVibration = circles.filter((circle) => circle.type === "Vibration");
+	const circlesWellness = circles.filter((circle) => circle.type === "Wellness");
+	const boxViewsWellness = createViews(circlesWellness);
+	const boxViewsVibration = createViews(circlesVibration);
+	return (
 		<Container>
-			<View style={{borderBottomWidth: 0.25, borderColor: colors.gray}}>
+			<View style={{ borderBottomWidth: 0.25, borderColor: colors.gray }}>
 				<PageTile>Add, delete or discover new circles</PageTile>
-			</View>			
+			</View>
 			<TypeTile>Vibration</TypeTile>
 			{boxViewsVibration}
 			<TypeTile>Wellness</TypeTile>
-			{boxViewsWellness}			
+			{boxViewsWellness}
 		</Container>
-	)	
+	);
 };
 
 const Container = styled(ScrollScreen)`
@@ -61,10 +58,10 @@ const Container = styled(ScrollScreen)`
 	width: 100%;
 `;
 
-const BoxContainer = styled(View)`	
+const BoxContainer = styled(View)`
 	width: 100%;
 	border-radius: 8px;
-	overflow: hidden;	
+	overflow: hidden;
 	margin: 0;
 	padding: 0px 2px;
 `;
@@ -78,23 +75,22 @@ const InnerContainer = styled.View`
 `;
 
 const RightContainer = styled.View`
-	flex: 1;	
+	flex: 1;
 	border-left-color: ${colors.gray};
 	justify-content: center;
 	padding-left: 10px;
 `;
 
 const PageTile = styled.Text`
-	font-size: 18px;	
+	font-size: 18px;
 	font-weight: 500;
 	margin-left: 15px;
 	justify-content: center;
 	margin-vertical: 20px;
-	border-bottom-width: 1px;
 `;
 
 const TypeTile = styled.Text`
-	font-size: 18px;	
+	font-size: 18px;
 	font-weight: 500;
 	margin-left: 15px;
 	margin-vertical: 20px;
@@ -107,20 +103,18 @@ const Status = styled.Text`
 	font-size: 14px;
 `;
 
-const Draggable = styled.Image`	
+const Draggable = styled.Image`
 	margin-vertical: 22px;
 `;
 
-const Bold = styled.Text`	
+const Bold = styled.Text`
 	font-size: 18px;
-	paddingBottom: 5px;
-	font-weight: 500,
+	padding-bottom: 5px;
+	font-weight: 500;
 `;
 
 const Light = styled.Text`
-	color: ${colors.gray};	
+	color: ${colors.gray};
 	font-size: 14px;
-	paddingTop: 5px
+	padding-top: 5px;
 `;
-
-
