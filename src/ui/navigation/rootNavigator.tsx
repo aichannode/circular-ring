@@ -109,7 +109,7 @@ const MainHomeNavigator = () => {
 				component={CircleAddScreen}
 				options={{
 					title: format("header.circle_add"),
-					headerRight: undefined,					
+					headerRight: undefined,
 				}}
 			/>
 			<MainStack.Screen
@@ -265,7 +265,14 @@ export const RootNavigator: React.FC = () => {
 	// CIR-467: will by pass the ring setup for debuging puropose
 	const [useByPass, setByPass] = useState(false);
 
-	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
+	const isOnboardingDone = isAuthenticated && hasUser;
+
+	console.log(
+		"isAuthenticated && !accountLinkedToDevice && hasUser;",
+		isAuthenticated,
+		!accountLinkedToDevice,
+		hasUser
+	);
 
 	if (!isAuthenticated) {
 		return (
@@ -281,7 +288,9 @@ export const RootNavigator: React.FC = () => {
 		);
 	}
 
-	if (!useByPass && (wait || !deviceStored || !accountLinkedToDevice)) {
+	console.log("!deviceStored || !accountLinkedToDevice", !deviceStored, !accountLinkedToDevice);
+
+	if (!useByPass && (wait || !deviceStored)) {
 		// if (!useByPass && (wait || !deviceStored || !accountLinkedToDevice)) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
@@ -297,7 +306,7 @@ export const RootNavigator: React.FC = () => {
 
 	const isTutorialDone = false;
 
-	console.log("!isTutorialDone && isOnboardingDone", !isTutorialDone && isOnboardingDone);
+	console.log("!isTutorialDone && isOnboardingDone", isOnboardingDone);
 
 	return isOnboardingDone || useByPass ? (
 		<HomeDrawer.Navigator
