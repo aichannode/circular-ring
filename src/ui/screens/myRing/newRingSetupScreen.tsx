@@ -2,7 +2,7 @@ import { useServices } from "@core/services";
 import { DeviceSetupState } from "@domain/device/bleDeviceService";
 import { useScannedDevices, useSetupState } from "@domain/device/hooks";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
-import { PrimaryButton } from "@ui/components/buttons";
+import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { Divider } from "@ui/components/divider";
 import { Grow, ResponsiveCenterView, Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
@@ -71,6 +71,9 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	}, [setupState]);
 
 	const [isConnecting, setConnecting] = useState(false);
+	const [error, setError] = useState(false);
+
+	console.log("Error", error);
 
 	return (
 		<Container>
@@ -134,6 +137,29 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 					case DeviceSetupState.SCANNING:
 					case DeviceSetupState.CONNECTING:
 					case DeviceSetupState.FINISHED:
+						if (error)
+							return (
+								<>
+									<ErrorContainer>
+										<ErrorText>{format("setup.connection.failed.title")}</ErrorText>
+									</ErrorContainer>
+									<ResponsiveCenterView>
+										<Instructions hidden={isConnecting}>
+											<Image source={require("@assets/images/clock.png")} />
+											<InstructionsText>{format("setup.scan.enabled.title")}</InstructionsText>
+										</Instructions>
+										<Stack align="center">
+											<Image source={require("@assets/images/ringShadow.png")} style={{ position: "absolute" }} />
+											<InstructionsArrow source={require("@assets/images/arrowDown.png")} hidden={isConnecting} />
+											<Image source={require("@assets/images/ringBig.png")} />
+											<Message>{format("setup.connection.failed.message")}</Message>
+										</Stack>
+									</ResponsiveCenterView>
+									<SecondaryButton style={{ marginTop: 70 }} onPress={() => setError(false)}>
+										{format("try_again")}
+									</SecondaryButton>
+								</>
+							);
 						return (
 							<>
 								<ResponsiveCenterView>
@@ -173,9 +199,6 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 														ringManagementService.userRings.set(updatedRings);
 														await bleDeviceService.connect(device);
 														await ringManagementService.registerConnectedRing();
-
-														console.log("RINGS AFTER ADD NEW RING", updatedRings);
-
 														goBack();
 														setConnecting(false);
 													} catch (e) {
@@ -184,6 +207,8 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 														bleDeviceService.startScan();
 														if ((e as { statusCode: number }).statusCode === 409) {
 															pairingFailedBottomSheet.current?.present();
+														} else {
+															setError(true);
 														}
 													}
 												}}
@@ -206,6 +231,22 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 		</Container>
 	);
 };
+
+const ErrorContainer = styled.View`
+	background-color: ${colors.orangeRed};
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 30px;
+`;
+
+const ErrorText = styled.Text`
+	color: white;
+	font-size: 16px;
+	padding: 5px;
+	text-align: center;
+`;
 
 const Container = styled(ScrollScreen)`
 	align-items: center;
