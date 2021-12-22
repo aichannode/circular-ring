@@ -31,7 +31,7 @@ export enum Routes {
 	RingFirmwareUpdate = "RingFirmwareUpdate",
 	Activity = "Activity",
 	Sleep = "Sleep",
-	CircleAdd ="CircleAdd",
+	CircleAdd = "CircleAdd",
 	Alarm = "Alarm",
 	EditAlarm = "EditAlarm",
 	Profile = "Profile",
@@ -49,6 +49,8 @@ export enum Routes {
 
 	QuickAccess = "QuickAccess",
 	Leaderboard = "Leaderboard",
+
+	SetUpCompleted = "SetUpCompleted",
 }
 
 export type AppRoutesParams = {
@@ -101,6 +103,7 @@ export type AppRoutesParams = {
 	[Routes.RingFirmwareUpdate]: undefined;
 	[Routes.NewRingSetupScreen]: undefined;
 	[Routes.Leaderboard]: undefined;
+	[Routes.SetUpCompleted]: { ringName: string | null; action: any };
 };
 
 export type Navigate = NativeStackNavigationProp<AppRoutesParams, keyof AppRoutesParams>["navigate"];

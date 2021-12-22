@@ -8,6 +8,7 @@ import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback, useState } from "react";
 import styled from "styled-components/native";
+import { Image } from "react-native";
 
 interface DeleteRingBottomSheetProps {
 	ring: NamedUserRing;
@@ -18,7 +19,7 @@ export const DeleteRingBottomSheet: React.FC<DeleteRingBottomSheetProps> = ({ ri
 	const { format } = useI18n();
 	const { ringManagementService } = useServices();
 
-	// const [isSuccess, setSuccess] = useState(false);
+	const [isSuccess, setSuccess] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string>("");
 	const [isLoading, setLoading] = useState(false);
 
@@ -29,10 +30,7 @@ export const DeleteRingBottomSheet: React.FC<DeleteRingBottomSheetProps> = ({ ri
 			console.log("DISSOCIATE");
 			await ringManagementService.deleteRing(ring);
 			setLoading(false);
-			// TODO uncomment this line when we will stay in current screen
-			// setSuccess(true);
-			// TODO and remove this one
-			setTimeout(() => onClose(), 100);
+			setSuccess(true);
 		} catch (error) {
 			console.log("Error disssiociating", error);
 			setLoading(false);
@@ -43,41 +41,40 @@ export const DeleteRingBottomSheet: React.FC<DeleteRingBottomSheetProps> = ({ ri
 	return (
 		<Container>
 			<ResponsiveCenterView style={{ flex: 1, justifyContent: "space-around" }}>
-				{/* TODO : uncomment lines when we will stay in current screen */}
-				{/*{isSuccess ? (*/}
-				{/*	<>*/}
-				{/*		<Title>{format("manage_rings.delete.success.title")}</Title>*/}
-				{/*		<Image source={require("@assets/images/checkBig.png")} style={{ marginTop: 70 }} />*/}
-				{/*		<Grow />*/}
-				{/*		<ButtonContainer gap={35}>*/}
-				{/*			<PrimaryButton key={"done"} onPress={onClose}>*/}
-				{/*				{format("global.done")}*/}
-				{/*			</PrimaryButton>*/}
-				{/*		</ButtonContainer>*/}
-				{/*	</>*/}
-				{/*) : (*/}
-				{/*	<>*/}
-				<Title>{format("manage_rings.delete.validation.title")}</Title>
-				<SubTitle>{format("manage_rings.delete.validation.subtitle")}</SubTitle>
-				<Description>{format("manage_rings.delete.validation.description")}</Description>
-				<ErrorMessage>{errorMessage}</ErrorMessage>
-				<Grow />
-				<ButtonContainer gap={35} style={{ height: 38 }}>
-					{isLoading ? (
-						<Spinner size={24} />
-					) : (
-						[
-							<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
-								{format("global.cancel")}
-							</TertiaryButton>,
-							<PrimaryButton key={"dissociate"} onPress={deleteRing}>
-								{format("manage_rings.delete.validation.dissociate")}
-							</PrimaryButton>,
-						]
-					)}
-				</ButtonContainer>
-				{/*	</>*/}
-				{/*)}*/}
+				{isSuccess ? (
+					<>
+						<Title>{format("manage_rings.delete.success.title")}</Title>
+						<Image source={require("@assets/images/checkBig.png")} style={{ marginTop: 70 }} />
+						<Grow />
+						<ButtonContainer gap={35}>
+							<PrimaryButton key={"done"} onPress={onClose}>
+								{format("global.done")}
+							</PrimaryButton>
+						</ButtonContainer>
+					</>
+				) : (
+					<>
+						<Title>{format("manage_rings.delete.validation.title")}</Title>
+						<SubTitle>{format("manage_rings.delete.validation.subtitle")}</SubTitle>
+						<Description>{format("manage_rings.delete.validation.description")}</Description>
+						<ErrorMessage>{errorMessage}</ErrorMessage>
+						<Grow />
+						<ButtonContainer gap={35} style={{ height: 38 }}>
+							{isLoading ? (
+								<Spinner size={24} />
+							) : (
+								[
+									<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
+										{format("global.cancel")}
+									</TertiaryButton>,
+									<PrimaryButton key={"dissociate"} onPress={deleteRing}>
+										{format("manage_rings.delete.validation.dissociate")}
+									</PrimaryButton>,
+								]
+							)}
+						</ButtonContainer>
+					</>
+				)}
 			</ResponsiveCenterView>
 		</Container>
 	);

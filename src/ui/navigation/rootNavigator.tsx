@@ -46,6 +46,7 @@ import React, { useState } from "react";
 import styled from "styled-components/native";
 import { NewRingSetupScreen } from "@ui/screens/myRing/newRingSetupScreen";
 import { LeaderboardScreen } from "@ui/screens/leaderboard/leaderboardScreen";
+import { SetUpCompleted } from "@ui/screens/onboarding/ringSetup/setUpCompleted";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -109,7 +110,7 @@ const MainHomeNavigator = () => {
 				component={CircleAddScreen}
 				options={{
 					title: format("header.circle_add"),
-					headerRight: undefined,					
+					headerRight: undefined,
 				}}
 			/>
 			<MainStack.Screen
@@ -242,6 +243,8 @@ const MainHomeNavigator = () => {
 				}}
 			/>
 
+			<MainStack.Screen name={Routes.SetUpCompleted} component={SetUpCompleted} options={{ headerShown: false }} />
+
 			<MainStack.Screen name={Routes.WebView} component={WebViewScreen} />
 		</MainStack.Navigator>
 	);
@@ -265,7 +268,14 @@ export const RootNavigator: React.FC = () => {
 	// CIR-467: will by pass the ring setup for debuging puropose
 	const [useByPass, setByPass] = useState(false);
 
-	const isOnboardingDone = isAuthenticated && accountLinkedToDevice && hasUser;
+	const isOnboardingDone = isAuthenticated && hasUser;
+
+	console.log(
+		"isAuthenticated && !accountLinkedToDevice && hasUser;",
+		isAuthenticated,
+		!accountLinkedToDevice,
+		hasUser
+	);
 
 	if (!isAuthenticated) {
 		return (
@@ -281,7 +291,9 @@ export const RootNavigator: React.FC = () => {
 		);
 	}
 
-	if (!useByPass && (wait || !deviceStored || !accountLinkedToDevice)) {
+	console.log("!deviceStored || !accountLinkedToDevice", !deviceStored, !accountLinkedToDevice);
+
+	if (!useByPass && (wait || !deviceStored)) {
 		// if (!useByPass && (wait || !deviceStored || !accountLinkedToDevice)) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
@@ -291,13 +303,14 @@ export const RootNavigator: React.FC = () => {
 					initialParams={{ setWait, onByPass: () => setByPass(true) }}
 					component={RingSetupScreen}
 				/>
+				<OnboardingStack.Screen name={Routes.SetUpCompleted} initialParams={{ setWait }} component={SetUpCompleted} />
 			</OnboardingStack.Navigator>
 		);
 	}
 
-	const isTutorialDone = false;
+	// const isTutorialDone = false;
 
-	console.log("!isTutorialDone && isOnboardingDone", !isTutorialDone && isOnboardingDone);
+	console.log("!isTutorialDone && isOnboardingDone", isOnboardingDone);
 
 	return isOnboardingDone || useByPass ? (
 		<HomeDrawer.Navigator

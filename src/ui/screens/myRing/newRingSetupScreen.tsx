@@ -17,7 +17,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
-import { useNavigation } from "@react-navigation/core";
+import { SetUpFailed } from "@ui/screens/onboarding/ringSetup/setUpFailed";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 
 interface IRingSetupScreen {
 	route: {
@@ -34,7 +35,7 @@ interface IRingSetupScreen {
 export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	const { format } = useI18n();
 	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
-	const { goBack } = useNavigation();
+	const { navigate } = useRoutesNavigation();
 	const scannedDevices = useScannedDevices();
 	const [devices, setDevices] = useState(scannedDevices);
 
@@ -47,7 +48,7 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 		bleDeviceService.startScan();
 	}, []);
 
-	console.log("Scanned Devic", scannedDevices);
+	console.log("Scanned Device", scannedDevices);
 
 	useEffect(() => {
 		const knownDevices = ringManagementService.userRings.get();
@@ -71,6 +72,9 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	}, [setupState]);
 
 	const [isConnecting, setConnecting] = useState(false);
+	const [error, setError] = useState(false);
+
+	console.log("Error", error);
 
 	return (
 		<Container>
@@ -131,9 +135,11 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 								</Stack>
 							</ResponsiveCenterView>
 						);
+					case DeviceSetupState.READY_TO_SCAN:
 					case DeviceSetupState.SCANNING:
 					case DeviceSetupState.CONNECTING:
 					case DeviceSetupState.FINISHED:
+						if (error) return <SetUpFailed fullScreen={false} setError={setError} isConnecting={isConnecting} />;
 						return (
 							<>
 								<ResponsiveCenterView>
@@ -171,19 +177,22 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 															connected: false,
 														}));
 														ringManagementService.userRings.set(updatedRings);
+														await bleDeviceService.disconnect(); // trying to fix double connection
 														await bleDeviceService.connect(device);
 														await ringManagementService.registerConnectedRing();
-
-														console.log("RINGS AFTER ADD NEW RING", updatedRings);
-
-														goBack();
 														setConnecting(false);
+														navigate(Routes.SetUpCompleted, {
+															ringName: device.name,
+															action: () => navigate(Routes.ManageMyRings),
+														});
 													} catch (e) {
 														setConnecting(false);
 														bleDeviceService.favoriteDevice.set(currentDevice);
 														bleDeviceService.startScan();
 														if ((e as { statusCode: number }).statusCode === 409) {
 															pairingFailedBottomSheet.current?.present();
+														} else {
+															setError(true);
 														}
 													}
 												}}
