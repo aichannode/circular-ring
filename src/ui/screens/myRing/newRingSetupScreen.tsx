@@ -2,7 +2,7 @@ import { useServices } from "@core/services";
 import { DeviceSetupState } from "@domain/device/bleDeviceService";
 import { useScannedDevices, useSetupState } from "@domain/device/hooks";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
-import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
+import { PrimaryButton } from "@ui/components/buttons";
 import { Divider } from "@ui/components/divider";
 import { Grow, ResponsiveCenterView, Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
@@ -17,7 +17,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
-import { useNavigation } from "@react-navigation/core";
+import { SetUpFailed } from "@ui/screens/onboarding/ringSetup/setUpFailed";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 
 interface IRingSetupScreen {
 	route: {
@@ -34,7 +35,7 @@ interface IRingSetupScreen {
 export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	const { format } = useI18n();
 	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
-	const { goBack } = useNavigation();
+	const { navigate } = useRoutesNavigation();
 	const scannedDevices = useScannedDevices();
 	const [devices, setDevices] = useState(scannedDevices);
 
@@ -47,7 +48,7 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 		bleDeviceService.startScan();
 	}, []);
 
-	console.log("Scanned Devic", scannedDevices);
+	console.log("Scanned Device", scannedDevices);
 
 	useEffect(() => {
 		const knownDevices = ringManagementService.userRings.get();
@@ -134,32 +135,11 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 								</Stack>
 							</ResponsiveCenterView>
 						);
+					case DeviceSetupState.READY_TO_SCAN:
 					case DeviceSetupState.SCANNING:
 					case DeviceSetupState.CONNECTING:
 					case DeviceSetupState.FINISHED:
-						if (error)
-							return (
-								<>
-									<ErrorContainer>
-										<ErrorText>{format("setup.connection.failed.title")}</ErrorText>
-									</ErrorContainer>
-									<ResponsiveCenterView>
-										<Instructions hidden={isConnecting}>
-											<Image source={require("@assets/images/clock.png")} />
-											<InstructionsText>{format("setup.scan.enabled.title")}</InstructionsText>
-										</Instructions>
-										<Stack align="center">
-											<Image source={require("@assets/images/ringShadow.png")} style={{ position: "absolute" }} />
-											<InstructionsArrow source={require("@assets/images/arrowDown.png")} hidden={isConnecting} />
-											<Image source={require("@assets/images/ringBig.png")} />
-											<Message>{format("setup.connection.failed.message")}</Message>
-										</Stack>
-									</ResponsiveCenterView>
-									<SecondaryButton style={{ marginTop: 70 }} onPress={() => setError(false)}>
-										{format("try_again")}
-									</SecondaryButton>
-								</>
-							);
+						if (error) return <SetUpFailed fullScreen={false} setError={setError} isConnecting={isConnecting} />;
 						return (
 							<>
 								<ResponsiveCenterView>
@@ -197,10 +177,14 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 															connected: false,
 														}));
 														ringManagementService.userRings.set(updatedRings);
+														await bleDeviceService.disconnect(); // trying to fix double connection
 														await bleDeviceService.connect(device);
 														await ringManagementService.registerConnectedRing();
-														goBack();
 														setConnecting(false);
+														navigate(Routes.SetUpCompleted, {
+															ringName: device.name,
+															action: () => navigate(Routes.ManageMyRings),
+														});
 													} catch (e) {
 														setConnecting(false);
 														bleDeviceService.favoriteDevice.set(currentDevice);
@@ -231,22 +215,6 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 		</Container>
 	);
 };
-
-const ErrorContainer = styled.View`
-	background-color: ${colors.orangeRed};
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 30px;
-`;
-
-const ErrorText = styled.Text`
-	color: white;
-	font-size: 16px;
-	padding: 5px;
-	text-align: center;
-`;
 
 const Container = styled(ScrollScreen)`
 	align-items: center;

@@ -17,6 +17,8 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
+import { SetUpFailed } from "@ui/screens/onboarding/ringSetup/setUpFailed";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 
 interface IRingSetupScreen {
 	route: {
@@ -35,7 +37,7 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	const { format } = useI18n();
 	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
 	const { setWait } = props.route.params;
-
+	const { navigate } = useRoutesNavigation();
 	const pairingFailedBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
 	const setupState = useSetupState();
@@ -59,6 +61,7 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	}, [setupState]);
 
 	const [isConnecting, setConnecting] = useState(false);
+	const [error, setError] = useState(false);
 
 	return (
 		<Container>
@@ -122,6 +125,7 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 					case DeviceSetupState.SCANNING:
 					case DeviceSetupState.CONNECTING:
 					case DeviceSetupState.FINISHED:
+						if (error) return <SetUpFailed fullScreen={true} setError={setError} isConnecting={isConnecting} />;
 						return (
 							<>
 								<CloseContainer>
@@ -159,15 +163,17 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 													try {
 														await bleDeviceService.connect(device);
 														await ringManagementService.registerConnectedRing();
-														setWait(false);
 														setConnecting(false);
 														bleDeviceService.stopScan();
+														navigate(Routes.SetUpCompleted, { ringName: device.name, action: () => setWait(false) });
 													} catch (e) {
 														setConnecting(false);
 														setWait(false);
 														await bleDeviceService.disconnect();
 														if ((e as { statusCode: number }).statusCode === 409) {
 															pairingFailedBottomSheet.current?.present();
+														} else {
+															setError(true);
 														}
 													}
 												}}

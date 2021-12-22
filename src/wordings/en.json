@@ -1,6 +1,7 @@
 {
 	"app_name": "Circular Ring",
 	"ok": "Ok",
+	"done": "Done",
 	"retry": "Retry",
 	"try_again": "Try again",
 	"back": "Back",
