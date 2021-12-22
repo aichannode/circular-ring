@@ -5,11 +5,13 @@ import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Pressable, StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 import { Melody, serializeMelody } from "@domain/ring/ringAlarm";
 import { useServices } from "@core/services";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
+import { ActivateRingBottomSheet } from "./activateRingBottomSheet";
 
 interface RingCardProps {
 	ring: NamedUserRing;
@@ -24,6 +26,8 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 	const [currentOption, setCurrentOption] = useState(ring.connected ? options[0] : options[1]);
 	const { bleDeviceService, ringManagementService } = useServices();
 
+	const areYouSureToActivate = useRef<CircularBottomSheetHandle>(null);
+
 	const disconnectAllRings = () => {
 		const rings = ringManagementService.userRings.get();
 		const updatedRings = rings.map((ring) => ({
@@ -32,6 +36,20 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 		}));
 		ringManagementService.userRings.set(updatedRings);
 		bleDeviceService.disconnect();
+	};
+
+	const connectToRing = (ring) => {
+		console.log("Reconnect to ring", ring.name);
+		disconnectAllRings();
+		bleDeviceService.favoriteDevice.set({ name: ring.name });
+		bleDeviceService.favoriteDeviceSNU.set(ring.id);
+		setTimeout(() => {
+			bleDeviceService.autoConnectFavoriteDevice();
+		}, 100);
+	};
+
+	const cancelConnectToRing = () => {
+		setCurrentOption(options[1]);
 	};
 
 	useEffect(() => {
@@ -43,13 +61,8 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 			disconnectAllRings();
 		}
 		if (!ring.connected && ring.name && currentOption === options[0]) {
-			console.log("Reconnect to ring", ring.name);
-			disconnectAllRings();
-			bleDeviceService.favoriteDevice.set({ name: ring.name });
-			bleDeviceService.favoriteDeviceSNU.set(ring.id);
-			setTimeout(() => {
-				bleDeviceService.autoConnectFavoriteDevice();
-			}, 100);
+			console.log("PRESENT");
+			areYouSureToActivate.current?.present();
 		}
 	}, [currentOption]);
 
@@ -98,6 +111,14 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 					</RingRightInfoContainer>
 				</RingInfoContainer>
 			</Card>
+			<CircularBottomSheet snapPoints={[600]} ref={areYouSureToActivate}>
+				<ActivateRingBottomSheet
+					ring={ring}
+					connectToRing={connectToRing}
+					cancelConnectToRing={cancelConnectToRing}
+					onClose={() => areYouSureToActivate.current?.close()}
+				/>
+			</CircularBottomSheet>
 		</Container>
 	);
 };
