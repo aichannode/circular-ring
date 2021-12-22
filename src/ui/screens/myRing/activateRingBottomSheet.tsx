@@ -46,7 +46,7 @@ export const ActivateRingBottomSheet: React.FC<ActivateRingBottomSheetProps> = (
 							cancelConnectToRing();
 						}}
 					>
-						{format("cancel")}
+						{format("global.cancel")}
 					</TertiaryButton>
 
 					<PrimaryButton

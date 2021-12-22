@@ -38,10 +38,10 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 		bleDeviceService.disconnect();
 	};
 
-	const connectToRing = (ring) => {
+	const connectToRing = (ring: NamedUserRing) => {
 		console.log("Reconnect to ring", ring.name);
 		disconnectAllRings();
-		bleDeviceService.favoriteDevice.set({ name: ring.name });
+		if (ring.name) bleDeviceService.favoriteDevice.set({ name: ring.name });
 		bleDeviceService.favoriteDeviceSNU.set(ring.id);
 		setTimeout(() => {
 			bleDeviceService.autoConnectFavoriteDevice();
