@@ -32,11 +32,8 @@ export const ActivateRingBottomSheet: React.FC<ActivateRingBottomSheetProps> = (
 			</Stack>
 			<ResponsiveCenterView maxWidth={270} style={{ flex: 1, justifyContent: "space-around" }}>
 				<Stack align="center">
-					<BoldText>Are you sure you want to activate this ring?</BoldText>
-					<SecondaryText style={{ textAlign: "center", marginTop: 20 }}>
-						All other rings that are paired with your account will go inactive and only this ring will be able to be
-						used.
-					</SecondaryText>
+					<BoldText>{format("activate.title")}</BoldText>
+					<SecondaryText style={{ textAlign: "center", marginTop: 20 }}>{format("activate.message")}</SecondaryText>
 				</Stack>
 				<ButtonContainer>
 					<TertiaryButton

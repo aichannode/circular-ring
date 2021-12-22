@@ -98,6 +98,8 @@
 	"forgot_password.new.password": "New password",
 	"forgot_password.new.confirm_password": "Confim new password",
 	"forgot_password.new.button": "Save and Sign in",
+	"activate.title": "Are you sure you want to activate this ring?",
+	"activate.message": "All other rings that are paired with your account will go inactive and only this ring will be able to be used.",
 	"global.back": "Back",
 	"global.next": "Next",
 	"global.cancel": "Cancel",
