@@ -66,9 +66,9 @@ export const MyRingScreen: React.FC = () => {
 					autoCapitalize="characters"
 					autoCompleteType="off"
 					autoCorrect={false}
-					value={viewModel.formatRingName(editedName)}
+					value={editedName}
 					onChangeText={setEditedName}
-				></Dialog.Input>
+				/>
 				<Dialog.Button onPress={() => setShowPrompt(false)} label={format("global.cancel")} />
 				<Dialog.Button
 					label={format("global.edit")}
