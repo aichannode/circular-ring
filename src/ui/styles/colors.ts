@@ -25,6 +25,12 @@ export const colors = {
 	purpleGarientStart: "#AD7CD4",
 	purpleGarientEnd: "#FC7F81",
 	disabled: "#bfbfbf",
+	// Place here all the colors relative to business semantic
+	business: {
+		activityNone: "#ff000059",
+		activityLow: "#F06A6A",
+		activityHigh: "#DD2A2A"
+	}
 };
 
 export const qualityColors: { [key in ScoreQuality]: string } = {

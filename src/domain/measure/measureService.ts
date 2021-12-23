@@ -1,6 +1,6 @@
 import { Store } from "@betomorrow/micro-stores";
 import { getLogger } from "@core/logger/logger";
-import dayjs from "dayjs";
+import moment from "moment";
 import { observable } from "micro-observables";
 import { MeasureApi } from "./measureApi";
 import {
@@ -13,7 +13,7 @@ import {
 	Metric,
 	MetricInfo,
 } from "./metric";
-import { DailyPhase } from "./sleep";
+import { DailyActivityPhase, DailySleepPhase, DurationInfos } from "./type";
 
 export class MeasureService {
 	private logger = getLogger("📊 MeasureService");
@@ -26,7 +26,8 @@ export class MeasureService {
 	sleepQualityData = new Store((day) => this.fetchSleepQualityDailyData(day), "date");
 	dailyGlobalScores = new Store((day) => this.fetchGlobalScore(day), "date");
 	sleepDurationInfos = new Store((day) => this.fetchSleepDurationInfos(day), "date");
-
+	activityDurationInfos = new Store((day) => this.fetchActivityDurationInfos(day), "date");
+	
 	constructor(private readonly measureApi: MeasureApi) {}
 
 	async fetchActivityData(ymdDay?: string) {
@@ -44,7 +45,7 @@ export class MeasureService {
 			this.logger.error("Error: activity data metrics are empty for day", ymdDay);
 			throw Error("No activity metrics");
 		}
-		return { date: dayjs(metrics.timestamp).format("YYYY-MM-DD"), data: metrics };
+		return { date: moment(metrics.timestamp).format("YYYY-MM-DD"), data: metrics };
 	}
 
 	async fetchSleepQualityDailyData(ymdDay?: string) {
@@ -56,7 +57,7 @@ export class MeasureService {
 			this.logger.error("Error: sleep data metrics are empty for day", ymdDay);
 			throw Error("No sleep metrics");
 		}
-		return { date: dayjs(metrics.timestamp).format("YYYY-MM-DD"), data: metrics };
+		return { date: moment(metrics.timestamp).format("YYYY-MM-DD"), data: metrics };
 	}
 
 	async fetchWakeUpScore() {
@@ -72,7 +73,7 @@ export class MeasureService {
 		}
 
 		return {
-			date: dayjs(metrics.timestamp).format("YYYY-MM-DD"),
+			date: moment(metrics.timestamp).format("YYYY-MM-DD"),
 			score: metrics.metrics["user.daily.global.score"],
 		};
 	}
@@ -81,11 +82,11 @@ export class MeasureService {
 		const allMetrics = await this.measureApi.getMeasures(
 			["user.daily.global.score"],
 			firstDayOfMonth,
-			dayjs(firstDayOfMonth).endOf("month").toDate()
+			moment(firstDayOfMonth).endOf("month").toDate()
 		);
 		this.dailyGlobalScores.merge(
 			allMetrics.map(({ timestamp, metrics }) => ({
-				date: dayjs(timestamp).format("YYYY-MM-DD"),
+				date: moment(timestamp).format("YYYY-MM-DD"),
 				score: metrics["user.daily.global.score"] ?? 0,
 			}))
 		);
@@ -94,68 +95,130 @@ export class MeasureService {
 	private async fetchDailyMeasures(measures: Metric[], date?: Date): Promise<MetricInfo<Metric> | null> {
 		const allMetrics = await this.measureApi.getMeasures(
 			measures,
-			date ? dayjs(date).startOf("day").toDate() : dayjs().subtract(1, "day").toDate(),
-			date ? dayjs(date).endOf("day").toDate() : new Date()
+			date ? moment(date).startOf("day").toDate() : moment().subtract(1, "day").toDate(),
+			date ? moment(date).endOf("day").toDate() : new Date()
 		);
 		const lastMetric = allMetrics[allMetrics.length - 1] ?? null;
 		return lastMetric;
 	}
 
-	async fetchSleepDurationInfos(ymdDay?: string) {
+	async fetchActivityDurationInfos(ymdDay?: string) {
 		const allMetrics = await this.measureApi.getMeasures(
-			["user.daily.total.sleep.duration", "user.sleep.stage", "user.sleep.napping"],
-			dayjs(ymdDay).subtract(1, "day").toDate(),
+			[
+				"user.start.of.sport",
+				"user.end.of.sport",
+				"user.non.active.activity",
+				"user.low.intensity.activity",
+				"user.medium.intensity.activity",
+				"user.high.intensity.activity"
+			],
+			moment(ymdDay).subtract(1, "day").toDate(),
 			ymdDay ? new Date(ymdDay) : new Date()
 		);
 
-		const sleepDurationInfos = getDurationInfos(allMetrics);
-		return { date: ymdDay ?? dayjs().format("YYYY-MM-DD"), infos: sleepDurationInfos };
+		const activityDurationInfos = getDurationInfos<DailyActivityPhase>(allMetrics);
+		return { date: ymdDay ?? moment().format("YYYY-MM-DD"), infos: activityDurationInfos };
+	}
+
+	async fetchSleepDurationInfos(ymdDay?: string) {
+		const allMetrics = await this.measureApi.getMeasures(
+			["user.daily.total.sleep.duration", "user.sleep.stage", "user.sleep.napping"],
+			moment(ymdDay).subtract(1, "day").toDate(),
+			ymdDay ? new Date(ymdDay) : new Date()
+		);
+
+		const sleepDurationInfos = getDurationInfos<DailySleepPhase>(allMetrics);
+		return { date: ymdDay ?? moment().format("YYYY-MM-DD"), infos: sleepDurationInfos };
 	}
 }
 
-function getDurationInfos(
-	allMetrics: MetricInfo<"user.sleep.stage" | "user.sleep.napping" | "user.daily.total.sleep.duration">[]
-) {
-	// Waiting for backend algorithm
-
-	return {
-		totalSleepDuration: 9 * 60 + 23,
-		dailyPhaseInfos: [
-			{
-				phase: DailyPhase.LYING,
-				start: dayjs().subtract(1, "day").hour(22).toDate(),
-				end: dayjs().subtract(1, "day").hour(23).toDate(),
-			},
-			{
-				phase: DailyPhase.SLEEP,
-				start: dayjs().subtract(1, "day").hour(23).toDate(),
-				end: dayjs().hour(1).toDate(),
-			},
-			{
-				phase: DailyPhase.DISTURBANCE,
-				start: dayjs().hour(1).toDate(),
-				end: dayjs().hour(2).toDate(),
-			},
-			{
-				phase: DailyPhase.SLEEP,
-				start: dayjs().hour(2).toDate(),
-				end: dayjs().hour(6).minute(0).toDate(),
-			},
-			{
-				phase: DailyPhase.AWAKE,
-				start: dayjs().hour(6).minute(0).toDate(),
-				end: dayjs().hour(14).toDate(),
-			},
-			{
-				phase: DailyPhase.NAP,
-				start: dayjs().hour(14).toDate(),
-				end: dayjs().hour(15).toDate(),
-			},
-			{
-				phase: DailyPhase.AWAKE,
-				start: dayjs().hour(15).toDate(),
-				end: dayjs().hour(19).toDate(),
-			},
-		],
-	};
+function getDurationInfos<T extends DailySleepPhase | DailyActivityPhase, K extends Metric = Metric>(
+	allMetrics: MetricInfo<K>[]
+): DurationInfos<T> {
+	return (allMetrics[0].metrics as any)["user.start.of.sport"] // TODO implement algorithm
+		? {
+			totalDuration: 9 * 60 + 23,
+			dailyPhaseInfos: [
+				{
+					phase: DailyActivityPhase.SEDENTARY as T,
+					start: moment().hour(0).minutes(0).toDate(),
+					end: moment().hour(11).minutes(55).toDate(),
+				},
+				{
+					phase: DailyActivityPhase.LOW as T,
+					start: moment().hour(11).minutes(55).toDate(),
+					end: moment().hour(12).minutes(10).toDate()
+				},
+				{
+					phase: DailyActivityPhase.MEDIUM as T,
+					start: moment().hour(12).minutes(10).toDate(),
+					end: moment().hour(12).minutes(40).toDate(),
+				},
+				{
+					phase: DailyActivityPhase.HIGH as T,
+					start: moment().hour(12).minutes(40).toDate(),
+					end: moment().hour(12).minutes(55).toDate()
+				},
+				{
+					phase: DailyActivityPhase.MEDIUM as T,
+					start: moment().hour(12).minutes(55).toDate(),
+					end: moment().hour(13).minutes(11).toDate()
+				},
+				{
+					phase: DailyActivityPhase.LOW as T,
+					start: moment().hour(13).minutes(11).toDate(),
+					end: moment().hour(13).minutes(30).toDate()
+				},
+				{
+					phase: DailyActivityPhase.SEDENTARY as T,
+					start: moment().hour(13).minutes(30).toDate(),
+					end: moment().hour(18).minutes(0).toDate(),
+				},
+				{
+					phase: DailyActivityPhase.LOW as T,
+					start: moment().hour(18).minutes(0).toDate(),
+					end: moment().hour(18).minutes(20).toDate()
+				},
+				{
+					phase: DailyActivityPhase.SEDENTARY as T,
+					start: moment().hour(18).minutes(20).toDate(),
+					end: moment().hour(20).minutes(0).toDate()
+				}
+			]
+		}: {
+			totalDuration: 9 * 60 + 23,
+			dailyPhaseInfos: [
+				
+				{
+					phase: DailySleepPhase.SLEEP as T,
+					start: moment().subtract(1, "day").hour(23).toDate(),
+					end: moment().hour(1).toDate(),
+				},
+				{
+					phase: DailySleepPhase.DISTURBANCE as T,
+					start: moment().hour(1).toDate(),
+					end: moment().hour(2).toDate(),
+				},
+				{
+					phase: DailySleepPhase.SLEEP as T,
+					start: moment().hour(2).toDate(),
+					end: moment().hour(6).minute(0).toDate(),
+				},
+				{
+					phase: DailySleepPhase.AWAKE as T,
+					start: moment().hour(6).minute(0).toDate(),
+					end: moment().hour(14).toDate(),
+				},
+				{
+					phase: DailySleepPhase.NAP as T,
+					start: moment().hour(14).toDate(),
+					end: moment().hour(15).toDate(),
+				},
+				{
+					phase: DailySleepPhase.AWAKE as T,
+					start: moment().hour(15).toDate(),
+					end: moment().hour(19).toDate(),
+				},
+			],
+		};
 }

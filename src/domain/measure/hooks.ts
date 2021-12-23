@@ -17,7 +17,10 @@ export const useSleepDurationData = (ymdDay?: string) => {
 	const { measureService } = useServices();
 	return useStore(ymdDay ?? dayjs().format("YYYY-MM-DD"), measureService.sleepDurationInfos, FetchStrategy.First);
 };
-
+export const useActivityDurationData = (ymdDay?: string) => {
+	const { measureService } = useServices();
+	return useStore(ymdDay ?? dayjs().format("YYYY-MM-DD"), measureService.activityDurationInfos, FetchStrategy.First);
+};
 export const useWakeUpScore = () => {
 	const { measureService } = useServices();
 	const score = useObservable(measureService.wakeUpScore);

@@ -5,19 +5,18 @@ import { CalendarView } from "@ui/components/calendar/calendarView";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
 import { Stack } from "@ui/components/layout";
-import { DailyPhasesPie } from "@ui/components/measure/dailyPhasesPie";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
 import { ScoreGauge } from "@ui/components/measure/scoreGauge";
 import { ScoreSection } from "@ui/components/measure/scoreSection";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import dayjs from "dayjs";
+import moment from "moment";
 import React, { useRef, useState } from "react";
-import { Image, LayoutAnimation, View } from "react-native";
+import { LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
 import { scoreDetailsDataInfos } from "./measureDisplayInfos";
-import { sleep_duration } from "@assets/images/sleep_duration.png"
+import { SleepDurationPieChart } from "./sleepDurationPie";
 
 const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
@@ -27,7 +26,7 @@ export const CircleSleepScreen: React.FC = () => {
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const { format } = useI18n();
 
-	const [selectedDay, setSelectedDay] = useState<string>(dayjs().format("YYYY-MM-DD"));
+	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
 	const { result: dailyData } = useSleepQualityDailyData(selectedDay);
@@ -52,12 +51,10 @@ export const CircleSleepScreen: React.FC = () => {
 				/>
 			</View>
 			<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
-			<View>{sleepDurationData && <DailyPhasesPie sleepDurationData={sleepDurationData.infos} />}</View>
+			<View>{sleepDurationData && <SleepDurationPieChart durationData={sleepDurationData.infos} />
+			}</View>
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
-				<View style={{justifyContent: "center", alignItems: "center"}}>
-					<Image source={sleep_duration}/>
-				</View>
 				{
 					allSleepQualityMetrics
 						.map((metric, index) => {
