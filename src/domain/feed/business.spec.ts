@@ -9,11 +9,11 @@ it('Check if jest is configured in UTC', function() {
 });
 
 it('should be a today date', function() {
-    expect(isToday("2021-10-11T10:31:06.585Z", today))
+    expect(isToday("2021-10-11T10:31:06.585Z", today)).toBeTruthy()
 })
 
-it('should be a yesterday date', function() {
-    expect(isToday("2021-09-11T14:31:06.585Z", today))
+it('should not be a today date', function() {
+    expect(isToday("2021-09-11T14:31:06.585Z", today)).toBeFalsy()
 })
 
 it('Date < 24h: should get the delta from current date in hours', function() {

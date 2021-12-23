@@ -1,8 +1,9 @@
 import { useServices } from "@core/services";
+import { isYesterday } from "@domain/common/utils";
 import { useObservable } from "micro-observables";
 import moment from "moment";
 import { useEffect } from "react";
-import { isToday, isYesterday } from "./business";
+import { isToday } from "./business";
 import { FeedRecommendation, FeedNotification } from "./type";
 
 export function useRecommendations(): Record<string, FeedRecommendation[]> {
