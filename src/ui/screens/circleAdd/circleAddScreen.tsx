@@ -20,12 +20,16 @@ function createViews(myArray: CircleEntity[]) {
 				<InnerContainer>
 					<Draggable source={circle.source}></Draggable>
 					<RightContainer>
-						<Bold>{title}</Bold>
-						<Light>{format(circle.desc)}</Light>
+						<View style={{flex: 1, flexDirection: "row", width: "100%"}}>
+							<Bold>{title}</Bold>
+							<TouchableOpacity style={{width: "10%"}} onPress={() => circlesService.toggleCircle(circle.id)}>
+								<Status>{circle.on ? "ON" : "OFF"}</Status>
+							</TouchableOpacity>
+						</View>
+						<View style={{height: "70%"}}>
+							<Light>{format(circle.desc)}</Light>
+						</View>
 					</RightContainer>
-					<TouchableOpacity onPress={() => circlesService.toggleCircle(circle.id)}>
-						<Status>{circle.on ? "ON" : "OFF"}</Status>
-					</TouchableOpacity>
 				</InnerContainer>
 			</BoxContainer>
 		);
@@ -70,8 +74,9 @@ const InnerContainer = styled.View`
 	display: flex;
 	flex-direction: row;
 	background-color: ${colors.lightgray};
-	padding: 0px 15px;
+	padding: 0px 10px 10px 0px;
 	margin-bottom: 1px;
+	height: 100px;
 `;
 
 const RightContainer = styled.View`
@@ -79,6 +84,7 @@ const RightContainer = styled.View`
 	border-left-color: ${colors.gray};
 	justify-content: center;
 	padding-left: 10px;
+	padding-top: 10px;
 `;
 
 const PageTile = styled.Text`
@@ -98,9 +104,9 @@ const TypeTile = styled.Text`
 
 const Status = styled.Text`
 	color: ${colors.gray};
-	margin-top: 4;
-	margin-right: 4;
 	font-size: 14px;
+	text-align: right;
+	width: 100%;
 `;
 
 const Draggable = styled.Image`
@@ -111,6 +117,7 @@ const Bold = styled.Text`
 	font-size: 18px;
 	padding-bottom: 5px;
 	font-weight: 500;
+	width: 90%;
 `;
 
 const Light = styled.Text`
