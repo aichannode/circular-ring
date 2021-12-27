@@ -18,7 +18,7 @@ interface ScoreSectionProps {
 export const ScoreSection: React.FC<ScoreSectionProps> = ({ score, color, label, style }) => {
 	const { formatScoreQuality } = useI18n();
 
-	const scoreQuality = score != undefined ? getScoreQuality(score, 80, 90) : null;
+	const scoreQuality = score != undefined ? getScoreQuality(score) : null;
 
 	return (
 		<ResponsiveCenterView style={style} maxWidth={175} align="stretch" horizontalPadding={0}>

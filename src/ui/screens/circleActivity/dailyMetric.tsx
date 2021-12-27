@@ -25,7 +25,7 @@ export const DailyMetric: React.FC<DailyMetricProps> = ({
 }) => {
 	const scoreQuality =
 		goodThreshold && optimalThreshold && value !== undefined
-			? getScoreQuality(value, goodThreshold, optimalThreshold)
+			? getScoreQuality(value)
 			: undefined;
 
 	return (
