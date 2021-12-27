@@ -6,13 +6,6 @@ export enum ScoreQuality {
 	OPTIMAL = "OPTIMAL",
 }
 
-export function getScoreQuality(score: number, goodThreshold: number, optimalThreshold: number) {
-	return score > optimalThreshold
-		? ScoreQuality.OPTIMAL
-		: score > goodThreshold
-		? ScoreQuality.GOOD
-		: ScoreQuality.POOR;
+export function getScoreQuality(score: number) {
+	return score == 0 ? ScoreQuality.POOR : ScoreQuality.OPTIMAL;
 }
-
-export const goodGlobalScoreThreshold = 80;
-export const optimalGlobalScoreThreshold = 90;

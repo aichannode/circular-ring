@@ -35,7 +35,7 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 }) => {
 	const gaugeRatio = gaugeInverted && rate !== undefined ? 1 - rate : rate;
 	const scoreQuality =
-		gaugeRatio !== undefined ? getScoreQuality(gaugeRatio, goodThreshold, optimalThreshold) : undefined;
+		gaugeRatio !== undefined ? getScoreQuality(gaugeRatio) : undefined;
 
 	const { formatScoreQuality, formatTranquility, formatDuration } = useI18n();
 

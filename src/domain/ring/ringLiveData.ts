@@ -3,7 +3,7 @@ export interface RingLiveData {
 	heartRate?: number;
 	spo2?: number;
 	hrv?: number;
-	correlation: number;
+	correlation?: number;
 	maxHeartRate?: number;
 }
 
