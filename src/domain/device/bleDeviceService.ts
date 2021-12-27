@@ -209,13 +209,13 @@ export class BleDeviceService {
 		}
 		this.userService.user.subscribe(async (user) => {
 			console.log("BLESERVICES USER", user);
-			if (!user) {
-				console.log("DISCONNECTION");
-				this.disconnect();
-				this._favoriteDevice.set(null);
-				this._favoriteDeviceSNU.set(null);
-				await this.favoriteDeviceStorage.clear();
-			}
+			// if (!user) {
+			// 	console.log("DISCONNECTION");
+			// 	this.disconnect();
+			// 	this._favoriteDevice.set(null);
+			// 	this._favoriteDeviceSNU.set(null);
+			// 	await this.favoriteDeviceStorage.clear();
+			// }
 		});
 	}
 

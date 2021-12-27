@@ -36,7 +36,7 @@ export class RingManagementService {
 	) {
 		this.userService.user.subscribe((user) => {
 			if (!user) {
-				this._userRings.set([]);
+				// this._userRings.set([]);
 			}
 		});
 
