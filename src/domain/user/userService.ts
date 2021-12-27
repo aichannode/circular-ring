@@ -62,7 +62,6 @@ export class UserService {
 		this._userSettings.set(await this.userStorage.loadUserSettings());
 		this._userAdvancedInfo.set(await this.userStorage.loadUserAdvancedInfo());
 		const authenticatedEmail = this.authService.userEmail.get();
-		console.log("THIS SUER", this._user);
 		if (!!authenticatedEmail) {
 			try {
 				await this.retrieveUser();
