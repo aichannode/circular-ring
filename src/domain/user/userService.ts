@@ -1,4 +1,3 @@
-import { Storage } from "@core/storage";
 import { getLogger } from "@core/logger/logger";
 import { round2Digits, toServerDate } from "@core/utils";
 import { AuthService } from "@domain/auth/authService";
@@ -20,8 +19,11 @@ import { Sex, User } from "@domain/user/user";
 import { UserApi, UserPutDto } from "@domain/user/userApi";
 import { UserSettings } from "@domain/user/userSettings";
 import { UserStorage } from "@domain/user/userStorage";
+import { RingManagementService } from "@domain/ring/ringManagementService";
+import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { observable } from "micro-observables";
 import * as RNLocalize from "react-native-localize";
+import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
 
 const defaultSettings = {
 	dateFormat: DateFormat.DMY,
@@ -49,7 +51,10 @@ export class UserService {
 	constructor(
 		private readonly authService: AuthService,
 		private readonly userApi: UserApi,
-		private readonly userStorage: UserStorage
+		private readonly userStorage: UserStorage,
+		private readonly bleDeviceService: BleDeviceService,
+		private readonly ringManagementService: RingManagementService,
+		private readonly favoriteDeviceStorage: FavoriteDeviceStorage
 	) {}
 
 	async init() {
@@ -57,6 +62,7 @@ export class UserService {
 		this._userSettings.set(await this.userStorage.loadUserSettings());
 		this._userAdvancedInfo.set(await this.userStorage.loadUserAdvancedInfo());
 		const authenticatedEmail = this.authService.userEmail.get();
+		console.log("THIS SUER", this._user);
 		if (!!authenticatedEmail) {
 			try {
 				await this.retrieveUser();
@@ -103,14 +109,19 @@ export class UserService {
 	}
 
 	async logout() {
-		const appDataIds = await Storage.getAllKeys();
-		Storage.multiRemove(appDataIds);
-		await this.authService.logout();
+		// const appDataIds = await Storage.getAllKeys();
+		// Storage.multiRemove(appDataIds);
+		this.bleDeviceService.disconnect();
 		this._user.set(null);
 		this._authenticatedUserEmail.set(null);
 		await this.userStorage.removeUser();
 		await this.userStorage.removeUserSettings();
 		await this.userStorage.removeUserAdvancedInfo();
+		this.ringManagementService._userRings.set([]);
+		this.bleDeviceService.favoriteDevice.set(null);
+		this.bleDeviceService.favoriteDeviceSNU.set(null);
+		await this.favoriteDeviceStorage.clear();
+		await this.authService.logout();
 	}
 
 	async deleteMe() {
@@ -158,6 +169,7 @@ export class UserService {
 			this.logger.warn("Get user failed: " + JSON.stringify(error));
 			if ((error as { statusCode: number }).statusCode !== 404) {
 				// 404 == User does not exist on Circular yet => other error : logout
+				console.log("Error LOGOUT");
 				await this.logout();
 			}
 			throw error;
@@ -181,6 +193,7 @@ export class UserService {
 			await this.userStorage.saveUserAdvancedInfo(userAdvancedInfo);
 		} catch (error) {
 			this.logger.warn("Get user settings failed: " + JSON.stringify(error));
+			throw error;
 		}
 	}
 

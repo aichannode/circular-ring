@@ -47,26 +47,21 @@ const ringApi = new RingApi(apiService);
 const cognitoAuthService = new CognitoAuthService<TokenPayload>();
 
 const userApi = new UserApi(apiService);
-const userService = new UserService(cognitoAuthService, userApi, userStorage);
 
 const bluetoothService = new BluetoothService();
-const bleDeviceService = new BleDeviceService(
-	bluetoothService,
-	fakeDeviceService,
-	favoriteDeviceStorage,
-	userService,
-	ringApi
-);
+const bleDeviceService = new BleDeviceService(bluetoothService, fakeDeviceService, favoriteDeviceStorage, ringApi);
 const circleAlarmService = new CircleAlarmService(bleDeviceService);
-const ringManagementService = new RingManagementService(
-	userService,
-	bleDeviceService,
-	userRingsStorage,
-	ringDataStorage,
-	ringApi
-);
+const ringManagementService = new RingManagementService(bleDeviceService, userRingsStorage, ringDataStorage, ringApi);
 
-const circlesService = new CirclesService()
+const userService = new UserService(
+	cognitoAuthService,
+	userApi,
+	userStorage,
+	bleDeviceService,
+	ringManagementService,
+	favoriteDeviceStorage
+);
+const circlesService = new CirclesService();
 
 const measureApi = new MeasureApi(apiService);
 const measureService = new MeasureService(measureApi);

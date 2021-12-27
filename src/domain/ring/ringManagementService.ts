@@ -1,7 +1,6 @@
 import { getLogger } from "@core/logger/logger";
 import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { Channel } from "@domain/device/channels";
-import { UserService } from "@domain/user/userService";
 import { observable } from "micro-observables";
 import { NamedUserRing } from "./ring";
 import { RingApi } from "./ringApi";
@@ -28,18 +27,11 @@ export class RingManagementService {
 	userRings = this._userRings;
 	currentRingSyncState = this._currentRingSyncState.readOnly();
 	constructor(
-		private readonly userService: UserService,
 		private readonly deviceService: BleDeviceService,
 		private readonly userRingsStorage: UserRingsStorage,
 		private readonly ringDataStorage: RingDataStorage,
 		private readonly ringApi: RingApi
 	) {
-		this.userService.user.subscribe((user) => {
-			if (!user) {
-				// this._userRings.set([]);
-			}
-		});
-
 		// once device is connected, retrieve its name and set it to our ring info
 		this.deviceService.favoriteDeviceSNU.subscribe((snu) => {
 			this._userRings.update((rings) => {
