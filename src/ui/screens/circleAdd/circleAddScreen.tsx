@@ -58,7 +58,6 @@ export const CircleAddScreen: React.FC = () => {
 
 const Container = styled(ScrollScreen)`
 	padding-top: 0px;
-	background-color: ${colors.white};
 	width: 100%;
 `;
 
@@ -66,25 +65,19 @@ const BoxContainer = styled(View)`
 	width: 100%;
 	border-radius: 8px;
 	overflow: hidden;
-	margin: 0;
-	padding: 0px 2px;
+	margin-bottom: 1px;
 `;
 
 const InnerContainer = styled.View`
-	display: flex;
 	flex-direction: row;
 	background-color: ${colors.lightgray};
-	padding: 0px 10px 10px 0px;
-	margin-bottom: 1px;
-	height: 100px;
+	height: 98px;
 `;
 
 const RightContainer = styled.View`
 	flex: 1;
-	border-left-color: ${colors.gray};
-	justify-content: center;
-	padding-left: 10px;
 	padding-top: 10px;
+	margin-right: 20px;
 `;
 
 const PageTile = styled.Text`
@@ -110,7 +103,9 @@ const Status = styled.Text`
 `;
 
 const Draggable = styled.Image`
-	margin-vertical: 22px;
+	margin-vertical: 19px;
+	margin-left: 20px;
+	margin-right: 20px;
 `;
 
 const Bold = styled.Text`
