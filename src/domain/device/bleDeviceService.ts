@@ -5,7 +5,6 @@ import { Channel } from "@domain/device/channels";
 import { FakeDeviceService } from "@domain/fake/fakeDeviceService";
 import { deserializeBattery, RingBattery } from "@domain/ring/ringBattery";
 import { deserializeLiveData, RingLiveData } from "@domain/ring/ringLiveData";
-import { UserService } from "@domain/user/userService";
 import { observable, Observable } from "micro-observables";
 import { Signal } from "micro-signals";
 import { Platform } from "react-native";
@@ -132,7 +131,6 @@ export class BleDeviceService {
 		private readonly bluetoothService: BluetoothService,
 		private readonly fakeDeviceService: FakeDeviceService,
 		private readonly favoriteDeviceStorage: FavoriteDeviceStorage,
-		private readonly userService: UserService,
 		private readonly ringApi: RingApi
 	) {
 		this._favoriteDevice.subscribe((device) => {
@@ -207,16 +205,6 @@ export class BleDeviceService {
 			console.log("CIR-266 init LOADED DEVICE");
 			this.autoConnectFavoriteDevice();
 		}
-		this.userService.user.subscribe(async (user) => {
-			console.log("BLESERVICES USER", user);
-			// if (!user) {
-			// 	console.log("DISCONNECTION");
-			// 	this.disconnect();
-			// 	this._favoriteDevice.set(null);
-			// 	this._favoriteDeviceSNU.set(null);
-			// 	await this.favoriteDeviceStorage.clear();
-			// }
-		});
 	}
 
 	async startScan() {
