@@ -76,12 +76,12 @@ export const HomeScreen: React.FC = () => {
 						<PrimaryButton onPress={feedService._DEBUG_reset}>RESET</PrimaryButton>
 					</IfAdmin>
 					{notifications[0] && (
-						<Fade key={notifications[0].id} isVisible isAnimatedOnMount>
+						<Fade isVisible isAnimatedOnMount>
 							<Notification notification={notifications[0]} />
 						</Fade>
 					)}
-					{Object.keys(recommendations).map((date) => (
-						<>
+					{Object.keys(recommendations).map((date, key) => (
+						<View key={key}>
 							{date !== "today" && (
 								<View style={{ alignItems: "center", marginTop: 15 }}>
 									<Separator />
@@ -95,7 +95,7 @@ export const HomeScreen: React.FC = () => {
 							{recommendations[date].map((banner) => (
 								<Recommendation key={banner.id} recommendation={banner} style={{ margin: 10 }} />
 							))}
-						</>
+						</View>
 					))}
 				</View>
 			</ScrollView>

@@ -46,12 +46,6 @@ export const QuickAccess: React.FC = () => {
 	const [disabledQuickAccess, setDisabledQuickAccess] = useState<I_Active[]>(_disabledQuickAccess);
 	const { userQuickAccess } = useServices();
 
-	console.log(quickAccess, disabledQuickAccess);
-
-	console.log(
-		"CIR-402 QuickAccess",
-		userQuickAccess.quickaccess.get()?.active.map((i) => i.id)
-	);
 	useEffect(() => {
 		if (userQuickAccess.quickaccess.get().active.length || userQuickAccess.quickaccess.get().disabled.length) {
 			console.log(
@@ -62,18 +56,6 @@ export const QuickAccess: React.FC = () => {
 			setDisabledQuickAccess(userQuickAccess.quickaccess.get()?.disabled);
 		}
 	}, []);
-
-	console.log("CIR-275 DRAGGED", dragged);
-	console.log("CIR-275 DISABLED", disabledDragged);
-
-	console.log(
-		"CIR-275 QuickAccess",
-		quickAccess.map((q) => q.id)
-	);
-	console.log(
-		"CIR-275 disabledQuickAccess",
-		disabledQuickAccess.map((q) => q.id)
-	);
 
 	return (
 		<Container>

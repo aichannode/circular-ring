@@ -35,7 +35,7 @@ interface IRingSetupScreen {
 export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	const { format } = useI18n();
 	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
-	const { navigate } = useRoutesNavigation();
+	const { navigate, goBack } = useRoutesNavigation();
 	const scannedDevices = useScannedDevices();
 	const [devices, setDevices] = useState(scannedDevices);
 
@@ -105,7 +105,11 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 									<View>
 										<Image source={require("@assets/images/ringShadow.png")} />
 										<Cover>
-											<Image source={require("@assets/images/ringBig.png")} />
+											{setupState === DeviceSetupState.DISABLED ? (
+												<Image source={require("@assets/images/bluetoothBig.png")} />
+											) : (
+												<Image source={require("@assets/images/ringBig.png")} />
+											)}
 										</Cover>
 									</View>
 									<DisabledMessage>
@@ -142,6 +146,11 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 						if (error) return <SetUpFailed fullScreen={false} setError={setError} isConnecting={isConnecting} />;
 						return (
 							<>
+								<CloseContainer>
+									<ClosePressable onPress={() => goBack()}>
+										<CloseImage source={require("@assets/images/crossOrange.png")} />
+									</ClosePressable>
+								</CloseContainer>
 								<ResponsiveCenterView>
 									<Instructions hidden={isConnecting}>
 										<Image source={require("@assets/images/clock.png")} />
@@ -215,6 +224,19 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 		</Container>
 	);
 };
+
+const CloseContainer = styled.View`
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+`;
+
+const ClosePressable = styled.TouchableOpacity`
+	margin: 0px 40px 40px 0px;
+`;
+
+const CloseImage = styled.Image``;
 
 const Container = styled(ScrollScreen)`
 	align-items: center;

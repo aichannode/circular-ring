@@ -242,13 +242,11 @@ export class CognitoAuthService<
 						reject(error);
 					} else if (session) {
 						const refreshToken = session.getRefreshToken();
-						console.log("REFRESHTOKEN");
 						currentUser?.refreshSession(refreshToken, (error2, newSession) => {
 							if (error2) {
 								this.logger.warn("Error refreshing session : " + JSON.stringify(error2));
 								reject(error2);
 							} else {
-								console.log("NEW SESSION");
 								this._accessToken.set(newSession.getIdToken());
 								resolve();
 							}

@@ -61,7 +61,6 @@ export class RingManagementService {
 					else return { ...ring, connected: false };
 				})
 			);
-		console.log("CIR-266  Loaded Rings", loadedRings);
 		this.syncData();
 	}
 

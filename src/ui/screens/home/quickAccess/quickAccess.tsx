@@ -72,7 +72,6 @@ export const QuickAccess: React.FC = () => {
 	const { userQuickAccess } = useServices();
 
 	useEffect(() => {
-		console.log("CIR-275 Get quickaccess", userQuickAccess.quickaccess.get().active);
 		setActive(
 			userQuickAccess.quickaccess.get().active.length || userQuickAccess.quickaccess.get().disabled.length
 				? userQuickAccess.quickaccess.get()?.active
