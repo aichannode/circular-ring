@@ -92,7 +92,11 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 									<View>
 										<Image source={require("@assets/images/ringShadow.png")} />
 										<Cover>
-											<Image source={require("@assets/images/ringBig.png")} />
+											{setupState === DeviceSetupState.DISABLED ? (
+												<Image source={require("@assets/images/bluetoothBig.png")} />
+											) : (
+												<Image source={require("@assets/images/ringBig.png")} />
+											)}
 										</Cover>
 									</View>
 									<DisabledMessage>
