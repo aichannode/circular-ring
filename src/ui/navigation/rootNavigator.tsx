@@ -232,7 +232,11 @@ const MainHomeNavigator = () => {
 					headerRight: () => <MyRingBattery />,
 				}}
 			/>
-			<MainStack.Screen name={Routes.NewRingSetupScreen} component={NewRingSetupScreen} />
+			<MainStack.Screen
+				name={Routes.NewRingSetupScreen}
+				component={NewRingSetupScreen}
+				options={{ headerShown: false }}
+			/>
 
 			<MainStack.Screen
 				name={Routes.Leaderboard}
