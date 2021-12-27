@@ -17,38 +17,36 @@ interface CirclesProps {
 export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 	const { format } = useI18n();
 	const navigation = useRoutesNavigation();
-	const { circlesService } = useServices()
-	const circles = useObservable(circlesService.circles)
-	const addCircle: CircleEntity =	{	
-			id: 0,
-			route: Routes.CircleAdd, 
-			source: require("@assets/images/circleAdd.png"),
-			key: "home.circles.add.label",
-			on: true,
-			desc: "home.circles.alarm.description",
-			type: ""
-		}
-	const circlesBanner = [addCircle].concat(circles)
-	
+	const { circlesService } = useServices();
+	const circles = useObservable(circlesService.circles);
+	const addCircle: CircleEntity = {
+		id: 0,
+		route: Routes.CircleAdd,
+		source: require("@assets/images/circleAdd.png"),
+		key: "home.circles.add.label",
+		on: true,
+		desc: "home.circles.alarm.description",
+		type: "",
+	};
+	const circlesBanner = [addCircle].concat(circles);
+
 	return (
 		<Container style={style} gap={15}>
-			<TitleText style={{paddingLeft: 10}}>{format("home.circles.title")}</TitleText>
+			<TitleText style={{ paddingLeft: 10 }}>{format("home.circles.title")}</TitleText>
 			<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
 				<Row align="flex-start" gap={0}>
-					{circlesBanner.map((circle) => (
-						circle.on ?
-						<CircleView  key={circle.route} onPress={() => navigation.navigate(circle.route)}>
-							<Stack style={{marginTop: circle.id === 0 ? -10 : 0}} gap={circle.id === 0 ? -3 : 10} align="center">
-								<Image source={circle.source} />
-								<CircleLabel>{format(circle.key)}</CircleLabel>
-							</Stack>
-						</CircleView>
-						:
-						null	
-					))}
+					{circlesBanner.map((circle) =>
+						circle.on ? (
+							<CircleView key={circle.route} onPress={() => navigation.navigate(circle.route)}>
+								<Stack style={{ marginTop: circle.id === 0 ? -10 : 0 }} gap={circle.id === 0 ? -3 : 10} align="center">
+									<Image source={circle.source} />
+									<CircleLabel>{format(circle.key)}</CircleLabel>
+								</Stack>
+							</CircleView>
+						) : null
+					)}
 				</Row>
 			</ScrollView>
-			
 		</Container>
 	);
 };
@@ -62,9 +60,8 @@ const CircleLabel = styled(PrimaryText)`
 	font-size: 12px;
 	text-align: center;
 	flex-wrap: wrap;
-
 `;
 
 const CircleView = styled.Pressable`
-	width: 80;
+	width: 80px;
 `;

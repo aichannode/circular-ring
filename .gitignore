@@ -59,3 +59,4 @@ buck-out/
 /ios/Pods/
 
 .google_access_token.json
+workspace.code-workspace
