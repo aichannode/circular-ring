@@ -34,11 +34,11 @@ export class RingManagementService {
 		private readonly ringDataStorage: RingDataStorage,
 		private readonly ringApi: RingApi
 	) {
-		this.userService.user.subscribe((user) => {
-			if (!user) {
-				this._userRings.set([]);
-			}
-		});
+		// this.userService.user.subscribe((user) => {
+		// 	if (!user) {
+		// 		this._userRings.set([]);
+		// 	}
+		// });
 
 		// once device is connected, retrieve its name and set it to our ring info
 		this.deviceService.favoriteDeviceSNU.subscribe((snu) => {
