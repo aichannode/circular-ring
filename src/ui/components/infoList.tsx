@@ -39,6 +39,7 @@ interface InfoListItemProps<T> {
 	loading?: boolean;
 	disabled?: boolean;
 	children?: React.ReactElement;
+	lightTheme?: boolean;
 }
 
 export function InfoListItem<T>({
@@ -57,12 +58,13 @@ export function InfoListItem<T>({
 	loading,
 	disabled = false,
 	children,
+	lightTheme = false,
 }: InfoListItemProps<T>) {
 	return (
 		<>
 			<TouchableOpacity onPress={() => (disabled ? null : action?.())}>
-				<Container style={style}>
-					<Name emphasize={emphasize} disabled={disabled}>
+				<Container style={style} lightTheme={lightTheme}>
+					<Name emphasize={emphasize} disabled={disabled && !lightTheme}>
 						{name}
 					</Name>
 					<Grow />
@@ -106,20 +108,23 @@ export function InfoListItem<T>({
 	);
 }
 
-const Container = styled.View`
+const Container = styled.View<{ lightTheme: boolean }>`
 	width: 100%;
 	height: 50px;
 	padding: 0 20px;
 	flex-direction: row;
 	align-items: center;
 	margin-bottom: 1px;
-	background-color: ${colors.lightgray};
+	background-color: ${(props) => (props.lightTheme ? colors.white : colors.lightgray)};
+	border-bottom-width: ${(props) => (props.lightTheme ? "1px" : "0px")};
+	border-bottom-color: ${colors.lightgray};
 `;
 
 const Name = styled.Text<{ emphasize: boolean; disabled: boolean }>`
 	${textStyles.primary};
 	font-size: 14px;
 	color: ${({ emphasize, disabled }) => (disabled ? colors.disabled : emphasize ? colors.red : colors.textPrimary)};
+	max-width: 75%;
 `;
 
 const Value = styled.Text`

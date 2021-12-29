@@ -47,6 +47,10 @@ import styled from "styled-components/native";
 import { NewRingSetupScreen } from "@ui/screens/myRing/newRingSetupScreen";
 import { LeaderboardScreen } from "@ui/screens/leaderboard/leaderboardScreen";
 import { SetUpCompleted } from "@ui/screens/onboarding/ringSetup/setUpCompleted";
+import { NotificationsScreen } from "@ui/screens/notifications/notificationsScreen";
+import { HighHrScreen } from "@ui/screens/notifications/highHrScreen";
+import { LowHrScreen } from "@ui/screens/notifications/lowHrScreen";
+import { LowSpo2Screen } from "@ui/screens/notifications/lowSpo2Screen";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -250,6 +254,41 @@ const MainHomeNavigator = () => {
 			<MainStack.Screen name={Routes.SetUpCompleted} component={SetUpCompleted} options={{ headerShown: false }} />
 
 			<MainStack.Screen name={Routes.WebView} component={WebViewScreen} />
+
+			<MainStack.Screen
+				name={Routes.Notifications}
+				component={NotificationsScreen}
+				options={{
+					title: format("header.notifications"),
+					headerRight: () => <MyRingBattery />,
+				}}
+			/>
+
+			<MainStack.Screen
+				name={Routes.HighHR}
+				component={HighHrScreen}
+				options={{
+					title: format("header.highHr"),
+					headerRight: () => <MyRingBattery />,
+				}}
+			/>
+
+			<MainStack.Screen
+				name={Routes.LowHr}
+				component={LowHrScreen}
+				options={{
+					title: format("header.lowHr"),
+					headerRight: () => <MyRingBattery />,
+				}}
+			/>
+			<MainStack.Screen
+				name={Routes.LowSpo2}
+				component={LowSpo2Screen}
+				options={{
+					title: format("header.lowSPO2"),
+					headerRight: () => <MyRingBattery />,
+				}}
+			/>
 		</MainStack.Navigator>
 	);
 };
