@@ -48,8 +48,9 @@ export const DailyPieChart: React.FC<Props> = ({
 	title,
 	getPhaseLevel
 }) => {
+	const startTime: string | undefined = stages[0]?.start
 	// The first slice starts yesterday. We need to use a different start angle
-	const didStartYesterday = isYesterday(stages[0].start, currentIsoDate)
+	const didStartYesterday = (startTime !== undefined) && isYesterday(startTime, currentIsoDate)
 	// Minus the chart radius with the bigger stroke to prevent cropped artefact
 	const chartRadius = chartSize/2 - [...phaseWidths].sort().reverse()[0]
 	// Used for the transform origin of the labels
@@ -85,10 +86,10 @@ export const DailyPieChart: React.FC<Props> = ({
 	}
 
 	// Start drawing the pie at this angle
-	const startPieAngle = angle(moment(stages[0].start))
+	const startPieAngle = angle(moment(startTime))
 	// The maximum drawable angle of the pie (the current hour)
 	const endPieAngle = angle(currentDate)
-	const lastSlideEndTime = stages[stages.length-1].end
+	const lastSlideEndTime: string | undefined = stages[stages.length-1]?.end
 	
 	const data = stages.map(({ start, end }) => ({
 		y: moment(end).diff(start),
