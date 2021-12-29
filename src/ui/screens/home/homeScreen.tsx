@@ -72,7 +72,7 @@ export const HomeScreen: React.FC = () => {
 				}
 			>
 				<QuickAccess />
-				<SyncBanner style={{ margin: 10 }} onRetry={forceRefresh} />
+				{!isInSleepMode && <SyncBanner style={{ margin: 10 }} onRetry={forceRefresh} />}
 
 				<View style={{ paddingHorizontal: 6 }}>
 					<IfAdmin>
