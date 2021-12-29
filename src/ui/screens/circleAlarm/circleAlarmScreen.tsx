@@ -11,13 +11,14 @@ import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { WarningBottomSheet } from "@ui/screens/circleAlarm/warningBottomSheet";
 import { colors } from "@ui/styles/colors";
+import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import { Image, Pressable, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { AlarmCard } from "./alarmCard";
 import { AlarmWeekOverview } from "./alarmWeekOverview";
 
-export const CircleAlarmScreen: React.FC = () => {
+export const CircleAlarmScreen: React.FC = observer(() => {
 	const navigation = useRoutesNavigation();
 	const { loading, alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
@@ -81,7 +82,7 @@ export const CircleAlarmScreen: React.FC = () => {
 			</CircularBottomSheet>
 		</Container>
 	);
-};
+});
 
 const Container = styled.View`
 	flex: 1;

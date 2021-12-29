@@ -1,22 +1,28 @@
 import { DailyActivityGoals, MetricType } from "../metric";
 import { ActivityStage, SleepStage } from "../type";
-import { DailyActivityDetailsMetrics, DailyEnergyScoreMetrics, DailySleepDetailsGaugeMetrics, DailySleepDetailsMetrics, RangeDetails, StageInfos } from "./type";
+import {
+	DailyActivityDetailsMetrics,
+	DailyEnergyScoreMetrics,
+	DailySleepDetailsGaugeMetrics,
+	DailySleepDetailsMetrics,
+	RangeDetails,
+	StageInfos,
+} from "./type";
 
 export function useDailyActivityIntensity(isoDay?: string): Array<StageInfos<ActivityStage>> {
 	// TODO implement
-	return []
+	// esteban
+	return [];
 }
 
 export function useDailyActivityDuration(isoDay?: string): number | undefined {
 	// TOTO implement
-	return
+	return;
 }
 
-export function useDailyActivityDetails(isoDay?: string): RangeDetails<
-	| DailyActivityDetailsMetrics
-	| DailyActivityGoals
-	| DailyEnergyScoreMetrics
-> {
+export function useDailyActivityDetails(
+	isoDay?: string
+): RangeDetails<DailyActivityDetailsMetrics | DailyActivityGoals | DailyEnergyScoreMetrics> {
 	// TOTO implement
 	return {
 		[MetricType.UserDailySteps]: 0,
@@ -31,20 +37,22 @@ export function useDailyActivityDetails(isoDay?: string): RangeDetails<
 		[MetricType.UserDailyCardioPointsGoalMax]: 0,
 		[MetricType.UserDailyCardioPointsGoalMin]: 0,
 		[MetricType.UserDailySleepQualityScore]: 0,
-	}
+	};
 }
 
 export function useDailySleepStages(isoDay?: string): Array<StageInfos<SleepStage>> {
 	// TOTO implement
-	return []
+	return [];
 }
 
 export function useSleepDuration(isoDay?: string): number | undefined {
 	// TOTO implement
-	return
+	return;
 }
 
-export function useDailySleepDetails(isoDay?: string): RangeDetails<DailySleepDetailsMetrics | DailySleepDetailsGaugeMetrics> {
+export function useDailySleepDetails(
+	isoDay?: string
+): RangeDetails<DailySleepDetailsMetrics | DailySleepDetailsGaugeMetrics> {
 	// TOTO implement
 	return {
 		[MetricType.UserDailyAwakeStageDuration]: 0,
@@ -61,20 +69,20 @@ export function useDailySleepDetails(isoDay?: string): RangeDetails<DailySleepDe
 		[MetricType.UserDailyPercdeepStageScore]: 0,
 		[MetricType.UserDailyPercTimeTtoFallAsleep]: 0,
 		[MetricType.UserDailyPercSleepDebt]: 0,
-	}
+	};
 }
 
 export function useDailyEnergyScore(isoDay?: string): number | undefined {
 	// TOTO implement
-	return
+	return;
 }
 
 export function useDailySleepQualityScore(isoDay?: string): number | undefined {
 	// TOTO implement
-	return
+	return;
 }
 
 export function useDailyGlobalScore(isoDay?: string): number | undefined {
 	// TOTO implement
-	return
+	return;
 }

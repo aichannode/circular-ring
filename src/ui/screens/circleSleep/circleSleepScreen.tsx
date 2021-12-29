@@ -1,5 +1,9 @@
-import { MetricType } from "@domain/measure/metric";
-import { useSleepDuration, useDailySleepDetails, useDailySleepQualityScore, useDailySleepStages } from "@domain/measure/representation/hooks";
+import {
+	useSleepDuration,
+	useDailySleepDetails,
+	useDailySleepQualityScore,
+	useDailySleepStages,
+} from "@domain/measure/representation/hooks";
 import { dailySleepDetailsMetrics } from "@domain/measure/representation/type";
 import { TimeFrame } from "@domain/measure/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
@@ -16,6 +20,7 @@ import { ScrollScreen } from "@ui/components/scrollScreen";
 import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useRef, useState } from "react";
 import { LayoutAnimation, View } from "react-native";
@@ -26,12 +31,12 @@ import { SleepDurationPieChart } from "./sleepDurationPie";
 const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
 
-export const CircleSleepScreen: React.FC = () => {
+export const CircleSleepScreen: React.FC = observer(() => {
 	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
 	const sleepDuration = useSleepDuration(selectedDay);
-	const details = useDailySleepDetails(selectedDay)
-	const qualityScore = useDailySleepQualityScore(selectedDay)
-	const stages = useDailySleepStages()
+	const details = useDailySleepDetails(selectedDay);
+	const qualityScore = useDailySleepQualityScore(selectedDay);
+	const stages = useDailySleepStages();
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const { format } = useI18n();
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
@@ -58,7 +63,7 @@ export const CircleSleepScreen: React.FC = () => {
 				/>
 			</View>
 			<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
-			<SleepDurationPieChart stages={stages} duration={sleepDuration ?? 0}/>
+			<SleepDurationPieChart stages={stages} duration={sleepDuration ?? 0} />
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
 				{
@@ -103,44 +108,56 @@ export const CircleSleepScreen: React.FC = () => {
 			</ElementStack>
 			<InfoListHeader>{format("sleep.details.title")}</InfoListHeader>
 			<ElementStack gap={10}>
-				<TitleText style={{marginBottom: 20, textAlign: "center", textTransform: "uppercase"}}>{format("sleep.details.stages")}</TitleText>
-				<View style={{marginVertical: 10}}>
+				<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
+					{format("sleep.details.stages")}
+				</TitleText>
+				<View style={{ marginVertical: 10 }}>
 					<TimeFrameSwitcher
 						color={colors.business.sleepPrimary}
-						frames={[{
-							label: "graph.time_frame.today",
-							duration: TimeFrame.TODAY
-						}, {
-							label: "graph.time_frame.7days",
-							duration: TimeFrame.LAST_7_DAYS
-						}, {
-							label: "graph.time_frame.all",
-							duration: TimeFrame.ALL
-						}]}
+						frames={[
+							{
+								label: "graph.time_frame.today",
+								duration: TimeFrame.TODAY,
+							},
+							{
+								label: "graph.time_frame.7days",
+								duration: TimeFrame.LAST_7_DAYS,
+							},
+							{
+								label: "graph.time_frame.all",
+								duration: TimeFrame.ALL,
+							},
+						]}
 					/>
 				</View>
-				<GraphLegend rows={[{
-					label: format("sleep.details.title"),
-					element: {
-						key: "sleep.details.title",
-						node: <View style={{borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red}}/>
-					},
-					value: "0 h 45 min (8%)"
-				}, {
-					label: format("sleep.details.stages"),
-					element: {
-						key: "sleep.details.stages",
-						node: <View style={{borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red}}/>
-					},
-					value: "5 h 48 min (61%)"
-				}, {
-					label: format("sleep.duration.title"),
-					element: {
-						key: "sleep.duration.title",
-						node: <View style={{borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red}}/>
-					},
-					value: "0 h 48 min (9%)"
-				}]}/>
+				<GraphLegend
+					rows={[
+						{
+							label: format("sleep.details.title"),
+							element: {
+								key: "sleep.details.title",
+								node: <View style={{ borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red }} />,
+							},
+							value: "0 h 45 min (8%)",
+						},
+						{
+							label: format("sleep.details.stages"),
+							element: {
+								key: "sleep.details.stages",
+								node: <View style={{ borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red }} />,
+							},
+							value: "5 h 48 min (61%)",
+						},
+						{
+							label: format("sleep.duration.title"),
+							element: {
+								key: "sleep.duration.title",
+								node: <View style={{ borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red }} />,
+							},
+							value: "0 h 48 min (9%)",
+						},
+					]}
+				/>
 			</ElementStack>
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
 				<View style={{ padding: 20 }}>
@@ -156,7 +173,7 @@ export const CircleSleepScreen: React.FC = () => {
 			</CircularBottomSheet>
 		</Container>
 	);
-};
+});
 
 const Container = styled(ScrollScreen)`
 	background-color: ${colors.white};
