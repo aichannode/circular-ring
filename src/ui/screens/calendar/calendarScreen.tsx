@@ -1,7 +1,7 @@
 import { FetchStrategy } from "@betomorrow/micro-stores";
 import { useServices } from "@core/services";
 import { useCalendar } from "@domain/calendar/hooks/useCalendar";
-import { useGlobalScore } from "@domain/measure/hooks";
+import { useDailyGlobalScore } from "@domain/measure/representation/hooks";
 import { CalendarView } from "@ui/components/calendar/calendarView";
 import { InfoListHeader } from "@ui/components/infoList";
 import { ResponsiveCenterView, Stack } from "@ui/components/layout";
@@ -35,7 +35,7 @@ export const CalendarScreen: React.FC = () => {
 		console.log(" ================== UPDATE CALENDAR");
 	}, [firstDayOfMonth]);
 
-	const { result: dailyScore } = useGlobalScore(selectedDay, FetchStrategy.Never);
+	const dailyScore = useDailyGlobalScore(selectedDay) ?? 0;
 
 	return (
 		<Container>
@@ -43,7 +43,7 @@ export const CalendarScreen: React.FC = () => {
 				<CalendarView selectedDay={selectedDay} onDaySelected={(day) => setSelectedDay(day)} />
 			</CalendarWrapper>
 			<ResponsiveCenterView>
-				<GlobalScoreCard score={dailyScore ? dailyScore.score : null} />
+				<GlobalScoreCard score={dailyScore} />
 			</ResponsiveCenterView>
 			<NoteHeader>
 				<InfoListHeader>{format("calendar.notes")}</InfoListHeader>

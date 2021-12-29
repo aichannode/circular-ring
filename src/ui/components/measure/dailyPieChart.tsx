@@ -1,5 +1,5 @@
 import { isYesterday } from "@domain/common/utils";
-import { DurationInfos } from "@domain/measure/type";
+import { StageInfos } from "@domain/measure/representation/type";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import moment, { Moment } from "moment";
@@ -13,7 +13,8 @@ import { VictoryPie } from "victory-native";
 import { Row, Stack } from "../layout";
 
 type Props = {
-	durationData: DurationInfos;
+	stages: Array<StageInfos<any>>;
+	totalDuration: number;
 	/** Chart diameter */
 	chartSize: number;
 	/** The title in the center of the pie */
@@ -28,16 +29,17 @@ type Props = {
 	phaseWidths: number[]
 	/** Logic to get the labels according the current phase */
 	getLabels(
-		phase: string,
+		phase: number,
 		index: number,
-		previousPhase?: string
+		previousPhase?: number
 	): [WordingKey | null | "", WordingKey | null]
 }
 
 const RIGHT_ANGLE = 90;
 
 export const DailyPieChart: React.FC<Props> = ({
-	durationData,
+	stages,
+	totalDuration,
 	currentIsoDate,
 	chartSize,
 	phaseColors,
@@ -47,7 +49,7 @@ export const DailyPieChart: React.FC<Props> = ({
 	getPhaseLevel
 }) => {
 	// The first slice starts yesterday. We need to use a different start angle
-	const didStartYesterday = isYesterday(durationData.dailyPhaseInfos[0].start.toISOString(), currentIsoDate)
+	const didStartYesterday = isYesterday(stages[0].start, currentIsoDate)
 	// Minus the chart radius with the bigger stroke to prevent cropped artefact
 	const chartRadius = chartSize/2 - [...phaseWidths].sort().reverse()[0]
 	// Used for the transform origin of the labels
@@ -56,7 +58,7 @@ export const DailyPieChart: React.FC<Props> = ({
 		y:  chartSize/2,
 	};
 	const currentDate = moment(currentIsoDate)
-	const sliceColors = durationData.dailyPhaseInfos.map(p => phaseColors[getPhaseLevel(p.phase)])
+	const sliceColors = stages.map(p => phaseColors[getPhaseLevel(p.type)])
 	// Add a last transparent dummy section which fills
 	// the gap between the last slice end time and the current time.
 	// TODO remove when back will be ready
@@ -65,30 +67,30 @@ export const DailyPieChart: React.FC<Props> = ({
 	function getSliceInnerRadius({index}: CallbackArgs) {
 		// The last segment is a dummy
 		// TODO remove when back will be ready
-		if (durationData.dailyPhaseInfos[index as number] === undefined){
+		if (stages[index as number] === undefined){
 			return chartRadius - phaseWidths[0] / 2
 		}
-		const phaseLevel = getPhaseLevel(durationData.dailyPhaseInfos[index as number]?.phase)
+		const phaseLevel = getPhaseLevel(stages[index as number]?.type)
 		return chartRadius - phaseWidths[phaseLevel] / 2
 	}
 
 	function getSliceOutterRadius({index}: CallbackArgs) {
 		// The last segment is a dummy
 		// TODO remove when back will be ready
-		if (durationData.dailyPhaseInfos[index as number] === undefined){
+		if (stages[index as number] === undefined){
 			return chartRadius + phaseWidths[0] / 2
 		}
-		const phaseLevel = getPhaseLevel(durationData.dailyPhaseInfos[index as number]?.phase)
+		const phaseLevel = getPhaseLevel(stages[index as number]?.type)
 		return chartRadius + phaseWidths[phaseLevel] / 2
 	}
 
 	// Start drawing the pie at this angle
-	const startPieAngle = angle(moment(durationData.dailyPhaseInfos[0].start))
+	const startPieAngle = angle(moment(stages[0].start))
 	// The maximum drawable angle of the pie (the current hour)
 	const endPieAngle = angle(currentDate)
-	const lastSlideEndTime = durationData.dailyPhaseInfos[durationData.dailyPhaseInfos.length-1].end
+	const lastSlideEndTime = stages[stages.length-1].end
 	
-	const data = durationData.dailyPhaseInfos.map(({ start, end }) => ({
+	const data = stages.map(({ start, end }) => ({
 		y: moment(end).diff(start),
 	}))
 	// Add a dummy section to leave a gap between the last known data time and the current date
@@ -110,9 +112,9 @@ export const DailyPieChart: React.FC<Props> = ({
 				radius={getSliceOutterRadius}
 				innerRadius={getSliceInnerRadius}
 			/>
-			{durationData.dailyPhaseInfos.map((phaseInfo, i, allPhases) => {
-				const currentPhaseType = phaseInfo.phase
-				const previousPhaseType = allPhases[i-1]?.phase
+			{stages.map((phaseInfo, i, allPhases) => {
+				const currentPhaseType = phaseInfo.type
+				const previousPhaseType = allPhases[i-1]?.type
 				return getLabels(currentPhaseType, i, previousPhaseType)
 					.map((label, index) => label !== null ? (
 						<React.Fragment key={`${i}-${index}`}>
@@ -148,7 +150,7 @@ export const DailyPieChart: React.FC<Props> = ({
 					<Image source={require("@assets/images/evening.png")} />
 					<TotalDurationWrapper>
 						<SliceDurationLabel>{format(title)}</SliceDurationLabel>
-						<SliceDurationValue>{formatDuration(durationData.totalDuration * 60)}</SliceDurationValue>
+						<SliceDurationValue>{formatDuration(totalDuration * 60)}</SliceDurationValue>
 					</TotalDurationWrapper>
 					<Image source={require("@assets/images/morning.png")} />
 				</Row>

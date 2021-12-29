@@ -1,5 +1,5 @@
-import { useActivityData, useActivityDurationData } from "@domain/measure/hooks";
-import { alldailyActivityMetrics, allEnergyScoreMetrics } from "@domain/measure/metric";
+import { useDailyActivityDetails, useDailyActivityDuration, useDailyActivityIntensity, useDailyEnergyScore } from "@domain/measure/representation/hooks";
+import { dailyActivityDetailsMetrics, dailyEnergyScoreMetrics } from "@domain/measure/representation/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CalendarView } from "@ui/components/calendar/calendarView";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
@@ -10,7 +10,7 @@ import { ScoreGauge } from "@ui/components/measure/scoreGauge";
 import { ScoreSection } from "@ui/components/measure/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import dayjs from "dayjs";
+import moment from "moment";
 import React, { useRef, useState } from "react";
 import { LayoutAnimation, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
@@ -23,12 +23,14 @@ const scoreOptimalThreshold = 0.9;
 
 export const CircleActivityScreen: React.FC = () => {
 	const { format } = useI18n();
+	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
+	const activityIntensity = useDailyActivityIntensity()
+	const activityDetails = useDailyActivityDetails()
+	const activityDuration = useDailyActivityDuration(selectedDay);
+	const energyScore = useDailyEnergyScore(selectedDay);
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
-	const { result: activityDuration } = useActivityDurationData()
-	const [selectedDay, setSelectedDay] = useState<string>(dayjs().format("YYYY-MM-DD"));
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const { result: dailyData } = useActivityData(selectedDay);
-
+	
 	return (
 		<Container>
 			<ScrollView>
@@ -36,7 +38,7 @@ export const CircleActivityScreen: React.FC = () => {
 					<ScoreSection
 						style={{ marginTop: 20 }}
 						color={colors.red}
-						score={dailyData?.data.metrics["user.daily.energy.score"]}
+						score={energyScore}
 						label={format("activity.energy_score")}
 					/>
 					<CircleCalendarButton
@@ -49,25 +51,21 @@ export const CircleActivityScreen: React.FC = () => {
 						}}
 					/>
 				</View>
-				{activityDuration && (
-					<>
-						<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
-						<ActivityDurationPieChart durationData={activityDuration.infos} />
-					</>
-				)}
+				<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
+				<ActivityDurationPieChart stages={activityIntensity} duration={activityDuration ?? 0} />
 				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
 				<ElementStack gap={10}>
-					{alldailyActivityMetrics.map((metric) => {
+					{dailyActivityDetailsMetrics.map((metric) => {
 						const dataInfos = dailyMetricsDataInfos[metric];
-						const value = dailyData?.data.metrics[metric];
+						const value = activityDetails[metric];
 						return (
 							<DailyMetric
 								key={metric}
 								icon={dataInfos.icon}
 								label={format(dataInfos.labelKey)}
 								value={value !== undefined ? Math.round(value) : undefined}
-								goodThreshold={dataInfos.goodGoal && dailyData?.data.metrics[dataInfos.goodGoal]}
-								optimalThreshold={dataInfos.optimalGoal && dailyData?.data.metrics[dataInfos.optimalGoal]}
+								goodThreshold={dataInfos.goodGoal && activityDetails[dataInfos.goodGoal]}
+								optimalThreshold={dataInfos.optimalGoal && activityDetails[dataInfos.optimalGoal]}
 							/>
 						);
 					})}
@@ -75,11 +73,11 @@ export const CircleActivityScreen: React.FC = () => {
 				<InfoListHeader>{format("activity.score.details")}</InfoListHeader>
 				<ElementStack gap={10}>
 					{
-						allEnergyScoreMetrics
+						dailyEnergyScoreMetrics
 							.map((metric, index) => {
 								const dataInfos = scoreDetailsDataInfos[metric];
-								const value = dailyData?.data.metrics[metric];
-								const gaugeValue = dataInfos.gauge ? dailyData?.data.metrics[dataInfos.gauge] : value;
+								const value = activityDetails[metric];
+								const gaugeValue = dataInfos.gauge ? activityDetails[dataInfos.gauge] : value;
 								return [
 									<ScoreGauge
 										key={metric}

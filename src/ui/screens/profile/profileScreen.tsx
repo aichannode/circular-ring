@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { useGlobalScore } from "@domain/measure/hooks";
+import { useDailyGlobalScore } from "@domain/measure/representation/hooks";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ResponsiveCenterView } from "@ui/components/layout";
@@ -18,7 +18,7 @@ export const ProfileScreen = () => {
 	const { navigate } = useRoutesNavigation();
 	const { cognitoAuthService } = useServices();
 
-	const { result: dailyScore } = useGlobalScore();
+	const dailyScore = useDailyGlobalScore();
 	const [isConnectedByEmail, setIsConnectedByEmail] = useState(false);
 
 	const goToProfileInformation = useCallback(() => {
@@ -47,7 +47,7 @@ export const ProfileScreen = () => {
 		>
 			<UserAvatar />
 			<ResponsiveCenterView>
-				<GlobalScoreCard score={dailyScore ? dailyScore.score : null} />
+				<GlobalScoreCard score={dailyScore} />
 			</ResponsiveCenterView>
 			<InfoListHeader>{format("profile.list_header.profile")}</InfoListHeader>
 			<InfoListItem name={format("profile.list.profile_information")} hasDisclosure action={goToProfileInformation} />

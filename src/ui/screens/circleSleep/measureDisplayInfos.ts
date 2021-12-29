@@ -1,66 +1,67 @@
 import { ScoreUnit } from "@domain/measure/score";
-import { SleepQualityGaugeMetric, SleepQualityMetric } from "@domain/measure/metric";
+import { MetricType } from "@domain/measure/metric";
 import { WordingKey } from "src/wordings";
+import { DailySleepDetailsGaugeMetrics, DailySleepDetailsMetrics } from "@domain/measure/representation/type";
 
-export type SleepQualityData = {
-	[key in SleepQualityMetric]: {
+export type SleepQualityDetails = {
+	[key in DailySleepDetailsMetrics]: {
 		titleKey: WordingKey;
 		descriptionKey: WordingKey;
 		unit: ScoreUnit;
-		gauge?: SleepQualityGaugeMetric;
+		gauge?: DailySleepDetailsGaugeMetrics;
 		inverted?: boolean;
 		displayGaugeValue?: boolean;
 	};
 };
 
-export const scoreDetailsDataInfos: SleepQualityData = {
-	"user.daily.awake.stage.duration": {
+export const scoreDetails: SleepQualityDetails = {
+	[MetricType.UserDailyAwakeStageDuration]: {
 		titleKey: "sleep.quality.disturbance.label",
 		descriptionKey: "sleep.quality.disturbance.description",
 		unit: "time",
-		gauge: "user.daily.%awake.stage.duration",
+		gauge: MetricType.UserDailyPercAwakeStageDuration,
 		displayGaugeValue: true,
 		inverted: true,
 	},
-	"user.daily.real.sleep.duration": {
+	[MetricType.UserDailyRealSleepDuration]: {
 		titleKey: "sleep.quality.real_sleep.label",
 		descriptionKey: "sleep.quality.real_sleep.description",
 		unit: "time",
-		gauge: "user.daily.%real.sleep",
+		gauge: MetricType.UserDailyPercRealSleep,
 		displayGaugeValue: true,
 	},
-	"user.daily.tranquility": {
+	[MetricType.UserDailyTranquility]: {
 		titleKey: "sleep.quality.tranquility.label",
 		descriptionKey: "sleep.quality.tranquility.description",
 		unit: "tranquility",
 	},
-	"user.daily.circadian.rhythm": {
+	[MetricType.UserDailyCircadianRhythm]: {
 		titleKey: "sleep.quality.circadian.label",
 		descriptionKey: "sleep.quality.circadian.description",
 		unit: "qualitative",
 	},
-	"user.daily.%rem.stage": {
+	[MetricType.UserDailyPercREMStage]: {
 		titleKey: "sleep.quality.rem.label",
 		descriptionKey: "sleep.quality.rem.description",
 		unit: "%",
-		gauge: "user.daily.%rem.stage.score",
+		gauge: MetricType.UserDailyPercREMStageScore,
 	},
-	"user.daily.%deep.stage": {
+	[MetricType.UserDailyPercDeepStage]: {
 		titleKey: "sleep.quality.deep.label",
 		descriptionKey: "sleep.quality.deep.description",
 		unit: "%",
-		gauge: "user.daily.%deep.stage.score",
+		gauge: MetricType.UserDailyPercdeepStageScore,
 	},
-	"user.daily.time.to.fall.asleep": {
+	[MetricType.UserDailyTimeToFallAsleep]: {
 		titleKey: "sleep.quality.fall_asleep.label",
 		descriptionKey: "sleep.quality.fall_asleep.description",
 		unit: "time",
-		gauge: "user.daily.%time.to.fall.asleep",
+		gauge: MetricType.UserDailyPercTimeTtoFallAsleep,
 	},
-	"user.daily.sleep.debt": {
+	[MetricType.UserDailySleepDebt]: {
 		titleKey: "sleep.quality.debt.label",
 		descriptionKey: "sleep.quality.debt.description",
 		unit: "time",
-		gauge: "user.daily.%sleep.debt",
+		gauge: MetricType.UserDailyPercSleepDebt,
 	},
 };

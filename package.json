@@ -35,6 +35,8 @@
 		"jsc-android": "^250230.2.1",
 		"micro-observables": "^1.7.0",
 		"micro-signals": "^2.4.0",
+		"mobx": "^6.3.10",
+		"mobx-react-lite": "^3.2.2",
 		"node-emoji": "^1.11.0",
 		"patch-package": "^6.4.7",
 		"react": "17.0.2",

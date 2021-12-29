@@ -1,48 +1,49 @@
 import { ScoreUnit } from "@domain/measure/score";
 import {
-	DailyActivityGoalMetric,
-	DailyActivityMetric,
-	EnergyScoreGaugeMetric,
-	EnergyScoreMetric,
+	DailyActivityGoals,
+	MetricType,
 } from "@domain/measure/metric";
 import { WordingKey } from "src/wordings";
+import { DailyActivityDetailsMetrics, DailyEnergyScoreMetrics, ActivityScoreGaugeMetrics } from "@domain/measure/representation/type";
 
 export type DailyMetricsData = {
-	[key in DailyActivityMetric]: {
+	[key in DailyActivityDetailsMetrics]: {
 		icon: number;
 		labelKey: WordingKey;
-		goodGoal?: DailyActivityGoalMetric;
-		optimalGoal?: DailyActivityGoalMetric;
+		goodGoal?: DailyActivityGoals;
+		optimalGoal?: DailyActivityGoals;
 	};
 };
 
 export type ScoreDetailsData = {
-	[key in EnergyScoreMetric]: {
+	[key in DailyEnergyScoreMetrics]: {
 		titleKey: WordingKey;
 		descriptionKey: WordingKey;
 		unit: ScoreUnit;
-		gauge?: EnergyScoreGaugeMetric;
+		gauge?: ActivityScoreGaugeMetrics;
 	};
 };
 
 export const dailyMetricsDataInfos: DailyMetricsData = {
-	"user.daily.steps": {
+	[MetricType.UserDailySteps]: {
 		icon: require("@assets/images/shoes.png"),
 		labelKey: "metric.steps",
-		goodGoal: "user.daily.steps.goal.min",
-		optimalGoal: "user.daily.steps.goal.max",
+		goodGoal: MetricType.UserDailyStepsGoalMin,
+		optimalGoal: MetricType.UserDailyStepsGoalMax,
 	},
-	"user.daily.walking.equivalency": {
+	[MetricType.UserDailyWalkingEquivalency]: {
 		icon: require("@assets/images/journey.png"),
 		labelKey: "metric.walking",
-		goodGoal: "user.daily.walking.equivalency.goal.min",
-		optimalGoal: "user.daily.walking.equivalency.goal.max",
+		goodGoal: MetricType.UserDailyWalkingEquivalencyGoalMin,
+		optimalGoal: MetricType.UserDailyWalkingEquivalencyGoalMax,
 	},
-	"user.daily.calories.burned": {
+	// TODO enable when back will be ready
+	/* 
+	[MetricType.UserDailyCaloriesBurnedGoal]: {
 		icon: require("@assets/images/fire.png"),
 		labelKey: "metric.calories",
-		goodGoal: "user.daily.calories.burned.goal.min",
-		optimalGoal: "user.daily.calories.burned.goal.max",
+		goodGoal: MetricType.UserDailyCaloriesBurnedGoalMin, // not implemented
+		optimalGoal: MetricType.UserDailyCardioPointsGoalMax,// not implemented
 	},
 	"user.daily.cardio.points": {
 		icon: require("@assets/images/sport.png"),
@@ -53,35 +54,36 @@ export const dailyMetricsDataInfos: DailyMetricsData = {
 	"user.daily.vo2max": {
 		icon: require("@assets/images/lungs.png"),
 		labelKey: "metric.vo2_max",
-	},
-	"user.daily.awake.hr.max": {
+	}, */
+	[MetricType.UserDailyAwakeHrMax]: {
 		icon: require("@assets/images/heart.png"),
 		labelKey: "metric.hr_max",
 	},
 };
 
 export const scoreDetailsDataInfos: ScoreDetailsData = {
-	"user.daily.score.recovery": {
+	// TODO enable when back will be ready
+	/* "user.daily.score.recovery": {
 		titleKey: "score.details.recovery.label",
 		descriptionKey: "score.details.recovery.description",
 		unit: "qualitative",
-	},
-	"user.daily.wake.up.score": {
+	}, */
+	[MetricType.UserDailySleepQualityScore]: {
 		titleKey: "score.details.wake_up.label",
 		descriptionKey: "score.details.wake_up.description",
 		unit: "%",
 	},
-	"user.daily.sleep.br": {
+	/* "user.daily.sleep.br": {
 		titleKey: "score.details.breathing.label",
 		descriptionKey: "score.details.breathing.description",
 		unit: "rpm",
 		gauge: "user.score.daily.br",
-	},
-	"user.daily.sleep.hrv": {
+	}
+	[MetricType.UserDailyAsleepHrv]: {
 		titleKey: "score.details.hrv.label",
 		descriptionKey: "score.details.hrv.description",
 		unit: "ms",
-		gauge: "user.daily.score.hrv",
+		gauge: "user.daily.score.hrv", // Not implemented
 	},
 	"user.daily.rhr": {
 		titleKey: "score.details.resting_heart_rate.label",
@@ -109,5 +111,5 @@ export const scoreDetailsDataInfos: ScoreDetailsData = {
 		titleKey: "score.details.activity_volume.label",
 		descriptionKey: "score.details.activity_volume.description",
 		unit: "qualitative",
-	},
+	},*/
 };

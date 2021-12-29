@@ -1,35 +1,42 @@
-import { useSleepDurationData, useSleepQualityDailyData } from "@domain/measure/hooks";
-import { allSleepQualityMetrics } from "@domain/measure/metric";
+import { MetricType } from "@domain/measure/metric";
+import { useSleepDuration, useDailySleepDetails, useDailySleepQualityScore, useDailySleepStages } from "@domain/measure/representation/hooks";
+import { dailySleepDetailsMetrics } from "@domain/measure/representation/type";
+import { TimeFrame } from "@domain/measure/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CalendarView } from "@ui/components/calendar/calendarView";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
 import { Stack } from "@ui/components/layout";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
+import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { ScoreGauge } from "@ui/components/measure/scoreGauge";
 import { ScoreSection } from "@ui/components/measure/scoreSection";
+import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { ScrollScreen } from "@ui/components/scrollScreen";
+import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import React, { useRef, useState } from "react";
 import { LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
-import { scoreDetailsDataInfos } from "./measureDisplayInfos";
+import { scoreDetails } from "./measureDisplayInfos";
 import { SleepDurationPieChart } from "./sleepDurationPie";
 
 const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
 
 export const CircleSleepScreen: React.FC = () => {
-	const { result: sleepDurationData } = useSleepDurationData();
+	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
+	const sleepDuration = useSleepDuration(selectedDay);
+	const details = useDailySleepDetails(selectedDay)
+	const qualityScore = useDailySleepQualityScore(selectedDay)
+	const stages = useDailySleepStages()
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const { format } = useI18n();
-
-	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
-	const { result: dailyData } = useSleepQualityDailyData(selectedDay);
+	//const { result: dailyData } = useDailySleepQualityDetails(selectedDay);
 
 	return (
 		<Container>
@@ -37,7 +44,7 @@ export const CircleSleepScreen: React.FC = () => {
 				<ScoreSection
 					style={{ marginTop: 20 }}
 					label={format("sleep.quality_score")}
-					score={dailyData?.data.metrics["user.daily.sleep.score"]}
+					score={qualityScore}
 					color={colors.darkBlue}
 				/>
 				<CircleCalendarButton
@@ -51,16 +58,15 @@ export const CircleSleepScreen: React.FC = () => {
 				/>
 			</View>
 			<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
-			<View>{sleepDurationData && <SleepDurationPieChart durationData={sleepDurationData.infos} />
-			}</View>
+			<SleepDurationPieChart stages={stages} duration={sleepDuration ?? 0}/>
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
 				{
-					allSleepQualityMetrics
+					dailySleepDetailsMetrics
 						.map((metric, index) => {
-							const dataInfos = scoreDetailsDataInfos[metric];
-							const value = dailyData?.data.metrics[metric];
-							const gaugeValue = dataInfos.gauge ? dailyData?.data.metrics[dataInfos.gauge] : value;
+							const dataInfos = scoreDetails[metric];
+							const value = details[metric];
+							const gaugeValue = dataInfos.gauge ? details[dataInfos.gauge] : value;
 							return [
 								<ScoreGauge
 									key={metric}
@@ -94,6 +100,47 @@ export const CircleSleepScreen: React.FC = () => {
 						.flatMap((x) => x)
 						.filter(Boolean) as JSX.Element[]
 				}
+			</ElementStack>
+			<InfoListHeader>{format("sleep.details.title")}</InfoListHeader>
+			<ElementStack gap={10}>
+				<TitleText style={{marginBottom: 20, textAlign: "center", textTransform: "uppercase"}}>{format("sleep.details.stages")}</TitleText>
+				<View style={{marginVertical: 10}}>
+					<TimeFrameSwitcher
+						color={colors.business.sleepPrimary}
+						frames={[{
+							label: "graph.time_frame.today",
+							duration: TimeFrame.TODAY
+						}, {
+							label: "graph.time_frame.7days",
+							duration: TimeFrame.LAST_7_DAYS
+						}, {
+							label: "graph.time_frame.all",
+							duration: TimeFrame.ALL
+						}]}
+					/>
+				</View>
+				<GraphLegend rows={[{
+					label: format("sleep.details.title"),
+					element: {
+						key: "sleep.details.title",
+						node: <View style={{borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red}}/>
+					},
+					value: "0 h 45 min (8%)"
+				}, {
+					label: format("sleep.details.stages"),
+					element: {
+						key: "sleep.details.stages",
+						node: <View style={{borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red}}/>
+					},
+					value: "5 h 48 min (61%)"
+				}, {
+					label: format("sleep.duration.title"),
+					element: {
+						key: "sleep.duration.title",
+						node: <View style={{borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red}}/>
+					},
+					value: "0 h 48 min (9%)"
+				}]}/>
 			</ElementStack>
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
 				<View style={{ padding: 20 }}>

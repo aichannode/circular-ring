@@ -27,9 +27,11 @@ export const colors = {
 	disabled: "#bfbfbf",
 	// Place here all the colors relative to business semantic
 	business: {
+		activityPrimary: "#e00a0a",
 		activityNone: "#ff000059",
 		activityLow: "#F06A6A",
-		activityHigh: "#DD2A2A"
+		activityHigh: "#DD2A2A",
+		sleepPrimary: "#2932ee",
 	}
 };
 
