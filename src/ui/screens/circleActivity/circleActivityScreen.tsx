@@ -1,4 +1,9 @@
-import { useDailyActivityDetails, useDailyActivityDuration, useDailyActivityIntensity, useDailyEnergyScore } from "@domain/measure/representation/hooks";
+import {
+	useDailyActivityDetails,
+	useDailyActivityDuration,
+	useDailyActivityIntensity,
+	useDailyEnergyScore,
+} from "@domain/measure/representation/hooks";
 import { dailyActivityDetailsMetrics, dailyEnergyScoreMetrics } from "@domain/measure/representation/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CalendarView } from "@ui/components/calendar/calendarView";
@@ -17,20 +22,21 @@ import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { DailyMetric } from "./dailyMetric";
 import { dailyMetricsDataInfos, scoreDetailsDataInfos } from "./measureDisplayInfos";
+import { observer } from "mobx-react-lite";
 
 const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
 
-export const CircleActivityScreen: React.FC = () => {
+export const CircleActivityScreen: React.FC = observer(() => {
 	const { format } = useI18n();
 	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
-	const activityIntensity = useDailyActivityIntensity()
-	const activityDetails = useDailyActivityDetails()
+	const activityIntensity = useDailyActivityIntensity();
+	const activityDetails = useDailyActivityDetails();
 	const activityDuration = useDailyActivityDuration(selectedDay);
 	const energyScore = useDailyEnergyScore(selectedDay);
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	
+
 	return (
 		<Container>
 			<ScrollView>
@@ -125,7 +131,7 @@ export const CircleActivityScreen: React.FC = () => {
 			</CircularBottomSheet>
 		</Container>
 	);
-};
+});
 
 const Container = styled.View`
 	flex: 1;

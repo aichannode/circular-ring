@@ -13,11 +13,12 @@ import { CalendarNoteItem } from "@ui/screens/calendar/calendarNoteItem";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import dayjs from "dayjs";
+import { observer } from "mobx-react-lite";
 import React, { useEffect, useMemo, useState } from "react";
 import { Pressable } from "react-native";
 import styled from "styled-components/native";
 
-export const CalendarScreen: React.FC = () => {
+export const CalendarScreen: React.FC = observer(() => {
 	const { measureService, calendarService } = useServices();
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
@@ -67,7 +68,7 @@ export const CalendarScreen: React.FC = () => {
 			</Stack>
 		</Container>
 	);
-};
+});
 
 const Container = styled(ScrollScreen)`
 	padding: 24px 0;

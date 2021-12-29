@@ -10,10 +10,11 @@ import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { ChangePasswordBottomSheet } from "@ui/screens/profile/changePasswordBottomSheet";
 import { LogoutBottomSheet } from "@ui/screens/profile/logoutBottomSheet";
+import { observer } from "mobx-react-lite";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components/native";
 
-export const ProfileScreen = () => {
+export const ProfileScreen = observer(() => {
 	const { format } = useI18n();
 	const { navigate } = useRoutesNavigation();
 	const { cognitoAuthService } = useServices();
@@ -69,7 +70,7 @@ export const ProfileScreen = () => {
 			</CircularBottomSheet>
 		</ScrollScreen>
 	);
-};
+});
 
 const SeparatedItem = styled(InfoListItem)`
 	margin-top: 20px;
