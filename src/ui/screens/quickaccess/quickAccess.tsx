@@ -44,16 +44,19 @@ export const QuickAccess: React.FC = () => {
 	const [disabledReceiver, setDisabledReceiver] = useState(-1);
 	const [quickAccess, setQuickAccess] = useState<I_Active[]>(_quickAccess);
 	const [disabledQuickAccess, setDisabledQuickAccess] = useState<I_Active[]>(_disabledQuickAccess);
-	const { userQuickAccess } = useServices();
+	const { userQuickAccessService } = useServices();
 
 	useEffect(() => {
-		if (userQuickAccess.quickaccess.get().active.length || userQuickAccess.quickaccess.get().disabled.length) {
+		if (
+			userQuickAccessService.quickaccess.get().active.length ||
+			userQuickAccessService.quickaccess.get().disabled.length
+		) {
 			console.log(
 				"## INITIAL RUN",
-				userQuickAccess.quickaccess.get()?.active.map((t) => t.id)
+				userQuickAccessService.quickaccess.get()?.active.map((t) => t.id)
 			);
-			setQuickAccess(userQuickAccess.quickaccess.get()?.active);
-			setDisabledQuickAccess(userQuickAccess.quickaccess.get()?.disabled);
+			setQuickAccess(userQuickAccessService.quickaccess.get()?.active);
+			setDisabledQuickAccess(userQuickAccessService.quickaccess.get()?.disabled);
 		}
 	}, []);
 
@@ -72,7 +75,7 @@ export const QuickAccess: React.FC = () => {
 							setReceiver(-1);
 						}}
 						onReceiveDragDrop={({ dragged: { payload } }) => {
-							userQuickAccess.update({
+							userQuickAccessService.update({
 								active: [disabledQuickAccess[payload.i]],
 								disabled: disabledQuickAccess.filter((t) => t.id != payload.tile.id),
 							});
@@ -102,7 +105,7 @@ export const QuickAccess: React.FC = () => {
 											const newArrayWithoutTile = quickAccess.filter((t) => t.id != payload.tile.id);
 											const newBeginning = newArrayWithoutTile.slice(0, i);
 											const newEnd = newArrayWithoutTile.slice(i, quickAccess.length);
-											userQuickAccess.update({
+											userQuickAccessService.update({
 												active: [...newBeginning, quickAccess[payload.i], ...newEnd],
 												disabled: disabledQuickAccess,
 											});
@@ -110,7 +113,7 @@ export const QuickAccess: React.FC = () => {
 										} else {
 											const newBeginning = quickAccess.slice(0, i);
 											const newEnd = quickAccess.slice(i, disabledQuickAccess.length);
-											userQuickAccess.update({
+											userQuickAccessService.update({
 												active: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
 												disabled: disabledQuickAccess.filter((t) => t.id != payload.tile.id),
 											});
@@ -171,7 +174,7 @@ export const QuickAccess: React.FC = () => {
 											const newArrayWithoutTile = quickAccess.filter((t) => t.id != payload.tile.id);
 											const newBeginning = newArrayWithoutTile.slice(0, i + 1);
 											const newEnd = newArrayWithoutTile.slice(i + 1, quickAccess.length);
-											userQuickAccess.update({
+											userQuickAccessService.update({
 												active: [...newBeginning, quickAccess[payload.i], ...newEnd],
 												disabled: disabledQuickAccess,
 											});
@@ -179,7 +182,7 @@ export const QuickAccess: React.FC = () => {
 										} else {
 											const newBeginning = quickAccess.slice(0, i + 1);
 											const newEnd = quickAccess.slice(i + 1, disabledQuickAccess.length);
-											userQuickAccess.update({
+											userQuickAccessService.update({
 												active: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
 												disabled: disabledQuickAccess.filter((t) => t.id != payload.tile.id),
 											});
@@ -220,7 +223,7 @@ export const QuickAccess: React.FC = () => {
 											if (isInQuickAccess) {
 												const newBeginning = disabledQuickAccess.slice(0, i);
 												const newEnd = disabledQuickAccess.slice(i, disabledQuickAccess.length);
-												userQuickAccess.update({
+												userQuickAccessService.update({
 													active: quickAccess.filter((t) => t.id != payload.tile.id),
 													disabled: [...newBeginning, quickAccess[payload.i], ...newEnd],
 												});
@@ -237,7 +240,7 @@ export const QuickAccess: React.FC = () => {
 											} else {
 												const newBeginning = disabledQuickAccess.slice(0, i);
 												const newEnd = disabledQuickAccess.slice(i, disabledQuickAccess.length);
-												userQuickAccess.update({
+												userQuickAccessService.update({
 													active: quickAccess,
 													disabled: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
 												});
@@ -306,7 +309,7 @@ export const QuickAccess: React.FC = () => {
 											);
 											setDisabledQuickAccess([...newBeginning, quickAccess[payload.i], ...newEnd]);
 											setQuickAccess(quickAccess.filter((t) => t.id != payload.tile.id));
-											userQuickAccess.update({
+											userQuickAccessService.update({
 												active: quickAccess.filter((t) => t.id != payload.tile.id),
 												disabled: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
 											});
@@ -314,7 +317,7 @@ export const QuickAccess: React.FC = () => {
 											const newArrayWithoutTile = disabledQuickAccess.filter((t) => t.id != payload.tile.id);
 											const newBeginning = newArrayWithoutTile.slice(0, i);
 											const newEnd = newArrayWithoutTile.slice(i, disabledQuickAccess.length);
-											userQuickAccess.update({
+											userQuickAccessService.update({
 												active: quickAccess,
 												disabled: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
 											});

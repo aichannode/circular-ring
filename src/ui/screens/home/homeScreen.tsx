@@ -20,10 +20,13 @@ import moment from "moment";
 import { useUserSettings } from "@domain/user/hooks/useUser";
 import { useI18n } from "@ui/i18n";
 import Fade from "@ui/components/fade";
+import { useObservable } from "micro-observables";
 
 export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
-	const { feedService, bluetoothService, bleDeviceService, ringManagementService } = useServices();
+	const { feedService, bluetoothService, bleDeviceService, ringManagementService, userQuickAccessService } =
+		useServices();
+	const isInSleepMode = useObservable(userQuickAccessService.isInSleepMode);
 	const [forceRefreshing, setForceRefreshing] = useState(false);
 
 	const setupState = useSetupState();
@@ -62,7 +65,7 @@ export const HomeScreen: React.FC = () => {
 				style={{ flex: 1 }}
 				refreshControl={
 					<RefreshControl
-						enabled={syncState === SyncState.NONE}
+						enabled={syncState === SyncState.NONE && !isInSleepMode}
 						refreshing={forceRefreshing}
 						onRefresh={() => forceRefresh()}
 					/>

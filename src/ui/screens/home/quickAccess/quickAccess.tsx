@@ -10,10 +10,13 @@ import { AlarmTile } from "./Alarm";
 
 import { TimerTile } from "./Timer";
 import { useI18n } from "@ui/i18n";
+import { useObservable } from "micro-observables";
 
 const SleepTile = () => {
 	// const { format } = useI18n();
-	const [sleepMode, setSleepMode] = useState<boolean>(false);
+	const { userQuickAccessService } = useServices();
+	const sleepMode = useObservable(userQuickAccessService.isInSleepMode);
+	// const [sleepMode, setSleepMode] = useState<boolean>(false);
 
 	useEffect(() => {
 		console.log("SLEEP MODE = ", sleepMode);
@@ -26,7 +29,7 @@ const SleepTile = () => {
 		<Tile style={{ backgroundColor: sleepBackGound }}>
 			<TouchableOpacity
 				onPress={() => {
-					setSleepMode(!sleepMode);
+					userQuickAccessService.setSleepMode(!sleepMode);
 				}}
 			>
 				<Bold style={{ color: sleepTextColor }}>Sleep mode</Bold>
@@ -69,15 +72,15 @@ export const QuickAccess: React.FC = () => {
 		},
 	];
 
-	const { userQuickAccess } = useServices();
+	const { userQuickAccessService } = useServices();
 
 	useEffect(() => {
 		setActive(
-			userQuickAccess.quickaccess.get().active.length || userQuickAccess.quickaccess.get().disabled.length
-				? userQuickAccess.quickaccess.get()?.active
+			userQuickAccessService.quickaccess.get().active.length || userQuickAccessService.quickaccess.get().disabled.length
+				? userQuickAccessService.quickaccess.get()?.active
 				: _quickAccess
 		);
-		userQuickAccess.quickaccess.subscribe((data) => {
+		userQuickAccessService.quickaccess.subscribe((data) => {
 			if (data?.active) {
 				setActive(data?.active);
 			}
