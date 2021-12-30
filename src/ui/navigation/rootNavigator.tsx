@@ -355,7 +355,7 @@ export const RootNavigator: React.FC = () => {
 
 	console.log("!isTutorialDone && isOnboardingDone", isOnboardingDone);
 
-	return isOnboardingDone || useByPass ? (
+	return !isOnboardingDone || useByPass ? (
 		<HomeDrawer.Navigator
 			screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
 			drawerContent={() => <DrawerContent />}
