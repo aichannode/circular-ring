@@ -1,3 +1,4 @@
+import moment from "moment";
 import { DailyActivityGoals, MetricType } from "../metric";
 import { ActivityStage, SleepStage } from "../type";
 import {
@@ -42,7 +43,78 @@ export function useDailyActivityDetails(
 
 export function useDailySleepStages(isoDay?: string): Array<StageInfos<SleepStage>> {
 	// TOTO implement
-	return [];
+
+	// Mock data for the night
+	const cursor = moment().subtract(1, "day").hour(22).minutes(0);
+
+	/**
+	 * Spec for stages
+	 * - stages array is always between user.core.sleep.begin and user.core.sleep.end
+	 */
+	return [
+		{
+			type: SleepStage.LIGHT,
+			start: cursor.toISOString(),
+			end: cursor.add(20, "minutes").toISOString(),
+		}, {
+			type: SleepStage.DEEP,
+			start: cursor.toISOString(),
+			end: cursor.add(1, "hour").toISOString(),
+		}, {
+			type: SleepStage.REM,
+			start: cursor.toISOString(),
+			end: cursor.add(50, "minutes").toISOString(),
+		}, {
+			type: SleepStage.DEEP,
+			start: cursor.toISOString(),
+			end: cursor.add(10, "minutes").toISOString(),
+		}, {
+			type: SleepStage.LIGHT,
+			start: cursor.toISOString(),
+			end: cursor.add(10, "minutes").toISOString(),
+		}, {
+			type: SleepStage.DEEP,
+			start: cursor.toISOString(),
+			end: cursor.add(30, "minutes").toISOString(),
+		}, {
+			type: SleepStage.LIGHT,
+			start: cursor.toISOString(),
+			end: cursor.add(1, "hour").toISOString(),
+		}, {
+			type: SleepStage.AWAKE,
+			start: cursor.toISOString(),
+			end: cursor.add(45, "minutes").toISOString(),
+		}, {
+			type: SleepStage.LIGHT,
+			start: cursor.toISOString(),
+			end: cursor.add(10, "minutes").toISOString(),
+		}, {
+			type: SleepStage.REM,
+			start: cursor.toISOString(),
+			end: cursor.add(1, "hour").toISOString(),
+		}, {
+			type: SleepStage.LIGHT,
+			start: cursor.toISOString(),
+			end: cursor.add(90, "minutes").toISOString(),
+		}, {
+			type: SleepStage.REM,
+			start: cursor.toISOString(),
+			end: cursor.add(30, "minutes").toISOString(),
+		}, {
+			type: SleepStage.LIGHT,
+			start: cursor.toISOString(),
+			end: cursor.add(20, "minutes").toISOString(),
+		}, {
+			type: SleepStage.DEEP,
+			start: cursor.toISOString(),
+			end: cursor.add(15, "minutes").toISOString(),
+		}, {
+			type: SleepStage.LIGHT,
+			start: cursor.toISOString(),
+			end: cursor.add(120, "minutes").toISOString(),
+		}
+		
+	];
 }
 
 export function useSleepDuration(isoDay?: string): number | undefined {

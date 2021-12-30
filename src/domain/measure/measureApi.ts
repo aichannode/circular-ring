@@ -1,22 +1,21 @@
-import { ApiService } from "@core/api/apiService";
 import moment from "moment";
-import { MetricType, DatedMetrics, Metric } from "./metric";
+import { MetricType, DatedMetrics } from "./metric";
 import _mockedData from "./mockedSleepDurationData.json"
 import { MetricDto } from "./type";
 
-const measureApiUrl = "/measures";
+//const measureApiUrl = "/measures";
 
 const mockedData: MetricDto = _mockedData
 
 function createBlock(date: string): DatedMetrics {
 	return {
-		timestamp: mockedData.metrics[0].timestamp,
+		timestamp: date,
 		metrics: {}
 	}
 }
 
 export class MeasureApi {
-	constructor(private readonly apiService: ApiService) {}
+	/* constructor(private readonly apiService: ApiService) {} */
 
 	async getMeasures<T extends MetricType>(metrics: ReadonlyArray<T>, start: Date, end: Date): Promise<Array<DatedMetrics<T>>> {
 /* 		const result = await this.apiService.get<{ data: MetricInfo<T>[] }>(measureApiUrl, {

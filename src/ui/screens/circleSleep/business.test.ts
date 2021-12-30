@@ -1,6 +1,7 @@
 import moment from "moment";
 import { SleepStage } from "@domain/measure/type";
 import { HypnogramData, Steps } from "./hypnogram";
+import { toStepsData } from "./business";
 
 const cursor = moment().hour(22).minutes(0);
 
@@ -33,13 +34,23 @@ const input: HypnogramData = [
 ];
 
 const output: Steps = [
-	// TODO to complete
-	{ x: 0, y: 1.1 },
-	{ x: 1, y: 1.1 },
-	{ x: 1, y: 2 },
-	{ x: 2, y: 2 },
-	{ x: 3, y: 3 },
-	{ x: 4, y: 3 },
+	// AWAKE
+	{ x: moment(input[0].start).valueOf(), y: 4 },
+	{ x: moment(input[0].end).valueOf(), y: 4 },
+	// REM
+	{ x: moment(input[1].start).valueOf(), y: 3 },
+	{ x: moment(input[1].end).valueOf(), y: 3 },
+	// LIGHT
+	{ x: moment(input[2].start).valueOf(), y: 2 },
+	{ x: moment(input[2].end).valueOf(), y: 2 },
+	// DEEP
+	{ x: moment(input[3].start).valueOf(), y: 1 },
+	{ x: moment(input[3].end).valueOf(), y: 1 },
+	// AWAKE
+	{ x: moment(input[4].start).valueOf(), y: 4 },
+	{ x: moment(input[4].end).valueOf(), y: 4 },
 ];
 
-test.todo("should convert sleep stages to victory pie data steps");
+test("should convert sleep stages to victory pie data steps", function() {
+	expect(toStepsData(input)).toEqual(output)
+});

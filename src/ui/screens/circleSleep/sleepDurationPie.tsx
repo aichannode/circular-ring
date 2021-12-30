@@ -12,22 +12,25 @@ type Props = {
 	stages: Array<StageInfos<SleepStage>>;
 }
 
-function getPhaseLevel(phase?: number) {
-    return phase ?? 1
+function getPhaseLevel(phase = 4) {
+    return phase < 4
+		? 1
+		: 0
 }
 
-function getLabels(
-	phase: number,
-	index: number,
-	previousPhase?: number
-): [WordingKey | null | "", WordingKey | null] {
-	if (phase === SleepStage.REM && index === 0) {
-		return ["sleep.duration.label.start_sleep", null];
+function createLabelGenerator(stages: Array<StageInfos<SleepStage>>) {
+	return function getLabels(
+		_phase: number,
+		index: number
+	): [WordingKey | null | "", WordingKey | null] {
+		if (index === 0) {
+			return ["sleep.duration.label.start_sleep", null];
+		}
+		if (index === stages.length - 1) {
+			return [null, "sleep.duration.label.wake_up"];
+		}
+		return [null, null];
 	}
-	if (phase === SleepStage.AWAKE && previousPhase === SleepStage.REM) {
-		return ["sleep.duration.label.wake_up", null];
-	}
-	return [null, null];
 }
 
 export function SleepDurationPieChart({ stages, duration }: Props) {
@@ -38,11 +41,11 @@ export function SleepDurationPieChart({ stages, duration }: Props) {
 				totalDuration={duration}
                 title="sleep.duration.total"
                 chartSize={200}
-                currentIsoDate={moment().hour(22).toISOString()}
+                currentIsoDate={moment().toISOString()}
 				phaseColors={[colors.lightBlue, colors.darkBlue]}
 				phaseWidths={[5, 7]}
                 getPhaseLevel={getPhaseLevel}
-                getLabels={getLabels}
+                getLabels={createLabelGenerator(stages)}
             />
 		</Container>
 	);

@@ -5,17 +5,17 @@ import {
 	useDailySleepStages,
 } from "@domain/measure/representation/hooks";
 import { dailySleepDetailsMetrics } from "@domain/measure/representation/type";
-import { TimeFrame } from "@domain/measure/type";
+import { SleepStage, TimeFrame } from "@domain/measure/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CalendarView } from "@ui/components/calendar/calendarView";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
 import { Stack } from "@ui/components/layout";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
+import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { ScoreGauge } from "@ui/components/measure/scoreGauge";
 import { ScoreSection } from "@ui/components/measure/scoreSection";
-import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
@@ -25,9 +25,9 @@ import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
+import { Hypnogram } from "./hypnogram";
 import { scoreDetails } from "./measureDisplayInfos";
 import { SleepDurationPieChart } from "./sleepDurationPie";
-import { GraphContainer } from "@ui/components/measure/graphContainer";
 
 const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
@@ -41,12 +41,16 @@ export const CircleSleepScreen: React.FC = observer(() => {
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const { format } = useI18n();
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
+	const [graphPeriod/* , setGraphPeriod */] = useState(TimeFrame.TODAY);
 
 	useEffect(() => {
 		console.log("CURRENT PERIOD = ", graphPeriod);
 	}, [graphPeriod]);
-	//const { result: dailyData } = useDailySleepQualityDetails(selectedDay);
+
+	const awakeDuration = stages.filter(({type}) => type === SleepStage.AWAKE).reduce((sum, {start, end}) => sum + moment(end).diff(start).valueOf(), 0)
+	const REMDuration = stages.filter(({type}) => type === SleepStage.REM).reduce((sum, {start, end}) => sum + moment(end).diff(start).valueOf(), 0)
+	const lightDuration = stages.filter(({type}) => type === SleepStage.LIGHT).reduce((sum, {start, end}) => sum + moment(end).diff(start).valueOf(), 0)
+	const deepDuration = stages.filter(({type}) => type === SleepStage.DEEP).reduce((sum, {start, end}) => sum + moment(end).diff(start).valueOf(), 0)
 
 	return (
 		<Container>
@@ -117,9 +121,8 @@ export const CircleSleepScreen: React.FC = observer(() => {
 					{format("sleep.details.stages")}
 				</TitleText>
 				<View style={{ marginVertical: 10 }}>
-					<TimeFrameSwitcher
+					{/* <TimeFrameSwitcher
 						setGraphPeriod={setGraphPeriod}
-						graphPeriod={graphPeriod}
 						color={colors.business.sleepPrimary}
 						frames={[
 							{
@@ -135,37 +138,48 @@ export const CircleSleepScreen: React.FC = observer(() => {
 								duration: TimeFrame.ALL,
 							},
 						]}
-					/>
+					/> */}
 				</View>
 				<GraphContainer>
-					<GraphLegend
-						rows={[
-							{
-								label: format("sleep.details.title"),
-								element: {
-									key: "sleep.details.title",
-									node: <View style={{ borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red }} />,
+					<Hypnogram data={stages}/>
+					<View style={{paddingHorizontal: 20, paddingBottom: 20}}>
+						<GraphLegend
+							rows={[
+								{
+									label: format("sleep.stage.awake"),
+									element: {
+										key: "sleep.stage.awake",
+										node: <></>,
+									},
+									value: `${moment.duration(awakeDuration).hours()} h ${moment.duration(awakeDuration).minutes()} min ${sleepDuration ? `${awakeDuration/sleepDuration}%` : ""}`,
 								},
-								value: "0 h 45 min (8%)",
-							},
-							{
-								label: format("sleep.details.stages"),
-								element: {
-									key: "sleep.details.stages",
-									node: <View style={{ borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red }} />,
+								{
+									label: format("sleep.stage.REM"),
+									element: {
+										key: "sleep.stage.REM",
+										node: <></>,
+									},
+									value: `${moment.duration(REMDuration).hours()} h ${moment.duration(REMDuration).minutes()} min ${sleepDuration ? `${REMDuration/sleepDuration}%` : ""}`,
 								},
-								value: "5 h 48 min (61%)",
-							},
-							{
-								label: format("sleep.duration.title"),
-								element: {
-									key: "sleep.duration.title",
-									node: <View style={{ borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red }} />,
+								{
+									label: format("sleep.stage.light"),
+									element: {
+										key: "sleep.stage.light",
+										node: <></>,
+									},
+									value: `${moment.duration(lightDuration).hours()} h ${moment.duration(lightDuration).minutes()} min ${sleepDuration ? `${lightDuration/sleepDuration}%` : ""}`,
 								},
-								value: "0 h 48 min (9%)",
-							},
-						]}
-					/>
+								{
+									label: format("sleep.stage.deep"),
+									element: {
+										key: "sleep.stage.deep",
+										node: <></>,
+									},
+									value: `${moment.duration(deepDuration).hours()} h ${moment.duration(deepDuration).minutes()} min ${sleepDuration ? `${awakeDuration/sleepDuration}%` : ""}`,
+								},
+							]}
+						/>					
+					</View>
 				</GraphContainer>
 			</ElementStack>
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
