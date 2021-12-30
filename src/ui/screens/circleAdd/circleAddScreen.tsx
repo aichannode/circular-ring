@@ -20,13 +20,13 @@ function createViews(myArray: CircleEntity[]) {
 				<InnerContainer>
 					<Draggable source={circle.source}></Draggable>
 					<RightContainer>
-						<View style={{flex: 1, flexDirection: "row", width: "100%"}}>
+						<View style={{flexDirection: "row", width: "100%"}}>
 							<Bold>{title}</Bold>
 							<TouchableOpacity style={{width: "10%"}} onPress={() => circlesService.toggleCircle(circle.id)}>
 								<Status>{circle.on ? "ON" : "OFF"}</Status>
 							</TouchableOpacity>
 						</View>
-						<View style={{height: "70%"}}>
+						<View>
 							<Light>{format(circle.desc)}</Light>
 						</View>
 					</RightContainer>
@@ -71,12 +71,11 @@ const BoxContainer = styled(View)`
 const InnerContainer = styled.View`
 	flex-direction: row;
 	background-color: ${colors.lightgray};
-	height: 98px;
+	align-items: center;
 `;
 
 const RightContainer = styled.View`
 	flex: 1;
-	padding-top: 10px;
 	margin-right: 20px;
 `;
 
