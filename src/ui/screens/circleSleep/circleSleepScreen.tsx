@@ -22,7 +22,7 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
 import { scoreDetails } from "./measureDisplayInfos";
@@ -40,7 +40,11 @@ export const CircleSleepScreen: React.FC = observer(() => {
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const { format } = useI18n();
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
+	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 
+	useEffect(() => {
+		console.log("CURRENT PERIOD = ", graphPeriod);
+	}, [graphPeriod]);
 	//const { result: dailyData } = useDailySleepQualityDetails(selectedDay);
 
 	return (
@@ -113,6 +117,8 @@ export const CircleSleepScreen: React.FC = observer(() => {
 				</TitleText>
 				<View style={{ marginVertical: 10 }}>
 					<TimeFrameSwitcher
+						setGraphPeriod={setGraphPeriod}
+						graphPeriod={graphPeriod}
 						color={colors.business.sleepPrimary}
 						frames={[
 							{

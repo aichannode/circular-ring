@@ -51,6 +51,10 @@ export enum Routes {
 	Leaderboard = "Leaderboard",
 
 	SetUpCompleted = "SetUpCompleted",
+	Notifications = "Notifications",
+	HighHR = "HighHR",
+	LowHr = "LowHr",
+	LowSpo2 = "LowSpo2",
 }
 
 export type AppRoutesParams = {
@@ -104,6 +108,10 @@ export type AppRoutesParams = {
 	[Routes.NewRingSetupScreen]: undefined;
 	[Routes.Leaderboard]: undefined;
 	[Routes.SetUpCompleted]: { ringName: string | null; action: any };
+	[Routes.Notifications]: undefined;
+	[Routes.HighHR]: undefined;
+	[Routes.LowHr]: undefined;
+	[Routes.LowSpo2]: undefined;
 };
 
 export type Navigate = NativeStackNavigationProp<AppRoutesParams, keyof AppRoutesParams>["navigate"];

@@ -18,12 +18,28 @@ import { TutorialInfo } from "@domain/user/tutorialInfo";
 import { Sex, User } from "@domain/user/user";
 import { UserApi, UserPutDto } from "@domain/user/userApi";
 import { UserSettings } from "@domain/user/userSettings";
+import { UserNotificationsSettings } from "@domain/user/userNotificationsSettings";
 import { UserStorage } from "@domain/user/userStorage";
 import { RingManagementService } from "@domain/ring/ringManagementService";
 import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { observable } from "micro-observables";
 import * as RNLocalize from "react-native-localize";
 import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
+
+const defaultNotificationsSettings = {
+	kira: "On",
+	banner: "On",
+	update: "On",
+	period: "On",
+	PMS: "On",
+	fertility: "On",
+	highHRAlert: "On",
+	lowHRAlert: "On",
+	lowSPO2Alert: "On",
+	highHR: 190,
+	lowHR: 50,
+	SPO2: 90,
+};
 
 const defaultSettings = {
 	dateFormat: DateFormat.DMY,
@@ -40,12 +56,14 @@ export class UserService {
 	private _authenticatedUserEmail = observable<string | null>(null);
 	private _user = observable<User | null>(null);
 	private _userSettings = observable<UserSettings | null>(null);
+	private _userNotificationsSettings = observable<UserNotificationsSettings>(defaultNotificationsSettings);
 	private _userAdvancedInfo = observable<AdvancedInfo | null>(null);
 
 	readonly justRegisteredUserEmail = this._justRegisteredUserEmail.readOnly();
 	readonly authenticatedUserEmail = this._authenticatedUserEmail.readOnly();
 	readonly user = this._user.readOnly();
 	readonly userSettings = this._userSettings.readOnly();
+	readonly userNotificationsSettings = this._userNotificationsSettings.readOnly();
 	readonly userAdvancedInfo = this._userAdvancedInfo.readOnly();
 
 	constructor(
@@ -60,6 +78,8 @@ export class UserService {
 	async init() {
 		this._user.set(await this.userStorage.loadUser());
 		this._userSettings.set(await this.userStorage.loadUserSettings());
+		const loadedNotificationsSettings = await this.userStorage.loadUserNotificationsSettings();
+		if (loadedNotificationsSettings !== null) this._userNotificationsSettings.set(loadedNotificationsSettings);
 		this._userAdvancedInfo.set(await this.userStorage.loadUserAdvancedInfo());
 		const authenticatedEmail = this.authService.userEmail.get();
 		if (!!authenticatedEmail) {
@@ -116,6 +136,7 @@ export class UserService {
 		await this.userStorage.removeUser();
 		await this.userStorage.removeUserSettings();
 		await this.userStorage.removeUserAdvancedInfo();
+		await this.userStorage.removeUserNotificationsSettings();
 		this.ringManagementService._userRings.set([]);
 		this.bleDeviceService.favoriteDevice.set(null);
 		this.bleDeviceService.favoriteDeviceSNU.set(null);
@@ -194,6 +215,13 @@ export class UserService {
 			this.logger.warn("Get user settings failed: " + JSON.stringify(error));
 			throw error;
 		}
+	}
+
+	async updateUserNotificationsSettings(newValue: any) {
+		this._userNotificationsSettings.update((notifications) => {
+			return { ...notifications, ...newValue };
+		});
+		await this.userStorage.saveUserNotificationsSettings({ ...this._userNotificationsSettings.get(), ...newValue });
 	}
 
 	async updateUserSettings(dateFormat: string, heightUnit: HeightUnit, weightUnit: WeightUnit) {
