@@ -241,13 +241,26 @@ export class UserService {
 	}
 
 	async completeTutorial(tutorialInfo: TutorialInfo) {
-		await this.updateUser({
+		console.log({
 			...tutorialInfo,
 			height: round2Digits(tutorialInfo.height),
 			weight: round2Digits(tutorialInfo.weight),
 			sex: tutorialInfo.sex.toString(),
 			bornDate: toServerDate(tutorialInfo.birthDate),
 			phoneNumber: null,
+			profilePictureUrl: null,
+			language: "en",
+			scorePublic: true,
+			tutorialCompleted: true,
+			stride: 0,
+		});
+		await this.updateUser({
+			...tutorialInfo,
+			height: round2Digits(tutorialInfo.height),
+			weight: round2Digits(tutorialInfo.weight),
+			sex: tutorialInfo.sex.toString(),
+			bornDate: toServerDate(tutorialInfo.birthDate),
+			phoneNumber: "+33666666666",
 			profilePictureUrl: null,
 			language: "en",
 			scorePublic: true,
