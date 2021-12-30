@@ -27,6 +27,7 @@ import { TitleText } from "@ui/components/text";
 import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { TimeFrame } from "@domain/measure/type";
 import { GraphLegend } from "@ui/components/measure/graphLegend";
+import { GraphContainer } from "@ui/components/measure/graphContainer";
 
 const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
@@ -151,61 +152,63 @@ export const CircleActivityScreen: React.FC = observer(() => {
 							]}
 						/>
 					</View>
-					<GraphLegend
-						rows={[
-							{
-								label: format("intensity.low"),
-								element: {
-									key: "intensity.low",
-									node: (
-										<View
-											style={{
-												borderRadius: 100,
-												width: 10,
-												height: 10,
-												backgroundColor: ActivityIntensityColors.HIGH,
-											}}
-										/>
-									),
+					<GraphContainer>
+						<GraphLegend
+							rows={[
+								{
+									label: format("intensity.low"),
+									element: {
+										key: "intensity.low",
+										node: (
+											<View
+												style={{
+													borderRadius: 100,
+													width: 10,
+													height: 10,
+													backgroundColor: ActivityIntensityColors.HIGH,
+												}}
+											/>
+										),
+									},
+									value: "0 h 45 min (8%)",
 								},
-								value: "0 h 45 min (8%)",
-							},
-							{
-								label: format("intensity.medium"),
-								element: {
-									key: "intensity.medium",
-									node: (
-										<View
-											style={{
-												borderRadius: 100,
-												width: 10,
-												height: 10,
-												backgroundColor: ActivityIntensityColors.MEDIUM,
-											}}
-										/>
-									),
+								{
+									label: format("intensity.medium"),
+									element: {
+										key: "intensity.medium",
+										node: (
+											<View
+												style={{
+													borderRadius: 100,
+													width: 10,
+													height: 10,
+													backgroundColor: ActivityIntensityColors.MEDIUM,
+												}}
+											/>
+										),
+									},
+									value: "5 h 48 min (61%)",
 								},
-								value: "5 h 48 min (61%)",
-							},
-							{
-								label: format("intensity.high"),
-								element: {
-									key: "intensity.high",
-									node: (
-										<View
-											style={{
-												borderRadius: 100,
-												width: 10,
-												height: 10,
-												backgroundColor: ActivityIntensityColors.LOW,
-											}}
-										/>
-									),
+								{
+									label: format("intensity.high"),
+									element: {
+										key: "intensity.high",
+										node: (
+											<View
+												style={{
+													borderRadius: 100,
+													width: 10,
+													height: 10,
+													backgroundColor: ActivityIntensityColors.LOW,
+												}}
+											/>
+										),
+									},
+									value: "0 h 48 min (9%)",
 								},
-								value: "0 h 48 min (9%)",
-							},
-						]}
-					/>
+							]}
+						/>
+					</GraphContainer>
 				</ElementStack>
 			</ScrollView>
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>

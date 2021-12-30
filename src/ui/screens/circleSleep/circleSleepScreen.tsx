@@ -27,6 +27,7 @@ import { LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
 import { scoreDetails } from "./measureDisplayInfos";
 import { SleepDurationPieChart } from "./sleepDurationPie";
+import { GraphContainer } from "@ui/components/measure/graphContainer";
 
 const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
@@ -136,34 +137,36 @@ export const CircleSleepScreen: React.FC = observer(() => {
 						]}
 					/>
 				</View>
-				<GraphLegend
-					rows={[
-						{
-							label: format("sleep.details.title"),
-							element: {
-								key: "sleep.details.title",
-								node: <View style={{ borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red }} />,
+				<GraphContainer>
+					<GraphLegend
+						rows={[
+							{
+								label: format("sleep.details.title"),
+								element: {
+									key: "sleep.details.title",
+									node: <View style={{ borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red }} />,
+								},
+								value: "0 h 45 min (8%)",
 							},
-							value: "0 h 45 min (8%)",
-						},
-						{
-							label: format("sleep.details.stages"),
-							element: {
-								key: "sleep.details.stages",
-								node: <View style={{ borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red }} />,
+							{
+								label: format("sleep.details.stages"),
+								element: {
+									key: "sleep.details.stages",
+									node: <View style={{ borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red }} />,
+								},
+								value: "5 h 48 min (61%)",
 							},
-							value: "5 h 48 min (61%)",
-						},
-						{
-							label: format("sleep.duration.title"),
-							element: {
-								key: "sleep.duration.title",
-								node: <View style={{ borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red }} />,
+							{
+								label: format("sleep.duration.title"),
+								element: {
+									key: "sleep.duration.title",
+									node: <View style={{ borderRadius: 100, width: 10, height: 10, backgroundColor: colors.red }} />,
+								},
+								value: "0 h 48 min (9%)",
 							},
-							value: "0 h 48 min (9%)",
-						},
-					]}
-				/>
+						]}
+					/>
+				</GraphContainer>
 			</ElementStack>
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
 				<View style={{ padding: 20 }}>
