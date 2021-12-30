@@ -72,7 +72,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 				/>
 			</View>
 			<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
-			<SleepDurationPieChart stages={stages} duration={sleepDuration ?? 0} />
+			<SleepDurationPieChart stages={stages} duration={(sleepDuration ?? 0)/1000/60} />
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
 				{
@@ -151,7 +151,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 										key: "sleep.stage.awake",
 										node: <></>,
 									},
-									value: `${moment.duration(awakeDuration).hours()} h ${moment.duration(awakeDuration).minutes()} min ${sleepDuration ? `${awakeDuration/sleepDuration}%` : ""}`,
+									value: `${moment.duration(awakeDuration).hours()} h ${moment.duration(awakeDuration).minutes()} min ${sleepDuration ? `${Math.round(awakeDuration*100/sleepDuration)}%` : ""}`,
 								},
 								{
 									label: format("sleep.stage.REM"),
@@ -159,7 +159,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 										key: "sleep.stage.REM",
 										node: <></>,
 									},
-									value: `${moment.duration(REMDuration).hours()} h ${moment.duration(REMDuration).minutes()} min ${sleepDuration ? `${REMDuration/sleepDuration}%` : ""}`,
+									value: `${moment.duration(REMDuration).hours()} h ${moment.duration(REMDuration).minutes()} min ${sleepDuration ? `${Math.round(REMDuration*100/sleepDuration)}%` : ""}`,
 								},
 								{
 									label: format("sleep.stage.light"),
@@ -167,7 +167,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 										key: "sleep.stage.light",
 										node: <></>,
 									},
-									value: `${moment.duration(lightDuration).hours()} h ${moment.duration(lightDuration).minutes()} min ${sleepDuration ? `${lightDuration/sleepDuration}%` : ""}`,
+									value: `${moment.duration(lightDuration).hours()} h ${moment.duration(lightDuration).minutes()} min ${sleepDuration ? `${Math.round(lightDuration*100/sleepDuration)}%` : ""}`,
 								},
 								{
 									label: format("sleep.stage.deep"),
@@ -175,7 +175,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 										key: "sleep.stage.deep",
 										node: <></>,
 									},
-									value: `${moment.duration(deepDuration).hours()} h ${moment.duration(deepDuration).minutes()} min ${sleepDuration ? `${awakeDuration/sleepDuration}%` : ""}`,
+									value: `${moment.duration(deepDuration).hours()} h ${moment.duration(deepDuration).minutes()} min ${sleepDuration ? `${Math.round(deepDuration*100/sleepDuration)}%` : ""}`,
 								},
 							]}
 						/>					
