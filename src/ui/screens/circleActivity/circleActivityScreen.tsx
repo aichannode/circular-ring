@@ -14,15 +14,19 @@ import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
 import { ScoreGauge } from "@ui/components/measure/scoreGauge";
 import { ScoreSection } from "@ui/components/measure/scoreSection";
 import { useI18n } from "@ui/i18n";
-import { colors } from "@ui/styles/colors";
+import { colors, ActivityIntensityColors } from "@ui/styles/colors";
 import moment from "moment";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { LayoutAnimation, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { DailyMetric } from "./dailyMetric";
 import { dailyMetricsDataInfos, scoreDetailsDataInfos } from "./measureDisplayInfos";
 import { observer } from "mobx-react-lite";
+import { TitleText } from "@ui/components/text";
+import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
+import { TimeFrame } from "@domain/measure/type";
+import { GraphLegend } from "@ui/components/measure/graphLegend";
 
 const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
@@ -36,6 +40,12 @@ export const CircleActivityScreen: React.FC = observer(() => {
 	const energyScore = useDailyEnergyScore(selectedDay);
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
+
+	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
+
+	useEffect(() => {
+		console.log("CURRENT PERIOD = ", graphPeriod);
+	}, [graphPeriod]);
 
 	return (
 		<Container>
@@ -115,6 +125,87 @@ export const CircleActivityScreen: React.FC = observer(() => {
 							.flatMap((x) => x)
 							.filter(Boolean) as JSX.Element[]
 					}
+				</ElementStack>
+				<ElementStack gap={10}>
+					<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
+						{format("activity.intensity")}
+					</TitleText>
+					<View style={{ marginVertical: 10 }}>
+						<TimeFrameSwitcher
+							setGraphPeriod={setGraphPeriod}
+							graphPeriod={graphPeriod}
+							color={colors.business.activityPrimary}
+							frames={[
+								{
+									label: "graph.time_frame.today",
+									duration: TimeFrame.TODAY,
+								},
+								{
+									label: "graph.time_frame.7days",
+									duration: TimeFrame.LAST_7_DAYS,
+								},
+								{
+									label: "graph.time_frame.all",
+									duration: TimeFrame.ALL,
+								},
+							]}
+						/>
+					</View>
+					<GraphLegend
+						rows={[
+							{
+								label: format("intensity.low"),
+								element: {
+									key: "intensity.low",
+									node: (
+										<View
+											style={{
+												borderRadius: 100,
+												width: 10,
+												height: 10,
+												backgroundColor: ActivityIntensityColors.HIGH,
+											}}
+										/>
+									),
+								},
+								value: "0 h 45 min (8%)",
+							},
+							{
+								label: format("intensity.medium"),
+								element: {
+									key: "intensity.medium",
+									node: (
+										<View
+											style={{
+												borderRadius: 100,
+												width: 10,
+												height: 10,
+												backgroundColor: ActivityIntensityColors.MEDIUM,
+											}}
+										/>
+									),
+								},
+								value: "5 h 48 min (61%)",
+							},
+							{
+								label: format("intensity.high"),
+								element: {
+									key: "intensity.high",
+									node: (
+										<View
+											style={{
+												borderRadius: 100,
+												width: 10,
+												height: 10,
+												backgroundColor: ActivityIntensityColors.LOW,
+											}}
+										/>
+									),
+								},
+								value: "0 h 48 min (9%)",
+							},
+						]}
+					/>
 				</ElementStack>
 			</ScrollView>
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
