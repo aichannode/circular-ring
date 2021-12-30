@@ -2,11 +2,13 @@ import { Storage } from "@core/storage";
 import { AdvancedInfo } from "@domain/user/advancedInfo";
 import { User } from "@domain/user/user";
 import { UserSettings } from "@domain/user/userSettings";
+import { UserNotificationsSettings } from "./userNotificationsSettings";
 
 const userStorageKey = "@user";
 const justRegisteredUserStorageKey = "@justRegisteredUser";
 const userSettingsStorageKey = "@userSettings";
 const userAdvancedInfoStorageKey = "@userAdvancedInfo";
+const userNotificationsSettingsStorageKey = "@userNotificationsSettings";
 
 export class UserStorage {
 	/** User **/
@@ -50,6 +52,20 @@ export class UserStorage {
 
 	removeUserSettings() {
 		return Storage.remove(userSettingsStorageKey);
+	}
+
+	/** User Notifications settings **/
+
+	saveUserNotificationsSettings(userNotificationsSettings: UserNotificationsSettings) {
+		return Storage.save<UserNotificationsSettings>(userNotificationsSettingsStorageKey, userNotificationsSettings);
+	}
+
+	loadUserNotificationsSettings() {
+		return Storage.load<UserNotificationsSettings>(userNotificationsSettingsStorageKey);
+	}
+
+	removeUserNotificationsSettings() {
+		return Storage.remove(userNotificationsSettingsStorageKey);
 	}
 
 	/** User Advanced Info **/
