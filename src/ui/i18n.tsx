@@ -33,10 +33,10 @@ export function useI18n(options?: FormatterOptions) {
 					//TODO send to sentry
 					if (key === undefined) {
 						console.warn("[INTL] missing mandatory i18n key.");
-						return "[INTL] missing mandatory i18n key.";
+						return "";
 					} else {
 						console.warn("[INTL] unknown key", key);
-						return key;
+						return "";
 					}
 				}
 			},
