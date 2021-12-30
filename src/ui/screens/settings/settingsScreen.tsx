@@ -40,6 +40,11 @@ export const SettingsScreen: React.FC = () => {
 			<InfoListHeader>{format("settings.general")}</InfoListHeader>
 			{/* <InfoListItem name={format("settings.notifications.title")} /> */}
 			<InfoListItem
+				name={format("settings.notifications")}
+				hasDisclosure
+				action={() => navigate(Routes.Notifications)}
+			/>
+			<InfoListItem
 				name={format("settings.date_format.title")}
 				action={() => dateFormatBottomSheet.current?.present()}
 				value={userSettings?.dateFormat}

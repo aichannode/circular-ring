@@ -27,7 +27,18 @@ export function useI18n(options?: FormatterOptions) {
 		...intl,
 		format: useCallback(
 			(key: WordingKey, values?: Record<string, string | number | boolean | Date | null | undefined> | undefined) => {
-				return intl.formatMessage({ id: key }, { ...values, ...createXmlFormatters(options) }) as string;
+				try {
+					return intl.formatMessage({ id: key }, { ...values, ...createXmlFormatters(options) }) as string;
+				} catch(e) {
+					//TODO send to sentry
+					if (key === undefined) {
+						console.warn("[INTL] missing mandatory i18n key.");
+						return "[INTL] missing mandatory i18n key.";
+					} else {
+						console.warn("[INTL] unknown key", key);
+						return key;
+					}
+				}
 			},
 			[intl]
 		),

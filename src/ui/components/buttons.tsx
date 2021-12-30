@@ -165,7 +165,7 @@ const PrimaryContent = styled(LinearGradient)<{ light?: boolean }>`
 `;
 
 const SecondaryContent = styled.View`
-	padding: 9px 22px;
+	padding: 7px 22px;
 	border-radius: 18px;
 	border-color: ${colors.textPrimary};
 	border-width: 1px;
