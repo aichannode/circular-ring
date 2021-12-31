@@ -18,7 +18,7 @@ export function useDailyActivityIntensity(isoDay?: string): Array<StageInfos<Act
 
 export function useDailyActivityDuration(isoDay?: string): number | undefined {
 	// TOTO implement
-	return;
+	return 4 * 60; // 4 hours of activity
 }
 
 export function useDailyActivityDetails(
@@ -26,18 +26,18 @@ export function useDailyActivityDetails(
 ): RangeDetails<DailyActivityDetailsMetrics | DailyActivityGoals | DailyEnergyScoreMetrics> {
 	// TOTO implement
 	return {
-		[MetricType.UserDailySteps]: 1000,
-		[MetricType.UserDailyWalkingEquivalency]: 1,
-		[MetricType.UserDailyAwakeHrMax]: 145,
-		[MetricType.UserDailyStepsGoalMin]: 0,
-		[MetricType.UserDailyStepsGoalMax]: 0,
-		[MetricType.UserDailyWalkingEquivalencyGoalMin]: 0,
-		[MetricType.UserDailyWalkingEquivalencyGoalMax]: 0,
-		[MetricType.UserWeeklyCardioPointsGoalMax]: 0,
+		[MetricType.UserDailySteps]: 1800,
+		[MetricType.UserDailyWalkingEquivalency]: 1.1,
+		[MetricType.UserDailyAwakeHrMax]: 87,
+		[MetricType.UserDailyStepsGoalMin]: 3000,
+		[MetricType.UserDailyStepsGoalMax]: 10000,
+		[MetricType.UserDailyWalkingEquivalencyGoalMin]: 1000,
+		[MetricType.UserDailyWalkingEquivalencyGoalMax]: 10000,
+		[MetricType.UserWeeklyCardioPointsGoalMax]: 100,
 		[MetricType.UserWeeklyCardioPointsGoalMin]: 0,
-		[MetricType.UserDailyCardioPointsGoalMax]: 0,
+		[MetricType.UserDailyCardioPointsGoalMax]: 100,
 		[MetricType.UserDailyCardioPointsGoalMin]: 0,
-		[MetricType.UserDailySleepQualityScore]: 0,
+		[MetricType.UserDailySleepQualityScore]: 73,
 	};
 }
 
@@ -132,7 +132,7 @@ export function useDailySleepStages(isoDay?: string): Array<StageInfos<SleepStag
 
 export function useSleepDuration(isoDay?: string): number | undefined {
 	// TOTO implement
-	return;
+	return 645 * 60 * 1000;
 }
 
 export function useDailySleepDetails(
@@ -140,34 +140,34 @@ export function useDailySleepDetails(
 ): RangeDetails<DailySleepDetailsMetrics | DailySleepDetailsGaugeMetrics> {
 	// TOTO implement
 	return {
-		[MetricType.UserDailyAwakeStageDuration]: 8,
-		[MetricType.UserDailyRealSleepDuration]: 362,
-		[MetricType.UserDailyPercREMStage]: 0,
-		[MetricType.UserDailyPercDeepStage]: 0,
-		[MetricType.UserDailyTranquility]: 0,
-		[MetricType.UserDailyCircadianRhythm]: 0,
-		[MetricType.UserDailyTimeToFallAsleep]: 0,
-		[MetricType.UserDailySleepDebt]: 0,
-		[MetricType.UserDailyPercAwakeStageDuration]: 0,
-		[MetricType.UserDailyPercRealSleep]: 50,
-		[MetricType.UserDailyPercREMStageScore]: 0,
-		[MetricType.UserDailyPercdeepStageScore]: 0,
-		[MetricType.UserDailyPercTimeTtoFallAsleep]: 0,
-		[MetricType.UserDailyPercSleepDebt]: 0,
+		[MetricType.UserDailyAwakeStageDuration]: 45,
+		[MetricType.UserDailyRealSleepDuration]: 330,
+		[MetricType.UserDailyPercREMStage]: 22,
+		[MetricType.UserDailyPercDeepStage]: 18,
+		[MetricType.UserDailyTranquility]: 50,
+		[MetricType.UserDailyCircadianRhythm]: 60,
+		[MetricType.UserDailyTimeToFallAsleep]: 60,
+		[MetricType.UserDailySleepDebt]: 158,
+		[MetricType.UserDailyPercAwakeStageDuration]: 10,
+		[MetricType.UserDailyPercRealSleep]: 51,
+		[MetricType.UserDailyPercREMStageScore]: 22,
+		[MetricType.UserDailyPercdeepStageScore]: 18,
+		[MetricType.UserDailyPercTimeTtoFallAsleep]: 10,
+		[MetricType.UserDailyPercSleepDebt]: 60,
 	};
 }
 
 export function useDailyEnergyScore(isoDay?: string): number | undefined {
 	// TOTO implement
-	return 88;
+	return 55;
 }
 
 export function useDailySleepQualityScore(isoDay?: string): number | undefined {
 	// TOTO implement
-	return;
+	return 47;
 }
 
 export function useDailyGlobalScore(isoDay?: string): number | undefined {
 	// TOTO implement
-	return;
+	return 60;
 }

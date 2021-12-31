@@ -41,7 +41,7 @@ export function SleepDurationPieChart({ stages, duration }: Props) {
 				totalDuration={duration}
                 title="sleep.duration.total"
                 chartSize={200}
-                currentIsoDate={moment().toISOString()}
+                currentIsoDate={moment().hour(20).toISOString()}
 				phaseColors={[colors.lightBlue, colors.darkBlue]}
 				phaseWidths={[5, 7]}
                 getPhaseLevel={getPhaseLevel}
