@@ -27,7 +27,8 @@ export const colors = {
 	high: "rgba(255,208,37, 0.89)",
 	medium: "rgba(255,93,0, 0.75)",
 	low: "rgba(255,29,29, 0.81)",
-	none: "rgba(51,51,51, 0.89)",
+	none: "rgb(222,222,222)",
+	selected: "rgba(51,51,51, 0.89)",
 	disabled: "#bfbfbf",
 	// Place here all the colors relative to business semantic
 	business: {

@@ -26,9 +26,9 @@ export function useDailyActivityDetails(
 ): RangeDetails<DailyActivityDetailsMetrics | DailyActivityGoals | DailyEnergyScoreMetrics> {
 	// TOTO implement
 	return {
-		[MetricType.UserDailySteps]: 0,
-		[MetricType.UserDailyWalkingEquivalency]: 0,
-		[MetricType.UserDailyAwakeHrMax]: 0,
+		[MetricType.UserDailySteps]: 1000,
+		[MetricType.UserDailyWalkingEquivalency]: 1,
+		[MetricType.UserDailyAwakeHrMax]: 145,
 		[MetricType.UserDailyStepsGoalMin]: 0,
 		[MetricType.UserDailyStepsGoalMax]: 0,
 		[MetricType.UserDailyWalkingEquivalencyGoalMin]: 0,
@@ -56,64 +56,77 @@ export function useDailySleepStages(isoDay?: string): Array<StageInfos<SleepStag
 			type: SleepStage.LIGHT,
 			start: cursor.toISOString(),
 			end: cursor.add(20, "minutes").toISOString(),
-		}, {
+		},
+		{
 			type: SleepStage.DEEP,
 			start: cursor.toISOString(),
 			end: cursor.add(1, "hour").toISOString(),
-		}, {
+		},
+		{
 			type: SleepStage.REM,
 			start: cursor.toISOString(),
 			end: cursor.add(50, "minutes").toISOString(),
-		}, {
+		},
+		{
 			type: SleepStage.DEEP,
 			start: cursor.toISOString(),
 			end: cursor.add(10, "minutes").toISOString(),
-		}, {
+		},
+		{
 			type: SleepStage.LIGHT,
 			start: cursor.toISOString(),
 			end: cursor.add(10, "minutes").toISOString(),
-		}, {
+		},
+		{
 			type: SleepStage.DEEP,
 			start: cursor.toISOString(),
 			end: cursor.add(30, "minutes").toISOString(),
-		}, {
+		},
+		{
 			type: SleepStage.LIGHT,
 			start: cursor.toISOString(),
 			end: cursor.add(1, "hour").toISOString(),
-		}, {
+		},
+		{
 			type: SleepStage.AWAKE,
 			start: cursor.toISOString(),
 			end: cursor.add(45, "minutes").toISOString(),
-		}, {
+		},
+		{
 			type: SleepStage.LIGHT,
 			start: cursor.toISOString(),
 			end: cursor.add(10, "minutes").toISOString(),
-		}, {
+		},
+		{
 			type: SleepStage.REM,
 			start: cursor.toISOString(),
 			end: cursor.add(1, "hour").toISOString(),
-		}, {
+		},
+		{
 			type: SleepStage.LIGHT,
 			start: cursor.toISOString(),
 			end: cursor.add(90, "minutes").toISOString(),
-		}, {
+		},
+		{
 			type: SleepStage.REM,
 			start: cursor.toISOString(),
 			end: cursor.add(30, "minutes").toISOString(),
-		}, {
+		},
+		{
 			type: SleepStage.LIGHT,
 			start: cursor.toISOString(),
 			end: cursor.add(20, "minutes").toISOString(),
-		}, {
+		},
+		{
 			type: SleepStage.DEEP,
 			start: cursor.toISOString(),
 			end: cursor.add(15, "minutes").toISOString(),
-		}, {
+		},
+		{
 			type: SleepStage.LIGHT,
 			start: cursor.toISOString(),
 			end: cursor.add(120, "minutes").toISOString(),
-		}
-		
+		},
 	];
 }
 
@@ -127,8 +140,8 @@ export function useDailySleepDetails(
 ): RangeDetails<DailySleepDetailsMetrics | DailySleepDetailsGaugeMetrics> {
 	// TOTO implement
 	return {
-		[MetricType.UserDailyAwakeStageDuration]: 0,
-		[MetricType.UserDailyRealSleepDuration]: 0,
+		[MetricType.UserDailyAwakeStageDuration]: 8,
+		[MetricType.UserDailyRealSleepDuration]: 362,
 		[MetricType.UserDailyPercREMStage]: 0,
 		[MetricType.UserDailyPercDeepStage]: 0,
 		[MetricType.UserDailyTranquility]: 0,
@@ -136,7 +149,7 @@ export function useDailySleepDetails(
 		[MetricType.UserDailyTimeToFallAsleep]: 0,
 		[MetricType.UserDailySleepDebt]: 0,
 		[MetricType.UserDailyPercAwakeStageDuration]: 0,
-		[MetricType.UserDailyPercRealSleep]: 0,
+		[MetricType.UserDailyPercRealSleep]: 50,
 		[MetricType.UserDailyPercREMStageScore]: 0,
 		[MetricType.UserDailyPercdeepStageScore]: 0,
 		[MetricType.UserDailyPercTimeTtoFallAsleep]: 0,
@@ -146,7 +159,7 @@ export function useDailySleepDetails(
 
 export function useDailyEnergyScore(isoDay?: string): number | undefined {
 	// TOTO implement
-	return;
+	return 88;
 }
 
 export function useDailySleepQualityScore(isoDay?: string): number | undefined {

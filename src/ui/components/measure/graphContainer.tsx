@@ -9,4 +9,6 @@ export const GraphContainer = styled.View`
 	shadow-opacity: 0.15;
 	shadow-radius: 10px;
 	elevation: 10;
+	overflow: hidden;
+	padding: 20px;
 `;
