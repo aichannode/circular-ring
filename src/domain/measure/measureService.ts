@@ -92,14 +92,16 @@ export class MeasureService {
 		);
 	}
 
-	private async fetchDailyMeasures(measures: Metric[], date?: Date): Promise<MetricInfo<Metric> | null> {
-		const allMetrics = await this.measureApi.getMeasures(
+	private async fetchDailyMeasures(measures: Metric[], date?: Date): Promise<MetricInfo | null> {
+		const allMetrics = await this.measureApi.getLastMesures(
 			measures,
 			date ? moment(date).startOf("day").toDate() : moment().subtract(1, "day").toDate(),
 			date ? moment(date).endOf("day").toDate() : new Date()
 		);
-		const lastMetric = allMetrics[allMetrics.length - 1] ?? null;
-		return lastMetric;
+		return {
+			timestamp: date?.toISOString() ?? new Date().toISOString(),
+			metrics: allMetrics
+		};
 	}
 
 	async fetchActivityDurationInfos(ymdDay?: string) {
