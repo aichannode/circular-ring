@@ -13,7 +13,7 @@ export class MeasureApi {
 		return result.data.data;
 	}
 
-	async getLastMesures(metrics: Metric[], start: Date, end: Date) {
+	async getLastMeasures(metrics: Metric[], start: Date, end: Date) {
 		const result = await this.apiService.get<Record<Metric, number>>(latestMeasureApiUrl, {
 			params: { metrics, start: start.toISOString(), end: end.toISOString() }
 		})

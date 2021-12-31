@@ -93,7 +93,7 @@ export class MeasureService {
 	}
 
 	private async fetchDailyMeasures(measures: Metric[], date?: Date): Promise<MetricInfo | null> {
-		const allMetrics = await this.measureApi.getLastMesures(
+		const allMetrics = await this.measureApi.getLastMeasures(
 			measures,
 			date ? moment(date).startOf("day").toDate() : moment().subtract(1, "day").toDate(),
 			date ? moment(date).endOf("day").toDate() : new Date()
