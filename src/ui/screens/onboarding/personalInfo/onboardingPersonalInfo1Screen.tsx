@@ -11,7 +11,6 @@ import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback, useRef, useState } from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import * as RNLocalize from "react-native-localize";
 
@@ -19,7 +18,6 @@ export const OnboardingPersonalInfo1Screen = () => {
 	const { format } = useI18n();
 	const { navigate } = useRoutesNavigation();
 	const navigation = useNavigation();
-	const safeArea = useSafeAreaInsets();
 
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
@@ -43,8 +41,10 @@ export const OnboardingPersonalInfo1Screen = () => {
 
 	return (
 		<StyledScrollScreen>
-			<StyledBackButton top={safeArea.top} />
-			<Title>{format("onboarding.personal_info.title")}</Title>
+			<TopContainer>
+				<StyledBackButton />
+				<Title>{format("onboarding.personal_info.title")}</Title>
+			</TopContainer>
 			<InfoBlock>
 				<TextField
 					ref={firstNameRef}
@@ -86,6 +86,12 @@ export const OnboardingPersonalInfo1Screen = () => {
 	);
 };
 
+const TopContainer = styled.View`
+	width: 100%;
+	margin-top: 67px;
+	margin-bottom: 70px;
+`;
+
 const StyledScrollScreen = styled(ScrollScreen)`
 	background-color: ${colors.lightgray};
 	justify-content: flex-start;
@@ -94,16 +100,16 @@ const StyledScrollScreen = styled(ScrollScreen)`
 	padding-right: 30px;
 `;
 
-const StyledBackButton = styled(BackButton)<{ top: number }>`
+const StyledBackButton = styled(BackButton)`
 	position: absolute;
-	left: 20px;
-	top: ${({ top }) => top}px;
+	top: 3;
+	left: -10;
 `;
 
 const Title = styled.Text`
 	${textStyles.bigTitle};
-	margin-top: 67px;
-	margin-bottom: 70px;
+	width: 100%;
+	text-align: center;
 `;
 
 const InfoBlock = styled.View`
