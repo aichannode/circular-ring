@@ -7,5 +7,5 @@ export enum ScoreQuality {
 }
 
 export function getScoreQuality(score: number) {
-	return score == 0 ? ScoreQuality.POOR : ScoreQuality.OPTIMAL;
+	return score < 50 ? ScoreQuality.POOR : ScoreQuality.OPTIMAL;
 }

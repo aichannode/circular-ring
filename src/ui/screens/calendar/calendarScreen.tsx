@@ -1,7 +1,7 @@
 import { FetchStrategy } from "@betomorrow/micro-stores";
 import { useServices } from "@core/services";
 import { useCalendar } from "@domain/calendar/hooks/useCalendar";
-import { useGlobalScore } from "@domain/measure/hooks";
+import { useDailyGlobalScore } from "@domain/measure/representation/hooks";
 import { CalendarView } from "@ui/components/calendar/calendarView";
 import { InfoListHeader } from "@ui/components/infoList";
 import { ResponsiveCenterView, Stack } from "@ui/components/layout";
@@ -13,11 +13,12 @@ import { CalendarNoteItem } from "@ui/screens/calendar/calendarNoteItem";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import dayjs from "dayjs";
+import { observer } from "mobx-react-lite";
 import React, { useEffect, useMemo, useState } from "react";
 import { Pressable } from "react-native";
 import styled from "styled-components/native";
 
-export const CalendarScreen: React.FC = () => {
+export const CalendarScreen: React.FC = observer(() => {
 	const { measureService, calendarService } = useServices();
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
@@ -35,7 +36,7 @@ export const CalendarScreen: React.FC = () => {
 		console.log(" ================== UPDATE CALENDAR");
 	}, [firstDayOfMonth]);
 
-	const { result: dailyScore } = useGlobalScore(selectedDay, FetchStrategy.Never);
+	const dailyScore = useDailyGlobalScore(selectedDay) ?? 0;
 
 	return (
 		<Container>
@@ -43,7 +44,7 @@ export const CalendarScreen: React.FC = () => {
 				<CalendarView selectedDay={selectedDay} onDaySelected={(day) => setSelectedDay(day)} />
 			</CalendarWrapper>
 			<ResponsiveCenterView>
-				<GlobalScoreCard score={dailyScore ? dailyScore.score : null} />
+				<GlobalScoreCard score={dailyScore} />
 			</ResponsiveCenterView>
 			<NoteHeader>
 				<InfoListHeader>{format("calendar.notes")}</InfoListHeader>
@@ -67,7 +68,7 @@ export const CalendarScreen: React.FC = () => {
 			</Stack>
 		</Container>
 	);
-};
+});
 
 const Container = styled(ScrollScreen)`
 	padding: 24px 0;

@@ -1,4 +1,5 @@
-import { DailySleepPhase, DurationInfos } from "@domain/measure/type";
+import { StageInfos } from "@domain/measure/representation/type";
+import { SleepStage } from "@domain/measure/type";
 import { DailyPieChart } from "@ui/components/measure/dailyPieChart";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
@@ -7,46 +8,44 @@ import { WordingKey } from "src/wordings";
 import styled from "styled-components/native";
 
 type Props = {
-	durationData: DurationInfos<DailySleepPhase>;
+	duration: number;
+	stages: Array<StageInfos<SleepStage>>;
 }
 
-function getPhaseLevel(phase?: string) {
-    return Number(phase === DailySleepPhase.NAP || phase === DailySleepPhase.SLEEP)
+function getPhaseLevel(phase = 4) {
+    return phase < 4
+		? 1
+		: 0
 }
 
-function getLabels(
-	phase: string,
-	index: number,
-	previousPhase?: string
-): [WordingKey | null | "", WordingKey | null] {
-	// Check with server
-	if (phase === DailySleepPhase.LYING && index === 0) {
-		return ["", null];
+function createLabelGenerator(stages: Array<StageInfos<SleepStage>>) {
+	return function getLabels(
+		_phase: number,
+		index: number
+	): [WordingKey | null | "", WordingKey | null] {
+		if (index === 0) {
+			return ["sleep.duration.label.start_sleep", null];
+		}
+		if (index === stages.length - 1) {
+			return [null, "sleep.duration.label.wake_up"];
+		}
+		return [null, null];
 	}
-	if (phase === DailySleepPhase.SLEEP && previousPhase === DailySleepPhase.LYING) {
-		return ["sleep.duration.label.start_sleep", null];
-	}
-	if (phase === DailySleepPhase.AWAKE && previousPhase === DailySleepPhase.SLEEP) {
-		return ["sleep.duration.label.wake_up", null];
-	}
-	if (phase === DailySleepPhase.NAP) {
-		return ["sleep.duration.label.nap_start", "sleep.duration.label.nap_end"];
-	}
-	return [null, null];
 }
 
-export function SleepDurationPieChart({ durationData }: Props) {
+export function SleepDurationPieChart({ stages, duration }: Props) {
 	return (
 		<Container>
             <DailyPieChart
-                durationData={durationData}
+                stages={stages}
+				totalDuration={duration}
                 title="sleep.duration.total"
                 chartSize={200}
-                currentIsoDate={moment().hour(22).toISOString()}
+                currentIsoDate={moment().hour(20).toISOString()}
 				phaseColors={[colors.lightBlue, colors.darkBlue]}
 				phaseWidths={[5, 7]}
                 getPhaseLevel={getPhaseLevel}
-                getLabels={getLabels}
+                getLabels={createLabelGenerator(stages)}
             />
 		</Container>
 	);
