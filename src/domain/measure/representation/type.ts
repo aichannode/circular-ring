@@ -7,11 +7,11 @@ export type StageInfos<T extends SleepStage | ActivityStage> = {
 	start: string;
 	/** Iso date */
 	end: string;
-}
+};
 
 export type RangeDetails<M extends MetricType> = {
-    [k in M]: number
-}
+	[k in M]: number;
+};
 
 /**
  * Used by the representation, atomically select needed data
@@ -21,9 +21,7 @@ export type RangeDetails<M extends MetricType> = {
 // ACTIVITY
 ///////////
 
-export const activityIntensityMetrics = [
-	MetricType.UserDataActivityIntensity
-] as const;
+export const activityIntensityMetrics = [MetricType.UserDataActivityIntensity] as const;
 export type ActivityIntensityMetrics = typeof activityIntensityMetrics[number];
 
 export const dailyActivityDetailsMetrics = [
@@ -39,9 +37,7 @@ export const weeklyActivityGoals = [
 ] as const;
 export type WeeklyActivityGoals = typeof weeklyActivityGoals[number];
 
-export const dailyEnergyScoreMetrics = [
-	MetricType.UserDailySleepQualityScore,
-] as const;
+export const dailyEnergyScoreMetrics = [MetricType.UserDailySleepQualityScore] as const;
 export type DailyEnergyScoreMetrics = typeof dailyEnergyScoreMetrics[number];
 
 // TODO check usage

@@ -1,7 +1,7 @@
 import { TimeFrame } from "@domain/measure/type";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import React, { useState } from "react";
+import React from "react";
 import { View } from "react-native";
 import { WordingKey } from "src/wordings";
 import { SelectableButton } from "../selectableButton";

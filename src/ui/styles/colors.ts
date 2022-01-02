@@ -2,6 +2,7 @@ import { ScoreQuality } from "@domain/measure/score";
 import { Intensity } from "@domain/ring/ringLiveData";
 
 export const colors = {
+	black: "#000000",
 	primary: "#ff3d00",
 	white: "#ffffff",
 	gray: "#979797",

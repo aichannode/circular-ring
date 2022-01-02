@@ -14,7 +14,7 @@ import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
 import { ScoreGauge } from "@ui/components/measure/scoreGauge";
 import { ScoreSection } from "@ui/components/measure/scoreSection";
 import { useI18n } from "@ui/i18n";
-import { colors, ActivityIntensityColors } from "@ui/styles/colors";
+import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import React, { useRef, useState, useEffect } from "react";
 import { LayoutAnimation, ScrollView, View } from "react-native";
@@ -24,11 +24,11 @@ import { DailyMetric } from "./dailyMetric";
 import { dailyMetricsDataInfos, scoreDetailsDataInfos } from "./measureDisplayInfos";
 import { observer } from "mobx-react-lite";
 import { TitleText } from "@ui/components/text";
-import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
+// import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { TimeFrame } from "@domain/measure/type";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
 
-import { CLEANUP_TIMER_LOOP_MILLIS } from "mobx-react-lite/dist/utils/reactionCleanupTrackingCommon";
+// import { CLEANUP_TIMER_LOOP_MILLIS } from "mobx-react-lite/dist/utils/reactionCleanupTrackingCommon";
 
 const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
@@ -43,8 +43,9 @@ export const CircleActivityScreen: React.FC = observer(() => {
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
-	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
+	const [graphPeriod] = useState(TimeFrame.TODAY);
 
+	console.log("FIX activityDetails", activityDetails);
 	useEffect(() => {
 		console.log("CURRENT PERIOD = ", graphPeriod);
 	}, [graphPeriod]);

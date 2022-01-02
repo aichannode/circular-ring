@@ -13,12 +13,50 @@ import {
 export function useDailyActivityIntensity(isoDay?: string): Array<StageInfos<ActivityStage>> {
 	// TODO implement
 	// esteban
-	return [];
+	const cursor = moment().hour(8).minutes(30);
+
+	return [
+		{
+			type: ActivityStage.LOW,
+			start: cursor.toISOString(),
+			end: cursor.add(6, "hours").toISOString(),
+		},
+		{
+			type: ActivityStage.MEDIUM,
+			start: cursor.toISOString(),
+			end: cursor.add(1, "hours").toISOString(),
+		},
+		{
+			type: ActivityStage.HIGH,
+			start: cursor.toISOString(),
+			end: cursor.add(1, "hour").toISOString(),
+		},
+		{
+			type: ActivityStage.MEDIUM,
+			start: cursor.toISOString(),
+			end: cursor.add(1, "hours").toISOString(),
+		},
+		{
+			type: ActivityStage.LOW,
+			start: cursor.toISOString(),
+			end: cursor.add(5, "hours").toISOString(),
+		},
+		// {
+		// 	type: ActivityStage.LOW,
+		// 	start: cursor.toISOString(),
+		// 	end: cursor.add(8, "hours").toISOString(),
+		// },
+		// {
+		// 	type: ActivityStage.LOW,
+		// 	start: cursor.toISOString(),
+		// 	end: cursor.add(30, "minutes").toISOString(),
+		// },
+	];
 }
 
 export function useDailyActivityDuration(isoDay?: string): number | undefined {
 	// TOTO implement
-	return 4 * 60; // 4 hours of activity
+	return 1 * 60; // 4 hours of activity
 }
 
 export function useDailyActivityDetails(
@@ -132,7 +170,7 @@ export function useDailySleepStages(isoDay?: string): Array<StageInfos<SleepStag
 
 export function useSleepDuration(isoDay?: string): number | undefined {
 	// TOTO implement
-	return 645 * 60 * 1000;
+	return 10 * 60 + 30;
 }
 
 export function useDailySleepDetails(

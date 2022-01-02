@@ -41,16 +41,26 @@ export const CircleSleepScreen: React.FC = observer(() => {
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const { format } = useI18n();
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const [graphPeriod/* , setGraphPeriod */] = useState(TimeFrame.TODAY);
+	const [graphPeriod /* , setGraphPeriod */] = useState(TimeFrame.TODAY);
 
 	useEffect(() => {
 		console.log("CURRENT PERIOD = ", graphPeriod);
 	}, [graphPeriod]);
 
-	const awakeDuration = stages.filter(({type}) => type === SleepStage.AWAKE).reduce((sum, {start, end}) => sum + moment(end).diff(start).valueOf(), 0)
-	const REMDuration = stages.filter(({type}) => type === SleepStage.REM).reduce((sum, {start, end}) => sum + moment(end).diff(start).valueOf(), 0)
-	const lightDuration = stages.filter(({type}) => type === SleepStage.LIGHT).reduce((sum, {start, end}) => sum + moment(end).diff(start).valueOf(), 0)
-	const deepDuration = stages.filter(({type}) => type === SleepStage.DEEP).reduce((sum, {start, end}) => sum + moment(end).diff(start).valueOf(), 0)
+	const awakeDuration = stages
+		.filter(({ type }) => type === SleepStage.AWAKE)
+		.reduce((sum, { start, end }) => sum + moment(end).diff(start).valueOf(), 0);
+	const REMDuration = stages
+		.filter(({ type }) => type === SleepStage.REM)
+		.reduce((sum, { start, end }) => sum + moment(end).diff(start).valueOf(), 0);
+	const lightDuration = stages
+		.filter(({ type }) => type === SleepStage.LIGHT)
+		.reduce((sum, { start, end }) => sum + moment(end).diff(start).valueOf(), 0);
+	const deepDuration = stages
+		.filter(({ type }) => type === SleepStage.DEEP)
+		.reduce((sum, { start, end }) => sum + moment(end).diff(start).valueOf(), 0);
+
+	console.log("FIX SLEEP END ", moment(stages[stages.length - 1].end).format("HH:mm"));
 
 	return (
 		<Container>
@@ -72,7 +82,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 				/>
 			</View>
 			<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
-			<SleepDurationPieChart stages={stages} duration={(sleepDuration ?? 0)/1000/60} />
+			<SleepDurationPieChart stages={stages} duration={sleepDuration ?? 0} />
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
 				{
@@ -141,8 +151,8 @@ export const CircleSleepScreen: React.FC = observer(() => {
 					/> */}
 				</View>
 				<GraphContainer>
-					<Hypnogram data={stages}/>
-					<View style={{paddingHorizontal: 20, paddingBottom: 20}}>
+					<Hypnogram data={stages} />
+					<View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
 						<GraphLegend
 							rows={[
 								{
@@ -151,7 +161,9 @@ export const CircleSleepScreen: React.FC = observer(() => {
 										key: "sleep.stage.awake",
 										node: <></>,
 									},
-									value: `${moment.duration(awakeDuration).hours()} h ${moment.duration(awakeDuration).minutes()} min ${sleepDuration ? `${Math.round(awakeDuration*100/sleepDuration)}%` : ""}`,
+									value: `${moment.duration(awakeDuration).hours()} h ${moment.duration(awakeDuration).minutes()} min ${
+										sleepDuration ? `${Math.round((awakeDuration * 100) / sleepDuration)}%` : ""
+									}`,
 								},
 								{
 									label: format("sleep.stage.REM"),
@@ -159,7 +171,9 @@ export const CircleSleepScreen: React.FC = observer(() => {
 										key: "sleep.stage.REM",
 										node: <></>,
 									},
-									value: `${moment.duration(REMDuration).hours()} h ${moment.duration(REMDuration).minutes()} min ${sleepDuration ? `${Math.round(REMDuration*100/sleepDuration)}%` : ""}`,
+									value: `${moment.duration(REMDuration).hours()} h ${moment.duration(REMDuration).minutes()} min ${
+										sleepDuration ? `${Math.round((REMDuration * 100) / sleepDuration)}%` : ""
+									}`,
 								},
 								{
 									label: format("sleep.stage.light"),
@@ -167,7 +181,9 @@ export const CircleSleepScreen: React.FC = observer(() => {
 										key: "sleep.stage.light",
 										node: <></>,
 									},
-									value: `${moment.duration(lightDuration).hours()} h ${moment.duration(lightDuration).minutes()} min ${sleepDuration ? `${Math.round(lightDuration*100/sleepDuration)}%` : ""}`,
+									value: `${moment.duration(lightDuration).hours()} h ${moment.duration(lightDuration).minutes()} min ${
+										sleepDuration ? `${Math.round((lightDuration * 100) / sleepDuration)}%` : ""
+									}`,
 								},
 								{
 									label: format("sleep.stage.deep"),
@@ -175,10 +191,12 @@ export const CircleSleepScreen: React.FC = observer(() => {
 										key: "sleep.stage.deep",
 										node: <></>,
 									},
-									value: `${moment.duration(deepDuration).hours()} h ${moment.duration(deepDuration).minutes()} min ${sleepDuration ? `${Math.round(deepDuration*100/sleepDuration)}%` : ""}`,
+									value: `${moment.duration(deepDuration).hours()} h ${moment.duration(deepDuration).minutes()} min ${
+										sleepDuration ? `${Math.round((deepDuration * 100) / sleepDuration)}%` : ""
+									}`,
 								},
 							]}
-						/>					
+						/>
 					</View>
 				</GraphContainer>
 			</ElementStack>
