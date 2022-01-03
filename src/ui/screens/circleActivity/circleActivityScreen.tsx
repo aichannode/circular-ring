@@ -22,6 +22,7 @@ import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { DailyMetric } from "./dailyMetric";
 import { dailyMetricsDataInfos, scoreDetailsDataInfos } from "./measureDisplayInfos";
+import { ScoreQuality } from "@domain/measure/score";
 import { observer } from "mobx-react-lite";
 import { TitleText } from "@ui/components/text";
 // import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
@@ -74,7 +75,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 				<ActivityDurationPieChart stages={activityIntensity} duration={activityDuration ?? 0} />
 				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
 				<ElementStack gap={10}>
-					{dailyActivityDetailsMetrics.map((metric) => {
+					{/* {dailyActivityDetailsMetrics.map((metric) => {
 						const dataInfos = dailyMetricsDataInfos[metric];
 						const value = activityDetails[metric];
 						return (
@@ -86,8 +87,57 @@ export const CircleActivityScreen: React.FC = observer(() => {
 								goodThreshold={dataInfos.goodGoal && activityDetails[dataInfos.goodGoal]}
 								optimalThreshold={dataInfos.optimalGoal && activityDetails[dataInfos.optimalGoal]}
 							/>
+
 						);
-					})}
+					})} */}
+					<DailyMetric
+						icon={require("@assets/images/shoes.png")}
+						label={"Steps taken (nb)"}
+						value={9200}
+						goodThreshold={0}
+						optimalThreshold={0}
+						OverWriteScoreQuality={ScoreQuality.OPTIMAL}
+					/>
+					<DailyMetric
+						icon={require("@assets/images/journey.png")}
+						label={"Walking equivalency (km)"}
+						value={5.4}
+						goodThreshold={0}
+						optimalThreshold={0}
+						OverWriteScoreQuality={ScoreQuality.OPTIMAL}
+					/>
+					<DailyMetric
+						icon={require("@assets/images/fire.png")}
+						label={"Calories burned (kcal)"}
+						value={1010}
+						goodThreshold={0}
+						optimalThreshold={0}
+						OverWriteScoreQuality={ScoreQuality.GOOD}
+					/>
+					<DailyMetric
+						icon={require("@assets/images/sport.png")}
+						label={"Cardio points"}
+						value={157}
+						goodThreshold={0}
+						optimalThreshold={0}
+						OverWriteScoreQuality={ScoreQuality.POOR}
+					/>
+					<DailyMetric
+						icon={require("@assets/images/lungs.png")}
+						label={"VO2 max (ml/kg/min)"}
+						value={35}
+						goodThreshold={0}
+						optimalThreshold={0}
+						// OverWriteScoreQuality={ScoreQuality.OPTIMAL}
+					/>
+					<DailyMetric
+						icon={require("@assets/images/heart.png")}
+						label={"HR max (bpm)"}
+						value={123}
+						goodThreshold={0}
+						optimalThreshold={0}
+						// OverWriteScoreQuality={ScoreQuality.OPTIMAL}
+					/>
 				</ElementStack>
 				<InfoListHeader>{format("activity.score.details")}</InfoListHeader>
 				<ElementStack gap={10}>

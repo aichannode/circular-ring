@@ -14,6 +14,7 @@ interface DailyMetricProps {
 	goodThreshold?: number;
 	optimalThreshold?: number;
 	style?: StyleProp<ViewStyle>;
+	OverWriteScoreQuality?: ScoreQuality | undefined;
 }
 export const DailyMetric: React.FC<DailyMetricProps> = ({
 	icon,
@@ -22,6 +23,7 @@ export const DailyMetric: React.FC<DailyMetricProps> = ({
 	goodThreshold,
 	optimalThreshold,
 	style,
+	OverWriteScoreQuality,
 }) => {
 	const scoreQuality =
 		goodThreshold && optimalThreshold && value !== undefined ? getScoreQuality(value ?? 0) : undefined;
@@ -31,7 +33,8 @@ export const DailyMetric: React.FC<DailyMetricProps> = ({
 			<MetricIcon source={icon} />
 			<SecondaryText>{label}</SecondaryText>
 			<Grow />
-			{!!scoreQuality && <QualityIndicator quality={scoreQuality} />}
+			{!!scoreQuality && OverWriteScoreQuality === undefined && <QualityIndicator quality={scoreQuality} />}
+			{OverWriteScoreQuality !== undefined && <QualityIndicator quality={OverWriteScoreQuality} />}
 			<Metric>{value !== undefined ? value : "-"}</Metric>
 		</Container>
 	);

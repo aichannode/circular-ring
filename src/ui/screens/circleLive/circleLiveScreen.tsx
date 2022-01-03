@@ -30,7 +30,7 @@ export const CircleLiveScreen: React.FC = () => {
 	console.log("maxHr", maxHrPercent);
 
 	const maxHeartRateRatio = data ? (data.heartRate! / data.maxHeartRate!) * 100 : null;
-	console.log("maxHeartRatio", maxHeartRateRatio, user);
+	console.log("data correlation", data?.correlation);
 	const activityIntensity = getIntensity(maxHrPercent);
 	const dataQuality = getSignalQuality(data ? data.correlation! : 0);
 
