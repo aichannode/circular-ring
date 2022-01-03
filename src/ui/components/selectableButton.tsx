@@ -1,4 +1,3 @@
-import { FeedEntityStyle } from "@domain/feed/type";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React from "react";
@@ -11,38 +10,20 @@ interface SelectableButtonProps {
 	onPress: () => void;
 	bgColor: string;
 	isDisabled?: boolean;
-	palette?: FeedEntityStyle
+	colors?: [string, string]
 	style?: StyleProp<ViewStyle>;
-}
-
-function getGradient(palette?: FeedEntityStyle): [string, string] {
-	switch(palette) {
-		case FeedEntityStyle.WHITE_WITH_PURPLE_GRADIENT:
-			return [colors.purpleGarientStart, colors.purpleGarientEnd]
-		case FeedEntityStyle.WHITE_WITH_DARK_BLUE_BORDER:
-			return [colors.darkBlue, colors.darkBlue]
-		case FeedEntityStyle.WHITE_WITH_LIGHT_BLUE_BORDER:
-			return [colors.lightBlue, colors.lightBlue]
-		case FeedEntityStyle.WHITE_WITH_ORANGE_BORDER:
-			return [colors.orange, colors.orange]
-		case FeedEntityStyle.WHITE_WITH_RED_BORDER:
-			return [colors.orangeRed, colors.orangeRed]
-		case FeedEntityStyle.ORANGE_GRADIENT:
-		default:
-			return [colors.orangeGradientStart, colors.orangeGradientEnd]
-	}
 }
 
 export const SelectableButton: React.FC<SelectableButtonProps> = ({
 	selected,
-	palette,
+	colors: palette = ["#000", "#fff"],
 	onPress,
 	bgColor,
 	style,
 	children,
 	isDisabled
 }) => {
-	const gradient = isDisabled ? [colors.disabled, colors.disabled] : getGradient(palette)
+	const gradient = isDisabled ? [colors.disabled, colors.disabled] : palette
 	const textColor = gradient[0]
 	return (
 		<Pressable onPress={onPress} style={style}>

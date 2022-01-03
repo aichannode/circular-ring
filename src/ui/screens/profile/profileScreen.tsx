@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { useGlobalScore } from "@domain/measure/hooks";
+import { useDailyGlobalScore } from "@domain/measure/representation/hooks";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ResponsiveCenterView } from "@ui/components/layout";
@@ -10,15 +10,16 @@ import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { ChangePasswordBottomSheet } from "@ui/screens/profile/changePasswordBottomSheet";
 import { LogoutBottomSheet } from "@ui/screens/profile/logoutBottomSheet";
+import { observer } from "mobx-react-lite";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components/native";
 
-export const ProfileScreen = () => {
+export const ProfileScreen = observer(() => {
 	const { format } = useI18n();
 	const { navigate } = useRoutesNavigation();
 	const { cognitoAuthService } = useServices();
 
-	const { result: dailyScore } = useGlobalScore();
+	const dailyScore = useDailyGlobalScore();
 	const [isConnectedByEmail, setIsConnectedByEmail] = useState(false);
 
 	const goToProfileInformation = useCallback(() => {
@@ -47,7 +48,7 @@ export const ProfileScreen = () => {
 		>
 			<UserAvatar />
 			<ResponsiveCenterView>
-				<GlobalScoreCard score={dailyScore ? dailyScore.score : null} />
+				<GlobalScoreCard score={dailyScore} />
 			</ResponsiveCenterView>
 			<InfoListHeader>{format("profile.list_header.profile")}</InfoListHeader>
 			<InfoListItem name={format("profile.list.profile_information")} hasDisclosure action={goToProfileInformation} />
@@ -69,7 +70,7 @@ export const ProfileScreen = () => {
 			</CircularBottomSheet>
 		</ScrollScreen>
 	);
-};
+});
 
 const SeparatedItem = styled(InfoListItem)`
 	margin-top: 20px;

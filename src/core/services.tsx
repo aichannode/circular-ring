@@ -72,7 +72,7 @@ const userService = new UserService(
 );
 const circlesService = new CirclesService();
 
-const measureApi = new MeasureApi(apiService);
+const measureApi = new MeasureApi(/* apiService */);
 const measureService = new MeasureService(measureApi);
 
 const userPreferencesStorage = new UserPreferencesStorage();

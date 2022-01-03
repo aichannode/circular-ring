@@ -10,7 +10,7 @@ import { ScoreView } from "../scoreView";
 import { SecondaryText, TitleText } from "../text";
 
 interface GlobalScoreCardProps {
-	score: number | null;
+	score?: number;
 	style?: StyleProp<ViewStyle>;
 }
 export const GlobalScoreCard: React.FC<GlobalScoreCardProps> = ({ score, style }) => {

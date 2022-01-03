@@ -2,7 +2,7 @@ import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
 import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
 import { useAutoConnectState } from "@domain/device/hooks";
-import { useWakeUpScore } from "@domain/measure/hooks";
+import { useDailySleepQualityScore } from "@domain/measure/representation/hooks";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader } from "@ui/components/infoList";
 import { ScoreSection } from "@ui/components/measure/scoreSection";
@@ -11,18 +11,19 @@ import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { WarningBottomSheet } from "@ui/screens/circleAlarm/warningBottomSheet";
 import { colors } from "@ui/styles/colors";
+import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import { Image, Pressable, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { AlarmCard } from "./alarmCard";
 import { AlarmWeekOverview } from "./alarmWeekOverview";
 
-export const CircleAlarmScreen: React.FC = () => {
+export const CircleAlarmScreen: React.FC = observer(() => {
 	const navigation = useRoutesNavigation();
 	const { loading, alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
 	const warningBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const wakeUpScore = useWakeUpScore();
+	const wakeUpScore = useDailySleepQualityScore();
 	const autoConnectState = useAutoConnectState();
 
 	useEffect(() => {
@@ -81,7 +82,7 @@ export const CircleAlarmScreen: React.FC = () => {
 			</CircularBottomSheet>
 		</Container>
 	);
-};
+});
 
 const Container = styled.View`
 	flex: 1;

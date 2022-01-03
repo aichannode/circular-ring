@@ -16,6 +16,7 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useServices } from "@core/services";
+import { getGradient } from "../utils";
 
 type Props = UserInputComponentConfigurationDto & {
     palette: Activity["style"]
@@ -89,7 +90,7 @@ function Select({
 					return (
 						<SelectableButton
 							style={{ marginRight: 8, marginTop: 8 }}
-							palette={palette}
+							colors={getGradient(palette)}
 							isDisabled={hasReachedMaxSelectionCount && !isSelected}
 							key={key}
 							onPress={function () {
