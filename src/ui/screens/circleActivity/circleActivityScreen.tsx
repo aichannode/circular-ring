@@ -1,5 +1,5 @@
 import {
-	useDailyActivityDetails,
+	useDailyEnergyScoreDetails,
 	useDailyActivityDuration,
 	useDailyActivityIntensity,
 	useDailyEnergyScore,
@@ -21,8 +21,9 @@ import { LayoutAnimation, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { DailyMetric } from "./dailyMetric";
-import { scoreDetailsDataInfos } from "./measureDisplayInfos";
 import { ScoreQuality } from "@domain/measure/score";
+/* import { DailyMetric } from "./dailyMetric"; */
+import { /* dailyMetricsDataInfos, */ getActivityQualityDetails } from "./measureDisplayInfos";
 import { observer } from "mobx-react-lite";
 import { TitleText } from "@ui/components/text";
 // import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
@@ -30,20 +31,20 @@ import { TimeFrame } from "@domain/measure/type";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
 
 // import { CLEANUP_TIMER_LOOP_MILLIS } from "mobx-react-lite/dist/utils/reactionCleanupTrackingCommon";
-
+/* 
 const scoreGoodThreshold = 0.8;
-const scoreOptimalThreshold = 0.9;
+const scoreOptimalThreshold = 0.9; */
 
 export const CircleActivityScreen: React.FC = observer(() => {
 	const { format } = useI18n();
 	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
 	const activityIntensity = useDailyActivityIntensity();
-	const activityDetails = useDailyActivityDetails();
+	const activityDetails = useDailyEnergyScoreDetails();
 	const activityDuration = useDailyActivityDuration(selectedDay);
 	const energyScore = useDailyEnergyScore(selectedDay);
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
-
+	const activityQualityDetails = getActivityQualityDetails(format)
 	const [graphPeriod] = useState(TimeFrame.TODAY);
 
 	console.log("FIX activityDetails", activityDetails);
@@ -96,7 +97,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 						value={9200}
 						goodThreshold={0}
 						optimalThreshold={0}
-						OverWriteScoreQuality={ScoreQuality.OPTIMAL}
+						overWriteScoreQuality={ScoreQuality.OPTIMAL}
 					/>
 					<DailyMetric
 						icon={require("@assets/images/journey.png")}
@@ -104,7 +105,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 						value={5.4}
 						goodThreshold={0}
 						optimalThreshold={0}
-						OverWriteScoreQuality={ScoreQuality.OPTIMAL}
+						overWriteScoreQuality={ScoreQuality.OPTIMAL}
 					/>
 					<DailyMetric
 						icon={require("@assets/images/fire.png")}
@@ -112,7 +113,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 						value={1010}
 						goodThreshold={0}
 						optimalThreshold={0}
-						OverWriteScoreQuality={ScoreQuality.GOOD}
+						overWriteScoreQuality={ScoreQuality.GOOD}
 					/>
 					<DailyMetric
 						icon={require("@assets/images/sport.png")}
@@ -120,7 +121,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 						value={157}
 						goodThreshold={0}
 						optimalThreshold={0}
-						OverWriteScoreQuality={ScoreQuality.POOR}
+						overWriteScoreQuality={ScoreQuality.POOR}
 					/>
 					<DailyMetric
 						icon={require("@assets/images/lungs.png")}
@@ -141,43 +142,52 @@ export const CircleActivityScreen: React.FC = observer(() => {
 				</ElementStack>
 				<InfoListHeader>{format("activity.score.details")}</InfoListHeader>
 				<ElementStack gap={10}>
-					{
-						dailyEnergyScoreMetrics
-							.map((metric, index) => {
-								const dataInfos = scoreDetailsDataInfos[metric];
-								const value = activityDetails[metric];
-								const gaugeValue = dataInfos.gauge ? activityDetails[dataInfos.gauge] : value;
-								return [
-									<ScoreGauge
-										key={metric}
-										value={value !== undefined ? Math.round(value) : undefined}
-										rate={gaugeValue !== undefined ? gaugeValue / 100 : undefined}
-										unit={dataInfos.unit}
-										goodThreshold={scoreGoodThreshold}
-										optimalThreshold={scoreOptimalThreshold}
+				{
+					dailyEnergyScoreMetrics
+						.map((metric, index) => {
+							const dataInfos = activityQualityDetails[metric];
+							
+							const values: {
+								value: number,
+								thresholdLow: number,
+								thresholdHigh: number,
+								gaugeFilling: number
+							} = {
+								value: (activityDetails as any)[dataInfos.metricsName.value],
+								thresholdLow: (activityDetails as any)[dataInfos.metricsName.thresholdLow],
+								thresholdHigh: (activityDetails as any)[dataInfos.metricsName.thresholdHigh],
+								gaugeFilling: (activityDetails as any)[dataInfos.metricsName.gaugeFilling],
+							}
+							console.log(dataInfos.metricsName)
+							return [
+								<ScoreGauge
+									key={metric}
+									value={dataInfos.renderValue(values)}
+									gaugeFilling={values.gaugeFilling}
+									color={dataInfos.getGaugeColor(values)}
+									label={format(dataInfos.titleKey)}
+									onPress={() => {
+										LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+										setFocusedGauge((current) => (current === index ? null : index));
+									}}
+								/>,
+								focusedGauge === index && (
+									<GaugeDescription
+										key={metric + "description"}
 										label={format(dataInfos.titleKey)}
-										onPress={() => {
+										description={format(dataInfos.descriptionKey)}
+										colorType="Sleep"
+										onClose={() => {
 											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-											setFocusedGauge((current) => (current === index ? null : index));
+											setFocusedGauge(null);
 										}}
-									/>,
-									focusedGauge === index && (
-										<GaugeDescription
-											key={metric + "description"}
-											colorType="Activity"
-											label={format(dataInfos.titleKey)}
-											description={format(dataInfos.descriptionKey)}
-											onClose={() => {
-												LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-												setFocusedGauge(null);
-											}}
-										/>
-									),
-								];
-							})
-							.flatMap((x) => x)
-							.filter(Boolean) as JSX.Element[]
-					}
+									/>
+								),
+							];
+						})
+						.flatMap((x) => x)
+						.filter(Boolean) as JSX.Element[]
+				}
 				</ElementStack>
 				<ElementStack gap={10}>
 					<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
