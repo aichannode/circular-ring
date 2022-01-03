@@ -7,7 +7,7 @@ import { mutate } from "@core/store";
 import {
 	DailyActivityDetailsMetrics,
 	DailyEnergyScoreMetrics,
-	ActivityScoreGaugeMetrics,
+	DailyEnergyScoreGaugeCalibrationMetrics,
 	ActivityIntensityMetrics,
 	dailyActivityDetailsMetrics,
 	dailyEnergyScoreMetrics,
@@ -16,9 +16,9 @@ import {
 	DailySleepDetailsGaugeMetrics,
 	SleepStageMetrics,
 	dailySleepDetailsMetrics,
-	dailySleepDetailsGaugeMetrics,
-	activityScoreGaugeMetrics,
+	dailySleepDetailsGaugeCalibrationMetrics,
 	sleepStageMetrics,
+	dailyEnergyScoreGaugeCalibrationMetrics,
 } from "./representation/type";
 
 const DAILY_KEY_FORMAT = "YYYY-MM-DD";
@@ -39,7 +39,7 @@ export class MeasureService {
 			| DailyActivityDetailsMetrics
 			| DailyActivityGoals
 			| DailyEnergyScoreMetrics
-			| ActivityScoreGaugeMetrics
+			| DailyEnergyScoreGaugeCalibrationMetrics
 		>
 	> = new Map();
 	dailyDailySleepDetailsMetrics: Map<
@@ -69,9 +69,9 @@ export class MeasureService {
 	async fetchDailyActivityData(isoDate?: string) {
 		const key = moment(isoDate).format(DAILY_KEY_FORMAT);
 		const range: RangeMetrics<
-			DailyActivityDetailsMetrics | DailyActivityGoals | DailyEnergyScoreMetrics | ActivityScoreGaugeMetrics
+			DailyActivityDetailsMetrics | DailyActivityGoals | DailyEnergyScoreMetrics | DailyEnergyScoreGaugeCalibrationMetrics
 		> = await this.fetchDailyMeasures(
-			[...dailyActivityDetailsMetrics, ...dailyActivityGoals, ...dailyEnergyScoreMetrics, ...activityScoreGaugeMetrics],
+			[...dailyActivityDetailsMetrics, ...dailyActivityGoals, ...dailyEnergyScoreMetrics, ...dailyEnergyScoreGaugeCalibrationMetrics],
 			isoDate ? moment(isoDate).toDate() : undefined
 		);
 
@@ -83,7 +83,7 @@ export class MeasureService {
 	async fetchDailyDailySleepDetailsMetrics(isoDay?: string) {
 		const key = moment(isoDay).format(DAILY_KEY_FORMAT);
 		const range: RangeMetrics<DailySleepDetailsMetrics | DailySleepDetailsGaugeMetrics> = await this.fetchDailyMeasures(
-			[...dailySleepDetailsMetrics, ...dailySleepDetailsGaugeMetrics],
+			[...dailySleepDetailsMetrics, ...dailySleepDetailsGaugeCalibrationMetrics],
 			isoDay ? moment(isoDay).toDate() : undefined
 		);
 
