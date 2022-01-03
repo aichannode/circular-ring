@@ -1,7 +1,7 @@
 import { getScoreQuality, ScoreQuality } from "@domain/measure/score";
 import { Grow } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
-import { colors, qualityColors } from "@ui/styles/colors";
+import { colors, ScoreQualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
@@ -24,9 +24,7 @@ export const DailyMetric: React.FC<DailyMetricProps> = ({
 	style,
 }) => {
 	const scoreQuality =
-		goodThreshold && optimalThreshold && value !== undefined
-			? getScoreQuality(value)
-			: undefined;
+		goodThreshold && optimalThreshold && value !== undefined ? getScoreQuality(value ?? 0) : undefined;
 
 	return (
 		<Container style={style}>
@@ -54,7 +52,7 @@ const QualityIndicator = styled.View<{ quality: ScoreQuality }>`
 	width: 10px;
 	height: 10px;
 	border-radius: 5px;
-	background-color: ${({ quality }) => qualityColors[quality]};
+	background-color: ${({ quality }) => ScoreQualityColors[quality]};
 	margin-right: 6px;
 `;
 

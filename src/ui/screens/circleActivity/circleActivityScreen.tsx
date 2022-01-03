@@ -70,7 +70,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 						}}
 					/>
 				</View>
-				<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
+				<InfoListHeader>{format("activity.duration.title")}</InfoListHeader>
 				<ActivityDurationPieChart stages={activityIntensity} duration={activityDuration ?? 0} />
 				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
 				<ElementStack gap={10}>

@@ -1,7 +1,7 @@
 import { useServices } from "@core/services";
 import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
 import { useAutoConnectState, useLiveData } from "@domain/device/hooks";
-import { getScoreQuality } from "@domain/measure/score";
+import { getSignalQuality } from "@domain/measure/score";
 import { usePreferences } from "@domain/preferences/hooks";
 import { getIntensity, Intensity, getMaxHr } from "@domain/ring/ringLiveData";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
@@ -10,7 +10,7 @@ import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { PrimaryText, TertiaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
-import { colors, intensityColors, qualityColors } from "@ui/styles/colors";
+import { colors, intensityColors, SignalQualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components/native";
@@ -32,7 +32,7 @@ export const CircleLiveScreen: React.FC = () => {
 	const maxHeartRateRatio = data ? (data.heartRate! / data.maxHeartRate!) * 100 : null;
 	console.log("maxHeartRatio", maxHeartRateRatio, user);
 	const activityIntensity = getIntensity(maxHrPercent);
-	const dataQuality = getScoreQuality(data ? data.correlation! : 0);
+	const dataQuality = getSignalQuality(data ? data.correlation! : 0);
 
 	const autoConnectState = useAutoConnectState();
 
@@ -68,7 +68,7 @@ export const CircleLiveScreen: React.FC = () => {
 								{format("live.accuracy.label")}
 								{dataQuality ? <QualityValue> {formatScoreQuality(dataQuality)}</QualityValue> : null}
 							</TertiaryText>
-							{dataQuality ? <ColoredDot color={qualityColors[dataQuality]} /> : null}
+							{dataQuality ? <ColoredDot color={SignalQualityColors[dataQuality]} /> : null}
 						</Row>
 					</Row>
 					<Row gap={20} style={{ height: 155 }} align="center">
