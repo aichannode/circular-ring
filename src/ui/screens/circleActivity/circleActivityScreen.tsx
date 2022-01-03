@@ -4,7 +4,7 @@ import {
 	useDailyActivityIntensity,
 	useDailyEnergyScore,
 } from "@domain/measure/representation/hooks";
-import { dailyActivityDetailsMetrics, dailyEnergyScoreMetrics } from "@domain/measure/representation/type";
+import { dailyEnergyScoreMetrics } from "@domain/measure/representation/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CalendarView } from "@ui/components/calendar/calendarView";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
@@ -21,7 +21,7 @@ import { LayoutAnimation, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { DailyMetric } from "./dailyMetric";
-import { dailyMetricsDataInfos, scoreDetailsDataInfos } from "./measureDisplayInfos";
+import { scoreDetailsDataInfos } from "./measureDisplayInfos";
 import { ScoreQuality } from "@domain/measure/score";
 import { observer } from "mobx-react-lite";
 import { TitleText } from "@ui/components/text";
