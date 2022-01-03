@@ -1,4 +1,4 @@
-import { ScoreQuality } from "@domain/measure/score";
+import { SignalQuality, ScoreQuality } from "@domain/measure/score";
 import { Intensity } from "@domain/ring/ringLiveData";
 
 export const colors = {
@@ -41,10 +41,15 @@ export const colors = {
 	},
 };
 
-export const qualityColors: { [key in ScoreQuality]: string } = {
+export const ScoreQualityColors: { [key in ScoreQuality]: string } = {
 	[ScoreQuality.POOR]: colors.red,
 	[ScoreQuality.GOOD]: colors.orange,
 	[ScoreQuality.OPTIMAL]: colors.green,
+};
+
+export const SignalQualityColors: { [key in SignalQuality]: string } = {
+	[SignalQuality.POOR]: colors.red,
+	[SignalQuality.GOOD]: colors.green,
 };
 
 export const intensityColors: { [key in Intensity]: string } = {

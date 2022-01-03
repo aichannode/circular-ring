@@ -3,7 +3,7 @@ import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { ScoreView } from "@ui/components/scoreView";
 import { SecondaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
-import { colors, qualityColors } from "@ui/styles/colors";
+import { colors, ScoreQualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
@@ -26,7 +26,7 @@ export const ScoreSection: React.FC<ScoreSectionProps> = ({ score, color, label,
 			<ScoreWrapper align="center" gap={12}>
 				<ScoreView value={score ?? undefined} color={color} textColor={colors.textPrimary} />
 				<Row align="center" style={{ width: 100 }} justify="center">
-					{scoreQuality && <ColoredDot color={qualityColors[scoreQuality]} />}
+					{scoreQuality && <ColoredDot color={ScoreQualityColors[scoreQuality]} />}
 					{scoreQuality && <TitleText>{formatScoreQuality(scoreQuality)}</TitleText>}
 				</Row>
 			</ScoreWrapper>

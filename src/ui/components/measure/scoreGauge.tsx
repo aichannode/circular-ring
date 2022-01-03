@@ -2,7 +2,7 @@ import { getScoreQuality, ScoreQuality, ScoreUnit } from "@domain/measure/score"
 import { Row } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
-import { colors, qualityColors } from "@ui/styles/colors";
+import { colors, ScoreQualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
@@ -34,8 +34,7 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 	gaugeInverted,
 }) => {
 	const gaugeRatio = gaugeInverted && rate !== undefined ? 1 - rate : rate;
-	const scoreQuality =
-		gaugeRatio !== undefined ? getScoreQuality(gaugeRatio) : undefined;
+	const scoreQuality = gaugeRatio !== undefined ? getScoreQuality(gaugeRatio) : undefined;
 
 	const { formatScoreQuality, formatTranquility, formatDuration } = useI18n();
 
@@ -77,7 +76,7 @@ const Gauge = styled.View`
 `;
 
 const GaugeValue = styled.View<{ quality?: ScoreQuality; rate: number }>`
-	background-color: ${({ quality }) => (quality ? qualityColors[quality] : colors.lightgray)};
+	background-color: ${({ quality }) => (quality ? ScoreQualityColors[quality] : colors.lightgray)};
 	position: absolute;
 	top: 0;
 	bottom: 0;

@@ -34,7 +34,7 @@ const scoreOptimalThreshold = 0.9;
 
 export const CircleSleepScreen: React.FC = observer(() => {
 	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
-	const sleepDuration = useSleepDuration(selectedDay);
+	const centerCircleSleepDuration = useSleepDuration(selectedDay);
 	const details = useDailySleepDetails(selectedDay);
 	const qualityScore = useDailySleepQualityScore(selectedDay);
 	const stages = useDailySleepStages();
@@ -42,6 +42,11 @@ export const CircleSleepScreen: React.FC = observer(() => {
 	const { format } = useI18n();
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const [graphPeriod /* , setGraphPeriod */] = useState(TimeFrame.TODAY);
+
+	// TODO remove and use the hook
+	const sleepDuration = moment(stages[stages.length - 1].end)
+		.diff(stages[0].start)
+		.valueOf();
 
 	useEffect(() => {
 		console.log("CURRENT PERIOD = ", graphPeriod);
@@ -61,6 +66,8 @@ export const CircleSleepScreen: React.FC = observer(() => {
 		.reduce((sum, { start, end }) => sum + moment(end).diff(start).valueOf(), 0);
 
 	console.log("FIX SLEEP END ", moment(stages[stages.length - 1].end).format("HH:mm"));
+
+	console.log("AWAKE DURATION", awakeDuration);
 
 	return (
 		<Container>
@@ -82,7 +89,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 				/>
 			</View>
 			<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
-			<SleepDurationPieChart stages={stages} duration={sleepDuration ?? 0} />
+			<SleepDurationPieChart stages={stages} duration={centerCircleSleepDuration ?? 0} />
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
 				{
