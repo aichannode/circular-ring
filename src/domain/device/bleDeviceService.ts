@@ -206,6 +206,10 @@ export class BleDeviceService {
 			this.autoConnectFavoriteDevice();
 		}
 	}
+	async setFavoriteDeviceName(name: string) {
+		await this.favoriteDeviceStorage.save({ name });
+		this._favoriteDevice.set({ name });
+	}
 
 	async startScan() {
 		if (this._scanning.get()) {

@@ -79,17 +79,17 @@ export const MyRingScreen: React.FC = () => {
 				/>
 			</Dialog.Container>
 			<RingBatteryView size={140} detailed style={{ marginBottom: 30 }} />
-			<EditText
-				onPress={() => {
-					console.log("Edit");
-					setShowPrompt(true);
-				}}
-			>
-				<StyledPrimaryText>{currentRing?.name}</StyledPrimaryText>
-				<Pen source={require("@assets/images/pen.png")}></Pen>
-			</EditText>
 			{connected === DeviceConnectionState.CONNECTED && (
 				<>
+					<EditText
+						onPress={() => {
+							console.log("Edit");
+							setShowPrompt(true);
+						}}
+					>
+						<StyledPrimaryText>{currentRing?.name}</StyledPrimaryText>
+						<Pen source={require("@assets/images/pen.png")}></Pen>
+					</EditText>
 					<InfoListItem
 						name={format("ring.firmware")}
 						hasDisclosure
