@@ -118,6 +118,7 @@ export class RingManagementService {
 				console.log("checking favorite ring : " + this.deviceService.favoriteDevice.get()?.name);
 				const idToDelete = ringToDelete.id;
 				if (this.deviceService.favoriteDevice.get()?.name === ringToDelete.name) {
+					console.log("this._userRings.get()", this._userRings.get());
 					await this.deviceService.disconnect();
 				} else {
 					this.logger.debug(
