@@ -176,7 +176,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 										key={metric + "description"}
 										label={format(dataInfos.titleKey)}
 										description={format(dataInfos.descriptionKey)}
-										colorType="Sleep"
+										colorType="Activity"
 										onClose={() => {
 											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 											setFocusedGauge(null);
