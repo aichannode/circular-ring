@@ -33,6 +33,15 @@ export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 	};
 	const circlesBanner = [addCircle].concat(circles);
 
+	const circleNavigate = (circle: CircleEntity) => {
+		if (!isInSleepMode) {
+			navigation.navigate(circle.route);
+		}
+		if (isInSleepMode && circle.canNavigateInSleepMode) {
+			navigation.navigate(circle.route);
+		}
+	};
+
 	return (
 		<Container style={style} gap={15}>
 			<TitleText style={{ paddingLeft: 10 }}>{format("home.circles.title")}</TitleText>
@@ -40,7 +49,7 @@ export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 				<Row align="flex-start" gap={0}>
 					{circlesBanner.map((circle) =>
 						circle.on ? (
-							<CircleView key={circle.route} onPress={() => navigation.navigate(circle.route)}>
+							<CircleView key={circle.route} onPress={() => circleNavigate(circle)}>
 								<Stack style={{ marginTop: circle.id === 0 ? -10 : 0 }} gap={circle.id === 0 ? -3 : 10} align="center">
 									<Image source={isInSleepMode ? circle.sleepModeIcon : circle.source} />
 									<CircleLabel>{format(circle.key)}</CircleLabel>
