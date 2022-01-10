@@ -20,13 +20,11 @@ import moment from "moment";
 import { useUserSettings } from "@domain/user/hooks/useUser";
 import { useI18n } from "@ui/i18n";
 import Fade from "@ui/components/fade";
-import { useObservable } from "micro-observables";
 
 export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
 	const { feedService, bluetoothService, bleDeviceService, ringManagementService, userQuickAccessService } =
 		useServices();
-	const isInSleepMode = useObservable(userQuickAccessService.isInSleepMode);
 	const [forceRefreshing, setForceRefreshing] = useState(false);
 
 	const setupState = useSetupState();
@@ -42,6 +40,7 @@ export const HomeScreen: React.FC = () => {
 	}, []);
 
 	const forceRefresh = useCallback(async () => {
+		if (userQuickAccessService.isInSleepMode.get()) return;
 		if (syncState !== SyncState.NONE) {
 			return;
 		}
@@ -65,14 +64,14 @@ export const HomeScreen: React.FC = () => {
 				style={{ flex: 1 }}
 				refreshControl={
 					<RefreshControl
-						enabled={syncState === SyncState.NONE && !isInSleepMode}
+						enabled={syncState === SyncState.NONE}
 						refreshing={forceRefreshing}
 						onRefresh={() => forceRefresh()}
 					/>
 				}
 			>
 				<QuickAccess />
-				{!isInSleepMode && <SyncBanner style={{ margin: 10 }} onRetry={forceRefresh} />}
+				<SyncBanner style={{ margin: 10 }} onRetry={forceRefresh} />
 
 				<View style={{ paddingHorizontal: 6 }}>
 					<IfAdmin>

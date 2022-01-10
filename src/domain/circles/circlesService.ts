@@ -9,7 +9,7 @@ export class CirclesService {
 			key: "home.circles.alarm.label",
 			desc: "home.circles.alarm.description",
 			source: require("@assets/images/circleAlarm.png"),
-			sleepModeIcon: require("@assets/images/ciclesAlarmSleeepmode.png"),
+			sleepModeIcon: require("@assets/images/circleAlarm.png"),
 			route: Routes.Alarm,
 			on: true,
 			type: "Vibration",
