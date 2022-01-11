@@ -4,7 +4,7 @@ import { colors } from "@ui/styles/colors"
 export function getGradient(palette?: FeedEntityStyle): ReadonlyArray<string> | undefined {
 	switch(palette) {
 		case FeedEntityStyle.WHITE_WITH_PURPLE_GRADIENT_BORDER:
-			return colors.gradient.orange
+			return colors.gradient.purple
 		case FeedEntityStyle.WHITE_WITH_DARK_BLUE_BORDER:
 			return [colors.darkBlue, colors.darkBlue]
 		case FeedEntityStyle.WHITE_WITH_LIGHT_BLUE_BORDER:
