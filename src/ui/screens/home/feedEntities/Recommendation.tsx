@@ -90,11 +90,12 @@ export const Recommendation: React.FC<Props> = ({ recommendation }) => {
 									<GradientText
 										stops={maybeGradientBorder}
 										textElement={SubTitleText}
+										style={{textAlign: "right"}}
 									>
 										{format(recommendation.secondaryTitle)}
 									</GradientText>
 								)
-								: <SubTitleText style={{color: highlightColor}}>{format(recommendation.secondaryTitle)}</SubTitleText>
+								: <SubTitleText style={{color: highlightColor, textAlign: "right"}}>{format(recommendation.secondaryTitle)}</SubTitleText>
 							}
 						</Row>	
 					</View>
