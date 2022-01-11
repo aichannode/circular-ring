@@ -90,7 +90,7 @@ function Select({
 					return (
 						<SelectableButton
 							style={{ marginRight: 8, marginTop: 8 }}
-							colors={getGradient(palette)}
+							colors={getGradient(palette)?.slice(0,2) as [string, string]}
 							isDisabled={hasReachedMaxSelectionCount && !isSelected}
 							key={key}
 							onPress={function () {

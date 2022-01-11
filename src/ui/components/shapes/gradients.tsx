@@ -11,7 +11,7 @@ export const OrangeDiagonalGradient: React.FC<OrangeDiagonalGradienProps> = ({ s
 		<LinearGradient
 			start={{ x: 0, y: 1 }}
 			end={{ x: 1, y: 0 }}
-			colors={[colors.orangeGradientStart, colors.orangeGradientEnd]}
+			colors={colors.gradient.orange.slice(0)}
 			style={style}
 		>
 			{children}
