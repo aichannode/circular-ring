@@ -31,8 +31,8 @@ export const SelectableButton: React.FC<SelectableButtonProps> = ({
 			<TertiaryBorder
 				colors={
 					pressed
-						? gradient.slice(0)
-						: gradient.slice(0).reverse()
+						? gradient.slice(0).reverse()
+						: gradient.slice(0)
 				}
 				start={{ x: 0, y: 1 }}
 				end={{ x: 1, y: 0.5 }}
