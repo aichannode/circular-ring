@@ -143,7 +143,7 @@ export const QuickAccess: React.FC = () => {
 								payload={{ tile, i }}
 								animateSnapback={false}
 							>
-								<QuickAccessContainer key={i} colors={[colors.orangeGradientEnd, colors.orangeGradientStart]}>
+								<QuickAccessContainer key={i} colors={colors.gradient.orange.slice(0)}>
 									<InnerContainer>
 										<Draggable source={require("@assets/images/group.png")}></Draggable>
 										<RightContainer>

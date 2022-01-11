@@ -42,7 +42,7 @@ export const UserAvatar = () => {
 					</PenBackground>
 				</PenBorder>
 				<AvatarBorder
-					colors={[colors.orangeGradientStart, colors.orangeGradientEnd]}
+					colors={colors.gradient.orange.slice(0)}
 					start={{ x: 0.5, y: 0 }}
 					end={{ x: 0.5, y: 1 }}
 				>
@@ -100,7 +100,7 @@ const PenBorder = styled.View`
 	border-radius: 14px;
 	align-items: stretch;
 	justify-content: center;
-	border: 2px solid ${colors.orangeGradientStart};
+	border: 2px solid ${colors.gradient.orange[0]};
 `;
 
 const PenBackground = styled.View`
