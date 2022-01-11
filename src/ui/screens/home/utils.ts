@@ -3,7 +3,7 @@ import { colors } from "@ui/styles/colors"
 
 export function getGradient(palette?: FeedEntityStyle): [string, string] | undefined {
 	switch(palette) {
-		case FeedEntityStyle.WHITE_WITH_PURPLE_GRADIENT:
+		case FeedEntityStyle.WHITE_WITH_PURPLE_GRADIENT_BORDER:
 			return [colors.purpleGarientStart, colors.purpleGarientEnd]
 		case FeedEntityStyle.WHITE_WITH_DARK_BLUE_BORDER:
 			return [colors.darkBlue, colors.darkBlue]
