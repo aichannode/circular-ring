@@ -29,6 +29,7 @@ import { TitleText } from "@ui/components/text";
 // import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { TimeFrame } from "@domain/measure/type";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
+import { sample } from "./business";
 
 // import { CLEANUP_TIMER_LOOP_MILLIS } from "mobx-react-lite/dist/utils/reactionCleanupTrackingCommon";
 /* 
@@ -214,7 +215,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 							]}
 						/>
 					</View> */}
-					<ActivityIntensityGraph />
+					<ActivityIntensityGraph samples={sample(activityIntensity, 60 * 15 * 1000)}/>
 				</ElementStack>
 			</ScrollView>
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
