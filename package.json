@@ -1,9 +1,9 @@
 {
 	"name": "Circular",
-	"version": "0.0.1",
+	"version": "0.0.3",
 	"private": true,
 	"scripts": {
-		"commit": "cz",
+		"finish-release": "standard-version && git-flow release finish -n",
 		"upgrade-wording": "sync-wording --upgrade && node ./scripts/flattenWording.js",
 		"android": "ENVFILE=.env.dev react-native run-android --variant='DevDebug' --appIdSuffix=dev",
 		"ios": "react-native run-ios --scheme 'Circular-Dev'",
@@ -101,6 +101,7 @@
 		"metro-react-native-babel-preset": "^0.66.2",
 		"react-native-codegen": "^0.0.7",
 		"react-test-renderer": "17.0.2",
+		"standard-version": "^9.3.2",
 		"typescript": "^4.4.2",
 		"typescript-styled-plugin": "^0.18.1"
 	},
@@ -112,16 +113,46 @@
 		"commitizen": {
 			"path": "./node_modules/cz-conventional-changelog",
 			"types": {
-				"feat": { "title": "Feature", "description": "A feature coming from an US ticket. This commit delivers a whole new functionality to the users." },
-				"update": { "title": "Update", "description": "A change to an existing feature coming from an UPDATE ticket: new images, better wording, improved UI, etc." },
-				"fix" : { "title": "Fix", "description": "A bug fix." },
-				"docs": { "title": "Docs", "description": "Documentation only changes." },
-				"style": { "title": "Style", "description": "Changes that do not affect the meaning of the code: white-space, formatting, missing semi-colons, etc."},
-				"refactor": { "title": "Refactor", "description": "A code change that neither fixes a bug nor adds or updates a feature." },
-				"perf": { "title": "Perf", "description": "A code change that improves performance." },
-				"chore": { "title": "Chore", "description": "Changes to the build process or auxiliary tools and libraries such as documentation generation."},
-				"revert": { "title": "Revert", "description": "Revert to a commit" },
-				"WIP": { "title": "WIP", "description": " Work in progress" }
+				"feat": {
+					"title": "Feature",
+					"description": "A feature coming from an US ticket. This commit delivers a whole new functionality to the users."
+				},
+				"update": {
+					"title": "Update",
+					"description": "A change to an existing feature coming from an UPDATE ticket: new images, better wording, improved UI, etc."
+				},
+				"fix": {
+					"title": "Fix",
+					"description": "A bug fix."
+				},
+				"docs": {
+					"title": "Docs",
+					"description": "Documentation only changes."
+				},
+				"style": {
+					"title": "Style",
+					"description": "Changes that do not affect the meaning of the code: white-space, formatting, missing semi-colons, etc."
+				},
+				"refactor": {
+					"title": "Refactor",
+					"description": "A code change that neither fixes a bug nor adds or updates a feature."
+				},
+				"perf": {
+					"title": "Perf",
+					"description": "A code change that improves performance."
+				},
+				"chore": {
+					"title": "Chore",
+					"description": "Changes to the build process or auxiliary tools and libraries such as documentation generation."
+				},
+				"revert": {
+					"title": "Revert",
+					"description": "Revert to a commit"
+				},
+				"WIP": {
+					"title": "WIP",
+					"description": " Work in progress"
+				}
 			}
 		}
 	}
