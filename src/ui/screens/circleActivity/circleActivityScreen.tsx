@@ -5,7 +5,7 @@ import {
 	useDailyEnergyScore,
 	useDailyMetrics,
 } from "@domain/measure/representation/hooks";
-import { DailyActivityDetailsMetrics, dailyActivityDetailsMetrics, dailyEnergyScoreMetrics, RangeDetails } from "@domain/measure/representation/type";
+import { dailyActivityDetailsMetrics, dailyEnergyScoreMetrics } from "@domain/measure/representation/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CalendarView } from "@ui/components/calendar/calendarView";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";

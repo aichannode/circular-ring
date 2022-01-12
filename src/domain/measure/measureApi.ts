@@ -34,12 +34,6 @@ export class MeasureApi {
 		let block: DatedMetrics = createBlock(currentTimestamp);
 		// Regroup metrics by timestamp
 		for (const serverBlock of mockedData.metrics) {
-			// Inject some missing data at the date of the write of this function
-
-			(serverBlock.metrics[MetricType.UserDailyTotalActivity] = 90 * 3600 * 1000), // 1h30 of activity
-				(serverBlock.metrics[MetricType.UserDailyTotalSleepDuration] = 8 * 3600 * 1000); // 8h00 of sleep
-			serverBlock.metrics[MetricType.UserDailyEnergyScore] = 10;
-
 			// Need to create a new block
 			if (currentTimestamp !== serverBlock.timestamp) {
 				// Push the previous block

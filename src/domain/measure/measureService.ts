@@ -85,8 +85,8 @@ export class MeasureService {
 	}
 
 	async fetchWakeUpScore() {
-		const range = await this.fetchDailyMeasures([]);
-		const scoreMetrics = range.reverse().find((data) => "" in data.metrics);  // TO COMPLETE
+	//	const range = await this.fetchDailyMeasures([]);
+		//const scoreMetrics = range.reverse().find((data) => "" in data.metrics);  // TO COMPLETE
 
 		mutate(() => {
 			this.wakeUpScore = 0 //scoreMetrics?.metrics[MetricType.UserDailySleepQualityScore] ?? 0;
@@ -95,8 +95,8 @@ export class MeasureService {
 
 	async fetchDailyEnergyScore(isoDay?: string) {
 		const key = moment(isoDay).format(DAILY_KEY_FORMAT);
-		const range = await this.fetchDailyMeasures([]); // TO COMPLETE
-		const scoreMetrics = range.reverse().find((data) => /* MetricType.UserDailyEnergyScore */"" in data.metrics);
+//		const range = await this.fetchDailyMeasures([]); // TO COMPLETE
+	//	const scoreMetrics = range.reverse().find((data) => /* MetricType.UserDailyEnergyScore */"" in data.metrics);
 
 		mutate(() => {
 			this.dailyEnergyScore.set(key, /* scoreMetrics?.metrics[MetricType.UserDailyEnergyScore] ??  */0); // TO COMPLETE
@@ -104,8 +104,8 @@ export class MeasureService {
 	}
 
 	async fetchGlobalScore(isoDay?: string) {
-		const range = await this.fetchDailyMeasures([/* MetricType.UserDailyGlobalScore */], moment(isoDay).toDate()); // TO COMPLETE
-		const scoreMetrics = range.reverse().find((data) => false/* MetricType.UserDailyGlobalScore in data.metrics */);
+	//	const range = await this.fetchDailyMeasures([/* MetricType.UserDailyGlobalScore */], moment(isoDay).toDate()); // TO COMPLETE
+	//	const scoreMetrics = range.reverse().find((data) => false/* MetricType.UserDailyGlobalScore in data.metrics */);
 
 		mutate(() => {
 			this.globalScore = /* scoreMetrics?.metrics[MetricType.UserDailyGlobalScore] ??  */0;
