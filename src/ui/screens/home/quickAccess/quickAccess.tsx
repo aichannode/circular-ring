@@ -5,15 +5,16 @@ import { TouchableOpacity } from "react-native";
 import { Stack } from "@ui/components/layout";
 import styled from "styled-components/native";
 import { useServices } from "@core/services";
-import { I_Active } from "@domain/quickaccess/quickAccess";
+import { I_QuickAccessElem } from "@domain/appState/type";
 import { AlarmTile } from "./Alarm";
 
 import { TimerTile } from "./Timer";
 import { useI18n } from "@ui/i18n";
+import { useObservable } from "micro-observables";
 
 const SleepTile = () => {
-	// const { format } = useI18n();
-	const [sleepMode, setSleepMode] = useState<boolean>(false);
+	const { appStateService } = useServices();
+	const sleepMode = useObservable(appStateService.isInSleepMode);
 
 	useEffect(() => {
 		console.log("SLEEP MODE = ", sleepMode);
@@ -26,7 +27,7 @@ const SleepTile = () => {
 		<Tile style={{ backgroundColor: sleepBackGound }}>
 			<TouchableOpacity
 				onPress={() => {
-					setSleepMode(!sleepMode);
+					appStateService.updateSleepMode(!sleepMode);
 				}}
 			>
 				<Bold style={{ color: sleepTextColor }}>Sleep mode</Bold>
@@ -49,7 +50,7 @@ const CalendarTile = () => {
 
 export const QuickAccess: React.FC = () => {
 	const { format } = useI18n();
-	const [active, setActive] = useState<I_Active[] | undefined>([]);
+	const [active, setActive] = useState<I_QuickAccessElem[] | undefined>([]);
 
 	const _quickAccess = [
 		{
@@ -69,15 +70,15 @@ export const QuickAccess: React.FC = () => {
 		},
 	];
 
-	const { userQuickAccess } = useServices();
+	const { appStateService } = useServices();
 
 	useEffect(() => {
 		setActive(
-			userQuickAccess.quickaccess.get().active.length || userQuickAccess.quickaccess.get().disabled.length
-				? userQuickAccess.quickaccess.get()?.active
+			appStateService.quickaccess.get().active.length || appStateService.quickaccess.get().disabled.length
+				? appStateService.quickaccess.get()?.active
 				: _quickAccess
 		);
-		userQuickAccess.quickaccess.subscribe((data) => {
+		appStateService.quickaccess.subscribe((data) => {
 			if (data?.active) {
 				setActive(data?.active);
 			}
