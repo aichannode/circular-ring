@@ -1,7 +1,7 @@
 import { getLogger } from "@core/logger/logger";
 import moment from "moment";
 import { MeasureApi } from "./measureApi";
-import { DailyActivityGoals, dailyActivityGoals, MetricType, RangeMetrics } from "./metric";
+import { MetricType, RangeMetrics } from "./metric";
 import { makeObservable, observable } from "mobx";
 import { mutate } from "@core/store";
 import {
@@ -14,10 +14,8 @@ import {
 	activityIntensityMetrics,
 	DailySleepDetailsMetrics,
 	DailySleepDetailsGaugeMetrics,
-	SleepStageMetrics,
 	dailySleepDetailsMetrics,
 	dailySleepDetailsGaugeCalibrationMetrics,
-	sleepStageMetrics,
 	dailyEnergyScoreGaugeCalibrationMetrics,
 } from "./representation/type";
 
@@ -34,13 +32,7 @@ export class MeasureService {
 	globalScore = 0;
 	dailyActivityMetrics: Map<
 		string,
-		RangeMetrics<
-			| MetricType.UserDailyEnergyScore
-			| DailyActivityDetailsMetrics
-			| DailyActivityGoals
-			| DailyEnergyScoreMetrics
-			| DailyEnergyScoreGaugeCalibrationMetrics
-		>
+		RangeMetrics
 	> = new Map();
 	dailyDailySleepDetailsMetrics: Map<
 		string,
@@ -48,7 +40,7 @@ export class MeasureService {
 	> = new Map();
 	dailyEnergyScore: Map<string, number> = new Map();
 	dailyGlobalScores: Map<string, number> = new Map();
-	dailySleepLevelMetrics: Map<string, RangeMetrics<SleepStageMetrics>> = new Map();
+	dailySleepLevelMetrics: Map<string, RangeMetrics> = new Map();
 	dailyActivityIntensityMetrics: Map<string, RangeMetrics<ActivityIntensityMetrics>> = new Map();
 	dailySleepDuration: Map<string, number> = new Map();
 
@@ -69,9 +61,9 @@ export class MeasureService {
 	async fetchDailyActivityData(isoDate?: string) {
 		const key = moment(isoDate).format(DAILY_KEY_FORMAT);
 		const range: RangeMetrics<
-			DailyActivityDetailsMetrics | DailyActivityGoals | DailyEnergyScoreMetrics | DailyEnergyScoreGaugeCalibrationMetrics
+			DailyActivityDetailsMetrics | DailyEnergyScoreMetrics | DailyEnergyScoreGaugeCalibrationMetrics // TO COMPLETE
 		> = await this.fetchDailyMeasures(
-			[...dailyActivityDetailsMetrics, ...dailyActivityGoals, ...dailyEnergyScoreMetrics, ...dailyEnergyScoreGaugeCalibrationMetrics],
+			[...dailyActivityDetailsMetrics, ...dailyEnergyScoreMetrics, ...dailyEnergyScoreGaugeCalibrationMetrics],
 			isoDate ? moment(isoDate).toDate() : undefined
 		);
 
@@ -93,49 +85,49 @@ export class MeasureService {
 	}
 
 	async fetchWakeUpScore() {
-		const range = await this.fetchDailyMeasures([MetricType.UserDailySleepQualityScore]);
-		const scoreMetrics = range.reverse().find((data) => MetricType.UserDailySleepQualityScore in data.metrics);
+		const range = await this.fetchDailyMeasures([]);
+		const scoreMetrics = range.reverse().find((data) => "" in data.metrics);  // TO COMPLETE
 
 		mutate(() => {
-			this.wakeUpScore = scoreMetrics?.metrics[MetricType.UserDailySleepQualityScore] ?? 0;
+			this.wakeUpScore = 0 //scoreMetrics?.metrics[MetricType.UserDailySleepQualityScore] ?? 0;
 		});
 	}
 
 	async fetchDailyEnergyScore(isoDay?: string) {
 		const key = moment(isoDay).format(DAILY_KEY_FORMAT);
-		const range = await this.fetchDailyMeasures([MetricType.UserDailyEnergyScore]);
-		const scoreMetrics = range.reverse().find((data) => MetricType.UserDailyEnergyScore in data.metrics);
+		const range = await this.fetchDailyMeasures([]); // TO COMPLETE
+		const scoreMetrics = range.reverse().find((data) => /* MetricType.UserDailyEnergyScore */"" in data.metrics);
 
 		mutate(() => {
-			this.dailyEnergyScore.set(key, scoreMetrics?.metrics[MetricType.UserDailyEnergyScore] ?? 0);
+			this.dailyEnergyScore.set(key, /* scoreMetrics?.metrics[MetricType.UserDailyEnergyScore] ??  */0); // TO COMPLETE
 		});
 	}
 
 	async fetchGlobalScore(isoDay?: string) {
-		const range = await this.fetchDailyMeasures([MetricType.UserDailyGlobalScore], moment(isoDay).toDate());
-		const scoreMetrics = range.reverse().find((data) => MetricType.UserDailyGlobalScore in data.metrics);
+		const range = await this.fetchDailyMeasures([/* MetricType.UserDailyGlobalScore */], moment(isoDay).toDate()); // TO COMPLETE
+		const scoreMetrics = range.reverse().find((data) => false/* MetricType.UserDailyGlobalScore in data.metrics */);
 
 		mutate(() => {
-			this.globalScore = scoreMetrics?.metrics[MetricType.UserDailyGlobalScore] ?? 0;
+			this.globalScore = /* scoreMetrics?.metrics[MetricType.UserDailyGlobalScore] ??  */0;
 		});
 	}
 
 	async fetchMonthGlobalScores(isoFirstDayOfMonth: Date) {
 		const lastDay = moment(isoFirstDayOfMonth).endOf("month").toDate();
 
-		const range = await this.measureApi.getMeasures([MetricType.UserDailyGlobalScore], isoFirstDayOfMonth, lastDay);
+		const range = await this.measureApi.getMeasures([/* MetricType.UserDailyGlobalScore */], isoFirstDayOfMonth, lastDay);
 		mutate(() => {
 			// Merge each metrics day by day
 			// If multiple metrics are bound to the same day
 			// Select the last of each day.
 			range.forEach((datedMetrics) => {
 				const key = getKeyFromDate(moment(datedMetrics.timestamp).toDate());
-				const value = datedMetrics.metrics["user.daily.global.score"];
+				const value = 0 /* datedMetrics.metrics["user.daily.global.score"]; */ // TO COMPLETE
 				if (value) {
 					this.dailyGlobalScores.set(key, value);
 				} else {
 					this.logger.warn(
-						`${MetricType.UserDailyGlobalScore} has not been found for the date ${datedMetrics.timestamp}`
+						//`${MetricType.UserDailyGlobalScore} has not been found for the date ${datedMetrics.timestamp}`  // TO COMPLETE
 					);
 				}
 			});
@@ -164,7 +156,7 @@ export class MeasureService {
 
 	public async fetchDailySleepDurationMetrics(date: Date = moment().toDate()) {
 		const key = moment(date).format(DAILY_KEY_FORMAT);
-		const allMetrics = await this.fetchDailyMeasures(sleepStageMetrics, date);
+		const allMetrics = await this.fetchDailyMeasures([], date);
 
 		mutate(() => {
 			this.dailySleepLevelMetrics?.set(key, allMetrics);

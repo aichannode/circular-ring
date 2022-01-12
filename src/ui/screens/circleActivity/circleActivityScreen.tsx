@@ -3,8 +3,9 @@ import {
 	useDailyActivityDuration,
 	useDailyActivityIntensity,
 	useDailyEnergyScore,
+	useDailyMetrics,
 } from "@domain/measure/representation/hooks";
-import { dailyEnergyScoreMetrics } from "@domain/measure/representation/type";
+import { DailyActivityDetailsMetrics, dailyActivityDetailsMetrics, dailyEnergyScoreMetrics, RangeDetails } from "@domain/measure/representation/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CalendarView } from "@ui/components/calendar/calendarView";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
@@ -23,24 +24,37 @@ import { ActivityDurationPieChart } from "./activityDurationPie";
 import { DailyMetric } from "./dailyMetric";
 import { ScoreQuality } from "@domain/measure/score";
 /* import { DailyMetric } from "./dailyMetric"; */
-import { /* dailyMetricsDataInfos, */ getActivityQualityDetails } from "./measureDisplayInfos";
+import { /* dailyMetricsDataInfos, */ dailyMetricsDetails, getActivityQualityDetails } from "./measureDisplayInfos";
 import { observer } from "mobx-react-lite";
 import { TitleText } from "@ui/components/text";
 // import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { TimeFrame } from "@domain/measure/type";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
 import { sample } from "./business";
+import shoes from "@assets/images/shoes.png"
+import journey from "@assets/images/journey.png"
+import fire from "@assets/images/fire.png"
+import sport from "@assets/images/sport.png"
+import lungs from "@assets/images/lungs.png"
+import heart from "@assets/images/heart.png"
 
-// import { CLEANUP_TIMER_LOOP_MILLIS } from "mobx-react-lite/dist/utils/reactionCleanupTrackingCommon";
-/* 
-const scoreGoodThreshold = 0.8;
-const scoreOptimalThreshold = 0.9; */
+function getIcon(path: string) {
+	switch(path) {
+		case "@assets/images/shoes.png": return shoes;
+		case "@assets/images/journey.png": return journey;
+		case "@assets/images/fire.png": return fire;
+		case "@assets/images/sport.png": return sport;
+		case "@assets/images/lungs.png": return lungs;
+		case "@assets/images/heart.png": return heart;
+	}
+}
 
 export const CircleActivityScreen: React.FC = observer(() => {
 	const { format } = useI18n();
 	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
 	const activityIntensity = useDailyActivityIntensity();
-	const activityDetails = useDailyEnergyScoreDetails();
+	const energyScoreDetails = useDailyEnergyScoreDetails();
+	const dailyMetrics = useDailyMetrics();
 	const activityDuration = useDailyActivityDuration(selectedDay);
 	const energyScore = useDailyEnergyScore(selectedDay);
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
@@ -48,7 +62,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 	const activityQualityDetails = getActivityQualityDetails(format)
 	const [graphPeriod] = useState(TimeFrame.TODAY);
 
-	console.log("FIX activityDetails", activityDetails);
+	console.log("FIX activityDetails", energyScoreDetails);
 	useEffect(() => {
 		console.log("CURRENT PERIOD = ", graphPeriod);
 	}, [graphPeriod]);
@@ -77,21 +91,21 @@ export const CircleActivityScreen: React.FC = observer(() => {
 				<ActivityDurationPieChart stages={activityIntensity} duration={activityDuration ?? 0} />
 				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
 				<ElementStack gap={10}>
-					{/* {dailyActivityDetailsMetrics.map((metric) => {
-						const dataInfos = dailyMetricsDataInfos[metric];
-						const value = activityDetails[metric];
+					{dailyActivityDetailsMetrics.map((metric) => {
+						const dataInfos = dailyMetricsDetails[metric];
+						const value = dailyMetrics[metric];
+						console.log(dataInfos.icon)
 						return (
 							<DailyMetric
 								key={metric}
-								icon={dataInfos.icon}
+								icon={getIcon(dataInfos.icon)}
 								label={format(dataInfos.labelKey)}
-								value={value !== undefined ? Math.round(value) : undefined}
-								goodThreshold={dataInfos.goodGoal && activityDetails[dataInfos.goodGoal]}
-								optimalThreshold={dataInfos.optimalGoal && activityDetails[dataInfos.optimalGoal]}
+								value={Math.round(value)}
+								goodThreshold={dataInfos.metricsName.thresholdLow && (energyScoreDetails as any)[dataInfos.metricsName.thresholdLow]}
+								optimalThreshold={dataInfos.metricsName.thresholdHigh && (energyScoreDetails as any)[dataInfos.metricsName.thresholdHigh]}
 							/>
-
 						);
-					})} */}
+					})}
 					<DailyMetric
 						icon={require("@assets/images/shoes.png")}
 						label={"Steps taken (nb)"}
@@ -154,10 +168,10 @@ export const CircleActivityScreen: React.FC = observer(() => {
 								thresholdHigh: number,
 								gaugeFilling: number
 							} = {
-								value: (activityDetails as any)[dataInfos.metricsName.value],
-								thresholdLow: (activityDetails as any)[dataInfos.metricsName.thresholdLow],
-								thresholdHigh: (activityDetails as any)[dataInfos.metricsName.thresholdHigh],
-								gaugeFilling: (activityDetails as any)[dataInfos.metricsName.gaugeFilling],
+								value: (energyScoreDetails as any)[dataInfos.metricsName.value],
+								thresholdLow: (energyScoreDetails as any)[dataInfos.metricsName.thresholdLow],
+								thresholdHigh: (energyScoreDetails as any)[dataInfos.metricsName.thresholdHigh],
+								gaugeFilling: (energyScoreDetails as any)[dataInfos.metricsName.gaugeFilling],
 							}
 							console.log(dataInfos.metricsName)
 							return [

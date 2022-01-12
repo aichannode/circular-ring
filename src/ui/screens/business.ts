@@ -1,9 +1,23 @@
 import { WordingKey } from "src/wordings"
+import { MetricColor } from "./type"
 
-enum GaugeColor {
-	RED,
-	ORANGE,
-	GREEN
+export function getMetricColor({
+	value: _value,
+	thresholdLow,
+	thresholdHigh
+}: {
+	value: number,
+	thresholdLow: number,
+	thresholdHigh: number
+}): MetricColor {
+	const value = Math.abs(_value)
+	if (value >= thresholdHigh) {
+		return MetricColor.GREEN
+	}
+	if ((value >=  thresholdLow) && (value < thresholdHigh)) {
+		return MetricColor.ORANGE
+	}
+	else return MetricColor.RED
 }
 
 export const getGaugeColor = (getGaugeFilling?: boolean) => ({
@@ -16,15 +30,15 @@ export const getGaugeColor = (getGaugeFilling?: boolean) => ({
 	thresholdLow: number,
 	thresholdHigh: number,
 	gaugeFilling: number,
-}): GaugeColor => {
+}): MetricColor => {
 	const value = Math.abs(getGaugeFilling ? gaugeFilling : _value)
 	if (value >= thresholdHigh) {
-		return GaugeColor.GREEN
+		return MetricColor.GREEN
 	}
 	if ((value >=  thresholdLow) && (value < thresholdHigh)) {
-		return GaugeColor.ORANGE
+		return MetricColor.ORANGE
 	}
-	else return GaugeColor.RED
+	else return MetricColor.RED
 }
 
 export const getInvertedGaugeColor = (getGaugeFilling?: boolean) => ({
@@ -37,15 +51,15 @@ export const getInvertedGaugeColor = (getGaugeFilling?: boolean) => ({
 	thresholdLow: number,
 	thresholdHigh: number,
 	gaugeFilling: number,
-}): GaugeColor => {
+}): MetricColor => {
 	const value = Math.abs(getGaugeFilling ? gaugeFilling : _value)
 	if (value <= thresholdHigh) {
-		return GaugeColor.GREEN
+		return MetricColor.GREEN
 	}
 	if ((value <= thresholdLow) && (value > thresholdHigh)) {
-		return GaugeColor.ORANGE
+		return MetricColor.ORANGE
 	}
-	return GaugeColor.RED
+	return MetricColor.RED
 }
 
 

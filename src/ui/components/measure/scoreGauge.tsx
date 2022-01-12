@@ -1,6 +1,6 @@
 import { Row } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
-import { GaugeColor } from "@ui/screens/type";
+import { MetricColor } from "@ui/screens/type";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React from "react";
@@ -12,7 +12,7 @@ interface ScoreGaugeProps {
 	value: string,
 	gaugeFilling: number,
 	isInverted?: boolean,
-	color: GaugeColor,
+	color: MetricColor,
 	style?: StyleProp<ViewStyle>;
 	onPress?: () => void;
 }
@@ -36,9 +36,9 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 				<GaugeValue
 					perc={gaugeFilling}
 					isInverted={isInverted}
-					style={{backgroundColor: color === GaugeColor.RED
+					style={{backgroundColor: color === MetricColor.RED
 						? colors.red
-						: color === GaugeColor.ORANGE
+						: color === MetricColor.ORANGE
 							? colors.orange
 							: colors.green
 					}}
