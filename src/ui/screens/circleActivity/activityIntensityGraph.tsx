@@ -4,10 +4,242 @@ import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import moment from "moment";
 import { useI18n } from "@ui/i18n";
-import { mockActivityIntensity } from "./business.test";
 import { VictoryAxisCommonProps } from "victory-core";
 import { View } from "react-native";
 import React from "react";
+
+const sampleCursor = moment().hour(12).minutes(0);
+
+export const mockActivityIntensity = [
+	{
+		value: 0.5, // 10 minutes of low + 5 minutes of medium
+		time: sampleCursor.toISOString(),
+	},
+	{
+		value: 0.6, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.6, // 10 minutes of high + 5 minutes of low
+		time: sampleCursor.add(15, "minutes").toISOString(), //9h
+	},
+	{
+		value: 0.6, // 5 minutes of low + 10 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.7, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.6, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.5, // 10 minutes of high + 5 minutes of low
+		time: sampleCursor.add(15, "minutes").toISOString(), //9h
+	},
+	{
+		value: 0.6, // 5 minutes of low + 10 minutes of sedantary
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.7, // 10 minutes of low + 5 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.6, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.6, // 10 minutes of high + 5 minutes of low
+		time: sampleCursor.add(15, "minutes").toISOString(), //11h
+	},
+	{
+		value: 0.7, // 5 minutes of low + 10 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.8, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.9, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.65, // 10 minutes of high + 5 minutes of low
+		time: sampleCursor.add(15, "minutes").toISOString(), //13h
+	},
+	{
+		value: 0.667, // 5 minutes of low + 10 minutes of sedantary
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.667, // 5 minutes of low + 10 minutes of sedantary
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.5, // 10 minutes of low + 5 minutes of medium
+		time: sampleCursor.toISOString(),
+	},
+	{
+		value: 0.6, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.6, // 10 minutes of high + 5 minutes of low
+		time: sampleCursor.add(15, "minutes").toISOString(), //14h
+	},
+	{
+		value: 0.6, // 5 minutes of low + 10 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.7, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 1.1, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 1.3, // 10 minutes of high + 5 minutes of low
+		time: sampleCursor.add(15, "minutes").toISOString(), //9h
+	},
+	{
+		value: 1.32, // 5 minutes of low + 10 minutes of sedantary
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 1.4, // 10 minutes of low + 5 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 2, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 2.3, // 10 minutes of high + 5 minutes of low
+		time: sampleCursor.add(15, "minutes").toISOString(), //11h
+	},
+	{
+		value: 3.3, // 5 minutes of low + 10 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 3.1, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 1.9, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 1.4, // 10 minutes of high + 5 minutes of low
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 1.3, // 5 minutes of low + 10 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 1, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.6, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.6, // 10 minutes of high + 5 minutes of low
+		time: sampleCursor.add(15, "minutes").toISOString(), //9h
+	},
+	{
+		value: 0.6, // 5 minutes of low + 10 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.7, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.6, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.5, // 10 minutes of high + 5 minutes of low
+		time: sampleCursor.add(15, "minutes").toISOString(), //9h
+	},
+	{
+		value: 0.6, // 5 minutes of low + 10 minutes of sedantary
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.7, // 10 minutes of low + 5 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.6, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.6, // 10 minutes of high + 5 minutes of low
+		time: sampleCursor.add(15, "minutes").toISOString(), //11h
+	},
+	{
+		value: 0.5, // 10 minutes of low + 5 minutes of medium
+		time: sampleCursor.toISOString(),
+	},
+	{
+		value: 0.6, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.6, // 10 minutes of high + 5 minutes of low
+		time: sampleCursor.add(15, "minutes").toISOString(), //9h
+	},
+	{
+		value: 0.6, // 5 minutes of low + 10 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.7, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.6, // 15 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.5, // 10 minutes of high + 5 minutes of low
+		time: sampleCursor.add(15, "minutes").toISOString(), //9h
+	},
+	{
+		value: 0.6, // 5 minutes of low + 10 minutes of sedantary
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.7, // 10 minutes of low + 5 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.6, // 5 minutes of low + 10 minutes of sedantary
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.7, // 10 minutes of low + 5 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.6, // 5 minutes of low + 10 minutes of sedantary
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+	{
+		value: 0.7, // 10 minutes of low + 5 minutes of medium
+		time: sampleCursor.add(15, "minutes").toISOString(),
+	},
+];
 
 export const ActivityIntensityGraph = () => {
 	const { format } = useI18n();
