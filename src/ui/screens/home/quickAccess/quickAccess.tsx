@@ -13,10 +13,8 @@ import { useI18n } from "@ui/i18n";
 import { useObservable } from "micro-observables";
 
 const SleepTile = () => {
-	// const { format } = useI18n();
 	const { appStateService } = useServices();
 	const sleepMode = useObservable(appStateService.isInSleepMode);
-	// const [sleepMode, setSleepMode] = useState<boolean>(false);
 
 	useEffect(() => {
 		console.log("SLEEP MODE = ", sleepMode);
