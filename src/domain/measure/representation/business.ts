@@ -2,13 +2,13 @@ import moment from "moment";
 import { getKeyFromDate, MeasureService } from "../measureService";
 import { DatedMetrics } from "../metric";
 import { ActivityStage, SleepStage } from "../type";
-import { ActivityIntensityMetrics, SleepStageMetrics, StageInfos } from "./type";
+import { ActivityIntensityMetrics, StageInfos } from "./type";
 
 /**
  * Return the phases of sleep for the given metrics
  */
 export function getSleepPhases(
-	chain: Array<DatedMetrics<SleepStageMetrics>>
+	chain: Array<DatedMetrics>
 ): StageInfos<SleepStage>[] {
 	return [
         {

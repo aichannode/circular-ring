@@ -27,9 +27,24 @@ export type ActivityIntensityMetrics = typeof activityIntensityMetrics[number];
 export const dailyActivityDetailsMetrics = [
 	MetricType.UserDailySteps,
 	MetricType.UserDailyWalkingEquivalency,
-	MetricType.UserDailyAwakeHrMax,
+	MetricType.UserDailyCaloriesBurned,
+	MetricType.UserDailyCardioPoints,
+	MetricType.UserDailyVO2Max,
+	MetricType.UserDailyHRMax,
 ] as const;
 export type DailyActivityDetailsMetrics = typeof dailyActivityDetailsMetrics[number];
+
+export const dailyActivityDetailsMetricsGoals = [
+	MetricType.UserDailyStepsGoalMin,
+	MetricType.UserDailyStepsGoalMax,
+	MetricType.UserDailyWalkingEquivalencyGoalMin,
+	MetricType.UserDailyWalkingEquivalencyGoalMax,
+	MetricType.UserDailyCaloriesBurnedGoalMin,
+	MetricType.UserDailyCaloriesBurnedGoalMax,
+	MetricType.UserDailyCardioPointsGoalMin,
+	MetricType.UserDailyCardioPointsGoalMax,
+] as const;
+export type DailyActivityDetailsMetricsGoals = typeof dailyActivityDetailsMetricsGoals[number];
 
 export const weeklyActivityGoals = [
 	MetricType.UserWeeklyCardioPointsGoalMax,
@@ -80,18 +95,6 @@ export const dailyEnergyScoreGaugeCalibrationMetrics = [
 ] as const;
 export type DailyEnergyScoreGaugeCalibrationMetrics = typeof dailyEnergyScoreGaugeCalibrationMetrics[number];
 
-////////
-// SLEEP
-////////
-
-export const sleepStageMetrics = [
-	MetricType.UserCoreSleepBegin,
-	MetricType.UserCoreSleepEnd,
-	MetricType.UserSleepstage,
-	MetricType.UserSleepNapping,
-] as const;
-export type SleepStageMetrics = typeof sleepStageMetrics[number];
-
 /**
  * Those metrics are used for display the value of the gauge.
  */
@@ -108,7 +111,7 @@ export const dailySleepDetailsMetrics = [
 export type DailySleepDetailsMetrics = typeof dailySleepDetailsMetrics[number];
 
 export const dailySleepDetailsMetricsGaugeSize = [
-	MetricType.UserDailyPercAwakeStageDuration,
+	MetricType.UserDailyPercAwakeStage,
 	MetricType.UserDailyPercRealSleep,
 	MetricType.UserDailyCorrectedPercREMStage,
 	MetricType.UserDailyCorrectedPercDeepStage,
@@ -137,3 +140,24 @@ export const dailySleepDetailsGaugeCalibrationMetrics = [
 	MetricType.UserDailySleepDebtGoalMax,
 ] as const;
 export type DailySleepDetailsGaugeMetrics = typeof dailySleepDetailsGaugeCalibrationMetrics[number];
+
+/** 
+ * Those metrics are used for the stages circle and hypnogram
+ */
+export const dailySleepStageDuration = [
+	MetricType.UserSleepstage,
+	MetricType.UserCoreSleepBegin,
+	MetricType.UserCoreSleepEnd,
+	MetricType.UserDailyTotalSleepDuration,
+	MetricType.UserDailyRealSleepDuration,
+	MetricType.UserDailyAwakeStageDuration,
+	MetricType.UserDailyAwakeStageDuration,
+	MetricType.UserDailyLightStageDuration,
+	MetricType.UserDailyDeepStageDuration,
+	MetricType.UserDailyPercRealSleep,
+	MetricType.UserDailyPercAwakeStage,
+	MetricType.UserDailyPercREMStage,
+	MetricType.UserDailyPercLightStage,
+	MetricType.UserDailyPercDeepStage,
+] as const
+export type DailySleepStageDuration = typeof dailySleepStageDuration[number];

@@ -4,19 +4,31 @@ import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import moment from "moment";
 import { useI18n } from "@ui/i18n";
-import { mockActivityIntensity } from "./business.test";
 import { VictoryAxisCommonProps } from "victory-core";
+import { useCalendar } from "@domain/calendar/hooks/useCalendar";
 import { View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
+import dayjs from "dayjs";
+import { FetchStrategy } from "@betomorrow/micro-stores";
+import styled from "styled-components/native";
 
-export const ActivityIntensityGraph = () => {
+type Props = {
+	samples: Array<{ isoTime: string; value: number }>;
+};
+
+export const ActivityIntensityGraph = ({ samples }: Props) => {
 	const { format } = useI18n();
-	console.log("FIX START", moment(mockActivityIntensity[0].time).format("HH:mm"));
-	console.log("FIX END", moment(mockActivityIntensity[mockActivityIntensity.length - 1].time).format("HH:mm"));
-	const data = mockActivityIntensity.map((data) => {
+	const [
+		selectedDay,
+		/*setSelectedDay*/
+		,
+	] = useState(dayjs().format("YYYY-MM-DD"));
+	const calendar = useCalendar(selectedDay, FetchStrategy.Once);
+	console.log("calendar.notes", calendar);
+	const data = samples.map((data) => {
 		return {
 			y: data.value,
-			x: data.time,
+			x: data.isoTime,
 		};
 	});
 
@@ -42,6 +54,11 @@ export const ActivityIntensityGraph = () => {
 	};
 	return (
 		<GraphContainer>
+			<NotesContainer>
+				{calendar?.notes.map((note, key) => (
+					<Note key={key}>{note.tag.name}</Note>
+				))}
+			</NotesContainer>
 			<VictoryChart domain={{ x: [0, data.length + 8], y: [0, 4] }} height={230}>
 				<VictoryAxis
 					tickFormat={(tick) => {
@@ -168,3 +185,19 @@ export const ActivityIntensityGraph = () => {
 		</GraphContainer>
 	);
 };
+
+const NotesContainer = styled.View`
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+`;
+
+const Note = styled.Text`
+	height: 14px;
+	font-size: 9px;
+	color: white;
+	background-color: ${colors.orange};
+	padding-horizontal: 8px;
+	margin-horizontal: 4px;
+	border-radius: 7px;
+`;

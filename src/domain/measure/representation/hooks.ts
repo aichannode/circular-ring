@@ -1,8 +1,9 @@
 import moment from "moment";
-import {/*  DailyActivityGoals,  */MetricType } from "../metric";
+import { MetricType } from "../metric";
 import { ActivityStage, SleepStage } from "../type";
 import {
-/* 	DailyActivityDetailsMetrics, */
+	DailyActivityDetailsMetrics,
+	DailyActivityDetailsMetricsGoals,
 	DailyEnergyScoreGaugeCalibrationMetrics,
 	DailyEnergyScoreMetrics,
 	DailyEnergyScoreMetricsGaugeSize,
@@ -61,13 +62,29 @@ export function useDailyActivityDuration(isoDay?: string): number | undefined {
 	// TOTO implement
 	return 1 * 60; // 4 hours of activity
 }
-/* 
+
 export function useDailyMetrics(
 	isoDay?: string
-): RangeDetails<DailyActivityDetailsMetrics | DailyActivityGoals> {
-	return {}
+): RangeDetails<DailyActivityDetailsMetrics | DailyActivityDetailsMetricsGoals> {
+	return {
+		[MetricType.UserDailySteps]: 9200,
+		[MetricType.UserDailyWalkingEquivalency]: 5.4,
+		[MetricType.UserDailyCaloriesBurned]: 1010,
+		[MetricType.UserDailyCardioPoints]: 157,
+		[MetricType.UserDailyVO2Max]: 35,
+		[MetricType.UserDailyHRMax]: 123,
+		// Goals
+		[MetricType.UserDailyStepsGoalMin]: 4500,
+		[MetricType.UserDailyStepsGoalMax]: 8000,
+		[MetricType.UserDailyWalkingEquivalencyGoalMin]: 3150,
+        [MetricType.UserDailyWalkingEquivalencyGoalMax]: 5600,
+        [MetricType.UserDailyCaloriesBurnedGoalMin]: 1561.34,
+        [MetricType.UserDailyCaloriesBurnedGoalMax]: 2023.36,
+		[MetricType.UserDailyCardioPointsGoalMin]: 75 / 7,
+		[MetricType.UserDailyCardioPointsGoalMax]: 150 / 7,
+	}
 }
- */
+
 export function useDailyEnergyScoreDetails(
 	isoDay?: string
 ): RangeDetails<DailyEnergyScoreMetrics | DailyEnergyScoreMetricsGaugeSize | DailyEnergyScoreGaugeCalibrationMetrics> {
@@ -110,7 +127,15 @@ export function useDailyEnergyScoreDetails(
 	};
 }
 
-export function useDailySleepStages(isoDay?: string): Array<StageInfos<SleepStage>> {
+export function useDailySleepStages(isoDay?: string): {
+	stages: Array<StageInfos<SleepStage>>
+	coreSleepTiming: [string, string]
+	totalSleepDuration: number
+	sleepStagesDuration: Partial<Record<SleepStage, {
+		duration: number
+		percent: number
+	}>>
+ } {
 	// TOTO implement
 
 	// Mock data for the night
@@ -120,7 +145,7 @@ export function useDailySleepStages(isoDay?: string): Array<StageInfos<SleepStag
 	 * Spec for stages
 	 * - stages array is always between user.core.sleep.begin and user.core.sleep.end
 	 */
-	return [
+	const stages: Array<StageInfos<SleepStage>> = [
 		{
 			type: SleepStage.LIGHT,
 			start: cursor.toISOString(),
@@ -196,12 +221,20 @@ export function useDailySleepStages(isoDay?: string): Array<StageInfos<SleepStag
 			start: cursor.toISOString(),
 			end: cursor.add(120, "minutes").toISOString(),
 		},
-	];
-}
+	]
 
-export function useSleepDuration(isoDay?: string): number | undefined {
-	// TOTO implement
-	return 10 * 60 + 30;
+	return {
+		totalSleepDuration: 630,
+		stages,
+		coreSleepTiming: [stages[0].start, stages[stages.length-1].end],
+		sleepStagesDuration: {
+			[SleepStage.AWAKE]: {duration: 45, percent: .7},
+			[SleepStage.REM]: {duration: 140, percent: .22},
+			[SleepStage.LIGHT]: {duration: 330, percent: .52},
+			[SleepStage.DEEP]: {duration: 115, percent: .18},
+		}
+	}
+
 }
 
 export function useDailySleepDetails(
@@ -213,7 +246,7 @@ export function useDailySleepDetails(
         [MetricType.UserDailyTranquility]: 0.83,
         [MetricType.UserDailyCircadianRhythm]: 0.89,
         [MetricType.UserDailyAwakeStageDuration]: 45,
-        [MetricType.UserDailyPercAwakeStageDuration]: 0.08,
+        [MetricType.UserDailyPercAwakeStage]: 0.08,
         [MetricType.UserDailyRealSleepDuration]: 514,
         [MetricType.UserDailyPercRealSleep]: 0.92,
         [MetricType.UserDailyPercREMStage]: 0.23,

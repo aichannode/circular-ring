@@ -1,4 +1,4 @@
-import { DailyActivityGoals, DatedMetrics, MetricType } from "./metric"
+import { DatedMetrics, MetricType } from "./metric"
 
 export enum SleepStage {
 	AWAKE = 4,
@@ -22,7 +22,7 @@ export enum TimeFrame {
 	ALL = "ALL",
 }
 
-export type UserProperties = Record<DailyActivityGoals, number> & {
+export type UserProperties = {
 	"user.firstname": string,
 	"user.lastname": string,
 	"user.sex":string,

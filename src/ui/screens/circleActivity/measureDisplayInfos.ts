@@ -1,32 +1,10 @@
-import { ScoreUnit } from "@domain/measure/score";
-import {
-	DailyActivityGoals,
-	MetricType,
-} from "@domain/measure/metric";
+import { MetricType } from "@domain/measure/metric";
+import { DailyActivityDetailsMetrics, DailyEnergyScoreMetrics } from "@domain/measure/representation/type";
 import { WordingKey } from "src/wordings";
-import { DailyActivityDetailsMetrics, DailyEnergyScoreMetrics, DailyEnergyScoreGaugeCalibrationMetrics } from "@domain/measure/representation/type";
-import { getGaugeColor, getScoreQualityLabel } from "../business";
-import { GaugeDisplayConfig } from "../type";
+import { getMetricColor, getGaugeColor, getScoreQualityLabel } from "../business";
+import { GaugeDisplayConfig, MetricDisplayConfig } from "../type";
 
 export type DailyEnergyScoreGaugeConfigs = Record<DailyEnergyScoreMetrics, GaugeDisplayConfig>
-
-export type DailyMetricsData = {
-	[key in DailyActivityDetailsMetrics]: {
-		icon: number;
-		labelKey: WordingKey;
-		goodGoal?: DailyActivityGoals;
-		optimalGoal?: DailyActivityGoals;
-	};
-};
-
-export type ScoreDetailsData = {
-	[key in DailyEnergyScoreMetrics]: {
-		titleKey: WordingKey;
-		descriptionKey: WordingKey;
-		unit: ScoreUnit;
-		gauge?: DailyEnergyScoreGaugeCalibrationMetrics;
-	};
-};
 
 export function getActivityQualityDetails(format: (v: WordingKey) => string): DailyEnergyScoreGaugeConfigs {
 	return {
@@ -206,40 +184,63 @@ export function getActivityQualityDetails(format: (v: WordingKey) => string): Da
 	}
 }
 
+type MetricsDetails = {
+	[key in DailyActivityDetailsMetrics]: MetricDisplayConfig
+}
 
-export const dailyMetricsDataInfos: DailyMetricsData = {
+export const dailyMetricsDetails: MetricsDetails = {
 	[MetricType.UserDailySteps]: {
-		icon: require("@assets/images/shoes.png"),
+		metricsName: {
+			value: MetricType.UserDailySteps,
+			thresholdLow: MetricType.UserDailyStepsGoalMin,
+			thresholdHigh: MetricType.UserDailyStepsGoalMax,
+		},
+		icon: "@assets/images/shoes.png",
 		labelKey: "metric.steps",
-		goodGoal: MetricType.UserDailyStepsGoalMin,
-		optimalGoal: MetricType.UserDailyStepsGoalMax,
+		getColor: getMetricColor,
 	},
 	[MetricType.UserDailyWalkingEquivalency]: {
-		icon: require("@assets/images/journey.png"),
+		metricsName: {
+			value: MetricType.UserDailyWalkingEquivalency,
+			thresholdLow: MetricType.UserDailyWalkingEquivalencyGoalMin,
+			thresholdHigh: MetricType.UserDailyWalkingEquivalencyGoalMax,
+		},
+		icon: "@assets/images/journey.png",
 		labelKey: "metric.walking",
-		goodGoal: MetricType.UserDailyWalkingEquivalencyGoalMin,
-		optimalGoal: MetricType.UserDailyWalkingEquivalencyGoalMax,
+		getColor: getMetricColor,
 	},
-	// TODO enable when back will be ready
-	/* 
-	[MetricType.UserDailyCaloriesBurnedGoal]: {
-		icon: require("@assets/images/fire.png"),
+	[MetricType.UserDailyCaloriesBurned]: {
+		metricsName: {
+			value: MetricType.UserDailyWalkingEquivalency,
+			thresholdLow: MetricType.UserDailyWalkingEquivalencyGoalMin,
+			thresholdHigh: MetricType.UserDailyWalkingEquivalencyGoalMax,
+		},
+		icon: "@assets/images/fire.png",
 		labelKey: "metric.calories",
-		goodGoal: MetricType.UserDailyCaloriesBurnedGoalMin, // not implemented
-		optimalGoal: MetricType.UserDailyCardioPointsGoalMax,// not implemented
+		getColor: getMetricColor,
 	},
-	"user.daily.cardio.points": {
-		icon: require("@assets/images/sport.png"),
+	[MetricType.UserDailyCardioPoints]: {
+		metricsName: {
+			value: MetricType.UserDailyWalkingEquivalency,
+			thresholdLow: MetricType.UserDailyWalkingEquivalencyGoalMin,
+			thresholdHigh: MetricType.UserDailyWalkingEquivalencyGoalMax,
+		},
+		icon: "@assets/images/sport.png",
 		labelKey: "metric.cardio",
-		goodGoal: "user.daily.cardio.points.goal.min",
-		optimalGoal: "user.daily.cardio.points.goal.max",
+		getColor: getMetricColor,
 	},
-	"user.daily.vo2max": {
-		icon: require("@assets/images/lungs.png"),
+	[MetricType.UserDailyVO2Max]: {
+		metricsName: {
+			value: MetricType.UserDailyVO2Max,
+		},
+		icon: "@assets/images/lungs.png",
 		labelKey: "metric.vo2_max",
-	}, */
-	[MetricType.UserDailyAwakeHrMax]: {
-		icon: require("@assets/images/heart.png"),
+	},
+	[MetricType.UserDailyHRMax]: {
+		metricsName: {
+			value: MetricType.UserDailyHRMax,
+		},
+		icon: "@assets/images/heart.png",
 		labelKey: "metric.hr_max",
 	},
-};
+}
