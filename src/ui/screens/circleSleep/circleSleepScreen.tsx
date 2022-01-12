@@ -1,5 +1,4 @@
 import {
-	useSleepDuration,
 	useDailySleepQualityScore,
 	useDailySleepStages,
 	useDailySleepDetails,
@@ -20,6 +19,7 @@ import { ScrollScreen } from "@ui/components/scrollScreen";
 import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import { isDefined } from "@ui/utils/filter";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
@@ -29,46 +29,24 @@ import { Hypnogram } from "./hypnogram";
 import { getSleepQualityDetails } from "./measureDisplayInfos";
 import { SleepDurationPieChart } from "./sleepDurationPie";
 
-/* const scoreGoodThreshold = 0.8;
-const scoreOptimalThreshold = 0.9;
- */
 export const CircleSleepScreen: React.FC = observer(() => {
 	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
-	const centerCircleSleepDuration = useSleepDuration(selectedDay);
 	const details = useDailySleepDetails(selectedDay);
 	const qualityScore = useDailySleepQualityScore(selectedDay);
-	const stages = useDailySleepStages();
+	const dailySleep = useDailySleepStages();
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const { format } = useI18n();
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const [graphPeriod /* , setGraphPeriod */] = useState(TimeFrame.TODAY);
 	const sleepQualityDetails = getSleepQualityDetails(format)
-
-	// TODO remove and use the hook
-	const sleepDuration = moment(stages[stages.length - 1].end)
-		.diff(stages[0].start)
-		.valueOf();
+	const awakeDuration = dailySleep.sleepStagesDuration[SleepStage.AWAKE]
+	const REMDuration = dailySleep.sleepStagesDuration[SleepStage.REM]
+	const lightDuration = dailySleep.sleepStagesDuration[SleepStage.LIGHT]
+	const deepDuration = dailySleep.sleepStagesDuration[SleepStage.DEEP]
 
 	useEffect(() => {
 		console.log("CURRENT PERIOD = ", graphPeriod);
 	}, [graphPeriod]);
-
-	const awakeDuration = stages
-		.filter(({ type }) => type === SleepStage.AWAKE)
-		.reduce((sum, { start, end }) => sum + moment(end).diff(start).valueOf(), 0);
-	const REMDuration = stages
-		.filter(({ type }) => type === SleepStage.REM)
-		.reduce((sum, { start, end }) => sum + moment(end).diff(start).valueOf(), 0);
-	const lightDuration = stages
-		.filter(({ type }) => type === SleepStage.LIGHT)
-		.reduce((sum, { start, end }) => sum + moment(end).diff(start).valueOf(), 0);
-	const deepDuration = stages
-		.filter(({ type }) => type === SleepStage.DEEP)
-		.reduce((sum, { start, end }) => sum + moment(end).diff(start).valueOf(), 0);
-
-	console.log("FIX SLEEP END ", moment(stages[stages.length - 1].end).format("HH:mm"));
-
-	console.log("AWAKE DURATION", awakeDuration);
 
 	return (
 		<Container>
@@ -90,7 +68,11 @@ export const CircleSleepScreen: React.FC = observer(() => {
 				/>
 			</View>
 			<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
-			<SleepDurationPieChart stages={stages} duration={centerCircleSleepDuration ?? 0} />
+			<SleepDurationPieChart
+				stages={dailySleep.stages}
+				coreSleepTiming={dailySleep.coreSleepTiming}
+				duration={dailySleep.totalSleepDuration ?? 0}
+			/>
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
 				{
@@ -165,51 +147,43 @@ export const CircleSleepScreen: React.FC = observer(() => {
 					/> */}
 				</View>
 				<GraphContainer>
-					<Hypnogram data={stages} />
+					<Hypnogram data={dailySleep.stages} />
 					<View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
 						<GraphLegend
 							rows={[
-								{
+								awakeDuration && {
 									label: format("sleep.stage.awake"),
 									element: {
 										key: "sleep.stage.awake",
 										node: <></>,
 									},
-									value: `${moment.duration(awakeDuration).hours()} h ${moment.duration(awakeDuration).minutes()} min ${
-										sleepDuration ? `${Math.round((awakeDuration * 100) / sleepDuration)}%` : ""
-									}`,
+									value: `${moment.duration(awakeDuration.duration).hours()} h ${moment.duration(awakeDuration.duration).minutes()} min ${awakeDuration.percent}%`
 								},
-								{
+								REMDuration && {
 									label: format("sleep.stage.REM"),
 									element: {
 										key: "sleep.stage.REM",
 										node: <></>,
 									},
-									value: `${moment.duration(REMDuration).hours()} h ${moment.duration(REMDuration).minutes()} min ${
-										sleepDuration ? `${Math.round((REMDuration * 100) / sleepDuration)}%` : ""
-									}`,
+									value: `${moment.duration(REMDuration.duration).hours()} h ${moment.duration(REMDuration.duration).minutes()} min ${REMDuration.percent}%`,
 								},
-								{
+								lightDuration && {
 									label: format("sleep.stage.light"),
 									element: {
 										key: "sleep.stage.light",
 										node: <></>,
 									},
-									value: `${moment.duration(lightDuration).hours()} h ${moment.duration(lightDuration).minutes()} min ${
-										sleepDuration ? `${Math.round((lightDuration * 100) / sleepDuration)}%` : ""
-									}`,
+									value: `${moment.duration(lightDuration.duration).hours()} h ${moment.duration(lightDuration.duration).minutes()} min ${lightDuration.percent}%`,
 								},
-								{
+								deepDuration && {
 									label: format("sleep.stage.deep"),
 									element: {
 										key: "sleep.stage.deep",
 										node: <></>,
 									},
-									value: `${moment.duration(deepDuration).hours()} h ${moment.duration(deepDuration).minutes()} min ${
-										sleepDuration ? `${Math.round((deepDuration * 100) / sleepDuration)}%` : ""
-									}`,
+									value: `${moment.duration(deepDuration.duration).hours()} h ${moment.duration(deepDuration.duration).minutes()} min ${deepDuration.percent}`,
 								},
-							]}
+							].filter(isDefined)}
 						/>
 					</View>
 				</GraphContainer>

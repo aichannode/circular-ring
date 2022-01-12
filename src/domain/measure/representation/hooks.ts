@@ -127,7 +127,15 @@ export function useDailyEnergyScoreDetails(
 	};
 }
 
-export function useDailySleepStages(isoDay?: string): Array<StageInfos<SleepStage>> {
+export function useDailySleepStages(isoDay?: string): {
+	stages: Array<StageInfos<SleepStage>>
+	coreSleepTiming: [string, string]
+	totalSleepDuration: number
+	sleepStagesDuration: Partial<Record<SleepStage, {
+		duration: number
+		percent: number
+	}>>
+ } {
 	// TOTO implement
 
 	// Mock data for the night
@@ -137,7 +145,7 @@ export function useDailySleepStages(isoDay?: string): Array<StageInfos<SleepStag
 	 * Spec for stages
 	 * - stages array is always between user.core.sleep.begin and user.core.sleep.end
 	 */
-	return [
+	const stages: Array<StageInfos<SleepStage>> = [
 		{
 			type: SleepStage.LIGHT,
 			start: cursor.toISOString(),
@@ -213,12 +221,20 @@ export function useDailySleepStages(isoDay?: string): Array<StageInfos<SleepStag
 			start: cursor.toISOString(),
 			end: cursor.add(120, "minutes").toISOString(),
 		},
-	];
-}
+	]
 
-export function useSleepDuration(isoDay?: string): number | undefined {
-	// TOTO implement
-	return 10 * 60 + 30;
+	return {
+		totalSleepDuration: 630,
+		stages,
+		coreSleepTiming: [stages[0].start, stages[stages.length-1].end],
+		sleepStagesDuration: {
+			[SleepStage.AWAKE]: {duration: 45, percent: .7},
+			[SleepStage.REM]: {duration: 140, percent: .22},
+			[SleepStage.LIGHT]: {duration: 330, percent: .52},
+			[SleepStage.DEEP]: {duration: 115, percent: .18},
+		}
+	}
+
 }
 
 export function useDailySleepDetails(
@@ -230,7 +246,7 @@ export function useDailySleepDetails(
         [MetricType.UserDailyTranquility]: 0.83,
         [MetricType.UserDailyCircadianRhythm]: 0.89,
         [MetricType.UserDailyAwakeStageDuration]: 45,
-        [MetricType.UserDailyPercAwakeStageDuration]: 0.08,
+        [MetricType.UserDailyPercAwakeStage]: 0.08,
         [MetricType.UserDailyRealSleepDuration]: 514,
         [MetricType.UserDailyPercRealSleep]: 0.92,
         [MetricType.UserDailyPercREMStage]: 0.23,

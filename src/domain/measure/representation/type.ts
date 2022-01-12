@@ -111,7 +111,7 @@ export const dailySleepDetailsMetrics = [
 export type DailySleepDetailsMetrics = typeof dailySleepDetailsMetrics[number];
 
 export const dailySleepDetailsMetricsGaugeSize = [
-	MetricType.UserDailyPercAwakeStageDuration,
+	MetricType.UserDailyPercAwakeStage,
 	MetricType.UserDailyPercRealSleep,
 	MetricType.UserDailyCorrectedPercREMStage,
 	MetricType.UserDailyCorrectedPercDeepStage,
@@ -140,3 +140,24 @@ export const dailySleepDetailsGaugeCalibrationMetrics = [
 	MetricType.UserDailySleepDebtGoalMax,
 ] as const;
 export type DailySleepDetailsGaugeMetrics = typeof dailySleepDetailsGaugeCalibrationMetrics[number];
+
+/** 
+ * Those metrics are used for the stages circle and hypnogram
+ */
+export const dailySleepStageDuration = [
+	MetricType.UserSleepstage,
+	MetricType.UserCoreSleepBegin,
+	MetricType.UserCoreSleepEnd,
+	MetricType.UserDailyTotalSleepDuration,
+	MetricType.UserDailyRealSleepDuration,
+	MetricType.UserDailyAwakeStageDuration,
+	MetricType.UserDailyAwakeStageDuration,
+	MetricType.UserDailyLightStageDuration,
+	MetricType.UserDailyDeepStageDuration,
+	MetricType.UserDailyPercRealSleep,
+	MetricType.UserDailyPercAwakeStage,
+	MetricType.UserDailyPercREMStage,
+	MetricType.UserDailyPercLightStage,
+	MetricType.UserDailyPercDeepStage,
+] as const
+export type DailySleepStageDuration = typeof dailySleepStageDuration[number];

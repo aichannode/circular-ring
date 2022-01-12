@@ -9,6 +9,7 @@ import styled from "styled-components/native";
 
 type Props = {
 	duration: number;
+	coreSleepTiming?: [string, string]
 	stages: Array<StageInfos<SleepStage>>;
 }
 
@@ -18,22 +19,23 @@ function getPhaseLevel(phase = 4) {
 		: 0
 }
 
-function createLabelGenerator(stages: Array<StageInfos<SleepStage>>) {
+function createLabelGenerator(stages: Array<StageInfos<SleepStage>>, coreSleepTiming?: [string, string]) {
 	return function getLabels(
 		_phase: number,
 		index: number
 	): [WordingKey | null | "", WordingKey | null] {
-		if (index === 0) {
+		// Display core sleep label
+		if (stages[index].start === coreSleepTiming?.[0]) {
 			return ["sleep.duration.label.start_sleep", null];
 		}
-		if (index === stages.length - 1) {
+		if (stages[index].end === coreSleepTiming?.[1]) {
 			return [null, "sleep.duration.label.wake_up"];
 		}
 		return [null, null];
 	}
 }
 
-export function SleepDurationPieChart({ stages, duration }: Props) {
+export function SleepDurationPieChart({ coreSleepTiming, stages, duration }: Props) {
 	return (
 		<Container>
             <DailyPieChart
@@ -45,7 +47,7 @@ export function SleepDurationPieChart({ stages, duration }: Props) {
 				phaseColors={[colors.lightBlue, colors.darkBlue]}
 				phaseWidths={[5, 7]}
                 getPhaseLevel={getPhaseLevel}
-                getLabels={createLabelGenerator(stages)}
+                getLabels={createLabelGenerator(stages, coreSleepTiming)}
             />
 		</Container>
 	);

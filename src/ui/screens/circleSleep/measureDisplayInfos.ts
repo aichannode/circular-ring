@@ -18,7 +18,7 @@ export function getSleepQualityDetails(format: (v: WordingKey) => string): Sleep
 				value: MetricType.UserDailyAwakeStageDuration,
 				thresholdLow: MetricType.UserDailyPercAwakeStageDurationGoalMin,
 				thresholdHigh: MetricType.UserDailyPercAwakeStageDurationGoalMax,
-				gaugeFilling: MetricType.UserDailyPercAwakeStageDuration,
+				gaugeFilling: MetricType.UserDailyPercAwakeStage,
 			},
 			titleKey: "sleep.quality.disturbance.label",
 			descriptionKey: "sleep.quality.disturbance.description",

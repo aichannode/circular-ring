@@ -1,5 +1,5 @@
 export type Metric<T extends MetricType = MetricType> = {
-	[key in T]: number;
+	[key in T]: number | string;
 }
 
 export type DatedMetrics<T extends MetricType = MetricType> = {
@@ -11,10 +11,15 @@ export type RangeMetrics<T extends MetricType = MetricType> = Array<DatedMetrics
 
 
 export enum MetricType {
-	// User sleep stages
+	//////////////
+	// Daily sleep
+	//////////////
 	UserSleepstage = "user.sleep.stage",
-
-	// User sleep quality details
+	UserCoreSleepBegin = "user.core.sleep.begin",
+	UserCoreSleepEnd = "user.core.sleep.end",
+	UserDailyLightStageDuration = "user.daily.light.stage.duration",
+	UserDailyDeepStageDuration = "user.daily.deep.stage.duration",
+	UserDailyREMStageDuration = "user.daily.rem.stage.duration",
 	UserDailyTimeToFallAsleep = "user.daily.time.to.fall.asleep",
 	UserDailyPercTimeToFallAsleep = "user.daily.perctime.to.fall.asleep",
 	UserDailySleepDebt = "user.daily.sleep.debt",
@@ -24,15 +29,14 @@ export enum MetricType {
 	UserDailyTotalSleepDuration = "user.daily.total.sleep.duration",
 	UserDailyRealSleepDuration = "user.daily.real.sleep.duration",
 	UserDailyAwakeStageDuration = "user.daily.awake.stage.duration",
-	UserDailyPercAwakeStageDuration = "user.daily.percawake.stage.duration",
+	UserDailyPercAwakeStage = "user.daily.percawake.stage",
+	UserDailyPercLightStage = "user.daily.perclight.stage",
 	UserDailyPercREMStage = "user.daily.percrem.stage",
 	UserDailyPercDeepStage = "user.daily.percdeep.stage",
 	UserDailyPercRealSleep = "user.daily.percreal.sleep",
 	UserDailyCorrectedPercREMStage = "user.daily.corrected.percrem.stage",
 	UserDailyCorrectedPercDeepStage = "user.daily.corrected.percdeep.stage",
 	UserDailySleepScore = "user.daily.sleep.score",
-
-	// User sleep quality goal
 	UserDailyPercAwakeStageDurationGoalMin = "user.daily.percawake.stage.duration.goal.min",
 	UserDailyPercAwakeStageDurationGoalMax = "user.daily.percawake.stage.duration.goal.max",
 	UserDailyPercRealSleepDurationGoalMin = "user.daily.percreal.sleep.duration.goal.min",
@@ -49,24 +53,28 @@ export enum MetricType {
 	UserDailyPercTimeToFallAsleepGoalMax = "user.daily.perctime.to.fall.asleep.goal.max",
 	UserDailySleepDebtGoalMin = "user.daily.percsleep.debt.goal.min",
 	UserDailySleepDebtGoalMax = "user.daily.percsleep.debt.goal.max",
-	
-	// Daily energy score details
-	UserDailyScoreRecovery = "user.daily.score.recovery",
-	UserDailyWakeUpScore = "user.daily.wake.up.score",
 	UserDailySleepBR = "user.daily.sleep.br",
+	UserDailySleepVarTemperature = "user.daily.sleep.var.temperature",
+	UserDailySleepScoreGoalMin = "user.daily.score.sleep.goal.min",
+	UserDailySleepScoreGoalMax = "user.daily.score.sleep.goal.max",
+	UserDailyScoreSleepBalanceGoalMin = "user.daily.score.sleep.balance.goal.min",
+	UserDailyScoreSleepBalanceGoalMax = "user.daily.score.sleep.balance.goal.max",
+	
+	///////////////////
+	// Daily metabolism
+	///////////////////
+	UserDailyScoreRecovery = "user.daily.score.recovery",
 	UserDailyScoreBr = "user.daily.score.br",
 	UserDailySleepHRV = "user.daily.sleep.hrv",
 	UserDailyScoreHRV = "user.daily.score.hrv",
 	UserDailyRHR = "user.daily.rhr",
 	UserDailyScoreRHR = "user.daily.score.rhr",
-	UserDailySleepVarTemperature = "user.daily.sleep.var.temperature",
 	UserDailyScoreVarTemperature = "user.daily.score.var.temperature",
 	UserDailyScoreSleepBalance = "user.daily.score.sleep.balance",
 	UserDailyScoreActivityVolume = "user.daily.score.activity.volume",
-
-	// User daily energy score details goal
 	UserDailyScoreRecoveryGoalMin = "user.daily.score.recovery.goal.min",
 	UserDailyScoreRecoveryGoalMax = "user.daily.score.recovery.goal.max",
+	UserDailyWakeUpScore = "user.daily.wake.up.score",
 	UserDailyWakeUpScoreGoalMin = "user.daily.wake.up.score.goal.min",
 	UserDailyWakeUpScoreGoalMax = "user.daily.wake.up.score.goal.max",
 	UserDailyScoreBRGoalMin = "user.daily.score.br.goal.min",
@@ -77,30 +85,26 @@ export enum MetricType {
 	UserDailyScoreRHRGoalMax = "user.daily.score.rhr.goal.max",
 	UserDailyScoreVarTemperatureGoalMin = "user.daily.score.var.temperature.goal.min",
 	UserDailyScoreVarTemperatureGoalMax = "user.daily.score.var.temperature.goal.max",
-	UserDailySleepScoreGoalMin = "user.daily.score.sleep.goal.min",
-	UserDailySleepScoreGoalMax = "user.daily.score.sleep.goal.max",
-	UserDailyScoreSleepBalanceGoalMin = "user.daily.score.sleep.balance.goal.min",
-	UserDailyScoreSleepBalanceGoalMax = "user.daily.score.sleep.balance.goal.max",
 	UserDailyScoreActivityVolumeGoalMin = "user.daily.score.activity.volume.goal.min",
 	UserDailyScoreActivityVolumeGoalMax = "user.daily.score.activity.volume.goal.max",
-
-	// User daily activity metrics
-	UserDailySteps = "user.daily.steps",
-	UserDailyWalkingEquivalency = "user.daily.walking.equivalency",
 	UserDailyCaloriesBurned = "user.daily.calories.burned",
 	UserDailyCardioPoints = "user.daily.cardio.points",
 	UserDailyVO2Max = "user.daily.vo2max",
 	UserDailyHRMax = "user.daily.hr.max",
-
-	// User daily activity metrics goal
 	UserDailyCaloriesBurnedGoalMin = "user.daily.calories.burned.goal.min",
 	UserDailyCaloriesBurnedGoalMax = "user.daily.calories.burned.goal.max",
-	UserDailyWalkingEquivalencyGoalMin = "user.daily.walking.equivalency.goal.min",
-	UserDailyWalkingEquivalencyGoalMax = "user.daily.walking.equivalency.goal.max",
 	UserWeeklyCardioPointsGoalMax = "user.weekly.cardio.points.goal.max",
 	UserWeeklyCardioPointsGoalMin = "user.weekly.cardio.points.goal.min",
 	UserDailyCardioPointsGoalMax = "user.daily.cardio.points.goal.max",
 	UserDailyCardioPointsGoalMin = "user.daily.cardio.points.goal.min",
+
+	/////////////////
+	// Daily activity
+	/////////////////
+	UserDailySteps = "user.daily.steps",
+	UserDailyWalkingEquivalency = "user.daily.walking.equivalency",
+	UserDailyWalkingEquivalencyGoalMin = "user.daily.walking.equivalency.goal.min",
+	UserDailyWalkingEquivalencyGoalMax = "user.daily.walking.equivalency.goal.max",
 	UserDailyStepsGoalMin = "user.daily.steps.goal.min",
 	UserDailyStepsGoalMax = "user.daily.steps.goal.max",
 
