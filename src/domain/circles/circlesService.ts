@@ -44,7 +44,7 @@ export class CirclesService {
 			desc: "home.circles.live.description",
 			route: Routes.Live,
 			source: require("@assets/images/circleLive.png"),
-			sleepModeIcon: require("@assets/images/SleepMode.png"),
+			sleepModeIcon: require("@assets/images/sleepModeLive.png"),
 			on: true,
 			type: "Wellness",
 			canNavigateInSleepMode: false,
