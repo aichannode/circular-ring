@@ -1,8 +1,8 @@
 import {
 	useSleepDuration,
-	useDailySleepDetails,
 	useDailySleepQualityScore,
 	useDailySleepStages,
+	useDailySleepDetails,
 } from "@domain/measure/representation/hooks";
 import { dailySleepDetailsMetrics } from "@domain/measure/representation/type";
 import { SleepStage, TimeFrame } from "@domain/measure/type";
@@ -26,15 +26,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
 import { Hypnogram } from "./hypnogram";
-import { scoreDetails } from "./measureDisplayInfos";
+import { getSleepQualityDetails } from "./measureDisplayInfos";
 import { SleepDurationPieChart } from "./sleepDurationPie";
 
-const scoreGoodThreshold = 0.8;
+/* const scoreGoodThreshold = 0.8;
 const scoreOptimalThreshold = 0.9;
-
+ */
 export const CircleSleepScreen: React.FC = observer(() => {
 	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
-	const sleepDuration = useSleepDuration(selectedDay);
+	const centerCircleSleepDuration = useSleepDuration(selectedDay);
 	const details = useDailySleepDetails(selectedDay);
 	const qualityScore = useDailySleepQualityScore(selectedDay);
 	const stages = useDailySleepStages();
@@ -42,6 +42,12 @@ export const CircleSleepScreen: React.FC = observer(() => {
 	const { format } = useI18n();
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const [graphPeriod /* , setGraphPeriod */] = useState(TimeFrame.TODAY);
+	const sleepQualityDetails = getSleepQualityDetails(format)
+
+	// TODO remove and use the hook
+	const sleepDuration = moment(stages[stages.length - 1].end)
+		.diff(stages[0].start)
+		.valueOf();
 
 	useEffect(() => {
 		console.log("CURRENT PERIOD = ", graphPeriod);
@@ -61,6 +67,8 @@ export const CircleSleepScreen: React.FC = observer(() => {
 		.reduce((sum, { start, end }) => sum + moment(end).diff(start).valueOf(), 0);
 
 	console.log("FIX SLEEP END ", moment(stages[stages.length - 1].end).format("HH:mm"));
+
+	console.log("AWAKE DURATION", awakeDuration);
 
 	return (
 		<Container>
@@ -82,26 +90,32 @@ export const CircleSleepScreen: React.FC = observer(() => {
 				/>
 			</View>
 			<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
-			<SleepDurationPieChart stages={stages} duration={sleepDuration ?? 0} />
+			<SleepDurationPieChart stages={stages} duration={centerCircleSleepDuration ?? 0} />
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
 				{
 					dailySleepDetailsMetrics
 						.map((metric, index) => {
-							const dataInfos = scoreDetails[metric];
-							const value = details[metric];
-							const gaugeValue = dataInfos.gauge ? details[dataInfos.gauge] : value;
+							const dataInfos = sleepQualityDetails[metric];
+							const values: {
+								value: number,
+								thresholdLow: number,
+								thresholdHigh: number,
+								gaugeFilling: number
+							} = {
+								value: (details as any)[dataInfos.metricsName.value],
+								thresholdLow: (details as any)[dataInfos.metricsName.thresholdLow],
+								thresholdHigh: (details as any)[dataInfos.metricsName.thresholdHigh],
+								gaugeFilling: (details as any)[dataInfos.metricsName.gaugeFilling],
+							}
 							return [
 								<ScoreGauge
 									key={metric}
-									value={value !== undefined ? Math.round(value) : undefined}
-									rate={gaugeValue !== undefined ? gaugeValue / 100 : undefined}
-									unit={dataInfos.unit}
-									goodThreshold={scoreGoodThreshold}
-									optimalThreshold={scoreOptimalThreshold}
+									value={dataInfos.renderValue(values)}
+									gaugeFilling={values.gaugeFilling}
+									color={dataInfos.getGaugeColor(values)}
 									label={format(dataInfos.titleKey)}
-									displayGaugeValue={dataInfos.displayGaugeValue}
-									gaugeInverted={dataInfos.inverted}
+									isInverted={dataInfos.isInverted}
 									onPress={() => {
 										LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 										setFocusedGauge((current) => (current === index ? null : index));

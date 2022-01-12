@@ -1,11 +1,14 @@
 import moment from "moment";
-import { DailyActivityGoals, MetricType } from "../metric";
+import {/*  DailyActivityGoals,  */MetricType } from "../metric";
 import { ActivityStage, SleepStage } from "../type";
 import {
-	DailyActivityDetailsMetrics,
+/* 	DailyActivityDetailsMetrics, */
+	DailyEnergyScoreGaugeCalibrationMetrics,
 	DailyEnergyScoreMetrics,
+	DailyEnergyScoreMetricsGaugeSize,
 	DailySleepDetailsGaugeMetrics,
 	DailySleepDetailsMetrics,
+	DailySleepDetailsMetricsGaugeSize,
 	RangeDetails,
 	StageInfos,
 } from "./type";
@@ -58,24 +61,52 @@ export function useDailyActivityDuration(isoDay?: string): number | undefined {
 	// TOTO implement
 	return 1 * 60; // 4 hours of activity
 }
-
-export function useDailyActivityDetails(
+/* 
+export function useDailyMetrics(
 	isoDay?: string
-): RangeDetails<DailyActivityDetailsMetrics | DailyActivityGoals | DailyEnergyScoreMetrics> {
+): RangeDetails<DailyActivityDetailsMetrics | DailyActivityGoals> {
+	return {}
+}
+ */
+export function useDailyEnergyScoreDetails(
+	isoDay?: string
+): RangeDetails<DailyEnergyScoreMetrics | DailyEnergyScoreMetricsGaugeSize | DailyEnergyScoreGaugeCalibrationMetrics> {
 	// TOTO implement
 	return {
-		[MetricType.UserDailySteps]: 1800,
-		[MetricType.UserDailyWalkingEquivalency]: 1.1,
-		[MetricType.UserDailyAwakeHrMax]: 87,
-		[MetricType.UserDailyStepsGoalMin]: 3000,
-		[MetricType.UserDailyStepsGoalMax]: 10000,
-		[MetricType.UserDailyWalkingEquivalencyGoalMin]: 1000,
-		[MetricType.UserDailyWalkingEquivalencyGoalMax]: 10000,
-		[MetricType.UserWeeklyCardioPointsGoalMax]: 100,
-		[MetricType.UserWeeklyCardioPointsGoalMin]: 0,
-		[MetricType.UserDailyCardioPointsGoalMax]: 100,
-		[MetricType.UserDailyCardioPointsGoalMin]: 0,
-		[MetricType.UserDailySleepQualityScore]: 73,
+		// Those metrics are used to display the gauge label
+		[MetricType.UserDailyScoreRecovery]: 0.83,
+        [MetricType.UserDailyWakeUpScore]: 0.96,
+        [MetricType.UserDailySleepBR]: 14.3,
+        [MetricType.UserDailyScoreBr]: 0.85,
+        [MetricType.UserDailySleepHRV]: 68,
+        [MetricType.UserDailyScoreHRV]: 0.93,
+        [MetricType.UserDailyRHR]: 62,
+        [MetricType.UserDailyScoreRHR]: 0.78,
+        [MetricType.UserDailySleepVarTemperature]: 0.5,
+        [MetricType.UserDailyScoreVarTemperature]: 0.87,
+        [MetricType.UserDailySleepScore]: 0.83,
+        [MetricType.UserDailyScoreSleepBalance]: 0.98,
+        [MetricType.UserDailyScoreActivityVolume]: 0.93,
+
+		// Those metrics are used for the gauge calibration
+		[MetricType.UserDailyScoreRecoveryGoalMax]: .8,
+		[MetricType.UserDailyScoreRecoveryGoalMin]: .9,
+		[MetricType.UserDailyWakeUpScoreGoalMin]: .8,
+		[MetricType.UserDailyWakeUpScoreGoalMax]: .9,
+		[MetricType.UserDailyScoreBRGoalMin]: .8,
+		[MetricType.UserDailyScoreBRGoalMax]: .9,
+		[MetricType.UserDailyScoreHRVGoalMin]: .8,
+		[MetricType.UserDailyScoreHRVGoalMax]: .9,
+		[MetricType.UserDailyScoreRHRGoalMin]: .8,
+		[MetricType.UserDailyScoreRHRGoalMax]: .9,
+		[MetricType.UserDailyScoreVarTemperatureGoalMin]: .8,
+		[MetricType.UserDailyScoreVarTemperatureGoalMax]: .9,
+		[MetricType.UserDailySleepScoreGoalMin]: .8,
+		[MetricType.UserDailySleepScoreGoalMax]: .9,
+		[MetricType.UserDailyScoreSleepBalanceGoalMin]: .8,
+		[MetricType.UserDailyScoreSleepBalanceGoalMax]: .9,
+		[MetricType.UserDailyScoreActivityVolumeGoalMin]: .8,
+		[MetricType.UserDailyScoreActivityVolumeGoalMax]: .9,
 	};
 }
 
@@ -175,23 +206,39 @@ export function useSleepDuration(isoDay?: string): number | undefined {
 
 export function useDailySleepDetails(
 	isoDay?: string
-): RangeDetails<DailySleepDetailsMetrics | DailySleepDetailsGaugeMetrics> {
+): RangeDetails<DailySleepDetailsMetrics | DailySleepDetailsMetricsGaugeSize | DailySleepDetailsGaugeMetrics> {
 	// TOTO implement
 	return {
-		[MetricType.UserDailyAwakeStageDuration]: 45,
-		[MetricType.UserDailyRealSleepDuration]: 330,
-		[MetricType.UserDailyPercREMStage]: 22,
-		[MetricType.UserDailyPercDeepStage]: 18,
-		[MetricType.UserDailyTranquility]: 50,
-		[MetricType.UserDailyCircadianRhythm]: 60,
-		[MetricType.UserDailyTimeToFallAsleep]: 60,
-		[MetricType.UserDailySleepDebt]: 158,
-		[MetricType.UserDailyPercAwakeStageDuration]: 10,
-		[MetricType.UserDailyPercRealSleep]: 51,
-		[MetricType.UserDailyPercREMStageScore]: 22,
-		[MetricType.UserDailyPercdeepStageScore]: 18,
-		[MetricType.UserDailyPercTimeTtoFallAsleep]: 10,
-		[MetricType.UserDailyPercSleepDebt]: 60,
+        // Those metrics are used to display the gauge label
+        [MetricType.UserDailyTranquility]: 0.83,
+        [MetricType.UserDailyCircadianRhythm]: 0.89,
+        [MetricType.UserDailyAwakeStageDuration]: 45,
+        [MetricType.UserDailyPercAwakeStageDuration]: 0.08,
+        [MetricType.UserDailyRealSleepDuration]: 514,
+        [MetricType.UserDailyPercRealSleep]: 0.92,
+        [MetricType.UserDailyPercREMStage]: 0.23,
+        [MetricType.UserDailyCorrectedPercREMStage]: 0.94,
+        [MetricType.UserDailyPercDeepStage]: 0.09,
+        [MetricType.UserDailyCorrectedPercDeepStage]: 0.74,
+        [MetricType.UserDailyTimeToFallAsleep]: 22,
+        [MetricType.UserDailyPercTimeToFallAsleep]: 0.93,
+        [MetricType.UserDailySleepDebt]: -11,
+        [MetricType.UserDailyPercSleepDebt]: 0.98,
+        // Those metrics are used for the gauge calibration
+        [MetricType.UserDailyPercRealSleepDurationGoalMin]: 0.8,
+        [MetricType.UserDailyPercRealSleepDurationGoalMax]: 0.9,
+        [MetricType.UserDailyTranquilityGoalMin]: 0.8,
+        [MetricType.UserDailyTranquilityGoalMax]: 0.9,
+        [MetricType.UserDailyCircadianRhythmGoalMin]: .8,
+        [MetricType.UserDailyCircadianRhythmGoalMax]: .9,
+        [MetricType.UserDailyPercREMStageScoreGoalMin]: 0.8,
+        [MetricType.UserDailyPercREMStageScoreGoalMax]: 0.9,
+        [MetricType.UserDailyPercDeepStageScoreGoalMin]: .8,
+        [MetricType.UserDailyPercDeepStageScoreGoalMax]: .9,
+        [MetricType.UserDailyPercTimeToFallAsleepGoalMin]: 0.8,
+        [MetricType.UserDailyPercTimeToFallAsleepGoalMax]: 0.9,
+        [MetricType.UserDailySleepDebtGoalMin]: 0.8,
+        [MetricType.UserDailySleepDebtGoalMax]: 0.9,
 	};
 }
 

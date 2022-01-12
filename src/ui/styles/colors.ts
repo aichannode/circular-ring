@@ -1,4 +1,4 @@
-import { ScoreQuality } from "@domain/measure/score";
+import { SignalQuality, ScoreQuality } from "@domain/measure/score";
 import { Intensity } from "@domain/ring/ringLiveData";
 
 export const colors = {
@@ -21,16 +21,16 @@ export const colors = {
 	sleepBlue: "#001871",
 	orangeRed: "#ff3d00",
 	lightBlue: "#AEBBF0",
-	orangeGradientStart: "#f44a59",
-	orangeGradientEnd: "#f97444",
-	purpleGarientStart: "#AD7CD4",
-	purpleGarientEnd: "#FC7F81",
 	high: "rgba(255,208,37, 0.89)",
 	medium: "rgba(255,93,0, 0.75)",
 	low: "rgba(255,29,29, 0.81)",
 	none: "rgb(222,222,222)",
 	selected: "rgba(51,51,51, 0.89)",
 	disabled: "#bfbfbf",
+	gradient: {
+		orange: ["#f44a59", "#f97444"],
+		purple: ["#AD7CD4", "#FC7F81"],
+	},
 	// Place here all the colors relative to business semantic
 	business: {
 		activityPrimary: "#e00a0a",
@@ -39,12 +39,17 @@ export const colors = {
 		activityHigh: "#DD2A2A",
 		sleepPrimary: "#2932ee",
 	},
-};
+} as const;
 
-export const qualityColors: { [key in ScoreQuality]: string } = {
+export const ScoreQualityColors: { [key in ScoreQuality]: string } = {
 	[ScoreQuality.POOR]: colors.red,
 	[ScoreQuality.GOOD]: colors.orange,
 	[ScoreQuality.OPTIMAL]: colors.green,
+};
+
+export const SignalQualityColors: { [key in SignalQuality]: string } = {
+	[SignalQuality.POOR]: colors.red,
+	[SignalQuality.GOOD]: colors.green,
 };
 
 export const intensityColors: { [key in Intensity]: string } = {

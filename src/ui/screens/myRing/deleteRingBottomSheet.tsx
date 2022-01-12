@@ -17,7 +17,7 @@ interface DeleteRingBottomSheetProps {
 
 export const DeleteRingBottomSheet: React.FC<DeleteRingBottomSheetProps> = ({ ring, onClose }) => {
 	const { format } = useI18n();
-	const { ringManagementService } = useServices();
+	const { ringManagementService, bleDeviceService } = useServices();
 
 	const [isSuccess, setSuccess] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string>("");
@@ -29,6 +29,7 @@ export const DeleteRingBottomSheet: React.FC<DeleteRingBottomSheetProps> = ({ ri
 		try {
 			console.log("DISSOCIATE");
 			await ringManagementService.deleteRing(ring);
+			bleDeviceService.setFavoriteDeviceName("noring");
 			setLoading(false);
 			setSuccess(true);
 		} catch (error) {

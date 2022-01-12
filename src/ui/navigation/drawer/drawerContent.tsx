@@ -14,7 +14,7 @@ export const DrawerContent = () => {
 	const { format } = useI18n();
 
 	return (
-		<Container colors={[colors.orangeGradientEnd, colors.orangeGradientStart]}>
+		<Container colors={colors.gradient.orange.slice(0)}>
 			<Pressable onPress={() => navigation.dispatch(DrawerActions.toggleDrawer)}>
 				<CloseContainer>
 					<CloseText>{format("drawer.close")}</CloseText>

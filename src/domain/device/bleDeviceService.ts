@@ -206,6 +206,10 @@ export class BleDeviceService {
 			this.autoConnectFavoriteDevice();
 		}
 	}
+	async setFavoriteDeviceName(name: string) {
+		await this.favoriteDeviceStorage.save({ name });
+		this._favoriteDevice.set({ name });
+	}
 
 	async startScan() {
 		if (this._scanning.get()) {
@@ -689,7 +693,11 @@ export class BleDeviceService {
 
 						// 	return { ...c, data: { ...c?.data, correlation: deserializedData.correlation, maxHeartRate } };
 						// }
-						return { ...c, data: { ...deserializedData, maxHeartRate } };
+						if (deserializedData.heartRate === 0) {
+							return { ...c, data: { ...c.data, correlation: 0 } };
+						}
+
+						return { ...c, data: { ...deserializedData, maxHeartRate, correlation: 1 } };
 					});
 				}
 			}

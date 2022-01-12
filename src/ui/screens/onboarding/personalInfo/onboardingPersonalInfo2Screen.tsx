@@ -92,7 +92,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 						selected={sex === Sex.Male}
 						onPress={() => setSex(Sex.Male)}
 						bgColor={colors.white}
-						colors={[colors.orangeGradientStart, colors.orangeGradientEnd]}
+						colors={colors.gradient.orange}
 					>
 						{format("onboarding.personal_info.sex_male")}
 					</SelectableButton>
@@ -101,7 +101,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 						selected={sex === Sex.Female}
 						onPress={() => setSex(Sex.Female)}
 						bgColor={colors.white}
-						colors={[colors.orangeGradientStart, colors.orangeGradientEnd]}
+						colors={colors.gradient.orange}
 					>
 						{format("onboarding.personal_info.sex_female")}
 					</SelectableButton>

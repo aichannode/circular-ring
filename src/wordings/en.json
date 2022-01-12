@@ -146,6 +146,7 @@
 	"activity.duration.label.sport_end": "Sport end",
 	"activity.duration.label.sport_start": "Sport start",
 	"activity.duration.total": "Total sport",
+	"activity.duration.title": "Activity duration",
 	"activity.energy_score": "Energy score",
 	"activity.score.daily_metrics": "Daily metrics",
 	"activity.score.details": "Energy score details",

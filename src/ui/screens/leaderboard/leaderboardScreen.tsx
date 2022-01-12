@@ -294,7 +294,7 @@ const LeaderboardTile = ({
 		<Tile
 			start={{ x: 0, y: 1 }}
 			end={{ x: 1, y: 0.5 }}
-			colors={gradient ? [colors.orangeGradientStart, colors.orangeGradientEnd] : [colors.white, colors.white]}
+			colors={gradient ? colors.gradient.orange.slice(0) : [colors.white, colors.white]}
 			style={{
 				shadowColor: "#000",
 				shadowOffset: {

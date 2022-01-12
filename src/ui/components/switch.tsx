@@ -31,7 +31,7 @@ export function Switch<T>({
 			colors={
 				disabled
 					? [colors.disabled, colors.disabled]
-					: [colors.orangeGradientStart, colors.orangeGradientEnd, colors.orangeGradientStart]
+					: colors.gradient.orange.concat(colors.gradient.orange[0])
 			}
 		>
 			<LeftOption onPress={() => (disabled ? null : onSelectOption(options[0]))}>
