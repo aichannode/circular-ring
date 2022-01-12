@@ -5,7 +5,7 @@ import { TouchableOpacity } from "react-native";
 import { Stack } from "@ui/components/layout";
 import styled from "styled-components/native";
 import { useServices } from "@core/services";
-import { I_Active } from "@domain/quickaccess/quickAccess";
+import { I_QuickAccessElem } from "@domain/appState/type";
 import { AlarmTile } from "./Alarm";
 
 import { TimerTile } from "./Timer";
@@ -14,8 +14,8 @@ import { useObservable } from "micro-observables";
 
 const SleepTile = () => {
 	// const { format } = useI18n();
-	const { userQuickAccessService } = useServices();
-	const sleepMode = useObservable(userQuickAccessService.isInSleepMode);
+	const { appStateService } = useServices();
+	const sleepMode = useObservable(appStateService.isInSleepMode);
 	// const [sleepMode, setSleepMode] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -29,7 +29,7 @@ const SleepTile = () => {
 		<Tile style={{ backgroundColor: sleepBackGound }}>
 			<TouchableOpacity
 				onPress={() => {
-					userQuickAccessService.setSleepMode(!sleepMode);
+					appStateService.updateSleepMode(!sleepMode);
 				}}
 			>
 				<Bold style={{ color: sleepTextColor }}>Sleep mode</Bold>
@@ -52,7 +52,7 @@ const CalendarTile = () => {
 
 export const QuickAccess: React.FC = () => {
 	const { format } = useI18n();
-	const [active, setActive] = useState<I_Active[] | undefined>([]);
+	const [active, setActive] = useState<I_QuickAccessElem[] | undefined>([]);
 
 	const _quickAccess = [
 		{
@@ -72,15 +72,15 @@ export const QuickAccess: React.FC = () => {
 		},
 	];
 
-	const { userQuickAccessService } = useServices();
+	const { appStateService } = useServices();
 
 	useEffect(() => {
 		setActive(
-			userQuickAccessService.quickaccess.get().active.length || userQuickAccessService.quickaccess.get().disabled.length
-				? userQuickAccessService.quickaccess.get()?.active
+			appStateService.quickaccess.get().active.length || appStateService.quickaccess.get().disabled.length
+				? appStateService.quickaccess.get()?.active
 				: _quickAccess
 		);
-		userQuickAccessService.quickaccess.subscribe((data) => {
+		appStateService.quickaccess.subscribe((data) => {
 			if (data?.active) {
 				setActive(data?.active);
 			}

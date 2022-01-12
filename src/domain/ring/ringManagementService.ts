@@ -1,7 +1,7 @@
 import { getLogger } from "@core/logger/logger";
 import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { Channel } from "@domain/device/channels";
-import { UserQuickAccess } from "@domain/quickaccess/quickAccessService";
+import { AppStateService } from "@domain/appState/appStateService";
 import { observable } from "micro-observables";
 import { NamedUserRing } from "./ring";
 import { RingApi } from "./ringApi";
@@ -32,7 +32,7 @@ export class RingManagementService {
 		private readonly userRingsStorage: UserRingsStorage,
 		private readonly ringDataStorage: RingDataStorage,
 		private readonly ringApi: RingApi,
-		private readonly userQuickAccessService: UserQuickAccess
+		private readonly appStateService: AppStateService
 	) {
 		// once device is connected, retrieve its name and set it to our ring info
 		this.deviceService.favoriteDeviceSNU.subscribe((snu) => {
@@ -63,7 +63,7 @@ export class RingManagementService {
 					else return { ...ring, connected: false };
 				})
 			);
-		if (!this.userQuickAccessService.isInSleepMode) this.syncData();
+		if (!this.appStateService.isInSleepMode) this.syncData();
 	}
 
 	async getRings() {

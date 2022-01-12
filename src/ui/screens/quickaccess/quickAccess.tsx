@@ -7,7 +7,7 @@ import LinearGradient from "react-native-linear-gradient";
 import { StyleSheet, View } from "react-native";
 import { DraxProvider, DraxView } from "react-native-drax";
 import { useServices } from "@core/services";
-import { I_Active } from "@domain/quickaccess/quickAccess";
+import { I_QuickAccessElem } from "@domain/appState/type";
 
 export const QuickAccess: React.FC = () => {
 	const { format } = useI18n();
@@ -42,21 +42,18 @@ export const QuickAccess: React.FC = () => {
 
 	const [receiver, setReceiver] = useState(-1);
 	const [disabledReceiver, setDisabledReceiver] = useState(-1);
-	const [quickAccess, setQuickAccess] = useState<I_Active[]>(_quickAccess);
-	const [disabledQuickAccess, setDisabledQuickAccess] = useState<I_Active[]>(_disabledQuickAccess);
-	const { userQuickAccessService } = useServices();
+	const [quickAccess, setQuickAccess] = useState<I_QuickAccessElem[]>(_quickAccess);
+	const [disabledQuickAccess, setDisabledQuickAccess] = useState<I_QuickAccessElem[]>(_disabledQuickAccess);
+	const { appStateService } = useServices();
 
 	useEffect(() => {
-		if (
-			userQuickAccessService.quickaccess.get().active.length ||
-			userQuickAccessService.quickaccess.get().disabled.length
-		) {
+		if (appStateService.quickaccess.get().active.length || appStateService.quickaccess.get().disabled.length) {
 			console.log(
 				"## INITIAL RUN",
-				userQuickAccessService.quickaccess.get()?.active.map((t) => t.id)
+				appStateService.quickaccess.get()?.active.map((t) => t.id)
 			);
-			setQuickAccess(userQuickAccessService.quickaccess.get()?.active);
-			setDisabledQuickAccess(userQuickAccessService.quickaccess.get()?.disabled);
+			setQuickAccess(appStateService.quickaccess.get()?.active);
+			setDisabledQuickAccess(appStateService.quickaccess.get()?.disabled);
 		}
 	}, []);
 
@@ -75,7 +72,7 @@ export const QuickAccess: React.FC = () => {
 							setReceiver(-1);
 						}}
 						onReceiveDragDrop={({ dragged: { payload } }) => {
-							userQuickAccessService.update({
+							appStateService.updateQuickaccess({
 								active: [disabledQuickAccess[payload.i]],
 								disabled: disabledQuickAccess.filter((t) => t.id != payload.tile.id),
 							});
@@ -105,7 +102,7 @@ export const QuickAccess: React.FC = () => {
 											const newArrayWithoutTile = quickAccess.filter((t) => t.id != payload.tile.id);
 											const newBeginning = newArrayWithoutTile.slice(0, i);
 											const newEnd = newArrayWithoutTile.slice(i, quickAccess.length);
-											userQuickAccessService.update({
+											appStateService.updateQuickaccess({
 												active: [...newBeginning, quickAccess[payload.i], ...newEnd],
 												disabled: disabledQuickAccess,
 											});
@@ -113,7 +110,7 @@ export const QuickAccess: React.FC = () => {
 										} else {
 											const newBeginning = quickAccess.slice(0, i);
 											const newEnd = quickAccess.slice(i, disabledQuickAccess.length);
-											userQuickAccessService.update({
+											appStateService.updateQuickaccess({
 												active: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
 												disabled: disabledQuickAccess.filter((t) => t.id != payload.tile.id),
 											});
@@ -174,7 +171,7 @@ export const QuickAccess: React.FC = () => {
 											const newArrayWithoutTile = quickAccess.filter((t) => t.id != payload.tile.id);
 											const newBeginning = newArrayWithoutTile.slice(0, i + 1);
 											const newEnd = newArrayWithoutTile.slice(i + 1, quickAccess.length);
-											userQuickAccessService.update({
+											appStateService.updateQuickaccess({
 												active: [...newBeginning, quickAccess[payload.i], ...newEnd],
 												disabled: disabledQuickAccess,
 											});
@@ -182,7 +179,7 @@ export const QuickAccess: React.FC = () => {
 										} else {
 											const newBeginning = quickAccess.slice(0, i + 1);
 											const newEnd = quickAccess.slice(i + 1, disabledQuickAccess.length);
-											userQuickAccessService.update({
+											appStateService.updateQuickaccess({
 												active: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
 												disabled: disabledQuickAccess.filter((t) => t.id != payload.tile.id),
 											});
@@ -223,7 +220,7 @@ export const QuickAccess: React.FC = () => {
 											if (isInQuickAccess) {
 												const newBeginning = disabledQuickAccess.slice(0, i);
 												const newEnd = disabledQuickAccess.slice(i, disabledQuickAccess.length);
-												userQuickAccessService.update({
+												appStateService.updateQuickaccess({
 													active: quickAccess.filter((t) => t.id != payload.tile.id),
 													disabled: [...newBeginning, quickAccess[payload.i], ...newEnd],
 												});
@@ -240,7 +237,7 @@ export const QuickAccess: React.FC = () => {
 											} else {
 												const newBeginning = disabledQuickAccess.slice(0, i);
 												const newEnd = disabledQuickAccess.slice(i, disabledQuickAccess.length);
-												userQuickAccessService.update({
+												appStateService.updateQuickaccess({
 													active: quickAccess,
 													disabled: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
 												});
@@ -309,7 +306,7 @@ export const QuickAccess: React.FC = () => {
 											);
 											setDisabledQuickAccess([...newBeginning, quickAccess[payload.i], ...newEnd]);
 											setQuickAccess(quickAccess.filter((t) => t.id != payload.tile.id));
-											userQuickAccessService.update({
+											appStateService.updateQuickaccess({
 												active: quickAccess.filter((t) => t.id != payload.tile.id),
 												disabled: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
 											});
@@ -317,7 +314,7 @@ export const QuickAccess: React.FC = () => {
 											const newArrayWithoutTile = disabledQuickAccess.filter((t) => t.id != payload.tile.id);
 											const newBeginning = newArrayWithoutTile.slice(0, i);
 											const newEnd = newArrayWithoutTile.slice(i, disabledQuickAccess.length);
-											userQuickAccessService.update({
+											appStateService.updateQuickaccess({
 												active: quickAccess,
 												disabled: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
 											});

@@ -9,6 +9,7 @@ import styled from "styled-components/native";
 import { useServices } from "@core/services";
 import { useObservable } from "micro-observables";
 import { CircleEntity } from "../../../domain/circles/type";
+import { useSleepMode } from "@domain/appState/appStateHooks";
 
 interface CirclesProps {
 	style?: StyleProp<ViewStyle>;
@@ -17,9 +18,9 @@ interface CirclesProps {
 export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 	const { format } = useI18n();
 	const navigation = useRoutesNavigation();
-	const { circlesService, userQuickAccessService } = useServices();
+	const { circlesService } = useServices();
 	const circles = useObservable(circlesService.circles);
-	const isInSleepMode = useObservable(userQuickAccessService.isInSleepMode);
+	const isInSleepMode = useSleepMode();
 	const addCircle: CircleEntity = {
 		id: 0,
 		route: Routes.CircleAdd,

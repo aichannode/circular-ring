@@ -23,8 +23,7 @@ import Fade from "@ui/components/fade";
 
 export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
-	const { feedService, bluetoothService, bleDeviceService, ringManagementService, userQuickAccessService } =
-		useServices();
+	const { feedService, bluetoothService, bleDeviceService, ringManagementService, appStateService } = useServices();
 	const [forceRefreshing, setForceRefreshing] = useState(false);
 
 	const setupState = useSetupState();
@@ -40,7 +39,7 @@ export const HomeScreen: React.FC = () => {
 	}, []);
 
 	const forceRefresh = useCallback(async () => {
-		if (userQuickAccessService.isInSleepMode.get()) return;
+		if (appStateService.isInSleepMode.get()) return;
 		if (syncState !== SyncState.NONE) {
 			return;
 		}
