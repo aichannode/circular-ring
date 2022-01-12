@@ -24,16 +24,18 @@ import { UserRingsStorage } from "@domain/ring/userRingsStorage";
 import { UserApi } from "@domain/user/userApi";
 import { UserService } from "@domain/user/userService";
 import { UserStorage } from "@domain/user/userStorage";
-import { UserQuickAccess } from "@domain/quickaccess/quickAccessService";
 import React, { createContext, useContext } from "react";
 import { Config } from "react-native-config";
-import { QuickAccessStorage } from "@domain/quickaccess/quickAccessStorage";
 import { TimerService } from "@domain/timer/timerService";
 import { TokenPayload } from "@domain/auth/type";
 import { UserDevicesStorage } from "@domain/device/userDevicesStorage";
+import { AppStateService } from "@domain/appState/appStateService";
+import { AppStateStorage } from "@domain/appState/appStateStorage";
 
 const fakeDeviceService = Config.ENVIRONNEMENT === "dev" ? new DevFakeDeviceService() : new EmptyFakeDeviceService();
 
+const appStateStorage = new AppStateStorage();
+const appStateService = new AppStateService(appStateStorage);
 const userStorage = new UserStorage();
 const favoriteDeviceStorage = new FavoriteDeviceStorage();
 const ringDataStorage = new RingDataStorage();
@@ -41,7 +43,6 @@ const userRingsStorage = new UserRingsStorage();
 const userDevicesStorage = new UserDevicesStorage();
 
 const apiService = new ApiService();
-
 const ringApi = new RingApi(apiService);
 
 const cognitoAuthService = new CognitoAuthService<TokenPayload>();
@@ -51,7 +52,13 @@ const userApi = new UserApi(apiService);
 const bluetoothService = new BluetoothService();
 const bleDeviceService = new BleDeviceService(bluetoothService, fakeDeviceService, favoriteDeviceStorage, ringApi);
 const circleAlarmService = new CircleAlarmService(bleDeviceService);
-const ringManagementService = new RingManagementService(bleDeviceService, userRingsStorage, ringDataStorage, ringApi);
+const ringManagementService = new RingManagementService(
+	bleDeviceService,
+	userRingsStorage,
+	ringDataStorage,
+	ringApi,
+	appStateService
+);
 
 const userService = new UserService(
 	cognitoAuthService,
@@ -68,9 +75,6 @@ const measureService = new MeasureService(measureApi);
 
 const userPreferencesStorage = new UserPreferencesStorage();
 const userPreferencesService = new UserPreferencesService(userPreferencesStorage);
-
-const quickAccessStorage = new QuickAccessStorage();
-const userQuickAccess = new UserQuickAccess(quickAccessStorage);
 
 const calibrationApi = new CalibrationApi(apiService);
 const calibrationService = new CalibrationService(calibrationApi);
@@ -97,10 +101,10 @@ export const services = {
 	circlesService,
 	fakeDeviceService,
 	calendarService,
-	userQuickAccess,
 	timerService,
 	ringApi,
 	userDevicesStorage,
+	appStateService,
 };
 
 export type Services = typeof services;

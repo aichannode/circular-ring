@@ -9,6 +9,7 @@ import styled from "styled-components/native";
 import { useServices } from "@core/services";
 import { useObservable } from "micro-observables";
 import { CircleEntity } from "../../../domain/circles/type";
+import { useSleepMode } from "@domain/appState/appStateHooks";
 
 interface CirclesProps {
 	style?: StyleProp<ViewStyle>;
@@ -19,16 +20,28 @@ export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 	const navigation = useRoutesNavigation();
 	const { circlesService } = useServices();
 	const circles = useObservable(circlesService.circles);
+	const isInSleepMode = useSleepMode();
 	const addCircle: CircleEntity = {
 		id: 0,
 		route: Routes.CircleAdd,
 		source: require("@assets/images/circleAdd.png"),
+		sleepModeIcon: require("@assets/images/circleAdd.png"),
 		key: "home.circles.add.label",
 		on: true,
 		desc: "home.circles.alarm.description",
 		type: "",
+		canNavigateInSleepMode: true,
 	};
 	const circlesBanner = [addCircle].concat(circles);
+
+	const circleNavigate = (circle: CircleEntity) => {
+		if (!isInSleepMode) {
+			navigation.navigate(circle.route);
+		}
+		if (isInSleepMode && circle.canNavigateInSleepMode) {
+			navigation.navigate(circle.route);
+		}
+	};
 
 	return (
 		<Container style={style} gap={15}>
@@ -37,9 +50,9 @@ export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 				<Row align="flex-start" gap={0}>
 					{circlesBanner.map((circle) =>
 						circle.on ? (
-							<CircleView key={circle.route} onPress={() => navigation.navigate(circle.route)}>
+							<CircleView key={circle.route} onPress={() => circleNavigate(circle)}>
 								<Stack style={{ marginTop: circle.id === 0 ? -10 : 0 }} gap={circle.id === 0 ? -3 : 10} align="center">
-									<Image source={circle.source} />
+									<Image source={isInSleepMode ? circle.sleepModeIcon : circle.source} />
 									<CircleLabel>{format(circle.key)}</CircleLabel>
 								</Stack>
 							</CircleView>
