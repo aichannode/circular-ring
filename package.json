@@ -94,6 +94,7 @@
 		"@types/react-native-calendars": "^1.1264.2",
 		"@types/styled-components": "^5.1.13",
 		"@types/styled-components-react-native": "^5.1.1",
+		"@typescript-eslint/eslint-plugin": "^5.9.1",
 		"babel-jest": "^27.1.0",
 		"cz-conventional-changelog": "^3.3.0",
 		"eslint": "^7.32.0",
