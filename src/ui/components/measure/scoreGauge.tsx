@@ -9,10 +9,10 @@ import styled from "styled-components/native";
 
 interface ScoreGaugeProps {
 	label: string;
-	value: string,
-	gaugeFilling: number,
-	isInverted?: boolean,
-	color: MetricColor,
+	value: string;
+	gaugeFilling: number;
+	isInverted?: boolean;
+	color: MetricColor;
 	style?: StyleProp<ViewStyle>;
 	onPress?: () => void;
 }
@@ -36,11 +36,9 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 				<GaugeValue
 					perc={gaugeFilling}
 					isInverted={isInverted}
-					style={{backgroundColor: color === MetricColor.RED
-						? colors.red
-						: color === MetricColor.ORANGE
-							? colors.orange
-							: colors.green
+					style={{
+						backgroundColor:
+							color === MetricColor.RED ? colors.red : color === MetricColor.ORANGE ? colors.orange : colors.green,
 					}}
 				/>
 			</Gauge>
@@ -61,7 +59,7 @@ const Gauge = styled.View`
 	overflow: hidden;
 `;
 
-const GaugeValue = styled.View<{ perc: number, isInverted?: boolean }>`
+const GaugeValue = styled.View<{ perc: number; isInverted?: boolean }>`
 	position: absolute;
 	top: 0;
 	bottom: 0;

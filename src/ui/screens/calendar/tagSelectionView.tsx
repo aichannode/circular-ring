@@ -23,7 +23,7 @@ export const TagSelectionView: React.FC<CalendarTagListViewProps> = ({
 		})
 		.sort((t1, t2) => {
 			return t1.name.localeCompare(t2.name);
-		})
+		});
 
 	if (displayCount) {
 		visibleTags = visibleTags.slice(0, displayCount);

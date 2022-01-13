@@ -17,7 +17,7 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import utc from "dayjs/plugin/utc";
 import { LocaleConfig } from "react-native-calendars";
-import { enableES5 } from "immer"
+import { enableES5 } from "immer";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 dayjs.extend(customParseFormat);
@@ -28,7 +28,7 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 // Configure immer for RN
-enableES5()
+enableES5();
 
 const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: "white" } };
 
@@ -53,6 +53,7 @@ export const App = () => {
 				monthNamesShort: intl.formatMessage({ id: "months_short" }).split(","),
 				dayNames: intl.formatMessage({ id: "days" }).split(","),
 				dayNamesShort: intl.formatMessage({ id: "days_short" }).split(","),
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				//@ts-ignore
 				today: intl.formatMessage({ id: "today" }),
 			};

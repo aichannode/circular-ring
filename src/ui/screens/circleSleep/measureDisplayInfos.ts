@@ -5,9 +5,8 @@ import { WordingKey } from "src/wordings";
 import { getGaugeColor, getInvertedGaugeColor } from "../business";
 import { GaugeDisplayConfig } from "../type";
 
-
 export type SleepQualityDetails = {
-	[key in DailySleepDetailsMetrics]: GaugeDisplayConfig
+	[key in DailySleepDetailsMetrics]: GaugeDisplayConfig;
 };
 
 export function getSleepQualityDetails(format: (v: WordingKey) => string): SleepQualityDetails {
@@ -23,7 +22,7 @@ export function getSleepQualityDetails(format: (v: WordingKey) => string): Sleep
 			titleKey: "sleep.quality.disturbance.label",
 			descriptionKey: "sleep.quality.disturbance.description",
 			isInverted: true,
-			renderValue: ({value, gaugeFilling}) => `${value} min (${gaugeFilling*100}%)`,
+			renderValue: ({ value, gaugeFilling }) => `${value} min (${gaugeFilling * 100}%)`,
 			getGaugeColor: getInvertedGaugeColor(true),
 		},
 		[MetricType.UserDailyRealSleepDuration]: {
@@ -36,9 +35,10 @@ export function getSleepQualityDetails(format: (v: WordingKey) => string): Sleep
 			},
 			titleKey: "sleep.quality.real_sleep.label",
 			descriptionKey: "sleep.quality.real_sleep.description",
-			renderValue: ({value, gaugeFilling}) => `${moment(value * 60 * 1000).hour()} h ${moment(value * 60 * 1000).minutes()} min (${gaugeFilling*100}%)`,
+			renderValue: ({ value, gaugeFilling }) =>
+				`${moment(value * 60 * 1000).hour()} h ${moment(value * 60 * 1000).minutes()} min (${gaugeFilling * 100}%)`,
 			getGaugeColor: getGaugeColor(),
-			displaySegment: [.6, 1],
+			displaySegment: [0.6, 1],
 		},
 		[MetricType.UserDailyTranquility]: {
 			// Tranquility: 2 metrics
@@ -53,7 +53,7 @@ export function getSleepQualityDetails(format: (v: WordingKey) => string): Sleep
 			renderValue: getTranquilityLabel(format),
 			getGaugeColor: getGaugeColor(),
 		},
-		[MetricType.UserDailyCircadianRhythm]:{
+		[MetricType.UserDailyCircadianRhythm]: {
 			// Circadian
 			metricsName: {
 				value: MetricType.UserDailyCircadianRhythm,
@@ -63,7 +63,7 @@ export function getSleepQualityDetails(format: (v: WordingKey) => string): Sleep
 			},
 			titleKey: "sleep.quality.circadian.label",
 			descriptionKey: "sleep.quality.circadian.description",
-			renderValue: ({value}) => `${value*100}%`,
+			renderValue: ({ value }) => `${value * 100}%`,
 			getGaugeColor: getGaugeColor(),
 		},
 		[MetricType.UserDailyPercREMStage]: {
@@ -76,7 +76,7 @@ export function getSleepQualityDetails(format: (v: WordingKey) => string): Sleep
 			},
 			titleKey: "sleep.quality.rem.label",
 			descriptionKey: "sleep.quality.rem.description",
-			renderValue: ({value}) => `${value*100}%`,
+			renderValue: ({ value }) => `${value * 100}%`,
 			getGaugeColor: getGaugeColor(true),
 		},
 		[MetricType.UserDailyPercDeepStage]: {
@@ -89,7 +89,7 @@ export function getSleepQualityDetails(format: (v: WordingKey) => string): Sleep
 			},
 			titleKey: "sleep.quality.deep.label",
 			descriptionKey: "sleep.quality.deep.description",
-			renderValue: ({value}) => `${value*100}%`,
+			renderValue: ({ value }) => `${value * 100}%`,
 			getGaugeColor: getGaugeColor(),
 		},
 		[MetricType.UserDailyTimeToFallAsleep]: {
@@ -102,9 +102,8 @@ export function getSleepQualityDetails(format: (v: WordingKey) => string): Sleep
 			},
 			titleKey: "sleep.quality.fall_asleep.label",
 			descriptionKey: "sleep.quality.fall_asleep.description",
-			renderValue: ({value}) => `${value > 0 ? '+' : '-'} ${value} min`,
+			renderValue: ({ value }) => `${value > 0 ? "+" : "-"} ${value} min`,
 			getGaugeColor: getGaugeColor(),
-			
 		},
 		[MetricType.UserDailySleepDebt]: {
 			// Sleep debt: 2 metrics
@@ -116,28 +115,30 @@ export function getSleepQualityDetails(format: (v: WordingKey) => string): Sleep
 			},
 			titleKey: "sleep.quality.debt.label",
 			descriptionKey: "sleep.quality.debt.description",
-			renderValue: ({value}) => `${value} min`,
+			renderValue: ({ value }) => `${value} min`,
 			getGaugeColor: getGaugeColor(),
-			displaySegment: [.6, 1],
-		}
-	}
+			displaySegment: [0.6, 1],
+		},
+	};
 }
 
-const getTranquilityLabel = (format: (v: WordingKey) => string) => ({
-	value,
-	thresholdLow,
-	thresholdHigh,
-}: {
-	value: number,
-	thresholdLow: number,
-	thresholdHigh: number,
-	gaugeFilling: number,
-}) => {
-	if (value >= thresholdHigh) {
-		return format("sleep.tranquility.calm")
-	}
-	if (value < thresholdHigh && value >= thresholdLow) {
-		return format("sleep.tranquility.agitated")
-	}
-	return format("sleep.tranquility.very_agitated")
-}
+const getTranquilityLabel =
+	(format: (v: WordingKey) => string) =>
+	({
+		value,
+		thresholdLow,
+		thresholdHigh,
+	}: {
+		value: number;
+		thresholdLow: number;
+		thresholdHigh: number;
+		gaugeFilling: number;
+	}) => {
+		if (value >= thresholdHigh) {
+			return format("sleep.tranquility.calm");
+		}
+		if (value < thresholdHigh && value >= thresholdLow) {
+			return format("sleep.tranquility.agitated");
+		}
+		return format("sleep.tranquility.very_agitated");
+	};

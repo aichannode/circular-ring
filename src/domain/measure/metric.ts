@@ -1,14 +1,13 @@
 export type Metric<T extends MetricType = MetricType> = {
 	[key in T]: number | string;
-}
+};
 
 export type DatedMetrics<T extends MetricType = MetricType> = {
 	timestamp: string;
 	metrics: Partial<Metric<T>>;
-}
+};
 
-export type RangeMetrics<T extends MetricType = MetricType> = Array<DatedMetrics<T>>
-
+export type RangeMetrics<T extends MetricType = MetricType> = Array<DatedMetrics<T>>;
 
 export enum MetricType {
 	//////////////
@@ -59,7 +58,7 @@ export enum MetricType {
 	UserDailySleepScoreGoalMax = "user.daily.score.sleep.goal.max",
 	UserDailyScoreSleepBalanceGoalMin = "user.daily.score.sleep.balance.goal.min",
 	UserDailyScoreSleepBalanceGoalMax = "user.daily.score.sleep.balance.goal.max",
-	
+
 	///////////////////
 	// Daily metabolism
 	///////////////////
@@ -107,5 +106,4 @@ export enum MetricType {
 	UserDailyWalkingEquivalencyGoalMax = "user.daily.walking.equivalency.goal.max",
 	UserDailyStepsGoalMin = "user.daily.steps.goal.min",
 	UserDailyStepsGoalMax = "user.daily.steps.goal.max",
-
 }

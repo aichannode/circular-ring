@@ -8,10 +8,10 @@ export interface CalendarTag {
 }
 
 export type CalendarTagCategory = {
-	id:	number
-	label: WordingKey
-	order: number
-}
+	id: number;
+	label: WordingKey;
+	order: number;
+};
 
 export interface CalendarNote {
 	id: number;

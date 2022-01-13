@@ -9,7 +9,7 @@ import React from "react";
 import { Image, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 import { Paragraph } from "../components/Paragraph";
-import { ParagraphComponentConfigurationDto } from "@domain/feed/type"
+import { ParagraphComponentConfigurationDto } from "@domain/feed/type";
 import { useI18n } from "@ui/i18n";
 import { useServices } from "@core/services";
 import { openURL } from "@ui/utils/urlUtils";
@@ -39,15 +39,12 @@ function getActionHandler(notif: FeedNotification, navigate: Navigate) {
 
 export const Notification: React.FC<Props> = ({ notification, style }) => {
 	const { navigate } = useRoutesNavigation();
-	const { feedService } = useServices()
-	const useContrastColor = notification.style === FeedEntityStyle.ORANGE_GRADIENT
+	const { feedService } = useServices();
+	const useContrastColor = notification.style === FeedEntityStyle.ORANGE_GRADIENT;
 	const { format } = useI18n();
 
 	return (
-		<Pressable
-			onPress={getActionHandler(notification, navigate)}
-			style={style}
-		>
+		<Pressable onPress={getActionHandler(notification, navigate)} style={style}>
 			<Container>
 				<View style={{ marginRight: 27 }}>
 					{notification.icon.type === IconType.URL ? <Image source={{ uri: notification.icon.type }} /> : null}
@@ -59,7 +56,12 @@ export const Notification: React.FC<Props> = ({ notification, style }) => {
 						{...(notification.components[0] as ParagraphComponentConfigurationDto).configuration}
 					/>
 				</Stack>
-				<CloseButton padding={16} onClose={() => {feedService.closeNotification(notification.id)}} />
+				<CloseButton
+					padding={16}
+					onClose={() => {
+						feedService.closeNotification(notification.id);
+					}}
+				/>
 			</Container>
 		</Pressable>
 	);

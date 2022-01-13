@@ -45,6 +45,7 @@ export const CalendarView: React.FC<CalendarProps> = ({
 			disableArrowLeft={isFirstMonth}
 			disableArrowRight={isLastMonth}
 			onDayPress={(day) => onDaySelected(day.dateString)}
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			//@ts-ignore
 			onMonthChange={(date: any) => {
 				setVisibleMonthDay(date.dateString);

@@ -609,7 +609,7 @@ export class BleDeviceService {
 				subscription.remove();
 			} else {
 				const decodedOutput = base64decode(charac?.value ?? "");
-				this.logger.debug("✅ BleDeviceService | decodedOutput : ", decodedOutput);
+				this.logger.debug("✅ BleDeviceService | decodedOutput : ", decodedOutput);
 				this.onMessageReceived.dispatch(decodedOutput);
 			}
 		});
@@ -676,8 +676,8 @@ export class BleDeviceService {
 						console.log("C", c);
 
 						const maxHeartRate =
-							c.data && !isNaN(Math.max(deserializedData.heartRate!, c.data.heartRate!))
-								? Math.max(deserializedData.heartRate!, c.data.maxHeartRate!)
+							c.data && !isNaN(Math.max(deserializedData.heartRate, c.data.heartRate ?? deserializedData.heartRate))
+								? Math.max(deserializedData.heartRate, c.data.maxHeartRate ?? deserializedData.heartRate)
 								: deserializedData.heartRate;
 
 						// if (maxHeartRate === undefined || isNaN(maxHeartRate)) maxHeartRate: c?.data?.heartRate;

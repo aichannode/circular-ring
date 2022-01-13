@@ -25,8 +25,10 @@ export class CalendarApi {
 	}
 
 	async getCategories(ids: number[]) {
-		const result = await this.apiService.get<CalendarTagCategory[]>(`/notes/tags/categories?${ids.map(id => `categoryId=${id}`).join('&')}`)
-		return result.data
+		const result = await this.apiService.get<CalendarTagCategory[]>(
+			`/notes/tags/categories?${ids.map((id) => `categoryId=${id}`).join("&")}`
+		);
+		return result.data;
 	}
 
 	async createTag(name: string, category: string) {

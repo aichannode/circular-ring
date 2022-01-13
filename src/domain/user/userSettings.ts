@@ -5,5 +5,5 @@ export interface UserSettings {
 	dateFormat: DateFormat;
 	heightFormat: HeightUnit;
 	weightFormat: WeightUnit;
-	hourFormat: HourFormat
+	hourFormat: HourFormat;
 }

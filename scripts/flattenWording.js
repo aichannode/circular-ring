@@ -1,8 +1,8 @@
-const fs = require("fs");
+import fs from "fs";
 
 function flattenInDir(dir) {
 	const files = fs.readdirSync(dir);
-	files.map(file => {
+	files.map((file) => {
 		const filename = `${dir}/${file}`;
 		if (fs.statSync(filename).isDirectory()) {
 			return flattenInDir(filename);

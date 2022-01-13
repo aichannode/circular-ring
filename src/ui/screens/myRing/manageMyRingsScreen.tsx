@@ -102,7 +102,11 @@ export const ManageMyRingsScreen = () => {
 				})}
 			</Stack>
 			<CircularBottomSheet snapPoints={[480]} ref={deleteRingBottomSheetRef}>
-				<DeleteRingBottomSheet ring={ringToDelete!} onClose={() => deleteRingBottomSheetRef.current?.close()} />
+				<>
+					{!!ringToDelete && (
+						<DeleteRingBottomSheet ring={ringToDelete} onClose={() => deleteRingBottomSheetRef.current?.close()} />
+					)}
+				</>
 			</CircularBottomSheet>
 		</ScrollScreen>
 	);

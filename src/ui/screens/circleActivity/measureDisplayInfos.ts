@@ -4,7 +4,7 @@ import { WordingKey } from "src/wordings";
 import { getMetricColor, getGaugeColor, getScoreQualityLabel } from "../business";
 import { GaugeDisplayConfig, MetricDisplayConfig } from "../type";
 
-export type DailyEnergyScoreGaugeConfigs = Record<DailyEnergyScoreMetrics, GaugeDisplayConfig>
+export type DailyEnergyScoreGaugeConfigs = Record<DailyEnergyScoreMetrics, GaugeDisplayConfig>;
 
 export function getActivityQualityDetails(format: (v: WordingKey) => string): DailyEnergyScoreGaugeConfigs {
 	return {
@@ -18,11 +18,11 @@ export function getActivityQualityDetails(format: (v: WordingKey) => string): Da
 			},
 			titleKey: "score.details.recovery.label",
 			descriptionKey: "score.details.recovery.description",
-			displaySegment: [.6, 1],
+			displaySegment: [0.6, 1],
 			renderValue: getScoreQualityLabel(format),
 			getGaugeColor: getGaugeColor(),
 		},
-		[MetricType.UserDailyWakeUpScore]:{
+		[MetricType.UserDailyWakeUpScore]: {
 			// Wakeup score
 			metricsName: {
 				value: MetricType.UserDailyWakeUpScore,
@@ -37,11 +37,11 @@ export function getActivityQualityDetails(format: (v: WordingKey) => string): Da
 				thresholdLow,
 				thresholdHigh,
 			}: {
-				value: number,
-				thresholdLow: number,
-				thresholdHigh: number,
-				gaugeFilling: number,
-			}) => `${value*100}%`,
+				value: number;
+				thresholdLow: number;
+				thresholdHigh: number;
+				gaugeFilling: number;
+			}) => `${value * 100}%`,
 			getGaugeColor: getGaugeColor(),
 		},
 		[MetricType.UserDailySleepBR]: {
@@ -59,10 +59,10 @@ export function getActivityQualityDetails(format: (v: WordingKey) => string): Da
 				thresholdLow,
 				thresholdHigh,
 			}: {
-				value: number,
-				thresholdLow: number,
-				thresholdHigh: number,
-				gaugeFilling: number,
+				value: number;
+				thresholdLow: number;
+				thresholdHigh: number;
+				gaugeFilling: number;
 			}) => `${value} rpm`,
 			getGaugeColor: getGaugeColor(),
 		},
@@ -81,10 +81,10 @@ export function getActivityQualityDetails(format: (v: WordingKey) => string): Da
 				thresholdLow,
 				thresholdHigh,
 			}: {
-				value: number,
-				thresholdLow: number,
-				thresholdHigh: number,
-				gaugeFilling: number,
+				value: number;
+				thresholdLow: number;
+				thresholdHigh: number;
+				gaugeFilling: number;
 			}) => `${value} ms`,
 			getGaugeColor: getGaugeColor(),
 		},
@@ -103,10 +103,10 @@ export function getActivityQualityDetails(format: (v: WordingKey) => string): Da
 				thresholdLow,
 				thresholdHigh,
 			}: {
-				value: number,
-				thresholdLow: number,
-				thresholdHigh: number,
-				gaugeFilling: number,
+				value: number;
+				thresholdLow: number;
+				thresholdHigh: number;
+				gaugeFilling: number;
 			}) => `${value} bpm`,
 			getGaugeColor: getGaugeColor(),
 		},
@@ -124,13 +124,13 @@ export function getActivityQualityDetails(format: (v: WordingKey) => string): Da
 				value,
 				thresholdLow,
 				thresholdHigh,
-				gaugeFilling
+				gaugeFilling,
 			}: {
-				value: number,
-				thresholdLow: number,
-				thresholdHigh: number,
-				gaugeFilling: number,
-			}) => `${value > 0 ? '+' : '-'} ${value}°C`,
+				value: number;
+				thresholdLow: number;
+				thresholdHigh: number;
+				gaugeFilling: number;
+			}) => `${value > 0 ? "+" : "-"} ${value}°C`,
 			getGaugeColor: getGaugeColor(),
 		},
 		[MetricType.UserDailySleepScore]: {
@@ -148,11 +148,11 @@ export function getActivityQualityDetails(format: (v: WordingKey) => string): Da
 				thresholdLow,
 				thresholdHigh,
 			}: {
-				value: number,
-				thresholdLow: number,
-				thresholdHigh: number,
-				gaugeFilling: number,
-			}) => `${value*100}%`,
+				value: number;
+				thresholdLow: number;
+				thresholdHigh: number;
+				gaugeFilling: number;
+			}) => `${value * 100}%`,
 			getGaugeColor: getGaugeColor(),
 		},
 		[MetricType.UserDailyScoreSleepBalance]: {
@@ -180,13 +180,13 @@ export function getActivityQualityDetails(format: (v: WordingKey) => string): Da
 			descriptionKey: "score.details.activity_volume.description",
 			renderValue: getScoreQualityLabel(format),
 			getGaugeColor: getGaugeColor(),
-		}
-	}
+		},
+	};
 }
 
 type MetricsDetails = {
-	[key in DailyActivityDetailsMetrics]: MetricDisplayConfig
-}
+	[key in DailyActivityDetailsMetrics]: MetricDisplayConfig;
+};
 
 export const dailyMetricsDetails: MetricsDetails = {
 	[MetricType.UserDailySteps]: {
@@ -243,4 +243,4 @@ export const dailyMetricsDetails: MetricsDetails = {
 		icon: "@assets/images/heart.png",
 		labelKey: "metric.hr_max",
 	},
-}
+};

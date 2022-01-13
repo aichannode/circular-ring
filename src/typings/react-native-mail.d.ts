@@ -52,8 +52,8 @@ declare module "react-native-mail" {
 				/**
 				 * On Android, the callback will only be called if an error occurs. The event argument is unused!
 				 */
-				event?: string,
-			) => void,
+				event?: string
+			) => void
 		): void;
 	}
 

@@ -9,13 +9,13 @@ import { WordingKey } from "../wordings";
 import { Bold, Colored, Strong } from "./components/text";
 
 export type FormatterOptions = Partial<{
-	color: ColorValue
-}>
+	color: ColorValue;
+}>;
 
 function createXmlFormatters(options?: FormatterOptions) {
 	return {
 		strong: (...chunks: string[]) => <Strong>{chunks}</Strong>,
-		colored: (...chunks: string[]) => <Colored style={{color: options?.color}}>{chunks}</Colored>,
+		colored: (...chunks: string[]) => <Colored style={{ color: options?.color }}>{chunks}</Colored>,
 		bold: (...chunks: string[]) => <Bold>{chunks}</Bold>,
 	} as const;
 }
@@ -29,7 +29,7 @@ export function useI18n(options?: FormatterOptions) {
 			(key: WordingKey, values?: Record<string, string | number | boolean | Date | null | undefined> | undefined) => {
 				try {
 					return intl.formatMessage({ id: key }, { ...values, ...createXmlFormatters(options) }) as string;
-				} catch(e) {
+				} catch (e) {
 					//TODO send to sentry
 					if (key === undefined) {
 						console.warn("[INTL] missing mandatory i18n key.");

@@ -98,7 +98,7 @@ export const ActivityIntensityGraph = ({ samples }: Props) => {
 									return [
 										{
 											target: "labels",
-											mutation: (props) => {
+											mutation: (props: { text: "clicked" }) => {
 												return props.text === "clicked" ? null : { text: "clicked" };
 											},
 										},

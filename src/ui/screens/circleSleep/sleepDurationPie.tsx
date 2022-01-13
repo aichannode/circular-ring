@@ -9,21 +9,16 @@ import styled from "styled-components/native";
 
 type Props = {
 	duration: number;
-	coreSleepTiming?: [string, string]
+	coreSleepTiming?: [string, string];
 	stages: Array<StageInfos<SleepStage>>;
-}
+};
 
 function getPhaseLevel(phase = 4) {
-    return phase < 4
-		? 1
-		: 0
+	return phase < 4 ? 1 : 0;
 }
 
 function createLabelGenerator(stages: Array<StageInfos<SleepStage>>, coreSleepTiming?: [string, string]) {
-	return function getLabels(
-		_phase: number,
-		index: number
-	): [WordingKey | null | "", WordingKey | null] {
+	return function getLabels(_phase: number, index: number): [WordingKey | null | "", WordingKey | null] {
 		// Display core sleep label
 		if (stages[index].start === coreSleepTiming?.[0]) {
 			return ["sleep.duration.label.start_sleep", null];
@@ -32,23 +27,23 @@ function createLabelGenerator(stages: Array<StageInfos<SleepStage>>, coreSleepTi
 			return [null, "sleep.duration.label.wake_up"];
 		}
 		return [null, null];
-	}
+	};
 }
 
 export function SleepDurationPieChart({ coreSleepTiming, stages, duration }: Props) {
 	return (
 		<Container>
-            <DailyPieChart
-                stages={stages}
+			<DailyPieChart
+				stages={stages}
 				totalDuration={duration}
-                title="sleep.duration.total"
-                chartSize={200}
-                currentIsoDate={moment().hour(20).toISOString()}
+				title="sleep.duration.total"
+				chartSize={200}
+				currentIsoDate={moment().hour(20).toISOString()}
 				phaseColors={[colors.lightBlue, colors.darkBlue]}
 				phaseWidths={[5, 7]}
-                getPhaseLevel={getPhaseLevel}
-                getLabels={createLabelGenerator(stages, coreSleepTiming)}
-            />
+				getPhaseLevel={getPhaseLevel}
+				getLabels={createLabelGenerator(stages, coreSleepTiming)}
+			/>
 		</Container>
 	);
 }

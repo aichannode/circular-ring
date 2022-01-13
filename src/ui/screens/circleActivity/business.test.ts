@@ -1,4 +1,3 @@
-
 import { ActivityStage } from "@domain/measure/type";
 import moment from "moment";
 import { sample } from "./business";

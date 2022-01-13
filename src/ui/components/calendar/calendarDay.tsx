@@ -7,8 +7,23 @@ import { Image } from "react-native";
 // import { DayComponentProps } from "react-native-calendars";
 import styled from "styled-components/native";
 
-export const CalendarDay: React.FC<any> = React.memo(({ date, marking, onPress, state }) => {
-	const fixedMarking = marking as unknown as { selected?: boolean } | undefined;
+type Date = {
+	dateString: string;
+	day: number;
+};
+
+type Props = {
+	date: {
+		dateString: string;
+		day: number;
+	};
+	marking?: { selected?: boolean };
+	onPress: (date: Date) => void;
+	state: "today" | "disabled";
+};
+
+export const CalendarDay: React.FC<Props> = React.memo(function CalendarDay({ date, marking, onPress, state }: Props) {
+	const fixedMarking = marking;
 	const dayCalendar = useCalendar(date.dateString, FetchStrategy.Never);
 
 	return (

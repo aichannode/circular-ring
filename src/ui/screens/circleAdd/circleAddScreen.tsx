@@ -20,9 +20,9 @@ function createViews(myArray: CircleEntity[]) {
 				<InnerContainer>
 					<Draggable source={circle.source}></Draggable>
 					<RightContainer>
-						<View style={{flexDirection: "row", width: "100%"}}>
+						<View style={{ flexDirection: "row", width: "100%" }}>
 							<Bold>{title}</Bold>
-							<TouchableOpacity style={{width: "10%"}} onPress={() => circlesService.toggleCircle(circle.id)}>
+							<TouchableOpacity style={{ width: "10%" }} onPress={() => circlesService.toggleCircle(circle.id)}>
 								<Status>{circle.on ? "ON" : "OFF"}</Status>
 							</TouchableOpacity>
 						</View>

@@ -15,8 +15,8 @@ export const AllTagsScreen: React.FC = () => {
 	const originalSelectedTags = route.params.selectedTags;
 
 	const allTags = useTags();
-	const allCategories = useTagCategories()
-	
+	const allCategories = useTagCategories();
+
 	console.log("CIR-262", allTags);
 	const navigation = useRoutesNavigation();
 	const navigate = navigation.navigate;
@@ -91,7 +91,7 @@ export const AllTagsScreen: React.FC = () => {
 				</View>
 			) : (
 				<View>
-					{allCategories.map(({id: categoryId, label: categoryLabel}) => {
+					{allCategories.map(({ id: categoryId, label: categoryLabel }) => {
 						const categoryTags = allTags.get(categoryId) ?? [];
 						return categoryTags.length === 0 ? null : (
 							<React.Fragment key={categoryId}>

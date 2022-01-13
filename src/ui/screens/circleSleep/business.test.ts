@@ -51,6 +51,6 @@ const output: Steps = [
 	{ x: moment(input[4].end).valueOf(), y: 4 },
 ];
 
-test("should convert sleep stages to victory pie data steps", function() {
-	expect(toStepsData(input)).toEqual(output)
+test("should convert sleep stages to victory pie data steps", function () {
+	expect(toStepsData(input)).toEqual(output);
 });

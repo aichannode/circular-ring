@@ -43,6 +43,7 @@ export class CognitoAuthService<
 
 	async init(): Promise<void> {
 		return new Promise((resolve) => {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			this._userPool.storage.sync((err, result) => {
 				if (!err && result === "SUCCESS") {

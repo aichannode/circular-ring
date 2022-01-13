@@ -5,7 +5,7 @@ import { createRecommendation } from "./mockedData";
 import { isNotification, isRecommendation } from "./business";
 
 const feedBaseUrl = "/feed";
-const interactionsBaseUrl = "/interactions"
+const interactionsBaseUrl = "/interactions";
 
 export class FeedApi {
 	constructor(private readonly apiService: ApiService) {}
@@ -15,7 +15,7 @@ export class FeedApi {
 	 */
 	async fetchNotifications(from: Date = new Date(moment().subtract(1, "month").toISOString())) {
 		const res = await this.apiService.get<{ data: FeedEntity[] }>(`${feedBaseUrl}/me`, { params: { from } });
-		return res.data.data.filter(isNotification)
+		return res.data.data.filter(isNotification);
 	}
 
 	/**
@@ -23,7 +23,7 @@ export class FeedApi {
 	 */
 	async fetchRecommendations(from: Date = new Date(moment().subtract(1, "month").toISOString())) {
 		const res = await this.apiService.get<{ data: FeedEntity[] }>(`${feedBaseUrl}/me`, { params: { from } });
-		return res.data.data.filter(isRecommendation)
+		return res.data.data.filter(isRecommendation);
 	}
 
 	/**
@@ -31,23 +31,24 @@ export class FeedApi {
 	 * Creates 5 new notifications.
 	 */
 	async _DEBUG_insertData() {
-		await Promise.all([0, 1, 2, 3, 5].map(async(id) => {
-			return await this.apiService.post(feedBaseUrl, createRecommendation(id), {_useBackOffice: true} as any)
-		}))
+		await Promise.all(
+			[0, 1, 2, 3, 5].map(async (id) => {
+				return await this.apiService.post(feedBaseUrl, createRecommendation(id), { _useBackOffice: true } as any);
+			})
+		);
 	}
-	
+
 	/**
 	 * Mark notification as closed by the user.
 	 */
 	async closeNotification(notificationIds: number[]) {
-		return await this.apiService.put(`${feedBaseUrl}/me/closed`, { bannerIds: notificationIds })
+		return await this.apiService.put(`${feedBaseUrl}/me/closed`, { bannerIds: notificationIds });
 	}
 
 	/**
 	 * Answer to a Kira question which uses a Select user input.
 	 */
 	async answerQuestion(selections: number[]) {
-		return await this.apiService.post(`${interactionsBaseUrl}/selections`, { selections })
+		return await this.apiService.post(`${interactionsBaseUrl}/selections`, { selections });
 	}
-
 }

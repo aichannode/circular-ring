@@ -134,6 +134,7 @@ export class RingManagementService {
 			} catch (e) {
 				this.logger.warn("Delete ring failed : " + JSON.stringify(e));
 
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				if (e.statusCode === 500) {
 					// SERVER PATCH : DELETE /rings/{id} returns error 500, but ring is correctly deleted from user

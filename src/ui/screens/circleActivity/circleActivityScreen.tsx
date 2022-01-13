@@ -31,21 +31,27 @@ import { TitleText } from "@ui/components/text";
 import { TimeFrame } from "@domain/measure/type";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
 import { sample } from "./business";
-import shoes from "@assets/images/shoes.png"
-import journey from "@assets/images/journey.png"
-import fire from "@assets/images/fire.png"
-import sport from "@assets/images/sport.png"
-import lungs from "@assets/images/lungs.png"
-import heart from "@assets/images/heart.png"
+import shoes from "@assets/images/shoes.png";
+import journey from "@assets/images/journey.png";
+import fire from "@assets/images/fire.png";
+import sport from "@assets/images/sport.png";
+import lungs from "@assets/images/lungs.png";
+import heart from "@assets/images/heart.png";
 
 function getIcon(path: string) {
-	switch(path) {
-		case "@assets/images/shoes.png": return shoes;
-		case "@assets/images/journey.png": return journey;
-		case "@assets/images/fire.png": return fire;
-		case "@assets/images/sport.png": return sport;
-		case "@assets/images/lungs.png": return lungs;
-		case "@assets/images/heart.png": return heart;
+	switch (path) {
+		case "@assets/images/shoes.png":
+			return shoes;
+		case "@assets/images/journey.png":
+			return journey;
+		case "@assets/images/fire.png":
+			return fire;
+		case "@assets/images/sport.png":
+			return sport;
+		case "@assets/images/lungs.png":
+			return lungs;
+		case "@assets/images/heart.png":
+			return heart;
 	}
 }
 
@@ -59,7 +65,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 	const energyScore = useDailyEnergyScore(selectedDay);
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const activityQualityDetails = getActivityQualityDetails(format)
+	const activityQualityDetails = getActivityQualityDetails(format);
 	const [graphPeriod] = useState(TimeFrame.TODAY);
 
 	console.log("FIX activityDetails", energyScoreDetails);
@@ -94,15 +100,20 @@ export const CircleActivityScreen: React.FC = observer(() => {
 					{dailyActivityDetailsMetrics.map((metric) => {
 						const dataInfos = dailyMetricsDetails[metric];
 						const value = dailyMetrics[metric];
-						console.log(dataInfos.icon)
+						console.log(dataInfos.icon);
 						return (
 							<DailyMetric
 								key={metric}
 								icon={getIcon(dataInfos.icon)}
 								label={format(dataInfos.labelKey)}
 								value={Math.round(value)}
-								goodThreshold={dataInfos.metricsName.thresholdLow && (energyScoreDetails as any)[dataInfos.metricsName.thresholdLow]}
-								optimalThreshold={dataInfos.metricsName.thresholdHigh && (energyScoreDetails as any)[dataInfos.metricsName.thresholdHigh]}
+								goodThreshold={
+									dataInfos.metricsName.thresholdLow && (energyScoreDetails as any)[dataInfos.metricsName.thresholdLow]
+								}
+								optimalThreshold={
+									dataInfos.metricsName.thresholdHigh &&
+									(energyScoreDetails as any)[dataInfos.metricsName.thresholdHigh]
+								}
 							/>
 						);
 					})}
@@ -157,52 +168,52 @@ export const CircleActivityScreen: React.FC = observer(() => {
 				</ElementStack>
 				<InfoListHeader>{format("activity.score.details")}</InfoListHeader>
 				<ElementStack gap={10}>
-				{
-					dailyEnergyScoreMetrics
-						.map((metric, index) => {
-							const dataInfos = activityQualityDetails[metric];
-							
-							const values: {
-								value: number,
-								thresholdLow: number,
-								thresholdHigh: number,
-								gaugeFilling: number
-							} = {
-								value: (energyScoreDetails as any)[dataInfos.metricsName.value],
-								thresholdLow: (energyScoreDetails as any)[dataInfos.metricsName.thresholdLow],
-								thresholdHigh: (energyScoreDetails as any)[dataInfos.metricsName.thresholdHigh],
-								gaugeFilling: (energyScoreDetails as any)[dataInfos.metricsName.gaugeFilling],
-							}
-							console.log(dataInfos.metricsName)
-							return [
-								<ScoreGauge
-									key={metric}
-									value={dataInfos.renderValue(values)}
-									gaugeFilling={values.gaugeFilling}
-									color={dataInfos.getGaugeColor(values)}
-									label={format(dataInfos.titleKey)}
-									onPress={() => {
-										LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-										setFocusedGauge((current) => (current === index ? null : index));
-									}}
-								/>,
-								focusedGauge === index && (
-									<GaugeDescription
-										key={metric + "description"}
+					{
+						dailyEnergyScoreMetrics
+							.map((metric, index) => {
+								const dataInfos = activityQualityDetails[metric];
+
+								const values: {
+									value: number;
+									thresholdLow: number;
+									thresholdHigh: number;
+									gaugeFilling: number;
+								} = {
+									value: (energyScoreDetails as any)[dataInfos.metricsName.value],
+									thresholdLow: (energyScoreDetails as any)[dataInfos.metricsName.thresholdLow],
+									thresholdHigh: (energyScoreDetails as any)[dataInfos.metricsName.thresholdHigh],
+									gaugeFilling: (energyScoreDetails as any)[dataInfos.metricsName.gaugeFilling],
+								};
+								console.log(dataInfos.metricsName);
+								return [
+									<ScoreGauge
+										key={metric}
+										value={dataInfos.renderValue(values)}
+										gaugeFilling={values.gaugeFilling}
+										color={dataInfos.getGaugeColor(values)}
 										label={format(dataInfos.titleKey)}
-										description={format(dataInfos.descriptionKey)}
-										colorType="Activity"
-										onClose={() => {
+										onPress={() => {
 											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-											setFocusedGauge(null);
+											setFocusedGauge((current) => (current === index ? null : index));
 										}}
-									/>
-								),
-							];
-						})
-						.flatMap((x) => x)
-						.filter(Boolean) as JSX.Element[]
-				}
+									/>,
+									focusedGauge === index && (
+										<GaugeDescription
+											key={metric + "description"}
+											label={format(dataInfos.titleKey)}
+											description={format(dataInfos.descriptionKey)}
+											colorType="Activity"
+											onClose={() => {
+												LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+												setFocusedGauge(null);
+											}}
+										/>
+									),
+								];
+							})
+							.flatMap((x) => x)
+							.filter(Boolean) as JSX.Element[]
+					}
 				</ElementStack>
 				<ElementStack gap={10}>
 					<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
@@ -229,7 +240,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 							]}
 						/>
 					</View> */}
-					<ActivityIntensityGraph samples={sample(activityIntensity, 60 * 15 * 1000)}/>
+					<ActivityIntensityGraph samples={sample(activityIntensity, 60 * 15 * 1000)} />
 				</ElementStack>
 			</ScrollView>
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>

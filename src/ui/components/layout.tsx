@@ -23,7 +23,7 @@ export const stack = (align: FlexAlign = "stretch", justify: FlexJustify = "flex
 export const StackContent = styled.View<Omit<LayoutProps, "gap" | "children">>`
 	${({ align, justify, reverse }) => stack(align, justify, reverse)};
 `;
-export const Stack = React.forwardRef<View, LayoutProps>(({ gap, children, ...props }, ref) => {
+export const Stack = React.forwardRef<View, LayoutProps>(function Stack({ gap, children, ...props }, ref) {
 	const childrenArray = useMemo(() => React.Children.toArray(children), [children]) as ChildrenType;
 	return (
 		<StackContent {...props} ref={ref}>
@@ -54,7 +54,7 @@ export const row = (
 export const RowContent = styled.View<Omit<LayoutProps, "gap" | "children">>`
 	${({ align, justify, reverse, wrap }) => row(align, justify, reverse, wrap)};
 `;
-export const Row = React.forwardRef<View, LayoutProps>(({ gap, children, ...props }, ref) => {
+export const Row = React.forwardRef<View, LayoutProps>(function Row({ gap, children, ...props }, ref) {
 	const childrenArray = useMemo(() => React.Children.toArray(children), [children]) as ChildrenType;
 	return (
 		<RowContent {...props} ref={ref}>

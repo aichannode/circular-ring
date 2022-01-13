@@ -107,51 +107,52 @@ export interface TimeEditorRef {
 	present: () => void;
 }
 
-export const TimeEditor = forwardRef<TimeEditorRef, TimeEditorProps>(
-	({ title, description, defaultTime, saveTime }, ref) => {
-		const [isVisible, setVisible] = useState(false);
+export const TimeEditor = forwardRef<TimeEditorRef, TimeEditorProps>(function TimeEditor(
+	{ title, description, defaultTime, saveTime },
+	ref
+) {
+	const [isVisible, setVisible] = useState(false);
 
-		const editTimeBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
+	const editTimeBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 
-		useImperativeHandle(ref, () => ({
-			present: () => {
-				if (Platform.OS === "android") {
-					setVisible(true);
-				} else {
-					editTimeBottomSheetRef.current?.present();
-				}
-			},
-		}));
+	useImperativeHandle(ref, () => ({
+		present: () => {
+			if (Platform.OS === "android") {
+				setVisible(true);
+			} else {
+				editTimeBottomSheetRef.current?.present();
+			}
+		},
+	}));
 
-		return (
-			<>
-				{Platform.OS === "android" ? (
-					isVisible && (
-						<DateTimePicker
-							value={defaultTime}
-							mode={"time"}
-							is24Hour={true}
-							onChange={(event: Event, selectedTime: Date | undefined) => {
-								setVisible(false);
-								selectedTime ? saveTime(selectedTime) : setVisible(false);
-							}}
-						/>
-					)
-				) : (
-					<CircularBottomSheet snapPoints={[480]} ref={editTimeBottomSheetRef} allowSwipeDownToClose={false}>
-						<EditTimeBottomSheet
-							title={title}
-							description={description}
-							defaultTime={defaultTime}
-							onSave={async (time) => {
-								await editTimeBottomSheetRef.current?.asyncClose();
-								saveTime(time);
-							}}
-							onClose={async () => await editTimeBottomSheetRef.current?.asyncClose()}
-						/>
-					</CircularBottomSheet>
-				)}
-			</>
-		);
-	}
-);
+	return (
+		<>
+			{Platform.OS === "android" ? (
+				isVisible && (
+					<DateTimePicker
+						value={defaultTime}
+						mode={"time"}
+						is24Hour={true}
+						onChange={(event: Event, selectedTime: Date | undefined) => {
+							setVisible(false);
+							selectedTime ? saveTime(selectedTime) : setVisible(false);
+						}}
+					/>
+				)
+			) : (
+				<CircularBottomSheet snapPoints={[480]} ref={editTimeBottomSheetRef} allowSwipeDownToClose={false}>
+					<EditTimeBottomSheet
+						title={title}
+						description={description}
+						defaultTime={defaultTime}
+						onSave={async (time) => {
+							await editTimeBottomSheetRef.current?.asyncClose();
+							saveTime(time);
+						}}
+						onClose={async () => await editTimeBottomSheetRef.current?.asyncClose()}
+					/>
+				</CircularBottomSheet>
+			)}
+		</>
+	);
+});

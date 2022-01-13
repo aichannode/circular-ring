@@ -13,16 +13,13 @@ interface ChangePasswordBottomSheetProps {
 export const ChangePasswordBottomSheet: React.FC<ChangePasswordBottomSheetProps> = ({ onClose }) => {
 	const { format } = useI18n();
 
-
 	return (
 		<Container horizontalPadding={0}>
 			<Title>{format("change_password.bottom.title")}</Title>
 			<Description>{format("change_password.bottom.description")}</Description>
 			<Grow />
 			<ButtonContainer gap={35}>
-				<PrimaryButton onPress={onClose}>
-					{format("ok")}
-				</PrimaryButton>
+				<PrimaryButton onPress={onClose}>{format("ok")}</PrimaryButton>
 			</ButtonContainer>
 		</Container>
 	);

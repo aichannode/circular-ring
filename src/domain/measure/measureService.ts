@@ -30,10 +30,7 @@ export class MeasureService {
 
 	wakeUpScore = 0;
 	globalScore = 0;
-	dailyActivityMetrics: Map<
-		string,
-		RangeMetrics
-	> = new Map();
+	dailyActivityMetrics: Map<string, RangeMetrics> = new Map();
 	dailyDailySleepDetailsMetrics: Map<
 		string,
 		RangeMetrics<MetricType.UserDailySleepScore | DailySleepDetailsMetrics | DailySleepDetailsGaugeMetrics>
@@ -85,50 +82,57 @@ export class MeasureService {
 	}
 
 	async fetchWakeUpScore() {
-	//	const range = await this.fetchDailyMeasures([]);
+		//	const range = await this.fetchDailyMeasures([]);
 		//const scoreMetrics = range.reverse().find((data) => "" in data.metrics);  // TO COMPLETE
 
 		mutate(() => {
-			this.wakeUpScore = 0 //scoreMetrics?.metrics[MetricType.UserDailySleepQualityScore] ?? 0;
+			this.wakeUpScore = 0; //scoreMetrics?.metrics[MetricType.UserDailySleepQualityScore] ?? 0;
 		});
 	}
 
 	async fetchDailyEnergyScore(isoDay?: string) {
 		const key = moment(isoDay).format(DAILY_KEY_FORMAT);
-//		const range = await this.fetchDailyMeasures([]); // TO COMPLETE
-	//	const scoreMetrics = range.reverse().find((data) => /* MetricType.UserDailyEnergyScore */"" in data.metrics);
+		//		const range = await this.fetchDailyMeasures([]); // TO COMPLETE
+		//	const scoreMetrics = range.reverse().find((data) => /* MetricType.UserDailyEnergyScore */"" in data.metrics);
 
 		mutate(() => {
-			this.dailyEnergyScore.set(key, /* scoreMetrics?.metrics[MetricType.UserDailyEnergyScore] ??  */0); // TO COMPLETE
+			this.dailyEnergyScore.set(key, /* scoreMetrics?.metrics[MetricType.UserDailyEnergyScore] ??  */ 0); // TO COMPLETE
 		});
 	}
 
 	async fetchGlobalScore(isoDay?: string) {
-	//	const range = await this.fetchDailyMeasures([/* MetricType.UserDailyGlobalScore */], moment(isoDay).toDate()); // TO COMPLETE
-	//	const scoreMetrics = range.reverse().find((data) => false/* MetricType.UserDailyGlobalScore in data.metrics */);
+		//	const range = await this.fetchDailyMeasures([/* MetricType.UserDailyGlobalScore */], moment(isoDay).toDate()); // TO COMPLETE
+		//	const scoreMetrics = range.reverse().find((data) => false/* MetricType.UserDailyGlobalScore in data.metrics */);
 
 		mutate(() => {
-			this.globalScore = /* scoreMetrics?.metrics[MetricType.UserDailyGlobalScore] ??  */0;
+			this.globalScore = /* scoreMetrics?.metrics[MetricType.UserDailyGlobalScore] ??  */ 0;
 		});
 	}
 
 	async fetchMonthGlobalScores(isoFirstDayOfMonth: Date) {
 		const lastDay = moment(isoFirstDayOfMonth).endOf("month").toDate();
 
-		const range = await this.measureApi.getMeasures([/* MetricType.UserDailyGlobalScore */], isoFirstDayOfMonth, lastDay);
+		const range = await this.measureApi.getMeasures(
+			[
+				/* MetricType.UserDailyGlobalScore */
+			],
+			isoFirstDayOfMonth,
+			lastDay
+		);
 		mutate(() => {
 			// Merge each metrics day by day
 			// If multiple metrics are bound to the same day
 			// Select the last of each day.
 			range.forEach((datedMetrics) => {
 				const key = getKeyFromDate(moment(datedMetrics.timestamp).toDate());
-				const value = 0 /* datedMetrics.metrics["user.daily.global.score"]; */ // TO COMPLETE
+				const value = 0; /* datedMetrics.metrics["user.daily.global.score"]; */ // TO COMPLETE
 				if (value) {
 					this.dailyGlobalScores.set(key, value);
 				} else {
-					this.logger.warn(
+					this.logger
+						.warn
 						//`${MetricType.UserDailyGlobalScore} has not been found for the date ${datedMetrics.timestamp}`  // TO COMPLETE
-					);
+						();
 				}
 			});
 		});

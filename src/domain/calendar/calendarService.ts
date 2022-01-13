@@ -15,7 +15,7 @@ export class CalendarService {
 	private _categories = observable<CalendarTagCategory[]>([]);
 
 	readonly tagMap = this._tagMap.readOnly();
-	readonly categories = this._categories.readOnly()
+	readonly categories = this._categories.readOnly();
 
 	// private _userTagMap = observable<Map<string, CalendarTag[]>>(new Map());
 
@@ -52,11 +52,11 @@ export class CalendarService {
 		try {
 			const tags = await this.calendarApi.getAllTags();
 			const categories = await this.calendarApi.getCategories(
-				[...new Set(tags.map(({categoryId: category}) => category))] // extract deduplicated category ids
-			)
-			this._tagMap.set(new Map(
-				categories.map((category) => [category.id, tags.filter((tag) => tag.categoryId === category.id)])
-			));
+				[...new Set(tags.map(({ categoryId: category }) => category))] // extract deduplicated category ids
+			);
+			this._tagMap.set(
+				new Map(categories.map((category) => [category.id, tags.filter((tag) => tag.categoryId === category.id)]))
+			);
 			this._categories.set(categories.sort((a, b) => a.order - b.order)); // Order categories
 		} catch (e) {
 			this.logger.warn("Error retrieving tags :", e);

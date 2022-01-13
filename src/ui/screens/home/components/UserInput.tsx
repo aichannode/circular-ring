@@ -14,16 +14,16 @@ import { PrimaryText, Strong } from "@ui/components/text";
 import { SelectableButton } from "@ui/components/selectableButton";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useServices } from "@core/services";
 import { getGradient } from "../utils";
 
 type Props = UserInputComponentConfigurationDto & {
-    palette: Activity["style"]
-    compId: number
-}
+	palette: Activity["style"];
+	compId: number;
+};
 
-function Header({ title, isAnswered, isClosed }: UserInputConfiguration & { isClosed: boolean, isAnswered: boolean }) {
+function Header({ title, isAnswered, isClosed }: UserInputConfiguration & { isClosed: boolean; isAnswered: boolean }) {
 	const { format } = useI18n();
 	return (
 		<View
@@ -54,26 +54,28 @@ type SelectProps = SelectInputTypeConfig["inputConfig"] & {
 };
 
 function Select({
-        label,
-		minCount,
-        maxCount,
-        options,
-		selectedOptions,
-        palette,
-        compId,
-        onLayout,
-    }: SelectProps & {compId: number}
-) {
-    const { format } = useI18n()
-    const [selectedIds, setSelectedIds] = useState<number[]>(selectedOptions ?? [])
-	const isRadio = minCount === 1 && maxCount === 1
-    const hasReachedMaxSelectionCount = selectedIds.length === maxCount && !isRadio
-    const { feedService } = useServices()
+	label,
+	minCount,
+	maxCount,
+	options,
+	selectedOptions,
+	palette,
+	compId,
+	onLayout,
+}: SelectProps & { compId: number }) {
+	const { format } = useI18n();
+	const [selectedIds, setSelectedIds] = useState<number[]>(selectedOptions ?? []);
+	const isRadio = minCount === 1 && maxCount === 1;
+	const hasReachedMaxSelectionCount = selectedIds.length === maxCount && !isRadio;
+	const { feedService } = useServices();
 
-    // Send answer to server
-    useEffect(function() {
-        feedService.answerRecommendation(compId, selectedIds)
-    }, [selectedIds])
+	// Send answer to server
+	useEffect(
+		function () {
+			feedService.answerRecommendation(compId, selectedIds);
+		},
+		[selectedIds]
+	);
 
 	return (
 		<View
@@ -90,23 +92,21 @@ function Select({
 					return (
 						<SelectableButton
 							style={{ marginRight: 8, marginTop: 8 }}
-							colors={getGradient(palette)?.slice(0,2) as [string, string]}
+							colors={getGradient(palette)?.slice(0, 2) as [string, string]}
 							isDisabled={hasReachedMaxSelectionCount && !isSelected}
 							key={key}
 							onPress={function () {
-								if (
-									selectedIds.includes(option.id)
-								) {
+								if (selectedIds.includes(option.id)) {
 									// CIR-429 need at least one option
-									if (selectedIds.length === 1) return
+									if (selectedIds.length === 1) return;
 									// Unselect
 									setSelectedIds(selectedIds.filter((id) => id !== option.id));
 								} else {
 									// Select
 									// It is a radio selection, we can pick just one
 									if (isRadio) {
-										setSelectedIds([option.id])
-										return
+										setSelectedIds([option.id]);
+										return;
 									}
 									if (!hasReachedMaxSelectionCount) {
 										setSelectedIds([...selectedIds, option.id]);
@@ -191,12 +191,9 @@ function animate(
 }
 
 export function UserInput({ compId, configuration, palette }: Props) {
-    const {
-        inputType,
-        inputConfig,
-    } = configuration
-    const [isClosed, setIsClosed] = useState(!!inputConfig.answeredAt)
-    const paperHeightRef = useSharedValue(0)
+	const { inputType, inputConfig } = configuration;
+	const [isClosed, setIsClosed] = useState(!!inputConfig.answeredAt);
+	const paperHeightRef = useSharedValue(0);
 
 	/**
 	 * Note on layout.
@@ -207,33 +204,29 @@ export function UserInput({ compId, configuration, palette }: Props) {
 	 * but the internal agency will remain. Making the paper sliding under the header. You are welcome.
 	 */
 
-    return (
-        <View style={{ marginHorizontal: 5, overflow: "hidden", display: "flex", flexDirection: "column-reverse"}}>
-            <Foldable
-                heightRef={paperHeightRef}
-                isClosed={isClosed}
-                style={{
-                    backgroundColor: "white",
-                    borderBottomStartRadius: 2,
-                    borderBottomEndRadius: 2
-                }}
-            >
-                {inputType === InputType.SELECT && (
-                    <Select
-                        compId={compId}
-                        onLayout={e => paperHeightRef.value = e.nativeEvent.layout.height}
-                        palette={palette as FeedEntityStyle}
-                        {...inputConfig}
-                    />
-                )}
-            </Foldable>
-            <Pressable onPress={() => setIsClosed(!isClosed)}>
-                <Header
-					isClosed={isClosed}
-					isAnswered={!!inputConfig.answeredAt}
-					{...configuration}
-				/>
-            </Pressable>
-        </View>
-    )
+	return (
+		<View style={{ marginHorizontal: 5, overflow: "hidden", display: "flex", flexDirection: "column-reverse" }}>
+			<Foldable
+				heightRef={paperHeightRef}
+				isClosed={isClosed}
+				style={{
+					backgroundColor: "white",
+					borderBottomStartRadius: 2,
+					borderBottomEndRadius: 2,
+				}}
+			>
+				{inputType === InputType.SELECT && (
+					<Select
+						compId={compId}
+						onLayout={(e) => (paperHeightRef.value = e.nativeEvent.layout.height)}
+						palette={palette as FeedEntityStyle}
+						{...inputConfig}
+					/>
+				)}
+			</Foldable>
+			<Pressable onPress={() => setIsClosed(!isClosed)}>
+				<Header isClosed={isClosed} isAnswered={!!inputConfig.answeredAt} {...configuration} />
+			</Pressable>
+		</View>
+	);
 }

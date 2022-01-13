@@ -173,7 +173,7 @@ export const TimerTile = () => {
 					<Light>{timer ? countdown(timer) : "off"}</Light>
 				</TouchableOpacity>
 			</Tile>
-			<CircularBottomScrollSheet snapPoints={[480]} ref={TimerBottomSheetRef}  allowSwipeDownToClose={false}>
+			<CircularBottomScrollSheet snapPoints={[480]} ref={TimerBottomSheetRef} allowSwipeDownToClose={false}>
 				<TimerBottomSheet onClose={() => TimerBottomSheetRef.current?.close()} />
 			</CircularBottomScrollSheet>
 		</>

@@ -38,11 +38,11 @@ export const CircleSleepScreen: React.FC = observer(() => {
 	const { format } = useI18n();
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const [graphPeriod /* , setGraphPeriod */] = useState(TimeFrame.TODAY);
-	const sleepQualityDetails = getSleepQualityDetails(format)
-	const awakeDuration = dailySleep.sleepStagesDuration[SleepStage.AWAKE]
-	const REMDuration = dailySleep.sleepStagesDuration[SleepStage.REM]
-	const lightDuration = dailySleep.sleepStagesDuration[SleepStage.LIGHT]
-	const deepDuration = dailySleep.sleepStagesDuration[SleepStage.DEEP]
+	const sleepQualityDetails = getSleepQualityDetails(format);
+	const awakeDuration = dailySleep.sleepStagesDuration[SleepStage.AWAKE];
+	const REMDuration = dailySleep.sleepStagesDuration[SleepStage.REM];
+	const lightDuration = dailySleep.sleepStagesDuration[SleepStage.LIGHT];
+	const deepDuration = dailySleep.sleepStagesDuration[SleepStage.DEEP];
 
 	useEffect(() => {
 		console.log("CURRENT PERIOD = ", graphPeriod);
@@ -80,16 +80,16 @@ export const CircleSleepScreen: React.FC = observer(() => {
 						.map((metric, index) => {
 							const dataInfos = sleepQualityDetails[metric];
 							const values: {
-								value: number,
-								thresholdLow: number,
-								thresholdHigh: number,
-								gaugeFilling: number
+								value: number;
+								thresholdLow: number;
+								thresholdHigh: number;
+								gaugeFilling: number;
 							} = {
 								value: (details as any)[dataInfos.metricsName.value],
 								thresholdLow: (details as any)[dataInfos.metricsName.thresholdLow],
 								thresholdHigh: (details as any)[dataInfos.metricsName.thresholdHigh],
 								gaugeFilling: (details as any)[dataInfos.metricsName.gaugeFilling],
-							}
+							};
 							return [
 								<ScoreGauge
 									key={metric}
@@ -157,7 +157,9 @@ export const CircleSleepScreen: React.FC = observer(() => {
 										key: "sleep.stage.awake",
 										node: <></>,
 									},
-									value: `${moment.duration(awakeDuration.duration).hours()} h ${moment.duration(awakeDuration.duration).minutes()} min ${awakeDuration.percent}%`
+									value: `${moment.duration(awakeDuration.duration).hours()} h ${moment
+										.duration(awakeDuration.duration)
+										.minutes()} min ${awakeDuration.percent}%`,
 								},
 								REMDuration && {
 									label: format("sleep.stage.REM"),
@@ -165,7 +167,9 @@ export const CircleSleepScreen: React.FC = observer(() => {
 										key: "sleep.stage.REM",
 										node: <></>,
 									},
-									value: `${moment.duration(REMDuration.duration).hours()} h ${moment.duration(REMDuration.duration).minutes()} min ${REMDuration.percent}%`,
+									value: `${moment.duration(REMDuration.duration).hours()} h ${moment
+										.duration(REMDuration.duration)
+										.minutes()} min ${REMDuration.percent}%`,
 								},
 								lightDuration && {
 									label: format("sleep.stage.light"),
@@ -173,7 +177,9 @@ export const CircleSleepScreen: React.FC = observer(() => {
 										key: "sleep.stage.light",
 										node: <></>,
 									},
-									value: `${moment.duration(lightDuration.duration).hours()} h ${moment.duration(lightDuration.duration).minutes()} min ${lightDuration.percent}%`,
+									value: `${moment.duration(lightDuration.duration).hours()} h ${moment
+										.duration(lightDuration.duration)
+										.minutes()} min ${lightDuration.percent}%`,
 								},
 								deepDuration && {
 									label: format("sleep.stage.deep"),
@@ -181,7 +187,9 @@ export const CircleSleepScreen: React.FC = observer(() => {
 										key: "sleep.stage.deep",
 										node: <></>,
 									},
-									value: `${moment.duration(deepDuration.duration).hours()} h ${moment.duration(deepDuration.duration).minutes()} min ${deepDuration.percent}`,
+									value: `${moment.duration(deepDuration.duration).hours()} h ${moment
+										.duration(deepDuration.duration)
+										.minutes()} min ${deepDuration.percent}`,
 								},
 							].filter(isDefined)}
 						/>
