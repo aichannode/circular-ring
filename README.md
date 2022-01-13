@@ -12,16 +12,17 @@ This repository enforces conventionnal commit messages. You can use any [IDE or 
 First, create the hook
 
 ```bash
-$ cat > some.text << 'END'
+$ cat > ./git/hooks/prepare-commit-msg << 'END'
 #!/bin/bash
 exec < /dev/tty && node_modules/.bin/cz --hook || true
 END
 ```
+It will force the Commitizen prompt to pop when you do: `git commit`
 
 Then, make it executable
 
 ```bash
-$ chmod ug+x .git/hooks/prepare-commit-msg
+$ chmod 775 .git/hooks/prepare-commit-msg
 ```
 
 ## Semantic release
