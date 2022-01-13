@@ -1,7 +1,7 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.codeActionsOnSave": [
-    "source.organizeImports",
+    // "source.organizeImports",
     "source.fixAll.eslint"
   ],
   "javascript.validate.enable": false
