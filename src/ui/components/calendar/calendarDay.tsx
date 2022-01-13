@@ -8,11 +8,11 @@ import { Image } from "react-native";
 import styled from "styled-components/native";
 
 type CustomDate = {
-	dateString: string
-	day: number
-	month: number
-	year: number
-	timestamp: number
+	dateString: string;
+	day: number;
+	month: number;
+	year: number;
+	timestamp: number;
 };
 
 type Props = {
