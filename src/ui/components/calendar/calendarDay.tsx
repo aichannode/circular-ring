@@ -7,19 +7,21 @@ import { Image } from "react-native";
 // import { DayComponentProps } from "react-native-calendars";
 import styled from "styled-components/native";
 
-type Date = {
-	dateString: string;
-	day: number;
+type CustomDate = {
+	dateString: string
+	day: number
+	month: number
+	year: number
+	timestamp: number
 };
 
 type Props = {
-	date: {
-		dateString: string;
-		day: number;
-	};
+	date: CustomDate;
 	marking?: { selected?: boolean };
-	onPress: (date: Date) => void;
-	state: "today" | "disabled";
+	onPress: (date: CustomDate) => void;
+	onLongPress: (date: CustomDate) => void;
+	state: "today" | "disabled" | "selected";
+	theme: any; // TO REFACTOR
 };
 
 export const CalendarDay: React.FC<Props> = React.memo(function CalendarDay({ date, marking, onPress, state }: Props) {

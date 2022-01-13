@@ -169,7 +169,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 							year: date.getFullYear(),
 							timestamp: dateJS.date(),
 						}}
-						marking={{ selected: true } as unknown as []}
+						marking={{ selected: true } as any} // TO REFACTOR
 						onPress={() => null}
 						onLongPress={() => null}
 						state={"selected"}
