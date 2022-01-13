@@ -48,6 +48,7 @@
 	"include": [
 		"src/**/*",
 		"global.d.ts",
+		"*/*.js",
 		"scripts/**/*.js",
 		"./.eslintrc.js"
 	]
