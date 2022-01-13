@@ -44,5 +44,11 @@
 				}
 			}
 		]
-	}
+	},
+	"include": [
+		"src/**/*",
+		"global.d.ts",
+		"scripts/**/*.js",
+		"./.eslintrc.js"
+	]
 }

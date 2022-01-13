@@ -7,39 +7,38 @@
  */
 
 module.exports = {
-  root: true,
-  env: {
-    node: true,
-    jest: true,
-  },
-  parser: "@typescript-eslint/parser",
-  extends: [
-    "plugin:react/recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier/@typescript-eslint",
-    "plugin:prettier/recommended",
-    "plugin:react/recommended"
-  ],
-  rules: {
-    "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/interface-name-prefix": "off",
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars-experimental": "error",
-    "prettier/prettier": "warn",
-    "react/no-unescaped-entities": "off",
-  },
-  parserOptions: {
-    sourceType: "module",
-    tsconfigRootDir: __dirname,
-    project: "./tsconfig.json",
-  },
-  plugins: ["@typescript-eslint/eslint-plugin", "react"],
-  settings: {
-    react: {
-      version: "detect",
-    },
-  }
+	root: true,
+	env: {
+		node: true,
+		jest: true,
+	},
+	parser: "@typescript-eslint/parser",
+	extends: [
+		"plugin:react/recommended",
+		"plugin:@typescript-eslint/recommended",
+		"prettier/@typescript-eslint",
+		"plugin:prettier/recommended",
+		"plugin:react/recommended",
+	],
+	rules: {
+		"@typescript-eslint/no-empty-function": "off",
+		"@typescript-eslint/interface-name-prefix": "off",
+		"@typescript-eslint/explicit-function-return-type": "off",
+		"@typescript-eslint/explicit-module-boundary-types": "off",
+		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/no-unused-vars": "off",
+		"prettier/prettier": "warn",
+		"react/no-unescaped-entities": "off",
+	},
+	parserOptions: {
+		sourceType: "module",
+		tsconfigRootDir: __dirname,
+		project: "./tsconfig.json",
+	},
+	plugins: ["@typescript-eslint/eslint-plugin", "react"],
+	settings: {
+		react: {
+			version: "detect",
+		},
+	},
 };
