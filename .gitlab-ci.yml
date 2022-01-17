@@ -46,7 +46,7 @@ android:build:release:
   variables:
     ENV: prod
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH =~ /^release/'
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH =~ /^release\/.*$/'
 
 android:build:prod:
   extends: .build-android
