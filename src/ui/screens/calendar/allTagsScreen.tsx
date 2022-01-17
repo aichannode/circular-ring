@@ -78,7 +78,7 @@ export const AllTagsScreen: React.FC = () => {
 				<View style={{ paddingVertical: 30, paddingHorizontal: 20 }}>
 					<TagSelectionView
 						tags={searchedTags}
-						selectedTags={selectedTags}
+						highlightedTagIds={selectedTags.map(({ id }) => id)}
 						onClickTag={(tag) => {
 							const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
 							if (isAlreadySelected) {
@@ -99,7 +99,7 @@ export const AllTagsScreen: React.FC = () => {
 								<TagListContainer>
 									<TagSelectionView
 										tags={categoryTags}
-										selectedTags={selectedTags}
+										highlightedTagIds={selectedTags.map(({ id }) => id)}
 										onClickTag={(tag) => {
 											const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
 											if (isAlreadySelected) {

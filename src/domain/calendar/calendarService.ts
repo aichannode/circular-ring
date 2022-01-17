@@ -36,8 +36,6 @@ export class CalendarService {
 	async fetchMonthCalendars(date: Date) {
 		try {
 			const calendarList = await this.calendarApi.getMonthCalendars(date);
-			this.logger.debug("Got calendar : " + JSON.stringify(calendarList));
-
 			return {
 				day: dayjs(date).format("YYYY-MM-DD"),
 				calendars: calendarList,

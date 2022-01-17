@@ -1,37 +1,84 @@
-import { AppStateStorage } from "./appStateStorage";
+import { CalendarTag } from "@domain/calendar/calendar";
+import produce from "immer";
 import { observable } from "micro-observables";
-import { I_AppState, I_QuickAccess } from "./type";
+import { AppStateStorage } from "./appStateStorage";
+import { I_AppState, I_QuickAccess, LAST_TAGS_SIZE } from "./type";
 
 export class AppStateService {
-	quickaccess = observable<I_QuickAccess>({ active: [], disabled: [] });
-	private _appState = observable<I_AppState | null>(null);
-	private _isInSleepMode = observable<boolean | undefined>(false);
+	isInSleepMode = observable<boolean>(false);
+	quickAccess = observable<I_QuickAccess>({
+		disabled: [],
+		active: [],
+	});
+	lastUsedTags = observable<CalendarTag[]>([]);
 
-	readonly isInSleepMode = this._isInSleepMode.readOnly();
+	private get appState(): I_AppState {
+		return {
+			isInSleepMode: this.isInSleepMode.get(),
+			quickAccess: this.quickAccess.get(),
+			lastUsedTags: this.lastUsedTags.get(),
+		};
+	}
 
 	constructor(private readonly AppStateStorage: AppStateStorage) {}
 
+	private hydrate(state: I_AppState) {
+		this.lastUsedTags.set(state.lastUsedTags);
+		this.quickAccess.set(state.quickAccess);
+		this.isInSleepMode.set(state.isInSleepMode);
+	}
+
 	async init() {
-		const appState = await this.AppStateStorage.load();
-		if (appState) this._appState.set(appState);
-		if (appState?.isInSleepMode) this._isInSleepMode.set(appState?.isInSleepMode);
-		if (appState?.quickAccess) {
-			const { active, disabled } = appState.quickAccess;
-			this.quickaccess.set({ active, disabled });
+		const lastState = await this.AppStateStorage.load();
+		if (lastState) {
+			this.hydrate(lastState);
 		}
+		/**
+		 * Start side effects watchers
+		 * - persist app state after update
+		 */
+		this.lastUsedTags.subscribe(() => this.AppStateStorage.save(this.appState));
+		this.quickAccess.subscribe(() => this.AppStateStorage.save(this.appState));
+		this.isInSleepMode.subscribe(() => this.AppStateStorage.save(this.appState));
 	}
 
 	updateQuickaccess({ active, disabled }: I_QuickAccess) {
 		console.log("## UPDATE", active, disabled);
-		this.quickaccess.update(() => ({
+		this.quickAccess.update(() => ({
 			active,
 			disabled,
 		}));
-		if (this._appState) this.AppStateStorage.save({ ...this._appState.get(), quickAccess: this.quickaccess.get() });
 	}
 
 	async updateSleepMode(value: boolean) {
-		this._isInSleepMode.set(value);
-		if (this._appState) this.AppStateStorage.save({ ...this._appState.get(), isInSleepMode: value });
+		this.isInSleepMode.set(value);
 	}
+
+	//////////////////////////////////////////
+	// Note for future refactor to SAM pattern
+	// All further methods acts like mutators
+	//////////////////////////////////////////
+	/**
+	 * Add a tag to the list
+	 * @implements CIR-402: maintain a list with a maximum length of 14 items
+	 */
+	mutator_addLastUsedTag = (tag: CalendarTag) => {
+		const lastUsedTags = this.lastUsedTags.get();
+		// Acceptor
+		// No special condiction here
+		this.lastUsedTags.set(
+			produce(lastUsedTags, function (mLastUsedTags) {
+				const currentTagIndex = mLastUsedTags.findIndex((t) => t.id === tag.id);
+				// There is already this tag in the queue. Reorder.
+				if (currentTagIndex > -1) {
+					mLastUsedTags.splice(currentTagIndex, 1);
+				}
+				// CIR-402: maintain a list with a maximum length of 14 items
+				else if (mLastUsedTags.length >= LAST_TAGS_SIZE) {
+					mLastUsedTags.pop();
+				}
+				mLastUsedTags.unshift(tag);
+			})
+		);
+	};
 }

@@ -1,3 +1,5 @@
+import { CalendarTag } from "@domain/calendar/calendar";
+
 export interface I_QuickAccessElem {
 	title: string;
 	desc: string;
@@ -9,7 +11,10 @@ export interface I_QuickAccess {
 	disabled: I_QuickAccessElem[];
 }
 
+export const LAST_TAGS_SIZE = 14;
+
 export interface I_AppState {
-	quickAccess?: I_QuickAccess | undefined;
-	isInSleepMode?: boolean | undefined;
+	quickAccess: I_QuickAccess;
+	isInSleepMode: boolean;
+	lastUsedTags: CalendarTag[];
 }

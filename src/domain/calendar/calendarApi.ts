@@ -45,7 +45,6 @@ export class CalendarApi {
 	}
 
 	private static calendarListFromDto(dto: CalendarDto[]): Calendar[] {
-		console.log("DTO", dto);
 		return dto.map((calendarDto) => {
 			if (calendarDto.notes.length) console.log("calendarDto", calendarDto, calendarDto.notes[0].tag);
 			const notes = calendarDto.notes.map((note) => {

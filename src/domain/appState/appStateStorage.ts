@@ -4,11 +4,11 @@ import { I_AppState } from "./type";
 const appStateStorageKey = "@appState";
 
 export class AppStateStorage {
-	save(data: I_AppState) {
+	async save(data: I_AppState) {
 		return Storage.save(appStateStorageKey, data);
 	}
 
-	load() {
-		return Storage.load<I_AppState>(appStateStorageKey);
+	async load(): Promise<I_AppState | null> {
+		return await Storage.load<I_AppState>(appStateStorageKey);
 	}
 }

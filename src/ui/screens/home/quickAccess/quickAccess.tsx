@@ -74,11 +74,11 @@ export const QuickAccess: React.FC = () => {
 
 	useEffect(() => {
 		setActive(
-			appStateService.quickaccess.get().active.length || appStateService.quickaccess.get().disabled.length
-				? appStateService.quickaccess.get()?.active
+			appStateService.quickAccess.get().active.length || appStateService.quickAccess.get().disabled.length
+				? appStateService.quickAccess.get()?.active
 				: _quickAccess
 		);
-		appStateService.quickaccess.subscribe((data) => {
+		appStateService.quickAccess.subscribe((data) => {
 			if (data?.active) {
 				setActive(data?.active);
 			}

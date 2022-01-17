@@ -47,13 +47,13 @@ export const QuickAccess: React.FC = () => {
 	const { appStateService } = useServices();
 
 	useEffect(() => {
-		if (appStateService.quickaccess.get().active.length || appStateService.quickaccess.get().disabled.length) {
+		if (appStateService.quickAccess.get().active.length || appStateService.quickAccess.get().disabled.length) {
 			console.log(
 				"## INITIAL RUN",
-				appStateService.quickaccess.get()?.active.map((t) => t.id)
+				appStateService.quickAccess.get()?.active.map((t) => t.id)
 			);
-			setQuickAccess(appStateService.quickaccess.get()?.active);
-			setDisabledQuickAccess(appStateService.quickaccess.get()?.disabled);
+			setQuickAccess(appStateService.quickAccess.get()?.active);
+			setDisabledQuickAccess(appStateService.quickAccess.get()?.disabled);
 		}
 	}, []);
 

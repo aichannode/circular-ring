@@ -1,11 +1,11 @@
 import { WordingKey } from "src/wordings";
 
-export interface CalendarTag {
+export type CalendarTag = Readonly<{
 	id: number;
 	name: string;
 	system: boolean;
 	categoryId: number;
-}
+}>;
 
 export type CalendarTagCategory = {
 	id: number;

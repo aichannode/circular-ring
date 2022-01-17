@@ -1,5 +1,6 @@
 import { FetchStrategy } from "@betomorrow/micro-stores";
 import { useServices } from "@core/services";
+import { useLastUsedTags } from "@domain/appState/representation/hooks";
 import { CalendarTag } from "@domain/calendar/calendar";
 import { useCalendar } from "@domain/calendar/hooks/useCalendar";
 import { PrimaryButton } from "@ui/components/buttons";
@@ -17,11 +18,11 @@ import { TagSelectionView } from "@ui/screens/calendar/tagSelectionView";
 import { colors } from "@ui/styles/colors";
 import { shadow } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
+import { deduplicate } from "@ui/utils/filter";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
 import dayjs from "dayjs";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { LayoutAnimation, Pressable, View } from "react-native";
-// import { Marking } from "react-native-calendars";
 import styled from "styled-components/native";
 
 interface TimeEditorConfig {
@@ -31,13 +32,50 @@ interface TimeEditorConfig {
 	saveTime: (time: Date) => void;
 }
 
+/**
+ * This hooks encapsulate the logic to get the list of selected tags from two sources:
+ * - from the route params coming from the tag selection screen
+ * - tags which are also selected on the last used tags list
+ * It will also handle the deselection of tags.
+ */
+function useTagsSelection(tagsFromRoute: CalendarTag[]): [CalendarTag[], (tag: CalendarTag) => void, () => void] {
+	const [selectedTags, setSelectedTags] = useState<CalendarTag[]>(tagsFromRoute);
+	// Turn all tags in a string of ids to easily compare new/old version
+	const tagsListIdentity = tagsFromRoute
+		.map(({ id }) => id)
+		.sort()
+		.join();
+
+	const selectTag = useCallback(function (tag: CalendarTag) {
+		const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
+		if (isAlreadySelected) {
+			setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
+		} else {
+			setSelectedTags([...selectedTags, tag]);
+		}
+	}, []);
+	const clearSelectedTags = useCallback(function () {
+		setSelectedTags([]);
+	}, []);
+	/**
+	 * Each time the allTagsScreen is close, this screen is refreshed
+	 * with a new route selectedTags params.
+	 * We need to recompute selectedTags state.
+	 */
+	useEffect(() => {
+		setSelectedTags(tagsFromRoute);
+	}, [tagsListIdentity]);
+
+	return [selectedTags, selectTag, clearSelectedTags];
+}
+
 export const CalendarEditNotesScreen: React.FC = () => {
 	const { format, formatHour } = useI18n();
 	const navigation = useRoutesNavigation();
 	const navigate = navigation.navigate;
 
 	const route = useAppRoute<Routes.CalendarEditNotes>();
-	const originalTags = useMemo(() => route.params.selectedTags ?? [], [route.params.selectedTags]);
+	const initialSelectedTags = route.params.selectedTags ?? [];
 	const day = route.params.day;
 	const date = new Date(day);
 	const dateJS = dayjs(date);
@@ -47,13 +85,17 @@ export const CalendarEditNotesScreen: React.FC = () => {
 
 	const dateWithHour = useCallback((hour: number) => dayjs(day).hour(hour).toDate(), [day]);
 
-	const [selectedTags, setSelectedTags] = useState<CalendarTag[]>(originalTags);
+	const {
+		lastUsedTags,
+		actions: { setLastUsedTags },
+	} = useLastUsedTags();
+	const [selectedTags, selectTag, clearSelectedTags] = useTagsSelection(initialSelectedTags);
+
 	const [startDate, setStartDate] = useState(dateWithHour(19));
 	const [endDate, setEndDate] = useState(dateWithHour(20));
 	const [isLoading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [noteAddedText, setNoteAddedText] = useState<string | undefined>(undefined);
-	const [visibleTags, setVisibleTags] = useState<CalendarTag[]>([]);
 
 	const startTimeEditionConfig = {
 		title: format("calendar.edit_start.title"),
@@ -71,10 +113,6 @@ export const CalendarEditNotesScreen: React.FC = () => {
 	const timeEditorRef = useRef<TimeEditorRef>(null);
 
 	const dismissHeaderTimeout = useRef<NodeJS.Timeout>();
-
-	useEffect(() => {
-		setSelectedTags(originalTags);
-	}, [JSON.stringify(originalTags)]);
 
 	const dismissHeader = useCallback(() => {
 		if (noteAddedText !== undefined) {
@@ -104,6 +142,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 		setErrorMessage("");
 		try {
 			await calendarService.createNote(selectedTags, startDate, endDate);
+			setLastUsedTags(selectedTags);
 			const noteNames = selectedTags.map((t) => t.name).join(", ");
 			LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 			setNoteAddedText(
@@ -112,47 +151,18 @@ export const CalendarEditNotesScreen: React.FC = () => {
 				})
 			);
 			setLoading(false);
-			setSelectedTags([]);
+			clearSelectedTags();
 		} catch (e) {
 			setLoading(false);
 			setErrorMessage(format("global.default_error"));
 		}
 	}, [selectedTags, startDate, endDate, dismissHeader]);
 
-	const allRawTags = selectedTags.sort((t1, t2) => {
-		return t1.name.localeCompare(t2.name);
-	});
-
-	// console.log("allRawTags", allRawTags, popularTags, selectedTags, debugTags);
-
-	useEffect(() => {
-		let _allRawTags = allRawTags.filter((item, pos) => {
-			return allRawTags.indexOf(item) == pos;
-		});
-
-		_allRawTags = _allRawTags.sort((a, b) => {
-			console.log(
-				"CIR-402",
-				selectedTags.findIndex((el) => el.name == a.name)
-			);
-			if (selectedTags.findIndex((el) => el.name == a.name) > selectedTags.findIndex((el) => el.name == b.name))
-				return 1;
-			else return -1;
-		});
-
-		console.log();
-
-		setVisibleTags(_allRawTags);
-	}, [selectedTags]);
-
-	console.log(
-		"CIR-402 visibleTags",
-		visibleTags.map((i) => i.name)
-	);
-	// console.log("CIR-402 allRawTags", allRawTags);
+	// CIR-402, put selected tag first, then put the last used tags.
+	const tags = selectedTags.concat(lastUsedTags).filter(deduplicate("id"));
+	console.log(tags);
 
 	const disableRegisterNote = endDate < startDate || selectedTags.length === 0;
-	console.log("Calendar", calendar);
 
 	return calendar ? (
 		<View style={{ flex: 1 }}>
@@ -203,21 +213,15 @@ export const CalendarEditNotesScreen: React.FC = () => {
 							<AllTagButton>{format("calendar.see_all_tags")}</AllTagButton>
 						</Pressable>
 					</PopularTagHeader>
-					{visibleTags ? (
+					{!!tags.length && (
 						<TagSelectionView
-							displayCount={14}
-							tags={visibleTags}
-							selectedTags={selectedTags}
-							onClickTag={(tag) => {
-								const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
-								if (isAlreadySelected) {
-									setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
-								} else {
-									setSelectedTags([...selectedTags, tag]);
-								}
-							}}
+							// CIR-402 highlighted is display first
+							shouldDisplayHighlightedFirst
+							tags={tags}
+							highlightedTagIds={selectedTags.map(({ id }) => id)}
+							onClickTag={selectTag}
 						/>
-					) : null}
+					)}
 				</PopularTagContainer>
 				<InfoListItem
 					name={format("calendar.start_time")}

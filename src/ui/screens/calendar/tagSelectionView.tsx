@@ -1,41 +1,40 @@
 import { CalendarTag } from "@domain/calendar/calendar";
-import { Row } from "@ui/components/layout";
 import { CalendarTagView } from "@ui/screens/calendar/calendarTagView";
 import React from "react";
 import styled from "styled-components/native";
 
 interface CalendarTagListViewProps {
-	tags: CalendarTag[];
-	selectedTags: CalendarTag[];
+	tags: ReadonlyArray<CalendarTag>;
+	highlightedTagIds: number[];
 	onClickTag: (tag: CalendarTag) => void;
-	displayCount?: number;
+	shouldDisplayHighlightedFirst?: boolean;
+	shouldSortAlphabeticaly?: boolean;
 }
 
 export const TagSelectionView: React.FC<CalendarTagListViewProps> = ({
 	tags,
-	selectedTags,
+	highlightedTagIds,
+	shouldDisplayHighlightedFirst,
+	shouldSortAlphabeticaly,
 	onClickTag,
-	displayCount,
 }) => {
-	let visibleTags = tags
-		.filter((item, pos) => {
-			return tags.map((t) => t.id).indexOf(item.id) == pos;
-		})
-		.sort((t1, t2) => {
-			return t1.name.localeCompare(t2.name);
-		});
+	const highlitedTags = tags.filter(({ id }) => highlightedTagIds.includes(id));
+	const normalTags = tags.filter(({ id }) => !highlightedTagIds.includes(id));
 
-	if (displayCount) {
-		visibleTags = visibleTags.slice(0, displayCount);
+	const tagsToDisplay = shouldDisplayHighlightedFirst ? [...highlitedTags, ...normalTags] : [...tags];
+
+	if (shouldSortAlphabeticaly) {
+		tagsToDisplay.sort((a, b) => a.name.localeCompare(b.name));
 	}
 
 	return (
-		<Container gap={8} wrap={"wrap"}>
-			{visibleTags.map((tag) => {
+		<Container>
+			{tagsToDisplay.map((tag) => {
 				return (
 					<CalendarTagView
 						key={tag.id}
-						selected={selectedTags.map((tag) => tag.id).indexOf(tag.id) >= 0}
+						style={{ marginRight: 8 }}
+						selected={highlightedTagIds.includes(tag.id)}
 						onClick={() => onClickTag(tag)}
 					>
 						{tag.name}
@@ -46,6 +45,11 @@ export const TagSelectionView: React.FC<CalendarTagListViewProps> = ({
 	);
 };
 
-const Container = styled(Row)`
+const Container = styled.View`
+	flex: 1;
+	flex-direction: row;
+	align-items: stretch;
+	justify-content: flex-start;
+	flex-wrap: wrap;
 	margin-bottom: 1px;
 `;
