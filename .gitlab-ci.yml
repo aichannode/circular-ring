@@ -41,6 +41,13 @@ android:build:demo:
   only:
     - demo
 
+android:build:release:
+  extends: .build-android
+  variables:
+    ENV: prod
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH =~ /^release\/.*$/'
+
 android:build:prod:
   extends: .build-android
   variables:
