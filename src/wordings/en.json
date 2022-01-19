@@ -322,6 +322,7 @@
 	"onboarding.personal_info.error.default": "An error occurred.\nPlease try again later.",
 	"banner.calibration.title": "Calibration period",
 	"banner.calibration.message": "Keep wearing your ring during the entirety of the {days} days calibration period for improved results!",
+	"banner.disturbances.title": "Disturbancess",
 	"calibration.recommandation.1": "Hi, {username}, this is Kira. I would like to welcome you to the Circular tribe! 👋\n\nYour Circular app will allow you to check your recommendations and detailed biometrics, set up an alarm clock, edit your alerts, and so much more!",
 	"calibration.recommandation.2": "Through Circular, checking and improving your health & sleep while optimizing your activities becomes easy 💪\n\nOn top of that, you'll be able to know more about yourself and understand the effects of your environment on your wellbeing. Nothing complicated, everything will be made easy to understand! That's my job!",
 	"calibration.recommandation.3": "In order to get the most of your Circular, I strongly suggest that you wear the ring as much as possible (night & day) and that you answer the questions I might be asking on your feed. They help me refine each recommendation to your needs and profile.",
@@ -544,5 +545,19 @@
 	"lowSpo2.alert": "Low SpO2 alert",
 	"lowSpo2.description": "Select the % that is going to trigger a vibration when reached. The default is 94%.",
 	"lowSpo2.SpO2": "SPO2",
-	"lowSpo2.resetToDefault": "Reset to default"
+	"lowSpo2.resetToDefault": "Reset to default",
+	"tutorial.step1.title": "Explore the possibilities",
+	"tutorial.step1.explanation": "Each circle corresponds to a ring’s feature. You can add or delete them at will depending on what you need.",
+	"tutorial.step2.title": "Quick access menu",
+	"tutorial.step2.explanation": "These shortcuts allow you to quickly get access to the settings you change often.\n\nYou can organize them as you wish in the « Quick access » section in the menu.",
+	"tutorial.step3.title": "Adaptative feed",
+	"tutorial.step3.explanation": "Depending on which circles you choose, your feed will display the corresponding information. Each recommendation is highly personal and the more you wear the ring the more powerful they get!",
+	"tutorial.step4.title": "Let’s be friends",
+	"tutorial.step4.explanation": "Kira will be your personnal assistant!\n\nShe will sometimes ask you questions in order to improve over time and to recommend you at best. Its role is to make everything easy to understand so you don’t have all the work to do.",
+	"tutorial.backgroundrecommendation": "I have one last thing to tell you about! Drum roll ... 🥁 the smart snooze feature.\n\nIf you have trouble waking up and you often fall behind the time because you regularly hit the snooze button to stay longer in bed, then you should take a look at the smart snooze feature.\n\nThe smart snooze will automatically make your ring vibrate every 5 minutes (you can edit that) until the ring detects that you get out of bed and that you're walking. Don't be late anymore!",
+	"tutorial.examplerecommendation": "Do you work at night or during the day?",
+	"tutorial.day": "Day 🌞",
+	"tutorial.night": "Night 🌝",
+	"tutorial.sleep": "Sleep",
+	"tutorial.calibration": "Calibration"
 }

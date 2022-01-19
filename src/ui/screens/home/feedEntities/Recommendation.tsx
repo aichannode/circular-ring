@@ -63,6 +63,8 @@ export const Recommendation: React.FC<Props> = ({ recommendation }) => {
 	const userInput = recommendation.components.find(({ type }) => type === FeedEntityComponentType.USER_INPUT) as
 		| UserInputComponentConfigurationDto
 		| undefined;
+	const paragraphs = recommendation.components.filter(({ type }) => type === FeedEntityComponentType.PARAGRAPH) as
+		| ParagraphComponentConfigurationDto[];
 	const maybeGradientBorder = getGradient(recommendation.style as FeedEntityStyle);
 
 	return (
@@ -111,10 +113,13 @@ export const Recommendation: React.FC<Props> = ({ recommendation }) => {
 								{getFeedEntityDate(recommendation.startDate, todayIso, userSettings?.hourFormat)}
 							</MetaDataText>
 						</Row>
-						<Paragraph
-							coloredTagColor={highlightColor}
-							{...(recommendation.components[0] as ParagraphComponentConfigurationDto).configuration}
-						/>
+						{paragraphs.map((paragraph, key) => (
+							<Paragraph
+								key={key}
+								coloredTagColor={highlightColor}
+								{...(paragraph as ParagraphComponentConfigurationDto).configuration}
+							/>
+						))}
 					</View>
 				</Stack>
 			</Container>

@@ -12,7 +12,7 @@ import { TimerTile } from "./Timer";
 import { useI18n } from "@ui/i18n";
 import { useObservable } from "micro-observables";
 
-const SleepTile = () => {
+export const SleepTile = () => {
 	const { appStateService } = useServices();
 	const sleepMode = useObservable(appStateService.isInSleepMode);
 
@@ -37,7 +37,7 @@ const SleepTile = () => {
 	);
 };
 
-const CalendarTile = () => {
+export const CalendarTile = () => {
 	const navigation = useRoutesNavigation();
 	return (
 		<Tile>
@@ -93,20 +93,17 @@ export const QuickAccess: React.FC = () => {
 	if (active?.length === 0) return null;
 
 	return (
-		<>
-			<Container gap={15}>
-				{displaySleep && <SleepTile />}
-				{displayAlarm && <AlarmTile />}
-				{displayCalendar && <CalendarTile />}
-				{displayTimer && <TimerTile />}
-			</Container>
-		</>
+		<Container gap={15}>
+			{displaySleep && <SleepTile />}
+			{displayAlarm && <AlarmTile />}
+			{displayCalendar && <CalendarTile />}
+			{displayTimer && <TimerTile />}
+		</Container>
 	);
 };
 
 const Container = styled(Stack)`
-	background-color: ${colors.white};
-	height: 50px;
+	height: 51px;
 	margin-top: 10px;
 	display: flex;
 	flex-direction: row;
@@ -130,4 +127,5 @@ const Tile = styled.View`
 	border-right-width: 0.25px;
 	border-left-width: 0.25px;
 	border-color: ${colors.gray};
+	background-color: ${colors.white};
 `;

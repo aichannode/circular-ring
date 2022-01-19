@@ -1,46 +1,21 @@
 import styled from "styled-components/native";
 import React, { useState, useCallback } from "react";
-import { Image } from "react-native";
 import { colors } from "@ui/styles/colors";
 import { useServices } from "@core/services";
 import dayjs from "dayjs";
 import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
 import { Spinner } from "@ui/components/spinner";
-
-const FourDot = ({ step }: { step: number }) => {
-	const dots = [];
-
-	for (let i = 0; i < 4; i++) {
-		if (i < step + 1) dots.push(<DotFilled key={i}></DotFilled>);
-		else dots.push(<Dot key={i}></Dot>);
-	}
-
-	return <DotContainer>{dots}</DotContainer>;
-};
-
-const DotContainer = styled.View`
-	height: 53px;
-	margin: 20px;
-	display: flex;
-	flex-direction: row;
-`;
-
-const Dot = styled.View`
-	height: 10px;
-	width: 10px;
-	border-radius: 5px;
-	background-color: ${colors.gray};
-	margin: 21px 2.5px;
-`;
-
-const DotFilled = styled.View`
-	height: 10px;
-	width: 10px;
-	border-radius: 5px;
-	background-color: ${colors.primary};
-	margin: 21px 2.5px;
-`;
+import { FakeHeader } from "./fakeHeader";
+import { CirclesBanner } from "./fakeCircle";
+import { View } from "react-native";
+import { Recommendation } from "@ui/screens/home/feedEntities/Recommendation";
+import { FakeRecommendation } from "./FakeRecommendation";
+import { Explanation } from "./explanation";
+import { Mask } from "./mask";
+import { recommendationData, recommendationDataFeed } from "./recomandation";
+import { FourDot } from "./fourDot";
+import { FakeQuiAccess } from "./fakeQuickAccess";
 
 export const Tutorial = () => {
 	const route = useAppRoute<Routes.OnboardingTutorial>();
@@ -53,20 +28,6 @@ export const Tutorial = () => {
 	const { format } = useI18n();
 
 	console.log("ROUTE PARAM TUTO", route.params);
-
-	const image = [
-		{ source: require("@assets/images/tutorial1.png") },
-		{ source: require("@assets/images/tutorial2.png") },
-		{ source: require("@assets/images/tutorial3.png") },
-		{ source: require("@assets/images/tutorial4.png") },
-	];
-
-	// const fake = () => {
-	// 	setLoading(true);
-	// 	setTimeout(() => {
-	// 		setLoading(false);
-	// 	}, 3000);
-	// };
 
 	const completeTutorial = useCallback(async () => {
 		setLoading(true);
@@ -82,15 +43,41 @@ export const Tutorial = () => {
 		console.log("TUTORIA UPDATE USER ERROR", errorMessage);
 	}, [birthDate, sex, weight, height]);
 
+	const getPositionOfExplanation = (step: number) => {
+		if (step === 0) return 200;
+		if (step === 1) return 270;
+		if (step === 2) return 425;
+		if (step === 3) return 110;
+		return 0;
+	};
+
 	return (
 		<Container>
-			<ImageContainer>
-				<Image
-					style={{ width: "100%", height: "100%", position: "absolute", top: 0 }}
-					resizeMode="cover"
-					source={image[step].source}
-				></Image>
-			</ImageContainer>
+			<Mask masked={true}>
+				<FakeHeader></FakeHeader>
+			</Mask>
+			<SubContainer>
+				<Explanation top={getPositionOfExplanation(step)} step={step} revert={step === 3}></Explanation>
+				<Mask masked={step !== 0}>
+					<CirclesBanner></CirclesBanner>
+				</Mask>
+				<View style={{ height: 16, backgroundColor: "rgba(0, 0, 0, 0.65)" }}></View>
+				<Mask masked={step !== 1} top={0}>
+					<FakeQuiAccess />
+					{/* <View></View> */}
+				</Mask>
+				<View style={{ height: 16, backgroundColor: "rgba(0, 0, 0, 0.65)" }}></View>
+				<FakeRecommendation
+					maskRecommendation={step !== 2}
+					maskUserInput={step !== 3}
+					recommendation={recommendationData}
+					style={{ margin: 10 }}
+				/>
+				<Mask masked={true}>
+					<Recommendation recommendation={recommendationDataFeed} style={{ margin: 10 }} />
+				</Mask>
+				<BottomGreyZone></BottomGreyZone>
+			</SubContainer>
 			{isLoading ? (
 				<Navigation>
 					<Spinner size={30}></Spinner>
@@ -132,16 +119,18 @@ export const Tutorial = () => {
 	);
 };
 
-const Container = styled.View`
+const BottomGreyZone = styled.View`
+	background-color: rgba(0, 0, 0, 0.65);
 	flex: 1;
-	background-color: grey;
 `;
 
-const ImageContainer = styled.View`
-	background-color: ${colors.white};
-	width: 100%;
+const SubContainer = styled.View`
+	background-color: white;
 	flex: 1;
-	margin-bottom: 93px;
+`;
+
+const Container = styled.View`
+	flex: 1;
 `;
 
 const Navigation = styled.View`

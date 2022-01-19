@@ -47,6 +47,7 @@ export const MyRingBattery: React.FC<MyRingBatteryProps> = ({ full, stalled }) =
 const Container = styled.Pressable`
 	flex-direction: row;
 	align-items: center;
+	left: -10px;
 `;
 
 const MyRingText = styled.Text`
