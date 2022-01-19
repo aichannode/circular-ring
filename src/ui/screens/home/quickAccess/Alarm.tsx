@@ -196,6 +196,7 @@ const Tile = styled.View`
 	border-right-width: 0.25px;
 	border-left-width: 0.25px;
 	border-color: ${colors.gray};
+	background-color: white;
 `;
 
 const SheetContainer = styled(ResponsiveCenterView)`
