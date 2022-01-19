@@ -18,6 +18,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import utc from "dayjs/plugin/utc";
 import { LocaleConfig } from "react-native-calendars";
 import { enableES5 } from "immer";
+import { RepresentationsProvider } from "@core/representation";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 dayjs.extend(customParseFormat);
@@ -73,11 +74,13 @@ export const App = () => {
 				<StatusBar translucent={true} barStyle="dark-content" backgroundColor="transparent" />
 				<SafeAreaProvider>
 					<ServicesProvider>
-						<NavigationContainer theme={theme}>
-							<BottomSheetModalProvider>
-								<RootNavigator />
-							</BottomSheetModalProvider>
-						</NavigationContainer>
+						<RepresentationsProvider>
+							<NavigationContainer theme={theme}>
+								<BottomSheetModalProvider>
+									<RootNavigator />
+								</BottomSheetModalProvider>
+							</NavigationContainer>
+						</RepresentationsProvider>
 					</ServicesProvider>
 				</SafeAreaProvider>
 			</GestureHandlerRootView>

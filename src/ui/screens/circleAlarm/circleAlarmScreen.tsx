@@ -1,8 +1,8 @@
+import { useRepresentations } from "@core/representation";
 import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
 import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
 import { useAutoConnectState } from "@domain/device/hooks";
-import { useDailySleepQualityScore } from "@domain/measure/representation/hooks";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader } from "@ui/components/infoList";
 import { ScoreSection } from "@ui/components/measure/scoreSection";
@@ -23,7 +23,7 @@ export const CircleAlarmScreen: React.FC = observer(() => {
 	const { loading, alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
 	const warningBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const wakeUpScore = useDailySleepQualityScore();
+	const wakeUpScore = useRepresentations().measure.hooks.useDailySleepQualityScore();
 	const autoConnectState = useAutoConnectState();
 
 	useEffect(() => {

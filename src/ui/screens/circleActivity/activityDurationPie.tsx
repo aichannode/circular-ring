@@ -1,6 +1,7 @@
-import { StageInfos } from "@domain/measure/representation/type";
+import { StageInfos } from "@domain/measure/representation/lib/type";
 import { ActivityStage } from "@domain/measure/type";
 import { DailyPieChart } from "@ui/components/measure/dailyPieChart";
+import { DailyPieChartLabelMappedToPhases } from "@ui/components/measure/dailyPieChartLabelMappedToPhases";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import React from "react";
@@ -11,33 +12,6 @@ type Props = {
 	duration: number;
 	stages: Array<StageInfos<ActivityStage>>;
 };
-
-//  function getPhaseLevel(phase?: number) {
-//     switch(phase) {
-// 		case ActivityStage.LOW:
-// 			return 1
-// 		case ActivityStage.MEDIUM:
-// 		case ActivityStage.HIGH:
-// 			return 2
-// 		default:
-// 			return 0
-// 	}
-// }
-
-// function getLabels(
-// 	phase: number,
-// 	_index: number,
-// 	previousPhase?: number
-// ): [WordingKey | null | "", WordingKey | null] {
-// 	// Check with server
-// 	if (previousPhase === ActivityStage.LOW && (phase === ActivityStage.MEDIUM || phase === ActivityStage.HIGH)) {
-// 		return ["activity.duration.label.sport_start", null];
-// 	}
-// 	if ((previousPhase === ActivityStage.MEDIUM || previousPhase === ActivityStage.HIGH) && phase === ActivityStage.LOW) {
-// 		return ["activity.duration.label.sport_end", null];
-// 	}
-// 	return [null, null];
-// }
 
 function getPhaseLevel(phase = 4) {
 	// console.log("FIX phase", phase - 1);
@@ -52,10 +26,10 @@ function createLabelGenerator(stages: Array<StageInfos<ActivityStage>>) {
 		// if (index === stages.length - 1) {
 		// 	return [null, "sleep.duration.label.wake_up"];
 		// }
-		if (index && stages[index].type === 4 && stages[index - 1].type !== 4) {
+		if (index && stages[index].stage === 4 && stages[index - 1].stage !== 4) {
 			return ["activity.duration.label.sport_start", null];
 		}
-		if (index && stages[index].type !== 4 && stages[index - 1].type === 4) {
+		if (index && stages[index].stage !== 4 && stages[index - 1].stage === 4) {
 			return ["activity.duration.label.sport_end", null];
 		}
 		return [null, null];
@@ -70,12 +44,12 @@ export function ActivityDurationPieChart({ stages, duration }: Props) {
 				totalDuration={duration}
 				title="activity.duration.total"
 				chartSize={200}
-				currentIsoDate={moment().hour(22).toISOString()}
+				currentIsoDate={moment("2021-12-10").hour(23).minutes(59).toISOString()}
 				phaseColors={[colors.business.activityNone, colors.business.activityLow, colors.business.activityHigh]}
 				phaseWidths={[5, 7, 7]}
 				getPhaseLevel={getPhaseLevel}
-				getLabels={createLabelGenerator(stages)}
 			/>
+			<DailyPieChartLabelMappedToPhases stages={stages} chartSize={200} getLabels={createLabelGenerator(stages)} />
 		</Container>
 	);
 }

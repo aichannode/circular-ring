@@ -1,8 +1,8 @@
-import { MetricType } from "../metric";
-import { SleepStage, ActivityStage } from "../type";
+import { MetricType } from "../../metric";
+import { SleepStage, ActivityStage } from "../../type";
 
 export type StageInfos<T extends SleepStage | ActivityStage> = {
-	type: T;
+	stage: T;
 	/** Iso date */
 	start: string;
 	/** Iso date */
@@ -17,12 +17,13 @@ export type RangeDetails<M extends MetricType> = {
  * Used by the representation, atomically select needed data
  */
 
-///////////
-// ACTIVITY
-///////////
-
-export const activityIntensityMetrics = [] as const;
-export type ActivityIntensityMetrics = typeof activityIntensityMetrics[number];
+export const dailyActivityIntensityMetrics = [
+	MetricType.UserDataActivityIntensity,
+	MetricType.UserDailySportBegin,
+	MetricType.UserDailySportEnd,
+	MetricType.UserDailyActivityTotal,
+] as const;
+export type DailyActivityIntensityMetrics = typeof dailyActivityIntensityMetrics[number];
 
 export const dailyActivityDetailsMetrics = [
 	MetricType.UserDailySteps,
@@ -145,13 +146,12 @@ export type DailySleepDetailsGaugeMetrics = typeof dailySleepDetailsGaugeCalibra
  * Those metrics are used for the stages circle and hypnogram
  */
 export const dailySleepStageDuration = [
-	MetricType.UserSleepstage,
 	MetricType.UserCoreSleepBegin,
 	MetricType.UserCoreSleepEnd,
 	MetricType.UserDailyTotalSleepDuration,
 	MetricType.UserDailyRealSleepDuration,
 	MetricType.UserDailyAwakeStageDuration,
-	MetricType.UserDailyAwakeStageDuration,
+	MetricType.UserDailyREMStageDuration,
 	MetricType.UserDailyLightStageDuration,
 	MetricType.UserDailyDeepStageDuration,
 	MetricType.UserDailyPercRealSleep,

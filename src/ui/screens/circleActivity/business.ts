@@ -1,4 +1,4 @@
-import { StageInfos } from "@domain/measure/representation/type";
+import { StageInfos } from "@domain/measure/representation/lib/type";
 import { ActivityStage, SleepStage } from "@domain/measure/type";
 import moment from "moment";
 
@@ -15,14 +15,14 @@ function getIntersections(
 	const intersections: Array<{ index: number; from: number; to: number }> = [];
 	for (let i = 0; i < inputSegments.length; i++) {
 		const stage = inputSegments[i];
-		const stageStart = moment(stage.start);
-		const stageEnd = moment(stage.end);
-		const stageDuration = moment.duration(stageEnd.diff(stageStart)).valueOf();
+		const stageStart = stage.start;
+		const stageEnd = stage.end;
+		const stageDuration = stageEnd - stageStart;
 		const sampleSize = to - from;
 		// The stage is smaller than the sample buffer
 		if (stageDuration < sampleSize) {
 			// The sample buffer contains the start of the stage but not the end
-			if (moment(stage.start).isBetween(from, to) && !moment(stage.end).isBetween(from, to)) {
+			if (stage.start > from && stage.start < to && !(stage.end > from && stage.end < to)) {
 				intersections.push({
 					index: i,
 					from: stage.start,
@@ -31,7 +31,7 @@ function getIntersections(
 			}
 
 			// The sample buffer contains the end of the stage but not the start
-			if (!moment(stage.start).isBetween(from, to) && moment(stage.end).isBetween(from, to)) {
+			if (!(stage.start > from && stage.start < to) && stage.end > from && stage.end < to) {
 				intersections.push({
 					index: i,
 					from, // We will take into account the start time of the sample
@@ -39,7 +39,7 @@ function getIntersections(
 				});
 			}
 			// The sample buffer contains the whole stage
-			if (moment(stage.start).isBetween(from, to) && moment(stage.end).isBetween(from, to)) {
+			if (stage.start > from && stage.start < to && stage.end > from && stage.end < to) {
 				intersections.push({
 					index: i,
 					from: stage.start,
@@ -50,7 +50,7 @@ function getIntersections(
 		// The stage is wider than the sample buffer
 		else {
 			// The stage contains the start of the sample buffer but not the end
-			if (moment(from).isBetween(stage.start, stage.end) && !moment(to).isBetween(stage.start, stage.end)) {
+			if (from > stage.start && from < stage.end && !(to > stage.start && to < stage.end)) {
 				intersections.push({
 					index: i,
 					from,
@@ -59,7 +59,7 @@ function getIntersections(
 			}
 
 			// The stage contains the end of the sample buffer but not the start
-			if (!moment(from).isBetween(stage.start, stage.end) && moment(to).isBetween(stage.start, stage.end)) {
+			if (!(from > stage.start && from < stage.end) && to > stage.start && to < stage.end) {
 				intersections.push({
 					index: i,
 					from: stage.start,
@@ -67,7 +67,7 @@ function getIntersections(
 				});
 			}
 			// The stage contains the whole sample buffer
-			if (moment(from).isBetween(stage.start, stage.end) && moment(to).isBetween(stage.start, stage.end)) {
+			if (from > stage.start && from < stage.end && to > stage.start && to < stage.end) {
 				intersections.push({
 					index: i,
 					from,
@@ -92,16 +92,12 @@ function getAverage(
 	/** the sample size in ms with a minum of 1min */
 	to: number
 ): number {
-	const sliceDuration = moment(to).diff(from);
+	const sliceDuration = to - from;
 	const intersections = getIntersections(stages, from, to)
 		// Convert the intersections length to a percent of time of the sample
 		.map((section) => ({
 			value: stages[section.index].value,
-			duration: moment(section.to).diff(section.from),
-		}))
-		.map(({ value, duration }) => ({
-			value,
-			percent: duration / sliceDuration,
+			percent: (section.to - section.from) / sliceDuration,
 		}));
 
 	return intersections.reduce(function (average, sample) {
@@ -115,6 +111,10 @@ export function sample<T extends SleepStage | ActivityStage>(
 	sampleSize: number
 ): Array<{ value: number; isoTime: string }> {
 	const samples: Array<{ value: number; isoTime: string }> = [];
+	if (sampleSize < 1000) {
+		console.warn(`[SAMPLING DATA] sample function need a sample size > 1000. Got ${sampleSize}`);
+		return samples;
+	}
 	if (!stages.length) {
 		return samples;
 	}
@@ -123,7 +123,7 @@ export function sample<T extends SleepStage | ActivityStage>(
 	const duration = moment.duration(endOfActivty.diff(startOfActivity)).asMilliseconds();
 	const sampleNb = duration / sampleSize; // How many samples we need to do
 	const segments = stages.map((stage) => ({
-		value: stage.type,
+		value: stage.stage,
 		start: moment(stage.start).valueOf(),
 		end: moment(stage.end).valueOf(),
 	}));
@@ -135,9 +135,8 @@ export function sample<T extends SleepStage | ActivityStage>(
 		const to = moment(from).add(sampleSize).valueOf();
 		samples.push({
 			isoTime: moment(from).toISOString(),
-			value: getAverage(segments, from, to),
+			value: getAverage(segments, from, to), // todo remove already used segments
 		});
 	}
-
 	return samples;
 }

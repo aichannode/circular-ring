@@ -7,13 +7,22 @@ export type DatedMetrics<T extends MetricType = MetricType> = {
 	metrics: Partial<Metric<T>>;
 };
 
-export type RangeMetrics<T extends MetricType = MetricType> = Array<DatedMetrics<T>>;
+/**
+ * Structure for measure model data for efficient search
+ * Each range contains:
+ * - the data evolution over range time for the given T metrics
+ * - the fixed values: the last value of the range for the given F metrics
+ */
+export type RangeMetrics<T extends MetricType = MetricType, F extends MetricType = MetricType> = {
+	timeline: Array<DatedMetrics<T>>;
+	fixedValues: Partial<Metric<F>>;
+};
 
 export enum MetricType {
 	//////////////
 	// Daily sleep
 	//////////////
-	UserSleepstage = "user.sleep.stage",
+	UserSleepStage = "user.sleep.stage",
 	UserCoreSleepBegin = "user.core.sleep.begin",
 	UserCoreSleepEnd = "user.core.sleep.end",
 	UserDailyLightStageDuration = "user.daily.light.stage.duration",
@@ -62,6 +71,7 @@ export enum MetricType {
 	///////////////////
 	// Daily metabolism
 	///////////////////
+	UserDailyGlobalScore = "user.daily.global.score",
 	UserDailyScoreRecovery = "user.daily.score.recovery",
 	UserDailyScoreBr = "user.daily.score.br",
 	UserDailySleepHRV = "user.daily.sleep.hrv",
@@ -100,6 +110,10 @@ export enum MetricType {
 	/////////////////
 	// Daily activity
 	/////////////////
+	UserDataActivityIntensity = "user.data.activity.intensity",
+	UserDailySportBegin = "user.daily.sport.begin",
+	UserDailySportEnd = "user.daily.sport.end",
+	UserDailyActivityTotal = "user.daily.activity.total",
 	UserDailySteps = "user.daily.steps",
 	UserDailyWalkingEquivalency = "user.daily.walking.equivalency",
 	UserDailyWalkingEquivalencyGoalMin = "user.daily.walking.equivalency.goal.min",

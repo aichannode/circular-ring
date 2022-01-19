@@ -1,7 +1,7 @@
 import { FetchStrategy } from "@betomorrow/micro-stores";
+import { useRepresentations } from "@core/representation";
 import { useServices } from "@core/services";
 import { useCalendar } from "@domain/calendar/hooks/useCalendar";
-import { useDailyGlobalScore } from "@domain/measure/representation/hooks";
 import { CalendarView } from "@ui/components/calendar/calendarView";
 import { InfoListHeader } from "@ui/components/infoList";
 import { ResponsiveCenterView, Stack } from "@ui/components/layout";
@@ -19,7 +19,13 @@ import { Pressable } from "react-native";
 import styled from "styled-components/native";
 
 export const CalendarScreen: React.FC = observer(() => {
-	const { measureService, calendarService } = useServices();
+	const { calendarService } = useServices();
+	const {
+		measure: {
+			hooks: { useDailyGlobalScore },
+			actions: { setEachDayOfMonthScore: setMonthGlobalScore },
+		},
+	} = useRepresentations();
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
 
@@ -30,13 +36,12 @@ export const CalendarScreen: React.FC = observer(() => {
 	const firstDayOfMonth = useMemo(() => dayjs(selectedDay).startOf("month").format("YYYY-MM-DD"), [selectedDay]);
 
 	useEffect(() => {
-		const firstOfMonth = new Date(firstDayOfMonth);
-		measureService.fetchMonthGlobalScores(firstOfMonth);
+		setMonthGlobalScore(firstDayOfMonth);
 		calendarService.calendarStore.fetch(firstDayOfMonth);
 		console.log(" ================== UPDATE CALENDAR");
 	}, [firstDayOfMonth]);
 
-	const dailyScore = useDailyGlobalScore(selectedDay) ?? 0;
+	const dailyScore = useDailyGlobalScore(selectedDay);
 
 	return (
 		<Container>

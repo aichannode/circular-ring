@@ -13,8 +13,6 @@ import { DevFakeDeviceService, EmptyFakeDeviceService } from "@domain/fake/fakeD
 import { FeedApi } from "@domain/feed/feedApi";
 import { FeedService } from "@domain/feed/feedService";
 import { FeedStorage } from "@domain/feed/feedStorage";
-import { MeasureApi } from "@domain/measure/measureApi";
-import { MeasureService } from "@domain/measure/measureService";
 import { UserPreferencesService } from "@domain/preferences/userPreferencesService";
 import { UserPreferencesStorage } from "@domain/preferences/userPreferencesStorage";
 import { RingApi } from "@domain/ring/ringApi";
@@ -42,7 +40,8 @@ const ringDataStorage = new RingDataStorage();
 const userRingsStorage = new UserRingsStorage();
 const userDevicesStorage = new UserDevicesStorage();
 
-const apiService = new ApiService();
+export const apiService = new ApiService();
+
 const ringApi = new RingApi(apiService);
 
 const cognitoAuthService = new CognitoAuthService<TokenPayload>();
@@ -70,9 +69,6 @@ const userService = new UserService(
 );
 const circlesService = new CirclesService();
 
-const measureApi = new MeasureApi(/* apiService */);
-const measureService = new MeasureService(measureApi);
-
 const userPreferencesStorage = new UserPreferencesStorage();
 const userPreferencesService = new UserPreferencesService(userPreferencesStorage);
 
@@ -93,7 +89,6 @@ export const services = {
 	bleDeviceService,
 	userService,
 	ringManagementService,
-	measureService,
 	circleAlarmService,
 	userPreferencesService,
 	calibrationService,

@@ -15,11 +15,15 @@ export enum ActivityStage {
 }
 
 export enum TimeFrame {
+	// Relative time
 	TODAY = "TODAY",
 	LAST_7_DAYS = "LAST_7_DAYS",
 	LAST_30_DAYS = "LAST_30_DAYS",
-	YEAR = "YEAR",
 	ALL = "ALL",
+	// Absolute time
+	DAY = "DAY",
+	WEEK = "WEEK",
+	MONTH = "MONTH",
 }
 
 export type UserProperties = {

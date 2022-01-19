@@ -1,5 +1,5 @@
 import { MetricType } from "@domain/measure/metric";
-import { DailySleepDetailsMetrics } from "@domain/measure/representation/type";
+import { DailySleepDetailsMetrics } from "@domain/measure/representation/lib/type";
 import moment from "moment";
 import { WordingKey } from "src/wordings";
 import { getGaugeColor, getInvertedGaugeColor } from "../business";

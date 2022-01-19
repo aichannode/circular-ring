@@ -1,11 +1,8 @@
 import {
-	useDailyEnergyScoreDetails,
-	useDailyActivityDuration,
-	useDailyActivityIntensity,
-	useDailyEnergyScore,
-	useDailyMetrics,
-} from "@domain/measure/representation/hooks";
-import { dailyActivityDetailsMetrics, dailyEnergyScoreMetrics } from "@domain/measure/representation/type";
+	dailyActivityDetailsMetrics,
+	dailyEnergyScoreMetrics,
+	StageInfos,
+} from "@domain/measure/representation/lib/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CalendarView } from "@ui/components/calendar/calendarView";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
@@ -18,16 +15,13 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import React, { useRef, useState, useEffect } from "react";
-import { LayoutAnimation, ScrollView, View } from "react-native";
+import { InteractionManager, LayoutAnimation, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { DailyMetric } from "./dailyMetric";
-import { ScoreQuality } from "@domain/measure/score";
-/* import { DailyMetric } from "./dailyMetric"; */
-import { /* dailyMetricsDataInfos, */ dailyMetricsDetails, getActivityQualityDetails } from "./measureDisplayInfos";
+import { dailyMetricsDetails, getActivityQualityDetails } from "./measureDisplayInfos";
 import { observer } from "mobx-react-lite";
 import { TitleText } from "@ui/components/text";
-// import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { TimeFrame } from "@domain/measure/type";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
 import { sample } from "./business";
@@ -37,6 +31,9 @@ import fire from "@assets/images/fire.png";
 import sport from "@assets/images/sport.png";
 import lungs from "@assets/images/lungs.png";
 import heart from "@assets/images/heart.png";
+import { DailyActivityIntensityData } from "@domain/measure/representation/api";
+import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
+import { useRepresentations } from "@core/representation";
 
 function getIcon(path: string) {
 	switch (path) {
@@ -55,20 +52,62 @@ function getIcon(path: string) {
 	}
 }
 
+function useSampler(
+	data: StageInfos<any>[],
+	sampleSize: number,
+	setData: (
+		data: Array<{
+			value: number;
+			isoTime: string;
+		}>
+	) => void
+) {
+	const handler = useRef<ReturnType<typeof InteractionManager.runAfterInteractions>>();
+	useEffect(
+		function () {
+			handler.current?.cancel();
+			handler.current = InteractionManager.runAfterInteractions(function () {
+				console.log("[CircleActivityScreen] SAMPLING");
+				setData(sample(data, sampleSize));
+			});
+			handler.current?.then(() => console.log("[CircleActivityScreen] SAMPLING DONE"));
+		},
+		[data, sampleSize]
+	);
+}
+
+const SAMPLE_SIZE = 15 * 60 * 1000; // 15 minutes
+
 export const CircleActivityScreen: React.FC = observer(() => {
 	const { format } = useI18n();
-	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
-	const activityIntensity = useDailyActivityIntensity();
-	const energyScoreDetails = useDailyEnergyScoreDetails();
-	const dailyMetrics = useDailyMetrics();
-	const activityDuration = useDailyActivityDuration(selectedDay);
+	const [selectedDay, setSelectedDay] = useState<string>(moment("2021-12-23").format("YYYY-MM-DD"));
+	const [activityIntensity, setData] = useState<DailyActivityIntensityData>({
+		stages: [],
+		duration: 0,
+		sportSessionTimes: [],
+	});
+	const {
+		measure: {
+			hooks: { useDailyEnergyScoreDetails, useDailyMetrics, useDailyEnergyScore, useDailyActivityIntensity },
+		},
+	} = useRepresentations();
+	const energyScoreDetails = useDailyEnergyScoreDetails(selectedDay);
+	const dailyMetrics = useDailyMetrics(selectedDay);
 	const energyScore = useDailyEnergyScore(selectedDay);
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const activityQualityDetails = getActivityQualityDetails(format);
-	const [graphPeriod] = useState(TimeFrame.TODAY);
+	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
+	const [graphData, setGraphData] = useState<
+		Array<{
+			value: number;
+			isoTime: string;
+		}>
+	>([]);
 
-	console.log("FIX activityDetails", energyScoreDetails);
+	useDailyActivityIntensity({ isoDay: selectedDay, setData });
+	useSampler(activityIntensity.stages, SAMPLE_SIZE, setGraphData);
+
 	useEffect(() => {
 		console.log("CURRENT PERIOD = ", graphPeriod);
 	}, [graphPeriod]);
@@ -94,13 +133,12 @@ export const CircleActivityScreen: React.FC = observer(() => {
 					/>
 				</View>
 				<InfoListHeader>{format("activity.duration.title")}</InfoListHeader>
-				<ActivityDurationPieChart stages={activityIntensity} duration={activityDuration ?? 0} />
+				<ActivityDurationPieChart stages={activityIntensity.stages} duration={activityIntensity.duration} />
 				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
 				<ElementStack gap={10}>
 					{dailyActivityDetailsMetrics.map((metric) => {
 						const dataInfos = dailyMetricsDetails[metric];
 						const value = dailyMetrics[metric];
-						console.log(dataInfos.icon);
 						return (
 							<DailyMetric
 								key={metric}
@@ -117,54 +155,6 @@ export const CircleActivityScreen: React.FC = observer(() => {
 							/>
 						);
 					})}
-					<DailyMetric
-						icon={require("@assets/images/shoes.png")}
-						label={"Steps taken (nb)"}
-						value={9200}
-						goodThreshold={0}
-						optimalThreshold={0}
-						overWriteScoreQuality={ScoreQuality.OPTIMAL}
-					/>
-					<DailyMetric
-						icon={require("@assets/images/journey.png")}
-						label={"Walking equivalency (km)"}
-						value={5.4}
-						goodThreshold={0}
-						optimalThreshold={0}
-						overWriteScoreQuality={ScoreQuality.OPTIMAL}
-					/>
-					<DailyMetric
-						icon={require("@assets/images/fire.png")}
-						label={"Calories burned (kcal)"}
-						value={1010}
-						goodThreshold={0}
-						optimalThreshold={0}
-						overWriteScoreQuality={ScoreQuality.GOOD}
-					/>
-					<DailyMetric
-						icon={require("@assets/images/sport.png")}
-						label={"Cardio points"}
-						value={157}
-						goodThreshold={0}
-						optimalThreshold={0}
-						overWriteScoreQuality={ScoreQuality.POOR}
-					/>
-					<DailyMetric
-						icon={require("@assets/images/lungs.png")}
-						label={"VO2 max (ml/kg/min)"}
-						value={35}
-						goodThreshold={0}
-						optimalThreshold={0}
-						// OverWriteScoreQuality={ScoreQuality.OPTIMAL}
-					/>
-					<DailyMetric
-						icon={require("@assets/images/heart.png")}
-						label={"HR max (bpm)"}
-						value={123}
-						goodThreshold={0}
-						optimalThreshold={0}
-						// OverWriteScoreQuality={ScoreQuality.OPTIMAL}
-					/>
 				</ElementStack>
 				<InfoListHeader>{format("activity.score.details")}</InfoListHeader>
 				<ElementStack gap={10}>
@@ -184,7 +174,6 @@ export const CircleActivityScreen: React.FC = observer(() => {
 									thresholdHigh: (energyScoreDetails as any)[dataInfos.metricsName.thresholdHigh],
 									gaugeFilling: (energyScoreDetails as any)[dataInfos.metricsName.gaugeFilling],
 								};
-								console.log(dataInfos.metricsName);
 								return [
 									<ScoreGauge
 										key={metric}
@@ -219,7 +208,8 @@ export const CircleActivityScreen: React.FC = observer(() => {
 					<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
 						{format("activity.intensity")}
 					</TitleText>
-					{/* <View style={{ marginVertical: 10 }}>
+					{/** Wait for available data on week/month */}
+					<View style={{ display: "none", marginVertical: 10 }}>
 						<TimeFrameSwitcher
 							setGraphPeriod={setGraphPeriod}
 							graphPeriod={graphPeriod}
@@ -239,8 +229,8 @@ export const CircleActivityScreen: React.FC = observer(() => {
 								},
 							]}
 						/>
-					</View> */}
-					<ActivityIntensityGraph samples={sample(activityIntensity, 60 * 15 * 1000)} />
+					</View>
+					<ActivityIntensityGraph samples={graphData} />
 				</ElementStack>
 			</ScrollView>
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>

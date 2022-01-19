@@ -1,4 +1,4 @@
-import { EffectCallback, useRef, useEffect } from "react";
+import { EffectCallback, useRef, useEffect, useMemo } from "react";
 
 export function useChangeEffect(effect: EffectCallback, deps?: unknown[]): void {
 	const firstRender = useRef(true);
@@ -18,4 +18,8 @@ export function useUnmount<T extends unknown[]>(effect: (deps: readonly [...T]) 
 		depRefs.current = deps;
 	}, deps);
 	useEffect(() => () => effect(depRefs.current), []);
+}
+
+export function useOnComponentWillMount(effect: EffectCallback) {
+	useMemo(effect, []);
 }

@@ -68,7 +68,7 @@ export function GraphLegend({ rows }: Props) {
 }
 
 const Column = styled.View`
-	justifycontent: center;
+	justify-content: center;
 `;
 
 const Cell = styled.View<{ isEven: boolean }>`

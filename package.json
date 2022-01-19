@@ -100,6 +100,7 @@
 		"eslint": "^7.32.0",
 		"jest": "^27.1.0",
 		"metro-react-native-babel-preset": "^0.66.2",
+		"react-devtools": "^4.22.1",
 		"react-native-codegen": "^0.0.7",
 		"react-test-renderer": "17.0.2",
 		"standard-version": "^9.3.2",

@@ -9,42 +9,42 @@ const sampleCursor = moment(start);
 // Two hours of activity presented by stages
 const activityInput = [
 	{
-		type: ActivityStage.LOW,
+		stage: ActivityStage.LOW,
 		start: stageCursor.toISOString(), // 12h
 		end: stageCursor.add(10, "minutes").toISOString(), // 12h10
 	},
 	{
-		type: ActivityStage.MEDIUM,
+		stage: ActivityStage.MEDIUM,
 		start: stageCursor.toISOString(), // 12h10
 		end: stageCursor.add(20, "minutes").toISOString(), // 12h30
 	},
 	{
-		type: ActivityStage.HIGH,
+		stage: ActivityStage.HIGH,
 		start: stageCursor.toISOString(), // 12h30
 		end: stageCursor.add(10, "minutes").toISOString(), // 12h40
 	},
 	{
-		type: ActivityStage.LOW,
+		stage: ActivityStage.LOW,
 		start: stageCursor.toISOString(), // 12h40
 		end: stageCursor.add(10, "minutes").toISOString(), // 12h50
 	},
 	{
-		type: ActivityStage.MEDIUM,
+		stage: ActivityStage.MEDIUM,
 		start: stageCursor.toISOString(), // 12h50
 		end: stageCursor.add(40, "minutes").toISOString(), // 13h30
 	},
 	{
-		type: ActivityStage.HIGH,
+		stage: ActivityStage.HIGH,
 		start: stageCursor.toISOString(), // 13h30
 		end: stageCursor.add(10, "minutes").toISOString(), // 13h40
 	},
 	{
-		type: ActivityStage.LOW,
+		stage: ActivityStage.LOW,
 		start: stageCursor.toISOString(), // 13h40
 		end: stageCursor.add(10, "minutes").toISOString(), // 13h50
 	},
 	{
-		type: ActivityStage.SEDENTARY,
+		stage: ActivityStage.SEDENTARY,
 		start: stageCursor.toISOString(), // 13h50
 		end: stageCursor.add(10, "minutes").toISOString(), // 14h
 	},

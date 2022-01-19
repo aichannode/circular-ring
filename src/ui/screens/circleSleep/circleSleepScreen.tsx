@@ -1,9 +1,6 @@
-import {
-	useDailySleepQualityScore,
-	useDailySleepStages,
-	useDailySleepDetails,
-} from "@domain/measure/representation/hooks";
-import { dailySleepDetailsMetrics } from "@domain/measure/representation/type";
+import { useRepresentations } from "@core/representation";
+import { DailySleepData } from "@domain/measure/representation/api";
+import { dailySleepDetailsMetrics } from "@domain/measure/representation/lib/type";
 import { SleepStage, TimeFrame } from "@domain/measure/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CalendarView } from "@ui/components/calendar/calendarView";
@@ -16,10 +13,11 @@ import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { ScoreGauge } from "@ui/components/measure/scoreGauge";
 import { ScoreSection } from "@ui/components/measure/scoreSection";
 import { ScrollScreen } from "@ui/components/scrollScreen";
+import { Spinner } from "@ui/components/spinner";
 import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import { isDefined } from "@ui/utils/filter";
+import { isDefined } from "@ui/utils/guard";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
@@ -30,20 +28,22 @@ import { getSleepQualityDetails } from "./measureDisplayInfos";
 import { SleepDurationPieChart } from "./sleepDurationPie";
 
 export const CircleSleepScreen: React.FC = observer(() => {
-	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
+	const [selectedDay, setSelectedDay] = useState<string>(moment("2021-12-21").format("YYYY-MM-DD"));
+	const { useDailySleepDetails, useDailySleepQualityScore, useDailySleepStages } = useRepresentations().measure.hooks;
 	const details = useDailySleepDetails(selectedDay);
 	const qualityScore = useDailySleepQualityScore(selectedDay);
-	const dailySleep = useDailySleepStages();
+	const [dailySleep, setData] = useState<DailySleepData | undefined>();
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const { format } = useI18n();
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const [graphPeriod /* , setGraphPeriod */] = useState(TimeFrame.TODAY);
 	const sleepQualityDetails = getSleepQualityDetails(format);
-	const awakeDuration = dailySleep.sleepStagesDuration[SleepStage.AWAKE];
-	const REMDuration = dailySleep.sleepStagesDuration[SleepStage.REM];
-	const lightDuration = dailySleep.sleepStagesDuration[SleepStage.LIGHT];
-	const deepDuration = dailySleep.sleepStagesDuration[SleepStage.DEEP];
+	const awakeDuration = dailySleep?.sleepStagesDuration[SleepStage.AWAKE];
+	const REMDuration = dailySleep?.sleepStagesDuration[SleepStage.REM];
+	const lightDuration = dailySleep?.sleepStagesDuration[SleepStage.LIGHT];
+	const deepDuration = dailySleep?.sleepStagesDuration[SleepStage.DEEP];
 
+	useDailySleepStages({ setData, isoDay: selectedDay });
 	useEffect(() => {
 		console.log("CURRENT PERIOD = ", graphPeriod);
 	}, [graphPeriod]);
@@ -68,11 +68,15 @@ export const CircleSleepScreen: React.FC = observer(() => {
 				/>
 			</View>
 			<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
-			<SleepDurationPieChart
-				stages={dailySleep.stages}
-				coreSleepTiming={dailySleep.coreSleepTiming}
-				duration={dailySleep.totalSleepDuration ?? 0}
-			/>
+			{dailySleep ? (
+				<SleepDurationPieChart
+					stages={dailySleep.stages}
+					coreSleepTiming={dailySleep.coreSleepTiming}
+					duration={dailySleep.totalMinutesSleepDuration ?? 0}
+				/>
+			) : (
+				<Spinner />
+			)}
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
 				{
@@ -146,55 +150,59 @@ export const CircleSleepScreen: React.FC = observer(() => {
 						]}
 					/> */}
 				</View>
-				<GraphContainer>
-					<Hypnogram data={dailySleep.stages} />
-					<View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
-						<GraphLegend
-							rows={[
-								awakeDuration && {
-									label: format("sleep.stage.awake"),
-									element: {
-										key: "sleep.stage.awake",
-										node: <></>,
+				{dailySleep ? (
+					<GraphContainer>
+						<Hypnogram data={dailySleep.stages} />
+						<View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
+							<GraphLegend
+								rows={[
+									awakeDuration && {
+										label: format("sleep.stage.awake"),
+										element: {
+											key: "sleep.stage.awake",
+											node: <></>,
+										},
+										value: `${moment.duration(awakeDuration.duration).hours()} h ${moment
+											.duration(awakeDuration.duration)
+											.minutes()} min ${awakeDuration.percent}%`,
 									},
-									value: `${moment.duration(awakeDuration.duration).hours()} h ${moment
-										.duration(awakeDuration.duration)
-										.minutes()} min ${awakeDuration.percent}%`,
-								},
-								REMDuration && {
-									label: format("sleep.stage.REM"),
-									element: {
-										key: "sleep.stage.REM",
-										node: <></>,
+									REMDuration && {
+										label: format("sleep.stage.REM"),
+										element: {
+											key: "sleep.stage.REM",
+											node: <></>,
+										},
+										value: `${moment.duration(REMDuration.duration).hours()} h ${moment
+											.duration(REMDuration.duration)
+											.minutes()} min ${REMDuration.percent}%`,
 									},
-									value: `${moment.duration(REMDuration.duration).hours()} h ${moment
-										.duration(REMDuration.duration)
-										.minutes()} min ${REMDuration.percent}%`,
-								},
-								lightDuration && {
-									label: format("sleep.stage.light"),
-									element: {
-										key: "sleep.stage.light",
-										node: <></>,
+									lightDuration && {
+										label: format("sleep.stage.light"),
+										element: {
+											key: "sleep.stage.light",
+											node: <></>,
+										},
+										value: `${moment.duration(lightDuration.duration).hours()} h ${moment
+											.duration(lightDuration.duration)
+											.minutes()} min ${lightDuration.percent}%`,
 									},
-									value: `${moment.duration(lightDuration.duration).hours()} h ${moment
-										.duration(lightDuration.duration)
-										.minutes()} min ${lightDuration.percent}%`,
-								},
-								deepDuration && {
-									label: format("sleep.stage.deep"),
-									element: {
-										key: "sleep.stage.deep",
-										node: <></>,
+									deepDuration && {
+										label: format("sleep.stage.deep"),
+										element: {
+											key: "sleep.stage.deep",
+											node: <></>,
+										},
+										value: `${moment.duration(deepDuration.duration).hours()} h ${moment
+											.duration(deepDuration.duration)
+											.minutes()} min ${deepDuration.percent}`,
 									},
-									value: `${moment.duration(deepDuration.duration).hours()} h ${moment
-										.duration(deepDuration.duration)
-										.minutes()} min ${deepDuration.percent}`,
-								},
-							].filter(isDefined)}
-						/>
-					</View>
-				</GraphContainer>
+								].filter(isDefined)}
+							/>
+						</View>
+					</GraphContainer>
+				) : (
+					<Spinner />
+				)}
 			</ElementStack>
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
 				<View style={{ padding: 20 }}>

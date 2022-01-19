@@ -1,5 +1,5 @@
+import { useRepresentations } from "@core/representation";
 import { useServices } from "@core/services";
-import { useDailyGlobalScore } from "@domain/measure/representation/hooks";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ResponsiveCenterView } from "@ui/components/layout";
@@ -19,7 +19,7 @@ export const ProfileScreen = observer(() => {
 	const { navigate } = useRoutesNavigation();
 	const { cognitoAuthService } = useServices();
 
-	const dailyScore = useDailyGlobalScore();
+	const dailyScore = useRepresentations().measure.hooks.useDailyGlobalScore();
 	const [isConnectedByEmail, setIsConnectedByEmail] = useState(false);
 
 	const goToProfileInformation = useCallback(() => {

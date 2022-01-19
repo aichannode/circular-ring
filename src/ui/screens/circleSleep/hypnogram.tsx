@@ -1,4 +1,4 @@
-import { StageInfos } from "@domain/measure/representation/type";
+import { StageInfos } from "@domain/measure/representation/lib/type";
 import { SleepStage } from "@domain/measure/type";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";

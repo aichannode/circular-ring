@@ -7,27 +7,27 @@ const cursor = moment().hour(22).minutes(0);
 
 const input: HypnogramData = [
 	{
-		type: SleepStage.AWAKE,
+		stage: SleepStage.AWAKE,
 		start: cursor.toISOString(),
 		end: cursor.hour(23).toISOString(),
 	},
 	{
-		type: SleepStage.REM,
+		stage: SleepStage.REM,
 		start: cursor.toISOString(),
 		end: cursor.add(10, "minutes").toISOString(),
 	},
 	{
-		type: SleepStage.LIGHT,
+		stage: SleepStage.LIGHT,
 		start: cursor.toISOString(),
 		end: cursor.add(30, "minutes").toISOString(),
 	},
 	{
-		type: SleepStage.DEEP,
+		stage: SleepStage.DEEP,
 		start: cursor.toISOString(),
 		end: cursor.add(1, "day").hour(1).minutes(30).toISOString(),
 	},
 	{
-		type: SleepStage.AWAKE,
+		stage: SleepStage.AWAKE,
 		start: cursor.toISOString(),
 		end: cursor.hour(2).toISOString(),
 	},

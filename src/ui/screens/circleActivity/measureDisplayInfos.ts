@@ -1,5 +1,5 @@
 import { MetricType } from "@domain/measure/metric";
-import { DailyActivityDetailsMetrics, DailyEnergyScoreMetrics } from "@domain/measure/representation/type";
+import { DailyActivityDetailsMetrics, DailyEnergyScoreMetrics } from "@domain/measure/representation/lib/type";
 import { WordingKey } from "src/wordings";
 import { getMetricColor, getGaugeColor, getScoreQualityLabel } from "../business";
 import { GaugeDisplayConfig, MetricDisplayConfig } from "../type";
