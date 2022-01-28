@@ -1,3 +1,4 @@
+import { NamedUserRing } from "@domain/ring/ring";
 import { CalendarTag } from "@domain/calendar/calendar";
 
 export interface I_QuickAccessElem {
@@ -17,4 +18,5 @@ export interface I_AppState {
 	quickAccess: I_QuickAccess;
 	isInSleepMode: boolean;
 	lastUsedTags: CalendarTag[];
+	userRings: NamedUserRing[];
 }

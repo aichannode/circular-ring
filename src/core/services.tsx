@@ -18,7 +18,6 @@ import { UserPreferencesStorage } from "@domain/preferences/userPreferencesStora
 import { RingApi } from "@domain/ring/ringApi";
 import { RingDataStorage } from "@domain/ring/ringDataStorage";
 import { RingManagementService } from "@domain/ring/ringManagementService";
-import { UserRingsStorage } from "@domain/ring/userRingsStorage";
 import { UserApi } from "@domain/user/userApi";
 import { UserService } from "@domain/user/userService";
 import { UserStorage } from "@domain/user/userStorage";
@@ -37,7 +36,6 @@ const appStateService = new AppStateService(appStateStorage);
 const userStorage = new UserStorage();
 const favoriteDeviceStorage = new FavoriteDeviceStorage();
 const ringDataStorage = new RingDataStorage();
-const userRingsStorage = new UserRingsStorage();
 const userDevicesStorage = new UserDevicesStorage();
 
 export const apiService = new ApiService();
@@ -49,22 +47,22 @@ const cognitoAuthService = new CognitoAuthService<TokenPayload>();
 const userApi = new UserApi(apiService);
 
 const bluetoothService = new BluetoothService();
-const bleDeviceService = new BleDeviceService(bluetoothService, fakeDeviceService, favoriteDeviceStorage, ringApi);
-const circleAlarmService = new CircleAlarmService(bleDeviceService);
-const ringManagementService = new RingManagementService(
-	bleDeviceService,
-	userRingsStorage,
-	ringDataStorage,
+const bleDeviceService = new BleDeviceService(
+	bluetoothService,
+	fakeDeviceService,
+	favoriteDeviceStorage,
 	ringApi,
 	appStateService
 );
+const circleAlarmService = new CircleAlarmService(bleDeviceService);
+const ringManagementService = new RingManagementService(bleDeviceService, ringDataStorage, ringApi, appStateService);
 
 const userService = new UserService(
 	cognitoAuthService,
 	userApi,
 	userStorage,
 	bleDeviceService,
-	ringManagementService,
+	appStateService,
 	favoriteDeviceStorage
 );
 const circlesService = new CirclesService();

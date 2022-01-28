@@ -1,4 +1,5 @@
 import { CalendarTag } from "@domain/calendar/calendar";
+import { NamedUserRing } from "@domain/ring/ring";
 import produce from "immer";
 import { observable } from "micro-observables";
 import { AppStateStorage } from "./appStateStorage";
@@ -11,12 +12,14 @@ export class AppStateService {
 		active: [],
 	});
 	lastUsedTags = observable<CalendarTag[]>([]);
+	userRings = observable<NamedUserRing[]>([]);
 
 	private get appState(): I_AppState {
 		return {
 			isInSleepMode: this.isInSleepMode.get(),
 			quickAccess: this.quickAccess.get(),
 			lastUsedTags: this.lastUsedTags.get(),
+			userRings: this.userRings.get(),
 		};
 	}
 
@@ -26,6 +29,7 @@ export class AppStateService {
 		this.lastUsedTags.set(state.lastUsedTags);
 		this.quickAccess.set(state.quickAccess);
 		this.isInSleepMode.set(state.isInSleepMode);
+		this.userRings.set(state.userRings);
 	}
 
 	async init() {
@@ -40,6 +44,7 @@ export class AppStateService {
 		this.lastUsedTags.subscribe(() => this.AppStateStorage.save(this.appState));
 		this.quickAccess.subscribe(() => this.AppStateStorage.save(this.appState));
 		this.isInSleepMode.subscribe(() => this.AppStateStorage.save(this.appState));
+		this.userRings.subscribe(() => this.AppStateStorage.save(this.appState));
 	}
 
 	updateQuickaccess({ active, disabled }: I_QuickAccess) {

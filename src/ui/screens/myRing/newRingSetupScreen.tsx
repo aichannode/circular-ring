@@ -19,6 +19,7 @@ import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
 import { SetUpFailed } from "@ui/screens/onboarding/ringSetup/setUpFailed";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { useObservable } from "micro-observables";
 
 interface IRingSetupScreen {
 	route: {
@@ -34,10 +35,11 @@ interface IRingSetupScreen {
 
 export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	const { format } = useI18n();
-	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
+	const { bluetoothService, bleDeviceService, ringManagementService, appStateService } = useServices();
 	const { navigate, goBack } = useRoutesNavigation();
 	const scannedDevices = useScannedDevices();
 	const [devices, setDevices] = useState(scannedDevices);
+	const userRings = useObservable(appStateService.userRings);
 
 	const pairingFailedBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
@@ -51,14 +53,15 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	console.log("Scanned Device", scannedDevices);
 
 	useEffect(() => {
-		const knownDevices = ringManagementService.userRings.get();
+		const knownDevices = userRings;
 		let devicesWithoutKnownOnes = scannedDevices;
 
 		for (const device of knownDevices) {
-			devicesWithoutKnownOnes = devicesWithoutKnownOnes.filter((d) => device.name !== d.name);
+			console.log("device.id", device.id);
+			devicesWithoutKnownOnes = devicesWithoutKnownOnes.filter((d) => device.ringId !== d.id);
 		}
 		setDevices(devicesWithoutKnownOnes);
-	}, [scannedDevices]);
+	}, [scannedDevices, userRings]);
 
 	useEffect(() => {
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
@@ -180,13 +183,7 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 													// store current device, because connect function overwrite it, then check if the ring belong to the user, then throw and error if not, then try to reconnect to fav device but name is not the right one
 													const currentDevice = await bleDeviceService.favoriteDevice.get();
 													try {
-														const rings = ringManagementService.userRings.get();
-														const updatedRings = rings.map((ring) => ({
-															...ring,
-															connected: false,
-														}));
-														ringManagementService.userRings.set(updatedRings);
-														await bleDeviceService.disconnect(); // trying to fix double connection
+														await bleDeviceService.disconnect({ dissociate: false }); // trying to fix double connection
 														await bleDeviceService.connect(device);
 														await ringManagementService.registerConnectedRing();
 														setConnecting(false);
