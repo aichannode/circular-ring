@@ -42,6 +42,7 @@ export class RingApi {
 		if (this._firmwareVersion.get() === undefined) {
 			try {
 				const firmware = await this.getLatestFirmware();
+				console.log("init Firmware", firmware);
 				this._firmwareVersion.set(firmware.version);
 			} catch (err) {
 				console.log("Error 1234");

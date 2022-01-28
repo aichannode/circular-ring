@@ -6,7 +6,7 @@ import { PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { FactoryResetBottomSheet } from "@ui/screens/myRing/factoryResetBottomSheet";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
 import styled from "styled-components/native";
 import { Channel } from "@domain/device/channels";
@@ -20,26 +20,31 @@ import Dialog from "react-native-dialog";
 const RING_NAME_PREFIX = "Circular ";
 
 export const MyRingScreen: React.FC = () => {
-	const { bleDeviceService } = useServices();
+	const { bleDeviceService, appStateService } = useServices();
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
-	const { ringManagementService } = useServices();
 	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const viewModel = new RingViewModel();
-	const userRings = useObservable(ringManagementService.userRings);
+	const userRings = useObservable(appStateService.userRings);
 	const currentRing: NamedUserRing = userRings.filter((ring) => ring.connected)[0];
 	const connected = useObservable(bleDeviceService.connectionState);
 	const [showPrompt, setShowPrompt] = useState<boolean>(false);
 	const [editedName, setEditedName] = useState<string>(
 		currentRing?.name ? currentRing?.name.slice(RING_NAME_PREFIX.length) : ""
 	);
+	console.log("userring", userRings);
+
+	useEffect(() => {
+		const currentRing: NamedUserRing = userRings.filter((ring) => ring.connected)[0];
+		setEditedName(currentRing?.name ? currentRing?.name.slice(RING_NAME_PREFIX.length) : "");
+	}, [currentRing]);
 
 	const renameRing = async () => {
 		if (editedName && editedName !== "") {
 			try {
 				bleDeviceService.favoriteDevice.set({ name: RING_NAME_PREFIX + viewModel.formatRingName(editedName) });
 				await bleDeviceService.write(`${Channel.RENAME}${viewModel.formatRingName(editedName)}`);
-				ringManagementService.userRings.set(
+				appStateService.userRings.set(
 					userRings.map((ring) => {
 						if (ring.connected)
 							return {

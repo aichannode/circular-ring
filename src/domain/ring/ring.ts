@@ -1,8 +1,9 @@
 export interface UserRing {
 	id: string;
-	firmware: string;
-	userId: number;
-	lastSyncDate: Date;
+	firmware?: string;
+	userId?: number;
+	ringId?: string;
+	lastSyncDate?: Date;
 	connected?: boolean;
 }
 

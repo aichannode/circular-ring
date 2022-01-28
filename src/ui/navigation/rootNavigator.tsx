@@ -1,4 +1,4 @@
-import { useAccountLinked, useDeviceStored } from "@domain/device/hooks";
+import { useDeviceStored } from "@domain/device/hooks";
 import { useAuthenticatedUserEmail, useUser } from "@domain/user/hooks/useUser";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -302,8 +302,6 @@ export const RootNavigator: React.FC = () => {
 	const [wait, setWait] = useState(false);
 	const isAuthenticated = !!useAuthenticatedUserEmail();
 
-	const accountLinkedToDevice = useAccountLinked(); //  == useRing not empty
-	console.log("CIR-266 NAVIGATOR ACCOUNT LINKED TO DEVICE", accountLinkedToDevice);
 	const hasUser = !!useUser();
 	const deviceStored = useDeviceStored(); // useObservable(useServices().bleDeviceService.favoriteDevice);
 	console.log("CIR-266 NAVIGATOR Device Stored", deviceStored);
@@ -312,14 +310,6 @@ export const RootNavigator: React.FC = () => {
 	const [useByPass, setByPass] = useState(false);
 
 	const isOnboardingDone = isAuthenticated && hasUser;
-
-	console.log(
-		"isAuthenticated && !accountLinkedToDevice && hasUser;",
-		isAuthenticated,
-		!accountLinkedToDevice,
-		hasUser
-	);
-
 	if (!isAuthenticated) {
 		return (
 			<SetupStack.Navigator screenOptions={{ headerShown: false }}>
@@ -334,10 +324,7 @@ export const RootNavigator: React.FC = () => {
 		);
 	}
 
-	console.log("!deviceStored || !accountLinkedToDevice", !deviceStored, !accountLinkedToDevice);
-
 	if (!useByPass && (wait || !deviceStored)) {
-		// if (!useByPass && (wait || !deviceStored || !accountLinkedToDevice)) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
 				{!hasUser && <OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />}
@@ -350,8 +337,6 @@ export const RootNavigator: React.FC = () => {
 			</OnboardingStack.Navigator>
 		);
 	}
-
-	// const isTutorialDone = false;
 
 	console.log("!isTutorialDone && isOnboardingDone", isOnboardingDone);
 

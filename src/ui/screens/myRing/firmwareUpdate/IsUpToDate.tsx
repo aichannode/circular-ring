@@ -21,9 +21,9 @@ interface I_IsUpToDate {
 export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 	const { bleDeviceService } = useServices();
 	const { format } = useI18n();
-	const { ringManagementService, ringApi } = useServices();
+	const { ringApi, appStateService } = useServices();
 	const [outOfDate, setOutOfDate] = useState(true);
-	const userRings = useObservable(ringManagementService.userRings);
+	const userRings = useObservable(appStateService.userRings);
 	const lastFirmwareVersion = useObservable(ringApi.firmwareVersion);
 	const { goBack } = useNavigation();
 	const ringBattery = useRingBattery();
@@ -41,6 +41,7 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 	};
 
 	const firmwareDiff = async () => {
+		console.log("lastFirmware version", lastFirmwareVersion);
 		if (lastFirmwareVersion !== currentRing.firmware) setOutOfDate(true);
 		else {
 			console.log("FIRMWARE UPTODATE");

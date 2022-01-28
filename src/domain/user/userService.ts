@@ -1,3 +1,4 @@
+import { AppStateService } from "@domain/appState/appStateService";
 import { getLogger } from "@core/logger/logger";
 import { round2Digits, toServerDate } from "@core/utils";
 import { AuthService } from "@domain/auth/authService";
@@ -20,7 +21,6 @@ import { UserApi, UserPutDto } from "@domain/user/userApi";
 import { UserSettings } from "@domain/user/userSettings";
 import { UserNotificationsSettings } from "@domain/user/userNotificationsSettings";
 import { UserStorage } from "@domain/user/userStorage";
-import { RingManagementService } from "@domain/ring/ringManagementService";
 import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { observable } from "micro-observables";
 import * as RNLocalize from "react-native-localize";
@@ -71,7 +71,7 @@ export class UserService {
 		private readonly userApi: UserApi,
 		private readonly userStorage: UserStorage,
 		private readonly bleDeviceService: BleDeviceService,
-		private readonly ringManagementService: RingManagementService,
+		private readonly appStateService: AppStateService,
 		private readonly favoriteDeviceStorage: FavoriteDeviceStorage
 	) {}
 
@@ -130,14 +130,14 @@ export class UserService {
 	async logout() {
 		// const appDataIds = await Storage.getAllKeys();
 		// Storage.multiRemove(appDataIds);
-		this.bleDeviceService.disconnect();
+		this.bleDeviceService.disconnect({ dissociate: true });
 		this._user.set(null);
 		this._authenticatedUserEmail.set(null);
 		await this.userStorage.removeUser();
 		await this.userStorage.removeUserSettings();
 		await this.userStorage.removeUserAdvancedInfo();
 		await this.userStorage.removeUserNotificationsSettings();
-		this.ringManagementService._userRings.set([]);
+		this.appStateService.userRings.set([]);
 		this.bleDeviceService.favoriteDevice.set(null);
 		this.bleDeviceService.favoriteDeviceSNU.set(null);
 		await this.favoriteDeviceStorage.clear();
