@@ -1,6 +1,5 @@
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { ActivityStage, SleepStage } from "@domain/measure/type";
-import moment from "moment";
 
 /**
  * Return the sections of the input segments array included in the given slide of time.
@@ -106,7 +105,7 @@ function getAverage(
 }
 
 export function sample<T extends SleepStage | ActivityStage>(
-	stages: StageInfos<T>[],
+	stages: ReadonlyArray<StageInfos<T>>,
 	/** the sample size in ms with a minum of 1min */
 	sampleSize: number
 ): Array<{ value: number; isoTime: string }> {
@@ -118,23 +117,21 @@ export function sample<T extends SleepStage | ActivityStage>(
 	if (!stages.length) {
 		return samples;
 	}
-	const startOfActivity = moment(stages[0].start);
-	const endOfActivty = moment(stages[stages.length - 1].end);
-	const duration = moment.duration(endOfActivty.diff(startOfActivity)).asMilliseconds();
+	const startOfActivity = new Date(stages[0].start);
+	const endOfActivty = new Date(stages[stages.length - 1].end);
+	const duration = endOfActivty.getTime() - startOfActivity.getTime();
 	const sampleNb = duration / sampleSize; // How many samples we need to do
 	const segments = stages.map((stage) => ({
 		value: stage.stage,
-		start: moment(stage.start).valueOf(),
-		end: moment(stage.end).valueOf(),
+		start: new Date(stage.start).getTime(),
+		end: new Date(stage.end).getTime(),
 	}));
 
 	for (let i = 0; i < sampleNb; i++) {
-		const from = moment(stages[0].start)
-			.add(sampleSize * i)
-			.valueOf();
-		const to = moment(from).add(sampleSize).valueOf();
+		const from = startOfActivity.getTime() + sampleSize * i;
+		const to = from + sampleSize;
 		samples.push({
-			isoTime: moment(from).toISOString(),
+			isoTime: new Date(from).toISOString(),
 			value: getAverage(segments, from, to), // todo remove already used segments
 		});
 	}

@@ -25,7 +25,7 @@ export function SleepDurationPieChart({ coreSleepTiming, stages, duration }: Pro
 				totalDuration={duration}
 				title="sleep.duration.total"
 				chartSize={200}
-				currentIsoDate={moment("2021-12-21").hour(20).toISOString()}
+				currentIsoDate={moment().toISOString()}
 				phaseColors={[colors.lightBlue, colors.darkBlue]}
 				phaseWidths={[5, 7]}
 				getPhaseLevel={getPhaseLevel}

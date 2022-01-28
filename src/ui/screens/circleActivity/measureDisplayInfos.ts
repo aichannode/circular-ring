@@ -1,5 +1,5 @@
 import { MetricType } from "@domain/measure/metric";
-import { DailyActivityDetailsMetrics, DailyEnergyScoreMetrics } from "@domain/measure/representation/lib/type";
+import { DailyActivitiesMetrics, DailyEnergyScoreMetrics } from "@domain/measure/representation/lib/type";
 import { WordingKey } from "src/wordings";
 import { getMetricColor, getGaugeColor, getScoreQualityLabel } from "../business";
 import { GaugeDisplayConfig, MetricDisplayConfig } from "../type";
@@ -185,7 +185,7 @@ export function getActivityQualityDetails(format: (v: WordingKey) => string): Da
 }
 
 type MetricsDetails = {
-	[key in DailyActivityDetailsMetrics]: MetricDisplayConfig;
+	[key in DailyActivitiesMetrics]: MetricDisplayConfig;
 };
 
 export const dailyMetricsDetails: MetricsDetails = {

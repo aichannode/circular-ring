@@ -44,7 +44,7 @@ export function ActivityDurationPieChart({ stages, duration }: Props) {
 				totalDuration={duration}
 				title="activity.duration.total"
 				chartSize={200}
-				currentIsoDate={moment("2021-12-10").hour(23).minutes(59).toISOString()}
+				currentIsoDate={moment().toISOString()}
 				phaseColors={[colors.business.activityNone, colors.business.activityLow, colors.business.activityHigh]}
 				phaseWidths={[5, 7, 7]}
 				getPhaseLevel={getPhaseLevel}

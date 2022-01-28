@@ -1,16 +1,15 @@
 import moment from "moment";
 import { useEffect, useRef } from "react";
-import { MetricType } from "../metric";
+import { Metrics } from "../metric";
 import {
-	DailyActivityDetailsMetrics,
-	DailyActivityDetailsMetricsGoals,
+	DailyActivitiesMetrics,
+	DailyActivitiesMetricsGoals,
 	DailyEnergyScoreGaugeCalibrationMetrics,
 	DailyEnergyScoreMetrics,
 	DailyEnergyScoreMetricsGaugeSize,
-	DailySleepDetailsGaugeMetrics,
-	DailySleepDetailsMetrics,
-	DailySleepDetailsMetricsGaugeSize,
-	RangeDetails,
+	DailySleepScoreContributorsGaugeCalibrationMetrics,
+	DailySleepScoreContributorsMetrics,
+	DailySleepScoreContributorsMetricsGaugeSize,
 } from "./lib/type";
 import { getActivityPhases, getSleepStages } from "./lib/business";
 import { InteractionManager } from "react-native";
@@ -25,8 +24,8 @@ import { MeasureModel } from "../model/measureModel";
 
 type HeavyComputationHandler = ReturnType<typeof InteractionManager.runAfterInteractions>;
 
-export function createRepresentation(_apiService: ApiService, model: MeasureModel) {
-	const actions = createActions(new MeasureApi(/* apiService */), model.present);
+export function createRepresentation(apiService: ApiService, model: MeasureModel) {
+	const actions = createActions(new MeasureApi(apiService), model.present);
 	return {
 		actions,
 		hooks: {
@@ -67,67 +66,27 @@ export function createRepresentation(_apiService: ApiService, model: MeasureMode
 					);
 				});
 			},
-			useDailyMetrics(isoDay?: string): RangeDetails<DailyActivityDetailsMetrics | DailyActivityDetailsMetricsGoals> {
-				return {
-					[MetricType.UserDailySteps]: 9200,
-					[MetricType.UserDailyWalkingEquivalency]: 5.4,
-					[MetricType.UserDailyCaloriesBurned]: 1010,
-					[MetricType.UserDailyCardioPoints]: 157,
-					[MetricType.UserDailyVO2Max]: 35,
-					[MetricType.UserDailyHRMax]: 123,
-					// Goals
-					[MetricType.UserDailyStepsGoalMin]: 4500,
-					[MetricType.UserDailyStepsGoalMax]: 8000,
-					[MetricType.UserDailyWalkingEquivalencyGoalMin]: 3150,
-					[MetricType.UserDailyWalkingEquivalencyGoalMax]: 5600,
-					[MetricType.UserDailyCaloriesBurnedGoalMin]: 1561.34,
-					[MetricType.UserDailyCaloriesBurnedGoalMax]: 2023.36,
-					[MetricType.UserDailyCardioPointsGoalMin]: 75 / 7,
-					[MetricType.UserDailyCardioPointsGoalMax]: 150 / 7,
-				};
+			useDailyActivities(isoDay?: string): Metrics<DailyActivitiesMetrics | DailyActivitiesMetricsGoals> {
+				useEffect(
+					function () {
+						__DEV__ && console.log("[MEASURE: Action] FETCH");
+						actions.setDailyActivitiesMetrics(isoDay);
+					},
+					[isoDay]
+				);
+				return model.dailyActivitiesMetrics.get(getKeyFromDate(isoDay)) ?? {};
 			},
-			useDailyEnergyScoreDetails(
+			useDailyEnergyScoreContributors(
 				isoDay?: string
-			): RangeDetails<
-				DailyEnergyScoreMetrics | DailyEnergyScoreMetricsGaugeSize | DailyEnergyScoreGaugeCalibrationMetrics
-			> {
-				// TOTO implement
-				return {
-					// Those metrics are used to display the gauge label
-					[MetricType.UserDailyScoreRecovery]: 0.83,
-					[MetricType.UserDailyWakeUpScore]: 0.96,
-					[MetricType.UserDailySleepBR]: 14.3,
-					[MetricType.UserDailyScoreBr]: 0.85,
-					[MetricType.UserDailySleepHRV]: 68,
-					[MetricType.UserDailyScoreHRV]: 0.93,
-					[MetricType.UserDailyRHR]: 62,
-					[MetricType.UserDailyScoreRHR]: 0.78,
-					[MetricType.UserDailySleepVarTemperature]: 0.5,
-					[MetricType.UserDailyScoreVarTemperature]: 0.87,
-					[MetricType.UserDailySleepScore]: 0.83,
-					[MetricType.UserDailyScoreSleepBalance]: 0.98,
-					[MetricType.UserDailyScoreActivityVolume]: 0.93,
-
-					// Those metrics are used for the gauge calibration
-					[MetricType.UserDailyScoreRecoveryGoalMax]: 0.8,
-					[MetricType.UserDailyScoreRecoveryGoalMin]: 0.9,
-					[MetricType.UserDailyWakeUpScoreGoalMin]: 0.8,
-					[MetricType.UserDailyWakeUpScoreGoalMax]: 0.9,
-					[MetricType.UserDailyScoreBRGoalMin]: 0.8,
-					[MetricType.UserDailyScoreBRGoalMax]: 0.9,
-					[MetricType.UserDailyScoreHRVGoalMin]: 0.8,
-					[MetricType.UserDailyScoreHRVGoalMax]: 0.9,
-					[MetricType.UserDailyScoreRHRGoalMin]: 0.8,
-					[MetricType.UserDailyScoreRHRGoalMax]: 0.9,
-					[MetricType.UserDailyScoreVarTemperatureGoalMin]: 0.8,
-					[MetricType.UserDailyScoreVarTemperatureGoalMax]: 0.9,
-					[MetricType.UserDailySleepScoreGoalMin]: 0.8,
-					[MetricType.UserDailySleepScoreGoalMax]: 0.9,
-					[MetricType.UserDailyScoreSleepBalanceGoalMin]: 0.8,
-					[MetricType.UserDailyScoreSleepBalanceGoalMax]: 0.9,
-					[MetricType.UserDailyScoreActivityVolumeGoalMin]: 0.8,
-					[MetricType.UserDailyScoreActivityVolumeGoalMax]: 0.9,
-				};
+			): Metrics<DailyEnergyScoreMetrics | DailyEnergyScoreMetricsGaugeSize | DailyEnergyScoreGaugeCalibrationMetrics> {
+				useEffect(
+					function () {
+						__DEV__ && console.log("[MEASURE: Action] FETCH");
+						actions.setDailyEnergyScoreContributorsMetrics(isoDay);
+					},
+					[isoDay]
+				);
+				return model.dailyEnergyScoreContributorsMetrics.get(getKeyFromDate(isoDay)) ?? {};
 			},
 			useDailySleepStages({
 				isoDay = moment().toISOString(),
@@ -166,50 +125,37 @@ export function createRepresentation(_apiService: ApiService, model: MeasureMode
 					);
 				});
 			},
-			useDailySleepDetails(
+			useDailySleepScoreContributors(
 				isoDay?: string
-			): RangeDetails<DailySleepDetailsMetrics | DailySleepDetailsMetricsGaugeSize | DailySleepDetailsGaugeMetrics> {
-				// TOTO implement
-				return {
-					// Those metrics are used to display the gauge label
-					[MetricType.UserDailyTranquility]: 0.83,
-					[MetricType.UserDailyCircadianRhythm]: 0.89,
-					[MetricType.UserDailyAwakeStageDuration]: 45,
-					[MetricType.UserDailyPercAwakeStage]: 0.08,
-					[MetricType.UserDailyRealSleepDuration]: 514,
-					[MetricType.UserDailyPercRealSleep]: 0.92,
-					[MetricType.UserDailyPercREMStage]: 0.23,
-					[MetricType.UserDailyCorrectedPercREMStage]: 0.94,
-					[MetricType.UserDailyPercDeepStage]: 0.09,
-					[MetricType.UserDailyCorrectedPercDeepStage]: 0.74,
-					[MetricType.UserDailyTimeToFallAsleep]: 22,
-					[MetricType.UserDailyPercTimeToFallAsleep]: 0.93,
-					[MetricType.UserDailySleepDebt]: -11,
-					[MetricType.UserDailyPercSleepDebt]: 0.98,
-					// Those metrics are used for the gauge calibration
-					[MetricType.UserDailyPercRealSleepDurationGoalMin]: 0.8,
-					[MetricType.UserDailyPercRealSleepDurationGoalMax]: 0.9,
-					[MetricType.UserDailyTranquilityGoalMin]: 0.8,
-					[MetricType.UserDailyTranquilityGoalMax]: 0.9,
-					[MetricType.UserDailyCircadianRhythmGoalMin]: 0.8,
-					[MetricType.UserDailyCircadianRhythmGoalMax]: 0.9,
-					[MetricType.UserDailyPercREMStageScoreGoalMin]: 0.8,
-					[MetricType.UserDailyPercREMStageScoreGoalMax]: 0.9,
-					[MetricType.UserDailyPercDeepStageScoreGoalMin]: 0.8,
-					[MetricType.UserDailyPercDeepStageScoreGoalMax]: 0.9,
-					[MetricType.UserDailyPercTimeToFallAsleepGoalMin]: 0.8,
-					[MetricType.UserDailyPercTimeToFallAsleepGoalMax]: 0.9,
-					[MetricType.UserDailySleepDebtGoalMin]: 0.8,
-					[MetricType.UserDailySleepDebtGoalMax]: 0.9,
-				};
+			): Metrics<
+				| DailySleepScoreContributorsMetrics
+				| DailySleepScoreContributorsMetricsGaugeSize
+				| DailySleepScoreContributorsGaugeCalibrationMetrics
+			> {
+				useEffect(
+					function () {
+						__DEV__ && console.log("[MEASURE: Action] FETCH");
+						actions.setDailySleepScoreContributorsMetrics(isoDay);
+					},
+					[isoDay]
+				);
+				return model.dailySleepScoreContributorsMetrics.get(getKeyFromDate(isoDay)) ?? {};
 			},
-			useDailyEnergyScore(isoDay?: string): number | undefined {
-				// TOTO implement
-				return 55;
+			useDailyEnergyScore(isoDay: string = moment().toISOString()): number | undefined {
+				useEffect(function () {
+					if (!model.dailyEnergyScore.has(isoDay)) {
+						actions.setDailyEnergyScore(isoDay);
+					}
+				});
+				return model.dailySleepScore.get(isoDay);
 			},
-			useDailySleepQualityScore(isoDay?: string): number | undefined {
-				// TOTO implement
-				return 47;
+			useDailySleepQualityScore(isoDay: string = moment().toISOString()): number | undefined {
+				useEffect(function () {
+					if (!model.dailySleepScore.has(isoDay)) {
+						actions.setDailySleepScore(isoDay);
+					}
+				});
+				return model.dailySleepScore.get(isoDay);
 			},
 			useDailyGlobalScore(isoDay: string = moment().toISOString()): number | undefined {
 				console.log(model.dailyGlobalScore.has);
@@ -218,12 +164,7 @@ export function createRepresentation(_apiService: ApiService, model: MeasureMode
 						actions.setDailyGlobalScore(isoDay);
 					}
 				});
-				const score = model.dailyGlobalScore.get(isoDay);
-				return score
-					? score * 100
-					: // : undefined
-					  // TODO remove mocked score when back will serve global score monthlty
-					  55;
+				return model.dailyGlobalScore.get(isoDay);
 			},
 		},
 	};

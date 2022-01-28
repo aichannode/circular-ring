@@ -1,6 +1,6 @@
 import { useRepresentations } from "@core/representation";
 import { DailySleepData } from "@domain/measure/representation/api";
-import { dailySleepDetailsMetrics } from "@domain/measure/representation/lib/type";
+import { dailySleepScoreContributorsMetrics } from "@domain/measure/representation/lib/type";
 import { SleepStage, TimeFrame } from "@domain/measure/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CalendarView } from "@ui/components/calendar/calendarView";
@@ -28,8 +28,12 @@ import { getSleepQualityDetails } from "./measureDisplayInfos";
 import { SleepDurationPieChart } from "./sleepDurationPie";
 
 export const CircleSleepScreen: React.FC = observer(() => {
-	const [selectedDay, setSelectedDay] = useState<string>(moment("2021-12-21").format("YYYY-MM-DD"));
-	const { useDailySleepDetails, useDailySleepQualityScore, useDailySleepStages } = useRepresentations().measure.hooks;
+	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
+	const {
+		useDailySleepScoreContributors: useDailySleepDetails,
+		useDailySleepQualityScore,
+		useDailySleepStages,
+	} = useRepresentations().measure.hooks;
 	const details = useDailySleepDetails(selectedDay);
 	const qualityScore = useDailySleepQualityScore(selectedDay);
 	const [dailySleep, setData] = useState<DailySleepData | undefined>();
@@ -80,7 +84,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
 				{
-					dailySleepDetailsMetrics
+					dailySleepScoreContributorsMetrics
 						.map((metric, index) => {
 							const dataInfos = sleepQualityDetails[metric];
 							const values: {
