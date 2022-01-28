@@ -32,22 +32,25 @@ export class MeasureApi {
 			params: { metrics, start: isoStart, end: isoEnd },
 		});
 
-		const chain: DatedMetrics[] = [];
-		let currentTimestamp = data[0].timestamp;
-		let block: DatedMetrics = createBlock(currentTimestamp);
-		// Regroup metrics by timestamp
-		for (const serverBlock of data) {
-			// Need to create a new block
-			if (currentTimestamp !== serverBlock.timestamp) {
-				// Push the previous block
-				chain.unshift(block);
-				currentTimestamp = serverBlock.timestamp;
-				// Create a new block
-				block = createBlock(currentTimestamp);
+		if (data.length) {
+			const chain: DatedMetrics[] = [];
+			let currentTimestamp = data[0].timestamp;
+			let block: DatedMetrics = createBlock(currentTimestamp);
+			// Regroup metrics by timestamp
+			for (const serverBlock of data) {
+				// Need to create a new block
+				if (currentTimestamp !== serverBlock.timestamp) {
+					// Push the previous block
+					chain.unshift(block);
+					currentTimestamp = serverBlock.timestamp;
+					// Create a new block
+					block = createBlock(currentTimestamp);
+				}
+				Object.assign(block.metrics, serverBlock.metrics);
 			}
-			Object.assign(block.metrics, serverBlock.metrics);
+			return chain;
 		}
-		return chain;
+		return [];
 	}
 
 	private async getLastMeasures<T extends MetricType>(
