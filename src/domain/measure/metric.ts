@@ -1,11 +1,11 @@
-export type Metric<T extends MetricType = MetricType> = {
-	[key in T]: number | string;
-};
-
 export type DatedMetrics<T extends MetricType = MetricType> = {
 	timestamp: string;
-	metrics: Partial<Metric<T>>;
+	metrics: Metrics<T>;
 };
+
+export type Metrics<M extends MetricType> = Partial<{
+	[k in M]: number | string;
+}>;
 
 /**
  * Structure for measure model data for efficient search
@@ -15,7 +15,7 @@ export type DatedMetrics<T extends MetricType = MetricType> = {
  */
 export type RangeMetrics<T extends MetricType = MetricType, F extends MetricType = MetricType> = {
 	timeline: Array<DatedMetrics<T>>;
-	fixedValues: Partial<Metric<F>>;
+	fixedValues: Metrics<F>;
 };
 
 export enum MetricType {
@@ -110,6 +110,7 @@ export enum MetricType {
 	/////////////////
 	// Daily activity
 	/////////////////
+	UserDailyEnergyScore = "user.daily.energy.score",
 	UserDataActivityIntensity = "user.data.activity.intensity",
 	UserDailySportBegin = "user.daily.sport.begin",
 	UserDailySportEnd = "user.daily.sport.end",

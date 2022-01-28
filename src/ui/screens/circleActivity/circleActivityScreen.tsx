@@ -1,8 +1,4 @@
-import {
-	dailyActivityDetailsMetrics,
-	dailyEnergyScoreMetrics,
-	StageInfos,
-} from "@domain/measure/representation/lib/type";
+import { dailyActivitiesMetrics, dailyEnergyScoreMetrics, StageInfos } from "@domain/measure/representation/lib/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CalendarView } from "@ui/components/calendar/calendarView";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
@@ -80,7 +76,7 @@ const SAMPLE_SIZE = 15 * 60 * 1000; // 15 minutes
 
 export const CircleActivityScreen: React.FC = observer(() => {
 	const { format } = useI18n();
-	const [selectedDay, setSelectedDay] = useState<string>(moment("2021-12-23").format("YYYY-MM-DD"));
+	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
 	const [activityIntensity, setData] = useState<DailyActivityIntensityData>({
 		stages: [],
 		duration: 0,
@@ -88,11 +84,16 @@ export const CircleActivityScreen: React.FC = observer(() => {
 	});
 	const {
 		measure: {
-			hooks: { useDailyEnergyScoreDetails, useDailyMetrics, useDailyEnergyScore, useDailyActivityIntensity },
+			hooks: {
+				useDailyEnergyScoreContributors: useDailyEnergyScoreDetails,
+				useDailyActivities,
+				useDailyEnergyScore,
+				useDailyActivityIntensity,
+			},
 		},
 	} = useRepresentations();
 	const energyScoreDetails = useDailyEnergyScoreDetails(selectedDay);
-	const dailyMetrics = useDailyMetrics(selectedDay);
+	const dailyMetrics = useDailyActivities(selectedDay);
 	const energyScore = useDailyEnergyScore(selectedDay);
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
@@ -136,23 +137,27 @@ export const CircleActivityScreen: React.FC = observer(() => {
 				<ActivityDurationPieChart stages={activityIntensity.stages} duration={activityIntensity.duration} />
 				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
 				<ElementStack gap={10}>
-					{dailyActivityDetailsMetrics.map((metric) => {
+					{dailyActivitiesMetrics.map((metric) => {
 						const dataInfos = dailyMetricsDetails[metric];
 						const value = dailyMetrics[metric];
 						return (
-							<DailyMetric
-								key={metric}
-								icon={getIcon(dataInfos.icon)}
-								label={format(dataInfos.labelKey)}
-								value={Math.round(value)}
-								goodThreshold={
-									dataInfos.metricsName.thresholdLow && (energyScoreDetails as any)[dataInfos.metricsName.thresholdLow]
-								}
-								optimalThreshold={
-									dataInfos.metricsName.thresholdHigh &&
-									(energyScoreDetails as any)[dataInfos.metricsName.thresholdHigh]
-								}
-							/>
+							value !== undefined &&
+							typeof value === "number" && (
+								<DailyMetric
+									key={metric}
+									icon={getIcon(dataInfos.icon)}
+									label={format(dataInfos.labelKey)}
+									value={Math.round(value)}
+									goodThreshold={
+										dataInfos.metricsName.thresholdLow &&
+										(energyScoreDetails as any)[dataInfos.metricsName.thresholdLow]
+									}
+									optimalThreshold={
+										dataInfos.metricsName.thresholdHigh &&
+										(energyScoreDetails as any)[dataInfos.metricsName.thresholdHigh]
+									}
+								/>
+							)
 						);
 					})}
 				</ElementStack>

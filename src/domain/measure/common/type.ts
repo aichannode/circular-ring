@@ -1,7 +1,45 @@
-import { MetricType, RangeMetrics } from "../metric";
-import { DailyActivityIntensityMetrics, DailySleepStageDuration } from "../representation/lib/type";
+import { Metrics, MetricType, RangeMetrics } from "../metric";
+import {
+	DailyActivitiesMetrics,
+	DailyActivitiesMetricsGoals,
+	DailyActivityIntensityMetrics,
+	DailyEnergyScoreGaugeCalibrationMetrics,
+	DailyEnergyScoreMetrics,
+	DailyEnergyScoreMetricsGaugeSize,
+	DailySleepScoreContributorsGaugeCalibrationMetrics,
+	DailySleepScoreContributorsMetrics,
+	DailySleepScoreContributorsMetricsGaugeSize,
+	DailySleepStageDuration,
+} from "../representation/lib/type";
 
 export type Mutations =
+	| {
+			type: "setDailySleepScoreContributorsMetrics";
+			payload: {
+				isoDate: string;
+				data: Metrics<
+					| DailySleepScoreContributorsMetrics
+					| DailySleepScoreContributorsMetricsGaugeSize
+					| DailySleepScoreContributorsGaugeCalibrationMetrics
+				>;
+			};
+	  }
+	| {
+			type: "setDailyEnergyScoreContributorsMetrics";
+			payload: {
+				isoDate: string;
+				data: Metrics<
+					DailyEnergyScoreMetrics | DailyEnergyScoreMetricsGaugeSize | DailyEnergyScoreGaugeCalibrationMetrics
+				>;
+			};
+	  }
+	| {
+			type: "setDailyActivitiesMetrics";
+			payload: {
+				isoDate: string;
+				data: Metrics<DailyActivitiesMetrics | DailyActivitiesMetricsGoals>;
+			};
+	  }
 	| {
 			type: "setDailyActivityIntensityMetrics";
 			payload: {
@@ -18,6 +56,20 @@ export type Mutations =
 	  }
 	| {
 			type: "setGlobalScore";
+			payload: {
+				isoDate: string;
+				score?: number;
+			};
+	  }
+	| {
+			type: "setDailyEnergyScore";
+			payload: {
+				isoDate: string;
+				score?: number;
+			};
+	  }
+	| {
+			type: "setSleepScore";
 			payload: {
 				isoDate: string;
 				score?: number;

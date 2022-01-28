@@ -1,12 +1,12 @@
 import { MetricType } from "@domain/measure/metric";
-import { DailySleepDetailsMetrics } from "@domain/measure/representation/lib/type";
+import { DailySleepScoreContributorsMetrics } from "@domain/measure/representation/lib/type";
 import moment from "moment";
 import { WordingKey } from "src/wordings";
 import { getGaugeColor, getInvertedGaugeColor } from "../business";
 import { GaugeDisplayConfig } from "../type";
 
 export type SleepQualityDetails = {
-	[key in DailySleepDetailsMetrics]: GaugeDisplayConfig;
+	[key in DailySleepScoreContributorsMetrics]: GaugeDisplayConfig;
 };
 
 export function getSleepQualityDetails(format: (v: WordingKey) => string): SleepQualityDetails {

@@ -1,32 +1,20 @@
-/* import { ApiService } from "@core/api/apiService"; */
+import { ApiService } from "@core/api/apiService";
 import moment from "moment";
 import { toTimeSegment } from "../../common/business";
-import { MetricType, DatedMetrics, Metric } from "../../metric";
-import mockedData from "../../mockedData.json";
+import { MetricType, DatedMetrics, Metrics } from "../../metric";
 import { TimeFrame } from "../../type";
 
-//const measureApiUrl = "/measures";
-
-// Parse data for performance reason
-/* const mockedData = {
-	..._mockedData,
-	metrics: _mockedData.metrics.map(block => ({
-		...block,
-		timestamp: new Date(block.timestamp).getTime()
-	}))
-} */
-
-function createBlock(date: number): DatedMetrics {
+function createBlock(timestamp: string): DatedMetrics {
 	return {
-		timestamp: new Date(date).toISOString(),
+		timestamp,
 		metrics: {},
 	};
 }
 
-// const measureApiUrl = "/measures";
-// const latestMeasureApiUrl = "/measures/latest";
+const measureApiUrl = "/measures";
+const latestMeasureApiUrl = "/measures/latest";
 export class MeasureApi {
-	//constructor(private readonly apiService: ApiService) {}
+	constructor(private readonly apiService: ApiService) {}
 
 	private async getMeasures<T extends MetricType>(
 		metrics: ReadonlyArray<T>,
@@ -38,37 +26,28 @@ export class MeasureApi {
 			isoEnd: string;
 		}
 	): Promise<Array<DatedMetrics<T>>> {
-		/* 		const result = await this.apiService.get<{ data: MetricInfo<T>[] }>(measureApiUrl, {
-			params: { metrics, start: start.toISOString(), end: end.toISOString() },
+		const {
+			data: { data },
+		} = await this.apiService.get<{ data: DatedMetrics[] }>(measureApiUrl, {
+			params: { metrics, start: isoStart, end: isoEnd },
 		});
-		return result.data.data; */
 
-		const start = new Date(isoStart).getTime();
-		const end = new Date(isoEnd).getTime();
 		const chain: DatedMetrics[] = [];
-		let currentTimestamp = mockedData.metrics[0].timestamp;
+		let currentTimestamp = data[0].timestamp;
 		let block: DatedMetrics = createBlock(currentTimestamp);
 		// Regroup metrics by timestamp
-		for (const serverBlock of mockedData.metrics) {
+		for (const serverBlock of data) {
 			// Need to create a new block
 			if (currentTimestamp !== serverBlock.timestamp) {
 				// Push the previous block
-				chain.push(block);
+				chain.unshift(block);
 				currentTimestamp = serverBlock.timestamp;
 				// Create a new block
 				block = createBlock(currentTimestamp);
 			}
 			Object.assign(block.metrics, serverBlock.metrics);
 		}
-
-		// Get the data within the given timeframe
-		return await chain.filter(function (block) {
-			const { timestamp } = block;
-			const timestampMS = new Date(timestamp).getTime();
-			const isInDate = timestampMS >= start && timestampMS < end;
-			const hasMetric = metrics.some((key) => key in block.metrics);
-			return isInDate && hasMetric;
-		});
+		return chain;
 	}
 
 	private async getLastMeasures<T extends MetricType>(
@@ -80,26 +59,11 @@ export class MeasureApi {
 			isoStart: string;
 			isoEnd: string;
 		}
-	): Promise<Record<T, number | string>> {
-		/* const result = await this.apiService.get<Record<Metric, number>>(latestMeasureApiUrl, {
-			params: { metrics, start: start.toISOString(), end: end.toISOString() }
-		}) */
-
-		const start = new Date(isoStart).getTime();
-		const end = new Date(isoEnd).getTime();
-		const checkList = [...metrics];
-		return await mockedData.metrics.reduceRight(function (record, block) {
-			const timestamp = new Date(block.timestamp).getTime();
-			if (timestamp >= start && timestamp < end) {
-				for (const metric of checkList) {
-					if (metric in block.metrics) {
-						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-						record[metric] = block.metrics[metric]!;
-					}
-				}
-			}
-			return record;
-		}, {} as Record<T, number | string>);
+	): Promise<Partial<Metrics<T>>> {
+		const result = await this.apiService.get<Partial<Metrics<T>>>(latestMeasureApiUrl, {
+			params: { metrics, start: isoStart, end: isoEnd },
+		});
+		return result.data;
 	}
 
 	public async fetchMeasures<T extends MetricType>(
@@ -113,7 +77,7 @@ export class MeasureApi {
 	public async fetchLastDailyMeasures<T extends MetricType>(
 		measures: ReadonlyArray<T>,
 		isoDay: string
-	): Promise<Metric<T>> {
+	): Promise<Partial<Metrics<T>>> {
 		return await this.getLastMeasures(measures, toTimeSegment(isoDay, TimeFrame.DAY));
 	}
 
