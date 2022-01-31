@@ -13,6 +13,10 @@
 		"tsc": "tsc -noEmit",
 		"pods": "cd ios && bundle exec pod install && cd .."
 	},
+	"engines": {
+		"node": "^12",
+		"npm": "^8"	
+	},
 	"dependencies": {
 		"@betomorrow/logging-core": "^1.0.5",
 		"@betomorrow/logging-native": "^1.0.5",
