@@ -1,4 +1,4 @@
-import { EffectCallback, useRef, useEffect, useMemo } from "react";
+import { EffectCallback, useEffect, useRef } from "react";
 
 export function useChangeEffect(effect: EffectCallback, deps?: unknown[]): void {
 	const firstRender = useRef(true);
