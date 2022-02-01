@@ -20,7 +20,6 @@ import { observer } from "mobx-react-lite";
 import { TitleText } from "@ui/components/text";
 import { TimeFrame } from "@domain/measure/type";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
-import { sample } from "./business";
 import shoes from "@assets/images/shoes.png";
 import journey from "@assets/images/journey.png";
 import fire from "@assets/images/fire.png";
@@ -48,32 +47,6 @@ function getIcon(path: string) {
 	}
 }
 
-function useSampler(
-	data: StageInfos<any>[],
-	sampleSize: number,
-	setData: (
-		data: Array<{
-			value: number;
-			isoTime: string;
-		}>
-	) => void
-) {
-	const handler = useRef<ReturnType<typeof InteractionManager.runAfterInteractions>>();
-	useEffect(
-		function () {
-			handler.current?.cancel();
-			handler.current = InteractionManager.runAfterInteractions(function () {
-				console.log("[CircleActivityScreen] SAMPLING");
-				setData(sample(data, sampleSize));
-			});
-			handler.current?.then(() => console.log("[CircleActivityScreen] SAMPLING DONE"));
-		},
-		[data, sampleSize]
-	);
-}
-
-const SAMPLE_SIZE = 15 * 60 * 1000; // 15 minutes
-
 export const CircleActivityScreen: React.FC = observer(() => {
 	const { format } = useI18n();
 	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
@@ -99,15 +72,11 @@ export const CircleActivityScreen: React.FC = observer(() => {
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const activityQualityDetails = getActivityQualityDetails(format);
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
-	const [graphData, setGraphData] = useState<
-		Array<{
-			value: number;
-			isoTime: string;
-		}>
-	>([]);
-
 	useDailyActivityIntensity({ isoDay: selectedDay, setData });
-	useSampler(activityIntensity.stages, SAMPLE_SIZE, setGraphData);
+	const graphData: Array<{
+		value: number;
+		isoTime: string;
+	}> = activityIntensity.stages.map((stage) => ({ value: stage.stage, isoTime: stage.start }));
 
 	useEffect(() => {
 		console.log("CURRENT PERIOD = ", graphPeriod);

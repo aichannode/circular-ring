@@ -19,7 +19,3 @@ export function useUnmount<T extends unknown[]>(effect: (deps: readonly [...T]) 
 	}, deps);
 	useEffect(() => () => effect(depRefs.current), []);
 }
-
-export function useOnComponentWillMount(effect: EffectCallback) {
-	useMemo(effect, []);
-}

@@ -1,6 +1,13 @@
+import { ApiService } from "@core/api/apiService";
 import moment from "moment";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+import { createActions } from "../actions";
+import { MeasureApi } from "../actions/lib/measureApi";
+import { getKeyFromDate } from "../common/business";
 import { Metrics } from "../metric";
+import { MeasureModel } from "../model/measureModel";
+import { DailyActivityIntensityData, DailySleepData } from "./api";
+import { createSleepStagesGetter, getActivityPhases, useDailyHeavyComputationData } from "./lib/business";
 import {
 	DailyActivitiesMetrics,
 	DailyActivitiesMetricsGoals,
@@ -11,18 +18,6 @@ import {
 	DailySleepScoreContributorsMetrics,
 	DailySleepScoreContributorsMetricsGaugeSize,
 } from "./lib/type";
-import { getActivityPhases, getSleepStages } from "./lib/business";
-import { InteractionManager } from "react-native";
-import { reaction } from "mobx";
-import { useOnComponentWillMount } from "@ui/utils/lifecycleHooks";
-import { DailyActivityIntensityData, DailySleepData } from "./api";
-import { getKeyFromDate } from "../common/business";
-import { createActions } from "../actions";
-import { MeasureApi } from "../actions/lib/measureApi";
-import { ApiService } from "@core/api/apiService";
-import { MeasureModel } from "../model/measureModel";
-
-type HeavyComputationHandler = ReturnType<typeof InteractionManager.runAfterInteractions>;
 
 export function createRepresentation(apiService: ApiService, model: MeasureModel) {
 	const actions = createActions(new MeasureApi(apiService), model.present);
@@ -30,41 +25,15 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 		actions,
 		hooks: {
 			useDailyActivityIntensity({
-				isoDay,
+				isoDay = moment().toISOString(),
 				setData,
 			}: {
 				isoDay?: string;
-				setData: (metrics: DailyActivityIntensityData) => void;
+				setData: (data: DailyActivityIntensityData) => void;
 			}) {
-				const heavyComputationHandler = useRef<HeavyComputationHandler>();
-
-				useEffect(
-					function () {
-						__DEV__ && console.log("[MEASURE: Action] FETCH");
-						actions.setDailyActivityIntensityMetrics(isoDay);
-					},
-					[isoDay]
-				);
-
-				useOnComponentWillMount(function () {
-					reaction(
-						// If this changes
-						() => model.dailyActivityIntensityMetrics.get(getKeyFromDate(isoDay)),
-						// Launch heavy computation
-						function (metrics) {
-							if (metrics) {
-								heavyComputationHandler.current?.cancel();
-								heavyComputationHandler.current = InteractionManager.runAfterInteractions(() => {
-									__DEV__ && console.log("[MEASURE: Representation] Start of daily activity data computation.");
-									setData(getActivityPhases(metrics));
-								});
-								heavyComputationHandler.current.then(
-									() => __DEV__ && console.log("[MEASURE: Representation] End of daily activity data computation.")
-								);
-							}
-						}
-					);
-				});
+				const modelField = model.dailyActivityIntensityMetrics;
+				const fetchData = () => actions.setDailyActivityIntensityMetrics(isoDay);
+				useDailyHeavyComputationData(isoDay, modelField, setData, getActivityPhases, fetchData);
 			},
 			useDailyActivities(isoDay?: string): Metrics<DailyActivitiesMetrics | DailyActivitiesMetricsGoals> {
 				useEffect(
@@ -93,37 +62,11 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				setData,
 			}: {
 				isoDay?: string;
-				setData: (metrics: DailySleepData) => void;
+				setData: (data: DailySleepData) => void;
 			}) {
-				const heavyComputationHandler = useRef<HeavyComputationHandler>();
-
-				useEffect(
-					function () {
-						__DEV__ && console.log("[MEASURE: Action] FETCH");
-						actions.setDailySleepStagesMetrics(isoDay);
-					},
-					[isoDay]
-				);
-
-				useOnComponentWillMount(function () {
-					reaction(
-						// If this changes
-						() => model.dailySleepMetrics.get(getKeyFromDate(isoDay)),
-						// Launch heavy computation
-						function (metrics) {
-							if (metrics) {
-								heavyComputationHandler.current?.cancel();
-								heavyComputationHandler.current = InteractionManager.runAfterInteractions(() => {
-									__DEV__ && console.log("[MEASURE: Representation] Start of daily activity data computation.");
-									setData(getSleepStages(metrics, isoDay));
-								});
-								heavyComputationHandler.current.then(
-									() => __DEV__ && console.log("[MEASURE: Representation] End of daily activity data computation.")
-								);
-							}
-						}
-					);
-				});
+				const modelField = model.dailySleepMetrics;
+				const fetchData = () => actions.setDailySleepStagesMetrics(isoDay);
+				useDailyHeavyComputationData(isoDay, modelField, setData, createSleepStagesGetter(isoDay), fetchData);
 			},
 			useDailySleepScoreContributors(
 				isoDay?: string

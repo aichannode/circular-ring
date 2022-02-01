@@ -1,8 +1,8 @@
-import { getSleepStages } from "./business";
+import { createSleepStagesGetter } from "./business";
 import mockedData from "./mockedModelData.json";
 
 test("getSleepStages", function () {
-	expect(getSleepStages(mockedData, "2021-12-21")).toEqual({
+	expect(createSleepStagesGetter("2021-12-21")(mockedData)).toEqual({
 		totalMinutesSleepDuration: 496,
 		stages: [
 			{
