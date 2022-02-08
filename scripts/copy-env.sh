@@ -1,5 +1,5 @@
 #!/bin/bash
-environment=(dev demo prod)
+environment=(dev demo staging prod)
 
 usage() {
     echo "Usage: npm run set-env [env]"

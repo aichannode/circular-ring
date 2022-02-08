@@ -131,7 +131,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode project.hasProperty("versionCode") ? project.property("versionCode") as Integer : 1
-        versionName project.hasProperty("versionName") ? project.property("versionName") as String : "1.0.0"
+        versionName project.hasProperty("versionName") ? project.property("versionName") as String : "0.0.0"
         resValue "string", "build_config_package", "com.circular.circular"
     }
     splits {
@@ -194,6 +194,15 @@ android {
                 appName: "Circular Demo",
             ]
         }
+        staging {
+            dimension "environment"
+            applicationIdSuffix ".staging"
+            versionNameSuffix "-staging" + (project.hasProperty("buildName") ? ("-" + project.property("buildName") as String) : "")
+
+            manifestPlaceholders = [
+                appName: "Circular Staging",
+            ]
+        }
         prod {
             dimension "environment"
             manifestPlaceholders = [
@@ -214,7 +223,12 @@ android {
                 output.versionCodeOverride =
                         defaultConfig.versionCode * 1000 + versionCodes.get(abi)
             }
-
+            variant.productFlavors.each { flavor ->
+                def suffixe = project.hasProperty("buildName") ? ("-" + project.property("buildName") as String) : ""
+                variant.outputs.all {
+                    outputFileName = "app-${flavor.name}${suffixe}-${buildType.name}.apk"
+                }
+            }
         }
     }
 }
@@ -263,6 +277,7 @@ apply from: file("../../node_modules/@react-native-community/cli-platform-androi
 project.ext.envConfigFiles = [
     dev: ".env.dev",
     demo: ".env.demo",
+    staging: ".env.staging",
     prod: ".env.prod",
 ]
 

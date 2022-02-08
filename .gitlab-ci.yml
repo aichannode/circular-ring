@@ -41,12 +41,14 @@ android:build:demo:
   only:
     - demo
 
-android:build:release:
+android:build:staging:
   extends: .build-android
   variables:
-    ENV: prod
+    ENV: staging
   rules:
     - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH =~ /^release\/.*$/'
+  before_script: 
+    - export BUILD_NAME=$(sed 's/release\///g' <<< ${CI_COMMIT_BRANCH})
 
 android:build:prod:
   extends: .build-android
@@ -82,7 +84,7 @@ android:build:prod:
     - cat ${GOOGLE_API_KEY_BASE64} | base64 -d > googleApiKey.json
     # Build
     - bundle install
-    - bundle exec fastlane ${ENV}
+    - bundle exec fastlane ${ENV} buildName:$BUILD_NAME
 #   IOS
 
 # ios:build:dev:
