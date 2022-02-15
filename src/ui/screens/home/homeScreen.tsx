@@ -1,15 +1,12 @@
 import { useServices } from "@core/services";
 import { useNotifications, useRecommendations } from "@domain/feed/hooks";
-import { useSyncState } from "@domain/ring/hooks";
-import { SyncState } from "@domain/ring/ringManagementService";
 import { colors } from "@ui/styles/colors";
 import React, { useCallback, useEffect, useState } from "react";
-import { RefreshControl, ScrollView, Platform, View } from "react-native";
+import { Platform, View, FlatList, RefreshControl } from "react-native";
 import styled from "styled-components/native";
 import { CirclesBanner } from "@ui/screens/home/circlesBanner";
 import { QuickAccess } from "@ui/screens/home/quickAccess/quickAccess";
 import { Notification } from "@ui/screens/home/feedEntities/Notification";
-import { SyncBanner } from "@ui/screens/home/syncBanner";
 import { useSetupState } from "@domain/device/hooks";
 import { DeviceSetupState } from "@domain/device/bleDeviceService";
 import { MetaDataText } from "@ui/components/text";
@@ -20,11 +17,16 @@ import moment from "moment";
 import { useUserSettings } from "@domain/user/hooks/useUser";
 import { useI18n } from "@ui/i18n";
 import Fade from "@ui/components/fade";
+import { Spinner } from "@ui/components/spinner";
+import { useSyncState } from "@domain/ring/hooks";
+import { SyncState } from "@domain/ring/ringManagementService";
+
+const BANNER_TO_LOAD_ON_END = 2;
 
 export const HomeScreen: React.FC = () => {
-	const syncState = useSyncState();
-	const { feedService, bluetoothService, bleDeviceService, ringManagementService, appStateService } = useServices();
+	const { feedService, bluetoothService, bleDeviceService, appStateService, ringManagementService } = useServices();
 	const [forceRefreshing, setForceRefreshing] = useState(false);
+	const syncState = useSyncState();
 
 	const setupState = useSetupState();
 
@@ -44,23 +46,55 @@ export const HomeScreen: React.FC = () => {
 			return;
 		}
 		setForceRefreshing(true);
-		console.log("One SYNC");
-		ringManagementService.submitFirmwareVersion(); // TODO extract, sending firmware version is not needed at each pull
 		await ringManagementService.syncData();
 		await feedService.fetchAll();
 		setForceRefreshing(false);
-	}, [syncState, setForceRefreshing]); // TODO why having setForceRefreshing as a dependency ?
+	}, [syncState]);
 
 	const userSettings = useUserSettings();
 	const { format } = useI18n();
 	const notifications = useNotifications();
-	const recommendations = useRecommendations();
+	const { loading, result: recommendations } = useRecommendations();
+
+	const data = [];
+	data.push(<QuickAccess />);
+	data.push(
+		<View style={{ paddingHorizontal: 6 }}>
+			<IfAdmin>
+				<PrimaryButton onPress={feedService._DEBUG_reset}>RESET</PrimaryButton>
+			</IfAdmin>
+			{notifications[0] && (
+				<Fade isVisible isAnimatedOnMount>
+					<Notification notification={notifications[0]} />
+				</Fade>
+			)}
+		</View>
+	);
+	Object.keys(recommendations).map((date, key) => {
+		data.push(
+			<View style={{ paddingHorizontal: 6 }} key={date}>
+				{date !== "today" && (
+					<View style={{ alignItems: "center", marginTop: 15 }}>
+						<Separator />
+						<MetaDataText style={{ paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray }}>
+							{date === "yesterday"
+								? format("global.yesterday").toUpperCase()
+								: moment(date).format(userSettings?.dateFormat)}
+						</MetaDataText>
+					</View>
+				)}
+				{recommendations[date].map((banner) => {
+					return <Recommendation key={banner.id} recommendation={banner} style={{ margin: 10 }} />;
+				})}
+			</View>
+		);
+	});
+	data.push(<SpinnerContainer>{loading && <Spinner size={20}></Spinner>}</SpinnerContainer>);
 
 	return (
 		<Container>
 			<CirclesBanner />
-			<ScrollView
-				style={{ flex: 1 }}
+			<FlatList
 				refreshControl={
 					<RefreshControl
 						enabled={syncState === SyncState.NONE}
@@ -68,41 +102,25 @@ export const HomeScreen: React.FC = () => {
 						onRefresh={() => forceRefresh()}
 					/>
 				}
-			>
-				<QuickAccess />
-				<SyncBanner style={{ margin: 10 }} onRetry={forceRefresh} />
-
-				<View style={{ paddingHorizontal: 6 }}>
-					<IfAdmin>
-						<PrimaryButton onPress={feedService._DEBUG_reset}>RESET</PrimaryButton>
-					</IfAdmin>
-					{notifications[0] && (
-						<Fade isVisible isAnimatedOnMount>
-							<Notification notification={notifications[0]} />
-						</Fade>
-					)}
-					{Object.keys(recommendations).map((date, key) => (
-						<View key={key}>
-							{date !== "today" && (
-								<View style={{ alignItems: "center", marginTop: 15 }}>
-									<Separator />
-									<MetaDataText style={{ paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray }}>
-										{date === "yesterday"
-											? format("global.yesterday").toUpperCase()
-											: moment(date).format(userSettings?.dateFormat)}
-									</MetaDataText>
-								</View>
-							)}
-							{recommendations[date].map((banner) => (
-								<Recommendation key={banner.id} recommendation={banner} style={{ margin: 10 }} />
-							))}
-						</View>
-					))}
-				</View>
-			</ScrollView>
+				data={data}
+				style={{ flex: 1 }}
+				renderItem={(item) => {
+					return item.item;
+				}}
+				onEndReached={(end) => {
+					if (!loading) appStateService.recommendationsCount.update((state) => state + BANNER_TO_LOAD_ON_END);
+				}}
+				refreshing={loading}
+				progressViewOffset={100}
+			/>
 		</Container>
 	);
 };
+
+const SpinnerContainer = styled.View`
+	height: 40px;
+	padding: 10px;
+`;
 
 const Container = styled.View`
 	flex: 1;

@@ -18,7 +18,7 @@ import { getFeedEntityDate } from "@domain/feed/business";
 import { useI18n } from "@ui/i18n";
 import { UserInput } from "../components/UserInput";
 import LinearGradient from "react-native-linear-gradient";
-import { getGradient } from "../utils";
+import { getGradient } from "../business";
 
 type Props = {
 	recommendation: FeedRecommendation;
@@ -115,7 +115,7 @@ export const Recommendation: React.FC<Props> = ({ recommendation }) => {
 						</Row>
 						{paragraphs.map((paragraph, key) => (
 							<Paragraph
-								key={key}
+								key={paragraph.id}
 								coloredTagColor={highlightColor}
 								{...(paragraph as ParagraphComponentConfigurationDto).configuration}
 							/>

@@ -18,7 +18,7 @@ import { getFeedEntityDate } from "@domain/feed/business";
 import { useI18n } from "@ui/i18n";
 import { UserInput } from "@ui/screens/home/components/UserInput";
 import LinearGradient from "react-native-linear-gradient";
-import { getGradient } from "@ui/screens/home/utils";
+import { getGradient } from "@ui/screens/home/business";
 import { Mask } from "./mask";
 
 type Props = {
