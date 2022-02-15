@@ -75,7 +75,7 @@ const calibrationService = new CalibrationService(calibrationApi);
 
 const feedStorage = new FeedStorage();
 const feedApi = new FeedApi(apiService);
-const feedService = new FeedService(feedStorage, feedApi);
+const feedService = new FeedService(feedStorage, feedApi, appStateService, userService);
 
 const calendarApi = new CalendarApi(apiService);
 const calendarService = new CalendarService(calendarApi, userService);

@@ -13,6 +13,7 @@ export class AppStateService {
 	});
 	lastUsedTags = observable<CalendarTag[]>([]);
 	userRings = observable<NamedUserRing[]>([]);
+	recommendationsCount = observable<number>(3);
 
 	private get appState(): I_AppState {
 		return {

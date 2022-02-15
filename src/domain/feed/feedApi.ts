@@ -1,8 +1,7 @@
 import { ApiService } from "@core/api/apiService";
 import moment from "moment";
-import { FeedEntity } from "./type";
-import { createRecommendation } from "./mockedData";
 import { isNotification, isRecommendation } from "./business";
+import { FeedEntity } from "./type";
 
 const feedBaseUrl = "/feed";
 const interactionsBaseUrl = "/interactions";
@@ -21,21 +20,14 @@ export class FeedApi {
 	/**
 	 * Fetch the recommendations
 	 */
-	async fetchRecommendations(from: Date = new Date(moment().subtract(1, "month").toISOString())) {
-		const res = await this.apiService.get<{ data: FeedEntity[] }>(`${feedBaseUrl}/me`, { params: { from } });
-		return res.data.data.filter(isRecommendation);
+	async fetchRecommendations(count = 10, from: Date = new Date(moment().subtract(10, "month").toISOString())) {
+		const res = await this.apiService.get<{ data: FeedEntity[] }>(`${feedBaseUrl}/me`, { params: { from, count } });
+		const recommendations = res.data.data.filter(isRecommendation);
+		return recommendations;
 	}
 
-	/**
-	 * Used only by QA.
-	 * Creates 5 new notifications.
-	 */
-	async _DEBUG_insertData() {
-		await Promise.all(
-			[0, 1, 2, 3, 5].map(async (id) => {
-				return await this.apiService.post(feedBaseUrl, createRecommendation(id), { _useBackOffice: true } as any);
-			})
-		);
+	async _DEBUG_resetAnswer(userId?: string) {
+		return await this.apiService.post(`${feedBaseUrl}/reset/answers`, { userId }, { _useBackOffice: true } as any);
 	}
 
 	/**

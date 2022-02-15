@@ -1,9 +1,11 @@
+import { AppStateService } from "@domain/appState/appStateService";
+import { UserService } from "@domain/user/userService";
 import { Observable, observable } from "micro-observables";
-import { FeedNotification, FeedRecommendation, InputAnswer, InputType, UserInputStates, UserInputState } from "./type";
+import moment from "moment";
+import { getStaleLocalUserInputStates, reconciliate, removeStaleLocalAnswers } from "./business";
 import { FeedApi } from "./feedApi";
 import { FeedStorage } from "./feedStorage";
-import { removeStaleLocalAnswers, reconciliate, getStaleLocalUserInputStates } from "./business";
-import moment from "moment";
+import { FeedNotification, FeedRecommendation, InputAnswer, InputType, UserInputState, UserInputStates } from "./type";
 
 export class FeedService {
 	private serverNotifications = observable<FeedNotification[]>([]);
@@ -20,7 +22,12 @@ export class FeedService {
 	notifications: Observable<FeedNotification[]>;
 	recommendations: Observable<FeedRecommendation[]>;
 
-	constructor(private readonly feedStorage: FeedStorage, private readonly feedApi: FeedApi) {
+	constructor(
+		private readonly feedStorage: FeedStorage,
+		private readonly feedApi: FeedApi,
+		private readonly appStateService: AppStateService,
+		private readonly userService: UserService
+	) {
 		// This is a little optimistic UI mechanism for the feed.
 		// This compute a view for the notifications and another view for the recommandations which
 		// - gets the server notifications and remove closed notifications which are on the client side.
@@ -78,9 +85,11 @@ export class FeedService {
 		}
 	}
 
-	async fetchRecommendations() {
+	async fetchRecommendations(count: number) {
 		this.lastFetchedAt.recommandations = Date.now();
-		await this.feedApi.fetchRecommendations().then((r) => this.serverRecommandations.set(r));
+		await this.feedApi.fetchRecommendations(count).then((r) => {
+			this.serverRecommandations.set(r);
+		});
 	}
 
 	async fetchNotifications() {
@@ -88,14 +97,14 @@ export class FeedService {
 		await this.feedApi.fetchNotifications().then((n) => this.serverNotifications.set(n));
 	}
 
-	async fetchAll() {
-		return Promise.all([this.fetchRecommendations(), this.fetchNotifications()]);
+	async fetchAll(count = 10) {
+		return Promise.all([this.fetchRecommendations(count), this.fetchNotifications()]);
 	}
 
 	_DEBUG_reset = async () => {
 		this.feedStorage.saveNotificationsState([]);
 		this.localyClosedNotificationsIds.set([]);
-		await this.feedApi._DEBUG_insertData();
+		await this.feedApi._DEBUG_resetAnswer(this.userService.user.get()?.id);
 		this.fetchNotifications();
 	};
 
@@ -156,6 +165,6 @@ export class FeedService {
 		this.feedApi
 			.answerQuestion(answer)
 			// now, refetch the notifications to sync with the server
-			.then(this.fetchRecommendations.bind(this));
+			.then(() => this.fetchRecommendations(this.appStateService.recommendationsCount.get()));
 	}
 }
