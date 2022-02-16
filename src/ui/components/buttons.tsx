@@ -132,7 +132,7 @@ const SecondaryButtonText = styled.Text`
 
 const TertiaryButtonText = styled.Text`
 	${textStyles.primary};
-	color: ${colors.red};
+	color: ${colors.orangeRed};
 `;
 
 const PrimaryBigButtonText = styled.Text`

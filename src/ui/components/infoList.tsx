@@ -123,7 +123,8 @@ const Container = styled.View<{ lightTheme: boolean }>`
 const Name = styled.Text<{ emphasize: boolean; disabled: boolean }>`
 	${textStyles.primary};
 	font-size: 14px;
-	color: ${({ emphasize, disabled }) => (disabled ? colors.disabled : emphasize ? colors.red : colors.textPrimary)};
+	color: ${({ emphasize, disabled }) =>
+		disabled ? colors.disabled : emphasize ? colors.orangeRed : colors.textPrimary};
 	max-width: 75%;
 `;
 

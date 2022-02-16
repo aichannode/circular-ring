@@ -38,7 +38,11 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 					isInverted={isInverted}
 					style={{
 						backgroundColor:
-							color === MetricColor.RED ? colors.red : color === MetricColor.ORANGE ? colors.orange : colors.green,
+							color === MetricColor.RED
+								? colors.orangeRed
+								: color === MetricColor.ORANGE
+								? colors.orange
+								: colors.green,
 					}}
 				/>
 			</Gauge>
