@@ -35,7 +35,7 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 				<CountdownCircleTimer
 					isPlaying={isPlaying}
 					duration={selectedMinute * 60 + selectedSeconde * 5 + selectedHour * 60 * 60}
-					colors={colors.orangeRed}
+					colors={colors.redOrange}
 					size={250}
 					strokeWidth={8}
 				>

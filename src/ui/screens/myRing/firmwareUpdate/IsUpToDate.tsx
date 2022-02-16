@@ -159,7 +159,7 @@ const UpToDate = styled.Text`
 
 const OutOfDate = styled.Text`
 	font-size: 18px;
-	color: ${colors.orangeRed};
+	color: ${colors.redOrange};
 	margin: auto;
 	margin-top: 12px;
 	margin-bottom: 22px;

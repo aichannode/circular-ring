@@ -52,7 +52,7 @@ const Container = styled.View`
 `;
 
 const ErrorContainer = styled.View`
-	background-color: ${colors.orangeRed};
+	background-color: ${colors.redOrange};
 	position: absolute;
 	top: 0px;
 	left: 0px;

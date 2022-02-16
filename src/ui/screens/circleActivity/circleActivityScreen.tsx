@@ -88,7 +88,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 				<View>
 					<ScoreSection
 						style={{ marginTop: 20 }}
-						color={colors.red}
+						color={colors.orangeRed}
 						score={energyScore}
 						label={format("activity.energy_score")}
 					/>

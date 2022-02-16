@@ -27,8 +27,14 @@ type Props = {
 
 function getColorFromBannerStyle(style: Activity["style"]): ColorValue | undefined {
 	switch (style) {
+		case FeedEntityStyle.WHITE_WITH_RED_BORDER:
+			return colors.red;
+		case FeedEntityStyle.WHITE_WITH_BLUE_BORDER:
+			return colors.blue;
 		case FeedEntityStyle.WHITE_WITH_DARK_BLUE_BORDER:
 			return colors.darkBlue;
+		default:
+			return undefined;
 	}
 }
 

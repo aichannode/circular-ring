@@ -33,7 +33,7 @@ export const SliderBetweenTwoValues: React.FC<SliderProps> = ({
 				<Slider
 					step={1}
 					containerStyle={{ flex: 1 }}
-					minimumTrackTintColor={colors.orangeRed}
+					minimumTrackTintColor={colors.redOrange}
 					maximumTrackTintColor={colors.lightgray}
 					maximumValue={stop}
 					minimumValue={start}
@@ -119,7 +119,7 @@ const Reset = styled.Text`
 	text-align: center;
 	margin-bottom: 30px;
 	font-size: 14px;
-	color: ${colors.orangeRed};
+	color: ${colors.redOrange};
 	font-weight: 500;
 	margin-top: 40px;
 `;
