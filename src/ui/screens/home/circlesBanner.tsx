@@ -7,9 +7,8 @@ import React from "react";
 import { Image, StyleProp, ViewStyle, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { useServices } from "@core/services";
-import { useObservable } from "micro-observables";
-import { CircleEntity } from "../../../domain/circles/type";
-import { useSleepMode } from "@domain/appState/appStateHooks";
+import { CircleEntity } from "@domain/circles/type";
+import { useSleepMode, useCircles } from "@domain/appState/appStateHooks";
 
 interface CirclesProps {
 	style?: StyleProp<ViewStyle>;
@@ -19,18 +18,20 @@ export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 	const { format } = useI18n();
 	const navigation = useRoutesNavigation();
 	const { circlesService } = useServices();
-	const circles = useObservable(circlesService.circles);
+	const circles = useCircles();
 	const isInSleepMode = useSleepMode();
 	const addCircle: CircleEntity = {
 		id: 0,
 		route: Routes.CircleAdd,
-		source: require("@assets/images/circleAdd.png"),
-		sleepModeIcon: require("@assets/images/circleAdd.png"),
-		key: "home.circles.add.label",
-		on: true,
-		desc: "home.circles.alarm.description",
-		type: "",
+		icon: { icon: "@assets/images/circleAdd.png", type: "LOCAL", id: 0 },
+		sleepModeIcon: { icon: "@assets/images/circleAdd.png", type: "LOCAL", id: 0 },
+		name: "home.circles.add.label",
+		enabled: true,
+		description: "home.circles.alarm.description",
+		category: "home.circles.alarm.description",
 		canNavigateInSleepMode: true,
+		default: true,
+		order: 0,
 	};
 	const circlesBanner = [addCircle].concat(circles);
 
@@ -43,17 +44,25 @@ export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 		}
 	};
 
+	console.log("circlesBanner", circlesBanner);
+
 	return (
 		<Container style={style} gap={15}>
 			<TitleText style={{ paddingLeft: 10 }}>{format("home.circles.title")}</TitleText>
 			<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
 				<Row align="flex-start" gap={0}>
-					{circlesBanner.map((circle) =>
-						circle.on ? (
-							<CircleView key={circle.route} onPress={() => circleNavigate(circle)}>
+					{circlesBanner.map((circle, key) =>
+						circle.enabled ? (
+							<CircleView key={key} onPress={() => circleNavigate(circle)}>
 								<Stack style={{ marginTop: circle.id === 0 ? -10 : 0 }} gap={circle.id === 0 ? -3 : 10} align="center">
-									<Image source={isInSleepMode ? circle.sleepModeIcon : circle.source} />
-									<CircleLabel>{format(circle.key)}</CircleLabel>
+									<Image
+										resizeMode="center"
+										style={{ borderWidth: 1 }}
+										source={
+											isInSleepMode ? circlesService.getIcon(circle.sleepModeIcon) : circlesService.getIcon(circle.icon)
+										}
+									/>
+									<CircleLabel>{format(circle.name)}</CircleLabel>
 								</Stack>
 							</CircleView>
 						) : null

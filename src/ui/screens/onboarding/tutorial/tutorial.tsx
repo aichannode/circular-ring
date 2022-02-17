@@ -16,6 +16,7 @@ import { Mask } from "./mask";
 import { recommendationData, recommendationDataFeed } from "./recomandation";
 import { FourDot } from "./fourDot";
 import { FakeQuiAccess } from "./fakeQuickAccess";
+import { useFetchCircles } from "@domain/circles/hooks";
 
 export const Tutorial = () => {
 	const route = useAppRoute<Routes.OnboardingTutorial>();
@@ -28,6 +29,7 @@ export const Tutorial = () => {
 	const { format } = useI18n();
 
 	console.log("ROUTE PARAM TUTO", route.params);
+	useFetchCircles();
 
 	const completeTutorial = useCallback(async () => {
 		setLoading(true);

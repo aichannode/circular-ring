@@ -559,5 +559,7 @@
 	"tutorial.day": "Day 🌞",
 	"tutorial.night": "Night 🌝",
 	"tutorial.sleep": "Sleep",
-	"tutorial.calibration": "Calibration"
+	"tutorial.calibration": "Calibration",
+	"cicle.category.wellness": "Wellness",
+	"cicle.category.vibration": "Vibration"
 }

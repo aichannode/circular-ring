@@ -22,6 +22,7 @@ import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringManagementService";
 
 const BANNER_TO_LOAD_ON_END = 2;
+import { useFetchCircles } from "@domain/circles/hooks";
 
 export const HomeScreen: React.FC = () => {
 	const { feedService, bluetoothService, bleDeviceService, appStateService, ringManagementService } = useServices();
@@ -90,6 +91,7 @@ export const HomeScreen: React.FC = () => {
 		);
 	});
 	data.push(<SpinnerContainer>{loading && <Spinner size={20}></Spinner>}</SpinnerContainer>);
+	useFetchCircles();
 
 	return (
 		<Container>

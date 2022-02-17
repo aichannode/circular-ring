@@ -33,7 +33,7 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 
 	const startUpdate = async () => {
 		await UpdateFailedBottomSheetRef.current?.close();
-		if (ringBattery && ringBattery?.charge <= 20) {
+		if (ringBattery && ringBattery?.charge <= 19) {
 			setTimeout(() => {
 				UpdateFailedBottomSheetRef.current?.present();
 			}, 250);
