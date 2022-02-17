@@ -28,6 +28,7 @@ import { TokenPayload } from "@domain/auth/type";
 import { UserDevicesStorage } from "@domain/device/userDevicesStorage";
 import { AppStateService } from "@domain/appState/appStateService";
 import { AppStateStorage } from "@domain/appState/appStateStorage";
+import { CirclesApi } from "@domain/circles/circlesApi";
 
 const fakeDeviceService = Config.ENVIRONNEMENT === "dev" ? new DevFakeDeviceService() : new EmptyFakeDeviceService();
 
@@ -65,7 +66,8 @@ const userService = new UserService(
 	appStateService,
 	favoriteDeviceStorage
 );
-const circlesService = new CirclesService();
+const circlesApi = new CirclesApi(apiService);
+const circlesService = new CirclesService(circlesApi, appStateService);
 
 const userPreferencesStorage = new UserPreferencesStorage();
 const userPreferencesService = new UserPreferencesService(userPreferencesStorage);

@@ -13,7 +13,6 @@ interface MyRingBatteryProps {
 export const MyRingBattery: React.FC<MyRingBatteryProps> = ({ full, stalled }) => {
 	const { format } = useI18n();
 	const navigation = useRoutesNavigation();
-	console.log("Stalled", stalled);
 
 	return (
 		<Container onPress={() => navigation.navigate(Routes.MyRing)}>

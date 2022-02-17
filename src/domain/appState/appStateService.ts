@@ -1,5 +1,6 @@
 import { CalendarTag } from "@domain/calendar/calendar";
 import { NamedUserRing } from "@domain/ring/ring";
+import { CircleEntity } from "@domain/circles/type";
 import produce from "immer";
 import { observable } from "micro-observables";
 import { AppStateStorage } from "./appStateStorage";
@@ -14,12 +15,16 @@ export class AppStateService {
 	lastUsedTags = observable<CalendarTag[]>([]);
 	userRings = observable<NamedUserRing[]>([]);
 	recommendationsCount = observable<number>(3);
+	userCircles = observable<CircleEntity[]>([]);
+	defaultCircles = observable<CircleEntity[]>([]);
 
 	private get appState(): I_AppState {
 		return {
 			isInSleepMode: this.isInSleepMode.get(),
 			quickAccess: this.quickAccess.get(),
 			lastUsedTags: this.lastUsedTags.get(),
+			userCircles: this.userCircles.get(),
+			defaultCircles: this.defaultCircles.get(),
 			userRings: this.userRings.get(),
 		};
 	}
@@ -31,6 +36,8 @@ export class AppStateService {
 		this.quickAccess.set(state.quickAccess);
 		this.isInSleepMode.set(state.isInSleepMode);
 		this.userRings.set(state.userRings);
+		this.userCircles.set(state.userCircles);
+		this.defaultCircles.set(state.defaultCircles);
 	}
 
 	async init() {
@@ -45,7 +52,9 @@ export class AppStateService {
 		this.lastUsedTags.subscribe(() => this.AppStateStorage.save(this.appState));
 		this.quickAccess.subscribe(() => this.AppStateStorage.save(this.appState));
 		this.isInSleepMode.subscribe(() => this.AppStateStorage.save(this.appState));
+		this.userCircles.subscribe(() => this.AppStateStorage.save(this.appState));
 		this.userRings.subscribe(() => this.AppStateStorage.save(this.appState));
+		this.defaultCircles.subscribe(() => this.AppStateStorage.save(this.appState));
 	}
 
 	updateQuickaccess({ active, disabled }: I_QuickAccess) {
