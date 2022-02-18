@@ -1,8 +1,8 @@
-import moment, { Moment } from "moment";
-import React from "react";
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import moment, { Moment } from "moment";
+import React from "react";
 import { View } from "react-native";
 import Svg, { Rect } from "react-native-svg";
 import { WordingKey } from "src/wordings";
@@ -30,8 +30,8 @@ export const DailyPieChartLabelMappedToPhases: React.FC<Props> = ({ stages, char
 	return (
 		<>
 			{stages.map((phaseInfo, i, allPhases) => {
-				const currentPhaseType = phaseInfo.stage;
-				const previousPhaseType = allPhases[i - 1]?.stage;
+				const currentPhaseType = phaseInfo.level;
+				const previousPhaseType = allPhases[i - 1]?.level;
 				return getLabels(currentPhaseType, i, previousPhaseType).map((label, index) =>
 					label !== null ? (
 						<React.Fragment key={`${i}-${index}`}>

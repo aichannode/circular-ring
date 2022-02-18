@@ -122,7 +122,7 @@ export function sample<T extends SleepStage | ActivityStage>(
 	const duration = endOfActivty.getTime() - startOfActivity.getTime();
 	const sampleNb = duration / sampleSize; // How many samples we need to do
 	const segments = stages.map((stage) => ({
-		value: stage.stage,
+		value: stage.level,
 		start: new Date(stage.start).getTime(),
 		end: new Date(stage.end).getTime(),
 	}));

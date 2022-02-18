@@ -26,9 +26,9 @@ export function getActivityPhases(
 			// Prevent duplicated user.data.activity.intensity value
 			// The user.data.activity.intensity should pop once per value change
 			// TODO extract to front CIR-562
-			if (result[i - 1]?.stage !== intensityValue) {
+			if (result[i - 1]?.level !== intensityValue) {
 				result.push({
-					stage: intensityValue,
+					level: intensityValue,
 					start: block.timestamp,
 					// Look for the next activity intensity switch
 					end:
@@ -74,7 +74,7 @@ export const createSleepStagesGetter =
 				const stage = Number(block.metrics[MetricType.UserSleepStage]);
 				// Prevent duplicated user sleep stage value
 				// TODO ask the back to do this
-				if (stageInfos[i - 1]?.stage !== stage) {
+				if (stageInfos[i - 1]?.level !== stage) {
 					// Find the end of this phase
 					// Look for the next sleep stage switch
 					const startSearchAt = i + 1;
@@ -95,7 +95,7 @@ export const createSleepStagesGetter =
 					const endOfStageBlock = data.timeline[endOfStageBlockIndex];
 
 					stageInfos.push({
-						stage,
+						level: stage,
 						start: block.timestamp,
 						end: endOfStageBlock.timestamp,
 					});

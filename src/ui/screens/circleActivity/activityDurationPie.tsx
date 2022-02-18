@@ -14,7 +14,8 @@ type Props = {
 };
 
 function getPhaseLevel(phase = 4) {
-	return phase - 2;
+	// console.log("FIX phase", phase - 1);
+	return phase - 1;
 }
 
 function createLabelGenerator(stages: Array<StageInfos<ActivityStage>>) {
@@ -25,10 +26,10 @@ function createLabelGenerator(stages: Array<StageInfos<ActivityStage>>) {
 		// if (index === stages.length - 1) {
 		// 	return [null, "sleep.duration.label.wake_up"];
 		// }
-		if (index && stages[index].stage === 4 && stages[index - 1].stage !== 4) {
+		if (index && stages[index].level === 4 && stages[index - 1].level !== 4) {
 			return ["activity.duration.label.sport_start", null];
 		}
-		if (index && stages[index].stage !== 4 && stages[index - 1].stage === 4) {
+		if (index && stages[index].level !== 4 && stages[index - 1].level === 4) {
 			return ["activity.duration.label.sport_end", null];
 		}
 		return [null, null];

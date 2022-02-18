@@ -78,7 +78,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 	const graphData: Array<{
 		value: number;
 		isoTime: string;
-	}> = activityIntensity.stages.map((stage) => ({ value: stage.stage, isoTime: stage.start }));
+	}> = activityIntensity.stages.map((stage) => ({ value: stage.level, isoTime: stage.start }));
 
 	return (
 		<Container>

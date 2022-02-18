@@ -1,33 +1,33 @@
-import moment from "moment";
 import { SleepStage } from "@domain/measure/type";
-import { HypnogramData, Steps } from "./hypnogram";
+import moment from "moment";
 import { toStepsData } from "./business";
+import { HypnogramData, Steps } from "./hypnogram";
 
 const cursor = moment().hour(22).minutes(0);
 
 const input: HypnogramData = [
 	{
-		stage: SleepStage.AWAKE,
+		level: SleepStage.AWAKE,
 		start: cursor.toISOString(),
 		end: cursor.hour(23).toISOString(),
 	},
 	{
-		stage: SleepStage.REM,
+		level: SleepStage.REM,
 		start: cursor.toISOString(),
 		end: cursor.add(10, "minutes").toISOString(),
 	},
 	{
-		stage: SleepStage.LIGHT,
+		level: SleepStage.LIGHT,
 		start: cursor.toISOString(),
 		end: cursor.add(30, "minutes").toISOString(),
 	},
 	{
-		stage: SleepStage.DEEP,
+		level: SleepStage.DEEP,
 		start: cursor.toISOString(),
 		end: cursor.add(1, "day").hour(1).minutes(30).toISOString(),
 	},
 	{
-		stage: SleepStage.AWAKE,
+		level: SleepStage.AWAKE,
 		start: cursor.toISOString(),
 		end: cursor.hour(2).toISOString(),
 	},

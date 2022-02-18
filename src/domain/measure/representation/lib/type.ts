@@ -1,8 +1,8 @@
 import { MetricType } from "../../metric";
-import { SleepStage, ActivityStage } from "../../type";
+import { ActivityStage, SleepStage } from "../../type";
 
 export type StageInfos<T extends SleepStage | ActivityStage> = {
-	stage: T;
+	level: T;
 	/** Iso date */
 	start: string;
 	/** Iso date */
