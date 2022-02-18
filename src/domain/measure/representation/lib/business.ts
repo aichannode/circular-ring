@@ -177,13 +177,16 @@ export function setAfterHeavyComputation<M, T>(
 	heavyComputationHandlerRef: React.MutableRefObject<HeavyComputationHandler | undefined>,
 	metrics: M
 ) {
+	let start = 0;
 	heavyComputationHandlerRef.current?.cancel();
 	heavyComputationHandlerRef.current = InteractionManager.runAfterInteractions(() => {
+		start = new Date().getTime();
 		__DEV__ && console.log("[MEASURE: Representation] Start of daily data computation.");
 		setData(heavyComputation(metrics));
 	});
 	heavyComputationHandlerRef.current.then(
-		() => __DEV__ && console.log("[MEASURE: Representation] End of daily data computation.")
+		() =>
+			__DEV__ && console.log("[MEASURE: Representation] End of daily data computation.", new Date().getTime() - start)
 	);
 }
 

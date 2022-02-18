@@ -1,7 +1,7 @@
 import { ApiService } from "@core/api/apiService";
 import moment from "moment";
 import { toTimeSegment } from "../../common/business";
-import { MetricType, DatedMetrics, Metrics } from "../../metric";
+import { DatedMetrics, Metrics, MetricType } from "../../metric";
 import { TimeFrame } from "../../type";
 
 function createBlock(timestamp: string): DatedMetrics {
@@ -41,7 +41,7 @@ export class MeasureApi {
 				// Need to create a new block
 				if (currentTimestamp !== serverBlock.timestamp) {
 					// Push the previous block
-					chain.unshift(block);
+					chain.push(block);
 					currentTimestamp = serverBlock.timestamp;
 					// Create a new block
 					block = createBlock(currentTimestamp);

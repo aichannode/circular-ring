@@ -1,197 +1,185 @@
-import { VictoryChart, VictoryBar, VictoryAxis } from "victory-native";
-import { colors, ActivityIntensityColors } from "@ui/styles/colors";
-import { GraphLegend } from "@ui/components/measure/graphLegend";
+import { CalendarTag } from "@domain/calendar/calendar";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
-import moment from "moment";
+import { GraphLegend } from "@ui/components/measure/graphLegend";
+import { Tag } from "@ui/components/tag";
 import { useI18n } from "@ui/i18n";
-import { VictoryAxisCommonProps } from "victory-core";
-import { useCalendar } from "@domain/calendar/hooks/useCalendar";
-import { View } from "react-native";
-import React, { useState } from "react";
-import dayjs from "dayjs";
-import { FetchStrategy } from "@betomorrow/micro-stores";
-import styled from "styled-components/native";
+import { ActivityIntensityColors, colors } from "@ui/styles/colors";
+import React from "react";
+import { Platform, processColor, View } from "react-native";
+import { BarChart } from "react-native-charts-wrapper";
 
 type Props = {
 	samples: Array<{ isoTime: string; value: number }>;
+	tags: CalendarTag[];
 };
 
-export const ActivityIntensityGraph = ({ samples }: Props) => {
+export const ActivityIntensityGraph = ({ samples, tags }: Props) => {
 	const { format } = useI18n();
-	const [
-		selectedDay,
-		/*setSelectedDay*/
-		,
-	] = useState(dayjs().format("YYYY-MM-DD"));
-	const calendar = useCalendar(selectedDay, FetchStrategy.Once);
-	const data = samples.map((data) => {
-		return {
-			y: data.value,
-			x: data.isoTime,
-		};
-	});
 
-	const axisYStyle: VictoryAxisCommonProps["style"] = {
-		axis: {
-			stroke: "transparent",
+	const data = {
+		dataSets: [
+			{
+				values: samples.map(({ value, isoTime }) => {
+					const date = new Date(isoTime);
+					const marker = `${date.getHours()}h${date.getMinutes()}\n${
+						value >= 3
+							? format("intensity.high")
+							: value >= 2
+							? format("intensity.medium")
+							: value >= 1
+							? format("intensity.low")
+							: format("intensity.none")
+					}`;
+					return {
+						y: value,
+						marker,
+					};
+				}),
+				config: {
+					drawValues: false,
+					colors: samples.map(({ value }) =>
+						value >= 3
+							? processColor(ActivityIntensityColors.HIGH)
+							: value >= 2
+							? processColor(ActivityIntensityColors.MEDIUM)
+							: value >= 1
+							? processColor(ActivityIntensityColors.LOW)
+							: processColor(ActivityIntensityColors.NONE)
+					),
+					// Alpha value depends on plateform
+					// https://github.com/wuxudong/react-native-charts-wrapper#convention
+					highlightAlpha: Platform.OS === "ios" ? 100 : 255,
+					highlightColor: processColor(colors.selected),
+				},
+			},
+		],
+
+		config: {
+			barWidth: 0.5,
 		},
-		tickLabels: {
-			fontSize: 10,
-			color: colors.darkGray,
-		},
-		grid: { stroke: "#000", strokeWidth: 0.04 },
 	};
 
-	const axisXStyle: VictoryAxisCommonProps["style"] = {
-		axis: {
-			stroke: "transparent",
-		},
-		tickLabels: {
-			fontSize: 10,
-			color: colors.darkGray,
-		},
+	const xAxis = {
+		position: "BOTTOM" as const,
+		valueFormatter: samples.map(({ isoTime }) => {
+			const date = new Date(isoTime);
+			const hour = date.getHours();
+			const minutes = date.getMinutes();
+			return `${hour}h${minutes}`;
+		}),
+		drawGridLines: false,
+		axisLineColor: processColor("white"), // can't hide it so paint it white
 	};
+
+	const yAxis = {
+		left: {
+			valueFormatter: ["", format("intensity.low"), format("intensity.medium"), format("intensity.high")],
+			granularityEnabled: true,
+			granularity: 1,
+			drawAxisLines: false,
+			axisLineColor: processColor("white"), // can't hide it so paint it white
+		},
+		right: { enabled: false }, // used to delete the right axis
+	};
+
 	return (
-		<GraphContainer>
-			<NotesContainer>
-				{calendar?.notes.map((note, key) => (
-					<Note key={key}>{note.tag.name}</Note>
-				))}
-			</NotesContainer>
-			<VictoryChart domain={{ x: [0, data.length + 8], y: [0, 4] }} height={230}>
-				<VictoryAxis
-					tickFormat={(tick) => {
-						if (parseInt(moment(tick).format("H")) % 2 === 0 && moment(tick).format("mm") === "00")
-							return moment(tick).format("H") + " h";
-						else return "";
+		// Important! The current lib does not support update of data size from 0
+		// because zoom/visibleRange props update won't be taken in account internaly.
+		// This will lead to an empty chart.
+		// Workaround: We need to unmount the chart when there is no data.
+		!!samples.length ? (
+			<GraphContainer style={{ height: 300 }}>
+				<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+					{tags.map(({ name, id }) => (
+						<View key={id} style={{ marginLeft: 8 }}>
+							<Tag>{name}</Tag>
+						</View>
+					))}
+				</View>
+				<BarChart
+					style={{
+						flex: 1,
 					}}
-					style={axisXStyle}
-				/>
-				<VictoryAxis
-					// domain={yDomain}
-
-					dependentAxis
-					fixLabelOverlap
-					style={axisYStyle}
-					tickFormat={function (tick) {
-						switch (tick) {
-							case 1:
-								return format("intensity.low");
-							case 2:
-								return format("intensity.medium");
-							case 3:
-								return format("intensity.high");
-							default:
-							case 1:
-								return "Max HR";
-						}
+					data={data}
+					xAxis={xAxis}
+					yAxis={yAxis}
+					legend={{
+						enabled: false,
 					}}
+					marker={{
+						enabled: true,
+						markerColor: processColor(colors.orangeRed),
+						textColor: processColor("white"),
+						textSize: 14,
+					}}
+					zoom={{ scaleX: 1, scaleY: 1, xValue: Math.floor(samples.length / 2), yValue: 1 }}
+					pinchZoom={true}
+					scaleYEnabled={false}
+					doubleTapToZoomEnabled={false}
+					chartDescription={{ text: "" }}
+					visibleRange={{ x: { max: Math.min(samples.length, 100) } }}
+					drawValueAboveBar={false}
+					highlightFullBarEnabled={true}
+					onSelect={console.log}
 				/>
-				<VictoryBar
-					events={[
+				<GraphLegend
+					rows={[
 						{
-							target: "data",
-							eventHandlers: {
-								onPressIn: () => {
-									return [
-										{
-											target: "labels",
-											mutation: (props: { text: "clicked" }) => {
-												return props.text === "clicked" ? null : { text: "clicked" };
-											},
-										},
-									];
-								},
+							label: format("intensity.high"),
+							element: {
+								key: "intensity.high",
+								node: (
+									<View
+										style={{
+											borderRadius: 100,
+											width: 10,
+											height: 10,
+											backgroundColor: ActivityIntensityColors.HIGH,
+										}}
+									/>
+								),
 							},
+							value: "1 h 00 min   (7%)",
+						},
+						{
+							label: format("intensity.medium"),
+							element: {
+								key: "intensity.medium",
+								node: (
+									<View
+										style={{
+											borderRadius: 100,
+											width: 10,
+											height: 10,
+											backgroundColor: ActivityIntensityColors.MEDIUM,
+										}}
+									/>
+								),
+							},
+							value: "2 h 00 min (14%)",
+						},
+						{
+							label: format("intensity.low"),
+							element: {
+								key: "intensity.low",
+								node: (
+									<View
+										style={{
+											borderRadius: 100,
+											width: 10,
+											height: 10,
+											backgroundColor: ActivityIntensityColors.LOW,
+										}}
+									/>
+								),
+							},
+							value: "10 h 30 min (79%)",
 						},
 					]}
-					barRatio={0.8}
-					data={data}
-					cornerRadius={{ top: 4, bottom: 4 }}
-					style={{
-						data: {
-							fill: ({ datum }) => {
-								if (datum.y >= 3) return ActivityIntensityColors.HIGH;
-								if (datum.y >= 2) return ActivityIntensityColors.MEDIUM;
-								if (datum.y >= 1) return ActivityIntensityColors.LOW;
-								return ActivityIntensityColors.NONE;
-							},
-							fillOpacity: 1,
-						},
-					}}
 				/>
-			</VictoryChart>
-			<GraphLegend
-				rows={[
-					{
-						label: format("intensity.high"),
-						element: {
-							key: "intensity.high",
-							node: (
-								<View
-									style={{
-										borderRadius: 100,
-										width: 10,
-										height: 10,
-										backgroundColor: ActivityIntensityColors.HIGH,
-									}}
-								/>
-							),
-						},
-						value: "1 h 00 min   (7%)",
-					},
-					{
-						label: format("intensity.medium"),
-						element: {
-							key: "intensity.medium",
-							node: (
-								<View
-									style={{
-										borderRadius: 100,
-										width: 10,
-										height: 10,
-										backgroundColor: ActivityIntensityColors.MEDIUM,
-									}}
-								/>
-							),
-						},
-						value: "2 h 00 min (14%)",
-					},
-					{
-						label: format("intensity.low"),
-						element: {
-							key: "intensity.low",
-							node: (
-								<View
-									style={{
-										borderRadius: 100,
-										width: 10,
-										height: 10,
-										backgroundColor: ActivityIntensityColors.LOW,
-									}}
-								/>
-							),
-						},
-						value: "10 h 30 min (79%)",
-					},
-				]}
-			/>
-		</GraphContainer>
+			</GraphContainer>
+		) : (
+			<></>
+		)
 	);
 };
-
-const NotesContainer = styled.View`
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-end;
-`;
-
-const Note = styled.Text`
-	height: 14px;
-	font-size: 9px;
-	color: white;
-	background-color: ${colors.orange};
-	padding-horizontal: 8px;
-	margin-horizontal: 4px;
-	border-radius: 7px;
-`;

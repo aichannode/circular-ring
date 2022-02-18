@@ -5,6 +5,7 @@ import lungs from "@assets/images/lungs.png";
 import shoes from "@assets/images/shoes.png";
 import sport from "@assets/images/sport.png";
 import { useRepresentations } from "@core/representation";
+import { useDailyTags } from "@domain/calendar/hooks/useTags";
 import { DailyActivityIntensityData } from "@domain/measure/representation/api";
 import { dailyActivitiesMetrics, dailyEnergyScoreMetrics } from "@domain/measure/representation/lib/type";
 import { TimeFrame } from "@domain/measure/type";
@@ -65,6 +66,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 			},
 		},
 	} = useRepresentations();
+	const tags = useDailyTags(selectedDay);
 	const energyScoreDetails = useDailyEnergyScoreDetails(selectedDay);
 	const dailyMetrics = useDailyActivities(selectedDay);
 	const energyScore = useDailyEnergyScore(selectedDay);
@@ -174,34 +176,36 @@ export const CircleActivityScreen: React.FC = observer(() => {
 							.filter(Boolean) as JSX.Element[]
 					}
 				</ElementStack>
-				<ElementStack gap={10}>
-					<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-						{format("activity.intensity")}
-					</TitleText>
-					{/** Wait for available data on week/month */}
-					<View style={{ display: "none", marginVertical: 10 }}>
-						<TimeFrameSwitcher
-							setGraphPeriod={setGraphPeriod}
-							graphPeriod={graphPeriod}
-							color={colors.business.activityPrimary}
-							frames={[
-								{
-									label: "graph.time_frame.today",
-									duration: TimeFrame.TODAY,
-								},
-								{
-									label: "graph.time_frame.7days",
-									duration: TimeFrame.LAST_7_DAYS,
-								},
-								{
-									label: "graph.time_frame.all",
-									duration: TimeFrame.ALL,
-								},
-							]}
-						/>
-					</View>
-					<ActivityIntensityGraph samples={graphData} />
-				</ElementStack>
+				{!!graphData.length && (
+					<ElementStack gap={10}>
+						<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
+							{format("activity.intensity")}
+						</TitleText>
+						{/** Wait for available data on week/month */}
+						<View style={{ display: "none", marginVertical: 10 }}>
+							<TimeFrameSwitcher
+								setGraphPeriod={setGraphPeriod}
+								graphPeriod={graphPeriod}
+								color={colors.business.activityPrimary}
+								frames={[
+									{
+										label: "graph.time_frame.today",
+										duration: TimeFrame.TODAY,
+									},
+									{
+										label: "graph.time_frame.7days",
+										duration: TimeFrame.LAST_7_DAYS,
+									},
+									{
+										label: "graph.time_frame.all",
+										duration: TimeFrame.ALL,
+									},
+								]}
+							/>
+						</View>
+						<ActivityIntensityGraph tags={tags} samples={graphData} />
+					</ElementStack>
+				)}
 			</ScrollView>
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
 				<View style={{ padding: 20 }}>

@@ -1,4 +1,4 @@
-import { SignalQuality, ScoreQuality } from "@domain/measure/score";
+import { ScoreQuality, SignalQuality } from "@domain/measure/score";
 import { Intensity } from "@domain/ring/ringLiveData";
 
 export const colors = {
@@ -69,5 +69,5 @@ export const ActivityIntensityColors: { [key in Intensity]: string } = {
 	[Intensity.LOW]: colors.low,
 	[Intensity.MEDIUM]: colors.medium,
 	[Intensity.HIGH]: colors.high,
-	[Intensity.NONE]: colors.none,
+	[Intensity.NONE]: colors.midGray,
 };
