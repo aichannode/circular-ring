@@ -45,12 +45,20 @@ export class CalendarService {
 	private async fetchAllTags() {
 		try {
 			const tags = await this.calendarApi.getAllTags();
+			console.log("tags", tags);
 			const categories = await this.calendarApi.getCategories(
 				[...new Set(tags.map(({ categoryId: category }) => category))] // extract deduplicated category ids
 			);
-			this._tagMap.set(
-				new Map(categories.map((category) => [category.id, tags.filter((tag) => tag.categoryId === category.id)]))
+
+			console.log("CATEGORIES =>", categories);
+			const filteredTags = new Map(
+				categories.map((category) => [category.id, tags.filter((tag) => tag.categoryId === category.id)])
 			);
+			filteredTags.set(
+				0,
+				tags.filter((tag) => tag.categoryId === null)
+			);
+			this._tagMap.set(filteredTags);
 			this._categories.set(categories.sort((a, b) => a.order - b.order)); // Order categories
 		} catch (e) {
 			this.logger.warn("Error retrieving tags :", e);

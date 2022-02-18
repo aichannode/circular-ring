@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { useUser } from "@domain/user/hooks/useUser";
 import { circularCalendarTheme } from "@ui/components/calendar/circularCalendarTheme";
 import dayjs from "dayjs";
@@ -37,7 +39,6 @@ export const CalendarView: React.FC<CalendarProps> = ({
 	);
 
 	const isLastMonth = useMemo(() => dayjs(visibleMonthDay).endOf("month").isAfter(dayjs()), [maxDate, visibleMonthDay]);
-
 	return (
 		<RNCalendar
 			minDate={minDate}
@@ -45,8 +46,6 @@ export const CalendarView: React.FC<CalendarProps> = ({
 			disableArrowLeft={isFirstMonth}
 			disableArrowRight={isLastMonth}
 			onDayPress={(day) => onDaySelected(day.dateString)}
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			//@ts-ignore
 			onMonthChange={(date: any) => {
 				setVisibleMonthDay(date.dateString);
 				autoSelectDayOnMonthChange && autoSelectDay(date.dateString);

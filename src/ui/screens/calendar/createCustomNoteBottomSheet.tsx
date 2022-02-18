@@ -1,6 +1,7 @@
 import { useServices } from "@core/services";
 import { PrimaryButton, TertiaryButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
+import { Spinner } from "@ui/components/spinner";
 import { MediumTitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -17,9 +18,12 @@ export const CreateCustomNoteBottomSheet: React.FC<CreateCustomNoteBottomSheetPr
 	const { format } = useI18n();
 	const { calendarService } = useServices();
 	const [search, setSearch] = useState("");
+	const [loading, setLoading] = useState(false);
 
 	const createCustomNote = async () => {
 		onClose();
+		console.log("Create NOTE");
+		setLoading(true);
 		await calendarService.createCustomTag(search, "Custom Notes");
 	};
 
@@ -44,15 +48,21 @@ export const CreateCustomNoteBottomSheet: React.FC<CreateCustomNoteBottomSheetPr
 				)}
 			</SearchWrapper>
 			<Grow />
-			<ButtonContainer gap={35}>
-				<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
-					{format("global.cancel")}
-				</TertiaryButton>
+			{!loading ? (
+				<ButtonContainer gap={35}>
+					<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
+						{format("global.cancel")}
+					</TertiaryButton>
 
-				<PrimaryButton key={"create"} onPress={createCustomNote}>
-					{format("global.create")}
-				</PrimaryButton>
-			</ButtonContainer>
+					<PrimaryButton key={"create"} onPress={createCustomNote}>
+						{format("global.create")}
+					</PrimaryButton>
+				</ButtonContainer>
+			) : (
+				<View style={{ marginBottom: 20 }}>
+					<Spinner size={12}></Spinner>
+				</View>
+			)}
 		</Container>
 	);
 };
@@ -66,7 +76,7 @@ const SearchWrapper = styled(View)`
 	margin: 6px 16px;
 	display: flex;
 	flex-direction: row;
-  shadow-color: #000;
+  	shadow-color: #000;
 	shadow-offset: {
 	width: 0px,
 	height: 2px,

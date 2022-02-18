@@ -1,6 +1,5 @@
 import { useTagCategories, useTags } from "@domain/calendar/hooks/useTags";
 import { InfoListHeader } from "@ui/components/infoList";
-import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
 import { TagSelectionView } from "@ui/screens/calendar/tagSelectionView";
@@ -8,7 +7,9 @@ import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useLayoutEffect, useState } from "react";
 import { Image, Pressable, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import styled from "styled-components/native";
+import CustomNote from "./customNotes";
 
 export const AllTagsScreen: React.FC = () => {
 	const route = useAppRoute<Routes.AllTags>();
@@ -43,7 +44,7 @@ export const AllTagsScreen: React.FC = () => {
 	}, [selectedTags, originalSelectedTags]);
 
 	return (
-		<ScrollScreen>
+		<ScrollView>
 			<View style={{ backgroundColor: colors.lightgray }}>
 				<SearchWrapper>
 					<ImageCenter source={require("@assets/images/search.png")} />
@@ -78,11 +79,21 @@ export const AllTagsScreen: React.FC = () => {
 					/>
 				</View>
 			) : (
-				<View>
+				<View style={{ flex: 1 }}>
+					<CustomNote
+						customNote={[...allTags.values()].flat().filter((tag) => tag.categoryId === null)}
+						selectedTags={selectedTags}
+						setSelectedTags={setSelectedTags}
+					></CustomNote>
 					{allCategories.map(({ id: categoryId, label: categoryLabel }) => {
 						const categoryTags = allTags.get(categoryId) ?? [];
+						console.log("categoryId", categoryId, " label ", categoryLabel);
 						return categoryTags.length === 0 ? null : (
-							<React.Fragment key={categoryId}>
+							<View
+								key={categoryId}
+								style={{ flex: 1 }}
+								// style={{ backgroundColor: "#" + Math.floor(Math.random() * 16777215).toString(16) }}
+							>
 								<InfoListHeader>{format(categoryLabel)}</InfoListHeader>
 								<TagListContainer>
 									<TagSelectionView
@@ -98,12 +109,12 @@ export const AllTagsScreen: React.FC = () => {
 										}}
 									/>
 								</TagListContainer>
-							</React.Fragment>
+							</View>
 						);
 					})}
 				</View>
 			)}
-		</ScrollScreen>
+		</ScrollView>
 	);
 };
 

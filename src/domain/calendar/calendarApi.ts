@@ -21,6 +21,7 @@ export class CalendarApi {
 
 	async getAllTags(): Promise<CalendarTag[]> {
 		const result = await this.apiService.get<CalendarTag[]>("/notes/me/tags");
+		console.log("GETALLTAGS RESULT", result);
 		return result.data;
 	}
 
