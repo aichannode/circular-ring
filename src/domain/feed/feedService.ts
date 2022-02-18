@@ -101,10 +101,18 @@ export class FeedService {
 		return Promise.all([this.fetchRecommendations(count), this.fetchNotifications()]);
 	}
 
-	_DEBUG_reset = async () => {
-		this.feedStorage.saveNotificationsState([]);
-		this.localyClosedNotificationsIds.set([]);
+	_DEBUG_resetAnswers = async () => {
+		this.feedStorage.clear();
+		this.localyAnsweredQuestions.set([]);
 		await this.feedApi._DEBUG_resetAnswer(this.userService.user.get()?.id);
+		this.fetchNotifications();
+	};
+
+	_DEBUG_resetFeed = async () => {
+		this.feedStorage.clear();
+		this.localyAnsweredQuestions.set([]);
+		this.localyClosedNotificationsIds.set([]);
+		await this.feedApi._DEBUG_resetFeed();
 		this.fetchNotifications();
 	};
 

@@ -1,28 +1,28 @@
 import { useServices } from "@core/services";
-import { useNotifications, useRecommendations } from "@domain/feed/hooks";
-import { colors } from "@ui/styles/colors";
-import React, { useCallback, useEffect, useState } from "react";
-import { Platform, View, FlatList, RefreshControl } from "react-native";
-import styled from "styled-components/native";
-import { CirclesBanner } from "@ui/screens/home/circlesBanner";
-import { QuickAccess } from "@ui/screens/home/quickAccess/quickAccess";
-import { Notification } from "@ui/screens/home/feedEntities/Notification";
-import { useSetupState } from "@domain/device/hooks";
+import { useFetchCircles } from "@domain/circles/hooks";
 import { DeviceSetupState } from "@domain/device/bleDeviceService";
-import { MetaDataText } from "@ui/components/text";
-import { Recommendation } from "@ui/screens/home/feedEntities/Recommendation";
-import { PrimaryButton } from "@ui/components/buttons";
-import { IfAdmin } from "@ui/containers/IfAdmin";
-import moment from "moment";
-import { useUserSettings } from "@domain/user/hooks/useUser";
-import { useI18n } from "@ui/i18n";
-import Fade from "@ui/components/fade";
-import { Spinner } from "@ui/components/spinner";
+import { useSetupState } from "@domain/device/hooks";
+import { useNotifications, useRecommendations } from "@domain/feed/hooks";
 import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringManagementService";
+import { useUserSettings } from "@domain/user/hooks/useUser";
+import { PrimaryButton } from "@ui/components/buttons";
+import Fade from "@ui/components/fade";
+import { Spinner } from "@ui/components/spinner";
+import { MetaDataText } from "@ui/components/text";
+import { IfAdmin } from "@ui/containers/IfAdmin";
+import { useI18n } from "@ui/i18n";
+import { CirclesBanner } from "@ui/screens/home/circlesBanner";
+import { Notification } from "@ui/screens/home/feedEntities/Notification";
+import { Recommendation } from "@ui/screens/home/feedEntities/Recommendation";
+import { QuickAccess } from "@ui/screens/home/quickAccess/quickAccess";
+import { colors } from "@ui/styles/colors";
+import moment from "moment";
+import React, { useCallback, useEffect, useState } from "react";
+import { FlatList, Platform, RefreshControl, View } from "react-native";
+import styled from "styled-components/native";
 
 const BANNER_TO_LOAD_ON_END = 2;
-import { useFetchCircles } from "@domain/circles/hooks";
 
 export const HomeScreen: React.FC = () => {
 	const { feedService, bluetoothService, bleDeviceService, appStateService, ringManagementService } = useServices();
@@ -62,7 +62,10 @@ export const HomeScreen: React.FC = () => {
 	data.push(
 		<View style={{ paddingHorizontal: 6 }}>
 			<IfAdmin>
-				<PrimaryButton onPress={feedService._DEBUG_reset}>RESET</PrimaryButton>
+				<PrimaryButton style={{ marginVertical: 8 }} onPress={feedService._DEBUG_resetFeed}>
+					RESET FEED
+				</PrimaryButton>
+				<PrimaryButton onPress={feedService._DEBUG_resetAnswers}>RESET ANSWERS</PrimaryButton>
 			</IfAdmin>
 			{notifications[0] && (
 				<Fade isVisible isAnimatedOnMount>

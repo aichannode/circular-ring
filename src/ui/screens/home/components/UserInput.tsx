@@ -17,6 +17,7 @@ import { colors } from "@ui/styles/colors";
 import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useServices } from "@core/services";
 import { getGradient } from "../business";
+import { PrimaryButton } from "@ui/components/buttons";
 
 type Props = UserInputComponentConfigurationDto & {
 	palette: Activity["style"];
@@ -50,6 +51,7 @@ function Header({ title, isAnswered, isClosed }: UserInputConfiguration & { isCl
 
 type SelectProps = SelectInputTypeConfig["inputConfig"] & {
 	palette: FeedEntityStyle;
+	canSave: boolean;
 	onLayout: (e: LayoutChangeEvent) => void;
 };
 
@@ -61,66 +63,77 @@ function Select({
 	selectedOptions,
 	palette,
 	compId,
+	canSave,
 	onLayout,
 }: SelectProps & { compId: number }) {
 	const { format } = useI18n();
 	const [selectedIds, setSelectedIds] = useState<number[]>(selectedOptions ?? []);
 	const isRadio = minCount === 1 && maxCount === 1;
 	const hasReachedMaxSelectionCount = selectedIds.length === maxCount && !isRadio;
+	const isValidAnswer = selectedIds.length >= minCount && selectedIds.length <= maxCount;
 	const { feedService } = useServices();
 
-	// Send answer to server
-	useEffect(
-		function () {
-			feedService.answerRecommendation(compId, selectedIds);
-		},
-		[selectedIds]
-	);
-
 	return (
-		<View
-			onLayout={onLayout}
-			style={{
-				paddingVertical: 14,
-				paddingHorizontal: 21,
-			}}
-		>
-			<PrimaryText style={{ fontWeight: "500", fontSize: 13 }}>{format(label)}</PrimaryText>
-			<View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-				{options.map((option, key) => {
-					const isSelected = selectedIds.includes(option.id);
-					return (
-						<SelectableButton
-							style={{ marginRight: 8, marginTop: 8 }}
-							colors={getGradient(palette)?.slice(0, 2) as [string, string]}
-							isDisabled={hasReachedMaxSelectionCount && !isSelected}
-							key={key}
-							onPress={function () {
-								if (selectedIds.includes(option.id)) {
-									// CIR-429 need at least one option
-									if (selectedIds.length === 1) return;
-									// Unselect
-									setSelectedIds(selectedIds.filter((id) => id !== option.id));
-								} else {
-									// Select
-									// It is a radio selection, we can pick just one
-									if (isRadio) {
-										setSelectedIds([option.id]);
-										return;
+		<View onLayout={onLayout}>
+			<View
+				onLayout={onLayout}
+				style={{
+					paddingVertical: 14,
+					paddingHorizontal: 21,
+				}}
+			>
+				<PrimaryText style={{ fontWeight: "500", fontSize: 13 }}>{format(label)}</PrimaryText>
+				<View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", paddingBottom: 8 }}>
+					{options.map((option, key) => {
+						const isSelected = selectedIds.includes(option.id);
+						return (
+							<SelectableButton
+								style={{ marginRight: 8, marginTop: 8 }}
+								colors={getGradient(palette)?.slice(0, 2) as [string, string]}
+								isDisabled={hasReachedMaxSelectionCount && !isSelected}
+								key={key}
+								onPress={function () {
+									// Can modify only if save is enable
+									if (canSave) {
+										if (selectedIds.includes(option.id)) {
+											// CIR-429 need at least one option
+											if (selectedIds.length === 1) return;
+											// Unselect
+											setSelectedIds(selectedIds.filter((id) => id !== option.id));
+										} else {
+											// Select
+											// It is a radio selection, we can pick just one
+											if (isRadio) {
+												setSelectedIds([option.id]);
+												return;
+											}
+											if (!hasReachedMaxSelectionCount) {
+												setSelectedIds([...selectedIds, option.id]);
+											}
+										}
 									}
-									if (!hasReachedMaxSelectionCount) {
-										setSelectedIds([...selectedIds, option.id]);
-									}
-								}
-							}}
-							bgColor="white"
-							selected={isSelected}
-						>
-							{format(option.label)}
-						</SelectableButton>
-					);
-				})}
+								}}
+								bgColor="white"
+								selected={isSelected}
+							>
+								{format(option.label)}
+							</SelectableButton>
+						);
+					})}
+				</View>
 			</View>
+			{canSave && (
+				<View style={{ borderTopColor: colors.midGray, borderTopWidth: 1, alignItems: "center", paddingVertical: 20 }}>
+					<PrimaryButton
+						disabled={!isValidAnswer}
+						onPress={function () {
+							feedService.answerRecommendation(compId, selectedIds);
+						}}
+					>
+						{format("global.save")}
+					</PrimaryButton>
+				</View>
+			)}
 		</View>
 	);
 }
@@ -217,6 +230,7 @@ export function UserInput({ compId, configuration, palette }: Props) {
 			>
 				{inputType === InputType.SELECT && (
 					<Select
+						canSave={!inputConfig.answeredAt}
 						compId={compId}
 						onLayout={(e) => (paperHeightRef.value = e.nativeEvent.layout.height)}
 						palette={palette as FeedEntityStyle}
