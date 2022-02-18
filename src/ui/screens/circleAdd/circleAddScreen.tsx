@@ -8,6 +8,7 @@ import styled from "styled-components/native";
 import { TouchableOpacity } from "react-native";
 import { useObservable } from "micro-observables";
 import { CircleEntity } from "../../../domain/circles/type";
+import { mergeDefaultAndUserCirle } from "../business";
 
 function createViews(myArray: CircleEntity[]) {
 	const { circlesService } = useServices();
@@ -38,7 +39,11 @@ function createViews(myArray: CircleEntity[]) {
 
 export const CircleAddScreen: React.FC = () => {
 	const { appStateService } = useServices();
-	const circles = useObservable(appStateService.userCircles);
+	const circles = mergeDefaultAndUserCirle(
+		useObservable(appStateService.userCircles),
+		useObservable(appStateService.defaultCircles)
+	);
+	console.log("useObservable(appStateService.userCircles)", useObservable(appStateService.userCircles));
 	const circlesVibration = circles.filter((circle) => circle.category === "cicle.category.vibration");
 	const circlesWellness = circles.filter((circle) => circle.category === "cicle.category.wellness");
 	const boxViewsWellness = createViews(circlesWellness);
