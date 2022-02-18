@@ -21,10 +21,13 @@ export const CreateCustomNoteBottomSheet: React.FC<CreateCustomNoteBottomSheetPr
 	const [loading, setLoading] = useState(false);
 
 	const createCustomNote = async () => {
-		onClose();
 		console.log("Create NOTE");
 		setLoading(true);
 		await calendarService.createCustomTag(search, "Custom Notes");
+		setLoading(false);
+		setTimeout(() => {
+			onClose();
+		}, 100);
 	};
 
 	return (

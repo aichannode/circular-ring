@@ -22,15 +22,11 @@ const CustomNote = ({
 }) => {
 	const [deleteMode, setDelete] = useState<boolean>(false);
 	const [loadingId, setLoadingId] = useState<number | null>(null);
-	// const [selectedTags, setSelectedTags] = useState<ICustomNote[]>([]);
-	console.log("customNote", customNote);
 	const { calendarService } = useServices();
 
-	console.log("Selected", selectedTags);
 	const createCustomNoteRef = useRef<CircularBottomSheetHandle>(null);
 
 	const deleteTag = async (tagId: number) => {
-		console.log("Tag", tagId);
 		setLoadingId(tagId);
 		await calendarService.deleteTag(tagId);
 		setLoadingId(null);
@@ -40,20 +36,10 @@ const CustomNote = ({
 		<>
 			<Container>
 				<Name>Custom Notes</Name>
-				<View style={{ height: 90, justifyContent: "space-between" }}>
+				<View style={{ justifyContent: "space-between" }}>
 					<TouchableOpacity onPress={() => setDelete((del) => !del)}>
 						<OrangeText>{!deleteMode ? "Delete" : "Cancel"}</OrangeText>
 					</TouchableOpacity>
-					{!deleteMode && (
-						<TouchableOpacity
-							onPress={() => {
-								console.log("ONPRESS");
-								createCustomNoteRef.current?.present();
-							}}
-						>
-							<OrangeText>Create</OrangeText>
-						</TouchableOpacity>
-					)}
 				</View>
 			</Container>
 
@@ -82,7 +68,6 @@ const CustomNote = ({
 						>
 							<TagText
 								deleteMode={deleteMode}
-								// deleting={loadingId !== tag.id}
 								numberOfLines={1}
 								selected={selectedTags.filter((t: CalendarTag) => t.id === tag.id).length > 0}
 							>
@@ -105,6 +90,16 @@ const CustomNote = ({
 						)}
 					</TagContainer>
 				))}
+				{!deleteMode && (
+					<AddContainer
+						onPress={() => {
+							console.log("ONPRESS");
+							createCustomNoteRef.current?.present();
+						}}
+					>
+						<Add>+</Add>
+					</AddContainer>
+				)}
 			</Tags>
 			<CircularBottomSheet snapPoints={[480]} ref={createCustomNoteRef}>
 				<CreateCustomNoteBottomSheet onClose={() => createCustomNoteRef.current?.close()} />
@@ -112,6 +107,22 @@ const CustomNote = ({
 		</>
 	);
 };
+
+const AddContainer = styled.TouchableOpacity`
+	height: 35px;
+	width: 35px;
+	border: 1px solid ${colors.redOrange}
+	border-radius: 35px;
+	margin: 5px;
+`;
+
+const Add = styled.Text`
+	text-align: center;
+	font-weight: bold;
+	font-size: 15px;
+	line-height: 30px;
+	color: ${colors.redOrange};
+`;
 
 const Container = styled.View`
 	width: 100%;
