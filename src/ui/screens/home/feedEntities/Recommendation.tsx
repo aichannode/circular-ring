@@ -19,6 +19,8 @@ import { useI18n } from "@ui/i18n";
 import { UserInput } from "../components/UserInput";
 import LinearGradient from "react-native-linear-gradient";
 import { getGradient } from "../business";
+import { Text } from "react-native";
+import MaskedView from "@react-native-masked-view/masked-view";
 
 type Props = {
 	recommendation: FeedRecommendation;
@@ -37,9 +39,6 @@ function getColorFromBannerStyle(style: Activity["style"]): ColorValue | undefin
 			return undefined;
 	}
 }
-
-import { Text } from "react-native";
-import MaskedView from "@react-native-community/masked-view";
 
 const GradientText = ({
 	stops,
