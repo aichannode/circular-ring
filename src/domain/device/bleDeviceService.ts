@@ -142,7 +142,6 @@ export class BleDeviceService {
 		private readonly appStateService: AppStateService
 	) {
 		this._favoriteDevice.subscribe((device) => {
-			console.log("SAVE DEVICE");
 			if (device) this.favoriteDeviceStorage.save(device);
 			return device;
 		});
@@ -205,12 +204,9 @@ export class BleDeviceService {
 
 	async init() {
 		const loadedDevice = await this.favoriteDeviceStorage.load();
-		console.log(" CIR-266 BLE DEVICE INIT LOADED DEVICE", loadedDevice);
 		this.checkSettings();
 		this._favoriteDevice.set(loadedDevice);
-		console.log("CIR-266 INIT");
 		if (loadedDevice) {
-			console.log("CIR-266 init LOADED DEVICE");
 			this.autoConnectFavoriteDevice();
 		}
 	}
@@ -245,7 +241,6 @@ export class BleDeviceService {
 		this.logger.info("SCAN STARTED");
 		this._scanning.set(true);
 		manager.startDeviceScan([NUServiceUUID], null, (error, device) => {
-			console.log("Scanned Device CIR-141", device?.name, device?.id);
 			if (error) {
 				this.logger.error(error);
 				this.stopScan();
@@ -256,7 +251,6 @@ export class BleDeviceService {
 				return;
 			}
 			const currentDevices = this._scannedDevices.get();
-			console.log("currentDevices", currentDevices);
 			if (!currentDevices.has(device.id)) {
 				this._scannedDevices.set(new Map(currentDevices).set(device.id, device));
 				this.logger.info("New device", device?.name, device?.id);
@@ -287,19 +281,14 @@ export class BleDeviceService {
 
 		try {
 			const latestFirmware = await this.ringApi.getLatestFirmware();
-			console.log("134 latest Firmware", latestFirmware);
 			firmwareFile = (await FB.fetch("GET", latestFirmware.fileUrl)).path();
 			const hashOfFMW = await RNFS.hash(firmwareFile, "sha1");
-			console.log("134 hashOfFMW", hashOfFMW, latestFirmware.hash);
 			if (hashOfFMW !== latestFirmware.hash) {
-				console.log("FWM DOESNT MATCH");
 				this.updateState.set(UpdateState.UPDATE_ERROR_DOWNLOAD_FAILED);
 				throw Error("FIRMWARE DONT MATCH");
 			}
-			console.log("134 irmwareFile 1", firmwareFile);
 			this.startDFUScan(firmwareFile);
 		} catch (err) {
-			console.log("134 firmwareFile 2", firmwareFile, err);
 			this.updateState.set(UpdateState.UPDATE_ERROR_DOWNLOAD_FAILED);
 			return null;
 		}
@@ -354,21 +343,17 @@ export class BleDeviceService {
 
 		try {
 			const dfuDevice = await timedPromise(DFUScanPromise, findDeviceTimeout);
-			console.log("DFU MODE Scanned Device", dfuDevice.name);
 			try {
-				console.log("firmwareFile 4", firmwareFile);
 				this.updateState.set(UpdateState.SENDING_FIRMWARE_OVER_BLUETOOTH);
-				const dfu = await NordicDFU.startDFU({
+				await NordicDFU.startDFU({
 					deviceAddress: dfuDevice?.id,
 					deviceName: dfuDevice?.name ? dfuDevice.name : "Circular Update",
 					filePath: Platform.OS === "android" ? firmwareFile : "file://" + firmwareFile,
 				});
 				this.updateState.set(UpdateState.RECONNECTING);
 				this.autoConnectFavoriteDevice();
-				console.log(" DFU ", dfu);
 			} catch (err) {
 				this.updateState.set(UpdateState.UPDATE_ERROR_SENDING_FIRMWARE_OVER_BLUETOOTH);
-				console.log("FIRMWARE ERROR ", err);
 			}
 		} catch (e) {
 			this.logger.warn("Device not found:", e, "retrying in 10 seconds ");
@@ -400,23 +385,16 @@ export class BleDeviceService {
 			this._connectedDevice.set(device);
 			this._connectionState.set(DeviceConnectionState.CONNECTED);
 			this._onDeviceDisconnectedSubscription = device.onDisconnected((error, disconnectedDevice) => {
-				console.log("CIR-266 Device disconnection");
 				this.handleDeviceDisconnection(error, disconnectedDevice);
 			});
 			const storedDevice = { name: device.name };
-			const favDevices = this._favoriteDevice.get();
-			const storedDevices = await this.favoriteDeviceStorage.load();
-			console.log("CIR-266 11");
-			console.log("ELSE CIR-266 favDevices && storedDevices", favDevices, storedDevices);
 			await this.favoriteDeviceStorage.save(storedDevice);
 			this._favoriteDevice.set(storedDevice);
-			console.log("CIR-266 22");
 			await this.startMonitoring();
 			const snu = await this.getResponse(Channel.SNU);
 			if (snu) {
 				this._favoriteDeviceSNU.set(snu);
 			}
-			console.log("CIR-266 3");
 			await this.write(`${Channel.CALENDAR}${getUTCTimestamp()}`);
 			this.logger.info("🕒 Time set to device", device.name, getUTCTimestamp());
 			await this.listenBattery();
@@ -452,7 +430,6 @@ export class BleDeviceService {
 	}
 
 	private handleDeviceDisconnection(error: BleError | null, device: Device) {
-		console.log("HANDLE DISCONNECTION");
 		const connectedDevice = this._connectedDevice.get();
 		if (!connectedDevice) {
 			return;
@@ -467,7 +444,6 @@ export class BleDeviceService {
 			this._currentRingBattery.set(null);
 			if (this.updateState.get().status !== UpdateState.IDLE.status) {
 				// this.startDFUScan();
-				console.log("UPDATE STATE", this.updateState.get());
 			} else {
 				this.logger.info("Trying to reconnect to", connectedDevice.name);
 				this.autoConnectFavoriteDevice();
@@ -484,7 +460,6 @@ export class BleDeviceService {
 		this.logger.info("autoConnectFavoriteDevice");
 		const name = this._favoriteDevice.get()?.name;
 		if (name === undefined) {
-			console.log("favorite device null", name);
 			return;
 		}
 		this.logger.info("Trying to autoconnect to", name);
@@ -493,7 +468,6 @@ export class BleDeviceService {
 		const manager = this.bluetoothService.manager;
 		try {
 			const connectedDevices = await manager.connectedDevices([NUServiceUUID]);
-			console.log("autoConnectFavoriteDevice  CONNECTED DEVICES = ", connectedDevices);
 			if (connectedDevices.length > 0) {
 				const alreadyConnectedDevice = connectedDevices[0];
 				this.logger.info("Already connected to", alreadyConnectedDevice.name);
@@ -501,7 +475,6 @@ export class BleDeviceService {
 				this._connectionState.set(DeviceConnectionState.CONNECTED);
 			}
 			const device = await this.findFavoriteDevice();
-			console.log("Favorite Devecies");
 			if (device) {
 				return this.connect(device);
 			}
@@ -635,7 +608,6 @@ export class BleDeviceService {
 
 	private async startMonitoring() {
 		const device = this._connectedDevice.get() ?? (await observableToPromise(this._connectedDevice));
-		console.log("CIR-266 Monitoring device ->", device);
 
 		if (!device) {
 			this.logger.error("Error : no device connected");
@@ -664,7 +636,6 @@ export class BleDeviceService {
 		await this.forgetBeforeDisconnection();
 		if (options.dissociate) {
 			this.appStateService.userRings.update((userRing) => {
-				console.log("device", device?.name, " ring : ", options.ring);
 				if (options.ring) {
 					return userRing.filter((ring) => ring.name !== options.ring?.name);
 				} else {
@@ -701,7 +672,6 @@ export class BleDeviceService {
 	}
 
 	private async forgetBeforeDisconnection() {
-		console.log("CIR-266 Forget Before Disconnection");
 		this._connectedDevice.set(null);
 		this._connectionState.set(DeviceConnectionState.DISCONNECTED);
 		this._onDeviceDisconnectedSubscription?.remove();
@@ -730,28 +700,12 @@ export class BleDeviceService {
 			if (value) {
 				const deserializedData = deserializeLiveData(value);
 				if (deserializedData) {
-					console.log("Deserialized Data", deserializedData);
 					this._currentRingLiveData.update((c) => {
-						console.log("C", c);
-
 						const maxHeartRate =
 							c.data && !isNaN(Math.max(deserializedData.heartRate, c.data.heartRate ?? deserializedData.heartRate))
 								? Math.max(deserializedData.heartRate, c.data.maxHeartRate ?? deserializedData.heartRate)
 								: deserializedData.heartRate;
 
-						// if (maxHeartRate === undefined || isNaN(maxHeartRate)) maxHeartRate: c?.data?.heartRate;
-						console.log("MAXHEARTRATE", maxHeartRate, "HEARTRATE", deserializedData.heartRate);
-
-						// if (deserializedData?.correlation < CORRELATION_GOOD_THRESHOLD) {
-						// 	console.log("LOW CORRELATION");
-						// 	console.log("LOW CORRELATION");
-						// 	console.log("LOW CORRELATION");
-						// 	console.log("LOW CORRELATION");
-						// 	console.log("LOW CORRELATION");
-						// 	console.log("LOW CORRELATION");
-
-						// 	return { ...c, data: { ...c?.data, correlation: deserializedData.correlation, maxHeartRate } };
-						// }
 						if (deserializedData.heartRate === 0) {
 							return { ...c, data: { ...c.data, correlation: 0 } };
 						}

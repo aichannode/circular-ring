@@ -44,8 +44,6 @@ export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 		}
 	};
 
-	//	console.log("circlesBanner", circlesBanner);
-
 	return (
 		<Container style={style} gap={15}>
 			<TitleText style={{ paddingLeft: 10 }}>{format("home.circles.title")}</TitleText>

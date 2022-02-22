@@ -19,6 +19,7 @@ import utc from "dayjs/plugin/utc";
 import { LocaleConfig } from "react-native-calendars";
 import { enableES5 } from "immer";
 import { RepresentationsProvider } from "@core/representation";
+import { useLogger } from "@core/logger/hooks/useLogger";
 
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
 dayjs.extend(customParseFormat);
@@ -38,6 +39,7 @@ export const App = () => {
 	const locale = getPreferredLangageCode(Object.keys(translations)) as "en"; // For some reason it can't be done in the main script
 	const [initialized, setInitialized] = useState(false);
 	useSentry();
+	const logger = useLogger("App.tsx");
 
 	useEffect(() => {
 		initializeServices().then(() => {
@@ -66,8 +68,8 @@ export const App = () => {
 		<IntlProvider
 			locale={locale}
 			messages={translations[locale]}
-			onError={() => {
-				console.log("intlError");
+			onError={(err) => {
+				logger.error(err);
 			}}
 		>
 			<GestureHandlerRootView style={{ flex: 1 }}>

@@ -160,7 +160,6 @@ export const CalendarEditNotesScreen: React.FC = () => {
 
 	// CIR-402, put selected tag first, then put the last used tags.
 	const tags = selectedTags.concat(lastUsedTags).filter(deduplicate("id"));
-	console.log(tags);
 
 	const disableRegisterNote = endDate < startDate || selectedTags.length === 0;
 

@@ -21,8 +21,6 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 	const [showCountdown, setShowCountdown] = useState(false);
 	const [isPlaying, setPlaying] = useState(true);
 
-	// console.log("Selected Second", selectedSeconde);
-
 	const sixty = useMemo(() => Array.from({ length: 60 }, (_, i) => ("0" + i).slice(-2)), []);
 	const secondes = useMemo(() => Array.from({ length: 12 }, (_, i) => ("0" + i * 5).slice(-2)), []);
 	const twelve = useMemo(() => Array.from({ length: 12 }, (_, i) => ("0" + i).slice(-2)), []);

@@ -46,45 +46,33 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	const setupState = useSetupState();
 
 	useEffect(() => {
-		console.log("MANAGE MY RING SCAN");
 		bleDeviceService.startScan();
 	}, []);
-
-	console.log("Scanned Device", scannedDevices);
 
 	useEffect(() => {
 		const knownDevices = userRings;
 		let devicesWithoutKnownOnes = scannedDevices;
 
 		for (const device of knownDevices) {
-			console.log("device.id", device.id);
 			devicesWithoutKnownOnes = devicesWithoutKnownOnes.filter((d) => device.ringId !== d.id);
 		}
 		setDevices(devicesWithoutKnownOnes);
 	}, [scannedDevices, userRings]);
 
 	useEffect(() => {
-		if (setupState === DeviceSetupState.READY_TO_SCAN) {
-			console.log("useEffect setupState", setupState);
-			// bleDeviceService.startScan();
-		}
 		if (setupState === DeviceSetupState.LOCATION_DISABLED) {
 			bleDeviceService.checkSettings();
 		}
-		console.log("setupState", setupState);
 	}, [setupState]);
 
 	const [isConnecting, setConnecting] = useState(false);
 	const [error, setError] = useState(false);
-
-	console.log("Error", error);
 
 	return (
 		<Container>
 			<IfAdmin>
 				<PrimaryButton
 					onPress={() => {
-						console.log(props.route.params.onByPass);
 						props.route.params.onByPass();
 					}}
 				>
@@ -177,7 +165,6 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 											<DeviceWrapper
 												key={device.id}
 												onPress={async () => {
-													console.log("OnPress device :", device);
 													bleDeviceService.stopScan();
 													setConnecting(true);
 													// store current device, because connect function overwrite it, then check if the ring belong to the user, then throw and error if not, then try to reconnect to fav device but name is not the right one

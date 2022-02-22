@@ -41,21 +41,15 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 	};
 
 	const firmwareDiff = async () => {
-		console.log("lastFirmware version", lastFirmwareVersion);
 		if (lastFirmwareVersion !== currentRing.firmware) setOutOfDate(true);
 		else {
-			console.log("FIRMWARE UPTODATE");
 			setOutOfDate(false);
 		}
 	};
 
-	console.log("Ring BATTERY", ringBattery);
-
 	useEffect(() => {
 		firmwareDiff();
 	}, [userRings]);
-
-	console.log("FIRMWARE UPDATE CURRENT RING", currentRing);
 
 	return (
 		<>
@@ -86,7 +80,6 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 			{outOfDate ? (
 				<PrimaryButton
 					onPress={() => {
-						console.log("Current Rings", connectedRing?.id);
 						startUpdate();
 					}}
 					style={{ position: "absolute", bottom: "10%" }}
@@ -98,7 +91,6 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 				<View style={{ display: "flex", flexDirection: "row", position: "absolute", bottom: "10%" }}>
 					<PrimaryButton
 						onPress={() => {
-							console.log("Current Rings", connectedRing?.id);
 							startUpdate();
 						}}
 					>

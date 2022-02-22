@@ -23,13 +23,6 @@ export const UpdatingComponent: React.FC = () => {
 	const { goBack } = useNavigation();
 
 	useEffect(() => {
-		console.log("UPDATEING COMPONENT updateState", updateState);
-		if (updateState.error) {
-			console.log("SHOW BOTTOM SHEET");
-		}
-	}, [updateState]);
-
-	useEffect(() => {
 		setProgress(uploadPercent * 0.8);
 	}, [uploadPercent]);
 
@@ -38,9 +31,7 @@ export const UpdatingComponent: React.FC = () => {
 			if (percent) setUploadPercent(percent);
 		});
 
-		DFUEmitter.addListener("DFUStateChanged", ({ state }) => {
-			console.log("DFU State:", state);
-		});
+		DFUEmitter.addListener("DFUStateChanged", ({ state }) => {});
 	}, []);
 
 	return (

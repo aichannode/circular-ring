@@ -12,7 +12,6 @@ export class TimerService {
 
 	play(remainingSecondes: number) {
 		this.deviceService.write("TMR" + remainingSecondes);
-		console.log("## Play", remainingSecondes);
 		this.timer.set({
 			status: "play",
 			remainingSecondes: remainingSecondes,
@@ -24,7 +23,6 @@ export class TimerService {
 				const { status, remainingSecondes, startDate, endDate } = previousState;
 
 				if (remainingSecondes <= 0 && status === "play") {
-					// this.playMelody(Melody.SOS, 32);
 					BackgroundTimer.stopBackgroundTimer();
 					return { status: "stop", remainingSecondes: 0, startDate: null, endDate: null };
 				}

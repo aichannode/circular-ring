@@ -17,10 +17,6 @@ export class CalendarService {
 	readonly tagMap = this._tagMap.readOnly();
 	readonly categories = this._categories.readOnly();
 
-	// private _userTagMap = observable<Map<string, CalendarTag[]>>(new Map());
-
-	// readonly userTagMap = this._userTagMap.readOnly();
-
 	constructor(private readonly calendarApi: CalendarApi, private readonly userService: UserService) {}
 
 	init() {
@@ -90,12 +86,7 @@ export class CalendarService {
 			await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));
 			throw e;
 		}
-		try {
-			await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));
-			console.log("FETCH CALENDAR SUCCESS");
-		} catch (e) {
-			console.log("FETCH CALENDAR", e);
-		}
+		await this.calendarStore.fetch(dayjs(note.startTime).startOf("month").format("YYYY-MM-DD"));
 	}
 
 	async deleteTag(tagId: number) {
@@ -120,7 +111,6 @@ export class CalendarService {
 
 	async updateNoteDate(note: CalendarNote, startDate: Date, endDate: Date) {
 		try {
-			console.log("Update note Date", note.id, startDate, endDate);
 			await this.calendarApi.updateNoteDate(note.id, startDate.toISOString(), endDate.toISOString());
 		} catch (e) {
 			this.logger.warn("Error updating note date : " + JSON.stringify(e));

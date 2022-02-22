@@ -17,21 +17,9 @@ export const AllTagsScreen: React.FC = () => {
 	const allTags = useTags();
 	const allCategories = useTagCategories();
 
-	console.log("CIR-262", allTags);
 	const navigation = useRoutesNavigation();
 	const navigate = navigation.navigate;
 	const { format } = useI18n();
-
-	// const systemTags = allTags ? allTags.keys().filter((tag) => tag.system) : [];
-	// const userTags = allTags ? allTags?.filter((tag) => !tag.system) : [];
-
-	Array.from(allTags.keys()).map((category) => {
-		// const categoryTags = allTags.get(category) ?? [];
-		console.log("category", category);
-	});
-
-	// console.log("System Tags", systemTags);
-	// console.log("User Tags", userTags);
 
 	const [selectedTags, setSelectedTags] = useState(originalSelectedTags);
 	const [search, setSearch] = useState("");

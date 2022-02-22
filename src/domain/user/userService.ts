@@ -189,7 +189,6 @@ export class UserService {
 			this.logger.warn("Get user failed: " + JSON.stringify(error));
 			if ((error as { statusCode: number }).statusCode !== 404) {
 				// 404 == User does not exist on Circular yet => other error : logout
-				console.log("Error LOGOUT");
 				await this.logout();
 			}
 			throw error;
@@ -241,19 +240,6 @@ export class UserService {
 	}
 
 	async completeTutorial(tutorialInfo: TutorialInfo) {
-		console.log({
-			...tutorialInfo,
-			height: round2Digits(tutorialInfo.height),
-			weight: round2Digits(tutorialInfo.weight),
-			sex: tutorialInfo.sex.toString(),
-			bornDate: toServerDate(tutorialInfo.birthDate),
-			phoneNumber: null,
-			profilePictureUrl: null,
-			language: "en",
-			scorePublic: true,
-			tutorialCompleted: true,
-			stride: 0,
-		});
 		await this.updateUser({
 			...tutorialInfo,
 			height: round2Digits(tutorialInfo.height),

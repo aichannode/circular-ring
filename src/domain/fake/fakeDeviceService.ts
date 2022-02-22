@@ -9,8 +9,6 @@ export class DevFakeDeviceService implements FakeDeviceService {
 	readonly fakeDeviceEnabled = this._fakeDeviceEnabled.readOnly();
 
 	toggleFakeDevice() {
-		console.log("hop");
-
 		this._fakeDeviceEnabled.update((c) => !c);
 	}
 }

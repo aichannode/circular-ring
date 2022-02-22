@@ -24,7 +24,6 @@ export const ActivityIntensityGraph = ({ samples }: Props) => {
 		,
 	] = useState(dayjs().format("YYYY-MM-DD"));
 	const calendar = useCalendar(selectedDay, FetchStrategy.Once);
-	console.log("calendar.notes", calendar);
 	const data = samples.map((data) => {
 		return {
 			y: data.value,
@@ -94,7 +93,6 @@ export const ActivityIntensityGraph = ({ samples }: Props) => {
 							target: "data",
 							eventHandlers: {
 								onPressIn: () => {
-									console.log("PRESS");
 									return [
 										{
 											target: "labels",
@@ -103,9 +101,6 @@ export const ActivityIntensityGraph = ({ samples }: Props) => {
 											},
 										},
 									];
-								},
-								onMouseOver: () => {
-									console.log("onMouseEnter");
 								},
 							},
 						},
@@ -116,7 +111,6 @@ export const ActivityIntensityGraph = ({ samples }: Props) => {
 					style={{
 						data: {
 							fill: ({ datum }) => {
-								// console.log("dATUm", datum);
 								if (datum.y >= 3) return ActivityIntensityColors.HIGH;
 								if (datum.y >= 2) return ActivityIntensityColors.MEDIUM;
 								if (datum.y >= 1) return ActivityIntensityColors.LOW;

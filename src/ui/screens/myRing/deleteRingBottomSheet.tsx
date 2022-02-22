@@ -27,13 +27,11 @@ export const DeleteRingBottomSheet: React.FC<DeleteRingBottomSheetProps> = ({ ri
 		setErrorMessage("");
 		setLoading(true);
 		try {
-			console.log("DISSOCIATE", ring);
 			await ringManagementService.deleteRing(ring);
 			bleDeviceService.setFavoriteDeviceName("noring");
 			setLoading(false);
 			setSuccess(true);
 		} catch (error) {
-			console.log("Error disssiociating", error);
 			setLoading(false);
 			setErrorMessage(format("global.default_error"));
 		}

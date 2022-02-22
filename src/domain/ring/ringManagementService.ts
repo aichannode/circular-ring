@@ -58,21 +58,11 @@ export class RingManagementService {
 		if (ring) {
 			this.logger.debug(`Deleting ring ${ring.name} (snu: ${ring.id})`);
 			try {
-				console.log("checking favorite ring : " + this.deviceService.favoriteDevice.get()?.name);
 				const idToDelete = ring.id;
 				await this.deviceService.disconnect({ dissociate: true, ring: ring });
-				// if (this.deviceService.favoriteDevice.get()?.name === ring.name) {
-				// } else {
-				// 	this.logger.debug(
-				// 		`No need to disconnect. Current active ring is "${
-				// 			this.deviceService.favoriteDevice.get()?.name
-				// 		}" (snu: ${this.deviceService.favoriteDeviceSNU.get()})`
-				// 	);
-				// }
 				await this.ringApi.deleteRing(idToDelete);
 			} catch (e) {
 				this.logger.warn("Delete ring failed : " + JSON.stringify(e));
-
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				if (e.statusCode === 500) {
@@ -97,7 +87,6 @@ export class RingManagementService {
 				try {
 					await this.deviceService.factoryResetCurrentRing();
 					await this.ringApi.deleteRing(idToReset);
-					console.log("ring to dissociate", ringToReset);
 				} catch (error) {
 					this.logger.warn("Error removing ring from account after factory-reset :", error);
 					throw error;
@@ -165,7 +154,6 @@ export class RingManagementService {
 
 	async submitFirmwareVersion() {
 		const firmware = await this.deviceService.getResponse(Channel.FIRMWARE_VERSION);
-		console.log("SUBMITE firmware", firmware);
 		const connectedRing = this.appStateService.userRings.get().find((ring) => ring.connected);
 		if (firmware && connectedRing) {
 			const { id } = connectedRing;

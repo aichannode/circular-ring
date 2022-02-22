@@ -1,7 +1,7 @@
 import { useRepresentations } from "@core/representation";
 import { DailySleepData } from "@domain/measure/representation/api";
 import { dailySleepScoreContributorsMetrics } from "@domain/measure/representation/lib/type";
-import { SleepStage, TimeFrame } from "@domain/measure/type";
+import { SleepStage } from "@domain/measure/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CalendarView } from "@ui/components/calendar/calendarView";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
@@ -20,7 +20,7 @@ import { colors } from "@ui/styles/colors";
 import { isDefined } from "@ui/utils/guard";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
 import { Hypnogram } from "./hypnogram";
@@ -40,7 +40,6 @@ export const CircleSleepScreen: React.FC = observer(() => {
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const { format } = useI18n();
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const [graphPeriod /* , setGraphPeriod */] = useState(TimeFrame.TODAY);
 	const sleepQualityDetails = getSleepQualityDetails(format);
 	const awakeDuration = dailySleep?.sleepStagesDuration[SleepStage.AWAKE];
 	const REMDuration = dailySleep?.sleepStagesDuration[SleepStage.REM];
@@ -48,9 +47,6 @@ export const CircleSleepScreen: React.FC = observer(() => {
 	const deepDuration = dailySleep?.sleepStagesDuration[SleepStage.DEEP];
 
 	useDailySleepStages({ setData, isoDay: selectedDay });
-	useEffect(() => {
-		console.log("CURRENT PERIOD = ", graphPeriod);
-	}, [graphPeriod]);
 
 	return (
 		<Container>

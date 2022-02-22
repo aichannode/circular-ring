@@ -33,9 +33,6 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 	const [startDate, setStartDate] = useState(note.startTime);
 	const [endDate, setEndDate] = useState(note.endTime);
 
-	// console.log(" StartDate ", startDate, " EndDate ", endDate);
-	// console.log("NOTE", note);
-
 	const startTimeEditionConfig = {
 		title: format("calendar.edit_start.title"),
 		description: format("calendar.edit_start.description"),
@@ -54,12 +51,7 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 	useEffect(() => {
 		if (startDate !== note.startTime || endDate !== note.endTime) {
 			// avoid first Render
-			calendarService
-				.updateNoteDate(note, startDate, endDate)
-				.then(() => {
-					console.log("Cir-397 Sucees Update Hour");
-				})
-				.catch((err) => console.log("CIR-397 error pdating date", err));
+			calendarService.updateNoteDate(note, startDate, endDate);
 		}
 	}, [startDate, endDate]);
 
@@ -108,7 +100,6 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 				<EditableNoteHourContainer>
 					<TouchableOpacity
 						onPress={async () => {
-							console.log("OnStart");
 							setConfig({ ...startTimeEditionConfig, time: startDate });
 							timeEditorRef.current?.present();
 						}}

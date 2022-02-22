@@ -42,10 +42,8 @@ export class RingApi {
 		if (this._firmwareVersion.get() === undefined) {
 			try {
 				const firmware = await this.getLatestFirmware();
-				console.log("init Firmware", firmware);
 				this._firmwareVersion.set(firmware.version);
 			} catch (err) {
-				console.log("Error 1234");
 				this._firmwareVersion.set(undefined);
 			}
 		}
@@ -53,7 +51,6 @@ export class RingApi {
 
 	async getRings(): Promise<UserRing[]> {
 		const result = await this.apiService.get<UserRing[]>(`${ringApiBaseUrl}`);
-		console.log("GETRINGS", result.data);
 		return result.data;
 	}
 
@@ -67,7 +64,6 @@ export class RingApi {
 	}
 
 	async sendData(ring: UserRing, rawData: string) {
-		console.log("🗒 rawData", rawData);
 		if (rawData === "") return;
 
 		await RNFS.writeFile(tempSyncDataFile, rawData, "utf8");
@@ -88,7 +84,6 @@ export class RingApi {
 				formData.append(k, v);
 			});
 			formData.append("Content-Type", "text/plain");
-			console.log("tempSyncDataFile", tempSyncDataFile);
 			formData.append("file", {
 				uri: tempSyncDataFile,
 				type: "text/plain",
