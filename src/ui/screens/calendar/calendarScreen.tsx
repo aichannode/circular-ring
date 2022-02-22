@@ -31,14 +31,12 @@ export const CalendarScreen: React.FC = observer(() => {
 
 	const [selectedDay, setSelectedDay] = useState(dayjs().format("YYYY-MM-DD"));
 	const calendar = useCalendar(selectedDay, FetchStrategy.Never);
-	console.log("calendar Screen", calendar);
 
 	const firstDayOfMonth = useMemo(() => dayjs(selectedDay).startOf("month").format("YYYY-MM-DD"), [selectedDay]);
 
 	useEffect(() => {
 		setMonthGlobalScore(firstDayOfMonth);
 		calendarService.calendarStore.fetch(firstDayOfMonth);
-		console.log(" ================== UPDATE CALENDAR");
 	}, [firstDayOfMonth]);
 
 	const dailyScore = useDailyGlobalScore(selectedDay);

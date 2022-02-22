@@ -22,7 +22,7 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { LayoutAnimation, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
@@ -77,10 +77,6 @@ export const CircleActivityScreen: React.FC = observer(() => {
 		value: number;
 		isoTime: string;
 	}> = activityIntensity.stages.map((stage) => ({ value: stage.stage, isoTime: stage.start }));
-
-	useEffect(() => {
-		console.log("CURRENT PERIOD = ", graphPeriod);
-	}, [graphPeriod]);
 
 	return (
 		<Container>

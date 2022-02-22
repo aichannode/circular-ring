@@ -70,12 +70,10 @@ export class CircleAlarmService {
 			serializeAlarmData({ ...alarm, id: ID_FOR_CREATION, isExisting: true, isActivated: true }),
 			Channel.ALARM
 		);
-		console.log("Create Alarm", response);
 		if (!response) {
 			this.logger.warn("No response after alarm creation");
 			throw Error("Invalid alarm data message " + response);
 		}
-		console.log("getAlarmId(response)", response);
 		const id = getAlarmId(response);
 		this._ringAlarms.update((alarms) => [...alarms, { ...alarm, id, isExisting: true, isActivated: true }]);
 		return { ...alarm, id, isExisting: true, isActivated: true };

@@ -19,7 +19,6 @@ interface I_SetUpCompleted {
 
 export const SetUpCompleted = ({ route }: I_SetUpCompleted) => {
 	const { format } = useI18n();
-	console.log("ROUTE", route);
 	return (
 		<>
 			<ResponsiveCenterView style={{ flex: 1, justifyContent: "space-around", marginTop: 100 }}>

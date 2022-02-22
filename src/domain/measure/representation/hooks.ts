@@ -101,7 +101,6 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				return model.dailySleepScore.get(isoDay);
 			},
 			useDailyGlobalScore(isoDay: string = moment().toISOString()): number | undefined {
-				console.log(model.dailyGlobalScore.has);
 				useEffect(function () {
 					if (!model.dailyGlobalScore.has(isoDay)) {
 						actions.setDailyGlobalScore(isoDay);

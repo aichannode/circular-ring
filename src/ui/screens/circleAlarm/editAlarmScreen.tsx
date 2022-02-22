@@ -79,7 +79,6 @@ export const EditAlarmScreen: React.FC = () => {
 							label,
 						};
 						if (initialAlarm) {
-							console.log("INITIALALARM", initialAlarm);
 							circleAlarmService.updateAlarm({ ...initialAlarm, ...newAlarm });
 						} else {
 							circleAlarmService.createAlarm(newAlarm);

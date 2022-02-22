@@ -32,7 +32,6 @@ export const MyRingScreen: React.FC = () => {
 	const [editedName, setEditedName] = useState<string>(
 		currentRing?.name ? currentRing?.name.slice(RING_NAME_PREFIX.length) : ""
 	);
-	console.log("userring", userRings);
 
 	useEffect(() => {
 		const currentRing: NamedUserRing = userRings.filter((ring) => ring.connected)[0];
@@ -55,7 +54,6 @@ export const MyRingScreen: React.FC = () => {
 					})
 				);
 			} catch (err) {
-				console.log("error");
 				Alert.alert("Error", "An error occured while trying to change ring name (no ring connected)", [
 					{ text: "OK", onPress: () => console.log("OK Pressed") },
 				]);
@@ -88,7 +86,6 @@ export const MyRingScreen: React.FC = () => {
 				<>
 					<EditText
 						onPress={() => {
-							console.log("Edit");
 							setShowPrompt(true);
 						}}
 					>

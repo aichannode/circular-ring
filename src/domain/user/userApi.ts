@@ -114,32 +114,22 @@ export class UserApi {
 	}
 
 	async uploadUserProfilPic(uri: string, name: string, type: string) {
-		console.log("type.split('/')[1]", type.split("/")[1]);
-		try {
-			const splitType = type.split("/")[1];
-			console.log("Type", type);
-			const data = (
-				await this.apiService.post<{ url: string; fields: Record<string, any>; taskId: string }>("/user/me/avatar", {
-					type: splitType,
-				})
-			).data;
-			console.log("data", data);
-			const formData = new FormData();
-			Object.entries(data.fields).forEach(([k, v]) => {
-				formData.append(k, v);
-			});
-			formData.append("Content-Type", type);
-			formData.append("file", {
-				uri,
-				type,
-				name,
-			});
-			console.log("Data.url", data.url, " formData", formData);
-			const res = await this.instance.post(data.url, formData);
-			console.log("REs", res);
-		} catch (err) {
-			console.log("Err", JSON.stringify(err));
-			throw err;
-		}
+		const splitType = type.split("/")[1];
+		const data = (
+			await this.apiService.post<{ url: string; fields: Record<string, any>; taskId: string }>("/user/me/avatar", {
+				type: splitType,
+			})
+		).data;
+		const formData = new FormData();
+		Object.entries(data.fields).forEach(([k, v]) => {
+			formData.append(k, v);
+		});
+		formData.append("Content-Type", type);
+		formData.append("file", {
+			uri,
+			type,
+			name,
+		});
+		await this.instance.post(data.url, formData);
 	}
 }

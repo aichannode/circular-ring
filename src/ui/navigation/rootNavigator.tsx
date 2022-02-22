@@ -304,7 +304,6 @@ export const RootNavigator: React.FC = () => {
 
 	const hasUser = !!useUser();
 	const deviceStored = useDeviceStored(); // useObservable(useServices().bleDeviceService.favoriteDevice);
-	console.log("CIR-266 NAVIGATOR Device Stored", deviceStored);
 
 	// CIR-467: will by pass the ring setup for debuging puropose
 	const [useByPass, setByPass] = useState(false);
@@ -337,8 +336,6 @@ export const RootNavigator: React.FC = () => {
 			</OnboardingStack.Navigator>
 		);
 	}
-
-	console.log("!isTutorialDone && isOnboardingDone", isOnboardingDone);
 
 	return isOnboardingDone || useByPass ? (
 		<HomeDrawer.Navigator

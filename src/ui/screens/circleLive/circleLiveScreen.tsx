@@ -27,10 +27,8 @@ export const CircleLiveScreen: React.FC = () => {
 	const user = useUser();
 
 	const maxHrPercent = getMaxHr(user?.sex, moment().diff(user?.bornDate, "years"), data?.heartRate);
-	console.log("maxHr", maxHrPercent);
 
 	// const maxHeartRateRatio = data ? (data.heartRate! / data.maxHeartRate!) * 100 : null;
-	console.log("data correlation", data?.correlation);
 	const activityIntensity = getIntensity(maxHrPercent);
 	const dataQuality = getSignalQuality(data?.correlation ?? 0);
 
@@ -41,8 +39,6 @@ export const CircleLiveScreen: React.FC = () => {
 
 	const disconnectedBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const tutorialBottomSheet = useRef<CircularBottomSheetHandle>(null);
-
-	console.log("LISTENNING DATA", listening, data);
 
 	useEffect(() => {
 		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {

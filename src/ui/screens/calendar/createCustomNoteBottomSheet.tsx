@@ -19,7 +19,6 @@ export const CreateCustomNoteBottomSheet: React.FC<CreateCustomNoteBottomSheetPr
 	const [search, setSearch] = useState("");
 
 	const createCustomNote = async () => {
-		console.log("Create NOTE");
 		onClose();
 		await calendarService.createCustomTag(search, "Custom Notes");
 	};

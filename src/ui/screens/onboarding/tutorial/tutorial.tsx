@@ -3,7 +3,6 @@ import React, { useState, useCallback } from "react";
 import { colors } from "@ui/styles/colors";
 import { useServices } from "@core/services";
 import dayjs from "dayjs";
-import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
 import { Spinner } from "@ui/components/spinner";
 import { FakeHeader } from "./fakeHeader";
@@ -25,10 +24,7 @@ export const Tutorial = () => {
 	const [step, setStep] = useState<number>(0);
 	const { navigate } = useRoutesNavigation();
 	const [isLoading, setLoading] = useState(false);
-	const [errorMessage, setErrorMessage] = useState("");
-	const { format } = useI18n();
 
-	console.log("ROUTE PARAM TUTO", route.params);
 	useFetchCircles();
 
 	const completeTutorial = useCallback(async () => {
@@ -40,9 +36,7 @@ export const Tutorial = () => {
 			setLoading(false);
 		} catch (error) {
 			setLoading(false);
-			setErrorMessage(format("onboarding.personal_info.error.default"));
 		}
-		console.log("TUTORIA UPDATE USER ERROR", errorMessage);
 	}, [birthDate, sex, weight, height]);
 
 	const getPositionOfExplanation = (step: number) => {

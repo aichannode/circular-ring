@@ -51,12 +51,9 @@ const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = () => {
 	};
 	const updateQuickAccessAlarm = async (_alarm: RingAlarm) => {
 		if (quickAccessAlarm) {
-			console.log("CIR-270 UPDATE QUICKACCESS ALARM", { ..._alarm });
 			circleAlarmService.saveQuickAccessAlarm({ ..._alarm });
-			console.log("CIR-270 UPDATE ALARM");
 			circleAlarmService.updateAlarm({ ..._alarm });
 		} else {
-			console.log("CIR-270 ELSE");
 			const response = await circleAlarmService.createAlarm(newAlarm);
 			circleAlarmService.quickAccessRingAlarmId.set(response);
 		}

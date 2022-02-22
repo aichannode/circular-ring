@@ -34,7 +34,6 @@ export const UpdateFailedBottomSheet: React.FC<UpdateFailedBottomSheetProps> = (
 				<PrimaryButton
 					key={"ok"}
 					onPress={async () => {
-						console.log("ASYNC SET IDLE");
 						startUpdate();
 					}}
 				>

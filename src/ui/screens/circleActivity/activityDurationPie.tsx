@@ -14,7 +14,6 @@ type Props = {
 };
 
 function getPhaseLevel(phase = 4) {
-	// console.log("FIX phase", phase - 1);
 	return phase - 2;
 }
 

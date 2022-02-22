@@ -33,7 +33,6 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 	};
 
 	const connectToRing = (ring: NamedUserRing) => {
-		console.log("Reconnect to ring", ring.name);
 		disconnectAllRings();
 		if (ring.name) bleDeviceService.favoriteDevice.set({ name: ring.name });
 		bleDeviceService.favoriteDeviceSNU.set(ring.id);
@@ -56,7 +55,6 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 			if (ring.name) bleDeviceService.favoriteDevice.set({ name: "noring" });
 		}
 		if (!ring.connected && ring.name && currentOption === options[0]) {
-			console.log("PRESENT");
 			areYouSureToActivate.current?.present();
 		}
 	}, [currentOption]);

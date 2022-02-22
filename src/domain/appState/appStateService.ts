@@ -58,7 +58,6 @@ export class AppStateService {
 	}
 
 	updateQuickaccess({ active, disabled }: I_QuickAccess) {
-		console.log("## UPDATE", active, disabled);
 		this.quickAccess.update(() => ({
 			active,
 			disabled,
