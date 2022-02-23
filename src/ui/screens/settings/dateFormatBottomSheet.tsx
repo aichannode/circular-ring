@@ -21,7 +21,7 @@ export const DateFormatBottomSheet: React.FC<DateFormatBottomSheetProps> = ({ on
 	const userSettings = useUserSettings();
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isLoading, setLoading] = useState(false);
-	const [dateFormat, setDateFormat] = useState(userSettings?.dateFormat ?? DateFormat.DMY);
+	const [dateFormat, setDateFormat] = useState(userSettings?.dateFormat ?? DateFormat.USCS);
 
 	const saveDateFormat = useCallback(async () => {
 		if (!userSettings) {
@@ -45,7 +45,7 @@ export const DateFormatBottomSheet: React.FC<DateFormatBottomSheetProps> = ({ on
 		<Container maxWidth={320}>
 			<Description>{format("settings.date_format.label")}</Description>
 			<View style={{ alignSelf: "stretch" }}>
-				{[DateFormat.DMY, DateFormat.MDY].map((option) => {
+				{[DateFormat.USCS, DateFormat.SI].map((option) => {
 					const selected = dateFormat === option;
 					return (
 						<Selector key={option.toString()} onPress={() => setDateFormat(option)}>

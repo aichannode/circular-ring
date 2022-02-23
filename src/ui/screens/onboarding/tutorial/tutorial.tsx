@@ -16,6 +16,7 @@ import { recommendationData, recommendationDataFeed } from "./recomandation";
 import { FourDot } from "./fourDot";
 import { FakeQuiAccess } from "./fakeQuickAccess";
 import { useFetchCircles } from "@domain/circles/hooks";
+import { DateFormat } from "@domain/units";
 
 export const Tutorial = () => {
 	const route = useAppRoute<Routes.OnboardingTutorial>();
@@ -32,7 +33,7 @@ export const Tutorial = () => {
 		const _birthDate = dayjs(birthDate, "DD/MM/YYYY", true).toDate();
 		try {
 			await userService.completeTutorial({ firstName, lastName, country, birthDate: _birthDate, sex, weight, height });
-			await userService.updateUserSettings("DD/MM/YYYY", heightUnit, weightUnit);
+			await userService.updateUserSettings(DateFormat.USCS, heightUnit, weightUnit);
 			setLoading(false);
 		} catch (error) {
 			setLoading(false);

@@ -42,7 +42,7 @@ const defaultNotificationsSettings = {
 };
 
 const defaultSettings = {
-	dateFormat: DateFormat.DMY,
+	dateFormat: DateFormat.USCS,
 	heightFormat: HeightUnit.cm,
 	weightFormat: WeightUnit.kg,
 	hourFormat: "12" as HourFormat,
@@ -229,7 +229,7 @@ export class UserService {
 			const userSettings = await this.userApi.updateUserSettings({
 				dateFormat,
 				heightFormat: heightUnit.toString(),
-				weightFormat: weightUnit === WeightUnit.kg ? "kg" : "lb",
+				weightFormat: weightUnit,
 				timezone,
 			});
 			this._userSettings.set(userSettings);

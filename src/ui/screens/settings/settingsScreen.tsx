@@ -28,7 +28,7 @@ export const SettingsScreen: React.FC = () => {
 		}
 		heightFormat &&
 			weightFormat &&
-			userService.updateUserSettings(userSettings?.dateFormat ?? DateFormat.DMY, heightFormat, weightFormat);
+			userService.updateUserSettings(userSettings?.dateFormat ?? DateFormat.USCS, heightFormat, weightFormat);
 	}, [heightFormat, weightFormat, userSettings?.dateFormat]);
 
 	const dateFormatBottomSheet = useRef<CircularBottomSheetHandle>(null);

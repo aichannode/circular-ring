@@ -1,5 +1,5 @@
 import { ApiService } from "@core/api/apiService";
-import { DateFormat, HeightUnit, HourFormat, WeightUnit } from "@domain/units";
+import { NotificationsFormat, TemperatureFormat, DateFormat, HeightUnit, HourFormat, WeightUnit } from "@domain/units";
 import { AdvancedInfo } from "@domain/user/advancedInfo";
 import { Sex, User } from "@domain/user/user";
 import { UserSettings } from "@domain/user/userSettings";
@@ -88,7 +88,15 @@ export class UserApi {
 		weightFormat: string;
 		timezone: string;
 	}): Promise<UserSettings> {
-		const result = await this.apiService.put<UserSettingsDto>("/user/setting", userSettings);
+		const defaultSettings = {
+			dateFormat: DateFormat.USCS,
+			heightFormat: HeightUnit.cm,
+			weightFormat: WeightUnit.kg,
+			temperatureFormat: TemperatureFormat.CELSIUS,
+			hourFormat: "12",
+			notifications: [NotificationsFormat.BANNER],
+		};
+		const result = await this.apiService.put<UserSettingsDto>("/user/setting", { ...defaultSettings, ...userSettings });
 		return UserApi.userSettingsFromDto(result.data);
 	}
 

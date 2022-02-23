@@ -1,13 +1,37 @@
-/**
- * Weight
- */
-
 import { arrayFromRange } from "@core/utils";
 
 export enum WeightUnit {
-	kg = "kg",
-	lbs = "lbs",
+	kg = "KG",
+	lbs = "LB",
 }
+
+export enum HeightUnit {
+	cm = "CM",
+	ft = "FT",
+}
+
+export enum DateFormat {
+	USCS = "USCS",
+	SI = "SI",
+}
+
+export enum TemperatureFormat {
+	CELSIUS = "CELSIUS",
+	FAHRENHEIT = "FAHRENHEIT",
+}
+
+export enum NotificationsFormat {
+	BANNER = "BANNER",
+	UPDATE = " UPDATE",
+	PERIODS = " PERIODS",
+	PMS = "PMS",
+	FERTILITY_WINDOW = "FERTILITY_WINDOW",
+	HIGH_HR = "HIGH_HR",
+	LOW_HR = "LOW_HR",
+	LOW_SPO2 = "LOW_SPO2",
+}
+
+export type HourFormat = "12" | "24";
 
 const KG_MIN = 20;
 const KG_MAX = 300;
@@ -33,15 +57,6 @@ export function kgToLbs(kgWeight: number) {
 
 export function lbsToKg(lbsWeight: number) {
 	return lbsWeight / KG_TO_LBS;
-}
-
-/**
- * Height
- */
-
-export enum HeightUnit {
-	cm = "cm",
-	ft = "ft",
 }
 
 const CM_MIN = 80;
@@ -82,10 +97,3 @@ export function ftToCm(ftHeight: number) {
 /**
  * Date
  */
-
-export enum DateFormat {
-	DMY = "DD/MM/YYYY",
-	MDY = "MM/DD/YYYY",
-}
-
-export type HourFormat = "12" | "24";
