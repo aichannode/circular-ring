@@ -1,12 +1,12 @@
+import { getLogger } from "@core/logger/logger";
 import { hasMetric } from "@ui/utils/guard";
 import { reaction } from "mobx";
-import moment from "moment";
 import { useEffect, useRef } from "react";
 import { InteractionManager } from "react-native";
 import { MetricType, RangeMetrics } from "../../metric";
 import { ActivityStage, SleepStage } from "../../type";
 import { DailySleepData } from "../api";
-import { DailyActivityIntensityMetrics, DailySleepStageDuration, StageInfos } from "./type";
+import { DailyActivityIntensityMetrics, DailySleepStageDuration, SleepStagesMetrics, StageInfos } from "./type";
 
 /**
  * Return the phases of sleep for the given metrics
@@ -16,9 +16,9 @@ export function getActivityPhases(
 ): {
 	stages: Array<StageInfos<ActivityStage>>;
 	duration: number;
-	sportSessionTimes: Array<[string | undefined, string | undefined]>;
+	sportSessionDates: Array<[string | undefined, string | undefined]>;
 } {
-	const sportSessionTimes: Array<[string | undefined, string | undefined]> = [];
+	const sportSessionDates: Array<[string | undefined, string | undefined]> = [];
 	const duration = Number(data.fixedValues[MetricType.UserDailyActivityTotal]);
 	const stages: Array<StageInfos<ActivityStage>> = data.timeline.reduce(function (result, block, i) {
 		if (hasMetric(MetricType.UserDataActivityIntensity)(block)) {
@@ -48,7 +48,7 @@ export function getActivityPhases(
 			// Find end block
 			const endIndex = data.timeline.slice(i).findIndex(hasMetric(MetricType.UserDailySportEnd));
 			const endTime = endIndex > -1 ? data.timeline[i + endIndex].timestamp : undefined;
-			sportSessionTimes.push([startTime, endTime]);
+			sportSessionDates.push([startTime, endTime]);
 			// Move the cursor forward to find the next session
 			i += endIndex > -1 ? endIndex : 0;
 		}
@@ -57,7 +57,7 @@ export function getActivityPhases(
 	return {
 		stages,
 		duration,
-		sportSessionTimes,
+		sportSessionDates,
 	};
 }
 
@@ -65,16 +65,16 @@ export function getActivityPhases(
  * Return the phases of sleep for the given metrics
  */
 export const createSleepStagesGetter =
-	(isoDay: string) =>
-	(data: RangeMetrics<MetricType.UserSleepStage, DailySleepStageDuration>): DailySleepData => {
-		const stageInfos: Array<StageInfos<SleepStage>> = [];
+	(_: string) =>
+	(data: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>): DailySleepData => {
+		const stages: Array<StageInfos<SleepStage>> = [];
 		for (let i = 0; i < data.timeline.length; i++) {
 			const block = data.timeline[i];
 			if (MetricType.UserSleepStage in block.metrics) {
-				const stage = Number(block.metrics[MetricType.UserSleepStage]);
+				const stage = block.metrics[MetricType.UserSleepStage] as number;
 				// Prevent duplicated user sleep stage value
 				// TODO ask the back to do this
-				if (stageInfos[i - 1]?.level !== stage) {
+				if (stages[i - 1]?.level !== stage) {
 					// Find the end of this phase
 					// Look for the next sleep stage switch
 					const startSearchAt = i + 1;
@@ -94,7 +94,7 @@ export const createSleepStagesGetter =
 
 					const endOfStageBlock = data.timeline[endOfStageBlockIndex];
 
-					stageInfos.push({
+					stages.push({
 						level: stage,
 						start: block.timestamp,
 						end: endOfStageBlock.timestamp,
@@ -108,31 +108,21 @@ export const createSleepStagesGetter =
 
 		const hasCoreSleep = MetricType.UserCoreSleepBegin in data.fixedValues;
 		const coreSleepTiming = hasCoreSleep
-			? ([data.fixedValues[MetricType.UserCoreSleepBegin], data.fixedValues[MetricType.UserCoreSleepEnd]] as [
-					string,
-					string
-			  ])
+			? ([
+					new Date((data.fixedValues[MetricType.UserCoreSleepBegin] as number) * 1000).toISOString(),
+					new Date((data.fixedValues[MetricType.UserCoreSleepEnd] as number) * 1000).toISOString(),
+			  ] as [string, string])
 			: undefined;
-		/**
-		 * Spec for sleep stages
-		 * - stages array begins at user.core.sleep
-		 */
-		const usedStageInfos = stageInfos.slice(
-			hasCoreSleep
-				? stageInfos.findIndex((block) =>
-						moment(coreSleepTiming?.[0]).isBetween(block.start, block.end, undefined, "[)")
-				  )
-				: stageInfos.findIndex((block) =>
-						moment(moment(isoDay).startOf("day")).isBetween(block.start, block.end, undefined, "[)")
-				  )
-		);
 
 		const totalMinutesSleepDuration = Number(data.fixedValues[MetricType.UserDailyTotalSleepDuration]);
+		const napTimings: Array<[string, string]> = getNaps(data);
 
 		return {
 			totalMinutesSleepDuration,
-			stages: usedStageInfos,
+			stages,
+			timeToFallASleep: data.fixedValues[MetricType.UserTimeToFallASleep] as number,
 			coreSleepTiming,
+			napTimings,
 			sleepStagesDuration: {
 				[SleepStage.AWAKE]:
 					MetricType.UserDailyAwakeStageDuration in data.fixedValues &&
@@ -224,3 +214,30 @@ export function useDailyHeavyComputationData<M, T>(
 		[isoDay]
 	);
 }
+
+/**
+ * Return the nap time frames
+ */
+export const getNaps = (data: RangeMetrics<SleepStagesMetrics>): Array<[string, string]> => {
+	const napTimings: Array<[string, string]> = [];
+	for (let i = 0; i < data.timeline.length; i++) {
+		const currentBlock = data.timeline[i];
+		if (MetricType.UserNapSleepBegin in currentBlock.metrics) {
+			const startTime = new Date(currentBlock.metrics[MetricType.UserNapSleepEnd] as number).toISOString();
+			// Find end block
+			const endIndex = data.timeline.slice(i).findIndex(hasMetric(MetricType.UserNapSleepEnd));
+			const endTime =
+				endIndex > -1
+					? new Date(data.timeline[i + endIndex].metrics[MetricType.UserNapSleepEnd] as number).toISOString()
+					: undefined;
+			if (!endTime) {
+				getLogger("MEASURE REPRESENTATION").debug(`A nap started at ${startTime} has no end`);
+				break;
+			}
+			napTimings.push([startTime, endTime]);
+			// Move the cursor forward to find the next session
+			i += endIndex > -1 ? endIndex : 0;
+		}
+	}
+	return napTimings;
+};

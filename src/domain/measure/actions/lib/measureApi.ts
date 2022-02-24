@@ -24,12 +24,14 @@ export class MeasureApi {
 		}: {
 			isoStart: string;
 			isoEnd: string;
-		}
+		},
+		useForceRefresh?: boolean
 	): Promise<Array<DatedMetrics<T>>> {
 		const {
 			data: { data },
 		} = await this.apiService.get<{ data: DatedMetrics[] }>(measureApiUrl, {
 			params: { metrics, start: isoStart, end: isoEnd },
+			useForceRefresh,
 		});
 
 		if (data.length) {
@@ -61,10 +63,12 @@ export class MeasureApi {
 		}: {
 			isoStart: string;
 			isoEnd: string;
-		}
+		},
+		useForceRefresh?: boolean
 	): Promise<Partial<Metrics<T>>> {
 		const result = await this.apiService.get<Partial<Metrics<T>>>(latestMeasureApiUrl, {
 			params: { metrics, start: isoStart, end: isoEnd },
+			useForceRefresh,
 		});
 		return result.data;
 	}
@@ -88,7 +92,7 @@ export class MeasureApi {
 		measures: ReadonlyArray<T>,
 		isoToday: string = moment().toISOString()
 	): Promise<Array<DatedMetrics<T>>> {
-		return await this.getMeasures(measures, toTimeSegment(isoToday, TimeFrame.TODAY));
+		return await this.getMeasures(measures, toTimeSegment(isoToday, TimeFrame.TODAY), true); // don't use cache for today measure
 	}
 
 	public async fetchDailyMeasures<T extends MetricType>(

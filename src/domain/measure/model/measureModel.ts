@@ -12,6 +12,7 @@ import {
 	DailySleepScoreContributorsMetrics,
 	DailySleepScoreContributorsMetricsGaugeSize,
 	DailySleepStageDuration,
+	SleepStagesMetrics,
 } from "../representation/lib/type";
 import { getKeyFromDate } from "../common/business";
 import { Proposal } from "../common/type";
@@ -77,12 +78,12 @@ export class MeasureModel implements IModel<Proposal> {
 			values: this._dailyEnergyScoreContributorsMetrics.values,
 		};
 	}
-	private _dailySleepMetrics: Map<string, RangeMetrics<MetricType.UserSleepStage, DailySleepStageDuration>> = new Map();
+	private _dailySleepMetrics: Map<string, RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>> = new Map();
 	public get dailySleepMetrics(): {
-		get: (isoDate: string) => RangeMetrics<MetricType.UserSleepStage, DailySleepStageDuration> | undefined;
+		get: (isoDate: string) => RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined;
 		has: (isoDate: string) => boolean;
 		keys: () => IterableIterator<string>;
-		values: () => IterableIterator<RangeMetrics<MetricType.UserSleepStage, DailySleepStageDuration> | undefined>;
+		values: () => IterableIterator<RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined>;
 	} {
 		return {
 			get: (isoDate: string) => this._dailySleepMetrics.get(getKeyFromDate(isoDate)),
@@ -197,6 +198,10 @@ export class MeasureModel implements IModel<Proposal> {
 			} else if (mutation.type === "setDailyEnergyScoreContributorsMetrics") {
 				mutate(() =>
 					this._dailyEnergyScoreContributorsMetrics.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.data)
+				);
+			} else if (mutation.type === "setDailySleepScoreContributorsMetrics") {
+				mutate(() =>
+					this._dailySleepScoreContributorsMetrics.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.data)
 				);
 			}
 		});

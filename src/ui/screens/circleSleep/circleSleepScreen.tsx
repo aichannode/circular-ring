@@ -23,6 +23,7 @@ import moment from "moment";
 import React, { useRef, useState } from "react";
 import { LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
+import { trimSleepStages } from "./business";
 import { Hypnogram } from "./hypnogram";
 import { getSleepQualityDetails } from "./measureDisplayInfos";
 import { SleepDurationPieChart } from "./sleepDurationPie";
@@ -45,6 +46,13 @@ export const CircleSleepScreen: React.FC = observer(() => {
 	const REMDuration = dailySleep?.sleepStagesDuration[SleepStage.REM];
 	const lightDuration = dailySleep?.sleepStagesDuration[SleepStage.LIGHT];
 	const deepDuration = dailySleep?.sleepStagesDuration[SleepStage.DEEP];
+	const sleepStages = trimSleepStages({
+		stages: dailySleep?.stages ?? [],
+		isoDay: selectedDay,
+		userTimeToFallAsleep: dailySleep?.timeToFallASleep,
+		napFrames: dailySleep?.napTimings,
+		coreSleepFrame: dailySleep?.coreSleepTiming,
+	});
 
 	useDailySleepStages({ setData, isoDay: selectedDay });
 
@@ -70,8 +78,9 @@ export const CircleSleepScreen: React.FC = observer(() => {
 			<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
 			{dailySleep ? (
 				<SleepDurationPieChart
-					stages={dailySleep.stages}
+					stages={sleepStages}
 					coreSleepTiming={dailySleep.coreSleepTiming}
+					napTimings={dailySleep.napTimings}
 					duration={dailySleep.totalMinutesSleepDuration ?? 0}
 				/>
 			) : (
@@ -152,7 +161,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 				</View>
 				{dailySleep ? (
 					<GraphContainer>
-						<Hypnogram data={dailySleep.stages} />
+						<Hypnogram data={sleepStages} />
 						<View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
 							<GraphLegend
 								rows={[

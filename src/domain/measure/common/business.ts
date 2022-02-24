@@ -12,7 +12,7 @@ export function toTimeSegment(isoDate: string, timeFrame: TimeFrame): { isoStart
 		case TimeFrame.TODAY:
 		case TimeFrame.DAY:
 			return {
-				isoStart: moment(isoDate).startOf("day").toISOString(),
+				isoStart: moment(isoDate).subtract(1, "day").startOf("day").toISOString(), // ensure a large enough timeframe to capture data like core.sleep.begin
 				isoEnd: moment(isoDate).endOf("day").toISOString(),
 			};
 		case TimeFrame.LAST_7_DAYS:

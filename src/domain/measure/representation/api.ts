@@ -4,12 +4,14 @@ import { StageInfos } from "./lib/type";
 export type DailyActivityIntensityData = {
 	stages: Array<StageInfos<ActivityStage>>;
 	duration: number;
-	sportSessionTimes: Array<[string | undefined, string | undefined]>;
+	sportSessionDates: Array<[string | undefined, string | undefined]>;
 };
 export type DailySleepData = {
 	stages: Array<StageInfos<SleepStage>>;
 	totalMinutesSleepDuration: number;
 	coreSleepTiming?: [string, string];
+	napTimings: Array<[string, string]>;
+	timeToFallASleep?: number;
 	sleepStagesDuration: Partial<{
 		[SleepStage.AWAKE]: { duration: number; percent: number };
 		[SleepStage.REM]: { duration: number; percent: number };

@@ -1,4 +1,5 @@
 import { isYesterday } from "@domain/common/utils";
+import { isToday } from "@domain/feed/business";
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -8,6 +9,7 @@ import { PieChart } from "react-native-svg-charts";
 import { WordingKey } from "src/wordings";
 import styled from "styled-components/native";
 import { Row, Stack } from "../layout";
+import { angle, toRad } from "./business";
 
 type Props = {
 	stages: Array<StageInfos<any>>;
@@ -39,9 +41,10 @@ export const DailyPieChart: React.FC<Props> = ({
 }) => {
 	const startTime: string | undefined = stages[0]?.start;
 	const endTime: string | undefined = stages[stages.length - 1]?.end;
+	const isTodayPie = isToday(endTime, currentIsoDate);
 
 	// The first slice starts yesterday. We need to use a different start angle
-	const didStartYesterday = startTime !== undefined && isYesterday(startTime, currentIsoDate);
+	const didStartTheDayBefore = startTime !== undefined && isYesterday(startTime, endTime);
 
 	// Minus the chart radius with the bigger stroke to prevent cropped artefact
 	const chartRadius = chartSize / 2 - [...phaseWidths].sort().reverse()[0];
@@ -59,11 +62,10 @@ export const DailyPieChart: React.FC<Props> = ({
 	// Start drawing the pie at this angle
 	const startPieAngle = angle(new Date(startTime));
 	// The maximum drawable angle of the pie (the current hour)
-	// const endPieAngle = angle(currentDate);
-	const endPieAngle = angle(new Date(endTime));
+	const endPieAngle = (didStartTheDayBefore ? 360 : 0) + angle(new Date(isTodayPie ? currentIsoDate : endTime));
 
 	const data = stages.map((stage, index) => ({
-		key: stage.start,
+		key: index,
 		value: Date.parse(stage.end) - Date.parse(stage.start),
 		svg: { fill: phaseColors[getPhaseLevel(stage.level)] },
 		arc: { innerRadius: getSliceInnerRadius(index), outerRadius: getSliceOutterRadius(index) },
@@ -77,8 +79,9 @@ export const DailyPieChart: React.FC<Props> = ({
 				style={{ flex: 1 }}
 				data={data}
 				padAngle={0}
-				startAngle={startPieAngle}
-				endAngle={(didStartYesterday ? 360 : 0) + endPieAngle}
+				startAngle={toRad(startPieAngle)}
+				endAngle={toRad(endPieAngle)}
+				sort={(a, b) => a.key - b.key}
 			/>
 			<InsideInfos align="center" justify="space-between">
 				<Image source={require("@assets/images/night.png")} />
@@ -96,10 +99,6 @@ export const DailyPieChart: React.FC<Props> = ({
 		</View>
 	);
 };
-
-function angle(t: Date) {
-	return ((t.getHours() + t.getMinutes() / 60) / 24) * 360;
-}
 
 const InsideInfos = styled(Stack)`
 	position: absolute;

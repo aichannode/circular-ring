@@ -23,6 +23,8 @@ import {
 	DailySleepScoreContributorsMetricsGaugeSize,
 	dailySleepStageDuration,
 	DailySleepStageDuration,
+	SleepStagesMetrics,
+	sleepStagesMetrics,
 } from "../representation/lib/type";
 import { MeasureApi } from "./lib/measureApi";
 
@@ -158,11 +160,17 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
+		/**
+		 * This actions will update the model with the sleep stages and duration for
+		 * the given day.
+		 */
 		async setDailySleepStagesMetrics(isoDay: string = moment().toISOString()) {
 			Promise.all([
-				measureApi.fetchMeasures<MetricType.UserSleepStage>(
-					[MetricType.UserSleepStage],
-					moment(isoDay).subtract(1, "day").toISOString(),
+				measureApi.fetchMeasures<SleepStagesMetrics>(
+					sleepStagesMetrics,
+					// Grab data from the noon before the day to make sure to get the ensleepment.
+					// TODO: implement day/night worker
+					moment(isoDay).startOf("day").subtract(12, "hours").toISOString(),
 					moment(isoDay).endOf("day").toISOString()
 				),
 				measureApi.fetchLastDailyMeasures<DailySleepStageDuration>(dailySleepStageDuration, isoDay),

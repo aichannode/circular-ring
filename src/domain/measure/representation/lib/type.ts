@@ -102,7 +102,7 @@ export const dailySleepScoreContributorsMetrics = [
 	MetricType.UserDailyCircadianRhythm,
 	MetricType.UserDailyPercREMStage,
 	MetricType.UserDailyPercDeepStage,
-	MetricType.UserDailyTimeToFallAsleep,
+	MetricType.UserTimeToFallASleep,
 	MetricType.UserDailySleepDebt,
 ] as const;
 export type DailySleepScoreContributorsMetrics = typeof dailySleepScoreContributorsMetrics[number];
@@ -112,7 +112,6 @@ export const dailySleepScoreContributorsMetricsGaugeSize = [
 	MetricType.UserDailyPercRealSleep,
 	MetricType.UserDailyCorrectedPercREMStage,
 	MetricType.UserDailyCorrectedPercDeepStage,
-	MetricType.UserDailyPercTimeToFallAsleep,
 	MetricType.UserDailyPercSleepDebt,
 ] as const;
 export type DailySleepScoreContributorsMetricsGaugeSize = typeof dailySleepScoreContributorsMetricsGaugeSize[number];
@@ -140,11 +139,22 @@ export type DailySleepScoreContributorsGaugeCalibrationMetrics =
 	typeof dailySleepScoreContributorsGaugeCalibrationMetrics[number];
 
 /**
- * Those metrics are used for the stages circle and hypnogram
+ * Those metrics are used for the stages circle and hypnogram.
+ * They represents the different sleep stages (core sleep and naps)
+ * along a time slice.
+ */
+export const sleepStagesMetrics = [MetricType.UserSleepStage, MetricType.UserNapSleepBegin, MetricType.UserNapSleepEnd];
+export type SleepStagesMetrics = typeof sleepStagesMetrics[number];
+
+/**
+ * This is a set of metrics used accross multiple components.
+ * They are computed metrics. That means that there value is
+ * the last known value for a time slice.
  */
 export const dailySleepStageDuration = [
 	MetricType.UserCoreSleepBegin,
 	MetricType.UserCoreSleepEnd,
+	MetricType.UserTimeToFallASleep,
 	MetricType.UserDailyTotalSleepDuration,
 	MetricType.UserDailyRealSleepDuration,
 	MetricType.UserDailyAwakeStageDuration,

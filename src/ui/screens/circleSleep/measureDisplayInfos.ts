@@ -92,13 +92,13 @@ export function getSleepQualityDetails(format: (v: WordingKey) => string): Sleep
 			renderValue: ({ value }) => `${value * 100}%`,
 			getGaugeColor: getGaugeColor(),
 		},
-		[MetricType.UserDailyTimeToFallAsleep]: {
+		[MetricType.UserTimeToFallASleep]: {
 			// Time to fall asleep: 2 metrics
 			metricsName: {
-				value: MetricType.UserDailyTimeToFallAsleep,
+				value: MetricType.UserTimeToFallASleep,
 				thresholdLow: MetricType.UserDailyPercTimeToFallAsleepGoalMin,
 				thresholdHigh: MetricType.UserDailyPercTimeToFallAsleepGoalMax,
-				gaugeFilling: MetricType.UserDailyPercTimeToFallAsleep,
+				gaugeFilling: MetricType.UserTimeToFallASleep,
 			},
 			titleKey: "sleep.quality.fall_asleep.label",
 			descriptionKey: "sleep.quality.fall_asleep.description",

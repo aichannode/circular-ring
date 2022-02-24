@@ -54,7 +54,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 	const [activityIntensity, setData] = useState<DailyActivityIntensityData>({
 		stages: [],
 		duration: 0,
-		sportSessionTimes: [],
+		sportSessionDates: [],
 	});
 	const {
 		measure: {
@@ -101,7 +101,11 @@ export const CircleActivityScreen: React.FC = observer(() => {
 					/>
 				</View>
 				<InfoListHeader>{format("activity.duration.title")}</InfoListHeader>
-				<ActivityDurationPieChart stages={activityIntensity.stages} duration={activityIntensity.duration} />
+				<ActivityDurationPieChart
+					stages={activityIntensity.stages}
+					sportSessionDates={activityIntensity.sportSessionDates}
+					duration={activityIntensity.duration}
+				/>
 				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
 				<ElementStack gap={10}>
 					{dailyActivitiesMetrics.map((metric) => {

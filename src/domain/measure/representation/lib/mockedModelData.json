@@ -1,7 +1,7 @@
 {
   "timeline":[
     {
-      "timestamp": "2021-12-20T15:10:00",
+      "timestamp": "2021-12-20T15:10:00:000Z",
       "metrics": {
         "user.sleep.stage": 4
       }
@@ -269,11 +269,64 @@
       "metrics":{
         "user.sleep.stage":4
       }
+    },
+    {
+      "timestamp":"2021-12-21T13:28:00.000Z",
+      "metrics":{
+        "user.nap.sleep.begin": 1640093280,
+        "user.sleep.stage":3
+      }
+    },
+    {
+      "timestamp":"2021-12-21T13:35:00.000Z",
+      "metrics":{
+        "user.sleep.stage":2
+      }
+    },
+    {
+      "timestamp":"2021-12-21T13:45:00.000Z",
+      "metrics":{
+        "user.sleep.stage":3
+      }
+    },
+    {
+      "timestamp":"2021-12-21T13:48:00.000Z",
+      "metrics":{
+        "user.nap.sleep.end": 1640094480,
+        "user.sleep.stage":4
+      }
+    },
+    {
+      "timestamp":"2021-12-21T17:00:00.000Z",
+      "metrics":{
+        "user.nap.sleep.begin": 1640106000,
+        "user.sleep.stage":3
+      }
+    },
+    {
+      "timestamp":"2021-12-21T17:05:00.000Z",
+      "metrics":{
+        "user.sleep.stage":2
+      }
+    },
+    {
+      "timestamp":"2021-12-21T17:10:00.000Z",
+      "metrics":{
+        "user.sleep.stage":3
+      }
+    },
+    {
+      "timestamp":"2021-12-21T17:12:00.000Z",
+      "metrics":{
+        "user.nap.sleep.end": 1640106720,
+        "user.sleep.stage":4
+      }
     }
   ],
   "fixedValues":{
-    "user.core.sleep.begin":"2021-12-20T23:24:00",
-    "user.core.sleep.end":"2021-12-21T07:40:00",
+    "user.time.to.fall.asleep": 1800000,
+    "user.core.sleep.begin":1640042640,
+    "user.core.sleep.end":1640072400,
     "user.daily.percreal.sleep":1,
     "user.daily.percawake.stage":0,
     "user.daily.percrem.stage":0.2,
