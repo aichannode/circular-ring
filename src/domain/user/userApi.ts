@@ -1,44 +1,12 @@
 import { ApiService } from "@core/api/apiService";
-import { NotificationsFormat, TemperatureFormat, DateFormat, HeightUnit, HourFormat, WeightUnit } from "@domain/units";
 import { AdvancedInfo } from "@domain/user/advancedInfo";
 import { Sex, User } from "@domain/user/user";
 import { UserSettings } from "@domain/user/userSettings";
 import axios, { AxiosInstance } from "axios";
 import { addRequestInterceptor } from "@core/api/interceptors/interceptor";
 import { serializeArrayParametersInterceptor } from "@core/api/interceptors/serializeArrayParametersInterceptor";
-
-interface UserDtoBase {
-	firstName: string;
-	lastName: string;
-	country: string;
-	phoneNumber: string | null;
-	profilePictureUrl: string | null;
-	weight: number;
-	height: number;
-	sex: string;
-	bornDate: string;
-	language: string;
-	scorePublic: boolean;
-	stride: number;
-	tutorialCompleted: boolean;
-}
-
-interface UserDto extends UserDtoBase {
-	id: string;
-	email: string;
-	validated: boolean;
-	createdAt: string;
-}
-
-export type UserPutDto = UserDtoBase;
-
-interface UserSettingsDto {
-	id: string;
-	dateFormat: DateFormat;
-	heightFormat: string;
-	hourFormat: HourFormat;
-	weightFormat: string;
-}
+import { UserDto, UserPutDto, UserSettingsDto } from "./type";
+import { userSettingsFromDto } from "./business";
 
 export class UserApi {
 	private readonly instance: AxiosInstance;
@@ -78,35 +46,13 @@ export class UserApi {
 	/** User Settings **/
 
 	async getUserSettings(): Promise<UserSettings> {
-		const result = await this.apiService.get<UserSettings>("/user/setting");
-		return UserApi.userSettingsFromDto(result.data);
+		const result = await this.apiService.get<UserSettingsDto>("/user/setting");
+		return userSettingsFromDto(result.data);
 	}
 
-	async updateUserSettings(userSettings: {
-		dateFormat: string;
-		heightFormat: string;
-		weightFormat: string;
-		timezone: string;
-	}): Promise<UserSettings> {
-		const defaultSettings = {
-			dateFormat: DateFormat.USCS,
-			heightFormat: HeightUnit.cm,
-			weightFormat: WeightUnit.kg,
-			temperatureFormat: TemperatureFormat.CELSIUS,
-			hourFormat: "12",
-			notifications: [NotificationsFormat.BANNER],
-		};
-		const result = await this.apiService.put<UserSettingsDto>("/user/setting", { ...defaultSettings, ...userSettings });
-		return UserApi.userSettingsFromDto(result.data);
-	}
-
-	private static userSettingsFromDto(userSettingsDto: UserSettingsDto): UserSettings {
-		return {
-			...userSettingsDto,
-			hourFormat: (userSettingsDto.hourFormat === "12" ? "12" : "24") as HourFormat,
-			weightFormat: userSettingsDto.weightFormat === "kg" ? WeightUnit.kg : WeightUnit.lbs,
-			heightFormat: userSettingsDto.heightFormat === "cm" ? HeightUnit.cm : HeightUnit.ft,
-		};
+	async updateUserSettings(userSettings: UserSettingsDto): Promise<UserSettings> {
+		const result = await this.apiService.put<UserSettingsDto>("/user/setting", userSettings);
+		return userSettingsFromDto(result.data);
 	}
 
 	/** User Advanced Info **/

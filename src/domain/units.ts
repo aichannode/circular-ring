@@ -1,23 +1,23 @@
 import { arrayFromRange } from "@core/utils";
 
 export enum WeightUnit {
-	kg = "KG",
-	lbs = "LB",
+	kg = "kg",
+	lbs = "lb",
 }
 
 export enum HeightUnit {
-	cm = "CM",
-	ft = "FT",
+	cm = "cm",
+	ft = "ft",
 }
 
 export enum DateFormat {
-	USCS = "USCS",
-	SI = "SI",
+	USCS = "mm/dd/yyyy",
+	SI = "dd/mm/yyyy",
 }
 
 export enum TemperatureFormat {
-	CELSIUS = "CELSIUS",
-	FAHRENHEIT = "FAHRENHEIT",
+	CELSIUS = "°C",
+	FAHRENHEIT = "°F",
 }
 
 export enum NotificationsFormat {
@@ -31,7 +31,10 @@ export enum NotificationsFormat {
 	LOW_SPO2 = "LOW_SPO2",
 }
 
-export type HourFormat = "12" | "24";
+export enum HourFormat {
+	TWELVE = "12h",
+	TWENTY_FOUR = "24h",
+}
 
 const KG_MIN = 20;
 const KG_MAX = 300;

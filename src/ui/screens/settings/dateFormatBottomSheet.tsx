@@ -31,7 +31,7 @@ export const DateFormatBottomSheet: React.FC<DateFormatBottomSheetProps> = ({ on
 		setErrorMessage("");
 		try {
 			if (dateFormat !== userSettings.dateFormat) {
-				await userService.updateUserSettings(dateFormat, userSettings.heightFormat, userSettings.weightFormat);
+				await userService.updateUserSettings({ dateFormat });
 			}
 			setLoading(false);
 			onSaved();

@@ -1,8 +1,9 @@
+import { dtoFromUserSettings } from "./business";
 import { AppStateService } from "@domain/appState/appStateService";
 import { getLogger } from "@core/logger/logger";
 import { round2Digits, toServerDate } from "@core/utils";
 import { AuthService } from "@domain/auth/authService";
-import { DateFormat, HeightUnit, HourFormat, WeightUnit } from "@domain/units";
+import { DateFormat, HeightUnit, HourFormat, NotificationsFormat, TemperatureFormat, WeightUnit } from "@domain/units";
 import {
 	AdvancedInfo,
 	ChronoType,
@@ -17,14 +18,14 @@ import {
 } from "@domain/user/advancedInfo";
 import { TutorialInfo } from "@domain/user/tutorialInfo";
 import { Sex, User } from "@domain/user/user";
-import { UserApi, UserPutDto } from "@domain/user/userApi";
+import { UserApi } from "@domain/user/userApi";
 import { UserSettings } from "@domain/user/userSettings";
 import { UserNotificationsSettings } from "@domain/user/userNotificationsSettings";
 import { UserStorage } from "@domain/user/userStorage";
 import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { observable } from "micro-observables";
-import * as RNLocalize from "react-native-localize";
 import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
+import { UserPutDto } from "./type";
 
 const defaultNotificationsSettings = {
 	kira: "On",
@@ -45,8 +46,9 @@ const defaultSettings = {
 	dateFormat: DateFormat.USCS,
 	heightFormat: HeightUnit.cm,
 	weightFormat: WeightUnit.kg,
-	hourFormat: "12" as HourFormat,
-	id: "default_settings",
+	hourFormat: HourFormat.TWELVE,
+	temperatureFormat: TemperatureFormat.CELSIUS,
+	notifications: [NotificationsFormat.BANNER],
 };
 
 export class UserService {
@@ -223,15 +225,10 @@ export class UserService {
 		await this.userStorage.saveUserNotificationsSettings({ ...this._userNotificationsSettings.get(), ...newValue });
 	}
 
-	async updateUserSettings(dateFormat: string, heightUnit: HeightUnit, weightUnit: WeightUnit) {
-		const timezone = RNLocalize.getTimeZone();
+	async updateUserSettings(settings: Partial<UserSettings>) {
 		try {
-			const userSettings = await this.userApi.updateUserSettings({
-				dateFormat,
-				heightFormat: heightUnit.toString(),
-				weightFormat: weightUnit,
-				timezone,
-			});
+			const dtoSettings = dtoFromUserSettings({ ...defaultSettings, ...settings });
+			const userSettings = await this.userApi.updateUserSettings(dtoSettings);
 			this._userSettings.set(userSettings);
 			await this.userStorage.saveUserSettings(userSettings);
 		} catch (error) {

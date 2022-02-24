@@ -11,6 +11,7 @@ import {
 	UserInputConfiguration,
 	UserInputStyle,
 } from "./type";
+import { HourFormat } from "@domain/units";
 
 const today = "2021-10-11T14:31:06.585Z";
 
@@ -31,8 +32,8 @@ it("Date < 24h: should get the delta from current date in hours", function () {
 });
 
 it("Date >= 24h: should extract the hour of the corresponding day", function () {
-	expect(getFeedEntityDate("2021-09-11T11:14:00.585Z", today, "12")).toEqual("11:14 AM");
-	expect(getFeedEntityDate("2021-09-11T14:14:00.585Z", today, "24")).toEqual("14:14");
+	expect(getFeedEntityDate("2021-09-11T11:14:00.585Z", today, HourFormat.TWELVE)).toEqual("11:14 AM");
+	expect(getFeedEntityDate("2021-09-11T14:14:00.585Z", today, HourFormat.TWENTY_FOUR)).toEqual("14:14");
 });
 
 function createaRecommandationsData(today: string, yesterday: string) {

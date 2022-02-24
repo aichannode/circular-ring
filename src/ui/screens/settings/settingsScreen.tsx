@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { DateFormat, HeightUnit, WeightUnit } from "@domain/units";
+import { HeightUnit, HourFormat, TemperatureFormat, WeightUnit } from "@domain/units";
 import { useUserSettings } from "@domain/user/hooks/useUser";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
@@ -21,15 +21,20 @@ export const SettingsScreen: React.FC = () => {
 
 	const [heightFormat, setHeightFormat] = useState(userSettings?.heightFormat);
 	const [weightFormat, setWeightFormat] = useState(userSettings?.weightFormat);
+	const [temperatureFormat, setTemperatureFormat] = useState(userSettings?.temperatureFormat);
+	const [hourFormat, setHourFormat] = useState(userSettings?.hourFormat);
 
 	const updateSettings = useCallback(() => {
-		if (heightFormat === userSettings?.heightFormat && weightFormat === userSettings?.weightFormat) {
-			return;
-		}
 		heightFormat &&
 			weightFormat &&
-			userService.updateUserSettings(userSettings?.dateFormat ?? DateFormat.USCS, heightFormat, weightFormat);
-	}, [heightFormat, weightFormat, userSettings?.dateFormat]);
+			userService.updateUserSettings({
+				dateFormat: userSettings?.dateFormat,
+				heightFormat,
+				weightFormat,
+				temperatureFormat,
+				hourFormat,
+			});
+	}, [heightFormat, weightFormat, hourFormat, temperatureFormat, userSettings?.dateFormat]);
 
 	const dateFormatBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
@@ -50,7 +55,12 @@ export const SettingsScreen: React.FC = () => {
 				value={userSettings?.dateFormat}
 				hasDisclosure
 			/>
-			{/* <InfoListItem name={format("settings.time_format")} /> */}
+			<InfoListItem
+				name={format("settings.time_format")}
+				switchOptions={[HourFormat.TWELVE, HourFormat.TWENTY_FOUR]}
+				switchValue={hourFormat}
+				onSwitchSelect={setHourFormat}
+			/>
 			<InfoListItem
 				name={format("settings.height_format")}
 				switchOptions={[HeightUnit.cm, HeightUnit.ft]}
@@ -63,7 +73,12 @@ export const SettingsScreen: React.FC = () => {
 				switchValue={weightFormat}
 				onSwitchSelect={setWeightFormat}
 			/>
-			{/* <InfoListItem name={format("settings.temperature_format")} /> */}
+			<InfoListItem
+				name={format("settings.temperature_format")}
+				switchOptions={[TemperatureFormat.CELSIUS, TemperatureFormat.FAHRENHEIT]}
+				switchValue={temperatureFormat}
+				onSwitchSelect={setTemperatureFormat}
+			/>
 			{/* <InfoListItem name={format("settings.dark_mode")} /> */}
 			{/* <InfoListHeader>{format("settings.security")}</InfoListHeader> */}
 			{/* <InfoListItem name={format("settings.logged_in")} /> */}
