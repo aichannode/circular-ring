@@ -7,6 +7,7 @@
 This repository use the git flow standard and requires the installation of a git plugin. Refer to the [official installation guide](https://github.com/nvie/gitflow/wiki/Installation) depending on your OS.
 
 ## Commitizen
+
 This repository enforces conventionnal commit messages. You can use any [IDE or git plugin](https://marketplace.visualstudio.com/items?itemName=KnisterPeter.vscode-commitizen) you want but, as a minimum requirement, you need to configure a git hook to format the message.
 
 First, create the hook
@@ -24,7 +25,3 @@ Then, make it executable
 ```bash
 $ chmod 775 .git/hooks/prepare-commit-msg
 ```
-
-## Semantic release
-
-This repository uses the semantic release to habve a meaningful versioning and changelogs. To achieve this we need, when using git-flow command to end our release with the npm command finish-release. This will prevent error due to version tag conflict between git-flow and standard-version.

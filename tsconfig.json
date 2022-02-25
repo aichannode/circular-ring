@@ -14,6 +14,7 @@
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"baseUrl": ".",
+		"allowJs": true,
 		"paths": {
 			"@assets/*": ["src/assets/*"],
 			"@wordings": ["wordings"],
@@ -47,6 +48,7 @@
 	},
 	"include": [
 		"src/**/*",
+		"storybook/**/*",
 		"global.d.ts",
 		"./*.js",
 		"scripts/**/*.js",

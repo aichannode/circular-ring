@@ -1,27 +1,35 @@
-import "react-native-gesture-handler";
-import "react-native-get-random-values";
+import { useLogger } from "@core/logger/hooks/useLogger";
 import { useSentry } from "@core/logger/hooks/useSentry";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import { RepresentationsProvider } from "@core/representation";
+import { initializeServices, ServicesProvider } from "@core/services";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import { RootNavigator } from "@ui/navigation/rootNavigator";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import utc from "dayjs/plugin/utc";
+import { enableES5 } from "immer";
+import { configure } from "mobx";
 import React, { useEffect, useState } from "react";
 import { createIntl, IntlProvider } from "react-intl";
-import { LogBox, StatusBar, Platform, UIManager } from "react-native";
-import * as RNLocalize from "react-native-localize";
-import { initializeServices, ServicesProvider } from "@core/services";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { translations } from "./wordings";
-import SplashScreen from "react-native-splash-screen";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import utc from "dayjs/plugin/utc";
+import { DevSettings, LogBox, Platform, StatusBar, UIManager } from "react-native";
 import { LocaleConfig } from "react-native-calendars";
-import { enableES5 } from "immer";
-import { RepresentationsProvider } from "@core/representation";
-import { useLogger } from "@core/logger/hooks/useLogger";
+import "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import "react-native-get-random-values";
+import * as RNLocalize from "react-native-localize";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import SplashScreen from "react-native-splash-screen";
+import StorybookUIRoot from "../storybook";
+import { translations } from "./wordings";
 
+// Setup Mobx for RN
+configure({ useProxies: "never" });
+
+LogBox.ignoreAllLogs(true);
+LogBox.ignoreLogs(["EventEmitter.removeListener"]);
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
+
 dayjs.extend(customParseFormat);
 dayjs.extend(utc);
 
@@ -38,6 +46,8 @@ const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: "
 export const App = () => {
 	const locale = getPreferredLangageCode(Object.keys(translations)) as "en"; // For some reason it can't be done in the main script
 	const [initialized, setInitialized] = useState(false);
+	const [isStoryBookDisplayed, toggleStoryBook] = useState(false);
+
 	useSentry();
 	const logger = useLogger("App.tsx");
 
@@ -45,6 +55,11 @@ export const App = () => {
 		initializeServices().then(() => {
 			setInitialized(true);
 			SplashScreen.hide();
+		});
+
+		// Add Storybook toggle command to the menu
+		DevSettings.addMenuItem("Toggle Storybook", function () {
+			toggleStoryBook((isDisplayed) => !isDisplayed);
 		});
 	}, []);
 
@@ -64,30 +79,34 @@ export const App = () => {
 		LocaleConfig.defaultLocale = locale;
 	}, []);
 
-	return initialized ? (
-		<IntlProvider
-			locale={locale}
-			messages={translations[locale]}
-			onError={(err) => {
-				logger.error(err);
-			}}
-		>
-			<GestureHandlerRootView style={{ flex: 1 }}>
-				<StatusBar translucent={true} barStyle="dark-content" backgroundColor="transparent" />
-				<SafeAreaProvider>
-					<ServicesProvider>
-						<RepresentationsProvider>
-							<NavigationContainer theme={theme}>
-								<BottomSheetModalProvider>
-									<RootNavigator />
-								</BottomSheetModalProvider>
-							</NavigationContainer>
-						</RepresentationsProvider>
-					</ServicesProvider>
-				</SafeAreaProvider>
-			</GestureHandlerRootView>
-		</IntlProvider>
-	) : null;
+	if (isStoryBookDisplayed) {
+		return <StorybookUIRoot />;
+	} else {
+		return initialized ? (
+			<IntlProvider
+				locale={locale}
+				messages={translations[locale]}
+				onError={(err) => {
+					logger.error(err);
+				}}
+			>
+				<GestureHandlerRootView style={{ flex: 1 }}>
+					<StatusBar translucent={true} barStyle="dark-content" backgroundColor="transparent" />
+					<SafeAreaProvider>
+						<ServicesProvider>
+							<RepresentationsProvider>
+								<NavigationContainer theme={theme}>
+									<BottomSheetModalProvider>
+										<RootNavigator />
+									</BottomSheetModalProvider>
+								</NavigationContainer>
+							</RepresentationsProvider>
+						</ServicesProvider>
+					</SafeAreaProvider>
+				</GestureHandlerRootView>
+			</IntlProvider>
+		) : null;
+	}
 };
 
 const defaultLanguageCode = "en";
