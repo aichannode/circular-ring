@@ -151,13 +151,13 @@ export const EditAlarmScreen: React.FC = () => {
 				style={{ marginTop: 20 }}
 				name={isSmart ? format("alarm.new.smart_snooze.title") : format("alarm.new.snooze.title")}
 				hasDisclosure
-				value={formatSnooze(smart)}
+				value={formatSnooze(snooze)}
 				action={() => snoozeBottomSheet.current?.present()}
 			/>
 			<InfoListItem
 				name={format("alarm.new.smart_alarm.title")}
 				hasDisclosure
-				value={formatSmart(snooze)}
+				value={formatSmart(smart)}
 				action={() => smartBottomSheet.current?.present()}
 			/>
 
