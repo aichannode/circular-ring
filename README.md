@@ -6,6 +6,10 @@
 
 This repository use the git flow standard and requires the installation of a git plugin. Refer to the [official installation guide](https://github.com/nvie/gitflow/wiki/Installation) depending on your OS.
 
+## Node version manager
+
+This repository is dependent of NodeJS 12. You could use [NVM](https://github.com/nvm-sh/nvm) or [N](https://www.npmjs.com/package/n) to set node version.
+
 ## Commitizen
 
 This repository enforces conventionnal commit messages. You can use any [IDE or git plugin](https://marketplace.visualstudio.com/items?itemName=KnisterPeter.vscode-commitizen) you want but, as a minimum requirement, you need to configure a git hook to format the message.
