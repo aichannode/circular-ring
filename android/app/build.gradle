@@ -227,7 +227,7 @@ android {
                         defaultConfig.versionCode * 1000 + versionCodes.get(abi)
             }
             variant.productFlavors.each { flavor ->
-                def suffixe = project.hasProperty("buildName") ? ("-" + project.property("buildName") as String) : ""
+                def suffixe = (project.hasProperty("buildName") && project.property("buildName").length() > 0) ? ("-" + project.property("buildName") as String) : ""
                 variant.outputs.all {
                     outputFileName = "app-${flavor.name}${suffixe}-${buildType.name}.apk"
                 }
