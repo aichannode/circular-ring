@@ -10,6 +10,7 @@ import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback, useRef, useState } from "react";
 import { Keyboard, TextInput } from "react-native";
 import styled from "styled-components/native";
+import { parseEmail } from "../business";
 
 export const LoginScreen = () => {
 	const navigation = useRoutesNavigation();
@@ -60,7 +61,7 @@ export const LoginScreen = () => {
 					title={format("login.email.title")}
 					placeholder={format("login.email.placeholder")}
 					value={email}
-					onValueChanged={setEmail}
+					onValueChanged={(state) => setEmail(parseEmail(state))}
 					keyboardType={"email-address"}
 					autoCapitalize={"none"}
 					returnKeyType={"next"}

@@ -84,3 +84,7 @@ export const getScoreQualityLabel =
 		}
 		return format("score.quality.poor");
 	};
+
+export const parseEmail = (email: string) => {
+	return email.trim();
+};
