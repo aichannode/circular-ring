@@ -127,7 +127,10 @@
 	},
 	"jest": {
 		"preset": "react-native",
-		"globalSetup": "./jest-setup.js"
+		"globalSetup": "./jest-setup.js",
+		"transformIgnorePatterns": [
+			"node_modules/?!(.*)"
+		]
 	},
 	"config": {
 		"react-native-storybook-loader": {

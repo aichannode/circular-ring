@@ -49,6 +49,7 @@
 	"include": [
 		"src/**/*",
 		"storybook/**/*",
+		"__mocks__/**/*.js",
 		"global.d.ts",
 		"./*.js",
 		"scripts/**/*.js",
