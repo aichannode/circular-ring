@@ -29,7 +29,8 @@ export const Header = ({ options, navigation }: NativeStackHeaderProps) => {
 					<Spacer size={16} />
 					{options.title ? <Title>{options.title}</Title> : <Image source={require("@assets/images/logoHeader.png")} />}
 					<Grow />
-					{options.headerRight ? options.headerRight({}) : null}
+					{/* If there is a bug try with "canGoBack: true" */}
+					{options.headerRight ? options.headerRight({ canGoBack: false }) : null}
 				</>
 			) : (
 				<>
@@ -49,7 +50,10 @@ export const Header = ({ options, navigation }: NativeStackHeaderProps) => {
 							<Image source={require("@assets/images/logoHeader.png")} />
 						)}
 					</Center>
-					<Right alignLeft={hasCircleIcon}>{options.headerRight ? options.headerRight({}) : null}</Right>
+					{/* If there is a bug try with "canGoBack: true" */}
+					<Right alignLeft={hasCircleIcon}>
+						{options.headerRight ? options.headerRight({ canGoBack: false }) : null}
+					</Right>
 				</>
 			)}
 		</Container>

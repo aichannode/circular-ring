@@ -131,7 +131,9 @@
 	},
 	"config": {
 		"react-native-storybook-loader": {
-			"searchDir": ["./src"],
+			"searchDir": [
+				"./src"
+			],
 			"pattern": "**/*.stories.tsx"
 		},
 		"commitizen": {
