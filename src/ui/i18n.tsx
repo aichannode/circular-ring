@@ -1,4 +1,5 @@
 import { ScoreQuality } from "@domain/measure/representation/api";
+import { SignalQuality } from "@domain/measure/score";
 import { Melody, Weekdays } from "@domain/ring/ringAlarm";
 import { Intensity } from "@domain/ring/ringLiveData";
 import dayjs from "dayjs";
@@ -62,6 +63,14 @@ export function useI18n(options?: FormatterOptions) {
 				return `${hourCount} h`;
 			} else {
 				return `${minuteCount} min`;
+			}
+		},
+		formatSignalQuality: (signalQuality: SignalQuality) => {
+			switch (signalQuality) {
+				case SignalQuality.POOR:
+					return intl.formatMessage({ id: "score.quality.poor" });
+				case SignalQuality.GOOD:
+					return intl.formatMessage({ id: "score.quality.good" });
 			}
 		},
 		formatScoreQuality: (scoreQuality: ScoreQuality) => {
