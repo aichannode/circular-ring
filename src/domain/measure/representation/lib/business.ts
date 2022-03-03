@@ -223,12 +223,12 @@ export const getNaps = (data: RangeMetrics<SleepStagesMetrics>): Array<[string, 
 	for (let i = 0; i < data.timeline.length; i++) {
 		const currentBlock = data.timeline[i];
 		if (MetricType.UserNapSleepBegin in currentBlock.metrics) {
-			const startTime = new Date(currentBlock.metrics[MetricType.UserNapSleepEnd] as number).toISOString();
+			const startTime = new Date((currentBlock.metrics[MetricType.UserNapSleepBegin] as number) * 1000).toISOString();
 			// Find end block
 			const endIndex = data.timeline.slice(i).findIndex(hasMetric(MetricType.UserNapSleepEnd));
 			const endTime =
 				endIndex > -1
-					? new Date(data.timeline[i + endIndex].metrics[MetricType.UserNapSleepEnd] as number).toISOString()
+					? new Date((data.timeline[i + endIndex].metrics[MetricType.UserNapSleepEnd] as number) * 1000).toISOString()
 					: undefined;
 			if (!endTime) {
 				getLogger("MEASURE REPRESENTATION").debug(`A nap started at ${startTime} has no end`);
