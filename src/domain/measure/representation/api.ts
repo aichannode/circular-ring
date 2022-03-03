@@ -19,3 +19,9 @@ export type DailySleepData = {
 		[SleepStage.DEEP]: { duration: number; percent: number };
 	}>;
 };
+
+export enum ScoreQuality {
+	POOR = "POOR",
+	GOOD = "GOOD",
+	OPTIMAL = "OPTIMAL",
+}

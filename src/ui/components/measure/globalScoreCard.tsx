@@ -1,9 +1,9 @@
-import { getScoreQuality } from "@domain/measure/score";
+import { ScoreQuality } from "@domain/measure/representation/api";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React from "react";
-import { StyleProp, ViewStyle, View } from "react-native";
+import { StyleProp, View, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 import { Row } from "../layout";
 import { ScoreView } from "../scoreView";
@@ -16,7 +16,7 @@ interface GlobalScoreCardProps {
 export const GlobalScoreCard: React.FC<GlobalScoreCardProps> = ({ score, style }) => {
 	const { format, formatScoreQuality } = useI18n();
 
-	const scoreQuality = score ? getScoreQuality(score) : null;
+	const scoreQuality = ScoreQuality.GOOD;
 
 	return (
 		<Container gap={16} align="center" justify="center" style={style}>

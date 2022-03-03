@@ -11,10 +11,10 @@ import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { ScoreGauge } from "@ui/components/measure/scoreGauge";
-import { ScoreSection } from "@ui/components/measure/scoreSection";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { TitleText } from "@ui/components/text";
+import { ScoreSection } from "@ui/containers/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { isDefined } from "@ui/utils/guard";
@@ -57,7 +57,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 	});
 
 	useDailySleepStages({ setData, isoDay: selectedDay });
-	console.log(JSON.stringify(dailySleep));
+
 	return (
 		<Container>
 			<View>
@@ -65,7 +65,8 @@ export const CircleSleepScreen: React.FC = observer(() => {
 					isDisabled={!canDisplay}
 					style={{ marginTop: 20 }}
 					label={format("sleep.quality_score")}
-					score={qualityScore}
+					score={qualityScore["user.daily.sleep.score"]}
+					quality={qualityScore.controlState}
 					color={colors.business.sleepPrimary}
 				/>
 				<CircleCalendarButton

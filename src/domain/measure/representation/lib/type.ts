@@ -93,6 +93,16 @@ export const dailyEnergyScoreGaugeCalibrationMetrics = [
 export type DailyEnergyScoreGaugeCalibrationMetrics = typeof dailyEnergyScoreGaugeCalibrationMetrics[number];
 
 /**
+ * Those metrics are used for the sleep score
+ */
+export const dailySleepScoreMetrics = [
+	MetricType.UserDailySleepScore,
+	MetricType.UserDailySleepScoreGoalMin,
+	MetricType.UserDailySleepScoreGoalMax,
+] as const;
+export type DailySleepScoreMetrics = typeof dailySleepScoreMetrics[number];
+
+/**
  * Those metrics are used for display the value of the gauge.
  */
 export const dailySleepScoreContributorsMetrics = [

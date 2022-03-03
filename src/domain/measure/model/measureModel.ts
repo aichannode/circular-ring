@@ -1,6 +1,8 @@
-import { Metrics, MetricType, RangeMetrics } from "../metric";
-import { makeAutoObservable, observable } from "mobx";
 import { IModel, mutate } from "@core/model";
+import { makeAutoObservable, observable } from "mobx";
+import { getKeyFromDate } from "../common/business";
+import { Proposal } from "../common/type";
+import { Metrics, MetricType, RangeMetrics } from "../metric";
 import {
 	DailyActivitiesMetrics,
 	DailyActivitiesMetricsGoals,
@@ -11,11 +13,10 @@ import {
 	DailySleepScoreContributorsGaugeCalibrationMetrics,
 	DailySleepScoreContributorsMetrics,
 	DailySleepScoreContributorsMetricsGaugeSize,
+	DailySleepScoreMetrics,
 	DailySleepStageDuration,
 	SleepStagesMetrics,
 } from "../representation/lib/type";
-import { getKeyFromDate } from "../common/business";
-import { Proposal } from "../common/type";
 
 export class MeasureModel implements IModel<Proposal> {
 	private _dailySleepScoreContributorsMetrics: Map<
@@ -160,12 +161,12 @@ export class MeasureModel implements IModel<Proposal> {
 			values: this._dailyGlobalScore.values,
 		};
 	}
-	private _dailySleepScore: Map<string, number | undefined> = new Map();
+	private _dailySleepScore: Map<string, Record<DailySleepScoreMetrics, number>> = new Map();
 	public get dailySleepScore(): {
-		get: (isoDate: string) => number | undefined;
+		get: (isoDate: string) => Record<DailySleepScoreMetrics, number> | undefined;
 		has: (isoDate: string) => boolean;
 		keys: () => IterableIterator<string>;
-		values: () => IterableIterator<number | undefined>;
+		values: () => IterableIterator<Record<DailySleepScoreMetrics, number>>;
 	} {
 		return {
 			get: (isoDate: string) => this._dailySleepScore.get(getKeyFromDate(isoDate)),
@@ -192,7 +193,7 @@ export class MeasureModel implements IModel<Proposal> {
 			} else if (mutation.type === "setGlobalScore") {
 				mutate(() => this._dailyGlobalScore.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.score));
 			} else if (mutation.type === "setSleepScore") {
-				mutate(() => this._dailySleepScore.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.score));
+				mutate(() => this._dailySleepScore.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.data));
 			} else if (mutation.type === "setDailyActivitiesMetrics") {
 				mutate(() => this._dailyActivitiesMetrics.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.data));
 			} else if (mutation.type === "setDailyEnergyScoreContributorsMetrics") {

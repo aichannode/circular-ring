@@ -21,6 +21,7 @@ import {
 	DailySleepScoreContributorsMetrics,
 	dailySleepScoreContributorsMetricsGaugeSize,
 	DailySleepScoreContributorsMetricsGaugeSize,
+	dailySleepScoreMetrics,
 	dailySleepStageDuration,
 	DailySleepStageDuration,
 	SleepStagesMetrics,
@@ -60,13 +61,17 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async setDailySleepScore(isoDay: string = moment().toISOString()) {
-			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailySleepScore], isoDay);
+			const data = await measureApi.fetchLastDailyMeasures(dailySleepScoreMetrics, isoDay);
 			present([
 				{
 					type: "setSleepScore",
 					payload: {
 						isoDate: isoDay,
-						score: data[MetricType.UserDailySleepScore] ? Number(data[MetricType.UserDailySleepScore]) : undefined,
+						data: {
+							[MetricType.UserDailySleepScore]: data[MetricType.UserDailySleepScore] as number,
+							[MetricType.UserDailySleepScoreGoalMin]: data[MetricType.UserDailySleepScoreGoalMin] as number,
+							[MetricType.UserDailySleepScoreGoalMax]: data[MetricType.UserDailySleepScoreGoalMax] as number,
+						},
 					},
 				},
 			]);

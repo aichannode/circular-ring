@@ -1,4 +1,5 @@
-import { getScoreQuality, ScoreQuality } from "@domain/measure/score";
+import { ScoreQuality } from "@domain/measure/representation/api";
+import { getScoreControlStates } from "@domain/measure/representation/business";
 import { Grow } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { colors, ScoreQualityColors } from "@ui/styles/colors";
@@ -10,9 +11,9 @@ import styled from "styled-components/native";
 interface DailyMetricProps {
 	icon: number;
 	label: string;
-	value?: number;
-	goodThreshold?: number;
-	optimalThreshold?: number;
+	value: number;
+	lowThreshold: number;
+	highThreshold: number;
 	style?: StyleProp<ViewStyle>;
 	overWriteScoreQuality?: ScoreQuality | undefined;
 }
@@ -20,13 +21,16 @@ export const DailyMetric: React.FC<DailyMetricProps> = ({
 	icon,
 	label,
 	value,
-	goodThreshold,
-	optimalThreshold,
+	lowThreshold,
+	highThreshold,
 	style,
 	overWriteScoreQuality,
 }) => {
-	const scoreQuality =
-		goodThreshold && optimalThreshold && value !== undefined ? getScoreQuality(value ?? 0) : undefined;
+	const scoreQuality = getScoreControlStates({
+		score: value,
+		lowThreshold,
+		highThreshold,
+	});
 
 	return (
 		<Container style={style}>

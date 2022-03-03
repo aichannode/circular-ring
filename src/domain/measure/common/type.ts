@@ -9,6 +9,7 @@ import {
 	DailySleepScoreContributorsGaugeCalibrationMetrics,
 	DailySleepScoreContributorsMetrics,
 	DailySleepScoreContributorsMetricsGaugeSize,
+	DailySleepScoreMetrics,
 	DailySleepStageDuration,
 } from "../representation/lib/type";
 
@@ -72,7 +73,7 @@ export type Mutations =
 			type: "setSleepScore";
 			payload: {
 				isoDate: string;
-				score?: number;
+				data: Record<DailySleepScoreMetrics, number>;
 			};
 	  };
 

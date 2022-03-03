@@ -1,5 +1,5 @@
-import { MetricType } from "../metric";
-import { canDisplay, getScoreControlStates, SleepScoreControlStates } from "./business";
+import { ScoreQuality } from "./api";
+import { canDisplay, getScoreControlStates } from "./business";
 
 test("Specs: 00000. Display mode", function () {
 	const today = "2022-03-01";
@@ -11,26 +11,26 @@ test("Specs: 00000. Display mode", function () {
 	expect(canDisplay(today, tomorrowSleepCoreEnd)).toBeFalsy();
 });
 
-test("Specs: 00001. Score sleep control states", function () {
+test("Specs: 00001. Score control states", function () {
 	expect(
 		getScoreControlStates({
-			[MetricType.UserDailySleepScore]: 0.2,
-			[MetricType.UserDailySleepScoreGoalMin]: 0.8,
-			[MetricType.UserDailySleepScoreGoalMax]: 0.9,
+			score: 0.2,
+			lowThreshold: 0.8,
+			highThreshold: 0.9,
 		})
-	).toEqual(SleepScoreControlStates.Poor);
+	).toEqual(ScoreQuality.POOR);
 	expect(
 		getScoreControlStates({
-			[MetricType.UserDailySleepScore]: 0.81,
-			[MetricType.UserDailySleepScoreGoalMin]: 0.8,
-			[MetricType.UserDailySleepScoreGoalMax]: 0.9,
+			score: 0.81,
+			lowThreshold: 0.8,
+			highThreshold: 0.9,
 		})
-	).toEqual(SleepScoreControlStates.Good);
+	).toEqual(ScoreQuality.GOOD);
 	expect(
 		getScoreControlStates({
-			[MetricType.UserDailySleepScore]: 0.94,
-			[MetricType.UserDailySleepScoreGoalMin]: 0.8,
-			[MetricType.UserDailySleepScoreGoalMax]: 0.9,
+			score: 0.94,
+			lowThreshold: 0.8,
+			highThreshold: 0.9,
 		})
-	).toEqual(SleepScoreControlStates.Optimal);
+	).toEqual(ScoreQuality.OPTIMAL);
 });

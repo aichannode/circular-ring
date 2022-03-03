@@ -1,4 +1,5 @@
-import { ScoreQuality, SignalQuality } from "@domain/measure/score";
+import { ScoreQuality } from "@domain/measure/representation/api";
+import { SignalQuality } from "@domain/measure/score";
 import { Intensity } from "@domain/ring/ringLiveData";
 
 export const colors = {

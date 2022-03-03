@@ -5,13 +5,14 @@ import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
 import { useAutoConnectState } from "@domain/device/hooks";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader } from "@ui/components/infoList";
-import { ScoreSection } from "@ui/components/measure/scoreSection";
 import { Spinner } from "@ui/components/spinner";
+import { ScoreSection } from "@ui/containers/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { WarningBottomSheet } from "@ui/screens/circleAlarm/warningBottomSheet";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import React, { useEffect, useRef } from "react";
 import { Image, Pressable, ScrollView } from "react-native";
 import styled from "styled-components/native";
@@ -25,6 +26,8 @@ export const CircleAlarmScreen: React.FC = observer(() => {
 	const warningBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const wakeUpScore = useRepresentations().measure.hooks.useDailySleepQualityScore();
 	const autoConnectState = useAutoConnectState();
+	const { useCanDisplayData } = useRepresentations().measure.hooks;
+	const canDisplay = useCanDisplayData(moment().format("YYYY-MM-DD"));
 
 	useEffect(() => {
 		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
@@ -37,9 +40,11 @@ export const CircleAlarmScreen: React.FC = observer(() => {
 		<Container>
 			<ScrollView>
 				<ScoreSection
+					isDisabled={!canDisplay}
 					label={format("alarm.wake_up_score")}
 					color={colors.blue}
-					score={wakeUpScore}
+					score={wakeUpScore["user.daily.sleep.score"]}
+					quality={wakeUpScore.controlState}
 					style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
 				/>
 				<InfoListHeader>{format("alarm.score.programmed")}</InfoListHeader>

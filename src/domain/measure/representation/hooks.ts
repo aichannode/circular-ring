@@ -7,7 +7,7 @@ import { getKeyFromDate } from "../common/business";
 import { Metrics, MetricType } from "../metric";
 import { MeasureModel } from "../model/measureModel";
 import { DailyActivityIntensityData, DailySleepData } from "./api";
-import { canDisplay } from "./business";
+import { canDisplay, getScoreControlStates } from "./business";
 import { createSleepStagesGetter, getActivityPhases, useDailyHeavyComputationData } from "./lib/business";
 import {
 	DailyActivitiesMetrics,
@@ -85,21 +85,43 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				);
 				return model.dailySleepScoreContributorsMetrics.get(getKeyFromDate(isoDay)) ?? {};
 			},
-			useDailyEnergyScore(isoDay: string = moment().toISOString()): number | undefined {
+			useDailyEnergyScore(isoDay: string = moment().toISOString()) {
 				useEffect(function () {
 					if (!model.dailyEnergyScore.has(isoDay)) {
 						actions.setDailyEnergyScore(isoDay);
 					}
 				});
-				return model.dailySleepScore.get(isoDay);
+				return {
+					// Default value accordint to the specs.
+					score: model.dailyEnergyScore.get(isoDay) ?? 0,
+					controlState: getScoreControlStates({
+						score: model.dailyEnergyScore.get(isoDay) ?? 0,
+						lowThreshold: 0.8,
+						highThreshold: 0.9,
+					}),
+				};
 			},
-			useDailySleepQualityScore(isoDay: string = moment().toISOString()): number | undefined {
+			useDailySleepQualityScore(isoDay: string = moment().toISOString()) {
 				useEffect(function () {
 					if (!model.dailySleepScore.has(isoDay)) {
 						actions.setDailySleepScore(isoDay);
 					}
 				});
-				return model.dailySleepScore.get(isoDay);
+				const data = model.dailySleepScore.get(isoDay);
+				const score = {
+					[MetricType.UserDailySleepScore]: data?.[MetricType.UserDailySleepScore] ?? 0,
+					[MetricType.UserDailySleepScoreGoalMin]: data?.[MetricType.UserDailySleepScoreGoalMin] ?? 0.8,
+					[MetricType.UserDailySleepScoreGoalMax]: data?.[MetricType.UserDailySleepScoreGoalMax] ?? 0.9,
+				};
+				return {
+					// Default value according to the specs.
+					...score,
+					controlState: getScoreControlStates({
+						lowThreshold: score["user.daily.score.sleep.goal.min"],
+						highThreshold: score["user.daily.score.sleep.goal.max"],
+						score: score["user.daily.sleep.score"],
+					}),
+				};
 			},
 			useCanDisplayData(isoDay: string): boolean {
 				useEffect(function () {

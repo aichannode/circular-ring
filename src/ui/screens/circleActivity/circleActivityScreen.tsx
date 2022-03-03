@@ -16,9 +16,9 @@ import { InfoListHeader } from "@ui/components/infoList";
 import { Stack } from "@ui/components/layout";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
 import { ScoreGauge } from "@ui/components/measure/scoreGauge";
-import { ScoreSection } from "@ui/components/measure/scoreSection";
 import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { TitleText } from "@ui/components/text";
+import { ScoreSection } from "@ui/containers/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
@@ -63,6 +63,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 				useDailyActivities,
 				useDailyEnergyScore,
 				useDailyActivityIntensity,
+				useCanDisplayData,
 			},
 		},
 	} = useRepresentations();
@@ -79,15 +80,18 @@ export const CircleActivityScreen: React.FC = observer(() => {
 		value: number;
 		isoTime: string;
 	}> = activityIntensity.stages.map((stage) => ({ value: stage.level, isoTime: stage.start }));
+	const canDisplay = useCanDisplayData(selectedDay);
 
 	return (
 		<Container>
 			<ScrollView>
 				<View>
 					<ScoreSection
+						isDisabled={!canDisplay}
 						style={{ marginTop: 20 }}
 						color={colors.orangeRed}
-						score={energyScore}
+						score={energyScore.score}
+						quality={energyScore.controlState}
 						label={format("activity.energy_score")}
 					/>
 					<CircleCalendarButton
@@ -119,11 +123,11 @@ export const CircleActivityScreen: React.FC = observer(() => {
 									icon={getIcon(dataInfos.icon)}
 									label={format(dataInfos.labelKey)}
 									value={Math.round(value)}
-									goodThreshold={
+									lowThreshold={
 										dataInfos.metricsName.thresholdLow &&
 										(energyScoreDetails as any)[dataInfos.metricsName.thresholdLow]
 									}
-									optimalThreshold={
+									highThreshold={
 										dataInfos.metricsName.thresholdHigh &&
 										(energyScoreDetails as any)[dataInfos.metricsName.thresholdHigh]
 									}

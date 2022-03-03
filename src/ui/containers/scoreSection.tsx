@@ -1,4 +1,4 @@
-import { getScoreQuality } from "@domain/measure/score";
+import { ScoreQuality } from "@domain/measure/representation/api";
 import { ResponsiveCenterView, Stack } from "@ui/components/layout";
 import { ScoreView } from "@ui/components/scoreView";
 import { SecondaryText, TitleText } from "@ui/components/text";
@@ -12,14 +12,13 @@ import styled from "styled-components/native";
 interface ScoreSectionProps {
 	isDisabled: boolean;
 	label: string;
-	score?: number | null;
+	quality: ScoreQuality;
+	score: number;
 	color: string;
 	style?: StyleProp<ViewStyle>;
 }
-export const ScoreSection: React.FC<ScoreSectionProps> = ({ score, color, label, style, isDisabled }) => {
+export const ScoreSection: React.FC<ScoreSectionProps> = ({ score, color, label, style, isDisabled, quality }) => {
 	const { format, formatScoreQuality } = useI18n();
-
-	const scoreQuality = score != undefined ? getScoreQuality(score) : null;
 
 	return (
 		<ResponsiveCenterView style={style} maxWidth={175} align="stretch" horizontalPadding={0}>
@@ -27,11 +26,11 @@ export const ScoreSection: React.FC<ScoreSectionProps> = ({ score, color, label,
 			<ScoreWrapper align="center" gap={12}>
 				<ScoreView value={score ? score * 100 : undefined} color={color} textColor={colors.textPrimary} />
 				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-					{!isDisabled && scoreQuality && <ColoredDot color={ScoreQualityColors[scoreQuality]} />}
+					{!isDisabled && <ColoredDot color={ScoreQualityColors[quality]} />}
 					{isDisabled ? (
 						<TitleText style={{ color }}> {format("global.not_enough_data")}</TitleText>
 					) : (
-						<TitleText>{scoreQuality && formatScoreQuality(scoreQuality)}</TitleText>
+						<TitleText>{formatScoreQuality(quality)}</TitleText>
 					)}
 				</View>
 			</ScoreWrapper>

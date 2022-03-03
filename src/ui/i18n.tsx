@@ -1,4 +1,4 @@
-import { ScoreQuality } from "@domain/measure/score";
+import { ScoreQuality } from "@domain/measure/representation/api";
 import { Melody, Weekdays } from "@domain/ring/ringAlarm";
 import { Intensity } from "@domain/ring/ringLiveData";
 import dayjs from "dayjs";
