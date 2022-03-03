@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing, StyleProp, Text, ViewStyle } from "react-native";
 import styled from "styled-components/native";
+import { lerp } from "./business";
 import { SineWave } from "./shapes/sineWave";
 import { PrimaryText } from "./text";
 
@@ -14,7 +15,9 @@ interface ScoreViewProps {
 const scoreWaveAmplitude = 15;
 const animationDuration = 2500;
 const noValueHeight = 60;
-// @refresh reset
+/**
+ * @implements spec [00003](https://docs.google.com/document/d/16SRBS_XPqDhePKuCi6rQm399n72H_82GTPAiay6AQlQ/edit?disco=AAAAWbZAWfY) Flask is filled for a value from 50 to 100.
+ */
 export const ScoreView: React.FC<ScoreViewProps> = ({ color, textColor, value = 0, style }) => {
 	const waveTranslateX = useRef(new Animated.Value(0)).current;
 
@@ -30,13 +33,15 @@ export const ScoreView: React.FC<ScoreViewProps> = ({ color, textColor, value = 
 
 	const units = Math.floor(value);
 	const decimals = ((value - units) * 100).toFixed(0);
+	const waveValue = lerp(2, -100)(value); // Empty flask is 50, full flask is 100
+	const wavePosition = -scoreWaveAmplitude / 2 + (100 - (waveValue || noValueHeight));
 
 	return (
 		<Container color={color} style={style}>
 			<Animated.View
 				style={{
 					position: "absolute",
-					top: -scoreWaveAmplitude + (100 - (value || noValueHeight)),
+					top: wavePosition,
 					left: 0,
 					transform: [{ translateX: waveTranslateX }],
 				}}
