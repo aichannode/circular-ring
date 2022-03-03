@@ -44,6 +44,10 @@ export const colors = {
 		activityHigh: "#DD2A2A",
 		sleepPrimary: "#3960F7",
 		alarmPrimary: "#3996f7",
+		sleepAwake: "#19d946",
+		sleepRem: "#00b3ff",
+		sleepLight: "#117af3",
+		sleepDeep: "#1831ae",
 	},
 } as const;
 
