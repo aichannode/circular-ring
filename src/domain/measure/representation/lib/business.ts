@@ -19,7 +19,7 @@ export function getActivityPhases(
 	sportSessionDates: Array<[string | undefined, string | undefined]>;
 } {
 	const sportSessionDates: Array<[string | undefined, string | undefined]> = [];
-	const duration = Number(data.fixedValues[MetricType.UserDailyActivityTotal]);
+	const duration = Number(data.last[MetricType.UserDailyActivityTotal]);
 	const stages: Array<StageInfos<ActivityStage>> = data.timeline.reduce(function (result, block, i) {
 		if (hasMetric(MetricType.UserDataActivityIntensity)(block)) {
 			const intensityValue = Number(block.metrics[MetricType.UserDataActivityIntensity]);
@@ -106,54 +106,50 @@ export const createSleepStagesGetter =
 			}
 		}
 
-		const hasCoreSleep = MetricType.UserCoreSleepBegin in data.fixedValues;
+		const hasCoreSleep = MetricType.UserCoreSleepBegin in data.last;
 		const coreSleepTiming = hasCoreSleep
 			? ([
-					new Date((data.fixedValues[MetricType.UserCoreSleepBegin] as number) * 1000).toISOString(),
-					new Date((data.fixedValues[MetricType.UserCoreSleepEnd] as number) * 1000).toISOString(),
+					new Date((data.last[MetricType.UserCoreSleepBegin] as number) * 1000).toISOString(),
+					new Date((data.last[MetricType.UserCoreSleepEnd] as number) * 1000).toISOString(),
 			  ] as [string, string])
 			: undefined;
 
-		const totalMinutesSleepDuration = Number(data.fixedValues[MetricType.UserDailyTotalSleepDuration]);
+		const totalMinutesSleepDuration = Number(data.last[MetricType.UserDailyTotalSleepDuration]);
 		const napTimings: Array<[string, string]> = getNaps(data);
 
 		return {
 			totalMinutesSleepDuration,
 			stages,
-			timeToFallASleep: data.fixedValues[MetricType.UserTimeToFallASleep] as number,
+			timeToFallASleep: data.last[MetricType.UserTimeToFallASleep] as number,
 			coreSleepTiming,
 			napTimings,
 			sleepStagesDuration: {
 				[SleepStage.AWAKE]:
-					MetricType.UserDailyAwakeStageDuration in data.fixedValues &&
-					MetricType.UserDailyPercAwakeStage in data.fixedValues
+					MetricType.UserDailyAwakeStageDuration in data.last && MetricType.UserDailyPercAwakeStage in data.last
 						? {
-								duration: data.fixedValues[MetricType.UserDailyAwakeStageDuration] as number,
-								percent: data.fixedValues[MetricType.UserDailyPercAwakeStage] as number,
+								duration: data.last[MetricType.UserDailyAwakeStageDuration] as number,
+								percent: data.last[MetricType.UserDailyPercAwakeStage] as number,
 						  }
 						: undefined,
 				[SleepStage.REM]:
-					MetricType.UserDailyREMStageDuration in data.fixedValues &&
-					MetricType.UserDailyPercREMStage in data.fixedValues
+					MetricType.UserDailyREMStageDuration in data.last && MetricType.UserDailyPercREMStage in data.last
 						? {
-								duration: data.fixedValues[MetricType.UserDailyREMStageDuration] as number,
-								percent: data.fixedValues[MetricType.UserDailyPercREMStage] as number,
+								duration: data.last[MetricType.UserDailyREMStageDuration] as number,
+								percent: data.last[MetricType.UserDailyPercREMStage] as number,
 						  }
 						: undefined,
 				[SleepStage.LIGHT]:
-					MetricType.UserDailyLightStageDuration in data.fixedValues &&
-					MetricType.UserDailyPercLightStage in data.fixedValues
+					MetricType.UserDailyLightStageDuration in data.last && MetricType.UserDailyPercLightStage in data.last
 						? {
-								duration: data.fixedValues[MetricType.UserDailyLightStageDuration] as number,
-								percent: data.fixedValues[MetricType.UserDailyPercLightStage] as number,
+								duration: data.last[MetricType.UserDailyLightStageDuration] as number,
+								percent: data.last[MetricType.UserDailyPercLightStage] as number,
 						  }
 						: undefined,
 				[SleepStage.DEEP]:
-					MetricType.UserDailyDeepStageDuration in data.fixedValues &&
-					MetricType.UserDailyPercDeepStage in data.fixedValues
+					MetricType.UserDailyDeepStageDuration in data.last && MetricType.UserDailyPercDeepStage in data.last
 						? {
-								duration: data.fixedValues[MetricType.UserDailyDeepStageDuration] as number,
-								percent: data.fixedValues[MetricType.UserDailyPercDeepStage] as number,
+								duration: data.last[MetricType.UserDailyDeepStageDuration] as number,
+								percent: data.last[MetricType.UserDailyPercDeepStage] as number,
 						  }
 						: undefined,
 			},

@@ -11,11 +11,11 @@ export type Metrics<M extends MetricType> = Partial<{
  * Structure for measure model data for efficient search
  * Each range contains:
  * - the data evolution over range time for the given T metrics
- * - the fixed values: the last value of the range for the given F metrics
+ * - the last value of the range for the given F metrics
  */
 export type RangeMetrics<T extends MetricType = MetricType, F extends MetricType = MetricType> = {
 	timeline: Array<DatedMetrics<T>>;
-	fixedValues: Metrics<F>;
+	last: Metrics<F>;
 };
 
 export enum MetricType {

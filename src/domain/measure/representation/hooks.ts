@@ -130,9 +130,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					}
 				});
 				// UsercoreSleepEnd is in Unix time in second
-				const userCoreSleepEnd = model.dailySleepMetrics.get(isoDay)?.fixedValues[
-					MetricType.UserCoreSleepEnd
-				] as number;
+				const userCoreSleepEnd = model.dailySleepMetrics.get(isoDay)?.last[MetricType.UserCoreSleepEnd] as number;
 
 				// Spec: 00000
 				return !!userCoreSleepEnd && canDisplay(isoDay, userCoreSleepEnd * 1000);

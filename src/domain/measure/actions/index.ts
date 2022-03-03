@@ -103,7 +103,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 							isoDate: isoDay,
 							range: {
 								timeline,
-								fixedValues: duration,
+								last: duration,
 							},
 						},
 					},
@@ -187,7 +187,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 							isoDate: isoDay,
 							range: {
 								timeline,
-								fixedValues: duration,
+								last: duration,
 							},
 						},
 					},
