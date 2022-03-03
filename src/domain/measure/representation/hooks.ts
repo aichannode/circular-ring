@@ -4,9 +4,10 @@ import { useEffect } from "react";
 import { createActions } from "../actions";
 import { MeasureApi } from "../actions/lib/measureApi";
 import { getKeyFromDate } from "../common/business";
-import { Metrics } from "../metric";
+import { Metrics, MetricType } from "../metric";
 import { MeasureModel } from "../model/measureModel";
 import { DailyActivityIntensityData, DailySleepData } from "./api";
+import { canDisplay } from "./business";
 import { createSleepStagesGetter, getActivityPhases, useDailyHeavyComputationData } from "./lib/business";
 import {
 	DailyActivitiesMetrics,
@@ -99,6 +100,19 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					}
 				});
 				return model.dailySleepScore.get(isoDay);
+			},
+			useCanDisplayData(isoDay: string): boolean {
+				useEffect(function () {
+					if (!model.dailySleepMetrics.has(isoDay)) {
+						actions.setDailySleepScore(isoDay);
+					}
+				});
+				const userCoreSleepEnd = model.dailySleepMetrics.get(isoDay)?.fixedValues[
+					MetricType.UserCoreSleepEnd
+				] as number;
+
+				// Spec: 00000
+				return !!userCoreSleepEnd && canDisplay(isoDay, userCoreSleepEnd);
 			},
 			useDailyGlobalScore(isoDay: string = moment().toISOString()): number | undefined {
 				useEffect(function () {

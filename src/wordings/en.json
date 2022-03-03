@@ -113,7 +113,7 @@
 	"global.default_error": "An error occurred.\nPlease try again later.",
 	"global.yes": "yes",
 	"global.no": "no",
-	"global.not_enough_data": "Not enough information",
+	"global.not_enough_data": "Not enough data",
 	"global.done": "Done",
 	"global.date_interval_linker": "to",
 	"global.edit": "Edit",

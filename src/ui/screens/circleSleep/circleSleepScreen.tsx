@@ -34,7 +34,9 @@ export const CircleSleepScreen: React.FC = observer(() => {
 		useDailySleepScoreContributors: useDailySleepDetails,
 		useDailySleepQualityScore,
 		useDailySleepStages,
+		useCanDisplayData,
 	} = useRepresentations().measure.hooks;
+	const canDisplay = useCanDisplayData(selectedDay);
 	const details = useDailySleepDetails(selectedDay);
 	const qualityScore = useDailySleepQualityScore(selectedDay);
 	const [dailySleep, setData] = useState<DailySleepData | undefined>();
@@ -60,10 +62,11 @@ export const CircleSleepScreen: React.FC = observer(() => {
 		<Container>
 			<View>
 				<ScoreSection
+					isDisabled={!canDisplay}
 					style={{ marginTop: 20 }}
 					label={format("sleep.quality_score")}
 					score={qualityScore}
-					color={colors.darkBlue}
+					color={colors.business.sleepPrimary}
 				/>
 				<CircleCalendarButton
 					currentDay={selectedDay}
