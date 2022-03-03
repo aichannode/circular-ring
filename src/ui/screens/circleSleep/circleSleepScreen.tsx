@@ -57,7 +57,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 	});
 
 	useDailySleepStages({ setData, isoDay: selectedDay });
-
+	console.log(JSON.stringify(dailySleep));
 	return (
 		<Container>
 			<View>
