@@ -25,6 +25,7 @@ export const ScoreSection: React.FC<ScoreSectionProps> = ({ score, color, label,
 		<ResponsiveCenterView style={style} maxWidth={175} align="stretch" horizontalPadding={0}>
 			<SecondaryText>{label}</SecondaryText>
 			<ScoreWrapper align="center" gap={12}>
+				<ScoreView value={score ? score * 100 : undefined} color={color} textColor={colors.textPrimary} />
 				<Row align="center" justify="center">
 					{!isDisabled && scoreQuality && <ColoredDot color={ScoreQualityColors[scoreQuality]} />}
 					{isDisabled ? (
