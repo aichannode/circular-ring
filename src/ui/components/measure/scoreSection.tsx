@@ -1,12 +1,12 @@
 import { getScoreQuality } from "@domain/measure/score";
-import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
+import { ResponsiveCenterView, Stack } from "@ui/components/layout";
 import { ScoreView } from "@ui/components/scoreView";
 import { SecondaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors, ScoreQualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React from "react";
-import { StyleProp, ViewStyle } from "react-native";
+import { StyleProp, View, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
 interface ScoreSectionProps {
@@ -26,14 +26,14 @@ export const ScoreSection: React.FC<ScoreSectionProps> = ({ score, color, label,
 			<SecondaryText>{label}</SecondaryText>
 			<ScoreWrapper align="center" gap={12}>
 				<ScoreView value={score ? score * 100 : undefined} color={color} textColor={colors.textPrimary} />
-				<Row align="center" justify="center">
+				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
 					{!isDisabled && scoreQuality && <ColoredDot color={ScoreQualityColors[scoreQuality]} />}
 					{isDisabled ? (
 						<TitleText style={{ color }}> {format("global.not_enough_data")}</TitleText>
 					) : (
 						<TitleText>{scoreQuality && formatScoreQuality(scoreQuality)}</TitleText>
 					)}
-				</Row>
+				</View>
 			</ScoreWrapper>
 		</ResponsiveCenterView>
 	);
@@ -52,6 +52,5 @@ const ColoredDot = styled.View<{ color: string }>`
 	height: 10px;
 	border-radius: 5px;
 	background-color: ${({ color }) => color};
-	position: absolute;
-	left: 0;
+	margin-right: 10px;
 `;

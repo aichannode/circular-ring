@@ -104,15 +104,16 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 			useCanDisplayData(isoDay: string): boolean {
 				useEffect(function () {
 					if (!model.dailySleepMetrics.has(isoDay)) {
-						actions.setDailySleepScore(isoDay);
+						actions.setDailySleepStagesMetrics(isoDay);
 					}
 				});
+				// UsercoreSleepEnd is in Unix time in second
 				const userCoreSleepEnd = model.dailySleepMetrics.get(isoDay)?.fixedValues[
 					MetricType.UserCoreSleepEnd
 				] as number;
 
 				// Spec: 00000
-				return !!userCoreSleepEnd && canDisplay(isoDay, userCoreSleepEnd);
+				return !!userCoreSleepEnd && canDisplay(isoDay, userCoreSleepEnd * 1000);
 			},
 			useDailyGlobalScore(isoDay: string = moment().toISOString()): number | undefined {
 				useEffect(function () {
