@@ -29,7 +29,7 @@ import {
 	sleepingPillsKeys,
 	workTimeKeys,
 } from "@ui/screens/profile/advancedInformation/profileAdvancedInfoI18n";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import styled from "styled-components/native";
 import { CycleLengthBottomSheet } from "./cycleLengthBottomSheet";
@@ -54,6 +54,10 @@ export const ProfileAdvancedInformationScreen = () => {
 	const cycleLengthBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 	const [isLoading, setLoading] = useState(false);
+
+	useEffect(() => {
+		userService.retrieveUser();
+	}, []);
 
 	function configureEditionBottomSheet(config: AdvancedInfoEditionConfig<EditionInfoType>, option: EditionInfoType) {
 		setBottomSheetConfig(config);

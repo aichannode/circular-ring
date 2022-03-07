@@ -1,8 +1,9 @@
-import { dtoFromUserSettings } from "./business";
-import { AppStateService } from "@domain/appState/appStateService";
 import { getLogger } from "@core/logger/logger";
 import { round2Digits, toServerDate } from "@core/utils";
+import { AppStateService } from "@domain/appState/appStateService";
 import { AuthService } from "@domain/auth/authService";
+import { BleDeviceService } from "@domain/device/bleDeviceService";
+import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
 import { DateFormat, HeightUnit, HourFormat, NotificationsFormat, TemperatureFormat, WeightUnit } from "@domain/units";
 import {
 	AdvancedInfo,
@@ -19,12 +20,11 @@ import {
 import { TutorialInfo } from "@domain/user/tutorialInfo";
 import { Sex, User } from "@domain/user/user";
 import { UserApi } from "@domain/user/userApi";
-import { UserSettings } from "@domain/user/userSettings";
 import { UserNotificationsSettings } from "@domain/user/userNotificationsSettings";
+import { UserSettings } from "@domain/user/userSettings";
 import { UserStorage } from "@domain/user/userStorage";
-import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { observable } from "micro-observables";
-import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
+import { dtoFromUserSettings } from "./business";
 import { UserPutDto } from "./type";
 
 const defaultNotificationsSettings = {
@@ -181,7 +181,7 @@ export class UserService {
 
 	/** Circular user **/
 
-	private async retrieveUser() {
+	async retrieveUser() {
 		// get User
 		try {
 			const user = await this.userApi.getUser();
