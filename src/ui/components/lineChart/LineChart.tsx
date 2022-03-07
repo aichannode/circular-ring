@@ -10,10 +10,18 @@ export interface Line {
 	/** bpm */
 	y: number;
 }
+export interface Average {
+	/** value */
+	value: number;
+	/** color */
+	color: string;
+}
 export type Lines = Line[];
+export type Averages = Average[];
 
 interface LineChartProps {
 	data: Lines;
+	averages?: Averages;
 	graphColor: string;
 	xColor: string;
 	yColor: string;
@@ -22,6 +30,8 @@ interface LineChartProps {
 
 export function LineChart({
 	data,
+	averages,
+
 	graphColor = colors.red,
 	shouldDrawCircles = false,
 	xColor = colors.textPrimary,
@@ -62,6 +72,16 @@ export function LineChart({
 			granularityEnabled: true,
 			granularity: 1,
 			axisLineColor: processColor("white"),
+
+			limitLines: averages?.map(({ value, color }) => {
+				return {
+					limit: value,
+					lineColor: processColor(color),
+					lineDashPhase: 2,
+					lineWidth: 2.5,
+					lineDashLengths: [30, 15],
+				};
+			}),
 		},
 		right: {
 			enabled: false,
