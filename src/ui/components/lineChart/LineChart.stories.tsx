@@ -3,8 +3,9 @@ import { storiesOf } from "@storybook/react-native";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import * as React from "react";
-import { LineChart, Lines } from "./LineChart";
+import { LineChart, Lines, Averages } from "./LineChart";
 import { data } from "./mockedDataHR.json";
+import { object } from "@storybook/addon-knobs";
 
 const lines: Lines = data.map((e) => {
 	return {
@@ -13,9 +14,20 @@ const lines: Lines = data.map((e) => {
 	};
 });
 
+const averages: Averages = [
+	{
+		value: 98,
+		color: "red",
+	},
+	{
+		value: 60,
+		color: "green",
+	},
+];
 storiesOf("LineChart", module)
 	.add("default", () => (
 		<LineChart
+			averages={object("averages", averages)}
 			xColor={colors.textPrimary}
 			yColor={colors.darkGray}
 			data={lines}
@@ -23,6 +35,18 @@ storiesOf("LineChart", module)
 			graphColor={"red"}
 		/>
 	))
+	.add("Custom average value & color", () => {
+		return (
+			<LineChart
+				averages={object("averages", averages)}
+				xColor={colors.textPrimary}
+				yColor={colors.darkGray}
+				data={lines}
+				shouldDrawCircles={false}
+				graphColor={"red"}
+			/>
+		);
+	})
 	.add("custom color", () => {
 		return (
 			<LineChart
