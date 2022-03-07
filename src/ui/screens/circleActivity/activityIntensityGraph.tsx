@@ -14,14 +14,14 @@ type Props = {
 };
 
 export const ActivityIntensityGraph = ({ samples, tags }: Props) => {
-	const { format } = useI18n();
+	const { format, formatHour } = useI18n();
 
 	const data = {
 		dataSets: [
 			{
 				values: samples.map(({ value, isoTime }) => {
 					const date = new Date(isoTime);
-					const marker = `${date.getHours()}h${date.getMinutes()}\n${
+					const marker = `${formatHour(date)}\n${
 						value >= 3
 							? format("intensity.high")
 							: value >= 2
@@ -56,6 +56,7 @@ export const ActivityIntensityGraph = ({ samples, tags }: Props) => {
 
 		config: {
 			barWidth: 0.5,
+			xEntrySpace: 50,
 		},
 	};
 
@@ -63,10 +64,9 @@ export const ActivityIntensityGraph = ({ samples, tags }: Props) => {
 		position: "BOTTOM" as const,
 		valueFormatter: samples.map(({ isoTime }) => {
 			const date = new Date(isoTime);
-			const hour = date.getHours();
-			const minutes = date.getMinutes();
-			return `${hour}h${minutes}`;
+			return `${formatHour(date)}`;
 		}),
+		labelCount: 3,
 		drawGridLines: false,
 		axisLineColor: processColor("white"), // can't hide it so paint it white
 	};
@@ -104,7 +104,9 @@ export const ActivityIntensityGraph = ({ samples, tags }: Props) => {
 					xAxis={xAxis}
 					yAxis={yAxis}
 					legend={{
+						formToTextSpace: 5,
 						enabled: false,
+						xEntrySpace: 50,
 					}}
 					marker={{
 						enabled: true,

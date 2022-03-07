@@ -1,15 +1,15 @@
-import { colors } from "@ui/styles/colors";
+import Cross from "@assets/images/crossBig.png";
 import { useServices } from "@core/services";
-import { textStyles } from "@ui/styles/textStyles";
-import React, { useState, useRef } from "react";
-import { Image, View, TouchableOpacity } from "react-native";
-import styled from "styled-components/native";
-import { CreateCustomNoteBottomSheet } from "./createCustomNoteBottomSheet";
-import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 // import { useCustomTags } from "@domain/calendar/hooks/useTags";
 import { CalendarTag } from "@domain/calendar/calendar";
-import Cross from "@assets/images/crossBig.png";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { Spinner } from "@ui/components/spinner";
+import { colors } from "@ui/styles/colors";
+import { textStyles } from "@ui/styles/textStyles";
+import React, { useRef, useState } from "react";
+import { Image, TouchableOpacity, View } from "react-native";
+import styled from "styled-components/native";
+import { CreateCustomNoteBottomSheet } from "./createCustomNoteBottomSheet";
 
 const CustomNote = ({
 	selectedTags,
@@ -111,7 +111,7 @@ const CustomNote = ({
 const AddContainer = styled.TouchableOpacity`
 	height: 35px;
 	width: 35px;
-	border: 1px solid ${colors.redOrange}
+	border: 1px solid ${colors.redOrange};
 	border-radius: 35px;
 	margin: 5px;
 `;

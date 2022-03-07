@@ -89,6 +89,7 @@ export const DailyPieChart: React.FC<Props> = ({
 					<Image source={require("@assets/images/evening.png")} />
 					<TotalDurationWrapper>
 						<SliceDurationLabel>{format(title)}</SliceDurationLabel>
+						{/* @TODO  format is24h below*/}
 						<SliceDurationValue>{formatDuration(totalDuration * 60)}</SliceDurationValue>
 					</TotalDurationWrapper>
 					<Image source={require("@assets/images/morning.png")} />

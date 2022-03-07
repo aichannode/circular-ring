@@ -1,6 +1,7 @@
 import { useServices } from "@core/services";
 import { RingAlarm } from "@domain/ring/ringAlarm";
 import { Divider } from "@ui/components/divider";
+import { Hour } from "@ui/components/hour";
 import { Grow } from "@ui/components/layout";
 import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
@@ -22,6 +23,8 @@ export const AlarmCard: React.FC<AlarmCardProps> = ({ data, disabled, style }) =
 	const { formatDay } = useI18n();
 	const { id, isActivated } = data;
 	const [isEnabled, setIsEnabled] = useState(isActivated);
+	const date = new Date();
+	date.setHours(data.time.hour, data.time.minute, 0);
 
 	const updateAlarm = async (prevState: boolean) => {
 		setIsEnabled((prev) => !prev);
@@ -36,9 +39,7 @@ export const AlarmCard: React.FC<AlarmCardProps> = ({ data, disabled, style }) =
 				}}
 			/>
 			<HourContainer>
-				<Time style={style}>
-					{`${data.time.hour.toString().padStart(2, "0")} : ${data.time.minute.toString().padStart(2, "0")}`}
-				</Time>
+				<Hour value={date} style={{ fontSize: 18 }} />
 			</HourContainer>
 			<VerticalSeparator />
 			<LabelContainer>
@@ -75,12 +76,6 @@ const HourContainer = styled.View`
 	align-items: center;
 `;
 
-const Time = styled.Text`
-	font-size: 18px;
-	font-weight: 700;
-	color: ${colors.textPrimary};
-`;
-
 const LabelContainer = styled.View`
 	flex-grow: 1;
 	justify-content: center;
@@ -101,7 +96,7 @@ const VerticalSeparator = styled(Divider)`
 `;
 
 const SwitchButton = styled(Switch)`
-	margin-right: 10px;
+	margin-right: 15px;
 	border-color: ${colors.blue};
 `;
 

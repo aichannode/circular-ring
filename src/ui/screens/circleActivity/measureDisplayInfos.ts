@@ -3,10 +3,12 @@ import { DailyActivitiesMetrics, DailyEnergyScoreMetrics } from "@domain/measure
 import { WordingKey } from "src/wordings";
 import { getMetricColor, getGaugeColor, getScoreQualityLabel } from "../business";
 import { GaugeDisplayConfig, MetricDisplayConfig } from "../type";
+import { useI18n } from "@ui/i18n";
 
 export type DailyEnergyScoreGaugeConfigs = Record<DailyEnergyScoreMetrics, GaugeDisplayConfig>;
 
 export function getActivityQualityDetails(format: (v: WordingKey) => string): DailyEnergyScoreGaugeConfigs {
+	const { formatTemperature } = useI18n();
 	return {
 		// Body recovery
 		[MetricType.UserDailyScoreRecovery]: {
@@ -130,7 +132,7 @@ export function getActivityQualityDetails(format: (v: WordingKey) => string): Da
 				thresholdLow: number;
 				thresholdHigh: number;
 				gaugeFilling: number;
-			}) => `${value > 0 ? "+" : "-"} ${value}°C`,
+			}) => formatTemperature(value),
 			getGaugeColor: getGaugeColor(),
 		},
 		[MetricType.UserDailySleepScore]: {

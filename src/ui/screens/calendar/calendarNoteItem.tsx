@@ -2,13 +2,13 @@ import { useServices } from "@core/services";
 import { CalendarNote } from "@domain/calendar/calendar";
 import { Grow } from "@ui/components/layout";
 import { Spinner } from "@ui/components/spinner";
+import { TimeEditor, TimeEditorRef } from "@ui/components/timeEditor";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useState, useRef, useEffect } from "react";
-import { TouchableOpacity, Pressable, StyleProp, ViewStyle } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Pressable, StyleProp, TouchableOpacity, ViewStyle } from "react-native";
 import styled from "styled-components/native";
-import { TimeEditor, TimeEditorRef } from "@ui/components/timeEditor";
 
 interface CalendarNoteItemProps {
 	note: CalendarNote;
@@ -25,7 +25,7 @@ interface TimeEditorConfig {
 }
 
 export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, color, canDelete = false, style }) => {
-	const { format, formatHour, formatNoteIntervalLinker } = useI18n();
+	const { format, formatNoteIntervalLinker, formatHour } = useI18n();
 	// const dateWithHour = useCallback((hour: number) => dayjs(day).hour(hour).toDate(), [day]);
 	const { calendarService } = useServices();
 	const [isLoading, setLoading] = useState(false);
@@ -65,27 +65,6 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 		} catch (e) {
 			setLoading(false);
 		}
-		// try {
-		// 	const newTags = tags
-		// 		.filter((element: CalendarNote) => element.id === note.id)
-		// 		.filter((element: CalendarNote) => {
-		// 			return note.tag.id != element.tag.id;
-		// 		});
-
-		// 	if (newTags.length > 0) {
-		// 		await calendarService.updateNote(
-		// 			note,
-		// 			newTags.map((item) => item.tag.id)
-		// 		);
-		// 	} else {
-		// 		await calendarService.deleteNote(note);
-		// 	}
-
-		// 	setLoading(false);
-		// } catch (e) {
-		// 	setLoading(false);
-		// 	setErrorMessage(format("global.default_error"));
-		// }
 	};
 
 	return (

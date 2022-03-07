@@ -1,12 +1,12 @@
 import { ApiService } from "@core/api/apiService";
+import { addRequestInterceptor } from "@core/api/interceptors/interceptor";
+import { serializeArrayParametersInterceptor } from "@core/api/interceptors/serializeArrayParametersInterceptor";
 import { AdvancedInfo } from "@domain/user/advancedInfo";
 import { Sex, User } from "@domain/user/user";
 import { UserSettings } from "@domain/user/userSettings";
 import axios, { AxiosInstance } from "axios";
-import { addRequestInterceptor } from "@core/api/interceptors/interceptor";
-import { serializeArrayParametersInterceptor } from "@core/api/interceptors/serializeArrayParametersInterceptor";
-import { UserDto, UserPutDto, UserSettingsDto } from "./type";
 import { userSettingsFromDto } from "./business";
+import { UserDto, UserPutDto, UserSettingsDto } from "./type";
 
 export class UserApi {
 	private readonly instance: AxiosInstance;

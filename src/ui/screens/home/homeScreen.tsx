@@ -5,6 +5,7 @@ import { useSetupState } from "@domain/device/hooks";
 import { useNotifications, useRecommendations } from "@domain/feed/hooks";
 import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringManagementService";
+import { DateFormat } from "@domain/units";
 import { useUserSettings } from "@domain/user/hooks/useUser";
 import { PrimaryButton } from "@ui/components/buttons";
 import Fade from "@ui/components/fade";
@@ -75,15 +76,14 @@ export const HomeScreen: React.FC = () => {
 		</View>
 	);
 	Object.keys(recommendations).map((date, key) => {
+		const dateFormat = userSettings?.dateFormat === DateFormat.SI ? "DD/MM/YYYY" : "MM/DD/YYYY";
 		data.push(
 			<View style={{ paddingHorizontal: 6 }} key={date}>
 				{date !== "today" && (
 					<View style={{ alignItems: "center", marginTop: 15 }}>
 						<Separator />
 						<MetaDataText style={{ paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray }}>
-							{date === "yesterday"
-								? format("global.yesterday").toUpperCase()
-								: moment(date).format(userSettings?.dateFormat)}
+							{date === "yesterday" ? format("global.yesterday").toUpperCase() : moment(date).format(dateFormat)}
 						</MetaDataText>
 					</View>
 				)}

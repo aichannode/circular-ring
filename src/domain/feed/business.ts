@@ -34,7 +34,7 @@ export function getFeedEntityDate(isoDate: string, todayIsoDate: string, format?
 	}
 
 	// The entry is older than one day, return the hours
-	return date.format(format === HourFormat.TWELVE ? "hh:mm A" : "HH:mm");
+	return date.format(format === HourFormat.TWELVE ? "hh:mm A" : "hh:mm");
 }
 
 function isUserInput(reco: FeedEntityComponentDto): reco is UserInputComponentConfigurationDto {

@@ -7,7 +7,7 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useState } from "react";
-import { View, Image } from "react-native";
+import { Image, View } from "react-native";
 import styled from "styled-components/native";
 
 interface CreateCustomNoteBottomSheetProps {

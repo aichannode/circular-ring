@@ -1,22 +1,22 @@
-import styled from "styled-components/native";
-import React, { useState, useCallback } from "react";
-import { colors } from "@ui/styles/colors";
 import { useServices } from "@core/services";
-import dayjs from "dayjs";
-import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
-import { Spinner } from "@ui/components/spinner";
-import { FakeHeader } from "./fakeHeader";
-import { CirclesBanner } from "./fakeCircle";
-import { View } from "react-native";
-import { Recommendation } from "@ui/screens/home/feedEntities/Recommendation";
-import { FakeRecommendation } from "./FakeRecommendation";
-import { Explanation } from "./explanation";
-import { Mask } from "./mask";
-import { recommendationData, recommendationDataFeed } from "./recomandation";
-import { FourDot } from "./fourDot";
-import { FakeQuiAccess } from "./fakeQuickAccess";
 import { useFetchCircles } from "@domain/circles/hooks";
 import { DateFormat } from "@domain/units";
+import { Spinner } from "@ui/components/spinner";
+import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
+import { Recommendation } from "@ui/screens/home/feedEntities/Recommendation";
+import { colors } from "@ui/styles/colors";
+import dayjs from "dayjs";
+import React, { useCallback, useState } from "react";
+import { View } from "react-native";
+import styled from "styled-components/native";
+import { Explanation } from "./explanation";
+import { CirclesBanner } from "./fakeCircle";
+import { FakeHeader } from "./fakeHeader";
+import { FakeQuiAccess } from "./fakeQuickAccess";
+import { FakeRecommendation } from "./FakeRecommendation";
+import { FourDot } from "./fourDot";
+import { Mask } from "./mask";
+import { recommendationData, recommendationDataFeed } from "./recomandation";
 
 export const Tutorial = () => {
 	const route = useAppRoute<Routes.OnboardingTutorial>();

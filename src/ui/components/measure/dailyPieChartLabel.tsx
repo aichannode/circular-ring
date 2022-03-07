@@ -1,7 +1,7 @@
-import moment, { Moment } from "moment";
-import React from "react";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import moment, { Moment } from "moment";
+import React from "react";
 import { View } from "react-native";
 import Svg, { Rect } from "react-native-svg";
 import { WordingKey } from "src/wordings";
