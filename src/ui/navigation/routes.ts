@@ -55,6 +55,8 @@ export enum Routes {
 	HighHR = "HighHR",
 	LowHr = "LowHr",
 	LowSpo2 = "LowSpo2",
+
+	Storybook = "Storybook",
 }
 
 export type AppRoutesParams = {
@@ -99,6 +101,7 @@ export type AppRoutesParams = {
 	[Routes.ProfileAdvancedInformation]: undefined;
 	[Routes.ProfileBirthControl]: undefined;
 	[Routes.Settings]: undefined;
+	[Routes.Storybook]: undefined;
 	[Routes.Live]: undefined;
 	[Routes.Calendar]: undefined;
 	[Routes.CalendarEditNotes]: { day: string; selectedTags?: CalendarTag[] };

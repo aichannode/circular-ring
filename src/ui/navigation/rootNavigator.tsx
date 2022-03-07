@@ -51,6 +51,7 @@ import { NotificationsScreen } from "@ui/screens/notifications/notificationsScre
 import { HighHrScreen } from "@ui/screens/notifications/highHrScreen";
 import { LowHrScreen } from "@ui/screens/notifications/lowHrScreen";
 import { LowSpo2Screen } from "@ui/screens/notifications/lowSpo2Screen";
+import StorybookScreen from "@stories";
 
 const SetupStack = createNativeStackNavigator();
 
@@ -287,6 +288,13 @@ const MainHomeNavigator = () => {
 				options={{
 					title: format("header.lowSPO2"),
 					headerRight: () => <MyRingBattery />,
+				}}
+			/>
+			<MainStack.Screen
+				name={Routes.Storybook}
+				component={StorybookScreen}
+				options={{
+					title: format("header.storybook"),
 				}}
 			/>
 		</MainStack.Navigator>
