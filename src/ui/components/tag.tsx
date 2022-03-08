@@ -1,4 +1,5 @@
 import { colors } from "@ui/styles/colors";
+import { capitalize } from "@ui/utils/stringUtils";
 import React from "react";
 import { StyleProp, Text, View, ViewStyle } from "react-native";
 
@@ -25,7 +26,7 @@ export function Tag({ children, containerStyle }: { children: string; containerS
 					color: colors.white,
 				}}
 			>
-				{children}
+				{capitalize(children)}
 			</Text>
 		</View>
 	);

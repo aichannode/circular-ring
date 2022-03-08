@@ -1,4 +1,5 @@
 import { useRepresentations } from "@core/representation";
+import { useDailyTags } from "@domain/calendar/hooks/useTags";
 import { DailySleepData } from "@domain/measure/representation/api";
 import { dailySleepScoreContributorsMetrics } from "@domain/measure/representation/lib/type";
 import { SleepStage } from "@domain/measure/type";
@@ -55,6 +56,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 		napFrames: dailySleep?.napTimings,
 		coreSleepFrame: dailySleep?.coreSleepTiming,
 	});
+	const tags = useDailyTags(selectedDay);
 
 	useDailySleepStages({ setData, isoDay: selectedDay });
 
@@ -165,7 +167,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 				</View>
 				{dailySleep ? (
 					<GraphContainer>
-						<Hypnogram data={sleepStages} />
+						<Hypnogram data={sleepStages} tags={tags} />
 						<View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
 							<GraphLegend
 								rows={[
