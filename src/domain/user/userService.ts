@@ -310,10 +310,19 @@ export class UserService {
 		stride?: number;
 		cycleLength?: number;
 	}) {
+		const defaultUserAdvancedInfo = {
+			workTime: "DAY",
+			chronoType: "MORNING",
+			physicalDisabilities: "NONE",
+			sleepDisorder: "NONE",
+			dietarySupplements: "NONE",
+			sleeperType: "LIGHT",
+		};
 		const currentInfo = this._userAdvancedInfo.get();
 		if (currentInfo) {
 			try {
 				const userAdvancedInfo = await this.userApi.updateAdvancedInfo({
+					...defaultUserAdvancedInfo,
 					...currentInfo,
 					...info,
 				});

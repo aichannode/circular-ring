@@ -202,9 +202,11 @@ export function useI18n(options?: FormatterOptions) {
 			const is24h = useIs24h();
 			return is24h ? dayjs(date).format("HH : mm") : dayjs(date).format("hh : mm A");
 		},
-		formatDate: (date: Date) => {
-			const isUSCS = useIsCelsius();
-			return isUSCS ? dayjs(date).format("MM/DD/YYYY") : dayjs(date).format("DD/MM/YYYY");
+		formatDate: (date: Date | undefined) => {
+			if (date) {
+				const isUSCS = useIsCelsius();
+				return isUSCS ? dayjs(date).format("MM/DD/YYYY") : dayjs(date).format("DD/MM/YYYY");
+			}
 		},
 		formatTemperature: (temperature: number) => {
 			const isCelsius = useIsCelsius();
