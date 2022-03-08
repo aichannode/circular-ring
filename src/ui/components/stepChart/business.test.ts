@@ -1,4 +1,4 @@
-import { linspace, progress } from "./business";
+import { getNearestDataIndexes, linspace, progress } from "./business";
 
 test("should return an evenly spaced array of points (asc)", function () {
 	expect(linspace(0, 10, 5)).toEqual([0, 2.5, 5, 7.5, 10]);
@@ -24,4 +24,14 @@ test("should return valid progress", function () {
 	expect(progress(0, 0, 1)).toEqual(0);
 	expect(progress(0.5, 0, 1)).toEqual(0.5);
 	expect(progress(12.5, 10, 20)).toEqual(0.25);
+});
+
+test("should get nearest data indexes", function () {
+	expect(getNearestDataIndexes(0, [0, 1, 2, 3, 4, 5])).toEqual([0]);
+	expect(getNearestDataIndexes(1, [0, 1, 2, 3, 4, 5])).toEqual([1]);
+	expect(getNearestDataIndexes(2, [0, 0, 0])).toEqual([0, 1, 2]);
+	expect(getNearestDataIndexes(2, [])).toEqual([]);
+	expect(getNearestDataIndexes(2, [0.1, 0.2, 0.3])).toEqual([2]);
+	expect(getNearestDataIndexes(0.15, [0.1, 0.2, 0.3])).toEqual([0, 1]);
+	expect(getNearestDataIndexes(0.15001, [0.1, 0.2, 0.3])).toEqual([1]);
 });

@@ -1,16 +1,19 @@
 import { colors } from "@ui/styles/colors";
 import React from "react";
-import { Text, View } from "react-native";
+import { StyleProp, Text, View, ViewStyle } from "react-native";
 
-export function Tag({ children }: { children: string }) {
+export function Tag({ children, containerStyle }: { children: string; containerStyle?: StyleProp<ViewStyle> }) {
 	return (
 		<View
-			style={{
-				height: 14,
-				paddingHorizontal: 5,
-				borderRadius: 7.5,
-				backgroundColor: colors.orangeRed,
-			}}
+			style={[
+				{
+					height: 14,
+					paddingHorizontal: 5,
+					borderRadius: 7.5,
+					backgroundColor: colors.orangeRed,
+				},
+				containerStyle,
+			]}
 		>
 			<Text
 				style={{

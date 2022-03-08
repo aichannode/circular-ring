@@ -1,6 +1,7 @@
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { SleepStage } from "@domain/measure/type";
 import { StepChart } from "@ui/components/stepChart/StepChart";
+import { Tag } from "@ui/components/tag";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
@@ -21,40 +22,52 @@ export function Hypnogram({ data }: Props) {
 	const stepsData = toStepsData(data);
 	const { format } = useI18n();
 
+	function yColor(y: number) {
+		switch (y) {
+			case SleepStage.DEEP:
+				return colors.business.sleepDeep;
+			case SleepStage.LIGHT:
+				return colors.business.sleepLight;
+			case SleepStage.REM:
+				return colors.business.sleepRem;
+			default:
+			case SleepStage.AWAKE:
+				return colors.business.sleepAwake;
+		}
+	}
+
+	function yLabelFormat(y: number) {
+		switch (y) {
+			case SleepStage.DEEP:
+				return format("sleep.stage.deep");
+			case SleepStage.LIGHT:
+				return format("sleep.stage.light");
+			case SleepStage.REM:
+				return format("sleep.stage.REM");
+			default:
+			case SleepStage.AWAKE:
+				return format("sleep.stage.awake");
+		}
+	}
+
 	return (
 		<StepChart
 			data={stepsData}
 			yAxisWidth={31}
-			yColor={function (y: number) {
-				switch (y) {
-					case SleepStage.DEEP:
-						return colors.business.sleepDeep;
-					case SleepStage.LIGHT:
-						return colors.business.sleepLight;
-					case SleepStage.REM:
-						return colors.business.sleepRem;
-					default:
-					case SleepStage.AWAKE:
-						return colors.business.sleepAwake;
-				}
-			}}
-			yLabelFormat={function (y: number) {
-				switch (y) {
-					case SleepStage.DEEP:
-						return format("sleep.stage.deep");
-					case SleepStage.LIGHT:
-						return format("sleep.stage.light");
-					case SleepStage.REM:
-						return format("sleep.stage.REM");
-					default:
-					case SleepStage.AWAKE:
-						return format("sleep.stage.awake");
-				}
-			}}
+			yColor={yColor}
+			yLabelFormat={yLabelFormat}
 			xLabelFormat={(tick) => moment(tick).format("H A")}
 			xAxisContentInset={15}
 			defaultYAxis={defaultYAxis}
 			defaultXAxis={defaultXAxis}
+			tooltipYOffset={-30}
+			tooltipSize={{ width: 40, height: 30 }}
+			renderTooltip={(step) => (
+				<>
+					<Tag containerStyle={{ backgroundColor: colors.blue, marginBottom: 4 }}>{moment(step.x).format("HH:mm")}</Tag>
+					<Tag containerStyle={{ backgroundColor: colors.blue }}>{yLabelFormat(step.y)}</Tag>
+				</>
+			)}
 		/>
 	);
 }

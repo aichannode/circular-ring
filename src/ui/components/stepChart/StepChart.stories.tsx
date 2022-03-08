@@ -1,7 +1,10 @@
 // components/Task.stories.js
 import { storiesOf } from "@storybook/react-native";
+import { Tag } from "@ui/components/tag";
+import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import * as React from "react";
+import { Text } from "react-native";
 import { StepChart, Steps } from "./StepChart";
 
 const defaultData: Steps = [
@@ -76,6 +79,19 @@ storiesOf("StepChart", module)
 	.add("default", () => {
 		return <StepChart data={defaultData} />;
 	})
+	.add("with tooltip", () => {
+		return (
+			<StepChart
+				data={defaultData}
+				renderTooltip={(step) => (
+					<Text style={{ color: "white" }}>
+						({step.x},{step.y})
+					</Text>
+				)}
+				tooltipYOffset={-10}
+			/>
+		);
+	})
 	.add("with only 2 steps", () => {
 		return <StepChart data={defaultData.filter((el) => el.y == 1 || el.y == 2)} />;
 	})
@@ -112,6 +128,16 @@ storiesOf("StepChart", module)
 				yLabelFormat={yLabelFormat}
 				xLabelFormat={xLabelFormat}
 				xAxisContentInset={15}
+				tooltipYOffset={-30}
+				tooltipSize={{ width: 40, height: 30 }}
+				renderTooltip={(step) => (
+					<>
+						<Tag containerStyle={{ backgroundColor: colors.blue, marginBottom: 4 }}>
+							{moment(step.x).format("HH:mm")}
+						</Tag>
+						<Tag containerStyle={{ backgroundColor: colors.blue }}>{yLabelFormat(step.y)}</Tag>
+					</>
+				)}
 			/>
 		);
 	});
