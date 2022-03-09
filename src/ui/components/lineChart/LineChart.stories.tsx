@@ -1,11 +1,11 @@
 // components/Task.stories.js
+import { object } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react-native";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import * as React from "react";
-import { LineChart, Lines, Averages } from "./LineChart";
+import { Averages, DaysItem, LineChart, Lines } from "./LineChart";
 import { data } from "./mockedDataHR.json";
-import { object } from "@storybook/addon-knobs";
 
 const lines: Lines = data.map((e) => {
 	return {
@@ -13,6 +13,51 @@ const lines: Lines = data.map((e) => {
 		y: e.metrics["user.hr"],
 	};
 });
+
+const items: DaysItem = [
+	{
+		awake: 1,
+		deep: 1.8,
+		rem: 3.6,
+		light: 5.2,
+	},
+	{
+		awake: 1.1,
+		deep: 1.9,
+		rem: 3.8,
+		light: 5.4,
+	},
+	{
+		awake: 1.7,
+		deep: 2.1,
+		rem: 3.9,
+		light: 5.4,
+	},
+	{
+		awake: 1.5,
+		deep: 1.7,
+		rem: 2,
+		light: 5.0,
+	},
+	{
+		awake: 1.4,
+		deep: 1.6,
+		rem: 3.8,
+		light: 4.8,
+	},
+	{
+		awake: 1.8,
+		deep: 2,
+		rem: 3,
+		light: 6.2,
+	},
+	{
+		awake: 2,
+		deep: 2.1,
+		rem: 3,
+		light: 5.4,
+	},
+];
 
 const averages: Averages = [
 	{
@@ -33,6 +78,8 @@ storiesOf("LineChart", module)
 			data={lines}
 			shouldDrawCircles={false}
 			graphColor={"red"}
+			valueFormatter="date"
+			valueFormatterPattern="H'h'"
 		/>
 	))
 	.add("Custom average value & color", () => {
@@ -44,9 +91,24 @@ storiesOf("LineChart", module)
 				data={lines}
 				shouldDrawCircles={false}
 				graphColor={"red"}
+				valueFormatter="date"
+				valueFormatterPattern="H'h'"
 			/>
 		);
 	})
+	.add("Multiple Line", () => {
+		return (
+			<LineChart
+				isWeek={true}
+				xColor={colors.textPrimary}
+				yColor={colors.darkGray}
+				daysItem={items}
+				shouldDrawCircles={true}
+				valueFormatter={["S", "M", "T", "W", "T", "F", "S"]}
+			/>
+		);
+	})
+
 	.add("custom color", () => {
 		return (
 			<LineChart
@@ -55,6 +117,8 @@ storiesOf("LineChart", module)
 				data={lines}
 				shouldDrawCircles={false}
 				graphColor={"green"}
+				valueFormatter="date"
+				valueFormatterPattern="H'h'"
 			/>
 		);
 	})
@@ -66,6 +130,8 @@ storiesOf("LineChart", module)
 				shouldDrawCircles={true}
 				data={lines}
 				graphColor={"red"}
+				valueFormatter="date"
+				valueFormatterPattern="H'h'"
 			/>
 		);
 	})
@@ -78,6 +144,8 @@ storiesOf("LineChart", module)
 				shouldDrawCircles={true}
 				data={lines}
 				graphColor={"red"}
+				valueFormatter="date"
+				valueFormatterPattern="H'h'"
 			/>
 		);
 	});

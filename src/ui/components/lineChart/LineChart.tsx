@@ -1,7 +1,7 @@
+import { colors } from "@ui/styles/colors";
 import React from "react";
 import { processColor } from "react-native";
 import { LineChart as LineComponent } from "react-native-charts-wrapper";
-import { colors } from "@ui/styles/colors";
 import styled from "styled-components/native";
 
 export interface Line {
@@ -9,6 +9,12 @@ export interface Line {
 	x: number;
 	/** bpm */
 	y: number;
+}
+export interface DayItem {
+	awake: number;
+	deep: number;
+	rem: number;
+	light: number;
 }
 export interface Average {
 	/** value */
@@ -18,33 +24,41 @@ export interface Average {
 }
 export type Lines = Line[];
 export type Averages = Average[];
+export type DaysItem = DayItem[];
 
 interface LineChartProps {
-	data: Lines;
+	data?: Lines;
+	isWeek?: boolean;
 	averages?: Averages;
-	graphColor: string;
+	daysItem?: DaysItem;
+	graphColor?: string;
 	xColor: string;
 	yColor: string;
 	shouldDrawCircles?: boolean;
+	valueFormatterPattern?: string;
+	valueFormatter: string | string[];
 }
 
 export function LineChart({
 	data,
 	averages,
-
+	daysItem,
+	valueFormatterPattern,
+	valueFormatter,
+	isWeek = false,
 	graphColor = colors.red,
 	shouldDrawCircles = false,
 	xColor = colors.textPrimary,
 	yColor = colors.darkGray,
 }: LineChartProps) {
-	const yValues = data.map((line) => line.y);
-	const yMin = Math.min(...yValues);
+	const yMin = !isWeek ? Math.min(...data!.map((line) => line.y)) : 0;
 
 	const xAxis = {
-		valueFormatter: "date",
-		valueFormatterPattern: "H'h'",
+		valueFormatter: valueFormatter,
+		valueFormatterPattern: valueFormatterPattern,
+
 		position: "BOTTOM" as const,
-		centerAxisLabels: true,
+		centerAxisLabels: isWeek ? false : true,
 		drawAxisLine: false,
 		enabled: true,
 		granularity: 1,
@@ -60,7 +74,7 @@ export function LineChart({
 	const yAxis = {
 		left: {
 			labelCount: 4,
-			axisMinimum: yMin - ((yMin % 10) + 10),
+			axisMinimum: isWeek ? 0 : yMin - ((yMin % 10) + 10),
 			enabled: true,
 			textColor: processColor(yColor),
 			drawGridLines: true,
@@ -110,6 +124,98 @@ export function LineChart({
 		],
 	};
 
+	const dataLineWeeks = {
+		dataSets: isWeek
+			? [
+					{
+						values: daysItem!.map(({ awake }, index) => {
+							return { x: index, y: awake };
+						}),
+						label: "",
+						config: {
+							drawValues: false,
+							lineWidth: 3,
+							drawCircles: true,
+							circleRadius: 6,
+							circleColor: processColor(colors.business.sleepAwake),
+							circleHoleColor: processColor(colors.business.sleepAwake),
+							highlightColor: processColor("transparent"),
+							color: processColor(colors.business.sleepAwake),
+							axisLineColor: processColor("white"),
+
+							drawFilled: false,
+							valueTextSize: 0,
+							legend: false,
+						},
+					},
+					{
+						values: daysItem!.map(({ deep }, index) => {
+							return { x: index, y: deep };
+						}),
+						label: "",
+						config: {
+							drawValues: false,
+							lineWidth: 3,
+							drawCircles: true,
+							circleRadius: 6,
+							circleColor: processColor(colors.business.sleepDeep),
+							circleHoleColor: processColor(colors.business.sleepDeep),
+							highlightColor: processColor("transparent"),
+							color: processColor(colors.business.sleepDeep),
+							axisLineColor: processColor("white"),
+
+							drawFilled: false,
+							valueTextSize: 0,
+							legend: false,
+						},
+					},
+
+					{
+						values: daysItem!.map(({ rem }, index) => {
+							return { x: index, y: rem };
+						}),
+						label: "",
+						config: {
+							drawValues: false,
+							lineWidth: 3,
+							drawCircles: true,
+							circleRadius: 6,
+							circleColor: processColor(colors.business.sleepRem),
+							circleHoleColor: processColor(colors.business.sleepRem),
+							highlightColor: processColor("transparent"),
+							color: processColor(colors.business.sleepRem),
+							axisLineColor: processColor("white"),
+
+							drawFilled: false,
+							valueTextSize: 0,
+							legend: false,
+						},
+					},
+					{
+						values: daysItem!.map(({ light }, index) => {
+							return { x: index, y: light };
+						}),
+						label: "",
+						config: {
+							drawValues: false,
+							lineWidth: 3,
+							drawCircles: true,
+							circleRadius: 6,
+							circleColor: processColor(colors.business.sleepLight),
+							circleHoleColor: processColor(colors.business.sleepLight),
+							highlightColor: processColor("transparent"),
+							color: processColor(colors.business.sleepLight),
+							axisLineColor: processColor("white"),
+
+							drawFilled: false,
+							valueTextSize: 0,
+							legend: false,
+						},
+					},
+			  ]
+			: [],
+	};
+
 	return (
 		<Container>
 			<LineComponent
@@ -119,7 +225,7 @@ export function LineChart({
 				chartDescription={{ text: "" }}
 				xAxis={xAxis}
 				style={{ flex: 1 }}
-				data={dataSets}
+				data={isWeek ? dataLineWeeks : dataSets}
 				yAxis={yAxis}
 				autoScaleMinMaxEnabled={false}
 				touchEnabled={false}
