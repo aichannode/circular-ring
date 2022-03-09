@@ -18,6 +18,7 @@ import { shadow } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import { deduplicate } from "@ui/utils/filter";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
+import { when } from "mobx";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -131,6 +132,25 @@ export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditN
 		}
 	}, []);
 
+	useEffect(
+		() =>
+			when(
+				() => !!calendar && calendar.notes.length > 0,
+				function () {
+					const noteNames = selectedTags.map((t) => t.name).join(", ");
+					LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+					setNoteAddedText(
+						format(selectedTags.length === 1 ? "calendar.note_added_success.one" : "calendar.note_added_success.many", {
+							notes: noteNames,
+						})
+					);
+					setLoading(false);
+					clearSelectedTags();
+				}
+			),
+		[calendar]
+	);
+
 	useEffect(() => {
 		if (noteAddedText !== undefined) {
 			dismissHeaderTimeout.current = setTimeout(dismissHeader, 5000);
@@ -147,15 +167,6 @@ export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditN
 		try {
 			createNote(selectedTags, startDate, endDate);
 			setLastUsedTags(selectedTags);
-			const noteNames = selectedTags.map((t) => t.name).join(", ");
-			LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-			setNoteAddedText(
-				format(selectedTags.length === 1 ? "calendar.note_added_success.one" : "calendar.note_added_success.many", {
-					notes: noteNames,
-				})
-			);
-			setLoading(false);
-			clearSelectedTags();
 		} catch (e) {
 			setLoading(false);
 			setErrorMessage(format("global.default_error"));

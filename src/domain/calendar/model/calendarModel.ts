@@ -25,7 +25,7 @@ export class CalendarModel implements Model<Proposal> {
 		(this.lastAcceptedMutations as IObservableArray).clear();
 		proposal.forEach((mutation) => {
 			if (mutation.type === "setMonthCalendars") {
-				mutate.call(this, mutation, () => this.month.splice(0, this.month.length, ...mutation.payload));
+				mutate.call(this, mutation, () => (this.month as IObservableArray).replace(mutation.payload));
 			} else if (mutation.type === "updateNote") {
 				// @TODO optimize: ask if the same note could be in multiple day
 				mutate.call(this, mutation, () =>
