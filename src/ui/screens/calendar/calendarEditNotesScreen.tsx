@@ -38,21 +38,23 @@ interface TimeEditorConfig {
  * It will also handle the deselection of tags.
  */
 function useTagsSelection(tagsFromRoute: CalendarTag[]): [CalendarTag[], (tag: CalendarTag) => void, () => void] {
-	const [selectedTags, setSelectedTags] = useState<CalendarTag[]>(tagsFromRoute);
+	const [selectedTags, setSelectedTags] = useState<CalendarTag[]>([
+		{ id: 0, categoryId: 0, name: "bla", system: false },
+	]);
 	// Turn all tags in a string of ids to easily compare new/old version
 	const tagsListIdentity = tagsFromRoute
 		.map(({ id }) => id)
 		.sort()
 		.join();
 
-	const selectTag = useCallback(function (tag: CalendarTag) {
+	const selectTag = function (tag: CalendarTag) {
 		const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
 		if (isAlreadySelected) {
 			setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
 		} else {
 			setSelectedTags([...selectedTags, tag]);
 		}
-	}, []);
+	};
 	const clearSelectedTags = useCallback(function () {
 		setSelectedTags([]);
 	}, []);
