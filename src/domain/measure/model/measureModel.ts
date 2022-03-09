@@ -44,21 +44,17 @@ export class MeasureModel implements Model<Proposal> {
 
 	constructor() {
 		// Mark all the collections of object that does not need to be deeply observed
-		makeAutoObservable<MeasureModel>(
-			this,
-			{
-				dailyActivityIntensityMetrics: observable.shallow,
-				dailySleepMetrics: observable.shallow,
-				dailySleepScoreContributorsMetrics: observable.shallow,
-				dailyEnergyScoreContributorsMetrics: observable.shallow,
-				dailyActivitiesMetrics: observable.shallow,
-				lastAcceptedMutations: observable.shallow,
-				present: action,
-			},
-			{ autoBind: true }
-		);
+		makeAutoObservable<MeasureModel>(this, {
+			dailyActivityIntensityMetrics: observable.shallow,
+			dailySleepMetrics: observable.shallow,
+			dailySleepScoreContributorsMetrics: observable.shallow,
+			dailyEnergyScoreContributorsMetrics: observable.shallow,
+			dailyActivitiesMetrics: observable.shallow,
+			lastAcceptedMutations: observable.shallow,
+			present: action,
+		});
 	}
-	public present(proposal: Proposal) {
+	public present = (proposal: Proposal) => {
 		(this.lastAcceptedMutations as IObservableArray).clear();
 		proposal.forEach((mutation) => {
 			if (mutation.type === "setDailyActivityIntensityMetrics") {
@@ -91,5 +87,5 @@ export class MeasureModel implements Model<Proposal> {
 				);
 			}
 		});
-	}
+	};
 }

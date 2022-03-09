@@ -11,16 +11,12 @@ export class CalendarModel implements Model<Proposal> {
 
 	constructor() {
 		// Mark all the collections of object that does not need to be deeply observed
-		makeAutoObservable<CalendarModel, "tags" | "tagCategories">(
-			this,
-			{
-				tags: observable.shallow,
-				tagCategories: observable.shallow,
-			},
-			{ autoBind: true }
-		);
+		makeAutoObservable<CalendarModel, "tags" | "tagCategories">(this, {
+			tags: observable.shallow,
+			tagCategories: observable.shallow,
+		});
 	}
-	public present(proposal: Proposal) {
+	public present = (proposal: Proposal) => {
 		// Empty the previous accepted mutations list
 		(this.lastAcceptedMutations as IObservableArray).clear();
 		proposal.forEach((mutation) => {
@@ -62,5 +58,5 @@ export class CalendarModel implements Model<Proposal> {
 				});
 			}
 		});
-	}
+	};
 }
