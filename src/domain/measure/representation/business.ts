@@ -1,4 +1,4 @@
-import { isToday } from "@domain/feed/business";
+import { isToday } from "@domain/common/business";
 import { ScoreQuality } from "./api";
 
 /**

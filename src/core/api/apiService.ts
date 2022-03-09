@@ -50,6 +50,9 @@ class CacheManager implements IStore<string, string> {
 		}
 		return cachedData;
 	}
+	delete(key: string) {
+		this.store.delete(key);
+	}
 }
 
 export class ApiService {
@@ -67,11 +70,18 @@ export class ApiService {
 			return data as T;
 		} else {
 			this.cacheManager.set(cachedId, "fetching", { ttl: 10 * 1000 });
-			const result = await fetch();
-			this.cacheManager.set(cachedId, JSON.stringify(result), {
-				ttl: 15 * 60 * 1000, // 15 mins cache
-			});
-			return result;
+			return fetch()
+				.then((result) => {
+					this.cacheManager.set(cachedId, JSON.stringify(result), {
+						ttl: 15 * 60 * 1000, // 15 mins cache
+					});
+					return result;
+				})
+				.catch((reason) => {
+					console.error(reason);
+					this.cacheManager.delete(cachedId);
+					throw new Error(reason);
+				});
 		}
 	}
 	constructor() {

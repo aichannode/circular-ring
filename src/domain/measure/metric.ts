@@ -14,8 +14,8 @@ export type Metrics<M extends MetricType> = Partial<{
  * - the last value of the range for the given F metrics
  */
 export type RangeMetrics<T extends MetricType = MetricType, F extends MetricType = MetricType> = {
-	timeline: Array<DatedMetrics<T>>;
-	last: Metrics<F>;
+	timeSeries: Array<DatedMetrics<T>>;
+	constant: Metrics<F>;
 };
 
 export enum MetricType {

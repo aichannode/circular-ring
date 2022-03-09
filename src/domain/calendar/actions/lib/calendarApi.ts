@@ -19,15 +19,32 @@ interface CalendarDto {
 export class CalendarApi {
 	constructor(private readonly apiService: ApiService) {}
 
-	async getAllTags(): Promise<CalendarTag[]> {
-		const result = await this.apiService.get<CalendarTag[]>("/notes/me/tags");
+	async getAllTags({
+		useForceRefresh,
+	}: {
+		/**
+		 * Bypass front end cache
+		 */
+		useForceRefresh?: boolean;
+	}): Promise<CalendarTag[]> {
+		const result = await this.apiService.get<CalendarTag[]>("/notes/me/tags", { useForceRefresh });
 		console.log("GETALLTAGS RESULT", result);
 		return result.data;
 	}
 
-	async getCategories(ids: number[]) {
+	async getCategories({
+		useForceRefresh,
+		ids,
+	}: {
+		/**
+		 * Bypass front end cache
+		 */
+		useForceRefresh?: boolean;
+		ids: number[];
+	}) {
 		const result = await this.apiService.get<CalendarTagCategory[]>(
-			`/notes/tags/categories?${ids.map((id) => `categoryId=${id}`).join("&")}`
+			`/notes/tags/categories?${ids.map((id) => `categoryId=${id}`).join("&")}`,
+			{ useForceRefresh }
 		);
 		return result.data;
 	}
@@ -40,8 +57,17 @@ export class CalendarApi {
 		await this.apiService.delete(`/notes/me/tags/${tagId}`);
 	}
 
-	async getMonthCalendars(date: Date): Promise<Calendar[]> {
-		const result = await this.apiService.get<CalendarDto[]>("/calendar", { params: { date } });
+	async getMonthCalendars({
+		isoMonth,
+		useForceRefresh,
+	}: {
+		isoMonth: string;
+		useForceRefresh?: boolean;
+	}): Promise<Calendar[]> {
+		const result = await this.apiService.get<CalendarDto[]>("/calendar", {
+			params: { date: isoMonth },
+			useForceRefresh,
+		});
 		return CalendarApi.calendarListFromDto(result.data);
 	}
 
@@ -65,17 +91,16 @@ export class CalendarApi {
 	}
 
 	async createNote(tags: CalendarTag[], startTime: Date, endTime: Date) {
-		await this.apiService.post<CalendarNote>("/notes/me", {
+		await this.apiService.post<CalendarNoteDto>("/notes/me", {
 			startTime: toServerDate(startTime),
 			endTime: toServerDate(endTime),
 			tags: tags.map((t) => t.id),
 		});
 	}
 
-	async createCustomTag(name: string, category: string) {
+	async createCustomTag(name: string) {
 		await this.apiService.post<CalendarNote>("/notes/me/tags", {
 			name,
-			category,
 		});
 	}
 
@@ -83,13 +108,13 @@ export class CalendarApi {
 		await this.apiService.delete(`/notes/me/${noteId}`);
 	}
 
-	async updateNote(noteId: number, tagIds: number[], startTime: string, endTime: string) {
+	async updateNote(note: CalendarNote) {
 		const requestParam = {
-			startTime: startTime,
-			endTime: endTime,
-			tags: tagIds,
+			startTime: note.startTime,
+			endTime: note.endTime,
+			tags: [note.tag],
 		};
-		await this.apiService.put(`/notes/me/${noteId}`, requestParam);
+		await this.apiService.put(`/notes/me/${note.id}`, requestParam);
 	}
 
 	async updateNoteDate(noteId: number, startTime: string, endTime: string) {

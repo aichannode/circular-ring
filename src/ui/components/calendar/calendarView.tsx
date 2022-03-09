@@ -2,7 +2,7 @@
 // @ts-nocheck
 import { useUser } from "@domain/user/hooks/useUser";
 import { circularCalendarTheme } from "@ui/components/calendar/circularCalendarTheme";
-import dayjs from "dayjs";
+import moment from "moment";
 import React, { useCallback, useMemo, useState } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { Calendar as RNCalendar } from "react-native-calendars";
@@ -10,35 +10,46 @@ import { CalendarDay } from "./calendarDay";
 
 interface CalendarProps {
 	style?: StyleProp<ViewStyle>;
-	selectedDay: string;
+	selectedIsoDay: string;
 	onDaySelected: (day: string) => void;
 	autoSelectDayOnMonthChange?: boolean;
 }
-export const CalendarView: React.FC<CalendarProps> = ({
-	selectedDay,
+export const CalendarView: React.FC<CalendarProps> = function CalendarView({
+	selectedIsoDay,
 	onDaySelected,
 	autoSelectDayOnMonthChange = true,
 	style,
-}) => {
+}) {
 	const autoSelectDay = useCallback(
 		(dayOfMonth: string) => {
-			const newDay = dayjs(dayOfMonth);
-			const newSelectedDay = newDay.isAfter(selectedDay) ? newDay.startOf("month") : newDay.endOf("month");
-			onDaySelected(newSelectedDay.format("YYYY-MM-DD"));
+			const newDay = moment(dayOfMonth);
+			const newSelectedIsoDay = newDay.isAfter(selectedIsoDay) ? newDay.startOf("month") : newDay.endOf("month");
+			onDaySelected(newSelectedIsoDay.format("YYYY-MM-DD"));
 		},
-		[selectedDay, onDaySelected]
+		[selectedIsoDay, onDaySelected]
 	);
 	const user = useUser();
-	const [minDate, maxDate] = useMemo(() => [user?.createdAt || new Date(), new Date()], [user?.createdAt]);
+	const [minDate, maxDate] = useMemo(
+		() => [
+			(user && moment(user.createdAt.toISOString()).startOf("day")?.toISOString()) ||
+				moment().startOf("day").toISOString(),
+			moment().startOf("day").toISOString(),
+		],
+		[user?.createdAt]
+	);
 
-	const [visibleMonthDay, setVisibleMonthDay] = useState(dayjs().format("YYYY-MM-DD"));
+	const [visibleMonthDay, setVisibleMonthDay] = useState(moment().format("YYYY-MM-DD"));
 
 	const isFirstMonth = useMemo(
-		() => dayjs(visibleMonthDay).startOf("month").isBefore(dayjs(minDate)),
+		() => moment(visibleMonthDay).startOf("month").isBefore(moment(minDate)),
 		[minDate, visibleMonthDay]
 	);
 
-	const isLastMonth = useMemo(() => dayjs(visibleMonthDay).endOf("month").isAfter(dayjs()), [maxDate, visibleMonthDay]);
+	const isLastMonth = useMemo(
+		() => moment(visibleMonthDay).endOf("month").isAfter(moment()),
+		[maxDate, visibleMonthDay]
+	);
+
 	return (
 		<RNCalendar
 			minDate={minDate}
@@ -52,7 +63,7 @@ export const CalendarView: React.FC<CalendarProps> = ({
 			}}
 			style={style}
 			hideExtraDays
-			markedDates={selectedDay ? { [selectedDay]: { selected: true } } : undefined}
+			markedDates={selectedIsoDay ? { [selectedIsoDay]: { selected: true } } : undefined}
 			dayComponent={CalendarDay}
 			theme={circularCalendarTheme}
 		/>

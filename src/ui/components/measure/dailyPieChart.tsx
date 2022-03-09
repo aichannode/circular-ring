@@ -1,5 +1,4 @@
-import { isYesterday } from "@domain/common/utils";
-import { isToday } from "@domain/feed/business";
+import { isToday, isYesterday } from "@domain/common/business";
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";

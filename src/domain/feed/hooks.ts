@@ -1,10 +1,9 @@
 import { useServices } from "@core/services";
-import { isYesterday } from "@domain/common/utils";
+import { isToday, isYesterday } from "@domain/common/business";
 import { useObservable } from "micro-observables";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { isToday } from "./business";
-import { FeedRecommendation, FeedNotification } from "./type";
+import { FeedNotification, FeedRecommendation } from "./type";
 
 const POLLING_INTERVAL = 10000;
 

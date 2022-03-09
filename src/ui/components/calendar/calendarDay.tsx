@@ -1,10 +1,9 @@
-import { FetchStrategy } from "@betomorrow/micro-stores";
-import { useCalendar } from "@domain/calendar/hooks/useCalendar";
+import { useRepresentations } from "@core/representation";
 import { Row } from "@ui/components/layout";
 import { colors } from "@ui/styles/colors";
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { Image } from "react-native";
-// import { DayComponentProps } from "react-native-calendars";
 import styled from "styled-components/native";
 
 type CustomDate = {
@@ -24,9 +23,14 @@ type Props = {
 	theme: any; // TO REFACTOR
 };
 
-export const CalendarDay: React.FC<Props> = React.memo(function CalendarDay({ date, marking, onPress, state }: Props) {
+export const CalendarDay: React.FC<Props> = observer(function CalendarDay({ date, marking, onPress, state }: Props) {
 	const fixedMarking = marking;
-	const dayCalendar = useCalendar(date.dateString, FetchStrategy.Never);
+	const {
+		calendar: {
+			hooks: { useCalendar },
+		},
+	} = useRepresentations();
+	const dayCalendar = useCalendar(date.dateString);
 
 	return (
 		<Container onPress={() => onPress(date)}>

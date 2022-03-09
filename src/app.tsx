@@ -24,7 +24,14 @@ import StorybookUIRoot from "../storybook";
 import { translations } from "./wordings";
 
 // Setup Mobx for RN
-configure({ useProxies: "never" });
+configure({
+	enforceActions: "always",
+	computedRequiresReaction: true,
+	reactionRequiresObservable: true,
+	observableRequiresReaction: true,
+	disableErrorBoundaries: true,
+	useProxies: "never",
+});
 
 LogBox.ignoreAllLogs(true);
 LogBox.ignoreLogs(["EventEmitter.removeListener"]);

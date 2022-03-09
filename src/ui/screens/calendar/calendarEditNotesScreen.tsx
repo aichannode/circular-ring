@@ -1,8 +1,6 @@
-import { FetchStrategy } from "@betomorrow/micro-stores";
-import { useServices } from "@core/services";
+import { useRepresentations } from "@core/representation";
 import { useLastUsedTags } from "@domain/appState/representation/hooks";
 import { CalendarTag } from "@domain/calendar/calendar";
-import { useCalendar } from "@domain/calendar/hooks/useCalendar";
 import { PrimaryButton } from "@ui/components/buttons";
 import { CalendarDay } from "@ui/components/calendar/calendarDay";
 import { circularCalendarTheme } from "@ui/components/calendar/circularCalendarTheme";
@@ -20,7 +18,8 @@ import { shadow } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import { deduplicate } from "@ui/utils/filter";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
-import dayjs from "dayjs";
+import { observer } from "mobx-react-lite";
+import moment from "moment";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { LayoutAnimation, Pressable, View } from "react-native";
 import styled from "styled-components/native";
@@ -69,7 +68,7 @@ function useTagsSelection(tagsFromRoute: CalendarTag[]): [CalendarTag[], (tag: C
 	return [selectedTags, selectTag, clearSelectedTags];
 }
 
-export const CalendarEditNotesScreen: React.FC = () => {
+export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditNotesScreen() {
 	const { format, formatHour } = useI18n();
 	const navigation = useRoutesNavigation();
 	const navigate = navigation.navigate;
@@ -78,12 +77,15 @@ export const CalendarEditNotesScreen: React.FC = () => {
 	const initialSelectedTags = route.params.selectedTags ?? [];
 	const day = route.params.day;
 	const date = new Date(day);
-	const dateJS = dayjs(date);
-
-	const { calendarService } = useServices();
-	const calendar = useCalendar(day, FetchStrategy.Never);
-
-	const dateWithHour = useCallback((hour: number) => dayjs(day).hour(hour).toDate(), [day]);
+	const dateJS = moment(date);
+	const {
+		calendar: {
+			hooks: { useCalendar },
+			actions: { createNote },
+		},
+	} = useRepresentations();
+	const calendar = useCalendar(day);
+	const dateWithHour = useCallback((hour: number) => moment(day).hour(hour).toDate(), [day]);
 
 	const {
 		lastUsedTags,
@@ -141,7 +143,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 		setLoading(true);
 		setErrorMessage("");
 		try {
-			await calendarService.createNote(selectedTags, startDate, endDate);
+			createNote(selectedTags, startDate, endDate);
 			setLastUsedTags(selectedTags);
 			const noteNames = selectedTags.map((t) => t.name).join(", ");
 			LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -192,14 +194,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 							{!calendar
 								? null
 								: calendar.notes.map((note) => {
-										return (
-											<CalendarNoteItem
-												key={`${note.id}-${note.tag.name}`}
-												note={note}
-												tags={calendar.notes}
-												canDelete
-											/>
-										);
+										return <CalendarNoteItem key={`${note.id}`} note={note} tags={calendar.notes} canDelete />;
 								  })}
 						</Stack>
 					</>
@@ -267,7 +262,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 			)}
 		</View>
 	) : null;
-};
+});
 
 const NoteAddedHeader = styled.View`
 	position: absolute;

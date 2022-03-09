@@ -1,12 +1,18 @@
+import { CalendarModel } from "@domain/calendar/model/calendarModel";
+import { createRepresentation as createCalendarRepresentation } from "@domain/calendar/representation/hooks";
 import { MeasureModel } from "@domain/measure/model/measureModel";
-import { createRepresentation } from "@domain/measure/representation/hooks";
+import { createRepresentation as createMeasureRepresentation } from "@domain/measure/representation/hooks";
 import React, { createContext, useContext } from "react";
 import { apiService } from "./services";
 
 const measureModel = new MeasureModel();
+const calendarModel = new CalendarModel();
 
-const measure = createRepresentation(apiService, measureModel);
+const calendar = createCalendarRepresentation(apiService, calendarModel);
+const measure = createMeasureRepresentation(apiService, measureModel);
+
 const representations = {
+	calendar,
 	measure,
 };
 

@@ -95,15 +95,15 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					[MetricType.UserDailyActivityTotal],
 					isoDay
 				),
-			]).then(function ([timeline, duration]) {
+			]).then(function ([timeSeries, duration]) {
 				present([
 					{
 						type: "setDailyActivityIntensityMetrics",
 						payload: {
 							isoDate: isoDay,
 							range: {
-								timeline,
-								last: duration,
+								timeSeries,
+								constant: duration,
 							},
 						},
 					},
@@ -186,8 +186,8 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 						payload: {
 							isoDate: isoDay,
 							range: {
-								timeline,
-								last: duration,
+								timeSeries: timeline,
+								constant: duration,
 							},
 						},
 					},

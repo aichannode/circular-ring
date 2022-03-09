@@ -1,13 +1,10 @@
-import Cross from "@assets/images/crossBig.png";
-import { useServices } from "@core/services";
-// import { useCustomTags } from "@domain/calendar/hooks/useTags";
+import { useRepresentations } from "@core/representation";
 import { CalendarTag } from "@domain/calendar/calendar";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
-import { Spinner } from "@ui/components/spinner";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useRef, useState } from "react";
-import { Image, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { CreateCustomNoteBottomSheet } from "./createCustomNoteBottomSheet";
 
@@ -21,26 +18,24 @@ const CustomNote = ({
 	customNote: CalendarTag[];
 }) => {
 	const [deleteMode, setDelete] = useState<boolean>(false);
-	const [loadingId, setLoadingId] = useState<number | null>(null);
-	const { calendarService } = useServices();
-
 	const createCustomNoteRef = useRef<CircularBottomSheetHandle>(null);
-
-	const deleteTag = async (tagId: number) => {
-		setLoadingId(tagId);
-		await calendarService.deleteTag(tagId);
-		setLoadingId(null);
-	};
+	const {
+		calendar: {
+			actions: { deleteTag },
+		},
+	} = useRepresentations();
 
 	return (
 		<>
 			<Container>
 				<Name>Custom Notes</Name>
-				<View style={{ justifyContent: "space-between" }}>
-					<TouchableOpacity onPress={() => setDelete((del) => !del)}>
-						<OrangeText>{!deleteMode ? "Delete" : "Cancel"}</OrangeText>
-					</TouchableOpacity>
-				</View>
+				{!!customNote.length && (
+					<View style={{ justifyContent: "space-between" }}>
+						<TouchableOpacity onPress={() => setDelete((del) => !del)}>
+							<OrangeText>{!deleteMode ? "Delete" : "Cancel"}</OrangeText>
+						</TouchableOpacity>
+					</View>
+				)}
 			</Container>
 
 			<Tags>
@@ -78,15 +73,7 @@ const CustomNote = ({
 							<TouchableOpacity
 								style={{ width: 40, height: 35, position: "absolute", right: -5 }}
 								onPress={() => deleteTag(tag.id)}
-							>
-								{loadingId !== tag.id ? (
-									<Image style={{ height: 10, width: 10, margin: 14 }} resizeMode="contain" source={Cross}></Image>
-								) : (
-									<View style={{ flex: 1, padding: 12 }}>
-										<Spinner size={10}></Spinner>
-									</View>
-								)}
-							</TouchableOpacity>
+							></TouchableOpacity>
 						)}
 					</TagContainer>
 				))}

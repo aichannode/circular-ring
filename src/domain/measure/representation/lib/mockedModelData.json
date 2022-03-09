@@ -1,5 +1,5 @@
 {
-  "timeline":[
+  "timeSeries":[
     {
       "timestamp": "2021-12-20T15:10:00:000Z",
       "metrics": {
@@ -323,7 +323,7 @@
       }
     }
   ],
-  "last":{
+  "constant":{
     "user.time.to.fall.asleep": 1800000,
     "user.core.sleep.begin":1640042640,
     "user.core.sleep.end":1640072400,

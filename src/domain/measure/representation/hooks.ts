@@ -1,4 +1,5 @@
 import { ApiService } from "@core/api/apiService";
+import { action } from "mobx";
 import moment from "moment";
 import { useEffect } from "react";
 import { createActions } from "../actions";
@@ -38,10 +39,10 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 			},
 			useDailyActivities(isoDay?: string): Metrics<DailyActivitiesMetrics | DailyActivitiesMetricsGoals> {
 				useEffect(
-					function () {
+					action(function () {
 						__DEV__ && console.log("[MEASURE: Action] FETCH");
 						actions.setDailyActivitiesMetrics(isoDay);
-					},
+					}),
 					[isoDay]
 				);
 				return model.dailyActivitiesMetrics.get(getKeyFromDate(isoDay)) ?? {};
@@ -50,10 +51,10 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				isoDay?: string
 			): Metrics<DailyEnergyScoreMetrics | DailyEnergyScoreMetricsGaugeSize | DailyEnergyScoreGaugeCalibrationMetrics> {
 				useEffect(
-					function () {
+					action(function () {
 						__DEV__ && console.log("[MEASURE: Action] FETCH");
 						actions.setDailyEnergyScoreContributorsMetrics(isoDay);
-					},
+					}),
 					[isoDay]
 				);
 				return model.dailyEnergyScoreContributorsMetrics.get(getKeyFromDate(isoDay)) ?? {};
@@ -77,20 +78,23 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				| DailySleepScoreContributorsGaugeCalibrationMetrics
 			> {
 				useEffect(
-					function () {
+					action(function () {
 						__DEV__ && console.log("[MEASURE: Action] FETCH");
 						actions.setDailySleepScoreContributorsMetrics(isoDay);
-					},
+					}),
 					[isoDay]
 				);
 				return model.dailySleepScoreContributorsMetrics.get(getKeyFromDate(isoDay)) ?? {};
 			},
 			useDailyEnergyScore(isoDay: string = moment().toISOString()) {
-				useEffect(function () {
-					if (!model.dailyEnergyScore.has(isoDay)) {
-						actions.setDailyEnergyScore(isoDay);
-					}
-				});
+				useEffect(
+					action(function () {
+						if (!model.dailyEnergyScore.has(isoDay)) {
+							actions.setDailyEnergyScore(isoDay);
+						}
+					}),
+					[isoDay]
+				);
 				return {
 					// Default value accordint to the specs.
 					score: model.dailyEnergyScore.get(isoDay) ?? 0,
@@ -102,11 +106,14 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				};
 			},
 			useDailySleepQualityScore(isoDay: string = moment().toISOString()) {
-				useEffect(function () {
-					if (!model.dailySleepScore.has(isoDay)) {
-						actions.setDailySleepScore(isoDay);
-					}
-				});
+				useEffect(
+					action(function () {
+						if (!model.dailySleepScore.has(isoDay)) {
+							actions.setDailySleepScore(isoDay);
+						}
+					}),
+					[isoDay]
+				);
 				const data = model.dailySleepScore.get(isoDay);
 				const score = {
 					[MetricType.UserDailySleepScore]: data?.[MetricType.UserDailySleepScore] ?? 0,
@@ -124,23 +131,29 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				};
 			},
 			useCanDisplayData(isoDay: string): boolean {
-				useEffect(function () {
-					if (!model.dailySleepMetrics.has(isoDay)) {
-						actions.setDailySleepStagesMetrics(isoDay);
-					}
-				});
+				useEffect(
+					action(function () {
+						if (!model.dailySleepMetrics.has(isoDay)) {
+							actions.setDailySleepStagesMetrics(isoDay);
+						}
+					}),
+					[isoDay]
+				);
 				// UsercoreSleepEnd is in Unix time in second
-				const userCoreSleepEnd = model.dailySleepMetrics.get(isoDay)?.last[MetricType.UserCoreSleepEnd] as number;
+				const userCoreSleepEnd = model.dailySleepMetrics.get(isoDay)?.constant[MetricType.UserCoreSleepEnd] as number;
 
 				// Spec: 00000
 				return !!userCoreSleepEnd && canDisplay(isoDay, userCoreSleepEnd * 1000);
 			},
 			useDailyGlobalScore(isoDay: string = moment().toISOString()): number | undefined {
-				useEffect(function () {
-					if (!model.dailyGlobalScore.has(isoDay)) {
-						actions.setDailyGlobalScore(isoDay);
-					}
-				});
+				useEffect(
+					action(function () {
+						if (!model.dailyGlobalScore.has(isoDay)) {
+							actions.setDailyGlobalScore(isoDay);
+						}
+					}),
+					[isoDay]
+				);
 				return model.dailyGlobalScore.get(isoDay);
 			},
 		},

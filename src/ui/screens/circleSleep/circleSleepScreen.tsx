@@ -1,5 +1,4 @@
 import { useRepresentations } from "@core/representation";
-import { useDailyTags } from "@domain/calendar/hooks/useTags";
 import { DailySleepData } from "@domain/measure/representation/api";
 import { dailySleepScoreContributorsMetrics } from "@domain/measure/representation/lib/type";
 import { SleepStage } from "@domain/measure/type";
@@ -37,6 +36,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 		useDailySleepStages,
 		useCanDisplayData,
 	} = useRepresentations().measure.hooks;
+	const { useDailyTags } = useRepresentations().calendar.hooks;
 	const canDisplay = useCanDisplayData(selectedDay);
 	const details = useDailySleepDetails(selectedDay);
 	const qualityScore = useDailySleepQualityScore(selectedDay);
@@ -223,7 +223,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 				<View style={{ padding: 20 }}>
 					<CalendarView
 						autoSelectDayOnMonthChange={false}
-						selectedDay={selectedDay}
+						selectedIsoDay={selectedDay}
 						onDaySelected={async (day) => {
 							await calendarBottomSheet.current?.asyncClose();
 							setSelectedDay(day);

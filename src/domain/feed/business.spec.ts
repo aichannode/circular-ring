@@ -1,5 +1,6 @@
+import { HourFormat } from "@domain/units";
 import moment from "moment";
-import { getFeedEntityDate, getStaleLocalUserInputStates, isToday, reconciliate } from "./business";
+import { getFeedEntityDate, getStaleLocalUserInputStates, reconciliate } from "./business";
 import {
 	FeedEntityComponentType,
 	FeedEntityStyle,
@@ -7,11 +8,10 @@ import {
 	FeedRecommendation,
 	IconType,
 	InputType,
-	UserInputStates,
 	UserInputConfiguration,
+	UserInputStates,
 	UserInputStyle,
 } from "./type";
-import { HourFormat } from "@domain/units";
 
 const today = "2021-10-11T14:31:06.585Z";
 
@@ -19,19 +19,11 @@ it("Check if jest is configured in UTC", function () {
 	expect(new Date().getTimezoneOffset()).toBe(0);
 });
 
-it("should be a today date", function () {
-	expect(isToday("2021-10-11T10:31:06.585Z", today)).toBeTruthy();
-});
-
-it("should not be a today date", function () {
-	expect(isToday("2021-09-11T14:31:06.585Z", today)).toBeFalsy();
-});
-
-it("Date < 24h: should get the delta from current date in hours", function () {
+it("Date is today: should get the delta from current date in hours", function () {
 	expect(getFeedEntityDate("2021-10-11T11:31:06.585Z", today)).toEqual("3 hours ago");
 });
 
-it("Date >= 24h: should extract the hour of the corresponding day", function () {
+it("Date is yesterday or later: should extract the hour of the corresponding day", function () {
 	expect(getFeedEntityDate("2021-09-11T11:14:00.585Z", today, HourFormat.TWELVE)).toEqual("11:14 AM");
 	expect(getFeedEntityDate("2021-09-11T14:14:00.585Z", today, HourFormat.TWENTY_FOUR)).toEqual("14:14");
 });

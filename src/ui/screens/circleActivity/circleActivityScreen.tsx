@@ -5,7 +5,6 @@ import lungs from "@assets/images/lungs.png";
 import shoes from "@assets/images/shoes.png";
 import sport from "@assets/images/sport.png";
 import { useRepresentations } from "@core/representation";
-import { useDailyTags } from "@domain/calendar/hooks/useTags";
 import { DailyActivityIntensityData } from "@domain/measure/representation/api";
 import { dailyActivitiesMetrics, dailyEnergyScoreMetrics } from "@domain/measure/representation/lib/type";
 import { TimeFrame } from "@domain/measure/type";
@@ -65,6 +64,9 @@ export const CircleActivityScreen: React.FC = observer(() => {
 				useDailyActivityIntensity,
 				useCanDisplayData,
 			},
+		},
+		calendar: {
+			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
 	const tags = useDailyTags(selectedDay);
@@ -219,7 +221,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 				<View style={{ padding: 20 }}>
 					<CalendarView
 						autoSelectDayOnMonthChange={false}
-						selectedDay={selectedDay}
+						selectedIsoDay={selectedDay}
 						onDaySelected={async (day) => {
 							await calendarBottomSheet.current?.asyncClose();
 							setSelectedDay(day);
