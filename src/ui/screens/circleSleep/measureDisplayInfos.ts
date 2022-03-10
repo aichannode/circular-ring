@@ -38,7 +38,6 @@ export function getSleepQualityDetails(format: (v: WordingKey) => string): Sleep
 			renderValue: ({ value, gaugeFilling }) =>
 				`${moment(value * 60 * 1000).hour()} h ${moment(value * 60 * 1000).minutes()} min (${gaugeFilling * 100}%)`,
 			getGaugeColor: getGaugeColor(),
-			displaySegment: [0.6, 1],
 		},
 		[MetricType.UserDailyTranquility]: {
 			// Tranquility: 2 metrics
@@ -117,7 +116,6 @@ export function getSleepQualityDetails(format: (v: WordingKey) => string): Sleep
 			descriptionKey: "sleep.quality.debt.description",
 			renderValue: ({ value }) => `${value} min`,
 			getGaugeColor: getGaugeColor(),
-			displaySegment: [0.6, 1],
 		},
 	};
 }

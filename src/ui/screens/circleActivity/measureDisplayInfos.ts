@@ -1,9 +1,9 @@
 import { MetricType } from "@domain/measure/metric";
 import { DailyActivitiesMetrics, DailyEnergyScoreMetrics } from "@domain/measure/representation/lib/type";
-import { WordingKey } from "src/wordings";
-import { getMetricColor, getGaugeColor, getScoreQualityLabel } from "../business";
-import { GaugeDisplayConfig, MetricDisplayConfig } from "../type";
 import { useI18n } from "@ui/i18n";
+import { WordingKey } from "src/wordings";
+import { getGaugeColor, getMetricColor, getScoreQualityLabel } from "../business";
+import { GaugeDisplayConfig, MetricDisplayConfig } from "../type";
 
 export type DailyEnergyScoreGaugeConfigs = Record<DailyEnergyScoreMetrics, GaugeDisplayConfig>;
 
@@ -20,7 +20,6 @@ export function getActivityQualityDetails(format: (v: WordingKey) => string): Da
 			},
 			titleKey: "score.details.recovery.label",
 			descriptionKey: "score.details.recovery.description",
-			displaySegment: [0.6, 1],
 			renderValue: getScoreQualityLabel(format),
 			getGaugeColor: getGaugeColor(),
 		},
