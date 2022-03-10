@@ -1,14 +1,13 @@
+import { NamedUserRing } from "@domain/ring/ring";
 import { PrimaryButton, TertiaryButton } from "@ui/components/buttons";
-import { SecondaryText } from "@ui/components/text";
-import { colors } from "@ui/styles/colors";
-
+import { ResponsiveCenterView, Stack } from "@ui/components/layout";
+import { PrimaryText, SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
+import { colors } from "@ui/styles/colors";
 import React from "react";
 import { Image } from "react-native";
 import styled from "styled-components/native";
-import { NamedUserRing } from "@domain/ring/ring";
-import { PrimaryText } from "@ui/components/text";
-import { ResponsiveCenterView, Stack } from "@ui/components/layout";
+
 
 interface ActivateRingBottomSheetProps {
 	onClose: () => void;
@@ -48,8 +47,8 @@ export const ActivateRingBottomSheet: React.FC<ActivateRingBottomSheetProps> = (
 
 					<PrimaryButton
 						onPress={() => {
-							onClose();
-							setTimeout(() => connectToRing(ring), 200);
+							connectToRing(ring);
+							setTimeout(() => onClose(), 200);
 						}}
 						style={{ width: 100 }}
 					>
