@@ -79,6 +79,7 @@ export function Hypnogram({ data, tags }: Props) {
 				defaultXAxis={defaultXAxis}
 				tooltipYOffset={-30}
 				tooltipSize={{ width: 40, height: 30 }}
+				chartHeight={200}
 				renderTooltip={(step) => (
 					<>
 						<Tag containerStyle={{ backgroundColor: colors.blue, marginBottom: 4 }}>

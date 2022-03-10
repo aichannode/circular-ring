@@ -1,16 +1,18 @@
 import { useRepresentations } from "@core/representation";
 import { DailySleepData } from "@domain/measure/representation/api";
 import { dailySleepScoreContributorsMetrics } from "@domain/measure/representation/lib/type";
-import { SleepStage } from "@domain/measure/type";
+import { SleepStage, TimeFrame } from "@domain/measure/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CalendarView } from "@ui/components/calendar/calendarView";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
 import { Stack } from "@ui/components/layout";
+import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { ScoreGauge } from "@ui/components/measure/scoreGauge";
+import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { TitleText } from "@ui/components/text";
@@ -30,6 +32,7 @@ import { SleepDurationPieChart } from "./sleepDurationPie";
 
 export const CircleSleepScreen: React.FC = observer(() => {
 	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
+	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	const {
 		useDailySleepScoreContributors: useDailySleepDetails,
 		useDailySleepQualityScore,
@@ -40,7 +43,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 	const canDisplay = useCanDisplayData(selectedDay);
 	const details = useDailySleepDetails(selectedDay);
 	const qualityScore = useDailySleepQualityScore(selectedDay);
-	const [dailySleep, setData] = useState<DailySleepData | undefined>();
+	const [dailySleep, setDailyData] = useState<DailySleepData | undefined>();
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const { format } = useI18n();
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
@@ -58,7 +61,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 	});
 	const tags = useDailyTags(selectedDay);
 
-	useDailySleepStages({ setData, isoDay: selectedDay });
+	useDailySleepStages({ setData: setDailyData, isoDay: selectedDay });
 
 	return (
 		<Container>
@@ -146,8 +149,9 @@ export const CircleSleepScreen: React.FC = observer(() => {
 					{format("sleep.details.stages")}
 				</TitleText>
 				<View style={{ marginVertical: 10 }}>
-					{/* <TimeFrameSwitcher
+					<TimeFrameSwitcher
 						setGraphPeriod={setGraphPeriod}
+						graphPeriod={graphPeriod}
 						color={colors.business.sleepPrimary}
 						frames={[
 							{
@@ -158,16 +162,71 @@ export const CircleSleepScreen: React.FC = observer(() => {
 								label: "graph.time_frame.7days",
 								duration: TimeFrame.LAST_7_DAYS,
 							},
-							{
-								label: "graph.time_frame.all",
-								duration: TimeFrame.ALL,
-							},
+							// {
+							// 	label: "graph.time_frame.all",
+							// 	duration: TimeFrame.ALL,
+							// },
 						]}
-					/> */}
+					/>
 				</View>
 				{dailySleep ? (
 					<GraphContainer>
-						<Hypnogram data={sleepStages} tags={tags} />
+						{graphPeriod === TimeFrame.TODAY && <Hypnogram data={sleepStages} tags={tags} />}
+						{graphPeriod === TimeFrame.LAST_7_DAYS && (
+							<View style={{ height: 200 }}>
+								<LineChart
+									daysItem={[
+										{
+											awake: 1,
+											deep: 1.8,
+											rem: 3.6,
+											light: 5.2,
+										},
+										{
+											awake: 1.1,
+											deep: 1.9,
+											rem: 3.8,
+											light: 5.4,
+										},
+										{
+											awake: 1.7,
+											deep: 2.1,
+											rem: 3.9,
+											light: 5.4,
+										},
+										{
+											awake: 1.5,
+											deep: 1.7,
+											rem: 2,
+											light: 5.0,
+										},
+										{
+											awake: 1.4,
+											deep: 1.6,
+											rem: 3.8,
+											light: 4.8,
+										},
+										{
+											awake: 1.8,
+											deep: 2,
+											rem: 3,
+											light: 6.2,
+										},
+										{
+											awake: 2,
+											deep: 2.1,
+											rem: 3,
+											light: 5.4,
+										},
+									]}
+									isWeek={true}
+									xColor={colors.textPrimary}
+									yColor={colors.darkGray}
+									shouldDrawCircles={true}
+									valueFormatter={["S", "M", "T", "W", "T", "F", "S"]}
+								/>
+							</View>
+						)}
 						<View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
 							<GraphLegend
 								rows={[
