@@ -1,5 +1,6 @@
 import { useRepresentations } from "@core/representation";
 import { CalendarNote } from "@domain/calendar/calendar";
+import { useIs24h } from "@domain/user/hooks/useUser";
 import { Grow } from "@ui/components/layout";
 import { TimeEditor, TimeEditorRef } from "@ui/components/timeEditor";
 import { useI18n } from "@ui/i18n";
@@ -33,6 +34,7 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = observer(functi
 	style,
 }) {
 	const { format, formatHour, formatNoteIntervalLinker } = useI18n();
+	const is24h = useIs24h();
 	const [startTime, setStartDate] = useState(note.startTime);
 	const [endTime, setEndDate] = useState(note.endTime);
 	const {
@@ -85,7 +87,7 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = observer(functi
 							timeEditorRef.current?.present();
 						}}
 					>
-						<Value>{formatHour(note.startTime)}</Value>
+						<Value>{formatHour(note.startTime, is24h)}</Value>
 					</TouchableOpacity>
 					<Value>{formatNoteIntervalLinker()}</Value>
 					<TouchableOpacity
@@ -94,7 +96,7 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = observer(functi
 							timeEditorRef.current?.present();
 						}}
 					>
-						<Value>{formatHour(note.endTime)}</Value>
+						<Value>{formatHour(note.endTime, is24h)}</Value>
 					</TouchableOpacity>
 				</EditableNoteHourContainer>
 				{canDelete && (

@@ -1,4 +1,5 @@
 import { CalendarTag } from "@domain/calendar/calendar";
+import { useIs24h } from "@domain/user/hooks/useUser";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { Tag } from "@ui/components/tag";
@@ -15,13 +16,14 @@ type Props = {
 
 export const ActivityIntensityGraph = ({ samples, tags }: Props) => {
 	const { format, formatHour } = useI18n();
+	const is24h = useIs24h();
 
 	const data = {
 		dataSets: [
 			{
 				values: samples.map(({ value, isoTime }) => {
 					const date = new Date(isoTime);
-					const marker = `${formatHour(date)}\n${
+					const marker = `${formatHour(date, is24h)}\n${
 						value >= 3
 							? format("intensity.high")
 							: value >= 2
@@ -64,7 +66,7 @@ export const ActivityIntensityGraph = ({ samples, tags }: Props) => {
 		position: "BOTTOM" as const,
 		valueFormatter: samples.map(({ isoTime }) => {
 			const date = new Date(isoTime);
-			return `${formatHour(date)}`;
+			return `${formatHour(date, is24h)}`;
 		}),
 		labelCount: 3,
 		drawGridLines: false,

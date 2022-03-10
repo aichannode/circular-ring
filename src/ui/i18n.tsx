@@ -2,7 +2,7 @@ import { ScoreQuality } from "@domain/measure/representation/api";
 import { SignalQuality } from "@domain/measure/score";
 import { Melody, Weekdays } from "@domain/ring/ringAlarm";
 import { Intensity } from "@domain/ring/ringLiveData";
-import { useIs24h, useIsCelsius } from "@domain/user/hooks/useUser";
+import { useIsCelsius } from "@domain/user/hooks/useUser";
 import dayjs from "dayjs";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
@@ -198,10 +198,8 @@ export function useI18n(options?: FormatterOptions) {
 		formatNoteIntervalLinker: () => {
 			return `${intl.formatMessage({ id: "global.date_interval_linker" })}`;
 		},
-		formatHour: (date: Date) => {
-			const is24h = useIs24h();
-			return is24h ? dayjs(date).format("HH : mm") : dayjs(date).format("hh : mm A");
-		},
+		formatHour: (date: Date, is24h: boolean) =>
+			is24h ? dayjs(date).format("HH : mm") : dayjs(date).format("hh : mm A"),
 		formatDate: (date: Date | undefined) => {
 			if (date) {
 				const isUSCS = useIsCelsius();

@@ -1,3 +1,4 @@
+import { useIs24h } from "@domain/user/hooks/useUser";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import React from "react";
@@ -13,7 +14,7 @@ export const Hour: React.FC<HourProps> = ({ value, style, onPress }) => {
 	const { formatHour } = useI18n();
 	return (
 		<Pressable onPress={onPress}>
-			<Time style={style}>{formatHour(value)}</Time>
+			<Time style={style}>{formatHour(value, useIs24h())}</Time>
 		</Pressable>
 	);
 };

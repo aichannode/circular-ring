@@ -1,6 +1,7 @@
 import { useRepresentations } from "@core/representation";
 import { useLastUsedTags } from "@domain/appState/representation/hooks";
 import { CalendarTag } from "@domain/calendar/calendar";
+import { useIs24h } from "@domain/user/hooks/useUser";
 import { PrimaryButton } from "@ui/components/buttons";
 import { CalendarDay } from "@ui/components/calendar/calendarDay";
 import { circularCalendarTheme } from "@ui/components/calendar/circularCalendarTheme";
@@ -73,6 +74,7 @@ function useTagsSelection(tagsFromRoute: CalendarTag[]): [CalendarTag[], (tag: C
 
 export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditNotesScreen() {
 	const { format, formatHour } = useI18n();
+	const is24h = useIs24h();
 	const navigation = useRoutesNavigation();
 	const navigate = navigation.navigate;
 
@@ -232,7 +234,7 @@ export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditN
 				</PopularTagContainer>
 				<InfoListItem
 					name={format("calendar.start_time")}
-					value={formatHour(startDate)}
+					value={formatHour(startDate, is24h)}
 					hasDisclosure
 					action={async () => {
 						setConfig({ ...startTimeEditionConfig, time: startDate });
@@ -241,7 +243,7 @@ export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditN
 				/>
 				<InfoListItem
 					name={format("calendar.end_time")}
-					value={formatHour(endDate)}
+					value={formatHour(endDate, is24h)}
 					hasDisclosure
 					action={async () => {
 						setConfig({ ...endTimeEditionConfig, time: endDate });
