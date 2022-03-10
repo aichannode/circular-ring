@@ -6,6 +6,7 @@ import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
+import { lerp } from "../business";
 
 interface ScoreGaugeProps {
 	label: string;
@@ -13,10 +14,14 @@ interface ScoreGaugeProps {
 	gaugeFilling: number;
 	isInverted?: boolean;
 	color: MetricColor;
+	calibration?: [number, number];
 	style?: StyleProp<ViewStyle>;
 	onPress?: () => void;
 }
 
+/**
+ * @implements spec 00003 gauge is filled for a value from 50 to 100.
+ */
 export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 	label,
 	value,
@@ -24,8 +29,11 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 	color,
 	isInverted,
 	gaugeFilling,
+	calibration = [0.5, 1], // Default gauge calibration from spec 00003
 	onPress,
 }) => {
+	const perc = lerp([0, 1], calibration)(gaugeFilling);
+
 	return (
 		<Container style={style} onPress={onPress}>
 			<Row justify="space-between">
@@ -34,7 +42,7 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 			</Row>
 			<Gauge>
 				<GaugeValue
-					perc={gaugeFilling}
+					perc={perc}
 					isInverted={isInverted}
 					style={{
 						backgroundColor:
