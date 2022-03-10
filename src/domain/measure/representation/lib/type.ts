@@ -50,7 +50,7 @@ export const weeklyActivityGoals = [
 export type WeeklyActivityGoals = typeof weeklyActivityGoals[number];
 
 export const dailyEnergyScoreMetrics = [
-	MetricType.UserDailyScoreRecovery,
+	MetricType.UserDailyBodyRecovery,
 	MetricType.UserDailyWakeUpScore,
 	MetricType.UserDailySleepBR,
 	MetricType.UserDailySleepHRV,
@@ -71,8 +71,8 @@ export const dailyEnergyScoreMetricsGaugeSize = [
 export type DailyEnergyScoreMetricsGaugeSize = typeof dailyEnergyScoreMetricsGaugeSize[number];
 
 export const dailyEnergyScoreGaugeCalibrationMetrics = [
-	MetricType.UserDailyScoreRecoveryGoalMin,
-	MetricType.UserDailyScoreRecoveryGoalMax,
+	MetricType.UserDailyBodyRecoveryGoalMin,
+	MetricType.UserDailyBodyRecoveryGoalMax,
 	MetricType.UserDailyWakeUpScoreGoalMax,
 	MetricType.UserDailyWakeUpScoreGoalMin,
 	MetricType.UserDailyScoreBRGoalMax,

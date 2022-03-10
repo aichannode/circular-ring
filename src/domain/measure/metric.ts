@@ -73,7 +73,7 @@ export enum MetricType {
 	// Daily metabolism
 	///////////////////
 	UserDailyGlobalScore = "user.daily.global.score",
-	UserDailyScoreRecovery = "user.daily.score.recovery",
+	UserDailyBodyRecovery = "user.daily.body.recovery",
 	UserDailyScoreBr = "user.daily.score.br",
 	UserDailySleepHRV = "user.daily.sleep.hrv",
 	UserDailyScoreHRV = "user.daily.score.hrv",
@@ -82,8 +82,8 @@ export enum MetricType {
 	UserDailyScoreVarTemperature = "user.daily.score.var.temperature",
 	UserDailyScoreSleepBalance = "user.daily.score.sleep.balance",
 	UserDailyScoreActivityVolume = "user.daily.score.activity.volume",
-	UserDailyScoreRecoveryGoalMin = "user.daily.score.recovery.goal.min",
-	UserDailyScoreRecoveryGoalMax = "user.daily.score.recovery.goal.max",
+	UserDailyBodyRecoveryGoalMin = "user.daily.body.recovery.goal.min",
+	UserDailyBodyRecoveryGoalMax = "user.daily.body.recovery.goal.max",
 	UserDailyWakeUpScore = "user.daily.wake.up.score",
 	UserDailyWakeUpScoreGoalMin = "user.daily.wake.up.score.goal.min",
 	UserDailyWakeUpScoreGoalMax = "user.daily.wake.up.score.goal.max",

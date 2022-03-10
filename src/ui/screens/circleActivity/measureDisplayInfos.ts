@@ -11,12 +11,12 @@ export function getActivityQualityDetails(format: (v: WordingKey) => string): Da
 	const { formatTemperature } = useI18n();
 	return {
 		// Body recovery
-		[MetricType.UserDailyScoreRecovery]: {
+		[MetricType.UserDailyBodyRecovery]: {
 			metricsName: {
-				value: MetricType.UserDailyScoreRecovery,
-				thresholdLow: MetricType.UserDailyScoreRecoveryGoalMin,
-				thresholdHigh: MetricType.UserDailyScoreRecoveryGoalMax,
-				gaugeFilling: MetricType.UserDailyScoreRecovery,
+				value: MetricType.UserDailyBodyRecovery,
+				thresholdLow: MetricType.UserDailyBodyRecoveryGoalMin,
+				thresholdHigh: MetricType.UserDailyBodyRecoveryGoalMax,
+				gaugeFilling: MetricType.UserDailyBodyRecovery,
 			},
 			titleKey: "score.details.recovery.label",
 			descriptionKey: "score.details.recovery.description",
