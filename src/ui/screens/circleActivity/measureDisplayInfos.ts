@@ -33,16 +33,7 @@ export function getActivityQualityDetails(format: (v: WordingKey) => string): Da
 			},
 			titleKey: "score.details.wake_up.label",
 			descriptionKey: "score.details.wake_up.description",
-			renderValue: ({
-				value,
-				thresholdLow,
-				thresholdHigh,
-			}: {
-				value: number;
-				thresholdLow: number;
-				thresholdHigh: number;
-				gaugeFilling: number;
-			}) => `${value * 100}%`,
+			renderValue: ({ value }: { value: number }) => `${value * 100}%`,
 			getGaugeColor: getGaugeColor(),
 		},
 		[MetricType.UserDailySleepBR]: {

@@ -127,7 +127,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		},
 		/**
 		 * Retrieve daily energy score contributors data on server
-		 * @implements spec [00013](https://docs.google.com/document/d/16SRBS_XPqDhePKuCi6rQm399n72H_82GTPAiay6AQlQ/edit?disco=AAAAWrQFZQY)
+		 * @implements spec 00013
 		 */
 		async setDailyEnergyScoreContributorsMetrics(isoDay: string = moment().toISOString()) {
 			const data = await measureApi.fetchLastDailyMeasures<
@@ -144,6 +144,8 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 						data: {
 							[MetricType.UserDailyBodyRecoveryGoalMin]: 0.8,
 							[MetricType.UserDailyBodyRecoveryGoalMax]: 0.9,
+							[MetricType.UserDailyWakeUpScoreGoalMin]: 0.8,
+							[MetricType.UserDailyWakeUpScoreGoalMax]: 0.9,
 							...data,
 						},
 					},
