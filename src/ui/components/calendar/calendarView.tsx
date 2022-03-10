@@ -54,6 +54,7 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 		<RNCalendar
 			minDate={minDate}
 			maxDate={maxDate}
+			initialDate={selectedIsoDay}
 			disableArrowLeft={isFirstMonth}
 			disableArrowRight={isLastMonth}
 			onDayPress={(day) => onDaySelected(day.dateString)}
