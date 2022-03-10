@@ -20,7 +20,6 @@ const noValueHeight = 60;
  */
 export const ScoreView: React.FC<ScoreViewProps> = ({ color, textColor, value = 0, style }) => {
 	const waveTranslateX = useRef(new Animated.Value(0)).current;
-
 	useEffect(() => {
 		const animation = Animated.timing(waveTranslateX, {
 			toValue: -100,
@@ -31,10 +30,10 @@ export const ScoreView: React.FC<ScoreViewProps> = ({ color, textColor, value = 
 		Animated.loop(animation).start();
 	}, []);
 
-	const units = Math.floor(value);
-	const decimals = ((value - units) * 100).toFixed(0);
-	const waveValue = lerp(2, -100)(value); // Empty flask is 50, full flask is 100
-	const wavePosition = -scoreWaveAmplitude / 2 + (100 - (waveValue || noValueHeight));
+	const integer = Math.floor(value * 100);
+	const decimals = (value * 100 - integer).toFixed(0);
+	const waveValue = lerp([0, 1], [-1, 1])(value); // Empty flask is 50, full flask is 100
+	const wavePosition = -scoreWaveAmplitude / 2 + (100 - (waveValue * 100 || noValueHeight));
 
 	return (
 		<Container color={color} style={style}>
@@ -49,7 +48,7 @@ export const ScoreView: React.FC<ScoreViewProps> = ({ color, textColor, value = 
 				<SineWave color={color} amplitude={scoreWaveAmplitude} />
 			</Animated.View>
 			<ScoreValue style={{ color: textColor ?? color }}>
-				{Math.floor(value) || "-"}
+				{integer || "-"}
 				{+decimals > 0 && <Text style={{ fontSize: 12 }}>,{decimals}</Text>}
 			</ScoreValue>
 		</Container>
