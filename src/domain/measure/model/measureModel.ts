@@ -69,6 +69,10 @@ export class MeasureModel implements Model<Proposal> {
 				mutate.call(this, mutation, () =>
 					this.dailyGlobalScore.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.score)
 				);
+			} else if (mutation.type === "setDailyEnergyScore") {
+				mutate.call(this, mutation, () =>
+					this.dailyEnergyScore.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.score)
+				);
 			} else if (mutation.type === "setSleepScore") {
 				mutate.call(this, mutation, () =>
 					this.dailySleepScore.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.data)
