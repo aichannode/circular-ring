@@ -31,11 +31,11 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 	quality,
 	isInverted,
 	percent,
-	calibration = [0.5, 1], // Default gauge calibration from spec 00003
+	calibration = [-1, 1], // Default gauge calibration from spec 00003
 	onPress,
 }) => {
 	const perc = lerp([0, 1], calibration)(percent);
-
+	console.log(perc);
 	return (
 		<Container style={style} onPress={onPress}>
 			<Row justify="space-between">
