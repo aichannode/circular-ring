@@ -11,55 +11,58 @@ import { DailyActivityIntensityMetrics, DailySleepStageDuration, SleepStagesMetr
 /**
  * Return the phases of sleep for the given metrics
  */
-export function getActivityPhases(
-	data: RangeMetrics<DailyActivityIntensityMetrics, MetricType.UserDailyActivityTotal>
-): {
-	stages: Array<StageInfos<ActivityStage>>;
-	duration: number;
-	sportSessionDates: Array<[string | undefined, string | undefined]>;
-} {
-	const sportSessionDates: Array<[string | undefined, string | undefined]> = [];
-	const duration = Number(data.constant[MetricType.UserDailyActivityTotal]);
-	const stages: Array<StageInfos<ActivityStage>> = data.timeSeries.reduce(function (result, block, i) {
-		if (hasMetric(MetricType.UserDataActivityIntensity)(block)) {
-			const intensityValue = Number(block.metrics[MetricType.UserDataActivityIntensity]);
-			// Prevent duplicated user.data.activity.intensity value
-			// The user.data.activity.intensity should pop once per value change
-			// TODO extract to front CIR-562
-			if (result[i - 1]?.level !== intensityValue) {
-				result.push({
-					level: intensityValue,
-					start: block.timestamp,
-					// Look for the next activity intensity switch
-					end:
-						data.timeSeries.slice(i + 1).find(hasMetric(MetricType.UserDataActivityIntensity))?.timestamp ??
-						data.timeSeries[data.timeSeries.length - 1].timestamp,
-				});
+export const createActivityPhasesGetter =
+	(isoDay: string) =>
+	(
+		data: RangeMetrics<DailyActivityIntensityMetrics, MetricType.UserDailyActivityTotal>
+	): {
+		stages: Array<StageInfos<ActivityStage>>;
+		duration: number;
+		sportSessionDates: Array<[string | undefined, string | undefined]>;
+	} => {
+		const sportSessionDates: Array<[string | undefined, string | undefined]> = [];
+		const duration = Number(data.constant[MetricType.UserDailyActivityTotal]);
+		const stages: Array<StageInfos<ActivityStage>> = data.timeSeries.reduce(function (result, block, i) {
+			const isSameDay = new Date(block.timestamp).getDate() === new Date(isoDay).getDate();
+			if (isSameDay && hasMetric(MetricType.UserDataActivityIntensity)(block)) {
+				const intensityValue = Number(block.metrics[MetricType.UserDataActivityIntensity]);
+				// Prevent duplicated user.data.activity.intensity value
+				// The user.data.activity.intensity should pop once per value change
+				// TODO extract to front CIR-562
+				if (result[i - 1]?.level !== intensityValue) {
+					result.push({
+						level: intensityValue,
+						start: block.timestamp,
+						// Look for the next activity intensity switch
+						end:
+							data.timeSeries.slice(i + 1).find(hasMetric(MetricType.UserDataActivityIntensity))?.timestamp ??
+							data.timeSeries[data.timeSeries.length - 1].timestamp,
+					});
+				}
+			}
+			return result;
+		}, [] as Array<StageInfos<ActivityStage>>);
+
+		for (let i = 0; i < data.timeSeries.length; i++) {
+			const currentBlock = data.timeSeries[i];
+			const doesStartSession = MetricType.UserDailySportBegin in currentBlock.metrics;
+			if (doesStartSession) {
+				const startTime = currentBlock.timestamp;
+				// Find end block
+				const endIndex = data.timeSeries.slice(i).findIndex(hasMetric(MetricType.UserDailySportEnd));
+				const endTime = endIndex > -1 ? data.timeSeries[i + endIndex].timestamp : undefined;
+				sportSessionDates.push([startTime, endTime]);
+				// Move the cursor forward to find the next session
+				i += endIndex > -1 ? endIndex : 0;
 			}
 		}
-		return result;
-	}, [] as Array<StageInfos<ActivityStage>>);
-
-	for (let i = 0; i < data.timeSeries.length; i++) {
-		const currentBlock = data.timeSeries[i];
-		const doesStartSession = MetricType.UserDailySportBegin in currentBlock.metrics;
-		if (doesStartSession) {
-			const startTime = currentBlock.timestamp;
-			// Find end block
-			const endIndex = data.timeSeries.slice(i).findIndex(hasMetric(MetricType.UserDailySportEnd));
-			const endTime = endIndex > -1 ? data.timeSeries[i + endIndex].timestamp : undefined;
-			sportSessionDates.push([startTime, endTime]);
-			// Move the cursor forward to find the next session
-			i += endIndex > -1 ? endIndex : 0;
-		}
-	}
-
-	return {
-		stages,
-		duration,
-		sportSessionDates,
+		console.log(stages[0].start, stages[0].level, stages[stages.length - 1]?.start);
+		return {
+			stages,
+			duration,
+			sportSessionDates,
+		};
 	};
-}
 
 /**
  * Return the phases of sleep for the given metrics

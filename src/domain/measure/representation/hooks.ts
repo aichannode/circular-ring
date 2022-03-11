@@ -9,7 +9,7 @@ import { MetricType } from "../metric";
 import { MeasureModel } from "../model/measureModel";
 import { Contributor, DailyActivityIntensityData, DailySleepData } from "./api";
 import { canDisplay, getScoreControlStates } from "./business";
-import { createSleepStagesGetter, getActivityPhases, useDailyHeavyComputationData } from "./lib/business";
+import { createActivityPhasesGetter, createSleepStagesGetter, useDailyHeavyComputationData } from "./lib/business";
 import { Activities, ActivityScoreContributors, SleepScoreContributors } from "./lib/type";
 
 export function createRepresentation(apiService: ApiService, model: MeasureModel) {
@@ -33,7 +33,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 			}) {
 				const modelField = model.dailyActivityIntensityMetrics;
 				const fetchData = () => actions.setDailyActivityIntensityMetrics(isoDay);
-				useDailyHeavyComputationData(isoDay, modelField, setData, getActivityPhases, fetchData);
+				useDailyHeavyComputationData(isoDay, modelField, setData, createActivityPhasesGetter(isoDay), fetchData);
 			},
 			useDailyActivities(isoDay?: string): Record<
 				Activities,
