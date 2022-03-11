@@ -35,7 +35,7 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 	onPress,
 }) => {
 	const perc = lerp([0, 1], calibration)(percent);
-	console.log(perc);
+
 	return (
 		<Container style={style} onPress={onPress}>
 			<Row justify="space-between">
@@ -44,7 +44,7 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 			</Row>
 			<Gauge>
 				<GaugeValue
-					perc={perc}
+					perc={perc <= 0 ? 0.01 : perc} // always fill a bit the gauge
 					isInverted={isInverted}
 					style={{
 						backgroundColor: ScoreQualityColors[quality],
