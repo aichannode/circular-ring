@@ -182,10 +182,6 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
-		/**
-		 * Retrieve daily energy score contributors data on server
-		 * @implements spec 00013
-		 */
 		async setDailyEnergyScoreContributorsMetrics(isoDay: string = moment().toISOString()) {
 			const data = await measureApi.fetchLastDailyMeasures<
 				| ContributorBodyRecovery
@@ -218,13 +214,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailyEnergyScoreContributorsMetrics",
 					payload: {
 						isoDate: isoDay,
-						data: {
-							[MetricType.UserDailyBodyRecoveryGoalMin]: 0.8,
-							[MetricType.UserDailyBodyRecoveryGoalMax]: 0.9,
-							[MetricType.UserDailyWakeUpScoreGoalMin]: 0.8,
-							[MetricType.UserDailyWakeUpScoreGoalMax]: 0.9,
-							...data,
-						},
+						data,
 					},
 				},
 			]);

@@ -76,6 +76,10 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					},
 				};
 			},
+			/**
+			 * Return sleep score contributors
+			 * @implements 00013, 00014, 00015, 00016, 00017, 00018, 00019, 00020, 00021, 00022
+			 */
 			useDailyEnergyScoreContributors(isoDay?: string): Record<ActivityScoreContributors, Contributor> {
 				useEffect(
 					action(function () {
@@ -88,23 +92,23 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				return {
 					[MetricType.UserDailyBodyRecovery]: {
 						value: data[MetricType.UserDailyBodyRecovery] as number,
-						thresholdLow: data[MetricType.UserDailyBodyRecoveryGoalMin] as number,
-						thresholdHigh: data[MetricType.UserDailyBodyRecoveryGoalMax] as number,
+						thresholdLow: (data[MetricType.UserDailyBodyRecoveryGoalMin] as number) ?? 0.8,
+						thresholdHigh: (data[MetricType.UserDailyBodyRecoveryGoalMax] as number) ?? 0.9,
 						percent: data[MetricType.UserDailyBodyRecovery] as number,
 						controlState: getScoreControlStates({
-							lowThreshold: data[MetricType.UserDailyBodyRecoveryGoalMin] as number,
-							highThreshold: data[MetricType.UserDailyBodyRecoveryGoalMax] as number,
+							lowThreshold: (data[MetricType.UserDailyBodyRecoveryGoalMin] as number) ?? 0.8,
+							highThreshold: (data[MetricType.UserDailyBodyRecoveryGoalMax] as number) ?? 0.9,
 							score: data[MetricType.UserDailyBodyRecovery] as number,
 						}),
 					},
 					[MetricType.UserDailyWakeUpScore]: {
 						value: data[MetricType.UserDailyWakeUpScore] as number,
-						thresholdLow: data[MetricType.UserDailyWakeUpScoreGoalMin] as number,
-						thresholdHigh: data[MetricType.UserDailyWakeUpScoreGoalMax] as number,
+						thresholdLow: (data[MetricType.UserDailyWakeUpScoreGoalMin] as number) ?? 0.8,
+						thresholdHigh: (data[MetricType.UserDailyWakeUpScoreGoalMax] as number) ?? 0.9,
 						percent: data[MetricType.UserDailyWakeUpScore] as number,
 						controlState: getScoreControlStates({
-							lowThreshold: data[MetricType.UserDailyWakeUpScoreGoalMin] as number,
-							highThreshold: data[MetricType.UserDailyWakeUpScoreGoalMax] as number,
+							lowThreshold: (data[MetricType.UserDailyWakeUpScoreGoalMin] as number) ?? 0.8,
+							highThreshold: (data[MetricType.UserDailyWakeUpScoreGoalMax] as number) ?? 0.9,
 							score: data[MetricType.UserDailyWakeUpScore] as number,
 						}),
 					},
