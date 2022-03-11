@@ -116,15 +116,15 @@ export const CircleActivityScreen: React.FC = observer(() => {
 				<ElementStack gap={10}>
 					{activities.map((metric) => {
 						const dataInfos = dailyActivitiesUIConfig[metric];
-						const value = dailyActivitiesData[metric];
+						const data = dailyActivitiesData[metric];
+
 						return (
-							value !== undefined &&
-							typeof value === "number" && (
+							typeof data.value === "number" && (
 								<DailyMetric
 									key={metric}
 									icon={getIcon(dataInfos.icon)}
 									label={format(dataInfos.labelKey)}
-									value={Math.round(value)}
+									value={Math.round(data.value)}
 									lowThreshold={dailyActivitiesData[metric].thresholdLow}
 									highThreshold={dailyActivitiesData[metric].thresholdHigh}
 								/>
