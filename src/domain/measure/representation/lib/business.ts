@@ -74,7 +74,9 @@ export const createSleepStagesGetter =
 				const stage = block.metrics[MetricType.UserSleepStage] as number;
 				// Prevent duplicated user sleep stage value
 				// TODO ask the back to do this
-				if (stages[i - 1]?.level !== stage) {
+				const currentLevel = Math.min(4, Math.max(1, Math.round(stage))); //@TODO ask if it is normal to have decimal
+				const previousLevel = Math.min(4, Math.max(1, Math.round(stages[i - 1]?.level)));
+				if (currentLevel !== previousLevel) {
 					// Find the end of this phase
 					// Look for the next sleep stage switch
 					const startSearchAt = i + 1;
@@ -95,7 +97,7 @@ export const createSleepStagesGetter =
 					const endOfStageBlock = data.timeSeries[endOfStageBlockIndex];
 
 					stages.push({
-						level: stage,
+						level: currentLevel,
 						start: block.timestamp,
 						end: endOfStageBlock.timestamp,
 					});
