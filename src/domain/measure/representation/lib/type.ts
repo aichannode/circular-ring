@@ -178,7 +178,6 @@ export const dailyActivityIntensityMetrics = [
 	MetricType.UserDataActivityIntensity,
 	MetricType.UserDailySportBegin,
 	MetricType.UserDailySportEnd,
-	MetricType.UserDailyActivityTotal,
 ] as const;
 export type DailyActivityIntensityMetrics = typeof dailyActivityIntensityMetrics[number];
 
