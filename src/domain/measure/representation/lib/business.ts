@@ -56,7 +56,7 @@ export const createActivityPhasesGetter =
 				i += endIndex > -1 ? endIndex : 0;
 			}
 		}
-		console.log(stages[0].start, stages[0].level, stages[stages.length - 1]?.start);
+
 		return {
 			stages,
 			duration,

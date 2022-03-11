@@ -15,21 +15,26 @@ type Props = {
 	stages: Array<StageInfos<ActivityStage>>;
 };
 
-function getPhaseLevel(phase = 4) {
-	// console.log("FIX phase", phase - 1);
+function getPhaseLevel(phase = 1) {
 	return phase - 1;
 }
 
 /**
- * @implements 00023: the chart should start at 00:001
+ * @implements 00023: the chart should start at 00:00
+ * @implements 00023: the chart should end at 00:00
+ * @implements 00023: the arc during a sport session is always bold and red
  */
 export function ActivityDurationPieChart({ stages, duration, sportSessionDates }: Props) {
 	// Check if the stage start at 00:00 and add a dummy stage if not
-	const correctedStages = produce(stages, (draft) => {
+	const correctedStages = produce(stages, function (draft) {
+		if (!draft.length) {
+			return draft;
+		}
 		const startOfDay = moment(draft[0].start).startOf("day").toISOString();
 		const endOfDay = moment(draft[stages.length - 1].end)
 			.endOf("day")
 			.toISOString();
+		// Add a fake stage to start the pie à 00:00
 		if (draft[0].start !== startOfDay) {
 			draft.unshift({
 				level: ActivityStage.SEDENTARY,
@@ -37,12 +42,23 @@ export function ActivityDurationPieChart({ stages, duration, sportSessionDates }
 				end: draft[1]?.start ?? endOfDay,
 			});
 		}
+		// Add a fake stage to end the pie à 00:00
 		if (draft[stages.length - 1].end !== endOfDay) {
 			draft.push({
 				level: ActivityStage.SEDENTARY,
 				start: draft[stages.length - 2].end ?? startOfDay,
 				end: endOfDay,
 			});
+		}
+		// Spec 00023: arc inside a session is always red and bold
+		for (const [sessionStart, sessionEnd] of sportSessionDates) {
+			if (sessionStart && sessionEnd) {
+				for (const stage of draft) {
+					if (new Date(stage.start) >= new Date(sessionStart) && new Date(stage.end) <= new Date(sessionEnd)) {
+						stage.level = ActivityStage.HIGH;
+					}
+				}
+			}
 		}
 	});
 	return (
@@ -53,8 +69,13 @@ export function ActivityDurationPieChart({ stages, duration, sportSessionDates }
 				title="activity.duration.total"
 				chartSize={200}
 				currentIsoDate={moment().toISOString()}
-				phaseColors={[colors.business.activityNone, colors.business.activityLow, colors.business.activityHigh]}
-				phaseWidths={[5, 7, 7]}
+				phaseColors={[
+					colors.business.activityNone,
+					colors.business.activityLow,
+					colors.business.activityLow,
+					colors.business.activityHigh,
+				]}
+				phaseWidths={[5, 7, 7, 7]}
 				getPhaseLevel={getPhaseLevel}
 			>
 				<DailyPieChartLabel
