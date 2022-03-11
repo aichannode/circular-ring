@@ -12,7 +12,7 @@ export function getSleepGaugesConfig(format: (v: WordingKey) => string): SleepQu
 			// Disturbance 2 metrics
 			titleKey: "sleep.quality.disturbance.label",
 			descriptionKey: "sleep.quality.disturbance.description",
-			renderValue: ({ value, percent }) => `${value} min (${1 - percent * 100}%)`,
+			renderValue: ({ value, percent }) => `${value} min (${(1 - percent) * 100}%)`,
 		},
 		[MetricType.UserDailyRealSleepDuration]: {
 			// Real sleep
