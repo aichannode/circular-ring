@@ -97,34 +97,37 @@ export const CircleSleepScreen: React.FC = observer(() => {
 					sleepScoreContributors
 						.map((metric, index) => {
 							const uiConfig = sleepGaugesConfig[metric];
-
-							return [
-								<ScoreGauge
-									key={metric}
-									value={uiConfig.renderValue({
-										...sleepScoreContributorsData[metric],
-									})}
-									percent={sleepScoreContributorsData[metric].percent}
-									label={format(uiConfig.titleKey)}
-									quality={sleepScoreContributorsData[metric].controlState}
-									onPress={() => {
-										LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-										setFocusedGauge((current) => (current === index ? null : index));
-									}}
-								/>,
-								focusedGauge === index && (
-									<GaugeDescription
-										key={metric + "description"}
+							const percent = sleepScoreContributorsData[metric].percent;
+							return (
+								percent !== undefined &&
+								!isNaN(percent) && [
+									<ScoreGauge
+										key={metric}
+										value={uiConfig.renderValue({
+											...sleepScoreContributorsData[metric],
+										})}
+										percent={sleepScoreContributorsData[metric].percent}
 										label={format(uiConfig.titleKey)}
-										description={format(uiConfig.descriptionKey)}
-										colorType="Sleep"
-										onClose={() => {
+										quality={sleepScoreContributorsData[metric].controlState}
+										onPress={() => {
 											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-											setFocusedGauge(null);
+											setFocusedGauge((current) => (current === index ? null : index));
 										}}
-									/>
-								),
-							];
+									/>,
+									focusedGauge === index && (
+										<GaugeDescription
+											key={metric + "description"}
+											label={format(uiConfig.titleKey)}
+											description={format(uiConfig.descriptionKey)}
+											colorType="Sleep"
+											onClose={() => {
+												LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+												setFocusedGauge(null);
+											}}
+										/>
+									),
+								]
+							);
 						})
 						.flatMap((x) => x)
 						.filter(Boolean) as JSX.Element[]
