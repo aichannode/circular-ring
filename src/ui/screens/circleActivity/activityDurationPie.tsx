@@ -27,11 +27,21 @@ export function ActivityDurationPieChart({ stages, duration, sportSessionDates }
 	// Check if the stage start at 00:00 and add a dummy stage if not
 	const correctedStages = produce(stages, (draft) => {
 		const startOfDay = moment(draft[0].start).startOf("day").toISOString();
-		if (draft[0].start !== moment(draft[0].start).startOf("day").toISOString()) {
+		const endOfDay = moment(draft[stages.length - 1].end)
+			.endOf("day")
+			.toISOString();
+		if (draft[0].start !== startOfDay) {
 			draft.unshift({
 				level: ActivityStage.SEDENTARY,
 				start: startOfDay,
-				end: draft[1]?.start ?? startOfDay,
+				end: draft[1]?.start ?? endOfDay,
+			});
+		}
+		if (draft[stages.length - 1].end !== endOfDay) {
+			draft.push({
+				level: ActivityStage.SEDENTARY,
+				start: draft[stages.length - 2].end ?? startOfDay,
+				end: endOfDay,
 			});
 		}
 	});
