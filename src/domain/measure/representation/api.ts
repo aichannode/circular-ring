@@ -25,3 +25,11 @@ export enum ScoreQuality {
 	GOOD = "GOOD",
 	OPTIMAL = "OPTIMAL",
 }
+
+export interface Contributor {
+	value: number;
+	thresholdLow: number;
+	thresholdHigh: number;
+	percent: number;
+	controlState: ScoreQuality;
+}

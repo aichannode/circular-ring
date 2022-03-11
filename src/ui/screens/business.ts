@@ -1,69 +1,5 @@
-import { WordingKey } from "src/wordings";
-import { MetricColor } from "./type";
 import { CircleEntity } from "@domain/circles/type";
-
-export function getMetricColor({
-	value: _value,
-	thresholdLow,
-	thresholdHigh,
-}: {
-	value: number;
-	thresholdLow: number;
-	thresholdHigh: number;
-}): MetricColor {
-	const value = Math.abs(_value);
-	if (value >= thresholdHigh) {
-		return MetricColor.GREEN;
-	}
-	if (value >= thresholdLow && value < thresholdHigh) {
-		return MetricColor.ORANGE;
-	} else return MetricColor.RED;
-}
-
-export const getGaugeColor =
-	(getGaugeFilling?: boolean) =>
-	({
-		value: _value,
-		thresholdLow,
-		thresholdHigh,
-		gaugeFilling,
-	}: {
-		value: number;
-		thresholdLow: number;
-		thresholdHigh: number;
-		gaugeFilling: number;
-	}): MetricColor => {
-		const value = Math.abs(getGaugeFilling ? gaugeFilling : _value);
-		if (value >= thresholdHigh) {
-			return MetricColor.GREEN;
-		}
-		if (value >= thresholdLow && value < thresholdHigh) {
-			return MetricColor.ORANGE;
-		} else return MetricColor.RED;
-	};
-
-export const getInvertedGaugeColor =
-	(getGaugeFilling?: boolean) =>
-	({
-		value: _value,
-		thresholdLow,
-		thresholdHigh,
-		gaugeFilling,
-	}: {
-		value: number;
-		thresholdLow: number;
-		thresholdHigh: number;
-		gaugeFilling: number;
-	}): MetricColor => {
-		const value = Math.abs(getGaugeFilling ? gaugeFilling : _value);
-		if (value <= thresholdHigh) {
-			return MetricColor.GREEN;
-		}
-		if (value <= thresholdLow && value > thresholdHigh) {
-			return MetricColor.ORANGE;
-		}
-		return MetricColor.RED;
-	};
+import { WordingKey } from "src/wordings";
 
 export const getScoreQualityLabel =
 	(format: (v: WordingKey) => string) =>
@@ -75,7 +11,7 @@ export const getScoreQualityLabel =
 		value: number;
 		thresholdLow: number;
 		thresholdHigh: number;
-		gaugeFilling: number;
+		percent: number;
 	}): string => {
 		if (value >= thresholdHigh) {
 			return format("score.quality.optimal");

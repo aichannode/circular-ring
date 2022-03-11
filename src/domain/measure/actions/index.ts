@@ -3,33 +3,59 @@ import moment from "moment";
 import { Proposal } from "../common/type";
 import { MetricType } from "../metric";
 import {
-	DailyActivitiesMetrics,
-	dailyActivitiesMetrics,
-	dailyActivitiesMetricsGoals,
-	DailyActivitiesMetricsGoals,
+	caloriesBurned,
+	CaloriesBurned,
+	ContributorActivityVolume,
+	contributorActivityVolume,
+	ContributorAwakeDuration,
+	contributorAwakeDuration,
+	ContributorBodyRecovery,
+	contributorBodyRecovery,
+	ContributorBRScore,
+	contributorBRScore,
+	ContributorCircadianRhythm,
+	contributorCircadianRhythm,
+	ContributorDailyTranquility,
+	contributorDailyTranquility,
+	ContributorDeepSleepuration,
+	contributorDeepSleepuration,
+	ContributorHRV,
+	contributorHRV,
+	ContributorRealSleepDuration,
+	contributorRealSleepDuration,
+	ContributorREMDuration,
+	contributorREMDuration,
+	ContributorRHR,
+	contributorRHR,
+	ContributorSleepBalance,
+	contributorSleepBalance,
+	ContributorSleepDebt,
+	contributorSleepDebt,
+	ContributorSleepQuality,
+	contributorSleepQuality,
+	ContributorSPO2,
+	contributorSPO2,
+	ContributorTimeToFallAsleep,
+	contributorTimeToFallAsleep,
+	ContributorVarTemperature,
+	contributorVarTemperature,
+	ContributorWakeUpScore,
+	contributorWakeUpScore,
 	dailyActivityIntensityMetrics,
 	DailyActivityIntensityMetrics,
-	DailyEnergyScoreGaugeCalibrationMetrics,
-	dailyEnergyScoreGaugeCalibrationMetrics,
-	DailyEnergyScoreMetrics,
-	dailyEnergyScoreMetrics,
-	DailyEnergyScoreMetricsGaugeSize,
-	dailyEnergyScoreMetricsGaugeSize,
 	dailyHRConstantMetrics,
 	DailyHRConstantMetrics,
 	dailyHRTimeSeriesMetrics,
 	DailyHRTimeSeriesMetrics,
-	dailySleepScoreContributorsGaugeCalibrationMetrics,
-	DailySleepScoreContributorsGaugeCalibrationMetrics,
-	dailySleepScoreContributorsMetrics,
-	DailySleepScoreContributorsMetrics,
-	dailySleepScoreContributorsMetricsGaugeSize,
-	DailySleepScoreContributorsMetricsGaugeSize,
 	dailySleepScoreMetrics,
 	dailySleepStageDuration,
 	DailySleepStageDuration,
 	SleepStagesMetrics,
 	sleepStagesMetrics,
+	stepsTaken,
+	StepsTaken,
+	walkingEquivalency,
+	WalkingEquivalency,
 } from "../representation/lib/type";
 import { MeasureApi } from "./lib/measureApi";
 
@@ -134,8 +160,16 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			});
 		},
 		async setDailyActivitiesMetrics(isoDay: string = moment().toISOString()) {
-			const data = await measureApi.fetchLastDailyMeasures<DailyActivitiesMetrics | DailyActivitiesMetricsGoals>(
-				[...dailyActivitiesMetrics, ...dailyActivitiesMetricsGoals],
+			const data = await measureApi.fetchLastDailyMeasures<
+				StepsTaken | WalkingEquivalency | CaloriesBurned | MetricType.UserDailyVO2Max | MetricType.UserDailyAwakeHRMax
+			>(
+				[
+					...stepsTaken,
+					...walkingEquivalency,
+					...caloriesBurned,
+					MetricType.UserDailyVO2Max,
+					MetricType.UserDailyAwakeHRMax,
+				],
 				isoDay
 			);
 			present([
@@ -154,9 +188,29 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		 */
 		async setDailyEnergyScoreContributorsMetrics(isoDay: string = moment().toISOString()) {
 			const data = await measureApi.fetchLastDailyMeasures<
-				DailyEnergyScoreMetrics | DailyEnergyScoreMetricsGaugeSize | DailyEnergyScoreGaugeCalibrationMetrics
+				| ContributorBodyRecovery
+				| ContributorWakeUpScore
+				| ContributorBRScore
+				| ContributorSPO2
+				| ContributorHRV
+				| ContributorRHR
+				| ContributorVarTemperature
+				| ContributorSleepQuality
+				| ContributorSleepBalance
+				| ContributorActivityVolume
 			>(
-				[...dailyEnergyScoreMetrics, ...dailyEnergyScoreMetricsGaugeSize, ...dailyEnergyScoreGaugeCalibrationMetrics],
+				[
+					...contributorBodyRecovery,
+					...contributorWakeUpScore,
+					...contributorBRScore,
+					...contributorSPO2,
+					...contributorHRV,
+					...contributorRHR,
+					...contributorVarTemperature,
+					...contributorSleepQuality,
+					...contributorSleepBalance,
+					...contributorActivityVolume,
+				],
 				isoDay
 			);
 			present([
@@ -177,14 +231,24 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		},
 		async setDailySleepScoreContributorsMetrics(isoDay: string = moment().toISOString()) {
 			const data = await measureApi.fetchLastDailyMeasures<
-				| DailySleepScoreContributorsMetrics
-				| DailySleepScoreContributorsMetricsGaugeSize
-				| DailySleepScoreContributorsGaugeCalibrationMetrics
+				| ContributorAwakeDuration
+				| ContributorRealSleepDuration
+				| ContributorDailyTranquility
+				| ContributorCircadianRhythm
+				| ContributorREMDuration
+				| ContributorDeepSleepuration
+				| ContributorTimeToFallAsleep
+				| ContributorSleepDebt
 			>(
 				[
-					...dailySleepScoreContributorsMetrics,
-					...dailySleepScoreContributorsMetricsGaugeSize,
-					...dailySleepScoreContributorsGaugeCalibrationMetrics,
+					...contributorAwakeDuration,
+					...contributorRealSleepDuration,
+					...contributorDailyTranquility,
+					...contributorCircadianRhythm,
+					...contributorREMDuration,
+					...contributorDeepSleepuration,
+					...contributorTimeToFallAsleep,
+					...contributorSleepDebt,
 				],
 				isoDay
 			);

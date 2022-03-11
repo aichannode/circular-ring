@@ -1,19 +1,21 @@
+import { ScoreQuality } from "@domain/measure/representation/api";
 import { Row } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { MetricColor } from "@ui/screens/type";
-import { colors } from "@ui/styles/colors";
+import { colors, ScoreQualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
-import { lerp } from "../business";
+import { lerp } from "../components/business";
 
 interface ScoreGaugeProps {
 	label: string;
 	value: string;
-	gaugeFilling: number;
+	percent: number;
+	quality: ScoreQuality;
 	isInverted?: boolean;
-	color: MetricColor;
+	color?: MetricColor;
 	calibration?: [number, number];
 	style?: StyleProp<ViewStyle>;
 	onPress?: () => void;
@@ -26,13 +28,13 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 	label,
 	value,
 	style,
-	color,
+	quality,
 	isInverted,
-	gaugeFilling,
+	percent,
 	calibration = [0.5, 1], // Default gauge calibration from spec 00003
 	onPress,
 }) => {
-	const perc = lerp([0, 1], calibration)(gaugeFilling);
+	const perc = lerp([0, 1], calibration)(percent);
 
 	return (
 		<Container style={style} onPress={onPress}>
@@ -45,12 +47,7 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 					perc={perc}
 					isInverted={isInverted}
 					style={{
-						backgroundColor:
-							color === MetricColor.RED
-								? colors.orangeRed
-								: color === MetricColor.ORANGE
-								? colors.orange
-								: colors.green,
+						backgroundColor: ScoreQualityColors[quality],
 					}}
 				/>
 			</Gauge>

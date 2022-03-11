@@ -13,12 +13,17 @@ export function canDisplay(isoDay: string, userCoreSleepEnd: number) {
  * Compute the control states for the sleep score
  * @implements spec [00001](https://docs.google.com/document/d/16SRBS_XPqDhePKuCi6rQm399n72H_82GTPAiay6AQlQ/edit?disco=AAAAWInQrBs)
  */
-export function getScoreControlStates(model: { lowThreshold: number; highThreshold: number; score: number }) {
+export function getScoreControlStates(model: {
+	lowThreshold: number;
+	highThreshold: number;
+	score: number;
+	isInverted?: boolean;
+}) {
 	if (model.score >= model.lowThreshold && model.score < model.highThreshold) {
 		return ScoreQuality.GOOD;
 	} else if (model.score < model.lowThreshold) {
-		return ScoreQuality.POOR;
+		return model.isInverted ? ScoreQuality.OPTIMAL : ScoreQuality.POOR;
 	} else {
-		return ScoreQuality.OPTIMAL;
+		return model.isInverted ? ScoreQuality.POOR : ScoreQuality.OPTIMAL;
 	}
 }

@@ -1,18 +1,32 @@
 import { Metrics, MetricType, RangeMetrics } from "../metric";
 import {
-	DailyActivitiesMetrics,
-	DailyActivitiesMetricsGoals,
+	CaloriesBurned,
+	CardioPoints,
+	ContributorActivityVolume,
+	ContributorAwakeDuration,
+	ContributorBodyRecovery,
+	ContributorBRScore,
+	ContributorCircadianRhythm,
+	ContributorDailyTranquility,
+	ContributorDeepSleepuration,
+	ContributorHRV,
+	ContributorRealSleepDuration,
+	ContributorREMDuration,
+	ContributorRHR,
+	ContributorSleepBalance,
+	ContributorSleepDebt,
+	ContributorSleepQuality,
+	ContributorSPO2,
+	ContributorTimeToFallAsleep,
+	ContributorVarTemperature,
+	ContributorWakeUpScore,
 	DailyActivityIntensityMetrics,
-	DailyEnergyScoreGaugeCalibrationMetrics,
-	DailyEnergyScoreMetrics,
-	DailyEnergyScoreMetricsGaugeSize,
 	DailyHRConstantMetrics,
 	DailyHRTimeSeriesMetrics,
-	DailySleepScoreContributorsGaugeCalibrationMetrics,
-	DailySleepScoreContributorsMetrics,
-	DailySleepScoreContributorsMetricsGaugeSize,
 	DailySleepScoreMetrics,
 	DailySleepStageDuration,
+	StepsTaken,
+	WalkingEquivalency,
 } from "../representation/lib/type";
 
 export type Mutations =
@@ -28,9 +42,14 @@ export type Mutations =
 			payload: {
 				isoDate: string;
 				data: Metrics<
-					| DailySleepScoreContributorsMetrics
-					| DailySleepScoreContributorsMetricsGaugeSize
-					| DailySleepScoreContributorsGaugeCalibrationMetrics
+					| ContributorAwakeDuration
+					| ContributorRealSleepDuration
+					| ContributorDailyTranquility
+					| ContributorCircadianRhythm
+					| ContributorREMDuration
+					| ContributorDeepSleepuration
+					| ContributorTimeToFallAsleep
+					| ContributorSleepDebt
 				>;
 			};
 	  }
@@ -39,7 +58,16 @@ export type Mutations =
 			payload: {
 				isoDate: string;
 				data: Metrics<
-					DailyEnergyScoreMetrics | DailyEnergyScoreMetricsGaugeSize | DailyEnergyScoreGaugeCalibrationMetrics
+					| ContributorBodyRecovery
+					| ContributorWakeUpScore
+					| ContributorBRScore
+					| ContributorSPO2
+					| ContributorHRV
+					| ContributorRHR
+					| ContributorVarTemperature
+					| ContributorSleepQuality
+					| ContributorSleepBalance
+					| ContributorActivityVolume
 				>;
 			};
 	  }
@@ -47,7 +75,14 @@ export type Mutations =
 			type: "setDailyActivitiesMetrics";
 			payload: {
 				isoDate: string;
-				data: Metrics<DailyActivitiesMetrics | DailyActivitiesMetricsGoals>;
+				data: Metrics<
+					| StepsTaken
+					| WalkingEquivalency
+					| CaloriesBurned
+					| CardioPoints
+					| MetricType.UserDailyVO2Max
+					| MetricType.UserDailyAwakeHRMax
+				>;
 			};
 	  }
 	| {

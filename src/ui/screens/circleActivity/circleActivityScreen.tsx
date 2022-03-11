@@ -6,7 +6,7 @@ import shoes from "@assets/images/shoes.png";
 import sport from "@assets/images/sport.png";
 import { useRepresentations } from "@core/representation";
 import { DailyActivityIntensityData } from "@domain/measure/representation/api";
-import { dailyActivitiesMetrics, dailyEnergyScoreMetrics } from "@domain/measure/representation/lib/type";
+import { activities, activityScoreContributors } from "@domain/measure/representation/lib/type";
 import { TimeFrame } from "@domain/measure/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CalendarView } from "@ui/components/calendar/calendarView";
@@ -14,9 +14,9 @@ import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButt
 import { InfoListHeader } from "@ui/components/infoList";
 import { Stack } from "@ui/components/layout";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
-import { ScoreGauge } from "@ui/components/measure/scoreGauge";
 import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { TitleText } from "@ui/components/text";
+import { ScoreGauge } from "@ui/containers/scoreGauge";
 import { ScoreSection } from "@ui/containers/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -28,7 +28,7 @@ import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
 import { DailyMetric } from "./dailyMetric";
-import { dailyMetricsDetails, getActivityQualityDetails } from "./measureDisplayInfos";
+import { dailyActivitiesUIConfig, getActivityGaugesConfig } from "./measureDisplayInfos";
 
 function getIcon(path: string) {
 	switch (path) {
@@ -63,22 +63,19 @@ export const CircleActivityScreen: React.FC = observer(() => {
 				useDailyEnergyScore,
 				useDailyActivityIntensity,
 				useCanDisplayData,
-				useDailyHR,
 			},
 		},
 		calendar: {
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
-	const dailyHr = useDailyHR(selectedDay);
-	console.log("dailyHr", dailyHr); // @TODO remove
 	const tags = useDailyTags(selectedDay);
 	const energyScoreDetails = useDailyEnergyScoreDetails(selectedDay);
-	const dailyMetrics = useDailyActivities(selectedDay);
+	const dailyActivitiesData = useDailyActivities(selectedDay);
 	const energyScore = useDailyEnergyScore(selectedDay);
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const activityQualityDetails = getActivityQualityDetails(format);
+	const activityContributorGaugesConfig = getActivityGaugesConfig(format);
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	useDailyActivityIntensity({ isoDay: selectedDay, setData });
 	const graphData: Array<{
@@ -117,9 +114,9 @@ export const CircleActivityScreen: React.FC = observer(() => {
 				/>
 				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
 				<ElementStack gap={10}>
-					{dailyActivitiesMetrics.map((metric) => {
-						const dataInfos = dailyMetricsDetails[metric];
-						const value = dailyMetrics[metric];
+					{activities.map((metric) => {
+						const dataInfos = dailyActivitiesUIConfig[metric];
+						const value = dailyActivitiesData[metric];
 						return (
 							value !== undefined &&
 							typeof value === "number" && (
@@ -128,14 +125,8 @@ export const CircleActivityScreen: React.FC = observer(() => {
 									icon={getIcon(dataInfos.icon)}
 									label={format(dataInfos.labelKey)}
 									value={Math.round(value)}
-									lowThreshold={
-										dataInfos.metricsName.thresholdLow &&
-										(energyScoreDetails as any)[dataInfos.metricsName.thresholdLow]
-									}
-									highThreshold={
-										dataInfos.metricsName.thresholdHigh &&
-										(energyScoreDetails as any)[dataInfos.metricsName.thresholdHigh]
-									}
+									lowThreshold={dailyActivitiesData[metric].thresholdLow}
+									highThreshold={dailyActivitiesData[metric].thresholdHigh}
 								/>
 							)
 						);
@@ -144,46 +135,37 @@ export const CircleActivityScreen: React.FC = observer(() => {
 				<InfoListHeader>{format("activity.score.details")}</InfoListHeader>
 				<ElementStack gap={10}>
 					{
-						dailyEnergyScoreMetrics
+						activityScoreContributors
 							.map((metric, index) => {
-								const dataInfos = activityQualityDetails[metric];
-
-								const values: {
-									value: number;
-									thresholdLow: number;
-									thresholdHigh: number;
-									gaugeFilling: number;
-								} = {
-									value: (energyScoreDetails as any)[dataInfos.metricsName.value],
-									thresholdLow: (energyScoreDetails as any)[dataInfos.metricsName.thresholdLow],
-									thresholdHigh: (energyScoreDetails as any)[dataInfos.metricsName.thresholdHigh],
-									gaugeFilling: (energyScoreDetails as any)[dataInfos.metricsName.gaugeFilling],
-								};
-								return [
-									<ScoreGauge
-										key={metric}
-										value={dataInfos.renderValue(values)}
-										gaugeFilling={values.gaugeFilling}
-										color={dataInfos.getGaugeColor(values)}
-										label={format(dataInfos.titleKey)}
-										onPress={() => {
-											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-											setFocusedGauge((current) => (current === index ? null : index));
-										}}
-									/>,
-									focusedGauge === index && (
-										<GaugeDescription
-											key={metric + "description"}
-											label={format(dataInfos.titleKey)}
-											description={format(dataInfos.descriptionKey)}
-											colorType="Activity"
-											onClose={() => {
+								const uiConfig = activityContributorGaugesConfig[metric];
+								return (
+									<>
+										<ScoreGauge
+											value={uiConfig.renderValue({
+												...energyScoreDetails[metric],
+											})}
+											percent={energyScoreDetails[metric].percent}
+											label={format(uiConfig.titleKey)}
+											quality={energyScoreDetails[metric].controlState}
+											onPress={() => {
 												LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-												setFocusedGauge(null);
+												setFocusedGauge((current) => (current === index ? null : index));
 											}}
 										/>
-									),
-								];
+										{focusedGauge === index && (
+											<GaugeDescription
+												key={metric + "description"}
+												label={format(uiConfig.titleKey)}
+												description={format(uiConfig.descriptionKey)}
+												colorType="Activity"
+												onClose={() => {
+													LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+													setFocusedGauge(null);
+												}}
+											/>
+										)}
+									</>
+								);
 							})
 							.flatMap((x) => x)
 							.filter(Boolean) as JSX.Element[]

@@ -120,7 +120,7 @@ export const createSleepStagesGetter =
 		return {
 			totalMinutesSleepDuration,
 			stages,
-			timeToFallASleep: data.constant[MetricType.UserTimeToFallASleep] as number,
+			timeToFallASleep: data.constant[MetricType.UserDailyCoreTimeToFallAsleep] as number,
 			coreSleepTiming,
 			napTimings,
 			sleepStagesDuration: {

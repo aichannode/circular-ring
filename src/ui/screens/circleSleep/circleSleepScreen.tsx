@@ -1,6 +1,6 @@
 import { useRepresentations } from "@core/representation";
 import { DailySleepData } from "@domain/measure/representation/api";
-import { dailySleepScoreContributorsMetrics } from "@domain/measure/representation/lib/type";
+import { sleepScoreContributors } from "@domain/measure/representation/lib/type";
 import { SleepStage, TimeFrame } from "@domain/measure/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CalendarView } from "@ui/components/calendar/calendarView";
@@ -11,11 +11,11 @@ import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { GraphLegend } from "@ui/components/measure/graphLegend";
-import { ScoreGauge } from "@ui/components/measure/scoreGauge";
 import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { TitleText } from "@ui/components/text";
+import { ScoreGauge } from "@ui/containers/scoreGauge";
 import { ScoreSection } from "@ui/containers/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -27,27 +27,23 @@ import { LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
 import { trimSleepStages } from "./business";
 import { Hypnogram } from "./hypnogram";
-import { getSleepQualityDetails } from "./measureDisplayInfos";
+import { getSleepGaugesConfig } from "./measureDisplayInfos";
 import { SleepDurationPieChart } from "./sleepDurationPie";
 
 export const CircleSleepScreen: React.FC = observer(() => {
 	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
-	const {
-		useDailySleepScoreContributors: useDailySleepDetails,
-		useDailySleepQualityScore,
-		useDailySleepStages,
-		useCanDisplayData,
-	} = useRepresentations().measure.hooks;
+	const { useDailySleepScoreContributors, useDailySleepQualityScore, useDailySleepStages, useCanDisplayData } =
+		useRepresentations().measure.hooks;
 	const { useDailyTags } = useRepresentations().calendar.hooks;
 	const canDisplay = useCanDisplayData(selectedDay);
-	const details = useDailySleepDetails(selectedDay);
+	const sleepScoreContributorsData = useDailySleepScoreContributors(selectedDay);
 	const qualityScore = useDailySleepQualityScore(selectedDay);
 	const [dailySleep, setDailyData] = useState<DailySleepData | undefined>();
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const { format } = useI18n();
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const sleepQualityDetails = getSleepQualityDetails(format);
+	const sleepGaugesConfig = getSleepGaugesConfig(format);
 	const awakeDuration = dailySleep?.sleepStagesDuration[SleepStage.AWAKE];
 	const REMDuration = dailySleep?.sleepStagesDuration[SleepStage.REM];
 	const lightDuration = dailySleep?.sleepStagesDuration[SleepStage.LIGHT];
@@ -98,28 +94,19 @@ export const CircleSleepScreen: React.FC = observer(() => {
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
 				{
-					dailySleepScoreContributorsMetrics
+					sleepScoreContributors
 						.map((metric, index) => {
-							const dataInfos = sleepQualityDetails[metric];
-							const values: {
-								value: number;
-								thresholdLow: number;
-								thresholdHigh: number;
-								gaugeFilling: number;
-							} = {
-								value: (details as any)[dataInfos.metricsName.value],
-								thresholdLow: (details as any)[dataInfos.metricsName.thresholdLow],
-								thresholdHigh: (details as any)[dataInfos.metricsName.thresholdHigh],
-								gaugeFilling: (details as any)[dataInfos.metricsName.gaugeFilling],
-							};
+							const uiConfig = sleepGaugesConfig[metric];
+
 							return [
 								<ScoreGauge
 									key={metric}
-									value={dataInfos.renderValue(values)}
-									gaugeFilling={values.gaugeFilling}
-									color={dataInfos.getGaugeColor(values)}
-									label={format(dataInfos.titleKey)}
-									isInverted={dataInfos.isInverted}
+									value={uiConfig.renderValue({
+										...sleepScoreContributorsData[metric],
+									})}
+									percent={sleepScoreContributorsData[metric].percent}
+									label={format(uiConfig.titleKey)}
+									quality={sleepScoreContributorsData[metric].controlState}
 									onPress={() => {
 										LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 										setFocusedGauge((current) => (current === index ? null : index));
@@ -128,8 +115,8 @@ export const CircleSleepScreen: React.FC = observer(() => {
 								focusedGauge === index && (
 									<GaugeDescription
 										key={metric + "description"}
-										label={format(dataInfos.titleKey)}
-										description={format(dataInfos.descriptionKey)}
+										label={format(uiConfig.titleKey)}
+										description={format(uiConfig.descriptionKey)}
 										colorType="Sleep"
 										onClose={() => {
 											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);

@@ -4,20 +4,34 @@ import { getKeyFromDate } from "../common/business";
 import { Proposal } from "../common/type";
 import { Metrics, MetricType, RangeMetrics } from "../metric";
 import {
-	DailyActivitiesMetrics,
-	DailyActivitiesMetricsGoals,
+	CaloriesBurned,
+	CardioPoints,
+	ContributorActivityVolume,
+	ContributorAwakeDuration,
+	ContributorBodyRecovery,
+	ContributorBRScore,
+	ContributorCircadianRhythm,
+	ContributorDailyTranquility,
+	ContributorDeepSleepuration,
+	ContributorHRV,
+	ContributorRealSleepDuration,
+	ContributorREMDuration,
+	ContributorRHR,
+	ContributorSleepBalance,
+	ContributorSleepDebt,
+	ContributorSleepQuality,
+	ContributorSPO2,
+	ContributorTimeToFallAsleep,
+	ContributorVarTemperature,
+	ContributorWakeUpScore,
 	DailyActivityIntensityMetrics,
-	DailyEnergyScoreGaugeCalibrationMetrics,
-	DailyEnergyScoreMetrics,
-	DailyEnergyScoreMetricsGaugeSize,
 	DailyHRConstantMetrics,
 	DailyHRTimeSeriesMetrics,
-	DailySleepScoreContributorsGaugeCalibrationMetrics,
-	DailySleepScoreContributorsMetrics,
-	DailySleepScoreContributorsMetricsGaugeSize,
 	DailySleepScoreMetrics,
 	DailySleepStageDuration,
 	SleepStagesMetrics,
+	StepsTaken,
+	WalkingEquivalency,
 } from "../representation/lib/type";
 
 export class MeasureModel implements Model<Proposal> {
@@ -26,14 +40,30 @@ export class MeasureModel implements Model<Proposal> {
 	public dailySleepScoreContributorsMetrics: Map<
 		string,
 		Metrics<
-			| DailySleepScoreContributorsMetrics
-			| DailySleepScoreContributorsMetricsGaugeSize
-			| DailySleepScoreContributorsGaugeCalibrationMetrics
+			| ContributorAwakeDuration
+			| ContributorRealSleepDuration
+			| ContributorDailyTranquility
+			| ContributorCircadianRhythm
+			| ContributorREMDuration
+			| ContributorDeepSleepuration
+			| ContributorTimeToFallAsleep
+			| ContributorSleepDebt
 		>
 	> = new Map();
 	public dailyEnergyScoreContributorsMetrics: Map<
 		string,
-		Metrics<DailyEnergyScoreMetrics | DailyEnergyScoreMetricsGaugeSize | DailyEnergyScoreGaugeCalibrationMetrics>
+		Metrics<
+			| ContributorBodyRecovery
+			| ContributorWakeUpScore
+			| ContributorBRScore
+			| ContributorSPO2
+			| ContributorHRV
+			| ContributorRHR
+			| ContributorVarTemperature
+			| ContributorSleepQuality
+			| ContributorSleepBalance
+			| ContributorActivityVolume
+		>
 	> = new Map();
 	public dailySleepMetrics: Map<string, RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>> = new Map();
 	public dailyEnergyScore: Map<string, number | undefined> = new Map();
@@ -41,7 +71,17 @@ export class MeasureModel implements Model<Proposal> {
 		string,
 		RangeMetrics<DailyActivityIntensityMetrics, MetricType.UserDailyActivityTotal>
 	> = new Map();
-	public dailyActivitiesMetrics: Map<string, Metrics<DailyActivitiesMetrics | DailyActivitiesMetricsGoals>> = new Map();
+	public dailyActivitiesMetrics: Map<
+		string,
+		Metrics<
+			| StepsTaken
+			| WalkingEquivalency
+			| CaloriesBurned
+			| CardioPoints
+			| MetricType.UserDailyVO2Max
+			| MetricType.UserDailyAwakeHRMax
+		>
+	> = new Map();
 	public dailyGlobalScore: Map<string, number | undefined> = new Map();
 	public dailySleepScore: Map<string, Record<DailySleepScoreMetrics, number>> = new Map();
 	public lastAcceptedMutations: Proposal[] = [];
