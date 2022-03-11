@@ -30,9 +30,9 @@ export function getActivityGaugesConfig(format: (v: WordingKey) => string): Dail
 		},
 		[MetricType.UserDailyScoreSPO2]: {
 			// SPO2
-			titleKey: "score.details.breathing.label",
-			descriptionKey: "score.details.breathing.description",
-			renderValue: ({ value }: { value: number }) => `${value} rpm`,
+			titleKey: "score.details.spo2.label",
+			descriptionKey: "score.details.spo2.description",
+			renderValue: ({ value }: { value: number }) => `${value} %`,
 		},
 		[MetricType.UserDailyScoreHRV]: {
 			// Heart rate variability
