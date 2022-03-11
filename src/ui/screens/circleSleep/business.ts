@@ -35,24 +35,20 @@ export function trimSleepStages({
 	if (coreSleepFrame === undefined) {
 		return stages;
 	}
-	// First, remove all awake period before core sleep
-	const splitedStages =
-		stages.slice(
-			coreSleepFrame
-				? stages.findIndex((block) => moment(coreSleepFrame[0]).isBetween(block.start, block.end, undefined, "[)"))
-				: stages.findIndex((block) =>
-						moment(moment(isoDay).startOf("day")).isBetween(block.start, block.end, undefined, "[)")
-				  )
-		) || [];
-
 	// Update the first stage to reflect the start of the sleep
-	return produce(splitedStages, function (draft) {
-		// Start of sleep
+	return produce(stages, function (draft) {
+		// Retrieve the phase where the core sleep begins
 		const coreSleepStart = Date.parse(coreSleepFrame[0]);
-		const start = new Date(coreSleepStart - userTimeToFallAsleep * 60).toISOString();
+		draft.splice(
+			0,
+			draft.findIndex((stage) => Date.parse(stage.start) <= coreSleepStart && Date.parse(stage.end) > coreSleepStart)
+		);
 
-		if (draft[0]?.start) {
-			draft[0].start = start;
+		// Start of sleep
+		const correctedStart = new Date(coreSleepStart - userTimeToFallAsleep).toISOString();
+
+		if (draft[0].start) {
+			draft[0].start = correctedStart;
 		}
 
 		// End of sleep. We need to take nap in account
