@@ -26,6 +26,13 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 	return {
 		actions,
 		hooks: {
+			useDailyHR(isoDay = moment().toISOString()) {
+				useEffect(() => {
+					__DEV__ && console.log("[MEASURE: Action] FETCH");
+					actions.setDailyHRMetrics(isoDay);
+				}, [isoDay]);
+				return model.dailyHRMetrics.get(getKeyFromDate(isoDay)) ?? {};
+			},
 			useDailyActivityIntensity({
 				isoDay = moment().toISOString(),
 				setData,

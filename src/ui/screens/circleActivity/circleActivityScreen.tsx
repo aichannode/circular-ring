@@ -63,12 +63,15 @@ export const CircleActivityScreen: React.FC = observer(() => {
 				useDailyEnergyScore,
 				useDailyActivityIntensity,
 				useCanDisplayData,
+				useDailyHR,
 			},
 		},
 		calendar: {
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
+	const dailyHr = useDailyHR(selectedDay);
+	console.log("dailyHr", dailyHr); // @TODO remove
 	const tags = useDailyTags(selectedDay);
 	const energyScoreDetails = useDailyEnergyScoreDetails(selectedDay);
 	const dailyMetrics = useDailyActivities(selectedDay);

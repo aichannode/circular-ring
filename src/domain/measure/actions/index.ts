@@ -15,6 +15,10 @@ import {
 	dailyEnergyScoreMetrics,
 	DailyEnergyScoreMetricsGaugeSize,
 	dailyEnergyScoreMetricsGaugeSize,
+	dailyHRConstantMetrics,
+	DailyHRConstantMetrics,
+	dailyHRTimeSeriesMetrics,
+	DailyHRTimeSeriesMetrics,
 	dailySleepScoreContributorsGaugeCalibrationMetrics,
 	DailySleepScoreContributorsGaugeCalibrationMetrics,
 	dailySleepScoreContributorsMetrics,
@@ -31,6 +35,25 @@ import { MeasureApi } from "./lib/measureApi";
 
 export function createActions(measureApi: MeasureApi, present: Present<Proposal>) {
 	return {
+		async setDailyHRMetrics(isoDay: string = moment().toISOString()) {
+			Promise.all([
+				measureApi.fetchDailyMeasures<DailyHRTimeSeriesMetrics>(dailyHRTimeSeriesMetrics, isoDay),
+				measureApi.fetchLastDailyMeasures<DailyHRConstantMetrics>(dailyHRConstantMetrics, isoDay),
+			]).then(function ([timeSeries, constant]) {
+				present([
+					{
+						type: "setDailyHRMetrics",
+						payload: {
+							isoDate: isoDay,
+							range: {
+								timeSeries,
+								constant,
+							},
+						},
+					},
+				]);
+			});
+		},
 		async setEachDayOfMonthScore(isoDate: string) {
 			const range = await measureApi.fetchMonthlyMeasures<MetricType.UserDailyGlobalScore>(
 				[MetricType.UserDailyGlobalScore],

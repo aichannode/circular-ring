@@ -6,6 +6,8 @@ import {
 	DailyEnergyScoreGaugeCalibrationMetrics,
 	DailyEnergyScoreMetrics,
 	DailyEnergyScoreMetricsGaugeSize,
+	DailyHRConstantMetrics,
+	DailyHRTimeSeriesMetrics,
 	DailySleepScoreContributorsGaugeCalibrationMetrics,
 	DailySleepScoreContributorsMetrics,
 	DailySleepScoreContributorsMetricsGaugeSize,
@@ -14,6 +16,13 @@ import {
 } from "../representation/lib/type";
 
 export type Mutations =
+	| {
+			type: "setDailyHRMetrics";
+			payload: {
+				isoDate: string;
+				range: RangeMetrics<DailyHRTimeSeriesMetrics, DailyHRConstantMetrics>;
+			};
+	  }
 	| {
 			type: "setDailySleepScoreContributorsMetrics";
 			payload: {

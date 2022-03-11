@@ -14,6 +14,7 @@ export type Metrics<M extends MetricType> = Partial<{
  * - the last value of the range for the given F metrics
  */
 export type RangeMetrics<T extends MetricType = MetricType, F extends MetricType = MetricType> = {
+	// le premier varie au cours du temps le deuxieme valeur fixes
 	timeSeries: Array<DatedMetrics<T>>;
 	constant: Metrics<F>;
 };
@@ -72,6 +73,7 @@ export enum MetricType {
 	///////////////////
 	// Daily metabolism
 	///////////////////
+	UserHR = "user.hr",
 	UserDailyGlobalScore = "user.daily.global.score",
 	UserDailyBodyRecovery = "user.daily.body.recovery",
 	UserDailyScoreBr = "user.daily.score.br",
@@ -107,6 +109,10 @@ export enum MetricType {
 	UserWeeklyCardioPointsGoalMin = "user.weekly.cardio.points.goal.min",
 	UserDailyCardioPointsGoalMax = "user.daily.cardio.points.goal.max",
 	UserDailyCardioPointsGoalMin = "user.daily.cardio.points.goal.min",
+	UserDailyAwakeHRMax = "user.daily.awake.hr.max",
+	UserDailyAwakeHRMin = "user.daily.awake.hr.min",
+	UserDailyAwakeHRAverage = "user.daily.awake.hr",
+	UserDailyAwakeHRReference = "user.reference.awake.hr",
 
 	/////////////////
 	// Daily activity

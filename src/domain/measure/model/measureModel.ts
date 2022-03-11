@@ -10,6 +10,8 @@ import {
 	DailyEnergyScoreGaugeCalibrationMetrics,
 	DailyEnergyScoreMetrics,
 	DailyEnergyScoreMetricsGaugeSize,
+	DailyHRConstantMetrics,
+	DailyHRTimeSeriesMetrics,
 	DailySleepScoreContributorsGaugeCalibrationMetrics,
 	DailySleepScoreContributorsMetrics,
 	DailySleepScoreContributorsMetricsGaugeSize,
@@ -19,6 +21,8 @@ import {
 } from "../representation/lib/type";
 
 export class MeasureModel implements Model<Proposal> {
+	public dailyHRMetrics: Map<string, RangeMetrics<DailyHRTimeSeriesMetrics, DailyHRConstantMetrics> | undefined> =
+		new Map();
 	public dailySleepScoreContributorsMetrics: Map<
 		string,
 		Metrics<
@@ -57,7 +61,11 @@ export class MeasureModel implements Model<Proposal> {
 	public present = (proposal: Proposal) => {
 		(this.lastAcceptedMutations as IObservableArray).clear();
 		proposal.forEach((mutation) => {
-			if (mutation.type === "setDailyActivityIntensityMetrics") {
+			if (mutation.type === "setDailyHRMetrics") {
+				mutate.call(this, mutation, () =>
+					this.dailyHRMetrics.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.range)
+				);
+			} else if (mutation.type === "setDailyActivityIntensityMetrics") {
 				mutate.call(this, mutation, () =>
 					this.dailyActivityIntensityMetrics.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.range)
 				);

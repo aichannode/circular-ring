@@ -13,6 +13,17 @@ export type StageInfos<T extends SleepStage | ActivityStage> = {
  * Used by the representation, atomically select needed data
  */
 
+export const dailyHRConstantMetrics = [
+	MetricType.UserDailyAwakeHRMax,
+	MetricType.UserDailyAwakeHRMin,
+	MetricType.UserDailyAwakeHRAverage,
+	MetricType.UserDailyAwakeHRReference,
+] as const;
+export type DailyHRConstantMetrics = typeof dailyHRConstantMetrics[number];
+
+export const dailyHRTimeSeriesMetrics = [MetricType.UserHR] as const;
+export type DailyHRTimeSeriesMetrics = typeof dailyHRTimeSeriesMetrics[number];
+
 export const dailyActivityIntensityMetrics = [
 	MetricType.UserDataActivityIntensity,
 	MetricType.UserDailySportBegin,
