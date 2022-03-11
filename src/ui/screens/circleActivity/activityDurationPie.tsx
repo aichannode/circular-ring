@@ -4,6 +4,7 @@ import { DailyPieChart } from "@ui/components/measure/dailyPieChart";
 import { DailyPieChartLabel } from "@ui/components/measure/dailyPieChartLabel";
 import { colors } from "@ui/styles/colors";
 import { isDefined } from "@ui/utils/filter";
+import produce from "immer";
 import moment from "moment";
 import React from "react";
 import styled from "styled-components/native";
@@ -19,11 +20,25 @@ function getPhaseLevel(phase = 4) {
 	return phase - 1;
 }
 
+/**
+ * @implements 00023: the chart should start at 00:001
+ */
 export function ActivityDurationPieChart({ stages, duration, sportSessionDates }: Props) {
+	// Check if the stage start at 00:00 and add a dummy stage if not
+	const correctedStages = produce(stages, (draft) => {
+		const startOfDay = moment(draft[0].start).startOf("day").toISOString();
+		if (draft[0].start !== moment(draft[0].start).startOf("day").toISOString()) {
+			draft.unshift({
+				level: ActivityStage.SEDENTARY,
+				start: startOfDay,
+				end: draft[1]?.start ?? startOfDay,
+			});
+		}
+	});
 	return (
 		<Container>
 			<DailyPieChart
-				stages={stages}
+				stages={correctedStages}
 				totalDuration={duration}
 				title="activity.duration.total"
 				chartSize={200}
