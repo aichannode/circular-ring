@@ -138,34 +138,34 @@ export const CircleActivityScreen: React.FC = observer(() => {
 						activityScoreContributors
 							.map((metric, index) => {
 								const uiConfig = activityContributorGaugesConfig[metric];
-								return (
-									<>
-										<ScoreGauge
-											value={uiConfig.renderValue({
-												...energyScoreDetails[metric],
-											})}
-											percent={energyScoreDetails[metric].percent}
+								const percent = energyScoreDetails[metric].percent;
+								return [
+									<ScoreGauge
+										key={metric}
+										value={uiConfig.renderValue({
+											...energyScoreDetails[metric],
+										})}
+										percent={percent}
+										label={format(uiConfig.titleKey)}
+										quality={energyScoreDetails[metric].controlState}
+										onPress={() => {
+											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+											setFocusedGauge((current) => (current === index ? null : index));
+										}}
+									/>,
+									focusedGauge === index && (
+										<GaugeDescription
+											key={metric + "description"}
 											label={format(uiConfig.titleKey)}
-											quality={energyScoreDetails[metric].controlState}
-											onPress={() => {
+											description={format(uiConfig.descriptionKey)}
+											colorType="Activity"
+											onClose={() => {
 												LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-												setFocusedGauge((current) => (current === index ? null : index));
+												setFocusedGauge(null);
 											}}
 										/>
-										{focusedGauge === index && (
-											<GaugeDescription
-												key={metric + "description"}
-												label={format(uiConfig.titleKey)}
-												description={format(uiConfig.descriptionKey)}
-												colorType="Activity"
-												onClose={() => {
-													LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-													setFocusedGauge(null);
-												}}
-											/>
-										)}
-									</>
-								);
+									),
+								];
 							})
 							.flatMap((x) => x)
 							.filter(Boolean) as JSX.Element[]
