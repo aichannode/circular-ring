@@ -66,7 +66,7 @@ export const ActivityIntensityGraph = ({ samples, tags }: Props) => {
 		}),
 		labelCount: 3,
 		drawGridLines: false,
-		axisLineColor: processColor("white"), // can't hide it so paint it white
+		drawAxisLine: false,
 	};
 
 	const yAxis = {
@@ -80,8 +80,8 @@ export const ActivityIntensityGraph = ({ samples, tags }: Props) => {
 			],
 			granularityEnabled: true,
 			granularity: 1,
-			drawAxisLines: false,
-			axisLineColor: processColor("white"), // can't hide it so paint it white
+			drawGridLines: false,
+			drawAxisLine: false,
 		},
 		right: { enabled: false }, // used to delete the right axis
 	};
