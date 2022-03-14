@@ -26,7 +26,9 @@ export const ActivityIntensityGraph = ({ samples, tags }: Props) => {
 				values: samples.map(({ value, isoTime }) => {
 					const date = new Date(isoTime);
 					const marker = `${formatHour(date, is24h)}\n${
-						value >= 3
+						value > 4
+							? format("intensity.max_hr")
+							: value === 4
 							? format("intensity.high")
 							: value >= 2
 							? format("intensity.medium")
@@ -69,7 +71,13 @@ export const ActivityIntensityGraph = ({ samples, tags }: Props) => {
 
 	const yAxis = {
 		left: {
-			valueFormatter: ["", format("intensity.low"), format("intensity.medium"), format("intensity.high")],
+			valueFormatter: [
+				"",
+				format("intensity.low"),
+				format("intensity.medium"),
+				format("intensity.high"),
+				format("intensity.max_hr"),
+			],
 			granularityEnabled: true,
 			granularity: 1,
 			drawAxisLines: false,
