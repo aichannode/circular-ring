@@ -57,7 +57,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						thresholdLow: data[MetricType.UserDailyStepsGoalMin] as number,
 					},
 					[MetricType.UserDailyWalkingEquivalency]: {
-						value: data[MetricType.UserDailyWalkingEquivalency] as number,
+						value: (data[MetricType.UserDailyWalkingEquivalency] as number) / 1000,
 						thresholdLow: data[MetricType.UserDailyWalkingEquivalencyGoalMin] as number,
 					},
 					[MetricType.UserDailyCaloriesBurned]: {
