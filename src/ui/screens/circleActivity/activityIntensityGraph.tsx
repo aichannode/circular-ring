@@ -1,13 +1,15 @@
 import { CalendarTag } from "@domain/calendar/calendar";
+import { ActivityStage } from "@domain/measure/type";
 import { useIs24h } from "@domain/user/hooks/useUser";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { Tag } from "@ui/components/tag";
 import { useI18n } from "@ui/i18n";
-import { ActivityIntensityColors, colors } from "@ui/styles/colors";
+import { colors } from "@ui/styles/colors";
 import React from "react";
 import { Platform, processColor, View } from "react-native";
 import { BarChart } from "react-native-charts-wrapper";
+import { getActivityIntensityBarColor } from "./business";
 
 type Props = {
 	samples: Array<{ isoTime: string; value: number }>;
@@ -39,15 +41,7 @@ export const ActivityIntensityGraph = ({ samples, tags }: Props) => {
 				}),
 				config: {
 					drawValues: false,
-					colors: samples.map(({ value }) =>
-						value >= 3
-							? processColor(ActivityIntensityColors.HIGH)
-							: value >= 2
-							? processColor(ActivityIntensityColors.MEDIUM)
-							: value >= 1
-							? processColor(ActivityIntensityColors.LOW)
-							: processColor(ActivityIntensityColors.NONE)
-					),
+					colors: samples.map(({ value }) => processColor(getActivityIntensityBarColor(value))),
 					// Alpha value depends on plateform
 					// https://github.com/wuxudong/react-native-charts-wrapper#convention
 					highlightAlpha: Platform.OS === "ios" ? 100 : 255,
@@ -138,7 +132,7 @@ export const ActivityIntensityGraph = ({ samples, tags }: Props) => {
 											borderRadius: 100,
 											width: 10,
 											height: 10,
-											backgroundColor: ActivityIntensityColors.HIGH,
+											backgroundColor: getActivityIntensityBarColor(ActivityStage.HIGH),
 										}}
 									/>
 								),
@@ -155,7 +149,7 @@ export const ActivityIntensityGraph = ({ samples, tags }: Props) => {
 											borderRadius: 100,
 											width: 10,
 											height: 10,
-											backgroundColor: ActivityIntensityColors.MEDIUM,
+											backgroundColor: getActivityIntensityBarColor(ActivityStage.MEDIUM),
 										}}
 									/>
 								),
@@ -172,7 +166,7 @@ export const ActivityIntensityGraph = ({ samples, tags }: Props) => {
 											borderRadius: 100,
 											width: 10,
 											height: 10,
-											backgroundColor: ActivityIntensityColors.LOW,
+											backgroundColor: getActivityIntensityBarColor(ActivityStage.LOW),
 										}}
 									/>
 								),

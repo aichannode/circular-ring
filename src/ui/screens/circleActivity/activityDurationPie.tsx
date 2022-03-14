@@ -70,10 +70,10 @@ export function ActivityDurationPieChart({ stages, duration, sportSessionDates }
 				chartSize={200}
 				currentIsoDate={moment().toISOString()}
 				phaseColors={[
-					colors.business.activityNone,
-					colors.business.activityLow,
-					colors.business.activityLow,
-					colors.business.activityHigh,
+					colors.business.activityDurationNone,
+					colors.business.activityDurationShort,
+					colors.business.activityDurationShort,
+					colors.business.activityDurationSession,
 				]}
 				phaseWidths={[5, 7, 7, 7]}
 				getPhaseLevel={getPhaseLevel}

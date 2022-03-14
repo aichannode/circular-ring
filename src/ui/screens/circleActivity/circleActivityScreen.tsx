@@ -184,7 +184,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 							<TimeFrameSwitcher
 								setGraphPeriod={setGraphPeriod}
 								graphPeriod={graphPeriod}
-								color={colors.business.activityPrimary}
+								color={colors.business.actuvityPrimary}
 								frames={[
 									{
 										label: "graph.time_frame.today",
