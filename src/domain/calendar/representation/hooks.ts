@@ -4,6 +4,7 @@ import { deduplicate } from "@ui/utils/filter";
 import moment from "moment";
 import { createActions } from "../actions";
 import { CalendarApi } from "../actions/lib/calendarApi";
+import { CalendarErrorContext } from "../common/type";
 import { CalendarModel } from "../model/calendarModel";
 import { createNAPs } from "./NAPs";
 
@@ -31,6 +32,10 @@ export function createRepresentation(apiService: ApiService, model: CalendarMode
 
 			useTagCategories() {
 				return model.tagCategories;
+			},
+
+			useErrors(context: CalendarErrorContext) {
+				return model.errors.get(context);
 			},
 
 			useDailyTags(isoDay: string) {

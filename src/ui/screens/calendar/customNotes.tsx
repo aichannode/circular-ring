@@ -1,14 +1,16 @@
+import Cross from "@assets/images/crossBig.png";
 import { useRepresentations } from "@core/representation";
 import { CalendarTag } from "@domain/calendar/calendar";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
+import { observer } from "mobx-react-lite";
 import React, { useRef, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { CreateCustomNoteBottomSheet } from "./createCustomNoteBottomSheet";
 
-const CustomNote = ({
+const CustomNote = observer(function CustomNote({
 	selectedTags,
 	setSelectedTags,
 	customNote,
@@ -16,7 +18,7 @@ const CustomNote = ({
 	selectedTags: CalendarTag[];
 	setSelectedTags: (arg: CalendarTag[]) => void;
 	customNote: CalendarTag[];
-}) => {
+}) {
 	const [deleteMode, setDelete] = useState<boolean>(false);
 	const createCustomNoteRef = useRef<CircularBottomSheetHandle>(null);
 	const {
@@ -73,7 +75,9 @@ const CustomNote = ({
 							<TouchableOpacity
 								style={{ width: 40, height: 35, position: "absolute", right: -5 }}
 								onPress={() => deleteTag(tag.id)}
-							></TouchableOpacity>
+							>
+								<Image style={{ height: 10, width: 10, margin: 14 }} resizeMode="contain" source={Cross}></Image>
+							</TouchableOpacity>
 						)}
 					</TagContainer>
 				))}
@@ -93,7 +97,7 @@ const CustomNote = ({
 			</CircularBottomSheet>
 		</>
 	);
-};
+});
 
 const AddContainer = styled.TouchableOpacity`
 	height: 35px;

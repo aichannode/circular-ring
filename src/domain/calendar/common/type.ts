@@ -1,5 +1,7 @@
 import { Calendar, CalendarNote, CalendarTag, CalendarTagCategory } from "../calendar";
 
+export const CUSTOM_TAG_CATEGORY_ID = -1;
+
 export type Mutations =
 	| {
 			type: "setMonthCalendars";
@@ -28,6 +30,18 @@ export type Mutations =
 	| {
 			type: "updateNote";
 			payload: CalendarNote;
+	  }
+	| {
+			type: "setError";
+			payload: {
+				context: CalendarErrorContext;
+				// Omit field to delete error
+				code?: 409;
+			};
 	  };
+
+export enum CalendarErrorContext {
+	TAG_CREATE = "TAG_CREATE",
+}
 
 export type Proposal = Mutations[];

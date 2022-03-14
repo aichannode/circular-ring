@@ -3,7 +3,7 @@ import { Present } from "@core/model";
 import { action } from "mobx";
 import moment from "moment";
 import { CalendarNote, CalendarTag } from "../calendar";
-import { Proposal } from "../common/type";
+import { CalendarErrorContext, CUSTOM_TAG_CATEGORY_ID, Proposal } from "../common/type";
 import { CalendarApi } from "./lib/calendarApi";
 
 export function createActions(calendarApi: CalendarApi, present: Present<Proposal>) {
@@ -40,8 +40,8 @@ export function createActions(calendarApi: CalendarApi, present: Present<Proposa
 				categories.map((category) => [category.id, tags.filter((tag) => tag.categoryId === category.id)])
 			);
 			filteredTags.set(
-				0,
-				tags.filter((tag) => tag.categoryId === null)
+				CUSTOM_TAG_CATEGORY_ID,
+				tags.filter((tag) => !tag.system)
 			);
 
 			present([
@@ -74,8 +74,27 @@ export function createActions(calendarApi: CalendarApi, present: Present<Proposa
 			try {
 				await calendarApi.createCustomTag(name);
 				fetchAllTags({ useForceRefresh: true });
+				present([
+					// Remove eventual error
+					{
+						type: "setError",
+						payload: {
+							context: CalendarErrorContext.TAG_CREATE,
+						},
+					},
+				]);
 			} catch (e) {
-				getLogger("Calendar Actions").warn("Error while creating tag :", e);
+				const error = e as { message: string; statusCode: 409 };
+				getLogger("Calendar Actions").warn("Error while creating tag :", error);
+				present([
+					{
+						type: "setError",
+						payload: {
+							context: CalendarErrorContext.TAG_CREATE,
+							code: error.statusCode,
+						},
+					},
+				]);
 			}
 		},
 		async deleteTag(id: number) {

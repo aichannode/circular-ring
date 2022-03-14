@@ -489,6 +489,7 @@
 	"calendar.edit_notes": "Edit",
 	"calendar.add_note": "Add a note",
 	"calendar.add_custom_note": "Create a Custom Note",
+	"calendar.errors.add_custom_note": "Tag name already exists.",
 	"calendar.save_note": "Add this note",
 	"calendar.popular_tags_header": "What happened?",
 	"calendar.see_all_tags": "See All",

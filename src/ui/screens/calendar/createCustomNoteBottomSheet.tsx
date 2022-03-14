@@ -1,4 +1,5 @@
 import { useRepresentations } from "@core/representation";
+import { CalendarErrorContext } from "@domain/calendar/common/type";
 import { PrimaryButton, TertiaryButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
 import { Spinner } from "@ui/components/spinner";
@@ -6,10 +7,12 @@ import { MediumTitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
+import { reaction } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { Image, View } from "react-native";
 import styled from "styled-components/native";
+import { ErrorMessage } from "../../components/errorMessage";
 
 interface CreateCustomNoteBottomSheetProps {
 	onClose: () => void;
@@ -18,30 +21,41 @@ interface CreateCustomNoteBottomSheetProps {
 export const CreateCustomNoteBottomSheet: React.FC<CreateCustomNoteBottomSheetProps> = observer(
 	function CreateCustomNoteBottomSheet({ onClose }) {
 		const { format } = useI18n();
-		const [search, setSearch] = useState("");
+		const [name, setName] = useState("");
 		const [loading, setLoading] = useState(false);
 		const {
 			calendar: {
-				hooks: { useTags },
+				hooks: { useTags, useErrors },
 				actions: { createTag },
 			},
 		} = useRepresentations();
-		const nbTags = Array.from(useTags().values()).reduce((sum, tags) => sum + tags.length, 0);
-
+		const hasAPIError = useErrors(CalendarErrorContext.TAG_CREATE);
 		const createCustomNote = () => {
-			setLoading(true);
-			createTag(search);
-			setTimeout(() => {
-				onClose();
-			}, 100);
+			if (name !== "") {
+				setLoading(true);
+				createTag(name);
+			}
 		};
 
 		useEffect(
 			function () {
-				setLoading(false);
+				if (hasAPIError) {
+					setLoading(false);
+				}
 			},
-			[nbTags]
+			[hasAPIError]
 		);
+
+		useEffect(function () {
+			return reaction(
+				() => Array.from(useTags().values()).reduce((sum, tags) => sum + tags.length, 0),
+				(nbTags, prevNbTags) => {
+					if (prevNbTags > 0 && nbTags > prevNbTags) {
+						onClose();
+					}
+				}
+			);
+		}, []);
 
 		return (
 			<Container horizontalPadding={0}>
@@ -50,12 +64,12 @@ export const CreateCustomNoteBottomSheet: React.FC<CreateCustomNoteBottomSheetPr
 				<SearchWrapper>
 					<SearchInput
 						placeholder={format("calendar.add_custom_note")}
-						value={search}
-						onChangeText={setSearch}
+						value={name}
+						onChangeText={setName}
 						autoFocus={true}
 					/>
-					{search.length > 0 && (
-						<CloseWrapper onPress={() => setSearch("")}>
+					{name.length > 0 && (
+						<CloseWrapper onPress={() => setName("")}>
 							<Image
 								style={{ tintColor: colors.textPrimary, width: 14, height: 13 }}
 								source={require("@assets/images/close.png")}
@@ -65,15 +79,23 @@ export const CreateCustomNoteBottomSheet: React.FC<CreateCustomNoteBottomSheetPr
 				</SearchWrapper>
 				<Grow />
 				{!loading ? (
-					<ButtonContainer gap={35}>
-						<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
-							{format("global.cancel")}
-						</TertiaryButton>
+					<>
+						{hasAPIError && (
+							<View>
+								<ErrorMessage>{format("calendar.errors.add_custom_note")}</ErrorMessage>
+							</View>
+						)}
 
-						<PrimaryButton key={"create"} onPress={createCustomNote}>
-							{format("global.create")}
-						</PrimaryButton>
-					</ButtonContainer>
+						<ButtonContainer gap={35}>
+							<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
+								{format("global.cancel")}
+							</TertiaryButton>
+
+							<PrimaryButton key={"create"} onPress={createCustomNote}>
+								{format("global.create")}
+							</PrimaryButton>
+						</ButtonContainer>
+					</>
 				) : (
 					<View style={{ marginBottom: 20 }}>
 						<Spinner size={12}></Spinner>

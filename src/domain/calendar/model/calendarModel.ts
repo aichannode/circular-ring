@@ -1,13 +1,14 @@
 import { Model, mutate } from "@core/model";
 import { IObservableArray, makeAutoObservable, observable, ObservableMap, remove } from "mobx";
 import { Calendar, CalendarTag, CalendarTagCategory } from "../calendar";
-import { Mutations, Proposal } from "../common/type";
+import { CalendarErrorContext, Mutations, Proposal } from "../common/type";
 
 export class CalendarModel implements Model<Proposal> {
 	public month: Calendar[] = [];
 	public categoryTags: Map<number, CalendarTag[]> = new Map();
 	public tagCategories: Array<CalendarTagCategory> = [];
 	public lastAcceptedMutations: Mutations[] = [];
+	public errors: Map<CalendarErrorContext, 409> = new Map();
 
 	constructor() {
 		// Mark all the collections of object that does not need to be deeply observed
@@ -55,6 +56,14 @@ export class CalendarModel implements Model<Proposal> {
 			} else if (mutation.type === "setTagCategories") {
 				mutate.call(this, mutation, () => {
 					(this.tagCategories as IObservableArray).replace(mutation.payload);
+				});
+			} else if (mutation.type === "setError") {
+				mutate.call(this, mutation, () => {
+					if (mutation.payload.code) {
+						this.errors.set(mutation.payload.context, mutation.payload.code);
+					} else {
+						this.errors.delete(mutation.payload.context);
+					}
 				});
 			}
 		});

@@ -10,6 +10,7 @@ import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback, useRef, useState } from "react";
 import { Keyboard, TextInput } from "react-native";
 import styled from "styled-components/native";
+import { ErrorMessage } from "../../components/errorMessage";
 import { parseEmail } from "../business";
 
 export const LoginScreen = () => {
@@ -116,13 +117,6 @@ const Logo = styled.Image`
 const Title = styled.Text`
 	${textStyles.mediumTitle};
 	margin-bottom: 30px;
-`;
-
-const ErrorMessage = styled.Text`
-	${textStyles.errorMessage};
-	margin-bottom: 20px;
-	text-align: center;
-	align-self: center;
 `;
 
 const InputField = styled(TextField)`

@@ -1,4 +1,5 @@
 import { useRepresentations } from "@core/representation";
+import { CUSTOM_TAG_CATEGORY_ID } from "@domain/calendar/common/type";
 import { InfoListHeader } from "@ui/components/infoList";
 import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
@@ -87,7 +88,7 @@ export const AllTagsScreen: React.FC = observer(() => {
 			) : (
 				<View style={{ flex: 1 }}>
 					<CustomNote
-						customNote={[...allTags.values()].flat().filter((tag) => tag.categoryId === null)}
+						customNote={allTags.get(CUSTOM_TAG_CATEGORY_ID) ?? []}
 						selectedTags={selectedTags}
 						setSelectedTags={setSelectedTags}
 					></CustomNote>
