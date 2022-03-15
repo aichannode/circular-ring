@@ -125,6 +125,7 @@ export const CircleActivityScreen: React.FC = observer(() => {
 									icon={getIcon(dataInfos.icon)}
 									label={format(dataInfos.labelKey)}
 									value={Math.round(data.value)}
+									score={dailyActivitiesData[metric].score}
 									lowThreshold={dailyActivitiesData[metric].thresholdLow}
 									highThreshold={dailyActivitiesData[metric].thresholdHigh}
 								/>

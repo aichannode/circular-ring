@@ -12,6 +12,7 @@ interface DailyMetricProps {
 	icon: number;
 	label: string;
 	value: number;
+	score?: number;
 	lowThreshold?: number;
 	highThreshold?: number;
 	style?: StyleProp<ViewStyle>;
@@ -21,6 +22,7 @@ export const DailyMetric: React.FC<DailyMetricProps> = ({
 	icon,
 	label,
 	value,
+	score,
 	lowThreshold,
 	highThreshold,
 	style,
@@ -30,7 +32,7 @@ export const DailyMetric: React.FC<DailyMetricProps> = ({
 		lowThreshold !== undefined &&
 		highThreshold !== undefined &&
 		getScoreControlStates({
-			score: value,
+			score: score ?? value,
 			lowThreshold,
 			highThreshold,
 		});

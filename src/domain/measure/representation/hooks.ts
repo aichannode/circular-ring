@@ -39,6 +39,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				Activities,
 				{
 					value: number;
+					score?: number;
 					thresholdLow?: number;
 					thresholdHigh?: number;
 				}
@@ -55,14 +56,18 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					[MetricType.UserDailySteps]: {
 						value: data[MetricType.UserDailySteps] as number,
 						thresholdLow: data[MetricType.UserDailyStepsGoalMin] as number,
+						thresholdHigh: data[MetricType.UserDailyStepsGoalMax] as number,
 					},
 					[MetricType.UserDailyWalkingEquivalency]: {
 						value: (data[MetricType.UserDailyWalkingEquivalency] as number) / 1000,
 						thresholdLow: data[MetricType.UserDailyWalkingEquivalencyGoalMin] as number,
+						thresholdHigh: data[MetricType.UserDailyWalkingEquivalencyGoalMax] as number,
 					},
 					[MetricType.UserDailyCaloriesBurned]: {
 						value: data[MetricType.UserDailyCaloriesBurned] as number,
-						thresholdLow: data[MetricType.UserDailyCaloriesBurnedGoal] as number,
+						score: data[MetricType.UserDailySteps] as number,
+						thresholdLow: data[MetricType.UserDailyStepsGoalMin] as number,
+						thresholdHigh: data[MetricType.UserDailyStepsGoalMax] as number,
 					},
 					[MetricType.UserDailyCardioPoints]: {
 						value: data[MetricType.UserDailyCardioPointsGoalMin] as number,
