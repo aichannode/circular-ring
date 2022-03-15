@@ -31,9 +31,9 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 	const user = useUser();
 	const [minDate, maxDate] = useMemo(
 		() => [
-			(user && moment(user.createdAt.toISOString()).startOf("day")?.toISOString()) ||
-				moment().startOf("day").toISOString(),
-			moment().startOf("day").toISOString(),
+			(user && moment(user.createdAt.toISOString()).startOf("day")?.format("YYYY-MM-DD")) ||
+				moment().startOf("day").format("YYYY-MM-DD"),
+			moment().startOf("day").format("YYYY-MM-DD"),
 		],
 		[user?.createdAt]
 	);
