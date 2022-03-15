@@ -116,7 +116,9 @@ export function createActions(calendarApi: CalendarApi, present: Present<Proposa
 		async createNote(tags: CalendarTag[], startTime: Date, endTime: Date) {
 			try {
 				await calendarApi.createNote(tags, startTime, endTime);
-				setMonthCalendars({ isoMonth: moment(startTime).format("YYYY-MM"), useForceRefresh: true });
+				// Use UTC to prevent offset when creating a note from negative timezone
+				// (eg: otherwize create a note in the USA at 20:00 will be set at 05:00 the day after)
+				setMonthCalendars({ isoMonth: moment.utc(startTime).format("YYYY-MM"), useForceRefresh: true });
 			} catch (e) {
 				getLogger("Calendar Actions").warn("Error while creating note :", e);
 			}

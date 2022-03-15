@@ -81,8 +81,8 @@ export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditN
 	const route = useAppRoute<Routes.CalendarEditNotes>();
 	const initialSelectedTags = route.params.selectedTags ?? [];
 	const day = route.params.day;
-	const date = new Date(day);
-	const dateJS = moment(date);
+	const date = moment(day);
+
 	const {
 		calendar: {
 			hooks: { useCalendar },
@@ -90,7 +90,7 @@ export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditN
 		},
 	} = useRepresentations();
 	const calendar = useCalendar(day);
-	const dateWithHour = useCallback((hour: number) => moment(day).hour(hour).toDate(), [day]);
+	const dateWithHour = useCallback((hour: number) => date.hour(hour).toDate(), [day]);
 
 	const {
 		lastUsedTags,
@@ -185,15 +185,15 @@ export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditN
 			<ScrollScreen contentContainerStyle={{ paddingVertical: 20 }}>
 				<DayContainer>
 					<DateText>
-						<DateStrong>{dateJS.format("MMMM")}</DateStrong> {dateJS.format("YYYY")}
+						<DateStrong>{date.format("MMMM")}</DateStrong> {date.format("YYYY")}
 					</DateText>
 					<CalendarDay
 						date={{
 							dateString: day,
-							day: date.getDate(),
-							month: date.getMonth(),
-							year: date.getFullYear(),
-							timestamp: dateJS.date(),
+							day: date.date(),
+							month: date.month(),
+							year: date.year(),
+							timestamp: date.date(),
 						}}
 						marking={{ selected: true } as any} // TO REFACTOR
 						onPress={() => null}

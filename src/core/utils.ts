@@ -47,5 +47,5 @@ export function round2Digits(value: number): number {
 }
 
 export function toServerDate(date: Date) {
-	return dayjs(date).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
+	return dayjs(date).utc().toISOString();
 }

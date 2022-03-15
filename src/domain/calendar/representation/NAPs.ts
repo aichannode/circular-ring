@@ -39,7 +39,9 @@ export function createNAPs(model: CalendarModel, calendarApi: CalendarApi, actio
 				if (mutation?.type === "deleteNote") {
 					await calendarApi.deleteNote(mutation.payload.id);
 					actions.setMonthCalendars({
-						isoMonth: moment(model.month[0]?.day).format("YYYY-MM"),
+						// CIR-733 Take a day in the middle of the month to prevent getting the
+						// last day of the month before when you are in a negative zone
+						isoMonth: model.month[10]?.day,
 						useForceRefresh: true,
 					});
 				}
