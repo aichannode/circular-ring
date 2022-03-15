@@ -198,11 +198,7 @@ export const walkingEquivalency = [
 ] as const;
 export type WalkingEquivalency = typeof walkingEquivalency[number];
 
-export const caloriesBurned = [
-	MetricType.UserDailyCaloriesBurned,
-	MetricType.UserDailyCaloriesBurnedGoalMin,
-	MetricType.UserDailyCaloriesBurnedGoalMax,
-] as const;
+export const caloriesBurned = [MetricType.UserDailyCaloriesBurned, MetricType.UserDailyCaloriesBurnedGoal] as const;
 export type CaloriesBurned = typeof caloriesBurned[number];
 
 export const cardioPoints = [

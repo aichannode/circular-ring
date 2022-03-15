@@ -62,7 +62,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					},
 					[MetricType.UserDailyCaloriesBurned]: {
 						value: data[MetricType.UserDailyCaloriesBurned] as number,
-						thresholdLow: data[MetricType.UserDailyCaloriesBurnedGoalMin] as number,
+						thresholdLow: data[MetricType.UserDailyCaloriesBurnedGoal] as number,
 					},
 					[MetricType.UserDailyCardioPoints]: {
 						value: data[MetricType.UserDailyCardioPointsGoalMin] as number,

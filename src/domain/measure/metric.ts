@@ -143,8 +143,7 @@ export enum MetricType {
 	UserDailyWalkingEquivalencyGoalMax = "user.daily.walking.equivalency.goal.max",
 
 	UserDailyCaloriesBurned = "user.daily.calories.burned",
-	UserDailyCaloriesBurnedGoalMin = "user.daily.calories.burned.goal.min",
-	UserDailyCaloriesBurnedGoalMax = "user.daily.calories.burned.goal.max",
+	UserDailyCaloriesBurnedGoal = "user.daily.calories.burned.goal",
 
 	UserDailyCardioPoints = "user.daily.cardio.points",
 	UserDailyCardioPointsGoalMax = "user.daily.cardio.points.goal.max",
