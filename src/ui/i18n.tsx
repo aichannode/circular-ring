@@ -203,7 +203,8 @@ export function useI18n(options?: FormatterOptions) {
 		formatDate: (date: Date | undefined) => {
 			if (date) {
 				const isUSCS = useIsCelsius();
-				return isUSCS ? dayjs(date).format("MM/DD/YYYY") : dayjs(date).format("DD/MM/YYYY");
+				// CIR-733 Stay in UTC to prevent date shift
+				return isUSCS ? dayjs.utc(date).format("MM/DD/YYYY") : dayjs(date).format("DD/MM/YYYY");
 			}
 		},
 		formatTemperature: (temperature: number) => {
