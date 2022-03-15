@@ -356,9 +356,9 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					// Default value according to the specs.
 					...score,
 					controlState: getScoreControlStates({
-						lowThreshold: score["user.daily.score.sleep.goal.min"],
-						highThreshold: score["user.daily.score.sleep.goal.max"],
-						score: score["user.daily.sleep.score"],
+						lowThreshold: score[MetricType.UserDailySleepScoreGoalMin],
+						highThreshold: score[MetricType.UserDailySleepScoreGoalMax],
+						score: score[MetricType.UserDailySleepScore],
 					}),
 				};
 			},
