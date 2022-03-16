@@ -1,10 +1,10 @@
 import { useRepresentations } from "@core/representation";
-import { isToday } from "@domain/common/business";
-import { CalendarView } from "@ui/components/calendar/calendarView";
+import { getIsoMonth } from "@domain/common/business";
 import { InfoListHeader } from "@ui/components/infoList";
 import { ResponsiveCenterView } from "@ui/components/layout";
 import { GlobalScoreCard } from "@ui/components/measure/globalScoreCard";
 import { ScrollScreen } from "@ui/components/scrollScreen";
+import { CalendarView } from "@ui/containers/calendarView";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
@@ -18,9 +18,6 @@ import { DailyNotes } from "./DailyNotes";
 
 export const CalendarScreen: React.FC = observer(() => {
 	const {
-		calendar: {
-			actions: { setMonthCalendars },
-		},
 		measure: {
 			hooks: { useDailyGlobalScore },
 			actions: { setEachDayOfMonthScore },
@@ -32,13 +29,7 @@ export const CalendarScreen: React.FC = observer(() => {
 	const [selectedIsoDay, setSelectedDay] = useState(moment().format("YYYY-MM-DD"));
 
 	useEffect(() => {
-		const isoMonth = moment(selectedIsoDay).startOf("month").format("YYYY-MM");
-		setEachDayOfMonthScore(isoMonth);
-		setMonthCalendars({
-			isoMonth,
-			// Don't use cache if it is today, as data is often updated.
-			useForceRefresh: isToday(selectedIsoDay, moment().toISOString()),
-		});
+		setEachDayOfMonthScore(getIsoMonth(selectedIsoDay));
 	}, [selectedIsoDay]);
 
 	const dailyScore = useDailyGlobalScore(selectedIsoDay);

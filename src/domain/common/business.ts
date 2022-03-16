@@ -12,3 +12,10 @@ export function isToday(dateIso: string, todayIso: string) {
 	const date = moment(dateIso);
 	return date.isSame(today, "d");
 }
+
+/**
+ * Return the month iso formated as YYYY-MM for the given date
+ */
+export function getIsoMonth(isoDate: string) {
+	return moment(isoDate).startOf("month").format("YYYY-MM");
+}

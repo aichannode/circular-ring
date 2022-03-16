@@ -1,12 +1,12 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
+import { useRepresentations } from "@core/representation";
+import { getIsoMonth, isToday } from "@domain/common/business";
 import { useUser } from "@domain/user/hooks/useUser";
 import { circularCalendarTheme } from "@ui/components/calendar/circularCalendarTheme";
 import moment from "moment";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { Calendar as RNCalendar } from "react-native-calendars";
-import { CalendarDay } from "./calendarDay";
+import { CalendarDay } from "../components/calendar/calendarDay";
 
 interface CalendarProps {
 	style?: StyleProp<ViewStyle>;
@@ -20,6 +20,19 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 	autoSelectDayOnMonthChange = true,
 	style,
 }) {
+	const { setMonthCalendars } = useRepresentations().calendar.actions;
+	// Fetch data on day change
+	useEffect(
+		function () {
+			setMonthCalendars({
+				isoMonth: getIsoMonth(selectedIsoDay),
+				// Don't use cache if it is today, as data is often updated.
+				useForceRefresh: isToday(selectedIsoDay, moment().toISOString()),
+			});
+		},
+		[selectedIsoDay]
+	);
+
 	const autoSelectDay = useCallback(
 		(dayOfMonth: string) => {
 			const newDay = moment(dayOfMonth);
