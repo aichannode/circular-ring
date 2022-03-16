@@ -5,6 +5,8 @@ import lungs from "@assets/images/lungs.png";
 import shoes from "@assets/images/shoes.png";
 import sport from "@assets/images/sport.png";
 import { useRepresentations } from "@core/representation";
+import { getCurrentLocalISODay } from "@domain/common/business";
+import { ISODay } from "@domain/common/type";
 import { DailyActivityIntensityData } from "@domain/measure/representation/api";
 import { activities, activityScoreContributors } from "@domain/measure/representation/lib/type";
 import { TimeFrame } from "@domain/measure/type";
@@ -21,7 +23,6 @@ import { ScoreSection } from "@ui/containers/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import React, { useRef, useState } from "react";
 import { LayoutAnimation, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
@@ -49,7 +50,7 @@ function getIcon(path: string) {
 
 export const CircleActivityScreen: React.FC = observer(() => {
 	const { format } = useI18n();
-	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
+	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
 	const [activityIntensity, setData] = useState<DailyActivityIntensityData>({
 		stages: [],
 		duration: 0,

@@ -1,39 +1,51 @@
+import { assertISODay } from "@domain/common/business";
+import { ISODay, ISOMonth } from "@domain/common/type";
 import moment from "moment";
 import { TimeFrame } from "../type";
 
 const DAILY_KEY_FORMAT = "YYYY-MM-DD";
 
-export function getKeyFromDate(isoDate?: string) {
-	return moment(isoDate).format(DAILY_KEY_FORMAT);
+export function getKeyFromDate(isoDay?: string) {
+	return moment(isoDay).format(DAILY_KEY_FORMAT);
 }
 
-export function toTimeSegment(isoDate: string, timeFrame: TimeFrame): { isoStart: string; isoEnd: string } {
+/**
+ * Return the UTC iso date of the start and the end for a given time segment and a given local iso day/month
+ */
+export function toUTCTimeSegment(
+	localISODate: ISODay | ISOMonth,
+	timeFrame: TimeFrame
+): { isoStart: string; isoEnd: string } {
 	switch (timeFrame) {
 		case TimeFrame.TODAY:
 		case TimeFrame.DAY:
+			assertISODay(localISODate);
 			return {
-				isoStart: moment(isoDate).subtract(1, "day").startOf("day").toISOString(), // ensure a large enough timeframe to capture data like core.sleep.begin
-				isoEnd: moment(isoDate).endOf("day").toISOString(),
+				isoStart: moment(localISODate).subtract(1, "day").startOf("day").toISOString(), // ensure a large enough timeframe to capture data like core.sleep.begin
+				isoEnd: moment(localISODate).endOf("day").toISOString(),
 			};
 		case TimeFrame.LAST_7_DAYS:
+			assertISODay(localISODate);
 			return {
-				isoStart: moment(isoDate).subtract(8, "day").startOf("day").toISOString(),
-				isoEnd: moment(isoDate).subtract(1, "day").endOf("day").toISOString(),
+				isoStart: moment(localISODate).subtract(8, "day").startOf("day").toISOString(),
+				isoEnd: moment(localISODate).subtract(1, "day").endOf("day").toISOString(),
 			};
 		case TimeFrame.WEEK:
+			assertISODay(localISODate);
 			return {
-				isoStart: moment(isoDate).startOf("week").toISOString(),
-				isoEnd: moment(isoDate).endOf("week").toISOString(),
+				isoStart: moment(localISODate).startOf("week").toISOString(),
+				isoEnd: moment(localISODate).endOf("week").toISOString(),
 			};
 		case TimeFrame.LAST_30_DAYS:
+			assertISODay(localISODate);
 			return {
-				isoStart: moment(isoDate).subtract(31, "day").startOf("day").toISOString(),
-				isoEnd: moment(isoDate).subtract(1, "day").endOf("day").toISOString(),
+				isoStart: moment(localISODate).subtract(31, "day").startOf("day").toISOString(),
+				isoEnd: moment(localISODate).subtract(1, "day").endOf("day").toISOString(),
 			};
 		case TimeFrame.MONTH:
 			return {
-				isoStart: moment(isoDate).startOf("month").toISOString(),
-				isoEnd: moment(isoDate).endOf("month").toISOString(),
+				isoStart: moment(localISODate).startOf("month").toISOString(),
+				isoEnd: moment(localISODate).endOf("month").toISOString(),
 			};
 		case TimeFrame.ALL:
 			return {

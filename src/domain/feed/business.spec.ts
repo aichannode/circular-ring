@@ -13,19 +13,19 @@ import {
 	UserInputStyle,
 } from "./type";
 
-const today = "2021-10-11T14:31:06.585Z";
+const now = "2021-10-11T14:31:06.585Z";
 
 it("Check if jest is configured in UTC", function () {
 	expect(new Date().getTimezoneOffset()).toBe(0);
 });
 
 it("Date is today: should get the delta from current date in hours", function () {
-	expect(getFeedEntityDate("2021-10-11T11:31:06.585Z", today)).toEqual("3 hours ago");
+	expect(getFeedEntityDate("2021-10-11T11:31:06.585Z", now)).toEqual("3 hours ago");
 });
 
 it("Date is yesterday or later: should extract the hour of the corresponding day", function () {
-	expect(getFeedEntityDate("2021-09-11T11:14:00.585Z", today, HourFormat.TWELVE)).toEqual("11:14 AM");
-	expect(getFeedEntityDate("2021-09-11T14:14:00.585Z", today, HourFormat.TWENTY_FOUR)).toEqual("14:14");
+	expect(getFeedEntityDate("2021-09-11T11:14:00.585Z", now, HourFormat.TWELVE)).toEqual("11:14 AM");
+	expect(getFeedEntityDate("2021-09-11T14:14:00.585Z", now, HourFormat.TWENTY_FOUR)).toEqual("14:14");
 });
 
 function createaRecommandationsData(today: string, yesterday: string) {

@@ -1,5 +1,6 @@
 import { useRepresentations } from "@core/representation";
-import { getIsoMonth } from "@domain/common/business";
+import { getCurrentLocalISODay, toISOMonth } from "@domain/common/business";
+import { ISODay } from "@domain/common/type";
 import { InfoListHeader } from "@ui/components/infoList";
 import { ResponsiveCenterView } from "@ui/components/layout";
 import { GlobalScoreCard } from "@ui/components/measure/globalScoreCard";
@@ -10,7 +11,6 @@ import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Pressable } from "react-native";
 import styled from "styled-components/native";
@@ -26,27 +26,27 @@ export const CalendarScreen: React.FC = observer(() => {
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
 
-	const [selectedIsoDay, setSelectedDay] = useState(moment().format("YYYY-MM-DD"));
+	const [selectedLocalIsoDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
 
 	useEffect(() => {
-		setEachDayOfMonthScore(getIsoMonth(selectedIsoDay));
-	}, [selectedIsoDay]);
+		setEachDayOfMonthScore(toISOMonth(selectedLocalIsoDay));
+	}, [selectedLocalIsoDay]);
 
-	const dailyScore = useDailyGlobalScore(selectedIsoDay);
+	const dailyScore = useDailyGlobalScore(selectedLocalIsoDay);
 
 	return (
 		<Container>
 			<CalendarWrapper>
-				<CalendarView selectedIsoDay={selectedIsoDay} onDaySelected={(day) => setSelectedDay(day)} />
+				<CalendarView selectedIsoDay={selectedLocalIsoDay} onDaySelected={(day) => setSelectedDay(day)} />
 			</CalendarWrapper>
 			<ResponsiveCenterView>{<GlobalScoreCard score={dailyScore} />}</ResponsiveCenterView>
 			<NoteHeader>
 				<InfoListHeader>{format("calendar.notes")}</InfoListHeader>
-				<Pressable onPress={() => navigate(Routes.CalendarEditNotes, { day: selectedIsoDay })}>
+				<Pressable onPress={() => navigate(Routes.CalendarEditNotes, { day: selectedLocalIsoDay })}>
 					<EditButtonText>{format("calendar.edit_notes")}</EditButtonText>
 				</Pressable>
 			</NoteHeader>
-			<DailyNotes isoDay={selectedIsoDay} />
+			<DailyNotes isoDay={selectedLocalIsoDay} />
 		</Container>
 	);
 });

@@ -1,5 +1,6 @@
 import { useRepresentations } from "@core/representation";
-import { getIsoMonth, isToday } from "@domain/common/business";
+import { isToday, toISOMonth } from "@domain/common/business";
+import { ISODay } from "@domain/common/type";
 import { useUser } from "@domain/user/hooks/useUser";
 import { circularCalendarTheme } from "@ui/components/calendar/circularCalendarTheme";
 import moment from "moment";
@@ -10,8 +11,8 @@ import { CalendarDay } from "../components/calendar/calendarDay";
 
 interface CalendarProps {
 	style?: StyleProp<ViewStyle>;
-	selectedIsoDay: string;
-	onDaySelected: (day: string) => void;
+	selectedIsoDay: ISODay;
+	onDaySelected: (day: ISODay) => void;
 	autoSelectDayOnMonthChange?: boolean;
 }
 export const CalendarView: React.FC<CalendarProps> = function CalendarView({
@@ -25,7 +26,7 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 	useEffect(
 		function () {
 			setMonthCalendars({
-				isoMonth: getIsoMonth(selectedIsoDay),
+				isoMonth: toISOMonth(selectedIsoDay),
 				// Don't use cache if it is today, as data is often updated.
 				useForceRefresh: isToday(selectedIsoDay, moment().toISOString()),
 			});
@@ -37,7 +38,7 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 		(dayOfMonth: string) => {
 			const newDay = moment(dayOfMonth);
 			const newSelectedIsoDay = newDay.isAfter(selectedIsoDay) ? newDay.startOf("month") : newDay.endOf("month");
-			onDaySelected(newSelectedIsoDay.format("YYYY-MM-DD"));
+			onDaySelected(newSelectedIsoDay.format("YYYY-MM-DD") as ISODay);
 		},
 		[selectedIsoDay, onDaySelected]
 	);
@@ -70,7 +71,7 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 			initialDate={selectedIsoDay}
 			disableArrowLeft={isFirstMonth}
 			disableArrowRight={isLastMonth}
-			onDayPress={(day) => onDaySelected(day.dateString)}
+			onDayPress={(day) => onDaySelected(day.dateString as ISODay)}
 			onMonthChange={(date: any) => {
 				setVisibleMonthDay(date.dateString);
 				autoSelectDayOnMonthChange && autoSelectDay(date.dateString);

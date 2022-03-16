@@ -1,3 +1,4 @@
+import { getUTCCurrentLocalISODay } from "@domain/common/business";
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { SleepStage } from "@domain/measure/type";
 import { DailyPieChart } from "@ui/components/measure/dailyPieChart";
@@ -36,7 +37,7 @@ export function SleepDurationPieChart({ coreSleepTiming, stages: _stages, durati
 				totalDuration={duration}
 				title="sleep.duration.total"
 				chartSize={200}
-				currentIsoDate={moment().toISOString()}
+				currentIsoDay={getUTCCurrentLocalISODay()}
 				phaseColors={[colors.lightBlue, colors.darkBlue]}
 				phaseWidths={[5, 7]}
 				getPhaseLevel={getPhaseLevel}

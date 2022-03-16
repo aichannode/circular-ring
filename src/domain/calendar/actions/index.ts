@@ -1,5 +1,6 @@
 import { getLogger } from "@core/logger/logger";
 import { Present } from "@core/model";
+import { getLocalDayFromUTCDate } from "@domain/common/business";
 import { action } from "mobx";
 import moment from "moment";
 import { CalendarNote, CalendarTag } from "../calendar";
@@ -9,11 +10,20 @@ import { CalendarApi } from "./lib/calendarApi";
 export function createActions(calendarApi: CalendarApi, present: Present<Proposal>) {
 	async function setMonthCalendars({ isoMonth, useForceRefresh }: { isoMonth: string; useForceRefresh?: boolean }) {
 		try {
-			const calendarList = await calendarApi.getMonthCalendars({ isoMonth, useForceRefresh });
+			const data = await calendarApi.getMonthCalendars({ isoMonth, useForceRefresh });
 			present([
 				{
 					type: "setMonthCalendars",
-					payload: calendarList,
+					payload: data.map((calendarDto) => ({
+						day: getLocalDayFromUTCDate(calendarDto.date),
+						streak: calendarDto.streak,
+						notes: calendarDto.notes.map((note) => ({
+							id: note.id,
+							startTime: new Date(note.startTime),
+							endTime: new Date(note.endTime),
+							tag: note.tag,
+						})),
+					})),
 				},
 			]);
 		} catch (error) {

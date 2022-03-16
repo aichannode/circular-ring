@@ -19,12 +19,12 @@ export const isNotification = (entity: FeedEntity): entity is FeedNotification =
 export const isRecommendation = (entity: FeedEntity): entity is FeedRecommendation =>
 	entity.type !== FeedEntityType.NOTIFICATION;
 
-export function getFeedEntityDate(isoDate: string, todayIsoDate: string, format?: HourFormat) {
+export function getFeedEntityDate(isoDate: string, isoNow: string, format?: HourFormat) {
 	const date = moment(isoDate);
-	const today = moment(todayIsoDate);
+	const today = moment(isoNow);
 
 	// The entry appeared today, return the relative time
-	if (isToday(isoDate, todayIsoDate)) {
+	if (isToday(isoDate, isoNow)) {
 		return date.from(today);
 	}
 

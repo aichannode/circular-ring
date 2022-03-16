@@ -1,6 +1,7 @@
 import { ApiService } from "@core/api/apiService";
+import { getCurrentLocalISODay } from "@domain/common/business";
+import { ISODay } from "@domain/common/type";
 import { action } from "mobx";
-import moment from "moment";
 import { useEffect } from "react";
 import { createActions } from "../actions";
 import { MeasureApi } from "../actions/lib/measureApi";
@@ -17,7 +18,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 	return {
 		actions,
 		hooks: {
-			useDailyHR(isoDay = moment().toISOString()) {
+			useDailyHR(isoDay = getCurrentLocalISODay()) {
 				useEffect(() => {
 					__DEV__ && console.log("[MEASURE: Action] FETCH");
 					actions.setDailyHRMetrics(isoDay);
@@ -25,17 +26,17 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				return model.dailyHRMetrics.get(getKeyFromDate(isoDay)) ?? {};
 			},
 			useDailyActivityIntensity({
-				isoDay = moment().toISOString(),
+				isoDay = getCurrentLocalISODay(),
 				setData,
 			}: {
-				isoDay?: string;
+				isoDay?: ISODay;
 				setData: (data: DailyActivityIntensityData) => void;
 			}) {
 				const modelField = model.dailyActivityIntensityMetrics;
 				const fetchData = () => actions.setDailyActivityIntensityMetrics(isoDay);
 				useDailyHeavyComputationData(isoDay, modelField, setData, createActivityPhasesGetter(isoDay), fetchData);
 			},
-			useDailyActivities(isoDay?: string): Record<
+			useDailyActivities(isoDay?: ISODay): Record<
 				Activities,
 				{
 					value: number;
@@ -85,7 +86,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 			 * Return sleep score contributors
 			 * @implements 00013, 00014, 00015, 00016, 00017, 00018, 00019, 00020, 00021, 00022
 			 */
-			useDailyEnergyScoreContributors(isoDay?: string): Record<ActivityScoreContributors, Contributor> {
+			useDailyEnergyScoreContributors(isoDay?: ISODay): Record<ActivityScoreContributors, Contributor> {
 				useEffect(
 					action(function () {
 						__DEV__ && console.log("[MEASURE: Action] FETCH");
@@ -208,10 +209,10 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				};
 			},
 			useDailySleepStages({
-				isoDay = moment().toISOString(),
+				isoDay = getCurrentLocalISODay(),
 				setData,
 			}: {
-				isoDay?: string;
+				isoDay?: ISODay;
 				setData: (data: DailySleepData) => void;
 			}) {
 				const modelField = model.dailySleepMetrics;
@@ -222,7 +223,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 			 * Return sleep score contributors
 			 * @implements 00006, 00007, 00008, 00009, 00010, 00011, 00012, 00022
 			 */
-			useDailySleepScoreContributors(isoDay?: string): Record<SleepScoreContributors, Contributor> {
+			useDailySleepScoreContributors(isoDay?: ISODay): Record<SleepScoreContributors, Contributor> {
 				useEffect(
 					action(function () {
 						__DEV__ && console.log("[MEASURE: Action] FETCH");
@@ -323,7 +324,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					},
 				};
 			},
-			useDailyEnergyScore(isoDay: string = moment().toISOString()) {
+			useDailyEnergyScore(isoDay: ISODay = getCurrentLocalISODay()) {
 				useEffect(
 					action(function () {
 						if (!model.dailyEnergyScore.has(isoDay)) {
@@ -342,7 +343,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					}),
 				};
 			},
-			useDailySleepQualityScore(isoDay: string = moment().toISOString()) {
+			useDailySleepQualityScore(isoDay: ISODay = getCurrentLocalISODay()) {
 				useEffect(
 					action(function () {
 						if (!model.dailySleepScore.has(isoDay)) {
@@ -367,7 +368,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					}),
 				};
 			},
-			useCanDisplayData(isoDay: string): boolean {
+			useCanDisplayData(isoDay: ISODay): boolean {
 				useEffect(
 					action(function () {
 						if (!model.dailySleepMetrics.has(isoDay)) {
@@ -382,7 +383,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				// Spec: 00000
 				return !!userCoreSleepEnd && canDisplay(isoDay, userCoreSleepEnd * 1000);
 			},
-			useDailyGlobalScore(isoDay: string = moment().toISOString()): number | undefined {
+			useDailyGlobalScore(isoDay: ISODay = getCurrentLocalISODay()): number | undefined {
 				useEffect(
 					action(function () {
 						if (!model.dailyGlobalScore.has(isoDay)) {

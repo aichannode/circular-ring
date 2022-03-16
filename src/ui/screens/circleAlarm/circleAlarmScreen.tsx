@@ -1,6 +1,7 @@
 import { useRepresentations } from "@core/representation";
 import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
+import { getCurrentLocalISODay } from "@domain/common/business";
 import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
 import { useAutoConnectState } from "@domain/device/hooks";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
@@ -12,7 +13,6 @@ import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { WarningBottomSheet } from "@ui/screens/circleAlarm/warningBottomSheet";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import React, { useEffect, useRef } from "react";
 import { Image, Pressable, ScrollView } from "react-native";
 import styled from "styled-components/native";
@@ -27,7 +27,7 @@ export const CircleAlarmScreen: React.FC = observer(() => {
 	const wakeUpScore = useRepresentations().measure.hooks.useDailySleepQualityScore();
 	const autoConnectState = useAutoConnectState();
 	const { useCanDisplayData } = useRepresentations().measure.hooks;
-	const canDisplay = useCanDisplayData(moment().format("YYYY-MM-DD"));
+	const canDisplay = useCanDisplayData(getCurrentLocalISODay());
 
 	useEffect(() => {
 		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {

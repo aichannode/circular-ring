@@ -1,7 +1,6 @@
 import { ApiService } from "@core/api/apiService";
 import { toServerDate } from "@core/utils";
-import { Calendar, CalendarNote, CalendarTag, CalendarTagCategory } from "@domain/calendar/calendar";
-import dayjs from "dayjs";
+import { CalendarNote, CalendarTag, CalendarTagCategory } from "@domain/calendar/calendar";
 
 interface CalendarNoteDto {
 	id: number;
@@ -63,31 +62,12 @@ export class CalendarApi {
 	}: {
 		isoMonth: string;
 		useForceRefresh?: boolean;
-	}): Promise<Calendar[]> {
+	}): Promise<CalendarDto[]> {
 		const result = await this.apiService.get<CalendarDto[]>("/calendar", {
 			params: { date: isoMonth },
 			useForceRefresh,
 		});
-		return CalendarApi.calendarListFromDto(result.data);
-	}
-
-	private static calendarListFromDto(dto: CalendarDto[]): Calendar[] {
-		return dto.map((calendarDto) => {
-			const notes = calendarDto.notes.map((note) => {
-				return {
-					id: note.id,
-					startTime: new Date(note.startTime),
-					endTime: new Date(note.endTime),
-					tag: note.tag,
-				};
-			});
-
-			return {
-				day: dayjs(calendarDto.date).format("YYYY-MM-DD"),
-				streak: calendarDto.streak,
-				notes,
-			};
-		});
+		return result.data;
 	}
 
 	async createNote(tags: CalendarTag[], startTime: Date, endTime: Date) {

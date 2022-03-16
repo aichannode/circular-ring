@@ -1,3 +1,4 @@
+import { getUTCCurrentLocalISODay } from "@domain/common/business";
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { ActivityStage } from "@domain/measure/type";
 import { DailyPieChart } from "@ui/components/measure/dailyPieChart";
@@ -68,7 +69,7 @@ export function ActivityDurationPieChart({ stages, duration, sportSessionDates }
 				totalDuration={duration}
 				title="activity.duration.total"
 				chartSize={200}
-				currentIsoDate={moment().toISOString()}
+				currentIsoDay={getUTCCurrentLocalISODay()}
 				phaseColors={[
 					colors.business.activityDurationNone,
 					colors.business.activityDurationShort,

@@ -1,3 +1,4 @@
+import { ISODay } from "@domain/common/type";
 import { Metrics, MetricType, RangeMetrics } from "../metric";
 import {
 	CaloriesBurned,
@@ -33,14 +34,14 @@ export type Mutations =
 	| {
 			type: "setDailyHRMetrics";
 			payload: {
-				isoDate: string;
+				isoDay: ISODay;
 				range: RangeMetrics<DailyHRTimeSeriesMetrics, DailyHRConstantMetrics>;
 			};
 	  }
 	| {
 			type: "setDailySleepScoreContributorsMetrics";
 			payload: {
-				isoDate: string;
+				isoDay: ISODay;
 				data: Metrics<
 					| ContributorAwakeDuration
 					| ContributorRealSleepDuration
@@ -56,7 +57,7 @@ export type Mutations =
 	| {
 			type: "setDailyEnergyScoreContributorsMetrics";
 			payload: {
-				isoDate: string;
+				isoDay: ISODay;
 				data: Metrics<
 					| ContributorBodyRecovery
 					| ContributorWakeUpScore
@@ -74,7 +75,7 @@ export type Mutations =
 	| {
 			type: "setDailyActivitiesMetrics";
 			payload: {
-				isoDate: string;
+				isoDay: ISODay;
 				data: Metrics<
 					| StepsTaken
 					| WalkingEquivalency
@@ -88,35 +89,35 @@ export type Mutations =
 	| {
 			type: "setDailyActivityIntensityMetrics";
 			payload: {
-				isoDate: string;
+				isoDay: ISODay;
 				range: RangeMetrics<DailyActivityIntensityMetrics, MetricType.UserDailyActivityTotal>;
 			};
 	  }
 	| {
 			type: "setDailySleepMetrics";
 			payload: {
-				isoDate: string;
+				isoDay: ISODay;
 				range: RangeMetrics<MetricType.UserSleepStage, DailySleepStageDuration>;
 			};
 	  }
 	| {
 			type: "setGlobalScore";
 			payload: {
-				isoDate: string;
+				isoDay: ISODay;
 				score?: number;
 			};
 	  }
 	| {
 			type: "setDailyEnergyScore";
 			payload: {
-				isoDate: string;
+				isoDay: ISODay;
 				score?: number;
 			};
 	  }
 	| {
 			type: "setSleepScore";
 			payload: {
-				isoDate: string;
+				isoDay: ISODay;
 				data: Record<DailySleepScoreMetrics, number>;
 			};
 	  };

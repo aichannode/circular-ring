@@ -103,39 +103,39 @@ export class MeasureModel implements Model<Proposal> {
 		proposal.forEach((mutation) => {
 			if (mutation.type === "setDailyHRMetrics") {
 				mutate.call(this, mutation, () =>
-					this.dailyHRMetrics.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.range)
+					this.dailyHRMetrics.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.range)
 				);
 			} else if (mutation.type === "setDailyActivityIntensityMetrics") {
 				mutate.call(this, mutation, () =>
-					this.dailyActivityIntensityMetrics.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.range)
+					this.dailyActivityIntensityMetrics.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.range)
 				);
 			} else if (mutation.type === "setDailySleepMetrics") {
 				mutate.call(this, mutation, () =>
-					this.dailySleepMetrics.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.range)
+					this.dailySleepMetrics.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.range)
 				);
 			} else if (mutation.type === "setGlobalScore") {
 				mutate.call(this, mutation, () =>
-					this.dailyGlobalScore.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.score)
+					this.dailyGlobalScore.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.score)
 				);
 			} else if (mutation.type === "setDailyEnergyScore") {
 				mutate.call(this, mutation, () =>
-					this.dailyEnergyScore.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.score)
+					this.dailyEnergyScore.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.score)
 				);
 			} else if (mutation.type === "setSleepScore") {
 				mutate.call(this, mutation, () =>
-					this.dailySleepScore.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.data)
+					this.dailySleepScore.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.data)
 				);
 			} else if (mutation.type === "setDailyActivitiesMetrics") {
 				mutate.call(this, mutation, () =>
-					this.dailyActivitiesMetrics.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.data)
+					this.dailyActivitiesMetrics.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.data)
 				);
 			} else if (mutation.type === "setDailyEnergyScoreContributorsMetrics") {
 				mutate.call(this, mutation, () =>
-					this.dailyEnergyScoreContributorsMetrics.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.data)
+					this.dailyEnergyScoreContributorsMetrics.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.data)
 				);
 			} else if (mutation.type === "setDailySleepScoreContributorsMetrics") {
 				mutate.call(this, mutation, () =>
-					this.dailySleepScoreContributorsMetrics.set(getKeyFromDate(mutation.payload.isoDate), mutation.payload.data)
+					this.dailySleepScoreContributorsMetrics.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.data)
 				);
 			}
 		});

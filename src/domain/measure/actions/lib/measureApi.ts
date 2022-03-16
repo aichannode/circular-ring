@@ -1,6 +1,7 @@
 import { ApiService } from "@core/api/apiService";
+import { ISODay, ISOMonth } from "@domain/common/type";
 import moment from "moment";
-import { toTimeSegment } from "../../common/business";
+import { toUTCTimeSegment } from "../../common/business";
 import { DatedMetrics, Metrics, MetricType } from "../../metric";
 import { TimeFrame } from "../../type";
 
@@ -83,54 +84,43 @@ export class MeasureApi {
 
 	public async fetchLastDailyMeasures<T extends MetricType>(
 		measures: ReadonlyArray<T>,
-		isoDay: string
+		isoDay: ISODay
 	): Promise<Partial<Metrics<T>>> {
-		return await this.getLastMeasures(measures, toTimeSegment(isoDay, TimeFrame.DAY));
-	}
-
-	public async fetchTodayMeasures<T extends MetricType>(
-		measures: ReadonlyArray<T>,
-		isoToday: string = moment().toISOString()
-	): Promise<Array<DatedMetrics<T>>> {
-		return await this.getMeasures(measures, toTimeSegment(isoToday, TimeFrame.TODAY), true); // don't use cache for today measure
+		return await this.getLastMeasures(measures, toUTCTimeSegment(isoDay, TimeFrame.DAY));
 	}
 
 	public async fetchDailyMeasures<T extends MetricType>(
 		measures: ReadonlyArray<T>,
-		isoDay: string
+		isoDay: ISODay
 	): Promise<Array<DatedMetrics<T>>> {
-		return await this.getMeasures(measures, toTimeSegment(isoDay, TimeFrame.DAY));
+		return await this.getMeasures(measures, toUTCTimeSegment(isoDay, TimeFrame.DAY));
 	}
 
 	public async fetchLast7DaysMeasures<T extends MetricType>(
 		measures: ReadonlyArray<T>,
-		isoToday: string = moment().toISOString()
+		isoToday: ISODay = moment().toISOString() as ISODay
 	): Promise<Array<DatedMetrics<T>>> {
-		return await this.getMeasures(measures, toTimeSegment(isoToday, TimeFrame.LAST_7_DAYS));
+		return await this.getMeasures(measures, toUTCTimeSegment(isoToday, TimeFrame.LAST_7_DAYS));
 	}
 
 	public async fetchWeeklyMeasures<T extends MetricType>(
 		measures: ReadonlyArray<T>,
-		isoWeek: string
+		isoDay: ISODay
 	): Promise<Array<DatedMetrics<T>>> {
-		return await this.getMeasures(measures, toTimeSegment(isoWeek, TimeFrame.WEEK));
+		return await this.getMeasures(measures, toUTCTimeSegment(isoDay, TimeFrame.WEEK));
 	}
 
 	public async fetchLast30DaysMeasures<T extends MetricType>(
 		measures: ReadonlyArray<T>,
-		isoToday: string = moment().toISOString()
+		isoToday: ISODay = moment().toISOString() as ISODay
 	): Promise<Array<DatedMetrics<T>>> {
-		return await this.getMeasures(measures, toTimeSegment(isoToday, TimeFrame.LAST_30_DAYS));
+		return await this.getMeasures(measures, toUTCTimeSegment(isoToday, TimeFrame.LAST_30_DAYS));
 	}
 
 	public async fetchMonthlyMeasures<T extends MetricType>(
 		measures: ReadonlyArray<T>,
-		isoMonth: string
+		isoMonth: ISOMonth
 	): Promise<Array<DatedMetrics<T>>> {
-		return await this.getMeasures(measures, toTimeSegment(isoMonth, TimeFrame.MONTH));
-	}
-
-	public async fetchAllMeasures<T extends MetricType>(measures: ReadonlyArray<T>): Promise<Array<DatedMetrics<T>>> {
-		return await this.getMeasures(measures, toTimeSegment("", TimeFrame.ALL));
+		return await this.getMeasures(measures, toUTCTimeSegment(isoMonth, TimeFrame.MONTH));
 	}
 }

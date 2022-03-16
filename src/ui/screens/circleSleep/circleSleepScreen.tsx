@@ -1,4 +1,6 @@
 import { useRepresentations } from "@core/representation";
+import { getCurrentLocalISODay } from "@domain/common/business";
+import { ISODay } from "@domain/common/type";
 import { DailySleepData } from "@domain/measure/representation/api";
 import { sleepScoreContributors } from "@domain/measure/representation/lib/type";
 import { SleepStage, TimeFrame } from "@domain/measure/type";
@@ -31,7 +33,7 @@ import { getSleepGaugesConfig } from "./measureDisplayInfos";
 import { SleepDurationPieChart } from "./sleepDurationPie";
 
 export const CircleSleepScreen: React.FC = observer(() => {
-	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
+	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	const { useDailySleepScoreContributors, useDailySleepQualityScore, useDailySleepStages, useCanDisplayData } =
 		useRepresentations().measure.hooks;
