@@ -12,6 +12,7 @@ import {
 	isISODay,
 	isISOMonth,
 	isToday,
+	isUTCDate,
 	isYesterday,
 	toISOMonth,
 } from "./business";
@@ -40,6 +41,16 @@ test("isIDODay", function () {
 	expect(isISODay("2012-03-01T00:00:00Z")).toBeFalsy();
 	expect(isISODay("2012-01-01")).toBeTruthy();
 	expect(isISODay("2012-01")).toBeFalsy();
+});
+
+test("isUTCDate", function () {
+	expect(isUTCDate("2012-01-01T17:52:27.8116975-12:00")).toBeTruthy();
+	expect(isUTCDate("2022-03-01T00:00:00.000+00:00")).toBeTruthy();
+	expect(isUTCDate("2022-03-01T00:00:00.000+00:00")).toBeTruthy();
+	expect(isUTCDate("2022-03-02T00:02:00Z")).toBeTruthy();
+	expect(isUTCDate("2022-03-01T00:00:00.000+00:00")).toBeTruthy();
+	expect(isUTCDate("2012-02-01T18:21:06")).toBeFalsy();
+	expect(isUTCDate("2012-03-01T00:00:00Z")).toBeTruthy();
 });
 
 test("isISOMonth", function () {
@@ -75,14 +86,14 @@ test("getLocalISODayFromLocalDate ", function () {
 
 test("getUTCISODayFromLocalDate ", function () {
 	timezone_mock.register("US/Pacific");
-	expect(getUTCISODayFromLocalDate("2022-02-28T08:00:00.000")).toBe("2022-03-01");
+	expect(getUTCISODayFromLocalDate("2022-02-28T07:00:00.000")).toBe("2022-02-28");
 	timezone_mock.register("UTC");
 	expect(getUTCISODayFromLocalDate("2022-02-28T23:00:00.000")).toBe("2022-02-28");
 });
 
 test("getLocalDayFromUTCDate", function () {
 	timezone_mock.register("US/Pacific");
-	expect(getLocalDayFromUTCDate("2022-03-01T00:00:00.000Z")).toBe("2022-01-28");
+	expect(getLocalDayFromUTCDate("2022-03-01T00:00:00.000Z")).toBe("2022-02-28");
 	timezone_mock.register("UTC");
 	expect(getLocalDayFromUTCDate("2022-03-01T00:00:00.000Z")).toBe("2022-03-01");
 });
@@ -91,7 +102,7 @@ test("getCurrentLocalISODay", function () {
 	timezone_mock.register("US/Pacific");
 	expect(getCurrentLocalISODay("2022-03-01T00:00:00.000")).toBe("2022-03-01");
 	timezone_mock.register("UTC");
-	expect(getCurrentLocalISODay("2022-03-01T00:00:00.000")).toBe("2022-02-28");
+	expect(getCurrentLocalISODay("2022-03-01T00:00:00.000")).toBe("2022-03-01");
 });
 
 test("getUTCCurrentLocalISODay", function () {

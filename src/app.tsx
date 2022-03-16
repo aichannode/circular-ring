@@ -29,7 +29,6 @@ configure({
 	computedRequiresReaction: true,
 	reactionRequiresObservable: true,
 	observableRequiresReaction: true,
-	disableErrorBoundaries: true,
 	useProxies: "never",
 });
 
