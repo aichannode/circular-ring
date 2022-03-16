@@ -2,7 +2,7 @@ import { ScoreQuality } from "@domain/measure/representation/api";
 import { SignalQuality } from "@domain/measure/score";
 import { Melody, Weekdays } from "@domain/ring/ringAlarm";
 import { Intensity } from "@domain/ring/ringLiveData";
-import { useIsCelsius } from "@domain/user/hooks/useUser";
+import { useIsCelsius, useIsUSCS } from "@domain/user/hooks/useUser";
 import dayjs from "dayjs";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
@@ -202,7 +202,7 @@ export function useI18n(options?: FormatterOptions) {
 			is24h ? dayjs(date).format("HH : mm") : dayjs(date).format("hh : mm A"),
 		formatDate: (date: Date | undefined) => {
 			if (date) {
-				const isUSCS = useIsCelsius();
+				const isUSCS = useIsUSCS();
 				// CIR-733 Stay in UTC to prevent date shift
 				return isUSCS ? dayjs.utc(date).format("MM/DD/YYYY") : dayjs(date).format("DD/MM/YYYY");
 			}
