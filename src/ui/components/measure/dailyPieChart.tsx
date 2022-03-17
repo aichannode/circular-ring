@@ -19,7 +19,7 @@ type Props = {
 	/** The title in the center of the pie */
 	title: WordingKey;
 	/** Current date as ISO string */
-	currentIsoDay: ISODay;
+	currentLocalIsoDay: ISODay;
 	/** Logic to know the color of the given phase */
 	getPhaseLevel(phase?: number | string): number;
 	/** Phase colors, indexed by phase level */
@@ -31,7 +31,7 @@ type Props = {
 export const DailyPieChart: React.FC<Props> = ({
 	stages,
 	totalDuration,
-	currentIsoDay,
+	currentLocalIsoDay,
 	chartSize,
 	phaseColors,
 	phaseWidths,
@@ -39,9 +39,9 @@ export const DailyPieChart: React.FC<Props> = ({
 	children,
 	getPhaseLevel,
 }) => {
-	const startTime: string | undefined = stages[0]?.start;
-	const endTime: string | undefined = stages[stages.length - 1]?.end;
-	const isTodayPie = isToday(endTime, currentIsoDay);
+	const startTime: string | undefined = stages[0]?.start; //TODO convert to local time
+	const endTime: string | undefined = stages[stages.length - 1]?.end; //TODO convert to local time
+	const isTodayPie = isToday(endTime, currentLocalIsoDay);
 
 	// The first slice starts yesterday. We need to use a different start angle
 	const didStartTheDayBefore = startTime !== undefined && isYesterday(startTime, endTime);
@@ -62,7 +62,7 @@ export const DailyPieChart: React.FC<Props> = ({
 	// Start drawing the pie at this angle
 	const startPieAngle = angle(new Date(startTime));
 	// The maximum drawable angle of the pie (the current hour)
-	const endPieAngle = (didStartTheDayBefore ? 360 : 0) + angle(new Date(isTodayPie ? currentIsoDay : endTime));
+	const endPieAngle = (didStartTheDayBefore ? 360 : 0) + angle(new Date(isTodayPie ? currentLocalIsoDay : endTime));
 
 	const data = stages.map((stage, index) => ({
 		key: index,

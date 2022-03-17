@@ -1,6 +1,6 @@
 import { getLogger } from "@core/logger/logger";
 import { Present } from "@core/model";
-import { getLocalDayFromUTCDate, toLocale } from "@domain/common/business";
+import { getUTCISODayFromLocalDate, getUTCISODayFromUTCDate, isUTCDate, toLocale } from "@domain/common/business";
 import { action } from "mobx";
 import { CalendarNote, CalendarTag } from "../calendar";
 import { CalendarErrorContext, CUSTOM_TAG_CATEGORY_ID, Proposal } from "../common/type";
@@ -20,7 +20,10 @@ export function createActions(calendarApi: CalendarApi, present: Present<Proposa
 				{
 					type: "setMonthCalendars",
 					payload: data.map((calendarDto) => ({
-						day: getLocalDayFromUTCDate(calendarDto.date),
+						// TODO remove condition when backend will be set to UTC
+						day: isUTCDate(calendarDto.date)
+							? getUTCISODayFromUTCDate(calendarDto.date)
+							: getUTCISODayFromLocalDate(calendarDto.date),
 						streak: calendarDto.streak,
 						notes: calendarDto.notes.map((note) => ({
 							id: note.id,

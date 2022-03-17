@@ -1,11 +1,12 @@
 import { useRepresentations } from "@core/representation";
+import { ISODay } from "@domain/common/type";
 import { Stack } from "@ui/components/layout";
 import { CalendarNoteItem } from "@ui/screens/calendar/calendarNoteItem";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-export const DailyNotes = observer(function DailyNotes({ isoDay }: { isoDay: string }) {
+export const DailyNotes = observer(function DailyNotes({ isoDay }: { isoDay: ISODay }) {
 	const {
 		calendar: {
 			hooks: { useCalendar },

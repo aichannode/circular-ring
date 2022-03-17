@@ -4,7 +4,10 @@ import { Calendar, CalendarTag, CalendarTagCategory } from "../calendar";
 import { CalendarErrorContext, Mutations, Proposal } from "../common/type";
 
 export class CalendarModel implements Model<Proposal> {
-	public month: Calendar[] = [];
+	/**
+	 * UTC calendar storing the monthly notes
+	 */
+	public UTCMonthNotes: Calendar[] = [];
 	public categoryTags: Map<number, CalendarTag[]> = new Map();
 	public tagCategories: Array<CalendarTagCategory> = [];
 	public lastAcceptedMutations: Mutations[] = [];
@@ -22,11 +25,11 @@ export class CalendarModel implements Model<Proposal> {
 		(this.lastAcceptedMutations as IObservableArray).clear();
 		proposal.forEach((mutation) => {
 			if (mutation.type === "setMonthCalendars") {
-				mutate.call(this, mutation, () => (this.month as IObservableArray).replace(mutation.payload));
+				mutate.call(this, mutation, () => (this.UTCMonthNotes as IObservableArray).replace(mutation.payload));
 			} else if (mutation.type === "updateNote") {
 				// @TODO optimize: ask if the same note could be in multiple day
 				mutate.call(this, mutation, () =>
-					this.month.forEach(({ notes }) =>
+					this.UTCMonthNotes.forEach(({ notes }) =>
 						notes.forEach((note) => {
 							if (note.id === mutation.payload.id) {
 								Object.assign(note, mutation.payload);
@@ -37,10 +40,10 @@ export class CalendarModel implements Model<Proposal> {
 			} else if (mutation.type === "deleteNote") {
 				// @TODO optimize: ask if the same note could be in multiple day
 				mutate.call(this, mutation, () =>
-					this.month.forEach(({ notes }, index) => {
+					this.UTCMonthNotes.forEach(({ notes }, index) => {
 						const i = notes.findIndex((note) => note.id === mutation.payload.id);
 						if (i >= 0) {
-							remove(this.month[index].notes as IObservableArray, i);
+							remove(this.UTCMonthNotes[index].notes as IObservableArray, i);
 						}
 					})
 				);

@@ -1,5 +1,5 @@
 import { Present } from "@core/model";
-import { getLocalDayFromUTCDate } from "@domain/common/business";
+import { getLocalISODayFromUTCDate } from "@domain/common/business";
 import { ISODay, ISOMonth } from "@domain/common/type";
 import moment from "moment";
 import { Proposal } from "../common/type";
@@ -92,7 +92,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					return {
 						type: "setGlobalScore",
 						payload: {
-							isoDay: getLocalDayFromUTCDate(block.timestamp),
+							isoDay: getLocalISODayFromUTCDate(block.timestamp),
 							score: block.metrics[MetricType.UserDailyGlobalScore]
 								? Number(block.metrics[MetricType.UserDailyGlobalScore])
 								: undefined,

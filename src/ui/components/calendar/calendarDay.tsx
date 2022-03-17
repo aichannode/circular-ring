@@ -1,8 +1,8 @@
 import { useRepresentations } from "@core/representation";
+import { getCurrentLocalISODay, getLocalISODayFromLocalDate } from "@domain/common/business";
 import { Row } from "@ui/components/layout";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import React from "react";
 import { Image } from "react-native";
 import { DateData } from "react-native-calendars";
@@ -20,7 +20,9 @@ export const CalendarDay = observer(function CalendarDay({ date, marking, onPres
 			hooks: { useCalendar },
 		},
 	} = useRepresentations();
-	const dayCalendar = useCalendar(date?.dateString ?? moment().toISOString());
+	const dayCalendar = useCalendar(
+		date?.dateString ? getLocalISODayFromLocalDate(date.dateString) : getCurrentLocalISODay()
+	);
 
 	return (
 		<Container onPress={() => onPress?.(date)}>

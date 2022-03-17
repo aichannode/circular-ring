@@ -3,6 +3,7 @@ import { isToday } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { useUser } from "@domain/user/hooks/useUser";
 import { circularCalendarTheme } from "@ui/components/calendar/circularCalendarTheme";
+import { action } from "mobx";
 import moment from "moment";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { StyleProp, ViewStyle } from "react-native";
@@ -24,13 +25,13 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 	const { setMonthCalendars } = useRepresentations().calendar.actions;
 	// Fetch data on day change
 	useEffect(
-		function () {
+		action(function () {
 			setMonthCalendars({
 				isoLocalDate: moment(selectedLocalIsoDay).local().format(),
 				// Don't use cache if it is today, as data is often updated.
 				useForceRefresh: isToday(selectedLocalIsoDay, moment().toISOString()),
 			});
-		},
+		}),
 		[selectedLocalIsoDay]
 	);
 

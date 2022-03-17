@@ -71,7 +71,7 @@ export function assertLocalDate(isoDate: string) {
 }
 
 /**
- * Return the local day iso formated as YYYY-MM-DD for the given date in local time
+ * Return the local iso day from the given local time stamp.
  */
 export function getLocalISODayFromLocalDate(localIsoDate: string): ISODay {
 	assertLocalDate(localIsoDate);
@@ -79,27 +79,27 @@ export function getLocalISODayFromLocalDate(localIsoDate: string): ISODay {
 }
 
 /**
- * Return the day iso formated as YYYY-MM-DD for the given date in local time
+ * Return the local iso day from the given UTC time stamp.
+ */
+export function getLocalISODayFromUTCDate(utcIsoDate: string): ISODay {
+	assertUTCDate(utcIsoDate);
+	return moment(utcIsoDate).format("YYYY-MM-DD") as ISODay;
+}
+
+/**
+ * Return the UTC iso day from the given UTC time stamp.
+ */
+export function getUTCISODayFromUTCDate(utcIsoDate: string): ISODay {
+	assertUTCDate(utcIsoDate);
+	return moment(utcIsoDate).utc().format("YYYY-MM-DD") as ISODay;
+}
+
+/**
+ * Return the UTC iso day from the given local time stamp.
  */
 export function getUTCISODayFromLocalDate(localIsoDate: string): ISODay {
 	assertLocalDate(localIsoDate);
-	return moment.utc(localIsoDate).format("YYYY-MM-DD") as ISODay;
-}
-
-/**
- * Return a local day formated as YYYY-MM-DD from the given UTC time stamp.
- */
-export function getLocalDayFromUTCDate(utcIsoDate: string): ISODay {
-	assertUTCDate(utcIsoDate);
-	return moment(utcIsoDate).format("YYYY-MM-DD") as ISODay;
-}
-
-/**
- * Return a local day formated as YYYY-MM-DD from the given UTC time stamp.
- */
-export function getUTCDayFromUTCDate(utcIsoDate: string): ISODay {
-	assertUTCDate(utcIsoDate);
-	return moment(utcIsoDate).format("YYYY-MM-DD") as ISODay;
+	return moment(localIsoDate).utc().format("YYYY-MM-DD") as ISODay;
 }
 
 /**
@@ -110,10 +110,10 @@ export function getCurrentLocalISODay(localNow?: string): ISODay {
 }
 
 /**
- * Return the current local iso day formated day in UTC
+ * Convert local iso day to UTC iso day
  */
-export function getUTCCurrentLocalISODay(localNow?: string): ISODay {
-	return getUTCISODayFromLocalDate(localNow ?? moment().local().format());
+export function toUTCISODay(localISODay: ISODay): ISODay {
+	return moment(localISODay).utc().format("YYYY-MM-DD") as ISODay;
 }
 
 /**

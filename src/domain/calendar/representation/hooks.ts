@@ -1,5 +1,7 @@
 import { ApiService } from "@core/api/apiService";
 import { Calendar } from "@domain/calendar/calendar";
+import { toUTCISODay } from "@domain/common/business";
+import { ISODay } from "@domain/common/type";
 import { deduplicate } from "@ui/utils/filter";
 import moment from "moment";
 import { createActions } from "../actions";
@@ -15,9 +17,9 @@ export function createRepresentation(apiService: ApiService, model: CalendarMode
 	// Start NAPs
 	createNAPs(model, calendarApi, actions);
 
-	function useCalendar(isoDay: string): Calendar | undefined {
-		return model.month.find((cal) => {
-			return cal.day.includes(isoDay);
+	function useCalendar(isoLocalDay: ISODay): Calendar | undefined {
+		return model.UTCMonthNotes.find((cal) => {
+			return cal.day.includes(toUTCISODay(isoLocalDay));
 		});
 	}
 
@@ -38,7 +40,7 @@ export function createRepresentation(apiService: ApiService, model: CalendarMode
 				return model.errors.get(context);
 			},
 
-			useDailyTags(isoDay: string) {
+			useDailyTags(isoDay: ISODay) {
 				return (
 					useCalendar(isoDay)
 						?.notes.filter(
