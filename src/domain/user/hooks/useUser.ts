@@ -22,6 +22,7 @@ export const useIsCelsius = () => {
 };
 
 export const useUserAdvancedInfo = () => useObservable(useServices().userService.userAdvancedInfo);
+export const useNotificationsSettings = () => useObservable(useServices().userService.userNotificationsSettings);
 
 export const useUserValidated = () => useObservable(useServices().userService.user)?.validated || false;
 export const useUserTutorialCompleted = () => useObservable(useServices().userService.user)?.tutorialCompleted || false;

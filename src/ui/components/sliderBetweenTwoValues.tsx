@@ -1,8 +1,8 @@
-import React from "react";
 import { Slider } from "@miblanchard/react-native-slider";
-import styled from "styled-components/native";
-import { colors } from "@ui/styles/colors";
 import { useI18n } from "@ui/i18n";
+import { colors } from "@ui/styles/colors";
+import React from "react";
+import styled from "styled-components/native";
 
 interface SliderProps {
 	title: string;
@@ -52,7 +52,7 @@ export const SliderBetweenTwoValues: React.FC<SliderProps> = ({
 					}}
 					thumbTintColor={colors.white}
 					value={value}
-					onValueChange={setValue}
+					onValueChange={(value) => setValue(typeof value === "number" ? value : value[0])}
 				></Slider>
 				<PinBar>
 					<PinRound />
