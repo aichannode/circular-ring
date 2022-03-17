@@ -29,15 +29,14 @@ export function getUTCLocalISOMonth(localIsoDay: ISODay): ISOMonth {
 	return moment.utc(localIsoDay).startOf("month").format("YYYY-MM") as ISOMonth;
 }
 
-const regexUTCDate =
-	/\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\d|3[0-1])T(?:[0-1]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+|)((?:\+|\-)(?:0{2}):?(?:0{2})|Z)$/;
+const regexUTCDate = /\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\d|3[0-1])T(?:[0-1]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+|)Z$/;
 
 /**
  * Return true if the given iso string is UTC based.
  * Ex:
  * 2012-01-01T17:52:27.8116975-12:00 => false
- * 2022-03-01T00:00:00.000+00:00 => true
- * 2022-03-01T00:00:00.000+0000 => true
+ * 2022-03-01T00:00:00.000+00:00 => false
+ * 2022-03-01T00:00:00.000+0000 => false
  * 2012-03-01T00:00:00Z => true
  * 2022-03-01T00:00:00.000Z => true
  * 2022-03-02T00:02:00Z => true
@@ -114,7 +113,7 @@ export function getCurrentLocalISODay(localNow?: string): ISODay {
  * Return the current local iso day formated day in UTC
  */
 export function getUTCCurrentLocalISODay(localNow?: string): ISODay {
-	return getUTCISODayFromLocalDate(localNow ?? moment.utc().toISOString());
+	return getUTCISODayFromLocalDate(localNow ?? moment().local().format());
 }
 
 /**

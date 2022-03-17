@@ -47,8 +47,8 @@ test("isISODay", function () {
 
 test("isUTCDate", function () {
 	expect(isUTCDate("2012-01-01T17:52:27.8116975-12:00")).toBeFalsy();
-	expect(isUTCDate("2022-03-01T00:00:00.000+00:00")).toBeTruthy();
-	expect(isUTCDate("2022-03-01T00:00:00.000+0000")).toBeTruthy();
+	expect(isUTCDate("2022-03-01T00:00:00.000+00:00")).toBeFalsy();
+	expect(isUTCDate("2022-03-01T00:00:00.000+0000")).toBeFalsy();
 	expect(isUTCDate("2012-02-01T18:21:06")).toBeFalsy();
 	expect(isUTCDate("2012-03-01T00:00:00Z")).toBeTruthy();
 	expect(isUTCDate("2022-03-01T00:00:00.000Z")).toBeTruthy();
@@ -105,6 +105,8 @@ test("getCurrentLocalISODay", function () {
 	expect(getCurrentLocalISODay("2022-03-01T00:00:00.000")).toBe("2022-03-01");
 	timezone_mock.register("UTC");
 	expect(getCurrentLocalISODay("2022-03-01T00:00:00.000")).toBe("2022-03-01");
+	// Test in runtime context
+	expect(() => getCurrentLocalISODay()).not.toThrow();
 });
 
 test("getUTCCurrentLocalISODay", function () {
@@ -112,6 +114,8 @@ test("getUTCCurrentLocalISODay", function () {
 	expect(getUTCCurrentLocalISODay("2022-02-28T08:00:00.000")).toBe("2022-02-28");
 	timezone_mock.register("UTC");
 	expect(getUTCCurrentLocalISODay("2022-03-01T00:00:00.000")).toBe("2022-03-01");
+	// Test in runtime context
+	expect(() => getUTCCurrentLocalISODay()).not.toThrow();
 });
 
 test("toISOMonth", function () {
@@ -127,7 +131,7 @@ test("toUTC", function () {
 
 test("toLocale", function () {
 	timezone_mock.register("US/Pacific");
-	expect(toLocale("2022-03-01T00:00:00.000Z")).toBe("2022-02-28T16:00:00");
+	expect(toLocale("2022-03-01T00:00:00.000Z")).toBe("2022-02-28T16:00:00-08:00");
 	timezone_mock.register("UTC");
-	expect(toLocale("2022-03-01T00:00:00.000Z")).toBe("2022-02-28T00:00:00");
+	expect(toLocale("2022-03-01T00:00:00.000Z")).toBe("2022-03-01T00:00:00+00:00");
 });
