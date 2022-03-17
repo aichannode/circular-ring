@@ -26,7 +26,7 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 	useEffect(
 		function () {
 			setMonthCalendars({
-				isoDate: moment(selectedLocalIsoDay).local().format(),
+				isoLocalDate: moment(selectedLocalIsoDay).local().format(),
 				// Don't use cache if it is today, as data is often updated.
 				useForceRefresh: isToday(selectedLocalIsoDay, moment().toISOString()),
 			});

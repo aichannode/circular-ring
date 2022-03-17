@@ -1,15 +1,21 @@
 import { getLogger } from "@core/logger/logger";
 import { Present } from "@core/model";
-import { getLocalDayFromUTCDate, getUTCISODayFromLocalDate, toISOMonth } from "@domain/common/business";
+import { getLocalDayFromUTCDate, toLocale } from "@domain/common/business";
 import { action } from "mobx";
 import { CalendarNote, CalendarTag } from "../calendar";
 import { CalendarErrorContext, CUSTOM_TAG_CATEGORY_ID, Proposal } from "../common/type";
 import { CalendarApi } from "./lib/calendarApi";
 
 export function createActions(calendarApi: CalendarApi, present: Present<Proposal>) {
-	async function setMonthCalendars({ isoDate, useForceRefresh }: { isoDate: string; useForceRefresh?: boolean }) {
+	async function setMonthCalendars({
+		isoLocalDate,
+		useForceRefresh,
+	}: {
+		isoLocalDate: string;
+		useForceRefresh?: boolean;
+	}) {
 		try {
-			const data = await calendarApi.getMonthCalendars({ isoDate, useForceRefresh });
+			const data = await calendarApi.getMonthCalendars({ isoLocalDate, useForceRefresh });
 			present([
 				{
 					type: "setMonthCalendars",
@@ -125,10 +131,8 @@ export function createActions(calendarApi: CalendarApi, present: Present<Proposa
 		async createNote(tags: CalendarTag[], startTime: Date, endTime: Date) {
 			try {
 				await calendarApi.createNote(tags, startTime, endTime);
-				// Use UTC to prevent offset when creating a note from negative timezone
-				// (eg: otherwize create a note in the USA at 20:00 will be set at 05:00 the day after)
 				setMonthCalendars({
-					isoDate: toISOMonth(getUTCISODayFromLocalDate(startTime.toISOString())),
+					isoLocalDate: toLocale(startTime.toISOString()),
 					useForceRefresh: true,
 				});
 			} catch (e) {

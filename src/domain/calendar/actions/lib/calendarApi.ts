@@ -57,18 +57,18 @@ export class CalendarApi {
 	}
 
 	async getMonthCalendars({
-		isoDate,
+		isoLocalDate,
 		useForceRefresh,
 	}: {
 		/**
-		 * A day of the month in iso string with time zone offset local time.
+		 * A day of the month in iso local time with time zone offset.
 		 * eg: 2012-01-01T17:52:27.875-7:00
 		 */
-		isoDate: string;
+		isoLocalDate: string;
 		useForceRefresh?: boolean;
 	}): Promise<CalendarDto[]> {
 		const result = await this.apiService.get<CalendarDto[]>("/calendar", {
-			params: { date: isoDate },
+			params: { date: isoLocalDate },
 			useForceRefresh,
 		});
 		return result.data;
