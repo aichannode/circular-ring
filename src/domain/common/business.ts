@@ -30,7 +30,7 @@ export function getUTCLocalISOMonth(localIsoDay: ISODay): ISOMonth {
 }
 
 const regexUTCDate =
-	/\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\d|3[0-1])T(?:[0-1]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+|)(?:\+|\-)(?:\d{2}):?(?:\d{2})/;
+	/\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\d|3[0-1])T(?:[0-1]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+|)((?:\+|\-)(?:\d{2}):?(?:\d{2})|Z)$/;
 
 export function isUTCDate(isoDate: string): boolean {
 	return isoDate.match(regexUTCDate) !== null;
@@ -65,7 +65,6 @@ export function assertLocalDate(isoDate: string) {
  */
 export function getLocalISODayFromLocalDate(localIsoDate: string): ISODay {
 	assertLocalDate(localIsoDate);
-	console.log(localIsoDate);
 	return moment(localIsoDate).format("YYYY-MM-DD") as ISODay;
 }
 
@@ -112,4 +111,12 @@ export function getUTCCurrentLocalISODay(localNow?: string): ISODay {
  */
 export function toISOMonth(isoDay: ISODay): ISOMonth {
 	return isoDay.slice(0, 7) as ISOMonth;
+}
+
+/**
+ * Convert locale isostring date to UTC
+ */
+export function toUTC(localISODate: string) {
+	assertLocalDate(localISODate);
+	return moment(localISODate).utc().toISOString();
 }

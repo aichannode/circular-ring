@@ -15,6 +15,7 @@ import {
 	isUTCDate,
 	isYesterday,
 	toISOMonth,
+	toUTC,
 } from "./business";
 
 const today = "2021-10-12T14:31:06.585Z";
@@ -46,11 +47,9 @@ test("isIDODay", function () {
 test("isUTCDate", function () {
 	expect(isUTCDate("2012-01-01T17:52:27.8116975-12:00")).toBeTruthy();
 	expect(isUTCDate("2022-03-01T00:00:00.000+00:00")).toBeTruthy();
-	expect(isUTCDate("2022-03-01T00:00:00.000+00:00")).toBeTruthy();
+	expect(isUTCDate("2022-03-01T00:00:00.000Z")).toBeTruthy();
 	expect(isUTCDate("2022-03-02T00:02:00Z")).toBeTruthy();
-	expect(isUTCDate("2022-03-01T00:00:00.000+00:00")).toBeTruthy();
 	expect(isUTCDate("2012-02-01T18:21:06")).toBeFalsy();
-	expect(isUTCDate("2012-03-01T00:00:00Z")).toBeTruthy();
 });
 
 test("isISOMonth", function () {
@@ -114,4 +113,10 @@ test("getUTCCurrentLocalISODay", function () {
 
 test("toISOMonth", function () {
 	expect(toISOMonth("2022-03-01")).toBe("2022-03");
+});
+
+test("toUTC", function () {
+	timezone_mock.register("US/Pacific");
+	expect(toUTC("2022-03-01")).toBe("2022-03-01T08:00:00.000Z");
+	timezone_mock.register("UTC");
 });
