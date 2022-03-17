@@ -15,6 +15,7 @@ import {
 	isUTCDate,
 	isYesterday,
 	toISOMonth,
+	toLocale,
 	toUTC,
 } from "./business";
 
@@ -121,4 +122,12 @@ test("toUTC", function () {
 	timezone_mock.register("US/Pacific");
 	expect(toUTC("2022-03-01")).toBe("2022-03-01T08:00:00.000Z");
 	timezone_mock.register("UTC");
+	expect(toUTC("2022-03-01")).toBe("2022-03-01T00:00:00.000Z");
+});
+
+test("toLocale", function () {
+	timezone_mock.register("US/Pacific");
+	expect(toLocale("2022-03-01T00:00:00.000Z")).toBe("2022-02-28T16:00:00");
+	timezone_mock.register("UTC");
+	expect(toLocale("2022-03-01T00:00:00.000Z")).toBe("2022-02-28T00:00:00");
 });

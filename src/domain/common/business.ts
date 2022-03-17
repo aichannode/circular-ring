@@ -131,3 +131,11 @@ export function toUTC(localISODate: string) {
 	assertLocalDate(localISODate);
 	return moment(localISODate).utc().toISOString();
 }
+
+/**
+ * Convert UTC iso string to locale string
+ */
+export function toLocale(isoDate: string) {
+	assertUTCDate(isoDate);
+	return moment(isoDate).local().format();
+}
