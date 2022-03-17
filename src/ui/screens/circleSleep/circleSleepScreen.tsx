@@ -274,7 +274,7 @@ export const CircleSleepScreen: React.FC = observer(() => {
 				<View style={{ padding: 20 }}>
 					<CalendarView
 						autoSelectDayOnMonthChange={false}
-						selectedIsoDay={selectedDay}
+						selectedLocalIsoDay={selectedDay}
 						onDaySelected={async (day) => {
 							await calendarBottomSheet.current?.asyncClose();
 							setSelectedDay(day);

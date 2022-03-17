@@ -7,9 +7,9 @@ import { CalendarErrorContext, CUSTOM_TAG_CATEGORY_ID, Proposal } from "../commo
 import { CalendarApi } from "./lib/calendarApi";
 
 export function createActions(calendarApi: CalendarApi, present: Present<Proposal>) {
-	async function setMonthCalendars({ isoMonth, useForceRefresh }: { isoMonth: string; useForceRefresh?: boolean }) {
+	async function setMonthCalendars({ isoDate, useForceRefresh }: { isoDate: string; useForceRefresh?: boolean }) {
 		try {
-			const data = await calendarApi.getMonthCalendars({ isoMonth, useForceRefresh });
+			const data = await calendarApi.getMonthCalendars({ isoDate, useForceRefresh });
 			present([
 				{
 					type: "setMonthCalendars",
@@ -128,7 +128,7 @@ export function createActions(calendarApi: CalendarApi, present: Present<Proposa
 				// Use UTC to prevent offset when creating a note from negative timezone
 				// (eg: otherwize create a note in the USA at 20:00 will be set at 05:00 the day after)
 				setMonthCalendars({
-					isoMonth: toISOMonth(getUTCISODayFromLocalDate(startTime.toISOString())),
+					isoDate: toISOMonth(getUTCISODayFromLocalDate(startTime.toISOString())),
 					useForceRefresh: true,
 				});
 			} catch (e) {

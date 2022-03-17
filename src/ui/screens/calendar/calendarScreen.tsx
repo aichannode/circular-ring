@@ -37,7 +37,7 @@ export const CalendarScreen: React.FC = observer(() => {
 	return (
 		<Container>
 			<CalendarWrapper>
-				<CalendarView selectedIsoDay={selectedLocalIsoDay} onDaySelected={(day) => setSelectedDay(day)} />
+				<CalendarView selectedLocalIsoDay={selectedLocalIsoDay} onDaySelected={(day) => setSelectedDay(day)} />
 			</CalendarWrapper>
 			<ResponsiveCenterView>{<GlobalScoreCard score={dailyScore} />}</ResponsiveCenterView>
 			<NoteHeader>

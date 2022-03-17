@@ -18,7 +18,7 @@ export function createNAPs(model: CalendarModel, calendarApi: CalendarApi, actio
 				if (mutation?.type === "updateNote") {
 					await calendarApi.updateNote(mutation.payload);
 					actions.setMonthCalendars({
-						isoMonth: moment(mutation.payload.startTime).format("YYYY-MM"),
+						isoDate: moment(mutation.payload.startTime).format("YYYY-MM"),
 						useForceRefresh: true,
 					});
 				}
@@ -41,7 +41,7 @@ export function createNAPs(model: CalendarModel, calendarApi: CalendarApi, actio
 					actions.setMonthCalendars({
 						// CIR-733 Take a day in the middle of the month to prevent getting the
 						// last day of the month before when you are in a negative zone
-						isoMonth: model.month[10]?.day,
+						isoDate: model.month[10]?.day,
 						useForceRefresh: true,
 					});
 				}

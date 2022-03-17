@@ -75,7 +75,6 @@ export function assertLocalDate(isoDate: string) {
  * Return the local day iso formated as YYYY-MM-DD for the given date in local time
  */
 export function getLocalISODayFromLocalDate(localIsoDate: string): ISODay {
-	console.log(localIsoDate, moment().local().format());
 	assertLocalDate(localIsoDate);
 	return moment(localIsoDate).format("YYYY-MM-DD") as ISODay;
 }
@@ -108,7 +107,7 @@ export function getUTCDayFromUTCDate(utcIsoDate: string): ISODay {
  * Return the current local iso day formated day in local time
  */
 export function getCurrentLocalISODay(localNow?: string): ISODay {
-	return getLocalISODayFromLocalDate(localNow ?? moment().local().toISOString());
+	return getLocalISODayFromLocalDate(localNow ?? moment().local().format());
 }
 
 /**

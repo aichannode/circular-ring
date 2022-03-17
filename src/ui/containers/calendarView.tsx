@@ -1,5 +1,5 @@
 import { useRepresentations } from "@core/representation";
-import { isToday, toISOMonth } from "@domain/common/business";
+import { isToday } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { useUser } from "@domain/user/hooks/useUser";
 import { circularCalendarTheme } from "@ui/components/calendar/circularCalendarTheme";
@@ -11,12 +11,12 @@ import { CalendarDay } from "../components/calendar/calendarDay";
 
 interface CalendarProps {
 	style?: StyleProp<ViewStyle>;
-	selectedIsoDay: ISODay;
+	selectedLocalIsoDay: ISODay;
 	onDaySelected: (day: ISODay) => void;
 	autoSelectDayOnMonthChange?: boolean;
 }
 export const CalendarView: React.FC<CalendarProps> = function CalendarView({
-	selectedIsoDay,
+	selectedLocalIsoDay,
 	onDaySelected,
 	autoSelectDayOnMonthChange = true,
 	style,
@@ -26,21 +26,21 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 	useEffect(
 		function () {
 			setMonthCalendars({
-				isoMonth: toISOMonth(selectedIsoDay),
+				isoDate: moment(selectedLocalIsoDay).local().format(),
 				// Don't use cache if it is today, as data is often updated.
-				useForceRefresh: isToday(selectedIsoDay, moment().toISOString()),
+				useForceRefresh: isToday(selectedLocalIsoDay, moment().toISOString()),
 			});
 		},
-		[selectedIsoDay]
+		[selectedLocalIsoDay]
 	);
 
 	const autoSelectDay = useCallback(
 		(dayOfMonth: string) => {
 			const newDay = moment(dayOfMonth);
-			const newSelectedIsoDay = newDay.isAfter(selectedIsoDay) ? newDay.startOf("month") : newDay.endOf("month");
+			const newSelectedIsoDay = newDay.isAfter(selectedLocalIsoDay) ? newDay.startOf("month") : newDay.endOf("month");
 			onDaySelected(newSelectedIsoDay.format("YYYY-MM-DD") as ISODay);
 		},
-		[selectedIsoDay, onDaySelected]
+		[selectedLocalIsoDay, onDaySelected]
 	);
 	const user = useUser();
 	const [minDate, maxDate] = useMemo(
@@ -68,7 +68,7 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 		<RNCalendar
 			minDate={minDate}
 			maxDate={maxDate}
-			initialDate={selectedIsoDay}
+			initialDate={selectedLocalIsoDay}
 			disableArrowLeft={isFirstMonth}
 			disableArrowRight={isLastMonth}
 			onDayPress={(day) => onDaySelected(day.dateString as ISODay)}
@@ -78,7 +78,7 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 			}}
 			style={style}
 			hideExtraDays
-			markedDates={selectedIsoDay ? { [selectedIsoDay]: { selected: true } } : undefined}
+			markedDates={selectedLocalIsoDay ? { [selectedLocalIsoDay]: { selected: true } } : undefined}
 			dayComponent={CalendarDay}
 			theme={circularCalendarTheme}
 		/>
