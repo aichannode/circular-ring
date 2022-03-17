@@ -36,7 +36,7 @@ it("should be a yesterday date", function () {
 	expect(isYesterday("2021-10-11T14:31:06.585Z", today)).toBeTruthy();
 });
 
-test("isIDODay", function () {
+test("isISODay", function () {
 	expect(isISODay("2012-01-01T17:52:27.8116975-12:00")).toBeFalsy();
 	expect(isISODay("2012-02-01T18:21:06")).toBeFalsy();
 	expect(isISODay("2012-03-01T00:00:00Z")).toBeFalsy();
@@ -45,11 +45,13 @@ test("isIDODay", function () {
 });
 
 test("isUTCDate", function () {
-	expect(isUTCDate("2012-01-01T17:52:27.8116975-12:00")).toBeTruthy();
+	expect(isUTCDate("2012-01-01T17:52:27.8116975-12:00")).toBeFalsy();
 	expect(isUTCDate("2022-03-01T00:00:00.000+00:00")).toBeTruthy();
+	expect(isUTCDate("2022-03-01T00:00:00.000+0000")).toBeTruthy();
+	expect(isUTCDate("2012-02-01T18:21:06")).toBeFalsy();
+	expect(isUTCDate("2012-03-01T00:00:00Z")).toBeTruthy();
 	expect(isUTCDate("2022-03-01T00:00:00.000Z")).toBeTruthy();
 	expect(isUTCDate("2022-03-02T00:02:00Z")).toBeTruthy();
-	expect(isUTCDate("2012-02-01T18:21:06")).toBeFalsy();
 });
 
 test("isISOMonth", function () {
