@@ -35,6 +35,9 @@ export function trimSleepStages({
 	if (coreSleepFrame === undefined) {
 		return stages;
 	}
+	if (!stages.length) {
+		return [];
+	}
 	// Update the first stage to reflect the start of the sleep
 	return produce(stages, function (draft) {
 		// Retrieve the phase where the core sleep begins
