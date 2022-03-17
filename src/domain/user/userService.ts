@@ -223,6 +223,20 @@ export class UserService {
 			return { ...notifications, ...newValue };
 		});
 		await this.userStorage.saveUserNotificationsSettings({ ...this._userNotificationsSettings.get(), ...newValue });
+		const userNotifications = this._userNotificationsSettings.get();
+		if ("lowHR" in newValue || "lowHRAlert" in newValue) {
+			const activated = userNotifications.lowHRAlert ? "01" : "00";
+			const value = userNotifications.lowHR.toString(16);
+			await this.bleDeviceService.write(`ALT01${activated}${value}`);
+		} else if ("highHR" in newValue || "highHRAlert" in newValue) {
+			const activated = userNotifications.highHRAlert ? "01" : "00";
+			const value = userNotifications.highHR.toString(16);
+			await this.bleDeviceService.write(`ALT02${activated}${value}`);
+		} else if ("SPO2" in newValue || "SPO2Alert") {
+			const activated = userNotifications.lowSPO2Alert ? "01" : "00";
+			const value = userNotifications.SPO2.toString(16);
+			await this.bleDeviceService.write(`ALT00${activated}${value}`);
+		}
 	}
 
 	async updateUserSettings(settings: Partial<UserSettings>) {
