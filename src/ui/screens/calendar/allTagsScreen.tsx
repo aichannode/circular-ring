@@ -13,7 +13,7 @@ import styled from "styled-components/native";
 import CustomNote from "./customNotes";
 import { TagSelectionView } from "./tagSelectionView";
 
-export const AllTagsScreen: React.FC = observer(() => {
+export const AllTagsScreen = observer(function AllTagsScreen() {
 	const route = useAppRoute<Routes.AllTags>();
 	const originalSelectedTags = route.params.selectedTags;
 	const {

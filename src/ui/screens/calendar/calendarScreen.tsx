@@ -16,7 +16,7 @@ import { Pressable } from "react-native";
 import styled from "styled-components/native";
 import { DailyNotes } from "./DailyNotes";
 
-export const CalendarScreen: React.FC = observer(() => {
+export const CalendarScreen = observer(function CalendarScreen() {
 	const {
 		measure: {
 			hooks: { useDailyGlobalScore },

@@ -48,7 +48,7 @@ function getIcon(path: string) {
 	}
 }
 
-export const CircleActivityScreen: React.FC = observer(() => {
+export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const { format } = useI18n();
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
 	const [activityIntensity, setData] = useState<DailyActivityIntensityData>({

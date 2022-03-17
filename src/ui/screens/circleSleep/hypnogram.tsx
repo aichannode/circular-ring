@@ -5,6 +5,7 @@ import { StepChart } from "@ui/components/stepChart/StepChart";
 import { Tag } from "@ui/components/tag";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React from "react";
 import { View } from "react-native";
@@ -21,7 +22,7 @@ type Props = {
 const defaultYAxis = [SleepStage.DEEP, SleepStage.LIGHT, SleepStage.REM, SleepStage.AWAKE];
 const defaultXAxis = [moment().hour(0).valueOf(), moment().hour(8).valueOf()];
 
-export function Hypnogram({ data, tags }: Props) {
+export const Hypnogram = observer(function Hypnogram({ data, tags }: Props) {
 	const stepsData = toStepsData(data);
 	const { format } = useI18n();
 
@@ -91,4 +92,4 @@ export function Hypnogram({ data, tags }: Props) {
 			/>
 		</>
 	);
-}
+});

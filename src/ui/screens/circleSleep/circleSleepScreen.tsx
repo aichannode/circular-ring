@@ -32,7 +32,7 @@ import { Hypnogram } from "./hypnogram";
 import { getSleepGaugesConfig } from "./measureDisplayInfos";
 import { SleepDurationPieChart } from "./sleepDurationPie";
 
-export const CircleSleepScreen: React.FC = observer(() => {
+export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	const { useDailySleepScoreContributors, useDailySleepQualityScore, useDailySleepStages, useCanDisplayData } =

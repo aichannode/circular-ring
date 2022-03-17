@@ -19,7 +19,7 @@ import styled from "styled-components/native";
 import { AlarmCard } from "./alarmCard";
 import { AlarmWeekOverview } from "./alarmWeekOverview";
 
-export const CircleAlarmScreen: React.FC = observer(() => {
+export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen() {
 	const navigation = useRoutesNavigation();
 	const { loading, alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
