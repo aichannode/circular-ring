@@ -99,9 +99,9 @@ export enum MetricType {
 	UserDailyPercDeepStageScoreGoalMax = "user.daily.percdeep.stage.score.goal.max",
 
 	UserDailyCoreTimeToFallAsleep = "user.daily.core.time.to.fall.asleep",
-	UserDailyPercTimeToFallAsleep = "user.daily.perctime.to.fall.asleep",
-	UserDailyPercTimeToFallAsleepGoalMin = "user.daily.perctime.to.fall.asleep.goal.min",
-	UserDailyPercTimeToFallAsleepGoalMax = "user.daily.perctime.to.fall.asleep.goal.max",
+	UserDailyCorePercTimeToFallAsleep = "user.daily.core.perctime.to.fall.asleep",
+	UserDailyCorePercTimeToFallAsleepGoalMin = "user.daily.core.perctime.to.fall.asleep.goal.min",
+	UserDailyCorePercTimeToFallAsleepGoalMax = "user.daily.core.perctime.to.fall.asleep.goal.max",
 
 	UserDailySleepDebt = "user.daily.sleep.debt",
 	UserDailyPercSleepDebt = "user.daily.percsleep.debt",

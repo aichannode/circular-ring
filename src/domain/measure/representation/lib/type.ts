@@ -157,9 +157,9 @@ export type ContributorDeepSleepuration = typeof contributorDeepSleepuration[num
 
 export const contributorTimeToFallAsleep = [
 	MetricType.UserDailyCoreTimeToFallAsleep,
-	MetricType.UserDailyPercTimeToFallAsleep,
-	MetricType.UserDailyPercTimeToFallAsleepGoalMin,
-	MetricType.UserDailyPercTimeToFallAsleepGoalMax,
+	MetricType.UserDailyCorePercTimeToFallAsleep,
+	MetricType.UserDailyCorePercTimeToFallAsleepGoalMin,
+	MetricType.UserDailyCorePercTimeToFallAsleepGoalMax,
 ] as const;
 export type ContributorTimeToFallAsleep = typeof contributorTimeToFallAsleep[number];
 

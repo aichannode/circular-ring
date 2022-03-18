@@ -302,13 +302,13 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					},
 					[MetricType.UserDailyCoreTimeToFallAsleep]: {
 						value: data[MetricType.UserDailyCoreTimeToFallAsleep] as number,
-						thresholdLow: (data[MetricType.UserDailyPercTimeToFallAsleepGoalMin] as number) ?? 0.8,
-						thresholdHigh: (data[MetricType.UserDailyPercTimeToFallAsleepGoalMax] as number) ?? 0.9,
-						percent: data[MetricType.UserDailyPercTimeToFallAsleep] as number,
+						thresholdLow: (data[MetricType.UserDailyCorePercTimeToFallAsleepGoalMin] as number) ?? 0.8,
+						thresholdHigh: (data[MetricType.UserDailyCorePercTimeToFallAsleepGoalMax] as number) ?? 0.9,
+						percent: data[MetricType.UserDailyCorePercTimeToFallAsleep] as number,
 						controlState: getScoreControlStates({
-							lowThreshold: (data[MetricType.UserDailyPercTimeToFallAsleepGoalMin] as number) ?? 0.8,
-							highThreshold: (data[MetricType.UserDailyPercTimeToFallAsleepGoalMax] as number) ?? 0.9,
-							score: data[MetricType.UserDailyPercTimeToFallAsleep] as number,
+							lowThreshold: (data[MetricType.UserDailyCorePercTimeToFallAsleepGoalMin] as number) ?? 0.8,
+							highThreshold: (data[MetricType.UserDailyCorePercTimeToFallAsleepGoalMax] as number) ?? 0.9,
+							score: data[MetricType.UserDailyCorePercTimeToFallAsleep] as number,
 						}),
 					},
 					[MetricType.UserDailySleepDebt]: {
@@ -319,7 +319,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						controlState: getScoreControlStates({
 							lowThreshold: (data[MetricType.UserDailyPercSleepDebtGoalMin] as number) ?? 0.8,
 							highThreshold: (data[MetricType.UserDailyPercSleepDebtGoalMax] as number) ?? 0.9,
-							score: data[MetricType.UserDailyPercTimeToFallAsleep] as number,
+							score: data[MetricType.UserDailyCorePercTimeToFallAsleep] as number,
 						}),
 					},
 				};
