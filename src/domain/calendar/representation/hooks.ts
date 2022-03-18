@@ -1,6 +1,6 @@
 import { ApiService } from "@core/api/apiService";
 import { Calendar } from "@domain/calendar/calendar";
-import { toUTCISODay } from "@domain/common/business";
+import { getLocalISODayFromUTCISODay } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { deduplicate } from "@ui/utils/filter";
 import moment from "moment";
@@ -19,7 +19,7 @@ export function createRepresentation(apiService: ApiService, model: CalendarMode
 
 	function useCalendar(isoLocalDay: ISODay): Calendar | undefined {
 		return model.UTCMonthNotes.find((cal) => {
-			return cal.day.includes(toUTCISODay(isoLocalDay));
+			return getLocalISODayFromUTCISODay(cal.day) === isoLocalDay;
 		});
 	}
 

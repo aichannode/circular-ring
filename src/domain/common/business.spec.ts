@@ -5,9 +5,9 @@ import {
 	assertISOMonth,
 	assertLocalDate,
 	getCurrentLocalISODay,
-	getLocalISODateFromLocalISODate,
 	getLocalISODayFromLocalDate,
 	getLocalISODayFromUTCDate,
+	getLocalISODayFromUTCISODay,
 	getUTCISODayFromLocalDate,
 	getUTCISODayFromUTCDate,
 	isISODay,
@@ -108,11 +108,11 @@ test("getLocalISODayFromUTCDate", function () {
 	expect(getLocalISODayFromUTCDate("2022-03-01T00:00:00.000Z")).toBe("2022-03-01");
 });
 
-test("getLocalISODateFromLocalISODate", function () {
+test("getLocalISODayFromUTCISODay", function () {
 	timezone_mock.register("US/Pacific");
-	expect(getLocalISODateFromLocalISODate("2022-03-01")).toBe("2022-03-01T00:00:00.000-08:00");
+	expect(getLocalISODayFromUTCISODay("2022-03-01")).toBe("2022-02-28");
 	timezone_mock.register("UTC");
-	expect(getLocalISODateFromLocalISODate("2022-03-01")).toBe("2022-03-01T00:00:00.000+00:00");
+	expect(getLocalISODayFromUTCISODay("2022-03-01")).toBe("2022-03-01");
 });
 
 test("getCurrentLocalISODay", function () {
