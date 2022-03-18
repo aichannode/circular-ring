@@ -12,14 +12,16 @@ export function getSleepGaugesConfig(format: (v: WordingKey) => string): SleepQu
 			// Disturbance 2 metrics
 			titleKey: "sleep.quality.disturbance.label",
 			descriptionKey: "sleep.quality.disturbance.description",
-			renderValue: ({ value, percent }) => `${value} min (${(1 - percent) * 100}%)`,
+			renderValue: ({ value, percent }) => `${value} min (${Math.round((1 - percent) * 100)}%)`,
 		},
 		[MetricType.UserDailyRealSleepDuration]: {
 			// Real sleep
 			titleKey: "sleep.quality.real_sleep.label",
 			descriptionKey: "sleep.quality.real_sleep.description",
 			renderValue: ({ value, percent }) =>
-				`${moment(value * 60 * 1000).hour()} h ${moment(value * 60 * 1000).minutes()} min (${percent * 100}%)`,
+				`${moment(value * 60 * 1000).hour()} h ${moment(value * 60 * 1000).minutes()} min (${Math.round(
+					percent * 100
+				)}%)`,
 		},
 		[MetricType.UserDailyTranquility]: {
 			// Tranquility: 2 metrics
@@ -31,19 +33,19 @@ export function getSleepGaugesConfig(format: (v: WordingKey) => string): SleepQu
 			// Circadian
 			titleKey: "sleep.quality.circadian.label",
 			descriptionKey: "sleep.quality.circadian.description",
-			renderValue: ({ value }) => `${value * 100}%`,
+			renderValue: ({ value }) => `${Math.round(value * 100)}%`,
 		},
 		[MetricType.UserDailyPercREMStageScore]: {
 			// REM sleep: 2 metrics
 			titleKey: "sleep.quality.rem.label",
 			descriptionKey: "sleep.quality.rem.description",
-			renderValue: ({ value }) => `${value * 100}%`,
+			renderValue: ({ value }) => `${Math.round(value * 100)}%`,
 		},
 		[MetricType.UserDailyPercDeepStage]: {
 			// Deep sleep: 2 metrics
 			titleKey: "sleep.quality.deep.label",
 			descriptionKey: "sleep.quality.deep.description",
-			renderValue: ({ value }) => `${value * 100}%`,
+			renderValue: ({ value }) => `${Math.round(value * 100)}%`,
 		},
 		[MetricType.UserDailyCoreTimeToFallAsleep]: {
 			// Time to fall asleep: 2 metrics

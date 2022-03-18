@@ -20,31 +20,31 @@ export function getActivityGaugesConfig(format: (v: WordingKey) => string): Dail
 			// Wakeup score
 			titleKey: "score.details.wake_up.label",
 			descriptionKey: "score.details.wake_up.description",
-			renderValue: ({ value }: { value: number }) => `${value * 100}%`,
+			renderValue: ({ value }: { value: number }) => `${Math.round(value * 100)}%`,
 		},
 		[MetricType.UserDailyScoreBR]: {
 			// Breathing rate
 			titleKey: "score.details.breathing.label",
 			descriptionKey: "score.details.breathing.description",
-			renderValue: ({ value }: { value: number }) => `${value} rpm`,
+			renderValue: ({ value }: { value: number }) => `${Math.round(value)} rpm`,
 		},
 		[MetricType.UserDailyScoreSPO2]: {
 			// SPO2
 			titleKey: "score.details.spo2.label",
 			descriptionKey: "score.details.spo2.description",
-			renderValue: ({ value }: { value: number }) => `${value} %`,
+			renderValue: ({ value }: { value: number }) => `${Math.round(value)} %`,
 		},
 		[MetricType.UserDailyScoreHRV]: {
 			// Heart rate variability
 			titleKey: "score.details.hrv.label",
 			descriptionKey: "score.details.hrv.description",
-			renderValue: ({ value }: { value: number }) => `${value} ms`,
+			renderValue: ({ value }: { value: number }) => `${Math.round(value)} ms`,
 		},
 		[MetricType.UserDailyScoreRHR]: {
 			// Resting heart rate
 			titleKey: "score.details.resting_heart_rate.label",
 			descriptionKey: "score.details.resting_heart_rate.description",
-			renderValue: ({ value }: { value: number }) => `${value} bpm`,
+			renderValue: ({ value }: { value: number }) => `${Math.round(value)} bpm`,
 		},
 		[MetricType.UserDailyScoreVarTemperature]: {
 			// Temperature variation
@@ -56,7 +56,7 @@ export function getActivityGaugesConfig(format: (v: WordingKey) => string): Dail
 			// Sleep quality
 			titleKey: "score.details.sleep_quality.label",
 			descriptionKey: "score.details.sleep_quality.description",
-			renderValue: ({ value }: { value: number }) => `${value * 100}%`,
+			renderValue: ({ value }: { value: number }) => `${Math.round(value * 100)}%`,
 		},
 		[MetricType.UserDailySleepBalance]: {
 			// Sleep balance
