@@ -34,14 +34,14 @@ export type Mutations =
 	| {
 			type: "setDailyHRMetrics";
 			payload: {
-				isoDay: ISODay;
+				localISODay: ISODay;
 				range: RangeMetrics<DailyHRTimeSeriesMetrics, DailyHRConstantMetrics>;
 			};
 	  }
 	| {
 			type: "setDailySleepScoreContributorsMetrics";
 			payload: {
-				isoDay: ISODay;
+				localISODay: ISODay;
 				data: Metrics<
 					| ContributorAwakeDuration
 					| ContributorRealSleepDuration
@@ -57,7 +57,7 @@ export type Mutations =
 	| {
 			type: "setDailyEnergyScoreContributorsMetrics";
 			payload: {
-				isoDay: ISODay;
+				localISODay: ISODay;
 				data: Metrics<
 					| ContributorBodyRecovery
 					| ContributorWakeUpScore
@@ -75,7 +75,7 @@ export type Mutations =
 	| {
 			type: "setDailyActivitiesMetrics";
 			payload: {
-				isoDay: ISODay;
+				localISODay: ISODay;
 				data: Metrics<
 					| StepsTaken
 					| WalkingEquivalency
@@ -89,35 +89,35 @@ export type Mutations =
 	| {
 			type: "setDailyActivityIntensityMetrics";
 			payload: {
-				isoDay: ISODay;
+				localISODay: ISODay;
 				range: RangeMetrics<DailyActivityIntensityMetrics, MetricType.UserDailyActivityTotal>;
 			};
 	  }
 	| {
 			type: "setDailySleepMetrics";
 			payload: {
-				isoDay: ISODay;
+				localISODay: ISODay;
 				range: RangeMetrics<MetricType.UserSleepStage, DailySleepStageDuration>;
 			};
 	  }
 	| {
 			type: "setGlobalScore";
 			payload: {
-				isoDay: ISODay;
+				localISODay: ISODay;
 				score?: number;
 			};
 	  }
 	| {
 			type: "setDailyEnergyScore";
 			payload: {
-				isoDay: ISODay;
+				localISODay: ISODay;
 				score?: number;
 			};
 	  }
 	| {
 			type: "setSleepScore";
 			payload: {
-				isoDay: ISODay;
+				localISODay: ISODay;
 				data: Record<DailySleepScoreMetrics, number>;
 			};
 	  };

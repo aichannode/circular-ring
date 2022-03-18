@@ -61,18 +61,23 @@ import {
 } from "../representation/lib/type";
 import { MeasureApi } from "./lib/measureApi";
 
+/**
+ * Actions for measure domain
+ * All date are in locale timezone
+ */
+
 export function createActions(measureApi: MeasureApi, present: Present<Proposal>) {
 	return {
-		async setDailyHRMetrics(isoDay: ISODay = moment().toISOString() as ISODay) {
+		async setDailyHRMetrics(localISODay: ISODay = moment().toISOString() as ISODay) {
 			Promise.all([
-				measureApi.fetchDailyMeasures<DailyHRTimeSeriesMetrics>(dailyHRTimeSeriesMetrics, isoDay),
-				measureApi.fetchLastDailyMeasures<DailyHRConstantMetrics>(dailyHRConstantMetrics, isoDay),
+				measureApi.fetchDailyMeasures<DailyHRTimeSeriesMetrics>(dailyHRTimeSeriesMetrics, localISODay),
+				measureApi.fetchLastDailyMeasures<DailyHRConstantMetrics>(dailyHRConstantMetrics, localISODay),
 			]).then(function ([timeSeries, constant]) {
 				present([
 					{
 						type: "setDailyHRMetrics",
 						payload: {
-							isoDay,
+							localISODay,
 							range: {
 								timeSeries,
 								constant,
@@ -82,17 +87,17 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				]);
 			});
 		},
-		async setEachDayOfMonthScore(isoMonth: ISOMonth) {
+		async setEachDayOfMonthScore(localISOMonth: ISOMonth) {
 			const range = await measureApi.fetchMonthlyMeasures<MetricType.UserDailyGlobalScore>(
 				[MetricType.UserDailyGlobalScore],
-				isoMonth
+				localISOMonth
 			);
 			present(
 				range.map((block) => {
 					return {
 						type: "setGlobalScore",
 						payload: {
-							isoDay: getLocalISODayFromUTCDate(block.timestamp),
+							localISODay: getLocalISODayFromUTCDate(block.timestamp),
 							score: block.metrics[MetricType.UserDailyGlobalScore]
 								? Number(block.metrics[MetricType.UserDailyGlobalScore])
 								: undefined,
@@ -101,25 +106,25 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				})
 			);
 		},
-		async setDailyGlobalScore(isoDay: ISODay = moment().toISOString() as ISODay) {
-			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailyGlobalScore], isoDay);
+		async setDailyGlobalScore(localISODay: ISODay = moment().toISOString() as ISODay) {
+			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailyGlobalScore], localISODay);
 			present([
 				{
 					type: "setGlobalScore",
 					payload: {
-						isoDay,
+						localISODay,
 						score: data[MetricType.UserDailyGlobalScore] ? Number(data[MetricType.UserDailyGlobalScore]) : undefined,
 					},
 				},
 			]);
 		},
-		async setDailySleepScore(isoDay: ISODay = moment().toISOString() as ISODay) {
-			const data = await measureApi.fetchLastDailyMeasures(dailySleepScoreMetrics, isoDay);
+		async setDailySleepScore(localISODay: ISODay = moment().toISOString() as ISODay) {
+			const data = await measureApi.fetchLastDailyMeasures(dailySleepScoreMetrics, localISODay);
 			present([
 				{
 					type: "setSleepScore",
 					payload: {
-						isoDay,
+						localISODay,
 						data: {
 							[MetricType.UserDailySleepScore]: data[MetricType.UserDailySleepScore] as number,
 							[MetricType.UserDailySleepScoreGoalMin]: data[MetricType.UserDailySleepScoreGoalMin] as number,
@@ -129,31 +134,31 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
-		async setDailyEnergyScore(isoDay: ISODay = moment().toISOString() as ISODay) {
-			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailyEnergyScore], isoDay);
+		async setDailyEnergyScore(localISODay: ISODay = moment().toISOString() as ISODay) {
+			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailyEnergyScore], localISODay);
 			present([
 				{
 					type: "setDailyEnergyScore",
 					payload: {
-						isoDay,
+						localISODay,
 						score: data[MetricType.UserDailyEnergyScore] ? Number(data[MetricType.UserDailyEnergyScore]) : undefined,
 					},
 				},
 			]);
 		},
-		async setDailyActivityIntensityMetrics(isoDay: ISODay = moment().toISOString() as ISODay) {
+		async setDailyActivityIntensityMetrics(localISODay: ISODay = moment().toISOString() as ISODay) {
 			Promise.all([
-				measureApi.fetchDailyMeasures<DailyActivityIntensityMetrics>(dailyActivityIntensityMetrics, isoDay),
+				measureApi.fetchDailyMeasures<DailyActivityIntensityMetrics>(dailyActivityIntensityMetrics, localISODay),
 				measureApi.fetchLastDailyMeasures<MetricType.UserDailyActivityTotal>(
 					[MetricType.UserDailyActivityTotal],
-					isoDay
+					localISODay
 				),
 			]).then(function ([timeSeries, duration]) {
 				present([
 					{
 						type: "setDailyActivityIntensityMetrics",
 						payload: {
-							isoDay,
+							localISODay,
 							range: {
 								timeSeries,
 								constant: duration,
@@ -163,7 +168,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				]);
 			});
 		},
-		async setDailyActivitiesMetrics(isoDay: ISODay = moment().toISOString() as ISODay) {
+		async setDailyActivitiesMetrics(localISODay: ISODay = moment().toISOString() as ISODay) {
 			const data = await measureApi.fetchLastDailyMeasures<
 				StepsTaken | WalkingEquivalency | CaloriesBurned | MetricType.UserDailyVO2Max | MetricType.UserDailyAwakeHRMax
 			>(
@@ -174,19 +179,19 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					MetricType.UserDailyVO2Max,
 					MetricType.UserDailyAwakeHRMax,
 				],
-				isoDay
+				localISODay
 			);
 			present([
 				{
 					type: "setDailyActivitiesMetrics",
 					payload: {
-						isoDay,
+						localISODay,
 						data,
 					},
 				},
 			]);
 		},
-		async setDailyEnergyScoreContributorsMetrics(isoDay: ISODay = moment().toISOString() as ISODay) {
+		async setDailyEnergyScoreContributorsMetrics(localISODay: ISODay = moment().toISOString() as ISODay) {
 			const data = await measureApi.fetchLastDailyMeasures<
 				| ContributorBodyRecovery
 				| ContributorWakeUpScore
@@ -211,13 +216,13 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					...contributorSleepBalance,
 					...contributorActivityVolume,
 				],
-				isoDay
+				localISODay
 			);
 			present([
 				{
 					type: "setDailyEnergyScoreContributorsMetrics",
 					payload: {
-						isoDay,
+						localISODay,
 						data,
 					},
 				},
@@ -250,7 +255,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				{
 					type: "setDailySleepScoreContributorsMetrics",
 					payload: {
-						isoDay,
+						localISODay: isoDay,
 						data,
 					},
 				},
@@ -260,22 +265,22 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		 * This actions will update the model with the sleep stages and duration for
 		 * the given day.
 		 */
-		async setDailySleepStagesMetrics(isoDay: ISODay = moment().toISOString() as ISODay) {
+		async setDailySleepStagesMetrics(localISODay: ISODay = moment().toISOString() as ISODay) {
 			Promise.all([
 				measureApi.fetchMeasures<SleepStagesMetrics>(
 					sleepStagesMetrics,
 					// Grab data from the noon before the day to make sure to get the ensleepment.
 					// TODO: implement day/night worker
-					moment(isoDay).startOf("day").subtract(12, "hours").toISOString(),
-					moment(isoDay).endOf("day").toISOString()
+					moment(localISODay).startOf("day").subtract(12, "hours").toISOString(),
+					moment(localISODay).endOf("day").toISOString()
 				),
-				measureApi.fetchLastDailyMeasures<DailySleepStageDuration>(dailySleepStageDuration, isoDay),
+				measureApi.fetchLastDailyMeasures<DailySleepStageDuration>(dailySleepStageDuration, localISODay),
 			]).then(function ([timeline, duration]) {
 				present([
 					{
 						type: "setDailySleepMetrics",
 						payload: {
-							isoDay,
+							localISODay,
 							range: {
 								timeSeries: timeline,
 								constant: duration,

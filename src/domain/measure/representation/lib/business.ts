@@ -1,5 +1,4 @@
 import { getLogger } from "@core/logger/logger";
-import { getUTCISODayFromLocalDate } from "@domain/common/business";
 import { hasMetric } from "@ui/utils/guard";
 import { action, reaction } from "mobx";
 import { useEffect, useRef } from "react";
@@ -194,13 +193,13 @@ export function useDailyHeavyComputationData<M, T>(
 	const heavyComputationHandlerRef = useRef<HeavyComputationHandler>();
 	useEffect(
 		action(function () {
-			const metrics = modelField.get(getUTCISODayFromLocalDate(localISODay));
+			const metrics = modelField.get(localISODay);
 			if (metrics === undefined) {
 				__DEV__ && console.log("[MEASURE: Action] FETCH daily measure");
 				fetchData(localISODay);
 				const dispose = reaction(
 					// If this changes
-					() => modelField.get(getUTCISODayFromLocalDate(localISODay)),
+					() => modelField.get(localISODay),
 					// Launch heavy computation
 					function (metrics) {
 						if (metrics) {

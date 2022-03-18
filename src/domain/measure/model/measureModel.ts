@@ -102,30 +102,40 @@ export class MeasureModel implements Model<Proposal> {
 		(this.lastAcceptedMutations as IObservableArray).clear();
 		proposal.forEach((mutation) => {
 			if (mutation.type === "setDailyHRMetrics") {
-				mutate.call(this, mutation, () => this.dailyHRMetrics.set(mutation.payload.isoDay, mutation.payload.range));
+				mutate.call(this, mutation, () =>
+					this.dailyHRMetrics.set(mutation.payload.localISODay, mutation.payload.range)
+				);
 			} else if (mutation.type === "setDailyActivityIntensityMetrics") {
 				mutate.call(this, mutation, () =>
-					this.dailyActivityIntensityMetrics.set(mutation.payload.isoDay, mutation.payload.range)
+					this.dailyActivityIntensityMetrics.set(mutation.payload.localISODay, mutation.payload.range)
 				);
 			} else if (mutation.type === "setDailySleepMetrics") {
-				mutate.call(this, mutation, () => this.dailySleepMetrics.set(mutation.payload.isoDay, mutation.payload.range));
+				mutate.call(this, mutation, () =>
+					this.dailySleepMetrics.set(mutation.payload.localISODay, mutation.payload.range)
+				);
 			} else if (mutation.type === "setGlobalScore") {
-				mutate.call(this, mutation, () => this.dailyGlobalScore.set(mutation.payload.isoDay, mutation.payload.score));
+				mutate.call(this, mutation, () =>
+					this.dailyGlobalScore.set(mutation.payload.localISODay, mutation.payload.score)
+				);
 			} else if (mutation.type === "setDailyEnergyScore") {
-				mutate.call(this, mutation, () => this.dailyEnergyScore.set(mutation.payload.isoDay, mutation.payload.score));
+				mutate.call(this, mutation, () =>
+					this.dailyEnergyScore.set(mutation.payload.localISODay, mutation.payload.score)
+				);
 			} else if (mutation.type === "setSleepScore") {
-				mutate.call(this, mutation, () => this.dailySleepScore.set(mutation.payload.isoDay, mutation.payload.data));
+				mutate.call(this, mutation, () =>
+					this.dailySleepScore.set(mutation.payload.localISODay, mutation.payload.data)
+				);
 			} else if (mutation.type === "setDailyActivitiesMetrics") {
 				mutate.call(this, mutation, () =>
-					this.dailyActivitiesMetrics.set(mutation.payload.isoDay, mutation.payload.data)
+					this.dailyActivitiesMetrics.set(mutation.payload.localISODay, mutation.payload.data)
 				);
 			} else if (mutation.type === "setDailyEnergyScoreContributorsMetrics") {
 				mutate.call(this, mutation, () =>
-					this.dailyEnergyScoreContributorsMetrics.set(mutation.payload.isoDay, mutation.payload.data)
+					this.dailyEnergyScoreContributorsMetrics.set(mutation.payload.localISODay, mutation.payload.data)
 				);
 			} else if (mutation.type === "setDailySleepScoreContributorsMetrics") {
 				mutate.call(this, mutation, () =>
-					this.dailySleepScoreContributorsMetrics.set(mutation.payload.isoDay, mutation.payload.data)
+					this.dailySleepScoreContributorsMetrics.set(mutation.payload.localISODay, mutation.payload.data)
 				);
 			}
 		});
