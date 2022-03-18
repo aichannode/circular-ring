@@ -59,7 +59,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	});
 	const tags = useDailyTags(selectedDay);
 
-	useDailySleepStages({ setData: setDailyData, isoDay: selectedDay });
+	useDailySleepStages({ setData: setDailyData, localISODay: selectedDay });
 
 	return (
 		<Container>

@@ -71,7 +71,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const activityContributorGaugesConfig = getActivityGaugesConfig(format);
-	useDailyActivityIntensity({ isoDay: selectedDay, setData });
+	useDailyActivityIntensity({ localISODay: selectedDay, setData });
 
 	const canDisplay = useCanDisplayData(selectedDay);
 

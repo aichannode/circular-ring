@@ -3,12 +3,6 @@ import { ISODay, ISOMonth } from "@domain/common/type";
 import moment from "moment";
 import { TimeFrame } from "../type";
 
-const DAILY_KEY_FORMAT = "YYYY-MM-DD";
-
-export function getKeyFromDate(isoDay?: string) {
-	return moment(isoDay).format(DAILY_KEY_FORMAT);
-}
-
 /**
  * Return the UTC iso date of the start and the end for a given time segment and a given local iso day/month
  */

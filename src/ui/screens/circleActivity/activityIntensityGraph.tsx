@@ -43,7 +43,7 @@ export const ActivityIntensityGraph: React.FC<Props> = observer(function Activit
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
-	useDailyActivityIntensity({ isoDay: getLocalISODayFromLocalDate(selectedDay), setData });
+	useDailyActivityIntensity({ localISODay: getLocalISODayFromLocalDate(selectedDay), setData });
 
 	const graphData: Array<{
 		value: number;

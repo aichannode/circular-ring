@@ -1,11 +1,10 @@
 import { ApiService } from "@core/api/apiService";
-import { getCurrentLocalISODay } from "@domain/common/business";
+import { getCurrentLocalISODay, getUTCISODayFromLocalDate } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { action } from "mobx";
 import { useEffect } from "react";
 import { createActions } from "../actions";
 import { MeasureApi } from "../actions/lib/measureApi";
-import { getKeyFromDate } from "../common/business";
 import { MetricType } from "../metric";
 import { MeasureModel } from "../model/measureModel";
 import { Contributor, DailyActivityIntensityData, DailyHr, DailySleepData } from "./api";
@@ -17,26 +16,32 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 	return {
 		actions,
 		hooks: {
-			useDailyHR(isoDay = getCurrentLocalISODay()): DailyHr | undefined {
+			useDailyHR(localISODay = getCurrentLocalISODay()): DailyHr | undefined {
 				useEffect(() => {
 					__DEV__ && console.log("[MEASURE: Action] FETCH");
-					actions.setDailyHRMetrics(isoDay);
-				}, [isoDay]);
+					actions.setDailyHRMetrics(localISODay);
+				}, [localISODay]);
 
-				return parseDailyHR(model.dailyHRMetrics.get(getKeyFromDate(isoDay)));
+				return parseDailyHR(model.dailyHRMetrics.get(getUTCISODayFromLocalDate(localISODay)));
 			},
 			useDailyActivityIntensity({
-				isoDay = getCurrentLocalISODay(),
+				localISODay = getCurrentLocalISODay(),
 				setData,
 			}: {
-				isoDay?: ISODay;
+				localISODay?: ISODay;
 				setData: (data: DailyActivityIntensityData) => void;
 			}) {
 				const modelField = model.dailyActivityIntensityMetrics;
-				const fetchData = () => actions.setDailyActivityIntensityMetrics(isoDay);
-				useDailyHeavyComputationData(isoDay, modelField, setData, createActivityPhasesGetter(isoDay), fetchData);
+				const fetchData = () => actions.setDailyActivityIntensityMetrics(localISODay);
+				useDailyHeavyComputationData(
+					localISODay,
+					modelField,
+					setData,
+					createActivityPhasesGetter(localISODay),
+					fetchData
+				);
 			},
-			useDailyActivities(isoDay?: ISODay): Record<
+			useDailyActivities(localISODay?: ISODay): Record<
 				Activities,
 				{
 					value: number;
@@ -48,11 +53,11 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				useEffect(
 					action(function () {
 						__DEV__ && console.log("[MEASURE: Action] FETCH");
-						actions.setDailyActivitiesMetrics(isoDay);
+						actions.setDailyActivitiesMetrics(localISODay);
 					}),
-					[isoDay]
+					[localISODay]
 				);
-				const data = model.dailyActivitiesMetrics.get(getKeyFromDate(isoDay)) ?? {};
+				const data = (localISODay && model.dailyActivitiesMetrics.get(getUTCISODayFromLocalDate(localISODay))) ?? {};
 				return {
 					[MetricType.UserDailySteps]: {
 						value: data[MetricType.UserDailySteps] as number,
@@ -86,15 +91,16 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 			 * Return sleep score contributors
 			 * @implements 00013, 00014, 00015, 00016, 00017, 00018, 00019, 00020, 00021, 00022
 			 */
-			useDailyEnergyScoreContributors(isoDay?: ISODay): Record<ActivityScoreContributors, Contributor> {
+			useDailyEnergyScoreContributors(localISODay?: ISODay): Record<ActivityScoreContributors, Contributor> {
 				useEffect(
 					action(function () {
 						__DEV__ && console.log("[MEASURE: Action] FETCH");
-						actions.setDailyEnergyScoreContributorsMetrics(isoDay);
+						actions.setDailyEnergyScoreContributorsMetrics(localISODay);
 					}),
-					[isoDay]
+					[localISODay]
 				);
-				const data = model.dailyEnergyScoreContributorsMetrics.get(getKeyFromDate(isoDay)) ?? {};
+				const data =
+					(localISODay && model.dailyEnergyScoreContributorsMetrics.get(getUTCISODayFromLocalDate(localISODay))) ?? {};
 				return {
 					[MetricType.UserDailyBodyRecovery]: {
 						value: data[MetricType.UserDailyBodyRecovery] as number,
@@ -209,29 +215,30 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				};
 			},
 			useDailySleepStages({
-				isoDay = getCurrentLocalISODay(),
+				localISODay = getCurrentLocalISODay(),
 				setData,
 			}: {
-				isoDay?: ISODay;
+				localISODay?: ISODay;
 				setData: (data: DailySleepData) => void;
 			}) {
 				const modelField = model.dailySleepMetrics;
-				const fetchData = () => actions.setDailySleepStagesMetrics(isoDay);
-				useDailyHeavyComputationData(isoDay, modelField, setData, createSleepStagesGetter(isoDay), fetchData);
+				const fetchData = () => actions.setDailySleepStagesMetrics(localISODay);
+				useDailyHeavyComputationData(localISODay, modelField, setData, createSleepStagesGetter(localISODay), fetchData);
 			},
 			/**
 			 * Return sleep score contributors
 			 * @implements 00006, 00007, 00008, 00009, 00010, 00011, 00012, 00022
 			 */
-			useDailySleepScoreContributors(isoDay?: ISODay): Record<SleepScoreContributors, Contributor> {
+			useDailySleepScoreContributors(localISODay?: ISODay): Record<SleepScoreContributors, Contributor> {
 				useEffect(
 					action(function () {
 						__DEV__ && console.log("[MEASURE: Action] FETCH");
-						actions.setDailySleepScoreContributorsMetrics(isoDay);
+						actions.setDailySleepScoreContributorsMetrics(localISODay);
 					}),
-					[isoDay]
+					[localISODay]
 				);
-				const data = model.dailySleepScoreContributorsMetrics.get(getKeyFromDate(isoDay)) ?? {};
+				const data =
+					(localISODay && model.dailySleepScoreContributorsMetrics.get(getUTCISODayFromLocalDate(localISODay))) ?? {};
 				return {
 					[MetricType.UserDailyAwakeStageDuration]: {
 						value: data[MetricType.UserDailyAwakeStageDuration] as number,
@@ -324,35 +331,35 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					},
 				};
 			},
-			useDailyEnergyScore(isoDay: ISODay = getCurrentLocalISODay()) {
+			useDailyEnergyScore(localISODay: ISODay = getCurrentLocalISODay()) {
 				useEffect(
 					action(function () {
-						if (!model.dailyEnergyScore.has(isoDay)) {
-							actions.setDailyEnergyScore(isoDay);
+						if (!model.dailyEnergyScore.has(getUTCISODayFromLocalDate(localISODay))) {
+							actions.setDailyEnergyScore(localISODay);
 						}
 					}),
-					[isoDay]
+					[localISODay]
 				);
 				return {
 					// Default value accordint to the specs.
-					score: model.dailyEnergyScore.get(isoDay) ?? 0,
+					score: model.dailyEnergyScore.get(getUTCISODayFromLocalDate(localISODay)) ?? 0,
 					controlState: getScoreControlStates({
-						score: model.dailyEnergyScore.get(isoDay) ?? 0,
+						score: model.dailyEnergyScore.get(getUTCISODayFromLocalDate(localISODay)) ?? 0,
 						lowThreshold: 0.8,
 						highThreshold: 0.9,
 					}),
 				};
 			},
-			useDailySleepQualityScore(isoDay: ISODay = getCurrentLocalISODay()) {
+			useDailySleepQualityScore(localISODay: ISODay = getCurrentLocalISODay()) {
 				useEffect(
 					action(function () {
-						if (!model.dailySleepScore.has(isoDay)) {
-							actions.setDailySleepScore(isoDay);
+						if (!model.dailySleepScore.has(getUTCISODayFromLocalDate(localISODay))) {
+							actions.setDailySleepScore(localISODay);
 						}
 					}),
-					[isoDay]
+					[localISODay]
 				);
-				const data = model.dailySleepScore.get(isoDay);
+				const data = model.dailySleepScore.get(getUTCISODayFromLocalDate(localISODay));
 				const score = {
 					[MetricType.UserDailySleepScore]: data?.[MetricType.UserDailySleepScore] ?? 0,
 					[MetricType.UserDailySleepScoreGoalMin]: data?.[MetricType.UserDailySleepScoreGoalMin] ?? 0.8,
@@ -368,31 +375,34 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					}),
 				};
 			},
-			useCanDisplayData(isoDay: ISODay): boolean {
+			useCanDisplayData(localISODay: ISODay): boolean {
 				useEffect(
 					action(function () {
-						if (!model.dailySleepMetrics.has(isoDay)) {
-							actions.setDailySleepStagesMetrics(isoDay);
+						// Warning: date in model are in UTC, you need to convert them in local
+						if (!model.dailySleepMetrics.has(getUTCISODayFromLocalDate(localISODay))) {
+							actions.setDailySleepStagesMetrics(localISODay);
 						}
 					}),
-					[isoDay]
+					[localISODay]
 				);
 				// UsercoreSleepEnd is in Unix time in second
-				const userCoreSleepEnd = model.dailySleepMetrics.get(isoDay)?.constant[MetricType.UserCoreSleepEnd] as number;
+				const userCoreSleepEnd = model.dailySleepMetrics.get(getUTCISODayFromLocalDate(localISODay))?.constant[
+					MetricType.UserCoreSleepEnd
+				] as number;
 
 				// Spec: 00000
-				return !!userCoreSleepEnd && canDisplay(isoDay, userCoreSleepEnd * 1000);
+				return !!userCoreSleepEnd && canDisplay(localISODay, userCoreSleepEnd * 1000);
 			},
-			useDailyGlobalScore(isoDay: ISODay = getCurrentLocalISODay()): number | undefined {
+			useDailyGlobalScore(localISODay: ISODay = getCurrentLocalISODay()): number | undefined {
 				useEffect(
 					action(function () {
-						if (!model.dailyGlobalScore.has(isoDay)) {
-							actions.setDailyGlobalScore(isoDay);
+						if (!model.dailyGlobalScore.has(getUTCISODayFromLocalDate(localISODay))) {
+							actions.setDailyGlobalScore(localISODay);
 						}
 					}),
-					[isoDay]
+					[localISODay]
 				);
-				return model.dailyGlobalScore.get(isoDay);
+				return model.dailyGlobalScore.get(getUTCISODayFromLocalDate(localISODay));
 			},
 		},
 	};

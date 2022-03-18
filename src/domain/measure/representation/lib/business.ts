@@ -1,4 +1,5 @@
 import { getLogger } from "@core/logger/logger";
+import { getUTCISODayFromLocalDate } from "@domain/common/business";
 import { hasMetric } from "@ui/utils/guard";
 import { action, reaction } from "mobx";
 import { useEffect, useRef } from "react";
@@ -12,7 +13,7 @@ import { DailyActivityIntensityMetrics, DailySleepStageDuration, SleepStagesMetr
  * Return the phases of sleep for the given metrics
  */
 export const createActivityPhasesGetter =
-	(isoDay: string) =>
+	(localISODay: string) =>
 	(
 		data: RangeMetrics<DailyActivityIntensityMetrics, MetricType.UserDailyActivityTotal>
 	): {
@@ -23,7 +24,7 @@ export const createActivityPhasesGetter =
 		const sportSessionDates: Array<[string | undefined, string | undefined]> = [];
 		const duration = Number(data.constant[MetricType.UserDailyActivityTotal]);
 		const stages: Array<StageInfos<ActivityStage>> = data.timeSeries.reduce(function (result, block, i) {
-			const isSameDay = new Date(block.timestamp).getDate() === new Date(isoDay).getDate();
+			const isSameDay = new Date(block.timestamp).getDate() === new Date(localISODay).getDate();
 			if (isSameDay && hasMetric(MetricType.UserDataActivityIntensity)(block)) {
 				const intensityValue = Number(block.metrics[MetricType.UserDataActivityIntensity]);
 				// Prevent duplicated user.data.activity.intensity value
@@ -182,24 +183,24 @@ export function setAfterHeavyComputation<M, T>(
 }
 
 export function useDailyHeavyComputationData<M, T>(
-	isoDay: string,
+	localISODay: string,
 	modelField: {
 		get(isoDay: string): M | undefined;
 	},
 	setData: (data: T) => void,
 	heavyComputation: (metrics: M) => T,
-	fetchData: (isoDay: string) => void
+	fetchData: (localISODay: string) => void
 ) {
 	const heavyComputationHandlerRef = useRef<HeavyComputationHandler>();
 	useEffect(
 		action(function () {
-			const metrics = modelField.get(isoDay);
+			const metrics = modelField.get(getUTCISODayFromLocalDate(localISODay));
 			if (metrics === undefined) {
 				__DEV__ && console.log("[MEASURE: Action] FETCH daily measure");
-				fetchData(isoDay);
+				fetchData(localISODay);
 				const dispose = reaction(
 					// If this changes
-					() => modelField.get(isoDay),
+					() => modelField.get(getUTCISODayFromLocalDate(localISODay)),
 					// Launch heavy computation
 					function (metrics) {
 						if (metrics) {
@@ -212,7 +213,7 @@ export function useDailyHeavyComputationData<M, T>(
 				setAfterHeavyComputation(setData, heavyComputation, heavyComputationHandlerRef, metrics);
 			}
 		}),
-		[isoDay]
+		[localISODay]
 	);
 }
 

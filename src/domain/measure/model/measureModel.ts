@@ -1,6 +1,6 @@
 import { Model, mutate } from "@core/model";
+import { ISODay } from "@domain/common/type";
 import { action, IObservableArray, makeAutoObservable, observable } from "mobx";
-import { getKeyFromDate } from "../common/business";
 import { Proposal } from "../common/type";
 import { Metrics, MetricType, RangeMetrics } from "../metric";
 import {
@@ -35,10 +35,10 @@ import {
 } from "../representation/lib/type";
 
 export class MeasureModel implements Model<Proposal> {
-	public dailyHRMetrics: Map<string, RangeMetrics<DailyHRTimeSeriesMetrics, DailyHRConstantMetrics> | undefined> =
+	public dailyHRMetrics: Map<ISODay, RangeMetrics<DailyHRTimeSeriesMetrics, DailyHRConstantMetrics> | undefined> =
 		new Map();
 	public dailySleepScoreContributorsMetrics: Map<
-		string,
+		ISODay,
 		Metrics<
 			| ContributorAwakeDuration
 			| ContributorRealSleepDuration
@@ -51,7 +51,7 @@ export class MeasureModel implements Model<Proposal> {
 		>
 	> = new Map();
 	public dailyEnergyScoreContributorsMetrics: Map<
-		string,
+		ISODay,
 		Metrics<
 			| ContributorBodyRecovery
 			| ContributorWakeUpScore
@@ -65,14 +65,14 @@ export class MeasureModel implements Model<Proposal> {
 			| ContributorActivityVolume
 		>
 	> = new Map();
-	public dailySleepMetrics: Map<string, RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>> = new Map();
-	public dailyEnergyScore: Map<string, number | undefined> = new Map();
+	public dailySleepMetrics: Map<ISODay, RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>> = new Map();
+	public dailyEnergyScore: Map<ISODay, number | undefined> = new Map();
 	public dailyActivityIntensityMetrics: Map<
-		string,
+		ISODay,
 		RangeMetrics<DailyActivityIntensityMetrics, MetricType.UserDailyActivityTotal>
 	> = new Map();
 	public dailyActivitiesMetrics: Map<
-		string,
+		ISODay,
 		Metrics<
 			| StepsTaken
 			| WalkingEquivalency
@@ -82,8 +82,8 @@ export class MeasureModel implements Model<Proposal> {
 			| MetricType.UserDailyAwakeHRMax
 		>
 	> = new Map();
-	public dailyGlobalScore: Map<string, number | undefined> = new Map();
-	public dailySleepScore: Map<string, Record<DailySleepScoreMetrics, number>> = new Map();
+	public dailyGlobalScore: Map<ISODay, number | undefined> = new Map();
+	public dailySleepScore: Map<ISODay, Record<DailySleepScoreMetrics, number>> = new Map();
 	public lastAcceptedMutations: Proposal[] = [];
 
 	constructor() {
@@ -102,40 +102,30 @@ export class MeasureModel implements Model<Proposal> {
 		(this.lastAcceptedMutations as IObservableArray).clear();
 		proposal.forEach((mutation) => {
 			if (mutation.type === "setDailyHRMetrics") {
-				mutate.call(this, mutation, () =>
-					this.dailyHRMetrics.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.range)
-				);
+				mutate.call(this, mutation, () => this.dailyHRMetrics.set(mutation.payload.isoDay, mutation.payload.range));
 			} else if (mutation.type === "setDailyActivityIntensityMetrics") {
 				mutate.call(this, mutation, () =>
-					this.dailyActivityIntensityMetrics.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.range)
+					this.dailyActivityIntensityMetrics.set(mutation.payload.isoDay, mutation.payload.range)
 				);
 			} else if (mutation.type === "setDailySleepMetrics") {
-				mutate.call(this, mutation, () =>
-					this.dailySleepMetrics.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.range)
-				);
+				mutate.call(this, mutation, () => this.dailySleepMetrics.set(mutation.payload.isoDay, mutation.payload.range));
 			} else if (mutation.type === "setGlobalScore") {
-				mutate.call(this, mutation, () =>
-					this.dailyGlobalScore.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.score)
-				);
+				mutate.call(this, mutation, () => this.dailyGlobalScore.set(mutation.payload.isoDay, mutation.payload.score));
 			} else if (mutation.type === "setDailyEnergyScore") {
-				mutate.call(this, mutation, () =>
-					this.dailyEnergyScore.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.score)
-				);
+				mutate.call(this, mutation, () => this.dailyEnergyScore.set(mutation.payload.isoDay, mutation.payload.score));
 			} else if (mutation.type === "setSleepScore") {
-				mutate.call(this, mutation, () =>
-					this.dailySleepScore.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.data)
-				);
+				mutate.call(this, mutation, () => this.dailySleepScore.set(mutation.payload.isoDay, mutation.payload.data));
 			} else if (mutation.type === "setDailyActivitiesMetrics") {
 				mutate.call(this, mutation, () =>
-					this.dailyActivitiesMetrics.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.data)
+					this.dailyActivitiesMetrics.set(mutation.payload.isoDay, mutation.payload.data)
 				);
 			} else if (mutation.type === "setDailyEnergyScoreContributorsMetrics") {
 				mutate.call(this, mutation, () =>
-					this.dailyEnergyScoreContributorsMetrics.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.data)
+					this.dailyEnergyScoreContributorsMetrics.set(mutation.payload.isoDay, mutation.payload.data)
 				);
 			} else if (mutation.type === "setDailySleepScoreContributorsMetrics") {
 				mutate.call(this, mutation, () =>
-					this.dailySleepScoreContributorsMetrics.set(getKeyFromDate(mutation.payload.isoDay), mutation.payload.data)
+					this.dailySleepScoreContributorsMetrics.set(mutation.payload.isoDay, mutation.payload.data)
 				);
 			}
 		});
