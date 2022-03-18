@@ -6,7 +6,7 @@ export const serializeArrayParametersInterceptor: Interceptor<AxiosRequestConfig
 	onFulfilled: (config) => {
 		return {
 			...config,
-			paramsSerializer: (params) => queryString.stringify(params, { arrayFormat: "none", encode: false }),
+			paramsSerializer: (params) => queryString.stringify(params, { arrayFormat: "none" }),
 		};
 	},
 };
