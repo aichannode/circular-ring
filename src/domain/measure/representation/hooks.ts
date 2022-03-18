@@ -8,22 +8,22 @@ import { MeasureApi } from "../actions/lib/measureApi";
 import { getKeyFromDate } from "../common/business";
 import { MetricType } from "../metric";
 import { MeasureModel } from "../model/measureModel";
-import { Contributor, DailyActivityIntensityData, DailySleepData } from "./api";
-import { canDisplay, getScoreControlStates } from "./business";
+import { Contributor, DailyActivityIntensityData, DailyHr, DailySleepData } from "./api";
+import { canDisplay, getScoreControlStates, parseDailyHR } from "./business";
 import { createActivityPhasesGetter, createSleepStagesGetter, useDailyHeavyComputationData } from "./lib/business";
 import { Activities, ActivityScoreContributors, SleepScoreContributors } from "./lib/type";
-
 export function createRepresentation(apiService: ApiService, model: MeasureModel) {
 	const actions = createActions(new MeasureApi(apiService), model.present);
 	return {
 		actions,
 		hooks: {
-			useDailyHR(isoDay = getCurrentLocalISODay()) {
+			useDailyHR(isoDay = getCurrentLocalISODay()): DailyHr | undefined {
 				useEffect(() => {
 					__DEV__ && console.log("[MEASURE: Action] FETCH");
 					actions.setDailyHRMetrics(isoDay);
 				}, [isoDay]);
-				return model.dailyHRMetrics.get(getKeyFromDate(isoDay)) ?? {};
+
+				return parseDailyHR(model.dailyHRMetrics.get(getKeyFromDate(isoDay)));
 			},
 			useDailyActivityIntensity({
 				isoDay = getCurrentLocalISODay(),

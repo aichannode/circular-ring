@@ -1,10 +1,11 @@
 // components/Task.stories.js
+import { Lines } from "@domain/measure/representation/api";
 import { object } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react-native";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import * as React from "react";
-import { Averages, DaysItem, LineChart, Lines } from "./LineChart";
+import { Averages, DaysItem, LineChart } from "./LineChart";
 import { data } from "./mockedDataHR.json";
 
 const lines: Lines = data.map((e) => {
@@ -62,13 +63,17 @@ const items: DaysItem = [
 const averages: Averages = [
 	{
 		value: 98,
-		color: "red",
+		color: colors.red,
 	},
 	{
 		value: 60,
 		color: "green",
 	},
 ];
+
+const [yMin, yMax] = [Math.min(...lines!.map((line) => line.y)), Math.max(...lines!.map((line) => line.y))];
+const [yMinIndex, yMaxIndex] = [lines!.findIndex((line) => line.y == yMin), lines!.findIndex((line) => line.y == yMax)];
+
 storiesOf("LineChart", module)
 	.add("default", () => (
 		<LineChart
@@ -77,7 +82,18 @@ storiesOf("LineChart", module)
 			yColor={colors.darkGray}
 			data={lines}
 			shouldDrawCircles={false}
-			graphColor={"red"}
+			graphColor={colors.red}
+			valueFormatter="date"
+			valueFormatterPattern="H'h'"
+		/>
+	))
+	.add("no data", () => (
+		<LineChart
+			xColor={colors.textPrimary}
+			yColor={colors.darkGray}
+			data={[]}
+			shouldDrawCircles={false}
+			graphColor={colors.red}
 			valueFormatter="date"
 			valueFormatterPattern="H'h'"
 		/>
@@ -90,7 +106,7 @@ storiesOf("LineChart", module)
 				yColor={colors.darkGray}
 				data={lines}
 				shouldDrawCircles={false}
-				graphColor={"red"}
+				graphColor={colors.red}
 				valueFormatter="date"
 				valueFormatterPattern="H'h'"
 			/>
@@ -99,7 +115,7 @@ storiesOf("LineChart", module)
 	.add("Multiple Line", () => {
 		return (
 			<LineChart
-				isWeek={true}
+				isMultipleLines={true}
 				xColor={colors.textPrimary}
 				yColor={colors.darkGray}
 				daysItem={items}
@@ -109,6 +125,24 @@ storiesOf("LineChart", module)
 		);
 	})
 
+	.add("Show min/max label", () => {
+		return (
+			<LineChart
+				xColor={colors.textPrimary}
+				yColor={colors.darkGray}
+				data={lines}
+				shouldDrawCircles={false}
+				graphColor={colors.red}
+				valueFormatter="date"
+				valueFormatterPattern="H'h'"
+				shouldShowLabel={true}
+				yMin={yMin}
+				yMax={yMax}
+				yMinIndex={yMinIndex}
+				yMaxIndex={yMaxIndex}
+			/>
+		);
+	})
 	.add("custom color", () => {
 		return (
 			<LineChart
@@ -129,7 +163,7 @@ storiesOf("LineChart", module)
 				yColor={colors.darkGray}
 				shouldDrawCircles={true}
 				data={lines}
-				graphColor={"red"}
+				graphColor={colors.red}
 				valueFormatter="date"
 				valueFormatterPattern="H'h'"
 			/>
@@ -143,7 +177,7 @@ storiesOf("LineChart", module)
 				yColor={colors.darkBlue}
 				shouldDrawCircles={true}
 				data={lines}
-				graphColor={"red"}
+				graphColor={colors.red}
 				valueFormatter="date"
 				valueFormatterPattern="H'h'"
 			/>

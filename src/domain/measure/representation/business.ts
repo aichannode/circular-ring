@@ -1,5 +1,6 @@
 import { isToday } from "@domain/common/business";
-import { ScoreQuality } from "./api";
+import { MetricType, RangeMetrics } from "../metric";
+import { DailyHr, ScoreQuality } from "./api";
 
 /**
  * Return either we can display the data of this day or not
@@ -26,4 +27,33 @@ export function getScoreControlStates(model: {
 	} else {
 		return model.isInverted ? ScoreQuality.POOR : ScoreQuality.OPTIMAL;
 	}
+}
+
+export function parseDailyHR(
+	dailyHR:
+		| RangeMetrics<
+				MetricType.UserHR,
+				| MetricType.UserDailyAwakeHRMax
+				| MetricType.UserDailyAwakeHRMin
+				| MetricType.UserDailyAwakeHRAverage
+				| MetricType.UserDailyAwakeHRReference
+		  >
+		| undefined
+) {
+	if (dailyHR === undefined || dailyHR?.timeSeries.length === 0) return undefined;
+	const dailyHr: DailyHr = {
+		constant: {
+			hr: dailyHR.constant[MetricType.UserDailyAwakeHRAverage],
+			hrMin: dailyHR.constant[MetricType.UserDailyAwakeHRMin],
+			hrMax: dailyHR.constant[MetricType.UserDailyAwakeHRMax],
+		},
+		lines: [],
+	};
+	dailyHR.timeSeries.map((timeSerie) => {
+		dailyHr.lines.push({
+			x: Date.parse(timeSerie.timestamp),
+			y: typeof timeSerie.metrics["user.hr"] === "number" ? timeSerie.metrics["user.hr"] : 0,
+		});
+	});
+	return dailyHr;
 }

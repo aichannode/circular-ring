@@ -33,3 +33,20 @@ export interface Contributor {
 	percent: number;
 	controlState: ScoreQuality;
 }
+
+export interface DailyHr {
+	lines: Lines;
+	constant: {
+		hr: any;
+		hrMin: any;
+		hrMax: any;
+	};
+}
+
+export interface Line {
+	/** timestamp */
+	x: number;
+	/** bpm */
+	y: number;
+}
+export type Lines = Line[];

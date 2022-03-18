@@ -1,15 +1,10 @@
+import { Lines } from "@domain/measure/representation/api";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import { processColor } from "react-native";
 import { LineChart as LineComponent } from "react-native-charts-wrapper";
 import styled from "styled-components/native";
 
-export interface Line {
-	/** timestamp */
-	x: number;
-	/** bpm */
-	y: number;
-}
 export interface DayItem {
 	awake: number;
 	deep: number;
@@ -22,13 +17,12 @@ export interface Average {
 	/** color */
 	color: string;
 }
-export type Lines = Line[];
 export type Averages = Average[];
 export type DaysItem = DayItem[];
 
 interface LineChartProps {
 	data?: Lines;
-	isWeek?: boolean;
+	isMultipleLines?: boolean;
 	averages?: Averages;
 	daysItem?: DaysItem;
 	graphColor?: string;
@@ -37,6 +31,12 @@ interface LineChartProps {
 	shouldDrawCircles?: boolean;
 	valueFormatterPattern?: string;
 	valueFormatter: string | string[];
+	shouldShowLabel?: boolean;
+	yMin?: number;
+	yMax?: number;
+
+	yMinIndex?: number;
+	yMaxIndex?: number;
 }
 
 export function LineChart({
@@ -45,20 +45,22 @@ export function LineChart({
 	daysItem,
 	valueFormatterPattern,
 	valueFormatter,
-	isWeek = false,
+	isMultipleLines = false,
 	graphColor = colors.red,
 	shouldDrawCircles = false,
 	xColor = colors.textPrimary,
 	yColor = colors.darkGray,
+	shouldShowLabel = false,
+	yMin,
+	yMax,
+	yMinIndex,
+	yMaxIndex,
 }: LineChartProps) {
-	const yMin = !isWeek ? Math.min(...data!.map((line) => line.y)) : 0;
-
 	const xAxis = {
 		valueFormatter: valueFormatter,
 		valueFormatterPattern: valueFormatterPattern,
-
 		position: "BOTTOM" as const,
-		centerAxisLabels: isWeek ? false : true,
+		centerAxisLabels: isMultipleLines ? false : true,
 		drawAxisLine: false,
 		enabled: true,
 		granularity: 1,
@@ -71,10 +73,11 @@ export function LineChart({
 		axisLineColor: processColor("white"),
 	};
 
+	console.log(yMin, yMax);
 	const yAxis = {
 		left: {
 			labelCount: 4,
-			axisMinimum: isWeek ? 0 : yMin - ((yMin % 10) + 10),
+			axisMinimum: yMin ? yMin - ((yMin % 10) + 10) : 0,
 			enabled: true,
 			textColor: processColor(yColor),
 			drawGridLines: true,
@@ -86,7 +89,6 @@ export function LineChart({
 			granularityEnabled: true,
 			granularity: 1,
 			axisLineColor: processColor("white"),
-
 			limitLines: averages?.map(({ value, color }) => {
 				return {
 					limit: value,
@@ -105,7 +107,10 @@ export function LineChart({
 	const dataSets = {
 		dataSets: [
 			{
-				values: data,
+				values: data?.map(({ x, y }) => {
+					const marker = y == yMin || y == yMax ? `${y}` : "";
+					return { x, y, marker };
+				}),
 				label: "",
 				config: {
 					drawValues: false,
@@ -125,7 +130,7 @@ export function LineChart({
 	};
 
 	const dataLineWeeks = {
-		dataSets: isWeek
+		dataSets: isMultipleLines
 			? [
 					{
 						values: daysItem!.map(({ awake }, index) => {
@@ -142,7 +147,6 @@ export function LineChart({
 							highlightColor: processColor("transparent"),
 							color: processColor(colors.business.sleepAwake),
 							axisLineColor: processColor("white"),
-
 							drawFilled: false,
 							valueTextSize: 0,
 							legend: false,
@@ -163,7 +167,6 @@ export function LineChart({
 							highlightColor: processColor("transparent"),
 							color: processColor(colors.business.sleepDeep),
 							axisLineColor: processColor("white"),
-
 							drawFilled: false,
 							valueTextSize: 0,
 							legend: false,
@@ -185,7 +188,6 @@ export function LineChart({
 							highlightColor: processColor("transparent"),
 							color: processColor(colors.business.sleepRem),
 							axisLineColor: processColor("white"),
-
 							drawFilled: false,
 							valueTextSize: 0,
 							legend: false,
@@ -206,7 +208,6 @@ export function LineChart({
 							highlightColor: processColor("transparent"),
 							color: processColor(colors.business.sleepLight),
 							axisLineColor: processColor("white"),
-
 							drawFilled: false,
 							valueTextSize: 0,
 							legend: false,
@@ -215,30 +216,33 @@ export function LineChart({
 			  ]
 			: [],
 	};
-
+	const highlights = data?.length
+		? [
+				{ x: yMinIndex ? data?.[yMinIndex].x : 0, y: yMinIndex ? data?.[yMinIndex].y : 0 },
+				{ x: yMaxIndex ? data?.[yMaxIndex].x : 0, y: yMaxIndex ? data?.[yMaxIndex].y : 0 },
+		  ]
+		: [];
 	return (
 		<Container>
 			<LineComponent
+				highlights={highlights}
 				legend={{
 					enabled: false,
 				}}
 				chartDescription={{ text: "" }}
 				xAxis={xAxis}
 				style={{ flex: 1 }}
-				data={isWeek ? dataLineWeeks : dataSets}
+				data={isMultipleLines ? dataLineWeeks : dataSets}
 				yAxis={yAxis}
 				autoScaleMinMaxEnabled={false}
-				touchEnabled={false}
-				dragEnabled={false}
-				scaleEnabled={false}
-				scaleXEnabled={false}
-				scaleYEnabled={false}
-				pinchZoom={false}
-				doubleTapToZoomEnabled={false}
+				marker={{
+					enabled: shouldShowLabel,
+					textColor: processColor(colors.white),
+					markerColor: processColor(colors.red),
+				}}
 				highlightPerTapEnabled={false}
-				highlightPerDragEnabled={false}
-				dragDecelerationEnabled={false}
-				keepPositionOnRotation={false}
+				doubleTapToZoomEnabled={true}
+				scaleYEnabled={false}
 			></LineComponent>
 		</Container>
 	);

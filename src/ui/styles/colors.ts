@@ -25,6 +25,9 @@ const palette = {
 	sleepBlue: "#001871",
 	redOrange: "#ff3d00",
 	lightBlue: "#AEBBF0",
+	high: "rgba(255,208,37, 0.89)",
+	medium: "rgba(255,93,0, 0.75)",
+	low: "rgba(255,29,29, 0.81)",
 };
 
 /**
@@ -81,4 +84,10 @@ export const intensityColors: { [key in Intensity]: string } = {
 	[Intensity.MEDIUM]: colors.orange,
 	[Intensity.HIGH]: colors.green,
 	[Intensity.NONE]: colors.textPrimary,
+};
+export const ActivityIntensityColors: { [key in Intensity]: string } = {
+	[Intensity.LOW]: colors.low,
+	[Intensity.MEDIUM]: colors.medium,
+	[Intensity.HIGH]: colors.high,
+	[Intensity.NONE]: colors.midGray,
 };

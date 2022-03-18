@@ -9,14 +9,11 @@ import { getCurrentLocalISODay } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DailyActivityIntensityData } from "@domain/measure/representation/api";
 import { activities, activityScoreContributors } from "@domain/measure/representation/lib/type";
-import { TimeFrame } from "@domain/measure/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
-import { Stack } from "@ui/components/layout";
+import { Row, Stack } from "@ui/components/layout";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
-import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
-import { TitleText } from "@ui/components/text";
 import { CalendarView } from "@ui/containers/calendarView";
 import { ScoreGauge } from "@ui/containers/scoreGauge";
 import { ScoreSection } from "@ui/containers/scoreSection";
@@ -24,11 +21,12 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
 import React, { useRef, useState } from "react";
-import { LayoutAnimation, ScrollView, View } from "react-native";
+import { Image, LayoutAnimation, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
 import { DailyMetric } from "./dailyMetric";
+import { HeartRateGraph } from "./heartRateGraph";
 import { dailyActivitiesUIConfig, getActivityGaugesConfig } from "./measureDisplayInfos";
 
 function getIcon(path: string) {
@@ -66,24 +64,18 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 				useCanDisplayData,
 			},
 		},
-		calendar: {
-			hooks: { useDailyTags },
-		},
 	} = useRepresentations();
-	const tags = useDailyTags(selectedDay);
 	const energyScoreDetails = useDailyEnergyScoreDetails(selectedDay);
 	const dailyActivitiesData = useDailyActivities(selectedDay);
 	const energyScore = useDailyEnergyScore(selectedDay);
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const activityContributorGaugesConfig = getActivityGaugesConfig(format);
-	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	useDailyActivityIntensity({ isoDay: selectedDay, setData });
-	const graphData: Array<{
-		value: number;
-		isoTime: string;
-	}> = activityIntensity.stages.map((stage) => ({ value: stage.level, isoTime: stage.start }));
+
 	const canDisplay = useCanDisplayData(selectedDay);
+
+	const [activeItem, setActiveItem] = useState<number>(0);
 
 	return (
 		<Container>
@@ -176,36 +168,36 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							.filter(Boolean) as JSX.Element[]
 					}
 				</ElementStack>
-				{!!graphData.length && (
-					<ElementStack gap={10}>
-						<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-							{format("activity.intensity")}
-						</TitleText>
-						{/** Wait for available data on week/month */}
-						<View style={{ display: "none", marginVertical: 10 }}>
-							<TimeFrameSwitcher
-								setGraphPeriod={setGraphPeriod}
-								graphPeriod={graphPeriod}
-								color={colors.business.actuvityPrimary}
-								frames={[
-									{
-										label: "graph.time_frame.today",
-										duration: TimeFrame.TODAY,
-									},
-									{
-										label: "graph.time_frame.7days",
-										duration: TimeFrame.LAST_7_DAYS,
-									},
-									{
-										label: "graph.time_frame.all",
-										duration: TimeFrame.ALL,
-									},
-								]}
+
+				<ElementStack gap={10} style={{ display: "flex" }}>
+					{activeItem === 0 && <ActivityIntensityGraph selectedDay={selectedDay} />}
+
+					{activeItem === 1 && <HeartRateGraph selectedDay={selectedDay} />}
+				</ElementStack>
+
+				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
+					<Row>
+						<ImageContainer onPress={() => setActiveItem(0)}>
+							<GraphSwitcherButton
+								source={
+									activeItem === 0
+										? require(`@assets/images/circleActivity.png`)
+										: require(`@assets/images/circleActivityTransparent.png`)
+								}
 							/>
-						</View>
-						<ActivityIntensityGraph tags={tags} samples={graphData} />
-					</ElementStack>
-				)}
+						</ImageContainer>
+
+						<ImageContainer onPress={() => setActiveItem(1)}>
+							<GraphSwitcherButton
+								source={
+									activeItem === 1
+										? require(`@assets/images/heartCircle.png`)
+										: require(`@assets/images/heartCircleTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+					</Row>
+				</ElementStack>
 			</ScrollView>
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
 				<View style={{ padding: 20 }}>
@@ -231,4 +223,15 @@ const Container = styled.View`
 const ElementStack = styled(Stack)`
 	padding: 25px 20px;
 	background-color: ${colors.lightgray};
+`;
+
+const GraphSwitcherButton = styled(Image)`
+	margin-left: 20px;
+	width: 40px;
+	height: 40px;
+	align-items: center;
+	justify-content: center;
+`;
+const ImageContainer = styled.Pressable`
+	align-items: center;
 `;

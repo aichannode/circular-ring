@@ -211,7 +211,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 											light: 5.4,
 										},
 									]}
-									isWeek={true}
+									isMultipleLines={true}
 									xColor={colors.textPrimary}
 									yColor={colors.darkGray}
 									shouldDrawCircles={true}
