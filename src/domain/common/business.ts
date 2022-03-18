@@ -1,5 +1,5 @@
 import moment from "moment";
-import { ISODay, ISOMonth } from "./type";
+import { ISODate, ISODay, ISOMonth } from "./type";
 
 export function isYesterday(dateIso: string, todayIso: string) {
 	const today = moment(todayIso).startOf("day");
@@ -103,10 +103,17 @@ export function getUTCISODayFromLocalDate(localIsoDate: string): ISODay {
 }
 
 /**
+ * Return the local iso date from the given local date.
+ */
+export function getLocalISODateFromLocalISODate(localISODate: ISODate) {
+	return moment(localISODate).toISOString(true);
+}
+
+/**
  * Return the current local iso day formated day in local time
  */
 export function getCurrentLocalISODay(localNow?: string): ISODay {
-	return getLocalISODayFromLocalDate(localNow ?? moment().local().format());
+	return getLocalISODayFromLocalDate(localNow ?? moment().toISOString(true));
 }
 
 /**
@@ -126,9 +133,9 @@ export function toISOMonth(isoDay: ISODay): ISOMonth {
 /**
  * Convert locale isostring date to UTC
  */
-export function toUTC(localISODate: string) {
+export function toUTC(localISODate: string): string {
 	assertLocalDate(localISODate);
-	return moment(localISODate).utc().toISOString();
+	return moment(localISODate).toISOString();
 }
 
 /**
@@ -136,5 +143,5 @@ export function toUTC(localISODate: string) {
  */
 export function toLocale(isoDate: string) {
 	assertUTCDate(isoDate);
-	return moment(isoDate).local().format();
+	return moment(isoDate).toISOString(true);
 }

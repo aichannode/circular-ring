@@ -1,5 +1,5 @@
 import { useRepresentations } from "@core/representation";
-import { isToday } from "@domain/common/business";
+import { getLocalISODayFromLocalDate, isToday } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { useUser } from "@domain/user/hooks/useUser";
 import { circularCalendarTheme } from "@ui/components/calendar/circularCalendarTheme";
@@ -27,7 +27,7 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 	useEffect(
 		action(function () {
 			setMonthCalendars({
-				isoLocalDate: moment(selectedLocalIsoDay).local().format(),
+				isoLocalDate: getLocalISODayFromLocalDate(selectedLocalIsoDay),
 				// Don't use cache if it is today, as data is often updated.
 				useForceRefresh: isToday(selectedLocalIsoDay, moment().toISOString()),
 			});
