@@ -120,7 +120,7 @@ export function StepChart({
 	);
 
 	function updatePosition(cursorX: number, cursorY: number) {
-		if (!graphRect.current) {
+		if (!graphRect.current || !data.length) {
 			return;
 		}
 
