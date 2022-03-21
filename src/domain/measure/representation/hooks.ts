@@ -149,11 +149,11 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						value: data[MetricType.UserDailyAsleepSPO2] as number,
 						thresholdLow: (data[MetricType.UserDailyScoreBRGoalMin] as number) ?? 0.8,
 						thresholdHigh: (data[MetricType.UserDailyScoreBRGoalMax] as number) ?? 0.9,
-						percent: data[MetricType.UserDailyScoreBR] as number,
+						percent: data[MetricType.UserDailyScoreSPO2] as number,
 						controlState: getScoreControlStates({
 							lowThreshold: (data[MetricType.UserDailyScoreBRGoalMin] as number) ?? 0.8,
 							highThreshold: (data[MetricType.UserDailyScoreBRGoalMax] as number) ?? 0.9,
-							score: data[MetricType.UserDailyScoreBR] as number,
+							score: data[MetricType.UserDailyScoreSPO2] as number,
 						}),
 					},
 					[MetricType.UserDailyScoreHRV]: {
