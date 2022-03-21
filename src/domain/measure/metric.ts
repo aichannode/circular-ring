@@ -149,7 +149,7 @@ export enum MetricType {
 	UserDailyCardioPointsGoalMax = "user.daily.cardio.points.goal.max",
 	UserDailyCardioPointsGoalMin = "user.daily.cardio.points.goal.min",
 
-	UserDailyVO2Max = "user.daily.V02max",
+	UserDailyVO2Max = "user.daily.vo2max",
 
 	///////////////////
 	// HR

@@ -79,25 +79,31 @@ export const dailyActivitiesUIConfig: MetricsDetails = {
 	[MetricType.UserDailySteps]: {
 		icon: "@assets/images/shoes.png",
 		labelKey: "metric.steps",
+		decimalNb: 0,
 	},
 	[MetricType.UserDailyWalkingEquivalency]: {
 		icon: "@assets/images/journey.png",
 		labelKey: "metric.walking",
+		decimalNb: 1,
 	},
 	[MetricType.UserDailyCaloriesBurned]: {
 		icon: "@assets/images/fire.png",
 		labelKey: "metric.calories",
+		decimalNb: 0,
 	},
 	[MetricType.UserDailyCardioPoints]: {
 		icon: "@assets/images/sport.png",
 		labelKey: "metric.cardio",
+		decimalNb: 0,
 	},
 	[MetricType.UserDailyVO2Max]: {
 		icon: "@assets/images/lungs.png",
 		labelKey: "metric.vo2_max",
+		decimalNb: 0,
 	},
 	[MetricType.UserDailyAwakeHRMax]: {
 		icon: "@assets/images/heart.png",
 		labelKey: "metric.hr_max",
+		decimalNb: 0,
 	},
 };

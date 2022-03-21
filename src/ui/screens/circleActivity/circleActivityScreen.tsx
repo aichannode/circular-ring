@@ -117,10 +117,9 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 									key={metric}
 									icon={getIcon(dataInfos.icon)}
 									label={format(dataInfos.labelKey)}
-									value={Math.round(data.value)}
-									score={dailyActivitiesData[metric].score}
-									lowThreshold={dailyActivitiesData[metric].thresholdLow}
-									highThreshold={dailyActivitiesData[metric].thresholdHigh}
+									value={data.value.toFixed(dataInfos.decimalNb)}
+									score={data.score}
+									controlState={data.controlState}
 								/>
 							)
 						);

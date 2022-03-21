@@ -7,8 +7,8 @@ import { createActions } from "../actions";
 import { MeasureApi } from "../actions/lib/measureApi";
 import { MetricType } from "../metric";
 import { MeasureModel } from "../model/measureModel";
-import { Contributor, DailyActivityIntensityData, DailyHr, DailySleepData } from "./api";
-import { canDisplay, getScoreControlStates, parseDailyHR } from "./business";
+import { ActivityControlState, Contributor, DailyActivityIntensityData, DailyHr, DailySleepData } from "./api";
+import { canDisplay, getActivityControlState, getScoreControlStates, parseDailyHR } from "./business";
 import { createActivityPhasesGetter, createSleepStagesGetter, useDailyHeavyComputationData } from "./lib/business";
 import { Activities, ActivityScoreContributors, SleepScoreContributors } from "./lib/type";
 export function createRepresentation(apiService: ApiService, model: MeasureModel) {
@@ -46,8 +46,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				{
 					value: number;
 					score?: number;
-					thresholdLow?: number;
-					thresholdHigh?: number;
+					controlState?: ActivityControlState;
 				}
 			> {
 				useEffect(
@@ -61,23 +60,35 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				return {
 					[MetricType.UserDailySteps]: {
 						value: data[MetricType.UserDailySteps] as number,
-						thresholdLow: data[MetricType.UserDailyStepsGoalMin] as number,
-						thresholdHigh: data[MetricType.UserDailyStepsGoalMax] as number,
+						controlState: getActivityControlState({
+							lowThreshold: data[MetricType.UserDailyStepsGoalMin] as number,
+							highThreshold: data[MetricType.UserDailyStepsGoalMax] as number,
+							value: data[MetricType.UserDailySteps] as number,
+						}),
 					},
 					[MetricType.UserDailyWalkingEquivalency]: {
 						value: (data[MetricType.UserDailyWalkingEquivalency] as number) / 1000,
-						thresholdLow: data[MetricType.UserDailyWalkingEquivalencyGoalMin] as number,
-						thresholdHigh: data[MetricType.UserDailyWalkingEquivalencyGoalMax] as number,
+						controlState: getActivityControlState({
+							lowThreshold: data[MetricType.UserDailyWalkingEquivalencyGoalMin] as number,
+							highThreshold: data[MetricType.UserDailyWalkingEquivalencyGoalMax] as number,
+							value: data[MetricType.UserDailyWalkingEquivalency] as number,
+						}),
 					},
 					[MetricType.UserDailyCaloriesBurned]: {
 						value: data[MetricType.UserDailyCaloriesBurned] as number,
 						score: data[MetricType.UserDailySteps] as number,
-						thresholdLow: data[MetricType.UserDailyStepsGoalMin] as number,
-						thresholdHigh: data[MetricType.UserDailyStepsGoalMax] as number,
+						controlState: getActivityControlState({
+							lowThreshold: data[MetricType.UserDailyStepsGoalMin] as number,
+							highThreshold: data[MetricType.UserDailyStepsGoalMax] as number,
+							value: data[MetricType.UserDailyCaloriesBurned] as number,
+						}),
 					},
 					[MetricType.UserDailyCardioPoints]: {
 						value: data[MetricType.UserDailyCardioPointsGoalMin] as number,
-						thresholdLow: data[MetricType.UserDailyCardioPointsGoalMin] as number,
+						controlState: getActivityControlState({
+							lowThreshold: data[MetricType.UserDailyCardioPointsGoalMin] as number,
+							value: data[MetricType.UserDailyCardioPointsGoalMin] as number,
+						}),
 					},
 					[MetricType.UserDailyVO2Max]: {
 						value: data[MetricType.UserDailyVO2Max] as number,

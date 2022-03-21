@@ -26,6 +26,12 @@ export enum ScoreQuality {
 	OPTIMAL = "OPTIMAL",
 }
 
+export enum ActivityControlState {
+	POOR = "POOR",
+	GOOD = "GOOD",
+	OPTIMAL = "OPTIMAL",
+}
+
 export interface Contributor {
 	value: number;
 	thresholdLow: number;

@@ -1,6 +1,6 @@
 import { isToday } from "@domain/common/business";
 import { MetricType, RangeMetrics } from "../metric";
-import { DailyHr, ScoreQuality } from "./api";
+import { ActivityControlState, DailyHr, ScoreQuality } from "./api";
 
 /**
  * Return either we can display the data of this day or not
@@ -8,6 +8,24 @@ import { DailyHr, ScoreQuality } from "./api";
  */
 export function canDisplay(isoDay: string, userCoreSleepEnd: number) {
 	return isToday(new Date(userCoreSleepEnd).toISOString(), isoDay);
+}
+
+/**
+ * Compute an activity control state
+ */
+export function getActivityControlState(model: { lowThreshold: number; highThreshold?: number; value: number }) {
+	if (model.highThreshold === undefined) {
+		if (model.value >= model.lowThreshold) {
+			return ActivityControlState.OPTIMAL;
+		}
+		return ActivityControlState.POOR;
+	} else if (model.value >= model.lowThreshold && model.value < model.highThreshold) {
+		return ActivityControlState.GOOD;
+	} else if (model.value < model.lowThreshold) {
+		return ActivityControlState.POOR;
+	} else {
+		return ActivityControlState.OPTIMAL;
+	}
 }
 
 /**

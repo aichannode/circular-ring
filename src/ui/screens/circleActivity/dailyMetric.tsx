@@ -1,5 +1,4 @@
-import { ScoreQuality } from "@domain/measure/representation/api";
-import { getScoreControlStates } from "@domain/measure/representation/business";
+import { ActivityControlState, ScoreQuality } from "@domain/measure/representation/api";
 import { Grow } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { colors, ScoreQualityColors } from "@ui/styles/colors";
@@ -11,39 +10,18 @@ import styled from "styled-components/native";
 interface DailyMetricProps {
 	icon: number;
 	label: string;
-	value: number;
+	value: string;
 	score?: number;
-	lowThreshold?: number;
-	highThreshold?: number;
+	controlState?: ActivityControlState;
 	style?: StyleProp<ViewStyle>;
-	overWriteScoreQuality?: ScoreQuality | undefined;
 }
-export const DailyMetric: React.FC<DailyMetricProps> = ({
-	icon,
-	label,
-	value,
-	score,
-	lowThreshold,
-	highThreshold,
-	style,
-	overWriteScoreQuality,
-}) => {
-	const scoreQuality =
-		lowThreshold !== undefined &&
-		highThreshold !== undefined &&
-		getScoreControlStates({
-			score: score ?? value,
-			lowThreshold,
-			highThreshold,
-		});
-
+export const DailyMetric: React.FC<DailyMetricProps> = ({ icon, label, value, controlState, style }) => {
 	return (
 		<Container style={style}>
 			<MetricIcon source={icon} />
 			<SecondaryText>{label}</SecondaryText>
 			<Grow />
-			{!!scoreQuality && overWriteScoreQuality === undefined && <QualityIndicator quality={scoreQuality} />}
-			{overWriteScoreQuality !== undefined && <QualityIndicator quality={overWriteScoreQuality} />}
+			{controlState && <QualityIndicator quality={controlState} />}
 			<Metric>{value !== undefined ? value : "-"}</Metric>
 		</Container>
 	);
@@ -60,7 +38,7 @@ const MetricIcon = styled.Image`
 	margin-right: 20px;
 `;
 
-const QualityIndicator = styled.View<{ quality: ScoreQuality }>`
+const QualityIndicator = styled.View<{ quality: ScoreQuality | ActivityControlState }>`
 	width: 10px;
 	height: 10px;
 	border-radius: 5px;

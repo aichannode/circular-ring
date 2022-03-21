@@ -9,6 +9,7 @@ export enum MetricColor {
 export type MetricDisplayConfig = {
 	icon: string;
 	labelKey: WordingKey;
+	decimalNb: number;
 };
 
 export type GaugeDisplayConfig = {
