@@ -26,6 +26,7 @@ import {
 	DailyHRTimeSeriesMetrics,
 	DailySleepScoreMetrics,
 	DailySleepStageDuration,
+	DailyWakeUpScoreMetrics,
 	StepsTaken,
 	WalkingEquivalency,
 } from "../representation/lib/type";
@@ -119,6 +120,13 @@ export type Mutations =
 			payload: {
 				localISODay: ISODay;
 				data: Record<DailySleepScoreMetrics, number>;
+			};
+	  }
+	| {
+			type: "setDailyWakeUpScore";
+			payload: {
+				localISODay: ISODay;
+				data: Record<DailyWakeUpScoreMetrics, number>;
 			};
 	  };
 

@@ -24,7 +24,7 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 	const { loading, alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
 	const warningBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const wakeUpScore = useRepresentations().measure.hooks.useDailySleepQualityScore();
+	const wakeUpScore = useRepresentations().measure.hooks.useDailyWakeUpScore();
 	const autoConnectState = useAutoConnectState();
 	const { useCanDisplayData } = useRepresentations().measure.hooks;
 	const canDisplay = useCanDisplayData(getCurrentLocalISODay());
@@ -39,14 +39,16 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 	return (
 		<Container>
 			<ScrollView>
-				<ScoreSection
-					isDisabled={!canDisplay}
-					label={format("alarm.wake_up_score")}
-					color={colors.blue}
-					score={wakeUpScore["user.daily.sleep.score"]}
-					quality={wakeUpScore.controlState}
-					style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
-				/>
+				{wakeUpScore && (
+					<ScoreSection
+						isDisabled={!canDisplay}
+						label={format("alarm.wake_up_score")}
+						color={colors.blue}
+						score={wakeUpScore.score}
+						quality={wakeUpScore.controlState}
+						style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
+					/>
+				)}
 				<InfoListHeader>{format("alarm.score.programmed")}</InfoListHeader>
 				<AlarmContainer>
 					{alarms?.map((value) => (

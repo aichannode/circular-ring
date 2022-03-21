@@ -34,6 +34,13 @@ export const dailySleepScoreMetrics = [
 ] as const;
 export type DailySleepScoreMetrics = typeof dailySleepScoreMetrics[number];
 
+export const dailyWakeUpScoreMetrics = [
+	MetricType.UserDailyWakeUpScore,
+	MetricType.UserDailyWakeUpScoreGoalMin,
+	MetricType.UserDailyWakeUpScoreGoalMax,
+] as const;
+export type DailyWakeUpScoreMetrics = typeof dailyWakeUpScoreMetrics[number];
+
 /**
  * Score contributors
  */

@@ -384,6 +384,28 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					}),
 				};
 			},
+			useDailyWakeUpScore(localISODay: ISODay = getCurrentLocalISODay()) {
+				useEffect(
+					action(function () {
+						if (!model.dailyWakeUpScore.has(localISODay)) {
+							actions.setDailyWakeUpScore(localISODay);
+						}
+					}),
+					[localISODay]
+				);
+				const data = model.dailyWakeUpScore.get(localISODay);
+				const score = data?.[MetricType.UserDailyWakeUpScore];
+				return score !== undefined
+					? {
+							score,
+							controlState: getScoreControlStates({
+								lowThreshold: data?.[MetricType.UserDailyWakeUpScoreGoalMin] ?? 0.8,
+								highThreshold: data?.[MetricType.UserDailyWakeUpScoreGoalMax] ?? 0.9,
+								score,
+							}),
+					  }
+					: undefined;
+			},
 			useCanDisplayData(localISODay: ISODay): boolean {
 				useEffect(
 					action(function () {

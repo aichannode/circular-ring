@@ -52,6 +52,7 @@ import {
 	dailySleepScoreMetrics,
 	dailySleepStageDuration,
 	DailySleepStageDuration,
+	dailyWakeUpScoreMetrics,
 	SleepStagesMetrics,
 	sleepStagesMetrics,
 	stepsTaken,
@@ -142,6 +143,22 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					payload: {
 						localISODay,
 						score: data[MetricType.UserDailyEnergyScore] ? Number(data[MetricType.UserDailyEnergyScore]) : undefined,
+					},
+				},
+			]);
+		},
+		async setDailyWakeUpScore(localISODay: ISODay = moment().toISOString() as ISODay) {
+			const data = await measureApi.fetchLastDailyMeasures(dailyWakeUpScoreMetrics, localISODay);
+			present([
+				{
+					type: "setDailyWakeUpScore",
+					payload: {
+						localISODay,
+						data: {
+							[MetricType.UserDailyWakeUpScore]: data[MetricType.UserDailyWakeUpScore] as number,
+							[MetricType.UserDailyWakeUpScoreGoalMin]: data[MetricType.UserDailyWakeUpScoreGoalMin] as number,
+							[MetricType.UserDailyWakeUpScoreGoalMax]: data[MetricType.UserDailyWakeUpScoreGoalMax] as number,
+						},
 					},
 				},
 			]);

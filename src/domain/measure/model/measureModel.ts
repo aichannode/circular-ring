@@ -29,6 +29,7 @@ import {
 	DailyHRTimeSeriesMetrics,
 	DailySleepScoreMetrics,
 	DailySleepStageDuration,
+	DailyWakeUpScoreMetrics,
 	SleepStagesMetrics,
 	StepsTaken,
 	WalkingEquivalency,
@@ -84,6 +85,8 @@ export class MeasureModel implements Model<Proposal> {
 	> = new Map();
 	public dailyGlobalScore: Map<ISODay, number | undefined> = new Map();
 	public dailySleepScore: Map<ISODay, Record<DailySleepScoreMetrics, number>> = new Map();
+	public dailyWakeUpScore: Map<ISODay, Record<DailyWakeUpScoreMetrics, number>> = new Map();
+
 	public lastAcceptedMutations: Proposal[] = [];
 
 	constructor() {
@@ -120,6 +123,10 @@ export class MeasureModel implements Model<Proposal> {
 			} else if (mutation.type === "setDailyEnergyScore") {
 				mutate.call(this, mutation, () =>
 					this.dailyEnergyScore.set(mutation.payload.localISODay, mutation.payload.score)
+				);
+			} else if (mutation.type === "setDailyWakeUpScore") {
+				mutate.call(this, mutation, () =>
+					this.dailyWakeUpScore.set(mutation.payload.localISODay, mutation.payload.data)
 				);
 			} else if (mutation.type === "setSleepScore") {
 				mutate.call(this, mutation, () =>
