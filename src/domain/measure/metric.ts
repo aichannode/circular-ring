@@ -70,7 +70,6 @@ export enum MetricType {
 	UserDailySleepBalance = "user.daily.sleep.balance",
 	UserDailySleepBalanceGoalMin = "user.daily.sleep.balance.goal.min",
 	UserDailySleepBalanceGoalMax = "user.daily.sleep.balance.goal.max",
-	UserDailyScoreSleepBalance = "user.daily.score.sleep.balance",
 
 	UserDailyActivityVolume = "user.daily.activity.volume",
 	UserDailyActivityVolumeGoalMin = "user.daily.activity.volume.goal.max",

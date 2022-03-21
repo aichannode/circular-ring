@@ -109,7 +109,6 @@ export type ContributorSleepQuality = typeof contributorSleepQuality[number];
 
 export const contributorSleepBalance = [
 	MetricType.UserDailySleepBalance,
-	MetricType.UserDailyScoreSleepBalance,
 	MetricType.UserDailySleepBalanceGoalMin,
 	MetricType.UserDailySleepBalanceGoalMax,
 ] as const;
