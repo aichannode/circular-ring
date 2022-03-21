@@ -51,7 +51,7 @@ export function getSleepGaugesConfig(format: (v: WordingKey) => string): SleepQu
 			// Time to fall asleep: 2 metrics
 			titleKey: "sleep.quality.fall_asleep.label",
 			descriptionKey: "sleep.quality.fall_asleep.description",
-			renderValue: ({ value }) => `${value > 0 ? "+" : "-"} ${value} min`,
+			renderValue: ({ value }) => `${value} min`,
 		},
 		[MetricType.UserDailySleepDebt]: {
 			// Sleep debt: 2 metrics
