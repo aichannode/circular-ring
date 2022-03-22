@@ -101,6 +101,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 				</View>
 				<InfoListHeader>{format("activity.duration.title")}</InfoListHeader>
 				<ActivityDurationPieChart
+					isToday={selectedDay === getCurrentLocalISODay()}
 					stages={activityIntensity.stages}
 					sportSessionDates={activityIntensity.sportSessionDates}
 					duration={activityIntensity.duration}

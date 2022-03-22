@@ -1,4 +1,3 @@
-import { getCurrentLocalISODay } from "@domain/common/business";
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { ActivityStage } from "@domain/measure/type";
 import { storiesOf } from "@storybook/react-native";
@@ -49,8 +48,6 @@ storiesOf("Pie chart", module).add("default", () => (
 		chartSize={300}
 		/** The title in the center of the pie */
 		title={"activity.duration.title"}
-		/** Current date as ISO string */
-		currentLocalIsoDay={getCurrentLocalISODay()}
 		/** Logic to know the color of the given phase */
 		getPhaseLevel={(phase: number) => phase - 1}
 		/** Phase colors, indexed by phase level */
