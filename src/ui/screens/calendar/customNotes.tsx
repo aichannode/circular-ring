@@ -1,5 +1,6 @@
 import Cross from "@assets/images/crossBig.png";
 import { useRepresentations } from "@core/representation";
+import { useLastUsedTags } from "@domain/appState/representation/hooks";
 import { CalendarTag } from "@domain/calendar/calendar";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { colors } from "@ui/styles/colors";
@@ -22,6 +23,10 @@ const CustomNote = observer(function CustomNote({
 	const [deleteMode, setDelete] = useState<boolean>(false);
 	const createCustomNoteRef = useRef<CircularBottomSheetHandle>(null);
 	const {
+		lastUsedTags,
+		actions: { setLastUsedTags },
+	} = useLastUsedTags();
+	const {
 		calendar: {
 			actions: { deleteTag },
 		},
@@ -36,6 +41,11 @@ const CustomNote = observer(function CustomNote({
 		},
 		[customNote.length, selectedTags.length]
 	);
+
+	function onPressDelete(id: number) {
+		deleteTag(id);
+		setLastUsedTags(lastUsedTags.filter((tag) => tag.id !== id));
+	}
 
 	return (
 		<>
@@ -84,7 +94,7 @@ const CustomNote = observer(function CustomNote({
 						{deleteMode && (
 							<TouchableOpacity
 								style={{ width: 40, height: 35, position: "absolute", right: -5 }}
-								onPress={() => deleteTag(tag.id)}
+								onPress={() => onPressDelete(tag.id)}
 							>
 								<Image style={{ height: 10, width: 10, margin: 14 }} resizeMode="contain" source={Cross}></Image>
 							</TouchableOpacity>
