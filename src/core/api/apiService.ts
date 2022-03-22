@@ -70,18 +70,20 @@ export class ApiService {
 			return data as T;
 		} else {
 			this.cacheManager.set(cachedId, "fetching", { ttl: 10 * 1000 });
-			return fetch()
-				.then((result) => {
-					this.cacheManager.set(cachedId, JSON.stringify(result), {
-						ttl: 15 * 60 * 1000, // 15 mins cache
-					});
-					return result;
-				})
-				.catch((reason) => {
-					console.error(reason);
-					this.cacheManager.delete(cachedId);
-					throw new Error(reason);
-				});
+			return new Promise((resolve, reject) =>
+				fetch()
+					.then((result) => {
+						this.cacheManager.set(cachedId, JSON.stringify(result), {
+							ttl: 15 * 60 * 1000, // 15 mins cache
+						});
+						resolve(result);
+					})
+					.catch((reason) => {
+						console.error(reason);
+						this.cacheManager.delete(cachedId);
+						reject(reason);
+					})
+			);
 		}
 	}
 	constructor() {
