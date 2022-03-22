@@ -137,7 +137,7 @@ export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditN
 	useEffect(
 		() =>
 			when(
-				() => !!calendar && calendar.notes.length > 0,
+				() => isLoading && !!calendar && calendar.notes.length > 0,
 				function () {
 					const noteNames = selectedTags.map((t) => t.name).join(", ");
 					LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
