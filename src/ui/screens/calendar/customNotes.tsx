@@ -5,7 +5,7 @@ import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/b
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
 import { observer } from "mobx-react-lite";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { CreateCustomNoteBottomSheet } from "./createCustomNoteBottomSheet";
@@ -26,6 +26,16 @@ const CustomNote = observer(function CustomNote({
 			actions: { deleteTag },
 		},
 	} = useRepresentations();
+
+	// Disable delete mode when there is no more tag anymore
+	useEffect(
+		function () {
+			if (!customNote.length && !selectedTags.length) {
+				setDelete(false);
+			}
+		},
+		[customNote.length, selectedTags.length]
+	);
 
 	return (
 		<>
