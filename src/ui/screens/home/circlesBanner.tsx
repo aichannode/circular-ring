@@ -1,14 +1,14 @@
+import { useServices } from "@core/services";
+import { useCircles, useSleepMode } from "@domain/appState/appStateHooks";
+import { CircleEntity } from "@domain/circles/type";
 import { Row, Stack } from "@ui/components/layout";
 import { PrimaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
 import React from "react";
-import { Image, StyleProp, ViewStyle, ScrollView } from "react-native";
+import { Image, ScrollView, StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
-import { useServices } from "@core/services";
-import { CircleEntity } from "@domain/circles/type";
-import { useSleepMode, useCircles } from "@domain/appState/appStateHooks";
 
 interface CirclesProps {
 	style?: StyleProp<ViewStyle>;
@@ -55,7 +55,6 @@ export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 								<Stack style={{ marginTop: circle.id === 0 ? -10 : 0 }} gap={circle.id === 0 ? -3 : 10} align="center">
 									<Image
 										resizeMode="center"
-										style={{ borderWidth: 1 }}
 										source={
 											isInSleepMode ? circlesService.getIcon(circle.sleepModeIcon) : circlesService.getIcon(circle.icon)
 										}
