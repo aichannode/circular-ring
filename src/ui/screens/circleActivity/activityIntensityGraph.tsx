@@ -62,13 +62,13 @@ export const ActivityIntensityGraph: React.FC<Props> = observer(function Activit
 					const date = new Date(isoTime);
 					const marker = `${formatHour(date, is24h)}\n${
 						value > 4
-							? format("intensity.max_hr")
-							: value === 4
 							? format("intensity.high")
-							: value >= 2
+							: value === 4
 							? format("intensity.medium")
-							: value >= 1
+							: value >= 2
 							? format("intensity.low")
+							: value >= 1
+							? format("intensity.rest")
 							: format("intensity.none")
 					}`;
 					return {
@@ -109,10 +109,10 @@ export const ActivityIntensityGraph: React.FC<Props> = observer(function Activit
 		left: {
 			valueFormatter: [
 				"",
+				format("intensity.rest"),
 				format("intensity.low"),
 				format("intensity.medium"),
 				format("intensity.high"),
-				format("intensity.max_hr"),
 			],
 			granularityEnabled: true,
 			granularity: 1,
