@@ -43,9 +43,9 @@ export interface Contributor {
 export interface DailyHr {
 	lines: Lines;
 	constant: {
-		hr: any;
-		hrMin: any;
-		hrMax: any;
+		hr: number;
+		hrMin: number;
+		hrMax: number;
 	};
 }
 
