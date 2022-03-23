@@ -60,9 +60,9 @@ export enum MetricType {
 	UserDailyScoreRHRGoalMax = "user.daily.score.rhr.goal.max",
 
 	UserDailySleepVarTemperature = "user.daily.sleep.var.temperature",
-	UserDailyScoreVarTemperature = "user.daily.score.var.temperature",
-	UserDailyScoreVarTemperatureGoalMin = "user.daily.score.var.temperature.goal.min",
-	UserDailyScoreVarTemperatureGoalMax = "user.daily.score.var.temperature.goal.max",
+	UserDailySleepScoreVarTemperature = "user.daily.sleep.score.var.temperature",
+	UserDailySleepScoreVarTemperatureGoalMin = "user.daily.sleep.score.var.temperature.goal.min",
+	UserDailySleepScoreVarTemperatureGoalMax = "user.daily.sleep.score.var.temperature.goal.max",
 
 	UserDailySleepScoreGoalMin = "user.daily.sleep.score.goal.min",
 	UserDailySleepScoreGoalMax = "user.daily.sleep.score.goal.max",

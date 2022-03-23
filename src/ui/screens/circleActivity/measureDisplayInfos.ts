@@ -1,5 +1,6 @@
 import { MetricType } from "@domain/measure/metric";
 import { Activities, ActivityScoreContributors } from "@domain/measure/representation/lib/type";
+import { useIsCelsius } from "@domain/user/hooks/useUser";
 import { useI18n } from "@ui/i18n";
 import { WordingKey } from "src/wordings";
 import { getScoreQualityLabel } from "../business";
@@ -9,6 +10,7 @@ export type DailyEnergyScoreGaugeConfigs = Record<ActivityScoreContributors, Gau
 
 export function getActivityGaugesConfig(format: (v: WordingKey) => string): DailyEnergyScoreGaugeConfigs {
 	const { formatTemperature } = useI18n();
+	const isCelsius = useIsCelsius();
 	return {
 		// Body recovery
 		[MetricType.UserDailyBodyRecovery]: {
@@ -46,11 +48,11 @@ export function getActivityGaugesConfig(format: (v: WordingKey) => string): Dail
 			descriptionKey: "score.details.resting_heart_rate.description",
 			renderValue: ({ value }: { value: number }) => `${Math.round(value)} bpm`,
 		},
-		[MetricType.UserDailyScoreVarTemperature]: {
+		[MetricType.UserDailySleepScoreVarTemperature]: {
 			// Temperature variation
 			titleKey: "score.details.temperature.label",
 			descriptionKey: "score.details.temperature.description",
-			renderValue: ({ value }: { value: number }) => formatTemperature(value),
+			renderValue: ({ value }: { value: number }) => formatTemperature(value, isCelsius),
 		},
 		[MetricType.UserDailySleepScore]: {
 			// Sleep quality

@@ -93,9 +93,9 @@ export type ContributorRHR = typeof contributorRHR[number];
 
 export const contributorVarTemperature = [
 	MetricType.UserDailySleepVarTemperature,
-	MetricType.UserDailyScoreVarTemperature,
-	MetricType.UserDailyScoreVarTemperatureGoalMin,
-	MetricType.UserDailyScoreVarTemperatureGoalMax,
+	MetricType.UserDailySleepScoreVarTemperature,
+	MetricType.UserDailySleepScoreVarTemperatureGoalMin,
+	MetricType.UserDailySleepScoreVarTemperatureGoalMax,
 ] as const;
 export type ContributorVarTemperature = typeof contributorVarTemperature[number];
 
@@ -256,7 +256,7 @@ export const activityScoreContributors = [
 	MetricType.UserDailyScoreSPO2,
 	MetricType.UserDailyScoreHRV,
 	MetricType.UserDailyScoreRHR,
-	MetricType.UserDailyScoreVarTemperature,
+	MetricType.UserDailySleepScoreVarTemperature,
 	MetricType.UserDailySleepScore,
 	MetricType.UserDailySleepBalance,
 	MetricType.UserDailyActivityVolume,

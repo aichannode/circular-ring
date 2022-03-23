@@ -178,15 +178,15 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 							score: data[MetricType.UserDailyScoreRHR] as number,
 						}),
 					},
-					[MetricType.UserDailyScoreVarTemperature]: {
+					[MetricType.UserDailySleepScoreVarTemperature]: {
 						value: data[MetricType.UserDailySleepVarTemperature] as number,
-						thresholdLow: (data[MetricType.UserDailyScoreVarTemperatureGoalMin] as number) ?? 0.8,
-						thresholdHigh: (data[MetricType.UserDailyScoreVarTemperatureGoalMax] as number) ?? 0.9,
-						percent: data[MetricType.UserDailyScoreVarTemperature] as number,
+						thresholdLow: (data[MetricType.UserDailySleepScoreVarTemperatureGoalMin] as number) ?? 0.8,
+						thresholdHigh: (data[MetricType.UserDailySleepScoreVarTemperatureGoalMax] as number) ?? 0.9,
+						percent: data[MetricType.UserDailySleepScoreVarTemperature] as number,
 						controlState: getScoreControlStates({
-							lowThreshold: (data[MetricType.UserDailyScoreVarTemperatureGoalMin] as number) ?? 0.8,
-							highThreshold: (data[MetricType.UserDailyScoreVarTemperatureGoalMax] as number) ?? 0.9,
-							score: data[MetricType.UserDailyScoreVarTemperature] as number,
+							lowThreshold: (data[MetricType.UserDailySleepScoreVarTemperatureGoalMin] as number) ?? 0.8,
+							highThreshold: (data[MetricType.UserDailySleepScoreVarTemperatureGoalMax] as number) ?? 0.9,
+							score: data[MetricType.UserDailySleepScoreVarTemperature] as number,
 						}),
 					},
 					[MetricType.UserDailySleepScore]: {
