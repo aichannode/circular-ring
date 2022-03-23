@@ -37,7 +37,7 @@ test("Specs: 00001. Score control states", function () {
 
 test("Specs: 00002. DailyHR hooks", () => {
 	expect(parseDailyHR(undefined)).toBeUndefined();
-	expect(parseDailyHR({ timeSeries: [], constant: {} })?.lines.length === 0).toBeTruthy();
+	expect(parseDailyHR({ timeSeries: [], constant: {} })).toBeUndefined();
 	const exampleData = {
 		timeSeries: [
 			{ metrics: { "user.hr": 0 }, timestamp: "2022-03-10T14:10:00Z" },

@@ -57,13 +57,13 @@ export function parseDailyHR(
 				| MetricType.UserDailyAwakeHRReference
 		  >
 		| undefined
-) {
+): DailyHr | undefined {
 	if (dailyHR === undefined || dailyHR?.timeSeries.length === 0) return undefined;
 	const dailyHr: DailyHr = {
 		constant: {
-			hr: dailyHR.constant[MetricType.UserDailyAwakeHRAverage],
-			hrMin: dailyHR.constant[MetricType.UserDailyAwakeHRMin],
-			hrMax: dailyHR.constant[MetricType.UserDailyAwakeHRMax],
+			hr: dailyHR.constant[MetricType.UserDailyAwakeHRAverage] as number,
+			hrMin: dailyHR.constant[MetricType.UserDailyAwakeHRMin] as number,
+			hrMax: dailyHR.constant[MetricType.UserDailyAwakeHRMax] as number,
 		},
 		lines: [],
 	};
