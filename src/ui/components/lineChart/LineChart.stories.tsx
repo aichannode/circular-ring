@@ -5,6 +5,7 @@ import { storiesOf } from "@storybook/react-native";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import * as React from "react";
+import { GraphContainer } from "../measure/graphContainer";
 import { Averages, DaysItem, LineChart } from "./LineChart";
 import { data } from "./mockedDataHR.json";
 
@@ -73,7 +74,6 @@ const averages: Averages = [
 
 const [yMin, yMax] = [Math.min(...lines!.map((line) => line.y)), Math.max(...lines!.map((line) => line.y))];
 const [yMinIndex, yMaxIndex] = [lines!.findIndex((line) => line.y == yMin), lines!.findIndex((line) => line.y == yMax)];
-
 storiesOf("LineChart", module)
 	.add("default", () => (
 		<LineChart
@@ -81,6 +81,17 @@ storiesOf("LineChart", module)
 			xColor={colors.textPrimary}
 			yColor={colors.darkGray}
 			data={lines}
+			shouldDrawCircles={false}
+			graphColor={colors.red}
+			valueFormatter="date"
+			valueFormatterPattern={["H'h'", "HH'h':mm"]}
+		/>
+	))
+	.add("no data", () => (
+		<LineChart
+			xColor={colors.textPrimary}
+			yColor={colors.darkGray}
+			data={[]}
 			shouldDrawCircles={false}
 			graphColor={colors.red}
 			valueFormatter="date"
@@ -127,20 +138,22 @@ storiesOf("LineChart", module)
 
 	.add("Show min/max label", () => {
 		return (
-			<LineChart
-				xColor={colors.textPrimary}
-				yColor={colors.darkGray}
-				data={lines}
-				shouldDrawCircles={false}
-				graphColor={colors.red}
-				valueFormatter="date"
-				valueFormatterPattern="H'h'"
-				shouldShowLabel={true}
-				yMin={yMin}
-				yMax={yMax}
-				yMinIndex={yMinIndex}
-				yMaxIndex={yMaxIndex}
-			/>
+			<GraphContainer style={{ height: 500 }}>
+				<LineChart
+					xColor={colors.textPrimary}
+					yColor={colors.darkGray}
+					data={lines}
+					shouldDrawCircles={false}
+					graphColor={colors.red}
+					valueFormatter="date"
+					valueFormatterPattern="H'h'"
+					shouldShowLabel={true}
+					yMin={yMin}
+					yMax={yMax}
+					yMinIndex={yMinIndex}
+					yMaxIndex={yMaxIndex}
+				/>
+			</GraphContainer>
 		);
 	})
 	.add("custom color", () => {

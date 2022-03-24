@@ -58,7 +58,7 @@ export function GraphLegend({ rows }: Props) {
 			</Column>
 			<Column style={{ flex: 1 }}>
 				{data.values.map((value, index) => (
-					<Cell key={value} style={{ paddingRight: 30, justifyContent: "center" }} isEven={index % 2 === 0}>
+					<Cell key={value + index} style={{ paddingRight: 30, justifyContent: "center" }} isEven={index % 2 === 0}>
 						<MetaDataText style={{ textAlign: "right" }}>{value}</MetaDataText>
 					</Cell>
 				))}

@@ -1,6 +1,6 @@
 import { Lines } from "@domain/measure/representation/api";
 import { colors } from "@ui/styles/colors";
-import React from "react";
+import React, { useState } from "react";
 import { processColor } from "react-native";
 import { LineChart as LineComponent } from "react-native-charts-wrapper";
 import styled from "styled-components/native";
@@ -29,14 +29,14 @@ interface LineChartProps {
 	xColor: string;
 	yColor: string;
 	shouldDrawCircles?: boolean;
-	valueFormatterPattern?: string;
+	valueFormatterPattern?: string | string[];
 	valueFormatter: string | string[];
 	shouldShowLabel?: boolean;
 	yMin?: number;
 	yMax?: number;
-
 	yMinIndex?: number;
 	yMaxIndex?: number;
+	labelCount?: number;
 }
 
 export function LineChart({
@@ -55,10 +55,17 @@ export function LineChart({
 	yMax,
 	yMinIndex,
 	yMaxIndex,
+	labelCount,
 }: LineChartProps) {
+	const [scaleX, setScaleX] = useState(1);
 	const xAxis = {
 		valueFormatter: valueFormatter,
-		valueFormatterPattern: valueFormatterPattern,
+		valueFormatterPattern:
+			typeof valueFormatterPattern == "string"
+				? valueFormatterPattern
+				: scaleX < 6
+				? valueFormatterPattern?.[0]
+				: valueFormatterPattern?.[1],
 		position: "BOTTOM" as const,
 		centerAxisLabels: isMultipleLines ? false : true,
 		drawAxisLine: false,
@@ -68,12 +75,13 @@ export function LineChart({
 		drawGridLines: false,
 		textSize: 10,
 		yOffset: 30,
+		labelCount: labelCount,
+		labelCountForce: true,
 		textColor: processColor(xColor),
 		granularityEnabled: true,
 		axisLineColor: processColor("white"),
 	};
 
-	console.log(yMin, yMax);
 	const yAxis = {
 		left: {
 			labelCount: 4,
@@ -85,7 +93,7 @@ export function LineChart({
 			drawAxisLine: false,
 			drawLabels: true,
 			textSize: 10,
-			gridColor: processColor(yColor),
+			gridColor: processColor(colors.extraLightGray),
 			granularityEnabled: true,
 			granularity: 1,
 			axisLineColor: processColor("white"),
@@ -94,7 +102,7 @@ export function LineChart({
 					limit: value,
 					lineColor: processColor(color),
 					lineDashPhase: 2,
-					lineWidth: 2.5,
+					lineWidth: 2,
 					lineDashLengths: [30, 15],
 				};
 			}),
@@ -120,7 +128,7 @@ export function LineChart({
 					highlightColor: processColor("transparent"),
 					color: processColor(graphColor),
 					axisLineColor: processColor("white"),
-
+					highlightEnabled: true,
 					drawFilled: false,
 					valueTextSize: 0,
 					legend: false,
@@ -141,7 +149,7 @@ export function LineChart({
 							drawValues: false,
 							lineWidth: 3,
 							drawCircles: true,
-							circleRadius: 6,
+							circleRadius: 4,
 							circleColor: processColor(colors.business.sleepAwake),
 							circleHoleColor: processColor(colors.business.sleepAwake),
 							highlightColor: processColor("transparent"),
@@ -161,7 +169,7 @@ export function LineChart({
 							drawValues: false,
 							lineWidth: 3,
 							drawCircles: true,
-							circleRadius: 6,
+							circleRadius: 4,
 							circleColor: processColor(colors.business.sleepDeep),
 							circleHoleColor: processColor(colors.business.sleepDeep),
 							highlightColor: processColor("transparent"),
@@ -182,7 +190,7 @@ export function LineChart({
 							drawValues: false,
 							lineWidth: 3,
 							drawCircles: true,
-							circleRadius: 6,
+							circleRadius: 4,
 							circleColor: processColor(colors.business.sleepRem),
 							circleHoleColor: processColor(colors.business.sleepRem),
 							highlightColor: processColor("transparent"),
@@ -202,7 +210,7 @@ export function LineChart({
 							drawValues: false,
 							lineWidth: 3,
 							drawCircles: true,
-							circleRadius: 6,
+							circleRadius: 4,
 							circleColor: processColor(colors.business.sleepLight),
 							circleHoleColor: processColor(colors.business.sleepLight),
 							highlightColor: processColor("transparent"),
@@ -240,9 +248,13 @@ export function LineChart({
 					textColor: processColor(colors.white),
 					markerColor: processColor(colors.red),
 				}}
+				dragDecelerationEnabled={true}
+				highlightPerDragEnabled={false}
 				highlightPerTapEnabled={false}
 				doubleTapToZoomEnabled={true}
 				scaleYEnabled={false}
+				scaleXEnabled={!isMultipleLines}
+				onChange={(e) => setScaleX(typeof e.nativeEvent.scaleX == "undefined" ? 1 : e.nativeEvent.scaleX)}
 			></LineComponent>
 		</Container>
 	);

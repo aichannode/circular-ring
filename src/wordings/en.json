@@ -567,5 +567,9 @@
 	"tutorial.sleep": "Sleep",
 	"tutorial.calibration": "Calibration",
 	"cicle.category.wellness": "Wellness",
-	"cicle.category.vibration": "Vibration"
+	"cicle.category.vibration": "Vibration",
+	"hr.average": "Average",
+	"hr.reference": "Reference",
+	"hr.hrMax": "HR Max",
+	"hr.hrMin": "HR Min"
 }

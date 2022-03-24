@@ -64,6 +64,7 @@ export function parseDailyHR(
 			hr: dailyHR.constant[MetricType.UserDailyAwakeHRAverage] as number,
 			hrMin: dailyHR.constant[MetricType.UserDailyAwakeHRMin] as number,
 			hrMax: dailyHR.constant[MetricType.UserDailyAwakeHRMax] as number,
+			reference: dailyHR.constant[MetricType.UserDailyAwakeHRReference] as number,
 		},
 		lines: [],
 	};

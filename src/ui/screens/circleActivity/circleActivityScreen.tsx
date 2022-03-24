@@ -176,9 +176,10 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 				</ElementStack>
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
-					<Row>
+					<Row style={{ marginBottom: 30, justifyContent: "center" }}>
 						<ImageContainer onPress={() => setActiveItem(0)}>
 							<GraphSwitcherButton
+								style={{ marginLeft: 0 }}
 								source={
 									activeItem === 0
 										? require(`@assets/images/circleActivity.png`)
@@ -226,7 +227,7 @@ const ElementStack = styled(Stack)`
 `;
 
 const GraphSwitcherButton = styled(Image)`
-	margin-left: 20px;
+	margin-left: 15px;
 	width: 40px;
 	height: 40px;
 	align-items: center;

@@ -46,6 +46,7 @@ export interface DailyHr {
 		hr: number;
 		hrMin: number;
 		hrMax: number;
+		reference: number;
 	};
 }
 

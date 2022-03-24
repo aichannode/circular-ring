@@ -1,5 +1,5 @@
 import { useRepresentations } from "@core/representation";
-import { getLocalISODayFromLocalDate } from "@domain/common/business";
+import { ISODay } from "@domain/common/type";
 import { DailyActivityIntensityData } from "@domain/measure/representation/api";
 import { TimeFrame } from "@domain/measure/type";
 import { useIs24h } from "@domain/user/hooks/useUser";
@@ -18,7 +18,7 @@ import { BarChart } from "react-native-charts-wrapper";
 import { getActivityIntensityBarColor } from "./business";
 
 type Props = {
-	selectedDay: string;
+	selectedDay: ISODay;
 };
 
 export const ActivityIntensityGraph: React.FC<Props> = observer(function ActivityIntensityGraph({
@@ -43,7 +43,7 @@ export const ActivityIntensityGraph: React.FC<Props> = observer(function Activit
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
-	useDailyActivityIntensity({ localISODay: getLocalISODayFromLocalDate(selectedDay), setData });
+	useDailyActivityIntensity({ localISODay: selectedDay, setData });
 
 	const graphData: Array<{
 		value: number;
@@ -54,7 +54,7 @@ export const ActivityIntensityGraph: React.FC<Props> = observer(function Activit
 			setLoading(false);
 		}, 500);
 	}, [graphData]);
-	const tags = useDailyTags(getLocalISODayFromLocalDate(selectedDay));
+	const tags = useDailyTags(selectedDay);
 	const data = {
 		dataSets: [
 			{
