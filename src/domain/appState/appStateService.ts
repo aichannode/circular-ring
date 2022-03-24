@@ -1,6 +1,6 @@
 import { CalendarTag } from "@domain/calendar/calendar";
-import { NamedUserRing } from "@domain/ring/ring";
 import { CircleEntity } from "@domain/circles/type";
+import { NamedUserRing } from "@domain/ring/ring";
 import produce from "immer";
 import { observable } from "micro-observables";
 import { AppStateStorage } from "./appStateStorage";
@@ -38,6 +38,19 @@ export class AppStateService {
 		this.userRings.set(state.userRings);
 		this.userCircles.set(state.userCircles);
 		this.defaultCircles.set(state.defaultCircles);
+	}
+
+	async reset() {
+		this.isInSleepMode.set(false);
+		this.quickAccess.set({
+			disabled: [],
+			active: [],
+		});
+		this.lastUsedTags.set([]);
+		this.userRings.set([]);
+		this.recommendationsCount.set(3);
+		this.userCircles.set([]);
+		this.defaultCircles.set([]);
 	}
 
 	async init() {

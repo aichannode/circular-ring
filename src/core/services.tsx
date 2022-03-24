@@ -56,14 +56,7 @@ const bleDeviceService = new BleDeviceService(
 const circleAlarmService = new CircleAlarmService(bleDeviceService);
 const ringManagementService = new RingManagementService(bleDeviceService, ringDataStorage, ringApi, appStateService);
 
-const userService = new UserService(
-	cognitoAuthService,
-	userApi,
-	userStorage,
-	bleDeviceService,
-	appStateService,
-	favoriteDeviceStorage
-);
+const userService = new UserService(cognitoAuthService, userApi, userStorage, bleDeviceService, appStateService);
 const circlesApi = new CirclesApi(apiService);
 const circlesService = new CirclesService(circlesApi, appStateService);
 

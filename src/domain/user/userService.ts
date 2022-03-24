@@ -3,7 +3,6 @@ import { round2Digits, toServerDate } from "@core/utils";
 import { AppStateService } from "@domain/appState/appStateService";
 import { AuthService } from "@domain/auth/authService";
 import { BleDeviceService } from "@domain/device/bleDeviceService";
-import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
 import { DateFormat, HeightUnit, HourFormat, NotificationsFormat, TemperatureFormat, WeightUnit } from "@domain/units";
 import {
 	AdvancedInfo,
@@ -73,8 +72,7 @@ export class UserService {
 		private readonly userApi: UserApi,
 		private readonly userStorage: UserStorage,
 		private readonly bleDeviceService: BleDeviceService,
-		private readonly appStateService: AppStateService,
-		private readonly favoriteDeviceStorage: FavoriteDeviceStorage
+		private readonly appStateService: AppStateService
 	) {}
 
 	async init() {
@@ -92,6 +90,23 @@ export class UserService {
 			}
 			this._authenticatedUserEmail.set(authenticatedEmail);
 		}
+	}
+
+	async reset() {
+		/** Clean user observable **/
+		this._user.set(null);
+		this._userSettings.set(null);
+		this._userNotificationsSettings.set(defaultNotificationsSettings);
+		this._userAdvancedInfo.set(null);
+		this._authenticatedUserEmail.set(null);
+		this._justRegisteredUserEmail.set(null);
+
+		/** Clean user Storage **/
+		this.userStorage.removeJustRegisteredUser();
+		this.userStorage.removeUser();
+		this.userStorage.removeUserAdvancedInfo();
+		this.userStorage.removeUserNotificationsSettings();
+		this.userStorage.removeUserSettings();
 	}
 
 	/** Login & Auth management **/
@@ -132,17 +147,10 @@ export class UserService {
 	async logout() {
 		// const appDataIds = await Storage.getAllKeys();
 		// Storage.multiRemove(appDataIds);
-		this.bleDeviceService.disconnect({ dissociate: true });
-		this._user.set(null);
-		this._authenticatedUserEmail.set(null);
-		await this.userStorage.removeUser();
-		await this.userStorage.removeUserSettings();
-		await this.userStorage.removeUserAdvancedInfo();
-		await this.userStorage.removeUserNotificationsSettings();
-		this.appStateService.userRings.set([]);
-		this.bleDeviceService.favoriteDevice.set(null);
-		this.bleDeviceService.favoriteDeviceSNU.set(null);
-		await this.favoriteDeviceStorage.clear();
+		this.bleDeviceService.disconnect({ dissociate: false });
+		this.bleDeviceService.reset();
+		this.reset();
+		this.appStateService.reset();
 		await this.authService.logout();
 	}
 

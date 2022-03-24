@@ -19,7 +19,7 @@ export class UserApi {
 	/** User **/
 
 	async getUser(): Promise<User> {
-		const result = await this.apiService.get<UserDto>("/user");
+		const result = await this.apiService.get<UserDto>("/user", { useForceRefresh: true });
 		return UserApi.userFromDto(result.data);
 	}
 
