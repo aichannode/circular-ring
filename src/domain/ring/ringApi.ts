@@ -1,16 +1,17 @@
+import { Logger } from "@betomorrow/logging-core";
 import { ApiService } from "@core/api/apiService";
+import { addRequestInterceptor, addResponseInterceptor } from "@core/api/interceptors/interceptor";
+import { logResponseInterceptor } from "@core/api/interceptors/logResponseInterceptor";
+import { serializeArrayParametersInterceptor } from "@core/api/interceptors/serializeArrayParametersInterceptor";
+import { getLogger } from "@core/logger/logger";
+import { getTimeZone } from "@domain/common/business";
+import { Task } from "@domain/task/task.model";
+import { sleep } from "@utils/timing-utils";
+import axios, { AxiosInstance } from "axios";
+import { observable } from "micro-observables";
 import { Platform } from "react-native";
 import RNFS from "react-native-fs";
 import { UserRing } from "./ring";
-import axios, { AxiosInstance } from "axios";
-import { addRequestInterceptor, addResponseInterceptor } from "@core/api/interceptors/interceptor";
-import { serializeArrayParametersInterceptor } from "@core/api/interceptors/serializeArrayParametersInterceptor";
-import { logResponseInterceptor } from "@core/api/interceptors/logResponseInterceptor";
-import { Logger } from "@betomorrow/logging-core";
-import { getLogger } from "@core/logger/logger";
-import { Task } from "@domain/task/task.model";
-import { sleep } from "@utils/timing-utils";
-import { observable } from "micro-observables";
 
 const ringApiBaseUrl = "/rings";
 
@@ -75,6 +76,7 @@ export class RingApi {
 					{
 						ringId: ring.id,
 						firmware: ring.firmware,
+						timezone: getTimeZone(),
 					}
 				)
 			).data;

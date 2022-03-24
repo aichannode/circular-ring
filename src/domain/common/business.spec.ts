@@ -8,6 +8,7 @@ import {
 	getLocalISODayFromLocalDate,
 	getLocalISODayFromUTCDate,
 	getLocalISODayFromUTCISODay,
+	getTimeZone,
 	getUTCISODayFromLocalDate,
 	getUTCISODayFromUTCDate,
 	isISODay,
@@ -140,4 +141,12 @@ test("toLocale", function () {
 	expect(toLocale("2022-03-01T00:00:00.000Z")).toBe("2022-02-28T16:00:00.000-08:00");
 	timezone_mock.register("UTC");
 	expect(toLocale("2022-03-01T00:00:00.000Z")).toBe("2022-03-01T00:00:00.000+00:00");
+});
+
+test("getTimeZone", function () {
+	expect(getTimeZone()).toMatch(/^[+-][0-9]{2}:[0-9]{2}$/);
+	timezone_mock.register("US/Pacific");
+	expect(getTimeZone()).toBe("-07:00");
+	timezone_mock.register("UTC");
+	expect(getTimeZone()).toMatch("+00:00");
 });

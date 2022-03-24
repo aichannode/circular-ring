@@ -1,5 +1,5 @@
 import moment from "moment";
-import { ISODay, ISOMonth } from "./type";
+import { ISODay, ISOMonth, TZ } from "./type";
 
 export function isYesterday(dateIso: string, todayIso: string) {
 	const today = moment(todayIso).startOf("day");
@@ -137,4 +137,11 @@ export function toUTC(localISODate: string): string {
 export function toLocale(isoDate: string) {
 	assertUTCDate(isoDate);
 	return moment(isoDate).toISOString(true);
+}
+
+export function getTimeZone(): TZ {
+	const offset = moment().utcOffset();
+	const hour = offset < 0 ? Math.floor(-offset / 60) : Math.floor(offset / 60);
+	const minutes = offset < 0 ? -offset % 60 : offset % 60;
+	return `${offset < 0 ? "-" : "+"}${hour < 10 ? `0${hour}` : hour}:${minutes < 10 ? `0${minutes}` : minutes}` as TZ;
 }
