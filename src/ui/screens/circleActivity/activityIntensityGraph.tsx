@@ -167,6 +167,7 @@ export const ActivityIntensityGraph: React.FC<Props> = observer(function Activit
 					<BarChart
 						style={{
 							flex: 1,
+							marginBottom: 27,
 						}}
 						data={data}
 						xAxis={xAxis}
