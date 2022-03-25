@@ -93,8 +93,8 @@ export interface AdvancedInfo {
 	openForNap: boolean;
 	maxHr: number;
 	hrZone: HrZone;
-	vo2Max: number;
-	rhr: number;
+	comparativeVo2Max: number;
+	comparativeRhr: number;
 	female: FemaleInfo;
 	stride: number;
 }

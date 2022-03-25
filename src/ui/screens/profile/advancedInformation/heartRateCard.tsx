@@ -55,7 +55,7 @@ export const HeartRateCard = () => {
 					<HRItemTitleText>{format("profile_advanced_info.heart_rate.rhr")}</HRItemTitleText>
 					<HRItemValue>
 						<HRItemValueNumber>
-							{advancedInfo.rhr ?? "-"}
+							{advancedInfo.comparativeRhr ?? "-"}
 							<HRItemValueUnit> bpm</HRItemValueUnit>
 						</HRItemValueNumber>
 					</HRItemValue>
@@ -64,7 +64,7 @@ export const HeartRateCard = () => {
 					<HRItemTitleText>{format("profile_advanced_info.heart_rate.vo2_max")}</HRItemTitleText>
 					<HRItemValue>
 						<HRItemValueNumber>
-							{advancedInfo.vo2Max ?? "-"}
+							{advancedInfo.comparativeVo2Max ?? "-"}
 							<HRItemValueUnit> bpm</HRItemValueUnit>
 						</HRItemValueNumber>
 					</HRItemValue>

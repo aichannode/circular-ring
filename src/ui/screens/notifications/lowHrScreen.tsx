@@ -19,7 +19,7 @@ export const LowHrScreen: React.FC = () => {
 	const notificationsSettings = useNotificationsSettings();
 	const [value, setValue] = useState<number | number[]>(notificationsSettings.lowHR);
 	const advancedInfo = useUserAdvancedInfo();
-	const defaultValue = !advancedInfo || !advancedInfo?.rhr ? 35 : advancedInfo?.rhr - 10;
+	const defaultValue = !advancedInfo || !advancedInfo?.comparativeRhr ? 35 : advancedInfo?.comparativeRhr - 10;
 
 	return (
 		<Container>
