@@ -100,7 +100,12 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = observer(functi
 					</TouchableOpacity>
 				</EditableNoteHourContainer>
 				{canDelete && (
-					<Pressable onPress={() => deleteNote(note)}>
+					<Pressable
+						onPress={() => {
+							console.log("delete", deleteNote);
+							deleteNote(note);
+						}}
+					>
 						<DeleteText>{format("calendar.delete_note")}</DeleteText>
 					</Pressable>
 				)}

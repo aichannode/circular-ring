@@ -135,21 +135,27 @@ export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditN
 	}, []);
 
 	useEffect(
-		() =>
-			when(
-				() => isLoading && !!calendar && calendar.notes.length > 0,
-				function () {
-					const noteNames = selectedTags.map((t) => t.name).join(", ");
-					LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-					setNoteAddedText(
-						format(selectedTags.length === 1 ? "calendar.note_added_success.one" : "calendar.note_added_success.many", {
-							notes: noteNames,
-						})
-					);
-					setLoading(false);
-					clearSelectedTags();
-				}
-			),
+		function () {
+			if (!!calendar && isLoading) {
+				return when(
+					() => calendar.notes.length > 0,
+					function () {
+						const noteNames = selectedTags.map((t) => t.name).join(", ");
+						LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+						setNoteAddedText(
+							format(
+								selectedTags.length === 1 ? "calendar.note_added_success.one" : "calendar.note_added_success.many",
+								{
+									notes: noteNames,
+								}
+							)
+						);
+						setLoading(false);
+						clearSelectedTags();
+					}
+				);
+			}
+		},
 		[calendar]
 	);
 

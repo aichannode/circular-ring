@@ -1,6 +1,5 @@
 import { CalendarTag } from "@domain/calendar/calendar";
 import { CalendarTagView } from "@ui/screens/calendar/calendarTagView";
-import { observer } from "mobx-react-lite";
 import React from "react";
 import styled from "styled-components/native";
 
@@ -12,7 +11,7 @@ interface CalendarTagListViewProps {
 	shouldSortAlphabeticaly?: boolean;
 }
 
-export const TagSelectionView: React.FC<CalendarTagListViewProps> = observer(function TagSelectionView({
+export const TagSelectionView: React.FC<CalendarTagListViewProps> = function TagSelectionView({
 	tags,
 	highlightedTagIds,
 	shouldDisplayHighlightedFirst,
@@ -44,7 +43,7 @@ export const TagSelectionView: React.FC<CalendarTagListViewProps> = observer(fun
 			})}
 		</Container>
 	);
-});
+};
 
 const Container = styled.View`
 	flex: 1;

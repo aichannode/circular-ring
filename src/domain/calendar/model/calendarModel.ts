@@ -16,7 +16,6 @@ export class CalendarModel implements Model<Proposal> {
 	constructor() {
 		// Mark all the collections of object that does not need to be deeply observed
 		makeAutoObservable<CalendarModel>(this, {
-			UTCMonthNotes: observable.shallow,
 			tagCategories: observable.shallow,
 		});
 	}

@@ -1,7 +1,6 @@
 import { getLogger } from "@core/logger/logger";
 import { Present } from "@core/model";
 import { getUTCISODayFromLocalDate, getUTCISODayFromUTCDate, isUTCDate, toLocale } from "@domain/common/business";
-import { action } from "mobx";
 import { CalendarNote, CalendarTag } from "../calendar";
 import { CalendarErrorContext, CUSTOM_TAG_CATEGORY_ID, Proposal } from "../common/type";
 import { CalendarApi } from "./lib/calendarApi";
@@ -152,7 +151,8 @@ export function createActions(calendarApi: CalendarApi, present: Present<Proposa
 			]);
 		},
 
-		deleteNote: action(async function (note: CalendarNote) {
+		deleteNote: function (note: CalendarNote) {
+			console.log(note);
 			present([
 				{
 					type: "deleteNote",
@@ -161,7 +161,7 @@ export function createActions(calendarApi: CalendarApi, present: Present<Proposa
 					},
 				},
 			]);
-		}),
+		},
 	};
 }
 
