@@ -3,7 +3,7 @@ import { useUnmount } from "@ui/utils/lifecycleHooks";
 import * as scale from "d3-scale";
 import * as shape from "d3-shape";
 import React, { useRef, useState } from "react";
-import { PanResponder, View } from "react-native";
+import { View } from "react-native";
 import { Defs, LinearGradient, Stop } from "react-native-svg";
 import { Grid, LineChart, XAxis, YAxis } from "react-native-svg-charts";
 import { getNearestDataIndexes, linspace, progress } from "./business";
@@ -87,37 +87,38 @@ export function StepChart({
 	const [selected, setSelected] = useState<Step | null>(null);
 	const [position, setPosition] = useState<Position | null>(null);
 
-	const panResponder = useRef(
-		renderTooltip &&
-			PanResponder.create({
-				onStartShouldSetPanResponder: () => true,
-				onStartShouldSetPanResponderCapture: () => true,
-				onMoveShouldSetPanResponder: () => true,
-				onMoveShouldSetPanResponderCapture: () => true,
-				onPanResponderTerminationRequest: () => true,
+	// TODO: This has been used to handle long press but for now we only use touch press.
+	// const panResponder = useRef(
+	// 	renderTooltip &&
+	// 		PanResponder.create({
+	// 			onStartShouldSetPanResponder: () => true,
+	// 			onStartShouldSetPanResponderCapture: () => true,
+	// 			onMoveShouldSetPanResponder: () => true,
+	// 			onMoveShouldSetPanResponderCapture: () => true,
+	// 			onPanResponderTerminationRequest: () => true,
 
-				// As we use PanResponder we cannot use onLongPress property of Touchable, so we use a timeout to detect long press.
-				onPanResponderGrant: (evt) => {
-					if (longPressTimeout.current) {
-						clearTimeout(longPressTimeout.current);
-					}
-					longPressTimeout.current = setTimeout(() => setTooltipVisible(true), longPressDelay);
-					updatePosition(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
-					return true;
-				},
-				onPanResponderMove: (evt) => {
-					updatePosition(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
-					return true;
-				},
-				onPanResponderRelease: () => {
-					if (longPressTimeout.current) {
-						clearTimeout(longPressTimeout.current);
-					}
-					setTooltipVisible(false);
-					return true;
-				},
-			})
-	);
+	// 			// As we use PanResponder we cannot use onLongPress property of Touchable, so we use a timeout to detect long press.
+	// 			onPanResponderGrant: (evt) => {
+	// 				if (longPressTimeout.current) {
+	// 					clearTimeout(longPressTimeout.current);
+	// 				}
+	// 				longPressTimeout.current = setTimeout(() => setTooltipVisible(true), longPressDelay);
+	// 				updatePosition(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
+	// 				return true;
+	// 			},
+	// 			onPanResponderMove: (evt) => {
+	// 				updatePosition(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
+	// 				return true;
+	// 			},
+	// 			onPanResponderRelease: () => {
+	// 				if (longPressTimeout.current) {
+	// 					clearTimeout(longPressTimeout.current);
+	// 				}
+	// 				setTooltipVisible(false);
+	// 				return true;
+	// 			},
+	// 		})
+	// );
 
 	function updatePosition(cursorX: number, cursorY: number) {
 		if (!graphRect.current || !data.length) {
@@ -242,6 +243,12 @@ export function StepChart({
 		>
 			<View style={{ marginBottom: 0, flexDirection: "row" }}>{yValues.length > 0 && yAxis}</View>
 			<View
+				onTouchStart={(evt) => {
+					updatePosition(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
+					if (!tooltipVisible) {
+						setTooltipVisible(true);
+					}
+				}}
 				style={{ flex: 1, position: "relative" }}
 				onLayout={(event) => {
 					const { x, y, width, height } = event.nativeEvent.layout;
@@ -252,7 +259,7 @@ export function StepChart({
 						height: height - verticalContentInset.top - verticalContentInset.bottom, // subtract the top and bottom content insets
 					};
 				}}
-				{...panResponder.current?.panHandlers}
+				// {...panResponder.current?.panHandlers}
 			>
 				<LineChart
 					style={{
