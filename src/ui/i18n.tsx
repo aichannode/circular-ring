@@ -208,6 +208,6 @@ export function useI18n(options?: FormatterOptions) {
 			}
 		},
 		formatTemperature: (temperature: number, isCelsius: boolean) =>
-			isCelsius ? `${temperature} °C` : `${(temperature * 9) / 5 + 32} °F`,
+			`${temperature > 0 ? "+" : ""}${isCelsius ? temperature + " °C" : (temperature * 9) / 5 + 32 + " °F"}`,
 	};
 }
