@@ -295,7 +295,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						}),
 					},
 					[MetricType.UserDailyPercREMStageScore]: {
-						value: data[MetricType.UserDailyPercREMStageScore] as number,
+						value: data[MetricType.UserDailyPercREMStage] as number,
 						thresholdLow: (data[MetricType.UserDailyPercREMStageScoreGoalMin] as number) ?? 0.8,
 						thresholdHigh: (data[MetricType.UserDailyPercREMStageScoreGoalMax] as number) ?? 0.9,
 						percent: data[MetricType.UserDailyPercREMStageScore] as number,

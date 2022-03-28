@@ -148,6 +148,7 @@ export const contributorCircadianRhythm = [
 export type ContributorCircadianRhythm = typeof contributorCircadianRhythm[number];
 
 export const contributorREMDuration = [
+	MetricType.UserDailyPercREMStage,
 	MetricType.UserDailyPercREMStageScore,
 	MetricType.UserDailyPercREMStageScoreGoalMin,
 	MetricType.UserDailyPercREMStageScoreGoalMax,
