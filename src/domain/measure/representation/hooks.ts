@@ -309,7 +309,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						value: data[MetricType.UserDailyPercDeepStage] as number,
 						thresholdLow: (data[MetricType.UserDailyPercDeepStageScoreGoalMin] as number) ?? 0.8,
 						thresholdHigh: (data[MetricType.UserDailyPercDeepStageScoreGoalMax] as number) ?? 0.9,
-						percent: data[MetricType.UserDailyPercDeepStage] as number,
+						percent: data[MetricType.UserDailyPercDeepStageScore] as number,
 						controlState: getScoreControlStates({
 							lowThreshold: (data[MetricType.UserDailyPercDeepStageScoreGoalMin] as number) ?? 0.8,
 							highThreshold: (data[MetricType.UserDailyPercDeepStageScoreGoalMax] as number) ?? 0.9,

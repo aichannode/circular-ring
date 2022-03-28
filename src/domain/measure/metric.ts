@@ -94,6 +94,7 @@ export enum MetricType {
 	UserDailyPercREMStageScoreGoalMax = "user.daily.percrem.stage.score.goal.max",
 
 	UserDailyPercDeepStage = "user.daily.percdeep.stage",
+	UserDailyPercDeepStageScore = "user.daily.percdeep.stage.score",
 	UserDailyPercDeepStageScoreGoalMin = "user.daily.percdeep.stage.score.goal.min",
 	UserDailyPercDeepStageScoreGoalMax = "user.daily.percdeep.stage.score.goal.max",
 

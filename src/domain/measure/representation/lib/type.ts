@@ -157,6 +157,7 @@ export type ContributorREMDuration = typeof contributorREMDuration[number];
 
 export const contributorDeepSleepuration = [
 	MetricType.UserDailyPercDeepStage,
+	MetricType.UserDailyPercDeepStageScore,
 	MetricType.UserDailyPercDeepStageScoreGoalMin,
 	MetricType.UserDailyPercDeepStageScoreGoalMax,
 ] as const;
