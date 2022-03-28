@@ -1,6 +1,5 @@
 import { MetricType } from "@domain/measure/metric";
 import { SleepScoreContributors } from "@domain/measure/representation/lib/type";
-import moment from "moment";
 import { WordingKey } from "src/wordings";
 import { GaugeDisplayConfig } from "../type";
 
@@ -19,9 +18,7 @@ export function getSleepGaugesConfig(format: (v: WordingKey) => string): SleepQu
 			titleKey: "sleep.quality.real_sleep.label",
 			descriptionKey: "sleep.quality.real_sleep.description",
 			renderValue: ({ value, percent }) =>
-				`${moment(value * 60 * 1000).hour()} h ${moment(value * 60 * 1000).minutes()} min (${Math.round(
-					percent * 100
-				)}%)`,
+				`${Math.floor(value / 60)} h ${value % 60} min (${Math.round(percent * 100)}%)`,
 		},
 		[MetricType.UserDailyTranquility]: {
 			// Tranquility: 2 metrics
