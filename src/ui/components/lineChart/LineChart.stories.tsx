@@ -1,6 +1,6 @@
 // components/Task.stories.js
 import { Lines } from "@domain/measure/representation/api";
-import { object } from "@storybook/addon-knobs";
+import { boolean, object, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react-native";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
@@ -75,6 +75,7 @@ const averages: Averages = [
 const [yMin, yMax] = [Math.min(...lines!.map((line) => line.y)), Math.max(...lines!.map((line) => line.y))];
 const [yMinIndex, yMaxIndex] = [lines!.findIndex((line) => line.y == yMin), lines!.findIndex((line) => line.y == yMax)];
 storiesOf("LineChart", module)
+	.addDecorator(withKnobs)
 	.add("default", () => (
 		<LineChart
 			averages={object("averages", averages)}
@@ -107,6 +108,7 @@ storiesOf("LineChart", module)
 			graphColor={colors.red}
 			valueFormatter="date"
 			valueFormatterPattern="H'h'"
+			hasNotEnoughData={boolean("hasNotEnoughData", false)}
 		/>
 	))
 	.add("Custom average value & color", () => {

@@ -406,7 +406,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					  }
 					: undefined;
 			},
-			useCanDisplayData(localISODay: ISODay): boolean {
+			hasEnoughData(localISODay: ISODay): boolean {
 				useEffect(
 					action(function () {
 						// Warning: date in model are in UTC, you need to convert them in local

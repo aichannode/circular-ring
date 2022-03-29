@@ -1,33 +1,43 @@
 import { ScoreQuality } from "@domain/measure/representation/api";
 import { ResponsiveCenterView, Stack } from "@ui/components/layout";
-import { ScoreView } from "@ui/components/scoreView";
+import { ScoreView } from "@ui/components/scoreView/ScoreView";
 import { SecondaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors, ScoreQualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
+import { isDefined } from "@ui/utils/filter";
 import React from "react";
 import { StyleProp, View, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
 interface ScoreSectionProps {
-	isDisabled: boolean;
 	label: string;
 	quality: ScoreQuality;
 	score: number;
 	color: string;
 	style?: StyleProp<ViewStyle>;
+	hasNotEnoughData?: boolean;
 }
-export const ScoreSection: React.FC<ScoreSectionProps> = ({ score, color, label, style, isDisabled, quality }) => {
+export const ScoreSection: React.FC<ScoreSectionProps> = ({
+	score,
+	color,
+	label,
+	style,
+	quality,
+	hasNotEnoughData,
+}) => {
+	const _hasNotEnoughData = hasNotEnoughData || !isDefined(score) || isNaN(score);
+
 	const { format, formatScoreQuality } = useI18n();
 
 	return (
 		<ResponsiveCenterView style={style} maxWidth={175} align="stretch" horizontalPadding={0}>
 			<SecondaryText>{label}</SecondaryText>
 			<ScoreWrapper align="center" gap={12}>
-				<ScoreView value={score} color={color} textColor={colors.textPrimary} />
+				<ScoreView value={score} color={color} textColor={colors.textPrimary} hasNotEnoughData={_hasNotEnoughData} />
 				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-					{!isDisabled && <ColoredDot color={ScoreQualityColors[quality]} />}
-					{isDisabled ? (
+					{!_hasNotEnoughData && <ColoredDot color={ScoreQualityColors[quality]} />}
+					{_hasNotEnoughData ? (
 						<TitleText style={{ color }}> {format("global.not_enough_data")}</TitleText>
 					) : (
 						<TitleText>{formatScoreQuality(quality)}</TitleText>

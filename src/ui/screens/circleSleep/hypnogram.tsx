@@ -16,12 +16,13 @@ export type { Steps } from "@ui/components/stepChart/StepChart";
 type Props = {
 	data: HypnogramData;
 	tags: CalendarTag[];
+	hasNotEnoughData?: boolean;
 };
 
 const defaultYAxis = [SleepStage.DEEP, SleepStage.LIGHT, SleepStage.REM, SleepStage.AWAKE];
 const defaultXAxis = [moment().hour(0).valueOf(), moment().hour(8).valueOf()];
 
-export function Hypnogram({ data, tags }: Props) {
+export function Hypnogram({ data, tags, hasNotEnoughData }: Props) {
 	const stepsData = toStepsData(data);
 	const { format } = useI18n();
 
@@ -80,6 +81,7 @@ export function Hypnogram({ data, tags }: Props) {
 				tooltipYOffset={-30}
 				tooltipSize={{ width: 40, height: 30 }}
 				chartHeight={200}
+				hasNotEnoughData={hasNotEnoughData}
 				renderTooltip={(step) => (
 					<>
 						<Tag containerStyle={{ backgroundColor: colors.blue, marginBottom: 4 }}>

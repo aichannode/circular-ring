@@ -1,3 +1,4 @@
+import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
 import * as scale from "d3-scale";
@@ -6,6 +7,7 @@ import React, { useRef, useState } from "react";
 import { View } from "react-native";
 import { Defs, LinearGradient, Stop } from "react-native-svg";
 import { Grid, LineChart, XAxis, YAxis } from "react-native-svg-charts";
+import { TextPlaceholder } from "../placeholder/TextPlaceholder";
 import { getNearestDataIndexes, linspace, progress } from "./business";
 
 interface Position {
@@ -42,6 +44,7 @@ interface StepChartProps {
 	tooltipYOffset?: number;
 	tooltipSize?: { width: number; height: number };
 	longPressDelay?: number;
+	hasNotEnoughData?: boolean;
 }
 
 const verticalContentInset = { top: 50, bottom: 20 };
@@ -61,8 +64,11 @@ export function StepChart({
 	tooltipYOffset = 0,
 	tooltipSize = { width: 50, height: 30 },
 	longPressDelay = 400,
+	hasNotEnoughData,
 	renderTooltip,
 }: StepChartProps) {
+	const _hasNotEnoughData = hasNotEnoughData || data.length === 0;
+
 	if (__DEV__) {
 		if (xAxisNbTicks < 2) {
 			throw new Error("xAxisNbTicks must be at least 2");
@@ -73,12 +79,14 @@ export function StepChart({
 	const yValues = data.length ? data.map((step) => step.y) : defaultYAxis;
 
 	const [xMin, xMax] = [Math.min(...xValues), Math.max(...xValues)];
-	const [yMin, yMax] = [Math.min(...yValues), Math.max(...yValues)];
-	const yAxisValues = [...new Set(yValues)].sort((a, b) => a - b);
+	const [yMin, yMax] = [Math.min(...yValues, ...defaultYAxis), Math.max(...yValues, ...defaultYAxis)];
+
 	const xAxisValues = linspace(xMin, xMax, xAxisNbTicks);
+	const yAxisValues = [...new Set([...yValues, ...defaultYAxis])].sort((a, b) => a - b);
 
 	const xContentInset = { left: xAxisContentInset, right: xAxisContentInset };
 	const yAxisContentInset = verticalContentInset.top;
+	const canShowAxes = !_hasNotEnoughData || defaultYAxis.length > 0;
 
 	const graphRect = useRef<Rect>();
 	const longPressTimeout = useRef<NodeJS.Timeout>();
@@ -86,6 +94,8 @@ export function StepChart({
 	const [tooltipVisible, setTooltipVisible] = useState(false);
 	const [selected, setSelected] = useState<Step | null>(null);
 	const [position, setPosition] = useState<Position | null>(null);
+
+	const { format } = useI18n();
 
 	// TODO: This has been used to handle long press but for now we only use touch press.
 	// const panResponder = useRef(
@@ -96,7 +106,6 @@ export function StepChart({
 	// 			onMoveShouldSetPanResponder: () => true,
 	// 			onMoveShouldSetPanResponderCapture: () => true,
 	// 			onPanResponderTerminationRequest: () => true,
-
 	// 			// As we use PanResponder we cannot use onLongPress property of Touchable, so we use a timeout to detect long press.
 	// 			onPanResponderGrant: (evt) => {
 	// 				if (longPressTimeout.current) {
@@ -261,34 +270,54 @@ export function StepChart({
 				}}
 				// {...panResponder.current?.panHandlers}
 			>
-				<LineChart
-					style={{
-						flex: 1,
-						height: chartHeight,
-						maxHeight: chartHeight,
-						marginLeft: xAxisContentInset,
-						marginRight: xAxisContentInset,
-					}}
-					data={data}
-					curve={shape.curveStep}
-					contentInset={verticalContentInset}
-					xAccessor={({ item }) => item.x}
-					yAccessor={({ item }) => item.y}
-					numberOfTicks={yAxisValues.length}
-					svg={{
-						strokeWidth: 4,
-						strokeLinejoin: "round",
-						stroke: "url(#gradient)",
-					}}
-				>
-					<Grid
-						svg={{
-							stroke: colors.darkGray,
-							strokeWidth: 0.5,
+				{_hasNotEnoughData && (
+					<View
+						style={[
+							{
+								flex: 1,
+							},
+							canShowAxes && {
+								marginLeft: xAxisContentInset,
+								marginRight: xAxisContentInset,
+								transform: [{ translateY: verticalContentInset.top }],
+							},
+						]}
+					>
+						<TextPlaceholder content={format("global.no_data_yet")} />
+					</View>
+				)}
+				{canShowAxes && (
+					<LineChart
+						style={{
+							flex: 1,
+							height: chartHeight,
+							maxHeight: chartHeight,
+							marginLeft: xAxisContentInset,
+							marginRight: xAxisContentInset,
 						}}
-					/>
-					{gradient}
-				</LineChart>
+						data={_hasNotEnoughData ? [] : data}
+						curve={shape.curveStep}
+						contentInset={verticalContentInset}
+						xAccessor={({ item }) => item.x}
+						yAccessor={({ item }) => item.y}
+						numberOfTicks={yAxisValues.length}
+						yMin={yMin}
+						yMax={yMax}
+						svg={{
+							strokeWidth: 4,
+							strokeLinejoin: "round",
+							stroke: "url(#gradient)",
+						}}
+					>
+						<Grid
+							svg={{
+								stroke: colors.darkGray,
+								strokeWidth: 0.5,
+							}}
+						/>
+						{gradient}
+					</LineChart>
+				)}
 				{tooltip}
 				<View
 					style={{

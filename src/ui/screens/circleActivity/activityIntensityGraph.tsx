@@ -3,9 +3,11 @@ import { ISODay } from "@domain/common/type";
 import { DailyActivityIntensityData } from "@domain/measure/representation/api";
 import { TimeFrame } from "@domain/measure/type";
 import { useIs24h } from "@domain/user/hooks/useUser";
+import { BarChart } from "@ui/components/measure/barChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
+import { TextPlaceholder } from "@ui/components/placeholder/TextPlaceholder";
 import { Spinner } from "@ui/components/spinner";
 import { Tag } from "@ui/components/tag";
 import { TitleText } from "@ui/components/text";
@@ -14,15 +16,16 @@ import { ActivityIntensityColors, colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { Platform, processColor, View } from "react-native";
-import { BarChart } from "react-native-charts-wrapper";
 import { getActivityIntensityBarColor } from "./business";
 
 type Props = {
 	selectedDay: ISODay;
+	hasNotEnoughData?: boolean;
 };
 
 export const ActivityIntensityGraph: React.FC<Props> = observer(function ActivityIntensityGraph({
 	selectedDay,
+	hasNotEnoughData,
 }: Props) {
 	const { format, formatHour } = useI18n();
 	const [isLoading, setLoading] = useState(true);
@@ -129,7 +132,7 @@ export const ActivityIntensityGraph: React.FC<Props> = observer(function Activit
 		// Workaround: We need to unmount the chart when there is no data.
 		isLoading ? (
 			<Spinner size={24} />
-		) : graphData.length ? (
+		) : (
 			<View>
 				<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
 					{format("activity.intensity")}
@@ -157,43 +160,56 @@ export const ActivityIntensityGraph: React.FC<Props> = observer(function Activit
 				</View>
 
 				<GraphContainer style={{ height: 300 }}>
-					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-						{tags.map(({ name, id }) => (
-							<View key={id} style={{ marginLeft: 8 }}>
-								<Tag>{name}</Tag>
+					{graphData.length > 0 && !hasNotEnoughData ? (
+						<>
+							<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+								{tags.map(({ name, id }) => (
+									<View key={id} style={{ marginLeft: 8 }}>
+										<Tag>{name}</Tag>
+									</View>
+								))}
 							</View>
-						))}
-					</View>
-					<BarChart
-						style={{
-							flex: 1,
-							marginBottom: 27,
-						}}
-						data={data}
-						xAxis={xAxis}
-						yAxis={yAxis}
-						legend={{
-							formToTextSpace: 5,
-							enabled: false,
-							xEntrySpace: 50,
-						}}
-						marker={{
-							enabled: true,
-							markerColor: processColor(colors.orangeRed),
-							textColor: processColor("white"),
-							textSize: 14,
-						}}
-						zoom={{ scaleX: 1, scaleY: 1, xValue: Math.floor(graphData.length / 2), yValue: 1 }}
-						pinchZoom={true}
-						scaleYEnabled={false}
-						doubleTapToZoomEnabled={false}
-						chartDescription={{ text: "" }}
-						visibleRange={{ x: { max: Math.min(graphData.length, 100) } }}
-						drawValueAboveBar={false}
-						highlightFullBarEnabled={true}
-						onSelect={console.log}
-					/>
+							<BarChart
+								style={{
+									flex: 1,
+									marginBottom: 27,
+								}}
+								data={data}
+								xAxis={xAxis}
+								yAxis={yAxis}
+								legend={{
+									formToTextSpace: 5,
+									enabled: false,
+									xEntrySpace: 50,
+								}}
+								marker={{
+									enabled: true,
+									markerColor: processColor(colors.orangeRed),
+									textColor: processColor("white"),
+									textSize: 14,
+								}}
+								zoom={{ scaleX: 1, scaleY: 1, xValue: Math.floor(graphData.length / 2), yValue: 1 }}
+								pinchZoom={true}
+								scaleYEnabled={false}
+								doubleTapToZoomEnabled={false}
+								chartDescription={{ text: "" }}
+								visibleRange={{ x: { max: Math.min(graphData.length, 100) } }}
+								drawValueAboveBar={false}
+								highlightFullBarEnabled={true}
+								onSelect={console.log}
+							/>
+						</>
+					) : (
+						<View
+							style={{
+								flex: 1,
+							}}
+						>
+							<TextPlaceholder content={format("global.no_data_yet")} />
+						</View>
+					)}
 					<GraphLegend
+						hasNotEnoughData={hasNotEnoughData}
 						rows={[
 							{
 								label: format("intensity.high"),
@@ -250,8 +266,6 @@ export const ActivityIntensityGraph: React.FC<Props> = observer(function Activit
 					/>
 				</GraphContainer>
 			</View>
-		) : (
-			<></>
 		)
 	);
 });

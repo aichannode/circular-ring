@@ -35,10 +35,10 @@ import { SleepDurationPieChart } from "./sleepDurationPie";
 export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
-	const { useDailySleepScoreContributors, useDailySleepQualityScore, useDailySleepStages, useCanDisplayData } =
+	const { useDailySleepScoreContributors, useDailySleepQualityScore, useDailySleepStages, hasEnoughData } =
 		useRepresentations().measure.hooks;
 	const { useDailyTags } = useRepresentations().calendar.hooks;
-	const canDisplay = useCanDisplayData(selectedDay);
+	const enoughData = hasEnoughData(selectedDay);
 	const sleepScoreContributorsData = useDailySleepScoreContributors(selectedDay);
 	const qualityScore = useDailySleepQualityScore(selectedDay);
 	const [dailySleep, setDailyData] = useState<DailySleepData | undefined>();
@@ -65,12 +65,12 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 		<Container>
 			<View>
 				<ScoreSection
-					isDisabled={!canDisplay}
 					style={{ marginTop: 20 }}
 					label={format("sleep.quality_score")}
 					score={qualityScore["user.daily.sleep.score"]}
 					quality={qualityScore.controlState}
 					color={colors.business.sleepPrimary}
+					hasNotEnoughData={!enoughData}
 				/>
 				<CircleCalendarButton
 					currentDay={selectedDay}
@@ -89,6 +89,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 					coreSleepTiming={dailySleep.coreSleepTiming}
 					napTimings={dailySleep.napTimings}
 					duration={dailySleep.totalMinutesSleepDuration ?? 0}
+					hasNotEnoughData={!enoughData}
 				/>
 			) : (
 				<Spinner />
@@ -99,37 +100,41 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 					sleepScoreContributors
 						.map((metric, index) => {
 							const uiConfig = sleepGaugesConfig[metric];
-							const percent = sleepScoreContributorsData[metric].percent;
-							return (
-								percent !== undefined &&
-								!isNaN(percent) && [
-									<ScoreGauge
-										key={metric}
-										value={uiConfig.renderValue({
-											...sleepScoreContributorsData[metric],
-										})}
-										percent={sleepScoreContributorsData[metric].percent}
+							const data = sleepScoreContributorsData[metric];
+							return [
+								<ScoreGauge
+									key={metric}
+									value={uiConfig.renderValue({
+										...data,
+									})}
+									percent={data.percent}
+									label={format(uiConfig.titleKey)}
+									quality={data.controlState}
+									onPress={() => {
+										LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+										setFocusedGauge((current) => (current === index ? null : index));
+									}}
+									hasNotEnoughData={
+										!enoughData ||
+										!isDefined(data.value) ||
+										!isDefined(data.percent) ||
+										isNaN(data.value) ||
+										isNaN(data.percent)
+									}
+								/>,
+								focusedGauge === index && (
+									<GaugeDescription
+										key={metric + "description"}
 										label={format(uiConfig.titleKey)}
-										quality={sleepScoreContributorsData[metric].controlState}
-										onPress={() => {
+										description={format(uiConfig.descriptionKey)}
+										colorType="Sleep"
+										onClose={() => {
 											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-											setFocusedGauge((current) => (current === index ? null : index));
+											setFocusedGauge(null);
 										}}
-									/>,
-									focusedGauge === index && (
-										<GaugeDescription
-											key={metric + "description"}
-											label={format(uiConfig.titleKey)}
-											description={format(uiConfig.descriptionKey)}
-											colorType="Sleep"
-											onClose={() => {
-												LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-												setFocusedGauge(null);
-											}}
-										/>
-									),
-								]
-							);
+									/>
+								),
+							];
 						})
 						.flatMap((x) => x)
 						.filter(Boolean) as JSX.Element[]
@@ -163,7 +168,9 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 				</View>
 				{dailySleep ? (
 					<GraphContainer>
-						{graphPeriod === TimeFrame.TODAY && <Hypnogram data={sleepStages} tags={tags} />}
+						{graphPeriod === TimeFrame.TODAY && (
+							<Hypnogram data={sleepStages} tags={tags} hasNotEnoughData={!enoughData} />
+						)}
 						{graphPeriod === TimeFrame.LAST_7_DAYS && (
 							<View style={{ height: 200 }}>
 								<LineChart
@@ -216,51 +223,61 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 									yColor={colors.darkGray}
 									shouldDrawCircles={true}
 									valueFormatter={["S", "M", "T", "W", "T", "F", "S"]}
+									hasNotEnoughData={!enoughData}
 								/>
 							</View>
 						)}
 						<View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
 							<GraphLegend
+								hasNotEnoughData={!enoughData}
 								rows={[
-									awakeDuration && {
+									{
 										label: format("sleep.stage.awake"),
 										element: {
 											key: "sleep.stage.awake",
 											node: <></>,
 										},
-										value: `${moment.duration(awakeDuration.duration).hours()} h ${moment
-											.duration(awakeDuration.duration)
-											.minutes()} min ${awakeDuration.percent}%`,
+										value:
+											awakeDuration &&
+											`${moment.duration(awakeDuration.duration).hours()} h ${moment
+												.duration(awakeDuration.duration)
+												.minutes()} min ${awakeDuration.percent}%`,
 									},
-									REMDuration && {
+									{
 										label: format("sleep.stage.REM"),
 										element: {
 											key: "sleep.stage.REM",
 											node: <></>,
 										},
-										value: `${moment.duration(REMDuration.duration).hours()} h ${moment
-											.duration(REMDuration.duration)
-											.minutes()} min ${REMDuration.percent}%`,
+										value:
+											REMDuration &&
+											`${moment.duration(REMDuration.duration).hours()} h ${moment
+												.duration(REMDuration.duration)
+												.minutes()} min ${REMDuration.percent}%`,
 									},
-									lightDuration && {
+									{
 										label: format("sleep.stage.light"),
 										element: {
 											key: "sleep.stage.light",
 											node: <></>,
 										},
-										value: `${moment.duration(lightDuration.duration).hours()} h ${moment
-											.duration(lightDuration.duration)
-											.minutes()} min ${lightDuration.percent}%`,
+										value:
+											lightDuration &&
+											`${moment.duration(lightDuration.duration).hours()} h ${moment
+												.duration(lightDuration.duration)
+												.minutes()} min ${lightDuration.percent}%`,
 									},
-									deepDuration && {
+									{
 										label: format("sleep.stage.deep"),
 										element: {
 											key: "sleep.stage.deep",
 											node: <></>,
 										},
-										value: `${moment.duration(deepDuration.duration).hours()} h ${moment
-											.duration(deepDuration.duration)
-											.minutes()} min ${deepDuration.percent}`,
+										value:
+											deepDuration &&
+											`${moment.duration(deepDuration.duration).hours()} h ${moment
+												.duration(deepDuration.duration)
+												.minutes()} min ${deepDuration.percent}`,
 									},
 								].filter(isDefined)}
 							/>

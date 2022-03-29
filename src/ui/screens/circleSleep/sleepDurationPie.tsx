@@ -13,13 +13,20 @@ type Props = {
 	coreSleepTiming?: [string, string];
 	napTimings?: Array<[string, string]>;
 	stages: Array<StageInfos<SleepStage>>;
+	hasNotEnoughData?: boolean;
 };
 
 function getPhaseLevel(phase = 4) {
 	return phase < 4 ? 1 : 0;
 }
 
-export function SleepDurationPieChart({ coreSleepTiming, stages: _stages, duration, napTimings = [] }: Props) {
+export function SleepDurationPieChart({
+	coreSleepTiming,
+	stages: _stages,
+	duration,
+	napTimings = [],
+	hasNotEnoughData,
+}: Props) {
 	// Complete circle with dummy data
 	const endCircle = {
 		start: _stages[_stages.length - 1]?.end,
@@ -40,6 +47,8 @@ export function SleepDurationPieChart({ coreSleepTiming, stages: _stages, durati
 				phaseColors={[colors.lightBlue, colors.darkBlue]}
 				phaseWidths={[5, 7]}
 				getPhaseLevel={getPhaseLevel}
+				hasNotEnoughData={hasNotEnoughData}
+				noDataPhaseColor={colors.lightBlue}
 			>
 				{coreSleepTiming && (
 					<DailyPieChartLabel

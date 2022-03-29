@@ -14,6 +14,7 @@ type Props = {
 	duration: number;
 	sportSessionDates: [string | undefined, string | undefined][];
 	stages: Array<StageInfos<ActivityStage>>;
+	hasNotEnoughData?: boolean;
 };
 
 function getPhaseLevel(phase = 1) {
@@ -25,7 +26,9 @@ function getPhaseLevel(phase = 1) {
  * @implements 00023: the chart should end at 00:00
  * @implements 00023: the arc during a sport session is always bold and red
  */
-export function ActivityDurationPieChart({ stages, duration, sportSessionDates, isToday }: Props) {
+export function ActivityDurationPieChart({ stages, duration, sportSessionDates, isToday, hasNotEnoughData }: Props) {
+	const _hasNotEnoughData = hasNotEnoughData || isNaN(duration);
+
 	// Check if the stage start at 00:00 and add a dummy stage if not
 	const correctedStages = produce(stages, function (draft) {
 		if (!draft.length) {
@@ -77,6 +80,8 @@ export function ActivityDurationPieChart({ stages, duration, sportSessionDates, 
 				]}
 				phaseWidths={[5, 7, 7, 7]}
 				getPhaseLevel={getPhaseLevel}
+				hasNotEnoughData={_hasNotEnoughData}
+				noDataPhaseColor={colors.business.activityDurationNone}
 			>
 				<DailyPieChartLabel
 					chartSize={200}

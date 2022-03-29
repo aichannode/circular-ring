@@ -86,7 +86,17 @@ export const App = () => {
 	}, []);
 
 	if (isStoryBookDisplayed) {
-		return <StorybookUIRoot />;
+		return (
+			<IntlProvider
+				locale={locale}
+				messages={translations[locale]}
+				onError={(err) => {
+					logger.error(err);
+				}}
+			>
+				<StorybookUIRoot />
+			</IntlProvider>
+		);
 	} else {
 		return initialized ? (
 			<IntlProvider

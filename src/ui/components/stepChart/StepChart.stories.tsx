@@ -1,4 +1,6 @@
 // components/Task.stories.js
+import { SleepStage } from "@domain/measure/type";
+import { boolean, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react-native";
 import { Tag } from "@ui/components/tag";
 import { colors } from "@ui/styles/colors";
@@ -75,7 +77,11 @@ function xLabelFormat(x: number) {
 	return moment(x).format("H A");
 }
 
+const defaultYAxis = [SleepStage.DEEP, SleepStage.LIGHT, SleepStage.REM, SleepStage.AWAKE];
+const defaultXAxis = [moment().hour(0).valueOf(), moment().hour(8).valueOf()];
+
 storiesOf("StepChart", module)
+	.addDecorator(withKnobs)
 	.add("default", () => {
 		return <StepChart data={defaultData} />;
 	})
@@ -99,10 +105,17 @@ storiesOf("StepChart", module)
 		return <StepChart data={defaultData} xAxisNbTicks={2} />;
 	})
 	.add("without data", () => {
-		return <StepChart data={[]} />;
+		return <StepChart data={[]} hasNotEnoughData={boolean("hasNotEnoughData", false)} />;
 	})
 	.add("without data and with placeholders", () => {
-		return <StepChart data={[]} defaultYAxis={[1, 2, 3, 4]} defaultXAxis={[0, 10]} />;
+		return (
+			<StepChart
+				data={[]}
+				defaultYAxis={[1, 2, 3, 4]}
+				defaultXAxis={[0, 10]}
+				hasNotEnoughData={boolean("hasNotEnoughData", false)}
+			/>
+		);
 	})
 	.add("no overlap x label", () => {
 		return <StepChart data={defaultData} xAxisContentInset={5} />;
@@ -138,6 +151,31 @@ storiesOf("StepChart", module)
 						<Tag containerStyle={{ backgroundColor: colors.blue }}>{yLabelFormat(step.y)}</Tag>
 					</>
 				)}
+			/>
+		);
+	})
+	.add("hypnograme without data", () => {
+		return (
+			<StepChart
+				data={[]}
+				defaultYAxis={defaultYAxis}
+				defaultXAxis={defaultXAxis}
+				yAxisWidth={31}
+				yColor={yColor}
+				yLabelFormat={yLabelFormat}
+				xLabelFormat={xLabelFormat}
+				xAxisContentInset={15}
+				tooltipYOffset={-30}
+				tooltipSize={{ width: 40, height: 30 }}
+				renderTooltip={(step) => (
+					<>
+						<Tag containerStyle={{ backgroundColor: colors.blue, marginBottom: 4 }}>
+							{moment(step.x).format("HH:mm")}
+						</Tag>
+						<Tag containerStyle={{ backgroundColor: colors.blue }}>{yLabelFormat(step.y)}</Tag>
+					</>
+				)}
+				hasNotEnoughData={boolean("hasNotEnoughData", false)}
 			/>
 		);
 	});

@@ -3,6 +3,7 @@ import { Grow } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { colors, ScoreQualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
+import { isDefined } from "@ui/utils/filter";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
@@ -10,19 +11,30 @@ import styled from "styled-components/native";
 interface DailyMetricProps {
 	icon: number;
 	label: string;
-	value: string;
+	value?: string;
 	score?: number;
 	controlState?: ActivityControlState;
 	style?: StyleProp<ViewStyle>;
+	hasNotEnoughData?: boolean;
 }
-export const DailyMetric: React.FC<DailyMetricProps> = ({ icon, label, value, controlState, style }) => {
+
+export const DailyMetric: React.FC<DailyMetricProps> = ({
+	icon,
+	label,
+	value,
+	controlState,
+	style,
+	hasNotEnoughData,
+}) => {
+	const _hasNotEnoughData = hasNotEnoughData || !isDefined(value);
+
 	return (
 		<Container style={style}>
 			<MetricIcon source={icon} />
 			<SecondaryText>{label}</SecondaryText>
 			<Grow />
-			{controlState && <QualityIndicator quality={controlState} />}
-			<Metric>{value !== undefined ? value : "-"}</Metric>
+			{controlState && !_hasNotEnoughData && <QualityIndicator quality={controlState} />}
+			<Metric>{_hasNotEnoughData ? "-" : value}</Metric>
 		</Container>
 	);
 };

@@ -26,8 +26,8 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 	const warningBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const wakeUpScore = useRepresentations().measure.hooks.useDailyWakeUpScore();
 	const autoConnectState = useAutoConnectState();
-	const { useCanDisplayData } = useRepresentations().measure.hooks;
-	const canDisplay = useCanDisplayData(getCurrentLocalISODay());
+	const { hasEnoughData } = useRepresentations().measure.hooks;
+	const enoughData = hasEnoughData(getCurrentLocalISODay());
 
 	useEffect(() => {
 		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
@@ -41,7 +41,7 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 			<ScrollView>
 				{wakeUpScore && (
 					<ScoreSection
-						isDisabled={!canDisplay}
+						hasNotEnoughData={!enoughData}
 						label={format("alarm.wake_up_score")}
 						color={colors.blue}
 						score={wakeUpScore.score}

@@ -1,9 +1,11 @@
 import { Lines } from "@domain/measure/representation/api";
+import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import React, { useState } from "react";
-import { processColor } from "react-native";
+import { processColor, View } from "react-native";
 import { LineChart as LineComponent } from "react-native-charts-wrapper";
 import styled from "styled-components/native";
+import { TextPlaceholder } from "../placeholder/TextPlaceholder";
 
 export interface DayItem {
 	awake: number;
@@ -37,6 +39,7 @@ interface LineChartProps {
 	yMinIndex?: number;
 	yMaxIndex?: number;
 	labelCount?: number;
+	hasNotEnoughData?: boolean;
 }
 
 export function LineChart({
@@ -56,8 +59,13 @@ export function LineChart({
 	yMinIndex,
 	yMaxIndex,
 	labelCount,
+	hasNotEnoughData,
 }: LineChartProps) {
 	const [scaleX, setScaleX] = useState(1);
+	const _hasNotEnoughData = hasNotEnoughData || (daysItem?.length === 0 && data?.length === 0);
+
+	const { format } = useI18n();
+
 	const xAxis = {
 		valueFormatter: valueFormatter,
 		valueFormatterPattern:
@@ -232,30 +240,36 @@ export function LineChart({
 		: [];
 	return (
 		<Container>
-			<LineComponent
-				highlights={highlights}
-				legend={{
-					enabled: false,
-				}}
-				chartDescription={{ text: "" }}
-				xAxis={xAxis}
-				style={{ flex: 1 }}
-				data={isMultipleLines ? dataLineWeeks : dataSets}
-				yAxis={yAxis}
-				autoScaleMinMaxEnabled={false}
-				marker={{
-					enabled: shouldShowLabel,
-					textColor: processColor(colors.white),
-					markerColor: processColor(colors.red),
-				}}
-				dragDecelerationEnabled={true}
-				highlightPerDragEnabled={false}
-				highlightPerTapEnabled={false}
-				doubleTapToZoomEnabled={true}
-				scaleYEnabled={false}
-				scaleXEnabled={!isMultipleLines}
-				onChange={(e) => setScaleX(typeof e.nativeEvent.scaleX == "undefined" ? 1 : e.nativeEvent.scaleX)}
-			></LineComponent>
+			{_hasNotEnoughData ? (
+				<View style={{ flex: 1 }}>
+					<TextPlaceholder content={format("global.no_data_yet")} />
+				</View>
+			) : (
+				<LineComponent
+					highlights={highlights}
+					legend={{
+						enabled: false,
+					}}
+					chartDescription={{ text: "" }}
+					xAxis={xAxis}
+					style={{ flex: 1 }}
+					data={isMultipleLines ? dataLineWeeks : dataSets}
+					yAxis={yAxis}
+					autoScaleMinMaxEnabled={false}
+					marker={{
+						enabled: shouldShowLabel,
+						textColor: processColor(colors.white),
+						markerColor: processColor(colors.red),
+					}}
+					dragDecelerationEnabled={true}
+					highlightPerDragEnabled={false}
+					highlightPerTapEnabled={false}
+					doubleTapToZoomEnabled={true}
+					scaleYEnabled={false}
+					scaleXEnabled={!isMultipleLines}
+					onChange={(e) => setScaleX(typeof e.nativeEvent.scaleX == "undefined" ? 1 : e.nativeEvent.scaleX)}
+				></LineComponent>
+			)}
 		</Container>
 	);
 }

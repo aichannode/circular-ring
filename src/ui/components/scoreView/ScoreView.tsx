@@ -1,15 +1,16 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing, StyleProp, Text, ViewStyle } from "react-native";
 import styled from "styled-components/native";
-import { lerp } from "./business";
-import { SineWave } from "./shapes/sineWave";
-import { PrimaryText } from "./text";
+import { lerp } from "../business";
+import { SineWave } from "../shapes/sineWave";
+import { PrimaryText } from "../text";
 
 interface ScoreViewProps {
 	color: string;
 	textColor?: string;
 	value?: number;
 	style?: StyleProp<ViewStyle>;
+	hasNotEnoughData?: boolean;
 }
 
 const scoreWaveAmplitude = 15;
@@ -18,7 +19,12 @@ const noValueHeight = 60;
 /**
  * @implements spec [00003](https://docs.google.com/document/d/16SRBS_XPqDhePKuCi6rQm399n72H_82GTPAiay6AQlQ/edit?disco=AAAAWbZAWfY) Flask is filled for a value from 50 to 100.
  */
-export const ScoreView: React.FC<ScoreViewProps> = ({ color, textColor, value = 0, style }) => {
+export const ScoreView: React.FC<ScoreViewProps> = ({ color, textColor, value = 0, style, hasNotEnoughData }) => {
+	const _hasNotEnoughData = hasNotEnoughData || isNaN(value);
+	if (_hasNotEnoughData) {
+		value = 0;
+	}
+
 	const waveTranslateX = useRef(new Animated.Value(0)).current;
 	useEffect(() => {
 		const animation = Animated.timing(waveTranslateX, {
@@ -48,7 +54,7 @@ export const ScoreView: React.FC<ScoreViewProps> = ({ color, textColor, value = 
 				<SineWave color={color} amplitude={scoreWaveAmplitude} />
 			</Animated.View>
 			<ScoreValue style={{ color: textColor ?? color }}>
-				{integer || "-"}
+				{_hasNotEnoughData ? "-" : integer}
 				{+decimals > 0 && <Text style={{ fontSize: 12 }}>,{decimals}</Text>}
 			</ScoreValue>
 		</Container>

@@ -115,6 +115,8 @@
 	"global.yes": "yes",
 	"global.no": "no",
 	"global.not_enough_data": "Not enough data",
+	"global.no_data_yet": "No data yet",
+	"global.no_data": "No data",
 	"global.done": "Done",
 	"global.date_interval_linker": "to",
 	"global.edit": "Edit",

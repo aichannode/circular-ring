@@ -19,6 +19,7 @@ import { ScoreGauge } from "@ui/containers/scoreGauge";
 import { ScoreSection } from "@ui/containers/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import { isDefined } from "@ui/utils/filter";
 import { observer } from "mobx-react-lite";
 import React, { useRef, useState } from "react";
 import { Image, LayoutAnimation, ScrollView, View } from "react-native";
@@ -61,7 +62,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 				useDailyActivities,
 				useDailyEnergyScore,
 				useDailyActivityIntensity,
-				useCanDisplayData,
+				hasEnoughData,
 			},
 		},
 	} = useRepresentations();
@@ -73,7 +74,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const activityContributorGaugesConfig = getActivityGaugesConfig(format);
 	useDailyActivityIntensity({ localISODay: selectedDay, setData });
 
-	const canDisplay = useCanDisplayData(selectedDay);
+	const enoughData = hasEnoughData(selectedDay);
 
 	const [activeItem, setActiveItem] = useState<number>(0);
 
@@ -82,12 +83,12 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 			<ScrollView>
 				<View>
 					<ScoreSection
-						isDisabled={!canDisplay}
 						style={{ marginTop: 20 }}
 						color={colors.orangeRed}
 						score={energyScore.score}
 						quality={energyScore.controlState}
 						label={format("activity.energy_score")}
+						hasNotEnoughData={!enoughData}
 					/>
 					<CircleCalendarButton
 						currentDay={selectedDay}
@@ -105,6 +106,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 					stages={activityIntensity.stages}
 					sportSessionDates={activityIntensity.sportSessionDates}
 					duration={activityIntensity.duration}
+					hasNotEnoughData={!enoughData}
 				/>
 				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
 				<ElementStack gap={10}>
@@ -113,16 +115,15 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 						const data = dailyActivitiesData[metric];
 
 						return (
-							typeof data.value === "number" && (
-								<DailyMetric
-									key={metric}
-									icon={getIcon(dataInfos.icon)}
-									label={format(dataInfos.labelKey)}
-									value={data.value.toFixed(dataInfos.decimalNb)}
-									score={data.score}
-									controlState={data.controlState}
-								/>
-							)
+							<DailyMetric
+								key={metric}
+								icon={getIcon(dataInfos.icon)}
+								label={format(dataInfos.labelKey)}
+								value={data.value?.toFixed(dataInfos.decimalNb)}
+								score={data.score}
+								controlState={data.controlState}
+								hasNotEnoughData={!enoughData || !isDefined(data.value) || isNaN(data.value)}
+							/>
 						);
 					})}
 				</ElementStack>
@@ -133,36 +134,38 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							.map((metric, index) => {
 								const uiConfig = activityContributorGaugesConfig[metric];
 								const percent = energyScoreDetails[metric].percent;
-								return (
-									percent !== undefined &&
-									!isNaN(percent) && [
-										<ScoreGauge
-											key={metric}
-											value={uiConfig.renderValue({
-												...energyScoreDetails[metric],
-											})}
-											percent={percent}
+								return [
+									<ScoreGauge
+										key={metric}
+										value={uiConfig.renderValue({
+											...energyScoreDetails[metric],
+										})}
+										percent={percent}
+										label={format(uiConfig.titleKey)}
+										quality={energyScoreDetails[metric].controlState}
+										onPress={() => {
+											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+											setFocusedGauge((current) => (current === index ? null : index));
+										}}
+										hasNotEnoughData={
+											!enoughData ||
+											!isDefined(energyScoreDetails[metric].value) ||
+											!isDefined(energyScoreDetails[metric].percent)
+										}
+									/>,
+									focusedGauge === index && (
+										<GaugeDescription
+											key={metric + "description"}
 											label={format(uiConfig.titleKey)}
-											quality={energyScoreDetails[metric].controlState}
-											onPress={() => {
+											description={format(uiConfig.descriptionKey)}
+											colorType="Activity"
+											onClose={() => {
 												LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-												setFocusedGauge((current) => (current === index ? null : index));
+												setFocusedGauge(null);
 											}}
-										/>,
-										focusedGauge === index && (
-											<GaugeDescription
-												key={metric + "description"}
-												label={format(uiConfig.titleKey)}
-												description={format(uiConfig.descriptionKey)}
-												colorType="Activity"
-												onClose={() => {
-													LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-													setFocusedGauge(null);
-												}}
-											/>
-										),
-									]
-								);
+										/>
+									),
+								];
 							})
 							.flatMap((x) => x)
 							.filter(Boolean) as JSX.Element[]
@@ -170,9 +173,14 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 				</ElementStack>
 
 				<ElementStack gap={10} style={{ display: "flex" }}>
-					{activeItem === 0 && <ActivityIntensityGraph selectedDay={selectedDay} />}
+					{activeItem === 0 && <ActivityIntensityGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
 
-					{activeItem === 1 && <HeartRateGraph selectedDay={selectedDay} />}
+					{activeItem === 1 && (
+						<HeartRateGraph
+							selectedDay={selectedDay}
+							// hasNotEnoughData={!enoughData} TODO: Add this prop when hasNotEnoughData is implemented in HeartRateGraph
+						/>
+					)}
 				</ElementStack>
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>

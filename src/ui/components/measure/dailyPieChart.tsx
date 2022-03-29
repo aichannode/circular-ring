@@ -2,6 +2,7 @@ import { isYesterday } from "@domain/common/business";
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import moment from "moment";
 import React from "react";
 import { Image, View } from "react-native";
 import { PieChart } from "react-native-svg-charts";
@@ -23,6 +24,8 @@ type Props = {
 	phaseColors: string[];
 	/** Phase stroke width, indexed by phase level */
 	phaseWidths: number[];
+	noDataPhaseColor: string;
+	hasNotEnoughData?: boolean;
 };
 
 export const DailyPieChart: React.FC<Props> = ({
@@ -34,7 +37,20 @@ export const DailyPieChart: React.FC<Props> = ({
 	title,
 	children,
 	getPhaseLevel,
+	noDataPhaseColor,
+	hasNotEnoughData,
 }) => {
+	const _hasNotEnoughData = hasNotEnoughData || stages.length === 0 || isNaN(totalDuration);
+	if (_hasNotEnoughData) {
+		stages = [
+			{
+				start: moment().startOf("day").toString(),
+				end: moment().endOf("day").add(1, "minute").toString(),
+				level: 2,
+			},
+		];
+	}
+
 	const startTime: string | undefined = stages[0]?.start; //TODO convert to local time
 	const endTime: string | undefined = stages[stages.length - 1]?.end; //TODO convert to local time
 
@@ -62,7 +78,7 @@ export const DailyPieChart: React.FC<Props> = ({
 	const data = stages.map((stage, index) => ({
 		key: index,
 		value: Date.parse(stage.end) - Date.parse(stage.start),
-		svg: { fill: phaseColors[getPhaseLevel(stage.level)] },
+		svg: { fill: _hasNotEnoughData ? noDataPhaseColor : phaseColors[getPhaseLevel(stage.level)] },
 		arc: { innerRadius: getSliceInnerRadius(index), outerRadius: getSliceOutterRadius(index) },
 	}));
 
@@ -85,7 +101,9 @@ export const DailyPieChart: React.FC<Props> = ({
 					<TotalDurationWrapper>
 						<SliceDurationLabel>{format(title)}</SliceDurationLabel>
 						{/* @TODO  format is24h below*/}
-						<SliceDurationValue>{formatDuration(totalDuration * 60)}</SliceDurationValue>
+						<SliceDurationValue>
+							{_hasNotEnoughData ? format("global.no_data") : formatDuration(totalDuration * 60)}
+						</SliceDurationValue>
 					</TotalDurationWrapper>
 					<Image source={require("@assets/images/morning.png")} />
 				</Row>

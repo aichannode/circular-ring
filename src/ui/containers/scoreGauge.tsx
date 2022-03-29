@@ -19,6 +19,7 @@ interface ScoreGaugeProps {
 	calibration?: [number, number];
 	style?: StyleProp<ViewStyle>;
 	onPress?: () => void;
+	hasNotEnoughData?: boolean;
 }
 
 /**
@@ -33,18 +34,20 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
 	percent,
 	calibration = [-1, 1], // Default gauge calibration from spec 00003
 	onPress,
+	hasNotEnoughData,
 }) => {
+	const _hasNotEnoughData = hasNotEnoughData || isNaN(percent);
 	const perc = lerp([0, 1], calibration)(percent);
 
 	return (
 		<Container style={style} onPress={onPress}>
 			<Row justify="space-between">
 				<SecondaryText>{label}</SecondaryText>
-				<SecondaryText>{value}</SecondaryText>
+				<SecondaryText>{_hasNotEnoughData ? "-" : value}</SecondaryText>
 			</Row>
 			<Gauge>
 				<GaugeValue
-					perc={perc <= 0 ? 0.01 : perc} // always fill a bit the gauge
+					perc={_hasNotEnoughData ? 0 : perc <= 0 ? 0.01 : perc} // always fill a bit the gauge
 					isInverted={isInverted}
 					style={{
 						backgroundColor: ScoreQualityColors[quality],
