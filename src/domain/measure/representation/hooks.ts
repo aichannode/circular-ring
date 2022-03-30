@@ -1,18 +1,28 @@
 import { ApiService } from "@core/api/apiService";
-import { getCurrentLocalISODay } from "@domain/common/business";
+import { getCurrentLocalISODay, getLast7Days } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
+import { isDefined } from "@ui/utils/guard";
 import { action } from "mobx";
 import { useEffect } from "react";
 import { createActions } from "../actions";
 import { MeasureApi } from "../actions/lib/measureApi";
 import { MetricType } from "../metric";
 import { MeasureModel } from "../model/measureModel";
-import { ActivityControlState, Contributor, DailyActivityIntensityData, DailyHr, DailySleepData } from "./api";
+import {
+	ActivityControlState,
+	Contributor,
+	DailyActivityIntensityData,
+	DailyHr,
+	DailySleepData,
+	Scores7D,
+	SleepItems,
+} from "./api";
 import { canDisplay, getActivityControlState, getScoreControlStates, parseDailyHR } from "./business";
 import { createActivityPhasesGetter, createSleepStagesGetter, useDailyHeavyComputationData } from "./lib/business";
 import { Activities, ActivityScoreContributors, SleepScoreContributors } from "./lib/type";
 export function createRepresentation(apiService: ApiService, model: MeasureModel) {
 	const actions = createActions(new MeasureApi(apiService), model.present);
+
 	return {
 		actions,
 		hooks: {
@@ -23,6 +33,54 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				}, [localISODay]);
 
 				return parseDailyHR(model.dailyHRMetrics.get(localISODay));
+			},
+			useCircleSleep(): SleepItems | undefined {
+				const items: SleepItems = [
+					{
+						awake: 1,
+						deep: 1.8,
+						rem: 3.6,
+						light: 5.2,
+					},
+					{
+						awake: 1.1,
+						deep: 1.9,
+						rem: 3.8,
+						light: 5.4,
+					},
+					{
+						awake: 1.7,
+						deep: 2.1,
+						rem: 3.9,
+						light: 5.4,
+					},
+					{
+						awake: 1.5,
+						deep: 1.7,
+						rem: 2,
+						light: 5.0,
+					},
+					{
+						awake: 1.4,
+						deep: 1.6,
+						rem: 3.8,
+						light: 4.8,
+					},
+					{
+						awake: 1.8,
+						deep: 2,
+						rem: 3,
+						light: 6.2,
+					},
+					{
+						awake: 2,
+						deep: 2.1,
+						rem: 3,
+						light: 5.4,
+					},
+				];
+
+				return items;
 			},
 			useDailyActivityIntensity({
 				localISODay = getCurrentLocalISODay(),
@@ -358,6 +416,40 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						highThreshold: 0.9,
 					}),
 				};
+			},
+			/**
+			 * @implements spec 00026
+			 */
+			useLast7DaysEnergyScore(localISODay: ISODay = getCurrentLocalISODay()): Scores7D | undefined {
+				// Compute the 7 previous date from the given date
+				const last7Days = getLast7Days(localISODay);
+
+				useEffect(
+					function () {
+						// Get the last 7 daily energy scores
+						last7Days.filter((d) => !model.dailyEnergyScore.has(d)).forEach((d) => actions.setDailyEnergyScore(d));
+						// and the average for the last 7 days
+						actions.setLast7DEnergyScore(localISODay);
+					},
+					[localISODay]
+				);
+
+				const scores = last7Days.map((date) => ({
+					value: model.dailyEnergyScore.get(date),
+					date,
+				})) as Scores7D["scores"];
+
+				// Spec 00026: IS_READY if has some historical data
+				const isReady = scores.some(isDefined);
+
+				return isReady
+					? {
+							scores,
+							constant: {
+								average: model.last7DEnergyScore.get(localISODay) ?? 0,
+							},
+					  }
+					: undefined;
 			},
 			useDailySleepQualityScore(localISODay: ISODay = getCurrentLocalISODay()) {
 				useEffect(

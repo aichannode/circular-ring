@@ -145,3 +145,14 @@ export function getTimeZone(): TZ {
 	const minutes = offset < 0 ? -offset % 60 : offset % 60;
 	return `${offset < 0 ? "-" : "+"}${hour < 10 ? `0${hour}` : hour}:${minutes < 10 ? `0${minutes}` : minutes}` as TZ;
 }
+
+/**
+ * Return the 7 previous date before the given date
+ */
+export function getLast7Days(isoDay: ISODay): [ISODay, ISODay, ISODay, ISODay, ISODay, ISODay, ISODay] {
+	return Array(7)
+		.fill(0)
+		.map((_, index) => {
+			return getUTCISODayFromUTCDate(moment(isoDay).subtract(index, "day").toISOString());
+		}) as [ISODay, ISODay, ISODay, ISODay, ISODay, ISODay, ISODay];
+}

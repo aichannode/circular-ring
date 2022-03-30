@@ -1,3 +1,4 @@
+import { ISODay } from "@domain/common/type";
 import { ActivityStage, SleepStage } from "../type";
 import { StageInfos } from "./lib/type";
 
@@ -57,3 +58,31 @@ export interface Line {
 	y: number;
 }
 export type Lines = Line[];
+export interface Score {
+	/** isoday*/
+	date: ISODay;
+	/** value */
+	value: number;
+}
+export interface Scores7D {
+	scores: [
+		Score | undefined,
+		Score | undefined,
+		Score | undefined,
+		Score | undefined,
+		Score | undefined,
+		Score | undefined,
+		Score | undefined
+	];
+	constant: {
+		average: number;
+	};
+}
+
+export interface SleepItem {
+	awake: number;
+	deep: number;
+	rem: number;
+	light: number;
+}
+export type SleepItems = SleepItem[];

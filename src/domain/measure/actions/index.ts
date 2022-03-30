@@ -1,5 +1,5 @@
 import { Present } from "@core/model";
-import { getLocalISODayFromUTCDate } from "@domain/common/business";
+import { getCurrentLocalISODay, getLocalISODayFromUTCDate } from "@domain/common/business";
 import { ISODay, ISOMonth } from "@domain/common/type";
 import moment from "moment";
 import { Proposal } from "../common/type";
@@ -143,6 +143,18 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					payload: {
 						localISODay,
 						score: data[MetricType.UserDailyEnergyScore] ? Number(data[MetricType.UserDailyEnergyScore]) : undefined,
+					},
+				},
+			]);
+		},
+		async setLast7DEnergyScore(localISODay: ISODay = getCurrentLocalISODay()) {
+			const data = await measureApi.fetchLastDailyMeasures([MetricType.User7DaysEnergyScore], localISODay);
+			present([
+				{
+					type: "setLast7DEnergyScore",
+					payload: {
+						localISODay,
+						score: (data[MetricType.User7DaysEnergyScore] as number) ?? 0,
 					},
 				},
 			]);

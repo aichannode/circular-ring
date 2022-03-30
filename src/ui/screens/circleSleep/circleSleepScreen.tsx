@@ -8,7 +8,6 @@ import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/b
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
 import { Stack } from "@ui/components/layout";
-import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { GraphLegend } from "@ui/components/measure/graphLegend";
@@ -31,6 +30,7 @@ import { trimSleepStages } from "./business";
 import { Hypnogram } from "./hypnogram";
 import { getSleepGaugesConfig } from "./measureDisplayInfos";
 import { SleepDurationPieChart } from "./sleepDurationPie";
+import { SleepStage7Days } from "./sleepStage7Days";
 
 export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
@@ -171,62 +171,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 						{graphPeriod === TimeFrame.TODAY && (
 							<Hypnogram data={sleepStages} tags={tags} hasNotEnoughData={!enoughData} />
 						)}
-						{graphPeriod === TimeFrame.LAST_7_DAYS && (
-							<View style={{ height: 200 }}>
-								<LineChart
-									daysItem={[
-										{
-											awake: 1,
-											deep: 1.8,
-											rem: 3.6,
-											light: 5.2,
-										},
-										{
-											awake: 1.1,
-											deep: 1.9,
-											rem: 3.8,
-											light: 5.4,
-										},
-										{
-											awake: 1.7,
-											deep: 2.1,
-											rem: 3.9,
-											light: 5.4,
-										},
-										{
-											awake: 1.5,
-											deep: 1.7,
-											rem: 2,
-											light: 5.0,
-										},
-										{
-											awake: 1.4,
-											deep: 1.6,
-											rem: 3.8,
-											light: 4.8,
-										},
-										{
-											awake: 1.8,
-											deep: 2,
-											rem: 3,
-											light: 6.2,
-										},
-										{
-											awake: 2,
-											deep: 2.1,
-											rem: 3,
-											light: 5.4,
-										},
-									]}
-									isMultipleLines={true}
-									xColor={colors.textPrimary}
-									yColor={colors.darkGray}
-									shouldDrawCircles={true}
-									valueFormatter={["S", "M", "T", "W", "T", "F", "S"]}
-									hasNotEnoughData={!enoughData}
-								/>
-							</View>
-						)}
+						{graphPeriod === TimeFrame.LAST_7_DAYS && <SleepStage7Days hasNotEnoughData={!enoughData} />}
 						<View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
 							<GraphLegend
 								hasNotEnoughData={!enoughData}

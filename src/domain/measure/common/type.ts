@@ -128,6 +128,13 @@ export type Mutations =
 				localISODay: ISODay;
 				data: Record<DailyWakeUpScoreMetrics, number>;
 			};
+	  }
+	| {
+			type: "setLast7DEnergyScore";
+			payload: {
+				localISODay: ISODay;
+				score: number;
+			};
 	  };
 
 export type Proposal = Mutations[];

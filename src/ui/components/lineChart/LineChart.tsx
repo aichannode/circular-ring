@@ -1,12 +1,13 @@
 import { Lines } from "@domain/measure/representation/api";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import moment from "moment";
 import React, { useState } from "react";
 import { processColor, View } from "react-native";
 import { LineChart as LineComponent } from "react-native-charts-wrapper";
 import styled from "styled-components/native";
+import { MultipleDataSets } from "../../type";
 import { TextPlaceholder } from "../placeholder/TextPlaceholder";
-
 export interface DayItem {
 	awake: number;
 	deep: number;
@@ -21,18 +22,20 @@ export interface Average {
 }
 export type Averages = Average[];
 export type DaysItem = DayItem[];
+type SelectEventPayload = { data: { x: number; y: number } };
 
 interface LineChartProps {
 	data?: Lines;
 	isMultipleLines?: boolean;
 	averages?: Averages;
-	daysItem?: DaysItem;
+	daysItem?: MultipleDataSets;
 	graphColor?: string;
 	xColor: string;
 	yColor: string;
 	shouldDrawCircles?: boolean;
 	valueFormatterPattern?: string | string[];
-	valueFormatter: string | string[];
+	yValueFormatterPattern?: string | undefined;
+	valueFormatter?: string | string[] | undefined;
 	shouldShowLabel?: boolean;
 	yMin?: number;
 	yMax?: number;
@@ -40,6 +43,10 @@ interface LineChartProps {
 	yMaxIndex?: number;
 	labelCount?: number;
 	hasNotEnoughData?: boolean;
+	shouldShowMarker?: boolean;
+	highlightPerTapEnabled?: boolean;
+	scaleXEnabled?: boolean;
+	onSelect?: (x: number) => void;
 }
 
 export function LineChart({
@@ -47,6 +54,7 @@ export function LineChart({
 	averages,
 	daysItem,
 	valueFormatterPattern,
+	yValueFormatterPattern,
 	valueFormatter,
 	isMultipleLines = false,
 	graphColor = colors.red,
@@ -59,23 +67,28 @@ export function LineChart({
 	yMinIndex,
 	yMaxIndex,
 	labelCount,
+	shouldShowMarker = false,
+	highlightPerTapEnabled = false,
+	scaleXEnabled = true,
 	hasNotEnoughData,
+	onSelect,
 }: LineChartProps) {
 	const [scaleX, setScaleX] = useState(1);
-	const _hasNotEnoughData = hasNotEnoughData || (daysItem?.length === 0 && data?.length === 0);
-
+	const linesLength = daysItem ? daysItem[0].lines.length : 0;
+	const _hasNotEnoughData = hasNotEnoughData || (linesLength === 0 && data?.length === 0);
 	const { format } = useI18n();
+	const [selectedX, setSelectedX] = useState<number | undefined>(onSelect ? data?.[0].x : -1);
 
 	const xAxis = {
 		valueFormatter: valueFormatter,
-		valueFormatterPattern:
-			typeof valueFormatterPattern == "string"
-				? valueFormatterPattern
-				: scaleX < 6
+		valueFormatterPattern: Array.isArray(valueFormatterPattern)
+			? scaleX < 6
 				? valueFormatterPattern?.[0]
-				: valueFormatterPattern?.[1],
+				: valueFormatterPattern?.[1]
+			: valueFormatterPattern,
+
 		position: "BOTTOM" as const,
-		centerAxisLabels: isMultipleLines ? false : true,
+		centerAxisLabels: !isMultipleLines,
 		drawAxisLine: false,
 		enabled: true,
 		granularity: 1,
@@ -104,6 +117,7 @@ export function LineChart({
 			gridColor: processColor(colors.extraLightGray),
 			granularityEnabled: true,
 			granularity: 1,
+			valueFormatterPattern: yValueFormatterPattern,
 			axisLineColor: processColor("white"),
 			limitLines: averages?.map(({ value, color }) => {
 				return {
@@ -124,15 +138,28 @@ export function LineChart({
 		dataSets: [
 			{
 				values: data?.map(({ x, y }) => {
-					const marker = y == yMin || y == yMax ? `${y}` : "";
+					let marker = "";
+					if (!!shouldShowMarker) {
+						marker = `${moment(x).format("Y-MM-DD")}\n${y}`;
+					} else if (y == yMin || y == yMax) {
+						marker = `${y}`;
+					}
 					return { x, y, marker };
 				}),
 				label: "",
 				config: {
 					drawValues: false,
-					lineWidth: 1,
+					lineWidth: shouldShowMarker ? 2 : 1,
 					drawCircles: shouldDrawCircles,
-					circleColor: processColor(graphColor),
+					circleColors: !!shouldShowMarker
+						? data?.map(({ x, y }) => {
+								if (x == selectedX) {
+									return processColor("#333333");
+								}
+								return processColor(graphColor);
+						  })
+						: [processColor(graphColor)],
+					drawCircleHole: false,
 					highlightColor: processColor("transparent"),
 					color: processColor(graphColor),
 					axisLineColor: processColor("white"),
@@ -140,96 +167,50 @@ export function LineChart({
 					drawFilled: false,
 					valueTextSize: 0,
 					legend: false,
+					circleRadius: 4,
 				},
 			},
 		],
 	};
 
-	const dataLineWeeks = {
+	const multipleDataSets = {
 		dataSets: isMultipleLines
-			? [
-					{
-						values: daysItem!.map(({ awake }, index) => {
-							return { x: index, y: awake };
+			? daysItem!.map(({ lines, color }) => {
+					return {
+						values: lines!.map(({ x, y }, index) => {
+							let marker = "";
+							if (!!shouldShowMarker) {
+								marker = `${moment(x).format("Y-MM-DD")}\n${y}`;
+							}
+							return { x: index, y, marker, value: x };
 						}),
 						label: "",
 						config: {
 							drawValues: false,
 							lineWidth: 3,
-							drawCircles: true,
-							circleRadius: 4,
-							circleColor: processColor(colors.business.sleepAwake),
-							circleHoleColor: processColor(colors.business.sleepAwake),
-							highlightColor: processColor("transparent"),
-							color: processColor(colors.business.sleepAwake),
-							axisLineColor: processColor("white"),
-							drawFilled: false,
-							valueTextSize: 0,
-							legend: false,
-						},
-					},
-					{
-						values: daysItem!.map(({ deep }, index) => {
-							return { x: index, y: deep };
-						}),
-						label: "",
-						config: {
-							drawValues: false,
-							lineWidth: 3,
-							drawCircles: true,
-							circleRadius: 4,
-							circleColor: processColor(colors.business.sleepDeep),
-							circleHoleColor: processColor(colors.business.sleepDeep),
-							highlightColor: processColor("transparent"),
-							color: processColor(colors.business.sleepDeep),
-							axisLineColor: processColor("white"),
-							drawFilled: false,
-							valueTextSize: 0,
-							legend: false,
-						},
-					},
+							drawCircleHole: false,
 
-					{
-						values: daysItem!.map(({ rem }, index) => {
-							return { x: index, y: rem };
-						}),
-						label: "",
-						config: {
-							drawValues: false,
-							lineWidth: 3,
 							drawCircles: true,
 							circleRadius: 4,
-							circleColor: processColor(colors.business.sleepRem),
-							circleHoleColor: processColor(colors.business.sleepRem),
+							circleColor: processColor(color),
+							circleHoleColor: processColor(color),
 							highlightColor: processColor("transparent"),
-							color: processColor(colors.business.sleepRem),
+							color: processColor(color),
 							axisLineColor: processColor("white"),
 							drawFilled: false,
 							valueTextSize: 0,
 							legend: false,
+							circleColors: !!shouldShowMarker
+								? lines?.map((_, i) => {
+										if (i == selectedX) {
+											return processColor("#333333");
+										}
+										return processColor(color);
+								  })
+								: [processColor(color)],
 						},
-					},
-					{
-						values: daysItem!.map(({ light }, index) => {
-							return { x: index, y: light };
-						}),
-						label: "",
-						config: {
-							drawValues: false,
-							lineWidth: 3,
-							drawCircles: true,
-							circleRadius: 4,
-							circleColor: processColor(colors.business.sleepLight),
-							circleHoleColor: processColor(colors.business.sleepLight),
-							highlightColor: processColor("transparent"),
-							color: processColor(colors.business.sleepLight),
-							axisLineColor: processColor("white"),
-							drawFilled: false,
-							valueTextSize: 0,
-							legend: false,
-						},
-					},
-			  ]
+					};
+			  })
 			: [],
 	};
 	const highlights = data?.length
@@ -253,7 +234,7 @@ export function LineChart({
 					chartDescription={{ text: "" }}
 					xAxis={xAxis}
 					style={{ flex: 1 }}
-					data={isMultipleLines ? dataLineWeeks : dataSets}
+					data={isMultipleLines ? multipleDataSets : dataSets}
 					yAxis={yAxis}
 					autoScaleMinMaxEnabled={false}
 					marker={{
@@ -263,11 +244,17 @@ export function LineChart({
 					}}
 					dragDecelerationEnabled={true}
 					highlightPerDragEnabled={false}
-					highlightPerTapEnabled={false}
-					doubleTapToZoomEnabled={true}
+					highlightPerTapEnabled={highlightPerTapEnabled}
 					scaleYEnabled={false}
-					scaleXEnabled={!isMultipleLines}
+					scaleXEnabled={scaleXEnabled}
 					onChange={(e) => setScaleX(typeof e.nativeEvent.scaleX == "undefined" ? 1 : e.nativeEvent.scaleX)}
+					onSelect={(e) => {
+						const payload = e.nativeEvent as SelectEventPayload | null;
+						if (payload?.data) {
+							setSelectedX(payload.data.x);
+							e.nativeEvent && onSelect && onSelect(payload.data.x);
+						}
+					}}
 				></LineComponent>
 			)}
 		</Container>
@@ -276,5 +263,4 @@ export function LineChart({
 
 const Container = styled.View`
 	flex: 1;
-	padding: 20px;
 `;

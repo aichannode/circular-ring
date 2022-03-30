@@ -5,6 +5,7 @@ import {
 	assertISOMonth,
 	assertLocalDate,
 	getCurrentLocalISODay,
+	getLast7Days,
 	getLocalISODayFromLocalDate,
 	getLocalISODayFromUTCDate,
 	getLocalISODayFromUTCISODay,
@@ -149,4 +150,27 @@ test("getTimeZone", function () {
 	expect(getTimeZone()).toBe("-07:00");
 	timezone_mock.register("UTC");
 	expect(getTimeZone()).toMatch("+00:00");
+});
+
+test("getLast7Days", function () {
+	timezone_mock.register("US/Pacific");
+	expect(getLast7Days("2022-03-01")).toEqual([
+		"2022-03-01",
+		"2022-02-28",
+		"2022-02-27",
+		"2022-02-26",
+		"2022-02-25",
+		"2022-02-24",
+		"2022-02-23",
+	]);
+	timezone_mock.register("UTC");
+	expect(getLast7Days("2022-03-01")).toEqual([
+		"2022-03-01",
+		"2022-02-28",
+		"2022-02-27",
+		"2022-02-26",
+		"2022-02-25",
+		"2022-02-24",
+		"2022-02-23",
+	]);
 });

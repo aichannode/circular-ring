@@ -1,12 +1,13 @@
 // components/Task.stories.js
-import { Lines } from "@domain/measure/representation/api";
+import { Lines, Scores7D } from "@domain/measure/representation/api";
 import { boolean, object, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react-native";
 import { colors } from "@ui/styles/colors";
+import { MultipleDataSets } from "@ui/type";
 import moment from "moment";
 import * as React from "react";
 import { GraphContainer } from "../measure/graphContainer";
-import { Averages, DaysItem, LineChart } from "./LineChart";
+import { Averages, LineChart } from "./LineChart";
 import { data } from "./mockedDataHR.json";
 
 const lines: Lines = data.map((e) => {
@@ -16,7 +17,7 @@ const lines: Lines = data.map((e) => {
 	};
 });
 
-const items: DaysItem = [
+const items = [
 	{
 		awake: 1,
 		deep: 1.8,
@@ -61,6 +62,33 @@ const items: DaysItem = [
 	},
 ];
 
+const dataSets: MultipleDataSets = [
+	{
+		lines: items.map(({ awake }, index) => {
+			return { x: index, y: awake };
+		}),
+		color: colors.business.sleepAwake,
+	},
+	{
+		lines: items.map(({ deep }, index) => {
+			return { x: index, y: deep };
+		}),
+		color: colors.business.sleepDeep,
+	},
+	{
+		lines: items.map(({ rem }, index) => {
+			return { x: index, y: rem };
+		}),
+		color: colors.business.sleepRem,
+	},
+	{
+		lines: items.map(({ light }, index) => {
+			return { x: index, y: light };
+		}),
+		color: colors.business.sleepLight,
+	},
+];
+
 const averages: Averages = [
 	{
 		value: 98,
@@ -74,6 +102,49 @@ const averages: Averages = [
 
 const [yMin, yMax] = [Math.min(...lines!.map((line) => line.y)), Math.max(...lines!.map((line) => line.y))];
 const [yMinIndex, yMaxIndex] = [lines!.findIndex((line) => line.y == yMin), lines!.findIndex((line) => line.y == yMax)];
+
+const scores: Scores7D = {
+	scores: [
+		{
+			date: "2022-03-03",
+			value: 80,
+		},
+		{
+			date: "2022-03-04",
+			value: 70,
+		},
+		{
+			date: "2022-03-05",
+			value: 75,
+		},
+		{
+			date: "2022-03-06",
+			value: 65,
+		},
+		{
+			date: "2022-03-07",
+			value: 60,
+		},
+		{
+			date: "2022-03-08",
+			value: 83,
+		},
+		{
+			date: "2022-03-09",
+			value: 85,
+		},
+	],
+	constant: {
+		average: 73,
+	},
+};
+const scoresLines: Lines = scores.scores.map((el) => {
+	return {
+		x: el ? moment(el.date).valueOf() : 0,
+		y: el?.value ? el.value * 100 : 0,
+	};
+});
+
 storiesOf("LineChart", module)
 	.addDecorator(withKnobs)
 	.add("default", () => (
@@ -88,6 +159,23 @@ storiesOf("LineChart", module)
 			valueFormatterPattern={["H'h'", "HH'h':mm"]}
 		/>
 	))
+	.add("Multiple Line", () => {
+		return (
+			<LineChart
+				isMultipleLines={true}
+				xColor={colors.textPrimary}
+				yColor={colors.darkGray}
+				daysItem={dataSets}
+				shouldDrawCircles={true}
+				valueFormatter={["S", "M", "T", "W", "T", "F", "S"]}
+				scaleXEnabled={false}
+				shouldShowMarker={true}
+				shouldShowLabel={true}
+				highlightPerTapEnabled={true}
+				onSelect={(date) => console.log(date)}
+			/>
+		);
+	})
 	.add("no data", () => (
 		<LineChart
 			xColor={colors.textPrimary}
@@ -125,19 +213,24 @@ storiesOf("LineChart", module)
 			/>
 		);
 	})
-	.add("Multiple Line", () => {
+
+	.add("One Line with select", () => {
 		return (
 			<LineChart
 				isMultipleLines={true}
 				xColor={colors.textPrimary}
 				yColor={colors.darkGray}
-				daysItem={items}
+				daysItem={[{ lines: scoresLines, color: colors.red }]}
 				shouldDrawCircles={true}
 				valueFormatter={["S", "M", "T", "W", "T", "F", "S"]}
+				scaleXEnabled={false}
+				shouldShowMarker={true}
+				shouldShowLabel={true}
+				highlightPerTapEnabled={true}
+				onSelect={(date) => console.log(date)}
 			/>
 		);
 	})
-
 	.add("Show min/max label", () => {
 		return (
 			<GraphContainer style={{ height: 500 }}>

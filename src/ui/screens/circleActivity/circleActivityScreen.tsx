@@ -27,6 +27,7 @@ import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
 import { DailyMetric } from "./dailyMetric";
+import { EnergyScoreGraph } from "./energyScoreGraph";
 import { HeartRateGraph } from "./heartRateGraph";
 import { dailyActivitiesUIConfig, getActivityGaugesConfig } from "./measureDisplayInfos";
 
@@ -181,6 +182,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							// hasNotEnoughData={!enoughData} TODO: Add this prop when hasNotEnoughData is implemented in HeartRateGraph
 						/>
 					)}
+					{activeItem === 2 && <EnergyScoreGraph selectedDay={selectedDay} />}
 				</ElementStack>
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
@@ -202,6 +204,15 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 									activeItem === 1
 										? require(`@assets/images/heartCircle.png`)
 										: require(`@assets/images/heartCircleTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+						<ImageContainer onPress={() => setActiveItem(2)}>
+							<GraphSwitcherButton
+								source={
+									activeItem === 2
+										? require(`@assets/images/energyScore.png`)
+										: require(`@assets/images/energyScoreTransparent.png`)
 								}
 							/>
 						</ImageContainer>

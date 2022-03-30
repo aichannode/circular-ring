@@ -68,6 +68,7 @@ export class MeasureModel implements Model<Proposal> {
 	> = new Map();
 	public dailySleepMetrics: Map<ISODay, RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>> = new Map();
 	public dailyEnergyScore: Map<ISODay, number | undefined> = new Map();
+	public last7DEnergyScore: Map<ISODay, number> = new Map();
 	public dailyActivityIntensityMetrics: Map<
 		ISODay,
 		RangeMetrics<DailyActivityIntensityMetrics, MetricType.UserDailyActivityTotal>
@@ -143,6 +144,10 @@ export class MeasureModel implements Model<Proposal> {
 			} else if (mutation.type === "setDailySleepScoreContributorsMetrics") {
 				mutate.call(this, mutation, () =>
 					this.dailySleepScoreContributorsMetrics.set(mutation.payload.localISODay, mutation.payload.data)
+				);
+			} else if (mutation.type === "setLast7DEnergyScore") {
+				mutate.call(this, mutation, () =>
+					this.last7DEnergyScore.set(mutation.payload.localISODay, mutation.payload.score)
 				);
 			}
 		});

@@ -44,7 +44,6 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 		lines!.findIndex((line) => line.y == yMax),
 	];
 	const tags = useDailyTags(selectedDay);
-
 	const averages: Averages = [];
 	if (typeof constant.reference !== "undefined") {
 		averages.push({
@@ -68,7 +67,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 
 	return isLoading ? (
 		<Spinner size={24} />
-	) : !!lines.length ? (
+	) : (
 		<View>
 			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
 				{format("live.heart_rate.label")}
@@ -158,7 +157,5 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 				</View>
 			</GraphContainer>
 		</View>
-	) : (
-		<></>
 	);
 });
