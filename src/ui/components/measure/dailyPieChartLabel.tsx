@@ -1,3 +1,4 @@
+import { useIs24h } from "@domain/user/hooks/useUser";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import moment, { Moment } from "moment";
@@ -25,7 +26,7 @@ export const DailyPieChartLabel: React.FC<Props> = ({ chartSize, labels }) => {
 		y: chartSize / 2,
 	};
 
-	const { format } = useI18n();
+	const { format, formatHour } = useI18n();
 
 	return (
 		<>
@@ -42,7 +43,7 @@ export const DailyPieChartLabel: React.FC<Props> = ({ chartSize, labels }) => {
 							>
 								<View>
 									<Label style={{ fontWeight: "500" }}>{text && format(text)}</Label>
-									<Label>{moment(date).format("HH:mm")}</Label>
+									<Label>{formatHour(new Date(date), useIs24h())}</Label>
 								</View>
 							</LabelPolarView>
 							<PolarSvg
