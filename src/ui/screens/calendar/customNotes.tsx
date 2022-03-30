@@ -113,7 +113,7 @@ const CustomNote = observer(function CustomNote({
 				)}
 			</Tags>
 			<CircularBottomSheet snapPoints={[480]} ref={createCustomNoteRef}>
-				<CreateCustomNoteBottomSheet onClose={() => createCustomNoteRef.current?.close()} />
+				<CreateCustomNoteBottomSheet onClose={() => createCustomNoteRef.current?.dismiss()} />
 			</CircularBottomSheet>
 		</>
 	);
