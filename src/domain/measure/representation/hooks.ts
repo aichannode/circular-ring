@@ -427,7 +427,9 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				useEffect(
 					function () {
 						// Get the last 7 daily energy scores
-						last7Days.filter((d) => !model.dailyEnergyScore.has(d)).forEach((d) => actions.setDailyEnergyScore(d));
+						last7Days
+							.filter((d) => !model.dailyEnergyScore.has(d))
+							.forEach((d) => actions.setDailyEnergyScore(d, true));
 						// and the average for the last 7 days
 						actions.setLast7DEnergyScore(localISODay);
 					},

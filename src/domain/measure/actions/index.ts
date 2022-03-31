@@ -135,7 +135,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
-		async setDailyEnergyScore(localISODay: ISODay = moment().toISOString() as ISODay) {
+		async setDailyEnergyScore(localISODay: ISODay = moment().toISOString() as ISODay, useForceRefresh = false) {
 			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailyEnergyScore], localISODay);
 			present([
 				{

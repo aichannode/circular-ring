@@ -1,4 +1,5 @@
 import { ApiService } from "@core/api/apiService";
+import { isToday } from "@domain/common/business";
 import { ISODay, ISOMonth } from "@domain/common/type";
 import moment from "moment";
 import { toUTCTimeSegment } from "../../common/business";
@@ -26,7 +27,7 @@ export class MeasureApi {
 			isoStart: string;
 			isoEnd: string;
 		},
-		useForceRefresh?: boolean
+		useForceRefresh = isToday(isoEnd, new Date().toISOString())
 	): Promise<Array<DatedMetrics<T>>> {
 		const {
 			data: { data },
@@ -34,7 +35,6 @@ export class MeasureApi {
 			params: { metrics, start: isoStart, end: isoEnd },
 			useForceRefresh,
 		});
-
 		if (data.length) {
 			const chain: DatedMetrics[] = [];
 			let currentTimestamp = data[0].timestamp;
@@ -65,7 +65,7 @@ export class MeasureApi {
 			isoStart: string;
 			isoEnd: string;
 		},
-		useForceRefresh?: boolean
+		useForceRefresh = isToday(isoEnd, new Date().toISOString())
 	): Promise<Partial<Metrics<T>>> {
 		const result = await this.apiService.get<Partial<Metrics<T>>>(latestMeasureApiUrl, {
 			params: { metrics, start: isoStart, end: isoEnd },
@@ -84,9 +84,10 @@ export class MeasureApi {
 
 	public async fetchLastDailyMeasures<T extends MetricType>(
 		measures: ReadonlyArray<T>,
-		isoDay: ISODay
+		isoDay: ISODay,
+		useForceRefresh = false
 	): Promise<Partial<Metrics<T>>> {
-		return await this.getLastMeasures(measures, toUTCTimeSegment(isoDay, TimeFrame.DAY));
+		return await this.getLastMeasures(measures, toUTCTimeSegment(isoDay, TimeFrame.DAY), useForceRefresh);
 	}
 
 	public async fetchDailyMeasures<T extends MetricType>(
