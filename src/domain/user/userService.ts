@@ -33,9 +33,9 @@ const defaultNotificationsSettings = {
 	period: "On",
 	PMS: "On",
 	fertility: "On",
-	highHRAlert: "On",
-	lowHRAlert: "On",
-	lowSPO2Alert: "On",
+	highHRAlert: "Off",
+	lowHRAlert: "Off",
+	lowSPO2Alert: "Off",
 	highHR: 190,
 	lowHR: 50,
 	SPO2: 90,
@@ -233,15 +233,16 @@ export class UserService {
 		await this.userStorage.saveUserNotificationsSettings({ ...this._userNotificationsSettings.get(), ...newValue });
 		const userNotifications = this._userNotificationsSettings.get();
 		if ("lowHR" in newValue || "lowHRAlert" in newValue) {
-			const activated = userNotifications.lowHRAlert ? "01" : "00";
+			console.log("userNotifications.lowHRAlert", userNotifications.lowHRAlert);
+			const activated = userNotifications.lowHRAlert === "On" ? "01" : "00";
 			const value = userNotifications.lowHR.toString(16);
 			await this.bleDeviceService.write(`ALT01${activated}${value}`);
 		} else if ("highHR" in newValue || "highHRAlert" in newValue) {
-			const activated = userNotifications.highHRAlert ? "01" : "00";
+			const activated = userNotifications.highHRAlert === "On" ? "01" : "00";
 			const value = userNotifications.highHR.toString(16);
 			await this.bleDeviceService.write(`ALT02${activated}${value}`);
 		} else if ("SPO2" in newValue || "SPO2Alert") {
-			const activated = userNotifications.lowSPO2Alert ? "01" : "00";
+			const activated = userNotifications.lowSPO2Alert === "On" ? "01" : "00";
 			const value = userNotifications.SPO2.toString(16);
 			await this.bleDeviceService.write(`ALT00${activated}${value}`);
 		}
