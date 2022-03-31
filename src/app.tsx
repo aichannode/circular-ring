@@ -28,7 +28,7 @@ configure({
 	enforceActions: "always",
 	computedRequiresReaction: true,
 	reactionRequiresObservable: true,
-	// observableRequiresReaction: true,
+	observableRequiresReaction: true,
 	useProxies: "never",
 });
 
