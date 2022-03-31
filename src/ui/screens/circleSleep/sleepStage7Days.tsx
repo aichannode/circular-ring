@@ -10,7 +10,7 @@ type Props = {
 };
 
 export function SleepStage7Days({ hasNotEnoughData }: Props) {
-	const { useCircleSleep } = useRepresentations().measure.hooks;
+	const { use7DSleepStages: useCircleSleep } = useRepresentations().measure.hooks;
 	const items = useCircleSleep();
 
 	const dataSets: MultipleDataSets = [

@@ -34,7 +34,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 				return parseDailyHR(model.dailyHRMetrics.get(localISODay));
 			},
-			useCircleSleep(): SleepItems | undefined {
+			use7DSleepStages(): SleepItems | undefined {
 				const items: SleepItems = [
 					{
 						awake: 1,
