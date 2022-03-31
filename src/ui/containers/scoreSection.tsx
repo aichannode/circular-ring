@@ -12,8 +12,8 @@ import styled from "styled-components/native";
 
 interface ScoreSectionProps {
 	label: string;
-	quality: ScoreQuality;
-	score: number;
+	quality?: ScoreQuality;
+	score?: number;
 	color: string;
 	style?: StyleProp<ViewStyle>;
 	hasNotEnoughData?: boolean;
@@ -26,7 +26,7 @@ export const ScoreSection: React.FC<ScoreSectionProps> = ({
 	quality,
 	hasNotEnoughData,
 }) => {
-	const _hasNotEnoughData = hasNotEnoughData || !isDefined(score) || isNaN(score);
+	const _hasNotEnoughData = hasNotEnoughData || !isDefined(score) || isNaN(score) || !isDefined(quality);
 
 	const { format, formatScoreQuality } = useI18n();
 

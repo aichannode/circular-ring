@@ -39,16 +39,14 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 	return (
 		<Container>
 			<ScrollView>
-				{wakeUpScore && (
-					<ScoreSection
-						hasNotEnoughData={!enoughData}
-						label={format("alarm.wake_up_score")}
-						color={colors.blue}
-						score={wakeUpScore.score}
-						quality={wakeUpScore.controlState}
-						style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
-					/>
-				)}
+				<ScoreSection
+					hasNotEnoughData={!enoughData}
+					label={format("alarm.wake_up_score")}
+					color={colors.blue}
+					score={wakeUpScore?.score}
+					quality={wakeUpScore?.controlState}
+					style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
+				/>
 				<InfoListHeader>{format("alarm.score.programmed")}</InfoListHeader>
 				<AlarmContainer>
 					{alarms?.map((value) => (
