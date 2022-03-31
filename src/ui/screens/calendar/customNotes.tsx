@@ -5,6 +5,7 @@ import { CalendarTag } from "@domain/calendar/calendar";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
+import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef, useState } from "react";
 import { Image, TouchableOpacity, View } from "react-native";
@@ -34,11 +35,11 @@ const CustomNote = observer(function CustomNote({
 
 	// Disable delete mode when there is no more tag anymore
 	useEffect(
-		function () {
+		action(function () {
 			if (!customNote.length && !selectedTags.length) {
 				setDelete(false);
 			}
-		},
+		}),
 		[customNote.length, selectedTags.length]
 	);
 

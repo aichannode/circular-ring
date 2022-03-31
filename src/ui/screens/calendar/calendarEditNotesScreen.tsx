@@ -20,7 +20,7 @@ import { textStyles } from "@ui/styles/textStyles";
 import { deduplicate } from "@ui/utils/filter";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
 import { when } from "mobx";
-import { observer } from "mobx-react-lite";
+import { observer, useLocalObservable } from "mobx-react-lite";
 import moment from "moment";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { LayoutAnimation, Pressable, View } from "react-native";
@@ -182,7 +182,7 @@ export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditN
 	}, [selectedTags, startDate, endDate, dismissHeader]);
 
 	// CIR-402, put selected tag first, then put the last used tags.
-	const tags = selectedTags.concat(lastUsedTags).filter(deduplicate("id"));
+	const tags = useLocalObservable(() => selectedTags.concat(lastUsedTags).filter(deduplicate("id")));
 
 	const disableRegisterNote = endDate < startDate || selectedTags.length === 0;
 
