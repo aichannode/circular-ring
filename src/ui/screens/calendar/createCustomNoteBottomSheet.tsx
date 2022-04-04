@@ -51,7 +51,7 @@ export const CreateCustomNoteBottomSheet: React.FC<CreateCustomNoteBottomSheetPr
 				() => Array.from(useTags().values()).reduce((sum, tags) => sum + tags.length, 0),
 				(nbTags, prevNbTags) => {
 					if (prevNbTags > 0 && nbTags > prevNbTags) {
-						onClose();
+						setTimeout(() => onClose(), 100);
 					}
 				}
 			);
