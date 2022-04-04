@@ -53,7 +53,12 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
 	const [activityIntensity, setData] = useState<DailyActivityIntensityData>({
 		stages: [],
-		duration: 0,
+		duration: {
+			total: 0,
+			highActivity: 0,
+			mediumActivity: 0,
+			lowActivity: 0,
+		},
 		sportSessionDates: [],
 	});
 	const {
@@ -106,7 +111,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 					isToday={selectedDay === getCurrentLocalISODay()}
 					stages={activityIntensity.stages}
 					sportSessionDates={activityIntensity.sportSessionDates}
-					duration={activityIntensity.duration}
+					duration={activityIntensity.duration.total}
 					hasNotEnoughData={!enoughData}
 				/>
 				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
