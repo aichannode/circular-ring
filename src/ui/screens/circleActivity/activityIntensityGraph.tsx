@@ -27,7 +27,7 @@ export const ActivityIntensityGraph: React.FC<Props> = observer(function Activit
 	selectedDay,
 	hasNotEnoughData,
 }: Props) {
-	const { format, formatHour } = useI18n();
+	const { format, formatHour, formatDuration } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 
 	const is24h = useIs24h();
@@ -35,7 +35,12 @@ export const ActivityIntensityGraph: React.FC<Props> = observer(function Activit
 
 	const [dataActivityIntensity, setData] = useState<DailyActivityIntensityData>({
 		stages: [],
-		duration: 0,
+		duration: {
+			total: 0,
+			highActivity: 0,
+			mediumActivity: 0,
+			lowActivity: 0,
+		},
 		sportSessionDates: [],
 	});
 	const {
@@ -226,7 +231,12 @@ export const ActivityIntensityGraph: React.FC<Props> = observer(function Activit
 										/>
 									),
 								},
-								value: "1 h 00 min   (7%)",
+								value: hasNotEnoughData
+									? format("global.no_data")
+									: `${formatDuration(dataActivityIntensity.duration.lowActivity)} (${(
+											(dataActivityIntensity.duration.lowActivity / dataActivityIntensity.duration.total) *
+											100
+									  ).toFixed(2)}`,
 							},
 							{
 								label: format("intensity.medium"),
@@ -243,7 +253,12 @@ export const ActivityIntensityGraph: React.FC<Props> = observer(function Activit
 										/>
 									),
 								},
-								value: "2 h 00 min (14%)",
+								value: hasNotEnoughData
+									? format("global.no_data")
+									: `${formatDuration(dataActivityIntensity.duration.mediumActivity)} (${(
+											(dataActivityIntensity.duration.mediumActivity / dataActivityIntensity.duration.total) *
+											100
+									  ).toFixed(2)}`,
 							},
 							{
 								label: format("intensity.low"),
@@ -260,7 +275,12 @@ export const ActivityIntensityGraph: React.FC<Props> = observer(function Activit
 										/>
 									),
 								},
-								value: "10 h 30 min (79%)",
+								value: hasNotEnoughData
+									? format("global.no_data")
+									: `${formatDuration(dataActivityIntensity.duration.highActivity)} (${(
+											(dataActivityIntensity.duration.highActivity / dataActivityIntensity.duration.total) *
+											100
+									  ).toFixed(2)}`,
 							},
 						]}
 					/>

@@ -4,7 +4,12 @@ import { StageInfos } from "./lib/type";
 
 export type DailyActivityIntensityData = {
 	stages: Array<StageInfos<ActivityStage>>;
-	duration: number;
+	duration: {
+		total: number;
+		highActivity: number;
+		mediumActivity: number;
+		lowActivity: number;
+	};
 	sportSessionDates: Array<[string | undefined, string | undefined]>;
 };
 export type DailySleepData = {

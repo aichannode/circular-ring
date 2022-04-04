@@ -43,6 +43,8 @@ import {
 	contributorVarTemperature,
 	ContributorWakeUpScore,
 	contributorWakeUpScore,
+	dailyActivityIntensityDuration,
+	DailyActivityIntensityDuration,
 	dailyActivityIntensityMetrics,
 	DailyActivityIntensityMetrics,
 	dailyHRConstantMetrics,
@@ -178,10 +180,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		async setDailyActivityIntensityMetrics(localISODay: ISODay = moment().toISOString() as ISODay) {
 			Promise.all([
 				measureApi.fetchDailyMeasures<DailyActivityIntensityMetrics>(dailyActivityIntensityMetrics, localISODay),
-				measureApi.fetchLastDailyMeasures<MetricType.UserDailyActivityTotal>(
-					[MetricType.UserDailyActivityTotal],
-					localISODay
-				),
+				measureApi.fetchLastDailyMeasures<DailyActivityIntensityDuration>(dailyActivityIntensityDuration, localISODay),
 			]).then(function ([timeSeries, duration]) {
 				present([
 					{

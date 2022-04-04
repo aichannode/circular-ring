@@ -189,6 +189,14 @@ export const dailyActivityIntensityMetrics = [
 ] as const;
 export type DailyActivityIntensityMetrics = typeof dailyActivityIntensityMetrics[number];
 
+export const dailyActivityIntensityDuration = [
+	MetricType.UserDailyActiveMinute,
+	MetricType.UserDailyHighActivityIntensityDuration,
+	MetricType.UserDailyMediumActivityIntensityDuration,
+	MetricType.UserDailyLowActivityIntensityDuration,
+] as const;
+export type DailyActivityIntensityDuration = typeof dailyActivityIntensityDuration[number];
+
 /**
  * Activities metrics
  */

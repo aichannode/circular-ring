@@ -128,9 +128,13 @@ export enum MetricType {
 	// Daily activity duration
 	/////////////////
 	UserDataActivityIntensity = "user.data.activity.intensity",
-	UserDailyActivityTotal = "user.daily.activity.total",
+	UserDailyActiveMinute = "user.daily.active.minute",
 	UserDailySportBegin = "user.daily.sport.begin",
 	UserDailySportEnd = "user.daily.sport.end",
+
+	UserDailyHighActivityIntensityDuration = "user.daily.high.activity.intensity.duration",
+	UserDailyMediumActivityIntensityDuration = "user.daily.medium.activity.intensity.duration",
+	UserDailyLowActivityIntensityDuration = "user.daily.low.activity.intensity.duration",
 
 	///////////////////
 	// Daily activities

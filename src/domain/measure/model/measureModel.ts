@@ -24,6 +24,7 @@ import {
 	ContributorTimeToFallAsleep,
 	ContributorVarTemperature,
 	ContributorWakeUpScore,
+	DailyActivityIntensityDuration,
 	DailyActivityIntensityMetrics,
 	DailyHRConstantMetrics,
 	DailyHRTimeSeriesMetrics,
@@ -71,7 +72,7 @@ export class MeasureModel implements Model<Proposal> {
 	public last7DEnergyScore: Map<ISODay, number> = new Map();
 	public dailyActivityIntensityMetrics: Map<
 		ISODay,
-		RangeMetrics<DailyActivityIntensityMetrics, MetricType.UserDailyActivityTotal>
+		RangeMetrics<DailyActivityIntensityMetrics, DailyActivityIntensityDuration>
 	> = new Map();
 	public dailyActivitiesMetrics: Map<
 		ISODay,

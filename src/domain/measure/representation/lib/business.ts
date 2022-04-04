@@ -5,23 +5,22 @@ import { useEffect, useRef } from "react";
 import { InteractionManager } from "react-native";
 import { MetricType, RangeMetrics } from "../../metric";
 import { ActivityStage, SleepStage } from "../../type";
-import { DailySleepData } from "../api";
-import { DailyActivityIntensityMetrics, DailySleepStageDuration, SleepStagesMetrics, StageInfos } from "./type";
+import { DailyActivityIntensityData, DailySleepData } from "../api";
+import {
+	DailyActivityIntensityDuration,
+	DailyActivityIntensityMetrics,
+	DailySleepStageDuration,
+	SleepStagesMetrics,
+	StageInfos,
+} from "./type";
 
 /**
  * Return the phases of sleep for the given metrics
  */
 export const createActivityPhasesGetter =
 	(localISODay: string) =>
-	(
-		data: RangeMetrics<DailyActivityIntensityMetrics, MetricType.UserDailyActivityTotal>
-	): {
-		stages: Array<StageInfos<ActivityStage>>;
-		duration: number;
-		sportSessionDates: Array<[string | undefined, string | undefined]>;
-	} => {
+	(data: RangeMetrics<DailyActivityIntensityMetrics, DailyActivityIntensityDuration>): DailyActivityIntensityData => {
 		const sportSessionDates: Array<[string | undefined, string | undefined]> = [];
-		const duration = Number(data.constant[MetricType.UserDailyActivityTotal]);
 		const stages: Array<StageInfos<ActivityStage>> = data.timeSeries.reduce(function (result, block, i) {
 			const isSameDay = new Date(block.timestamp).getDate() === new Date(localISODay).getDate();
 			if (isSameDay && hasMetric(MetricType.UserDataActivityIntensity)(block)) {
@@ -59,7 +58,12 @@ export const createActivityPhasesGetter =
 
 		return {
 			stages,
-			duration,
+			duration: {
+				total: (data.constant[MetricType.UserDailyActiveMinute] as number) ?? 0,
+				highActivity: (data.constant[MetricType.UserDailyHighActivityIntensityDuration] as number) ?? 0,
+				mediumActivity: (data.constant[MetricType.UserDailyMediumActivityIntensityDuration] as number) ?? 0,
+				lowActivity: (data.constant[MetricType.UserDailyLowActivityIntensityDuration] as number) ?? 0,
+			},
 			sportSessionDates,
 		};
 	};

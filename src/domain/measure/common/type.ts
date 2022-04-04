@@ -21,6 +21,7 @@ import {
 	ContributorTimeToFallAsleep,
 	ContributorVarTemperature,
 	ContributorWakeUpScore,
+	DailyActivityIntensityDuration,
 	DailyActivityIntensityMetrics,
 	DailyHRConstantMetrics,
 	DailyHRTimeSeriesMetrics,
@@ -91,7 +92,7 @@ export type Mutations =
 			type: "setDailyActivityIntensityMetrics";
 			payload: {
 				localISODay: ISODay;
-				range: RangeMetrics<DailyActivityIntensityMetrics, MetricType.UserDailyActivityTotal>;
+				range: RangeMetrics<DailyActivityIntensityMetrics, DailyActivityIntensityDuration>;
 			};
 	  }
 	| {
