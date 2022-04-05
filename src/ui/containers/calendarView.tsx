@@ -53,7 +53,7 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 		[user?.createdAt]
 	);
 
-	const [visibleMonthDay, setVisibleMonthDay] = useState(moment().format("YYYY-MM-DD"));
+	const [visibleMonthDay, setVisibleMonthDay] = useState(selectedLocalIsoDay);
 
 	const isFirstMonth = useMemo(
 		() => moment(visibleMonthDay).startOf("month").isBefore(moment(minDate)),
