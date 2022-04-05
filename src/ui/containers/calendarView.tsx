@@ -23,16 +23,18 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 	style,
 }) {
 	const { setMonthCalendars } = useRepresentations().calendar.actions;
-	// Fetch data on day change
+	const [visibleMonthDay, setVisibleMonthDay] = useState(selectedLocalIsoDay);
+
+	// Fetch data on month swipe
 	useEffect(
 		action(function () {
 			setMonthCalendars({
-				isoLocalDate: getLocalISODayFromLocalDate(selectedLocalIsoDay),
+				isoLocalDate: getLocalISODayFromLocalDate(visibleMonthDay),
 				// Don't use cache if it is today, as data is often updated.
-				useForceRefresh: isToday(selectedLocalIsoDay, moment().toISOString()),
+				useForceRefresh: isToday(visibleMonthDay, moment().toISOString()),
 			});
 		}),
-		[selectedLocalIsoDay]
+		[visibleMonthDay]
 	);
 
 	const autoSelectDay = useCallback(
@@ -52,8 +54,6 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 		],
 		[user?.createdAt]
 	);
-
-	const [visibleMonthDay, setVisibleMonthDay] = useState(selectedLocalIsoDay);
 
 	const isFirstMonth = useMemo(
 		() => moment(visibleMonthDay).startOf("month").isBefore(moment(minDate)),
