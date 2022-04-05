@@ -1,11 +1,13 @@
 import { useRepresentations } from "@core/representation";
+import { CalendarTag } from "@domain/calendar/calendar";
 import { CUSTOM_TAG_CATEGORY_ID } from "@domain/calendar/common/type";
 import { InfoListHeader } from "@ui/components/infoList";
 import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
-import { observer } from "mobx-react-lite";
+import { action, IObservableArray } from "mobx";
+import { observer, useLocalObservable } from "mobx-react-lite";
 import React, { useLayoutEffect, useMemo, useState } from "react";
 import { Image, Pressable, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -33,8 +35,21 @@ export const AllTagsScreen = observer(function AllTagsScreen() {
 	const navigate = navigation.navigate;
 	const { format } = useI18n();
 
-	const [selectedTags, setSelectedTags] = useState(originalSelectedTags);
+	const selectedTags = useLocalObservable(() => originalSelectedTags) as IObservableArray<CalendarTag>;
 	const [search, setSearch] = useState("");
+
+	const updateSelectedTags = action(function setSelectedTags(tag: CalendarTag) {
+		const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
+		if (isAlreadySelected) {
+			selectedTags.replace(selectedTags.filter((t) => t.id !== tag.id));
+		} else {
+			selectedTags.push(tag);
+		}
+	});
+
+	const filteredTags = Array.from(allTags.values()).flatMap((tags) =>
+		tags.filter((tag) => tag.name.toLowerCase().includes(search.toLowerCase()))
+	);
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
@@ -73,16 +88,9 @@ export const AllTagsScreen = observer(function AllTagsScreen() {
 			{search ? (
 				<View style={{ paddingVertical: 30, paddingHorizontal: 20 }}>
 					<TagSelectionView
-						tags={[]}
+						tags={filteredTags}
 						highlightedTagIds={selectedTags.map(({ id }) => id)}
-						onClickTag={(tag) => {
-							const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
-							if (isAlreadySelected) {
-								setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
-							} else {
-								setSelectedTags([...selectedTags, tag]);
-							}
-						}}
+						onClickTag={updateSelectedTags}
 					/>
 				</View>
 			) : (
@@ -90,7 +98,7 @@ export const AllTagsScreen = observer(function AllTagsScreen() {
 					<CustomNote
 						customNote={allTags.get(CUSTOM_TAG_CATEGORY_ID) ?? []}
 						selectedTags={selectedTags}
-						setSelectedTags={setSelectedTags}
+						setSelectedTags={action((tags) => tags.forEach(updateSelectedTags))}
 					></CustomNote>
 					{allCategories.map(({ id: categoryId, label: categoryLabel }) => {
 						const categoryTags = allTags.get(categoryId) ?? [];
@@ -101,14 +109,7 @@ export const AllTagsScreen = observer(function AllTagsScreen() {
 									<TagSelectionView
 										tags={categoryTags}
 										highlightedTagIds={selectedTags.map(({ id }) => id)}
-										onClickTag={(tag) => {
-											const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
-											if (isAlreadySelected) {
-												setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
-											} else {
-												setSelectedTags([...selectedTags, tag]);
-											}
-										}}
+										onClickTag={updateSelectedTags}
 									/>
 								</TagListContainer>
 							</View>

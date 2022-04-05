@@ -19,7 +19,7 @@ import { shadow } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import { deduplicate } from "@ui/utils/filter";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
-import { when } from "mobx";
+import { action, IObservableArray, runInAction, toJS, when } from "mobx";
 import { observer, useLocalObservable } from "mobx-react-lite";
 import moment from "moment";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -39,26 +39,30 @@ interface TimeEditorConfig {
  * - tags which are also selected on the last used tags list
  * It will also handle the deselection of tags.
  */
-function useTagsSelection(tagsFromRoute: CalendarTag[]): [CalendarTag[], (tag: CalendarTag) => void, () => void] {
-	const [selectedTags, setSelectedTags] = useState<CalendarTag[]>([
-		{ id: 0, categoryId: 0, name: "bla", system: false },
-	]);
+function useTagsSelection(
+	tagsFromRoute: CalendarTag[],
+	lastUsedTags: CalendarTag[]
+): [CalendarTag[], (tag: CalendarTag) => void, () => void] {
+	const tags = useLocalObservable<CalendarTag[]>(() => []) as IObservableArray<CalendarTag>;
+
 	// Turn all tags in a string of ids to easily compare new/old version
 	const tagsListIdentity = tagsFromRoute
 		.map(({ id }) => id)
 		.sort()
 		.join();
 
-	const selectTag = function (tag: CalendarTag) {
-		const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
+	const selectTag = action(function (tag: CalendarTag) {
+		const isAlreadySelected = tags.map((t) => t.id).indexOf(tag.id) >= 0;
 		if (isAlreadySelected) {
-			setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
+			tags.replace(tags.filter((t) => t.id !== tag.id));
 		} else {
-			setSelectedTags([...selectedTags, tag]);
+			tags.push(tag);
 		}
-	};
+		// CIR-402, put selected tag first, then put the last used tags.
+		tags.replace(tags.concat(lastUsedTags).filter(deduplicate("id")));
+	});
 	const clearSelectedTags = useCallback(function () {
-		setSelectedTags([]);
+		runInAction(() => tags.replace(lastUsedTags));
 	}, []);
 	/**
 	 * Each time the allTagsScreen is close, this screen is refreshed
@@ -66,10 +70,10 @@ function useTagsSelection(tagsFromRoute: CalendarTag[]): [CalendarTag[], (tag: C
 	 * We need to recompute selectedTags state.
 	 */
 	useEffect(() => {
-		setSelectedTags(tagsFromRoute);
+		runInAction(() => tags.replace(tagsFromRoute));
 	}, [tagsListIdentity]);
 
-	return [selectedTags, selectTag, clearSelectedTags];
+	return [tags, selectTag, clearSelectedTags];
 }
 
 export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditNotesScreen() {
@@ -96,7 +100,7 @@ export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditN
 		lastUsedTags,
 		actions: { setLastUsedTags },
 	} = useLastUsedTags();
-	const [selectedTags, selectTag, clearSelectedTags] = useTagsSelection(initialSelectedTags);
+	const [tags, selectTag, clearSelectedTags] = useTagsSelection(initialSelectedTags, lastUsedTags);
 
 	const [startDate, setStartDate] = useState(dateWithHour(19));
 	const [endDate, setEndDate] = useState(dateWithHour(20));
@@ -140,15 +144,12 @@ export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditN
 				return when(
 					() => calendar.notes.length > 0,
 					function () {
-						const noteNames = selectedTags.map((t) => t.name).join(", ");
+						const noteNames = tags.map((t) => t.name).join(", ");
 						LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 						setNoteAddedText(
-							format(
-								selectedTags.length === 1 ? "calendar.note_added_success.one" : "calendar.note_added_success.many",
-								{
-									notes: noteNames,
-								}
-							)
+							format(tags.length === 1 ? "calendar.note_added_success.one" : "calendar.note_added_success.many", {
+								notes: noteNames,
+							})
 						);
 						setLoading(false);
 						clearSelectedTags();
@@ -173,18 +174,18 @@ export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditN
 		setLoading(true);
 		setErrorMessage("");
 		try {
-			createNote(selectedTags, startDate, endDate);
-			setLastUsedTags(selectedTags);
+			createNote(tags, startDate, endDate);
+			setLastUsedTags(tags);
 		} catch (e) {
 			setLoading(false);
 			setErrorMessage(format("global.default_error"));
 		}
-	}, [selectedTags, startDate, endDate, dismissHeader]);
+	}, [tags, startDate, endDate, dismissHeader]);
 
-	// CIR-402, put selected tag first, then put the last used tags.
-	const tags = useLocalObservable(() => selectedTags.concat(lastUsedTags).filter(deduplicate("id")));
+	const disableRegisterNote = endDate < startDate || tags.length === 0;
 
-	const disableRegisterNote = endDate < startDate || selectedTags.length === 0;
+	// Always slice an mobx array to return a serializable object,
+	const selectedTags = toJS(tags);
 
 	return calendar ? (
 		<View style={{ flex: 1 }}>
@@ -224,7 +225,14 @@ export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditN
 				<PopularTagContainer>
 					<PopularTagHeader>
 						<PopularTagHeaderText>{format("calendar.popular_tags_header")}</PopularTagHeaderText>
-						<Pressable onPress={() => navigate(Routes.AllTags, { day, selectedTags })}>
+						<Pressable
+							onPress={() =>
+								navigate(Routes.AllTags, {
+									day,
+									selectedTags,
+								})
+							}
+						>
 							<AllTagButton>{format("calendar.see_all_tags")}</AllTagButton>
 						</Pressable>
 					</PopularTagHeader>
@@ -233,7 +241,7 @@ export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditN
 							// CIR-402 highlighted is display first
 							shouldDisplayHighlightedFirst
 							tags={tags}
-							highlightedTagIds={selectedTags.map(({ id }) => id)}
+							highlightedTagIds={tags.map(({ id }) => id)}
 							onClickTag={selectTag}
 						/>
 					)}
