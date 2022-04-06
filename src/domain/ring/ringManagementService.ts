@@ -1,7 +1,7 @@
 import { getLogger } from "@core/logger/logger";
+import { AppStateService } from "@domain/appState/appStateService";
 import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { Channel } from "@domain/device/channels";
-import { AppStateService } from "@domain/appState/appStateService";
 import { observable } from "micro-observables";
 import { NamedUserRing } from "./ring";
 import { RingApi } from "./ringApi";

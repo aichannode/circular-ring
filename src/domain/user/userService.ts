@@ -340,6 +340,7 @@ export class UserService {
 			sleepDisorder: "NONE",
 			dietarySupplements: "NONE",
 			sleeperType: "LIGHT",
+			sleepingPills: "NONE",
 		};
 		const currentInfo = this._userAdvancedInfo.get();
 		if (currentInfo) {

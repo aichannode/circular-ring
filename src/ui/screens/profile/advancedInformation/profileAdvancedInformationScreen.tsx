@@ -13,7 +13,7 @@ import { AdvancedInfoBottomSheetConfig } from "@ui/screens/profile/advancedInfor
 import {
 	AdvancedInfoEditionBottomSheet,
 	AdvancedInfoEditionConfig,
-	EditionInfoType,
+	EditionInfoType
 } from "@ui/screens/profile/advancedInformation/advancedInfoEditionBottomSheet";
 import { BMICard } from "@ui/screens/profile/advancedInformation/bmiCard";
 import { ChronotypeCard } from "@ui/screens/profile/advancedInformation/chronotypeCard";
@@ -27,7 +27,7 @@ import {
 	pillPackFormatKeys,
 	sleepDisorderKeys,
 	sleepingPillsKeys,
-	workTimeKeys,
+	workTimeKeys
 } from "@ui/screens/profile/advancedInformation/profileAdvancedInfoI18n";
 import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
@@ -96,7 +96,7 @@ export const ProfileAdvancedInformationScreen = () => {
 				name={format("profile_advanced_info.stride.title")}
 				hasDisclosure={true}
 				value={`${
-					heightUnit === HeightUnit.ft ? round2Digits(cmToFt(user.stride)) : Math.round(user.stride)
+					heightUnit === HeightUnit.ft ? round2Digits(cmToFt(advancedInfo.stride)) : Math.round(advancedInfo.stride)
 				} ${heightUnit}`}
 				action={() => {
 					strideBottomSheetRef.current?.present();
