@@ -1,5 +1,5 @@
 import { Model, mutate } from "@core/model";
-import { ISODay } from "@domain/common/type";
+import { ISODay, ISOMonth } from "@domain/common/type";
 import { action, IObservableArray, makeAutoObservable, observable } from "mobx";
 import { Proposal } from "../common/type";
 import { Metrics, MetricType, RangeMetrics } from "../metric";
@@ -31,12 +31,18 @@ import {
 	DailySleepScoreMetrics,
 	DailySleepStageDuration,
 	DailyWakeUpScoreMetrics,
+	Sleep7DConstantMetrics,
+	SleepAllConstantMetrics,
+	SleepMonthlyStageMetrics,
 	SleepStagesMetrics,
 	StepsTaken,
 	WalkingEquivalency,
 } from "../representation/lib/type";
 
 export class MeasureModel implements Model<Proposal> {
+	public last7DSleepMetrics: Map<ISODay, Metrics<Sleep7DConstantMetrics>> = new Map();
+	public monthlySleepStageMetrics: Map<ISOMonth, Metrics<SleepMonthlyStageMetrics>> = new Map();
+	public lastAllSleepStageMetrics: Map<ISOMonth, Metrics<SleepAllConstantMetrics>> = new Map();
 	public dailyHRMetrics: Map<ISODay, RangeMetrics<DailyHRTimeSeriesMetrics, DailyHRConstantMetrics> | undefined> =
 		new Map();
 	public dailySleepScoreContributorsMetrics: Map<
@@ -100,13 +106,28 @@ export class MeasureModel implements Model<Proposal> {
 			dailyEnergyScoreContributorsMetrics: observable.shallow,
 			dailyActivitiesMetrics: observable.shallow,
 			lastAcceptedMutations: observable.shallow,
+			last7DSleepMetrics: observable.shallow,
+			monthlySleepStageMetrics: observable.shallow,
+			lastAllSleepStageMetrics: observable.shallow,
 			present: action,
 		});
 	}
 	public present = (proposal: Proposal) => {
 		(this.lastAcceptedMutations as IObservableArray).clear();
 		proposal.forEach((mutation) => {
-			if (mutation.type === "setDailyHRMetrics") {
+			if (mutation.type === "pullLast7DSleepMetrics") {
+				mutate.call(this, mutation, () =>
+					this.last7DSleepMetrics.set(mutation.payload.localISODay, mutation.payload.data)
+				);
+			} else if (mutation.type === "pullMonthlySleepStageMetrics") {
+				mutate.call(this, mutation, () =>
+					this.monthlySleepStageMetrics.set(mutation.payload.localISOMonth, mutation.payload.data)
+				);
+			} else if (mutation.type === "pullLastAllSleepConstantMetrics") {
+				mutate.call(this, mutation, () =>
+					this.lastAllSleepStageMetrics.set(mutation.payload.localISOMonth, mutation.payload.data)
+				);
+			} else if (mutation.type === "setDailyHRMetrics") {
 				mutate.call(this, mutation, () =>
 					this.dailyHRMetrics.set(mutation.payload.localISODay, mutation.payload.range)
 				);

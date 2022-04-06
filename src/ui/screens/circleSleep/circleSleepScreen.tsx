@@ -3,14 +3,13 @@ import { getCurrentLocalISODay } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DailySleepData } from "@domain/measure/representation/api";
 import { sleepScoreContributors } from "@domain/measure/representation/lib/type";
-import { SleepStage, TimeFrame } from "@domain/measure/type";
+import { TimeFrame } from "@domain/measure/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
-import { Stack } from "@ui/components/layout";
+import { Row, Stack } from "@ui/components/layout";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
-import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
@@ -20,36 +19,32 @@ import { ScoreGauge } from "@ui/containers/scoreGauge";
 import { ScoreSection } from "@ui/containers/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import { isDefined } from "@ui/utils/guard";
+import { isDefined } from "@ui/utils/filter";
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import React, { useRef, useState } from "react";
-import { LayoutAnimation, View } from "react-native";
+import { Image, LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
 import { trimSleepStages } from "./business";
-import { Hypnogram } from "./hypnogram";
+import { DailySleepChart } from "./DailySleepChart";
 import { getSleepGaugesConfig } from "./measureDisplayInfos";
+import { Sleep7DChart } from "./Sleep7DChart";
+import { SleepAllChart } from "./SleepAllChart";
 import { SleepDurationPieChart } from "./sleepDurationPie";
-import { SleepStage7Days } from "./sleepStage7Days";
 
 export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	const { useDailySleepScoreContributors, useDailySleepQualityScore, useDailySleepStages, hasEnoughData } =
 		useRepresentations().measure.hooks;
-	const { useDailyTags } = useRepresentations().calendar.hooks;
 	const enoughData = hasEnoughData(selectedDay);
 	const sleepScoreContributorsData = useDailySleepScoreContributors(selectedDay);
 	const qualityScore = useDailySleepQualityScore(selectedDay);
 	const [dailySleep, setDailyData] = useState<DailySleepData | undefined>();
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
+	const [activeItem, setActiveItem] = useState<number>(0);
 	const { format } = useI18n();
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const sleepGaugesConfig = getSleepGaugesConfig(format);
-	const awakeDuration = dailySleep?.sleepStagesDuration[SleepStage.AWAKE];
-	const REMDuration = dailySleep?.sleepStagesDuration[SleepStage.REM];
-	const lightDuration = dailySleep?.sleepStagesDuration[SleepStage.LIGHT];
-	const deepDuration = dailySleep?.sleepStagesDuration[SleepStage.DEEP];
 	const sleepStages = trimSleepStages({
 		stages: dailySleep?.stages ?? [],
 		isoDay: selectedDay,
@@ -57,7 +52,6 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 		napFrames: dailySleep?.napTimings,
 		coreSleepFrame: dailySleep?.coreSleepTiming,
 	});
-	const tags = useDailyTags(selectedDay);
 
 	useDailySleepStages({ setData: setDailyData, localISODay: selectedDay });
 
@@ -142,10 +136,10 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 			</ElementStack>
 			<InfoListHeader>{format("sleep.details.title")}</InfoListHeader>
 			<ElementStack gap={10}>
-				<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
+				<TitleText style={{ textAlign: "center", textTransform: "uppercase" }}>
 					{format("sleep.details.stages")}
 				</TitleText>
-				<View style={{ marginVertical: 10 }}>
+				<View style={{ marginBottom: 25, marginTop: 20 }}>
 					<TimeFrameSwitcher
 						setGraphPeriod={setGraphPeriod}
 						graphPeriod={graphPeriod}
@@ -159,79 +153,55 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 								label: "graph.time_frame.7days",
 								duration: TimeFrame.LAST_7_DAYS,
 							},
-							// {
-							// 	label: "graph.time_frame.all",
-							// 	duration: TimeFrame.ALL,
-							// },
+							{
+								label: "graph.time_frame.all",
+								duration: TimeFrame.ALL,
+							},
 						]}
 					/>
 				</View>
-				{dailySleep ? (
-					<GraphContainer>
-						{graphPeriod === TimeFrame.TODAY && (
-							<Hypnogram data={sleepStages} tags={tags} hasNotEnoughData={!enoughData} />
-						)}
-						{graphPeriod === TimeFrame.LAST_7_DAYS && <SleepStage7Days hasNotEnoughData={!enoughData} />}
-						<View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
-							<GraphLegend
-								hasNotEnoughData={!enoughData}
-								rows={[
-									{
-										label: format("sleep.stage.awake"),
-										element: {
-											key: "sleep.stage.awake",
-											node: <></>,
-										},
-										value:
-											awakeDuration &&
-											`${moment.duration(awakeDuration.duration).hours()} h ${moment
-												.duration(awakeDuration.duration)
-												.minutes()} min ${awakeDuration.percent}%`,
-									},
-									{
-										label: format("sleep.stage.REM"),
-										element: {
-											key: "sleep.stage.REM",
-											node: <></>,
-										},
-										value:
-											REMDuration &&
-											`${moment.duration(REMDuration.duration).hours()} h ${moment
-												.duration(REMDuration.duration)
-												.minutes()} min ${REMDuration.percent}%`,
-									},
-									{
-										label: format("sleep.stage.light"),
-										element: {
-											key: "sleep.stage.light",
-											node: <></>,
-										},
-										value:
-											lightDuration &&
-											`${moment.duration(lightDuration.duration).hours()} h ${moment
-												.duration(lightDuration.duration)
-												.minutes()} min ${lightDuration.percent}%`,
-									},
-									{
-										label: format("sleep.stage.deep"),
-										element: {
-											key: "sleep.stage.deep",
-											node: <></>,
-										},
-										value:
-											deepDuration &&
-											`${moment.duration(deepDuration.duration).hours()} h ${moment
-												.duration(deepDuration.duration)
-												.minutes()} min ${deepDuration.percent}`,
-									},
-								].filter(isDefined)}
+				{activeItem === 0 &&
+					(dailySleep ? (
+						<GraphContainer>
+							{graphPeriod === TimeFrame.TODAY && (
+								<DailySleepChart data={dailySleep} selectedDay={selectedDay} hasNotEnoughData={!enoughData} />
+							)}
+							{graphPeriod === TimeFrame.LAST_7_DAYS && (
+								<Sleep7DChart selectedDay={selectedDay} hasNotEnoughData={!enoughData} />
+							)}
+							{graphPeriod === TimeFrame.ALL && (
+								<SleepAllChart selectedDay={selectedDay} hasNotEnoughData={!enoughData} />
+							)}
+						</GraphContainer>
+					) : (
+						<Spinner />
+					))}
+				{activeItem === 1 && <></>}
+				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
+					<Row style={{ justifyContent: "center" }}>
+						<ImageContainer onPress={() => setActiveItem(0)}>
+							<GraphSwitcherButton
+								source={
+									activeItem === 0
+										? require(`@assets/images/sleepCircleBlue.png`)
+										: require(`@assets/images/sleepCircleBlueTransparent.png`)
+								}
 							/>
-						</View>
-					</GraphContainer>
-				) : (
-					<Spinner />
-				)}
+						</ImageContainer>
+						<ImageContainer onPress={() => setActiveItem(1)}>
+							<GraphSwitcherButton
+								style={{ marginLeft: 0 }}
+								source={
+									activeItem === 1
+										? require(`@assets/images/heartCircleBlue.png`)
+										: require(`@assets/images/heartCircleBlueTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+					</Row>
+				</ElementStack>
 			</ElementStack>
+			{/* TODO: Refactor this because it is copy/paste from circleActivityScreen */}
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
 				<View style={{ padding: 20 }}>
 					<CalendarView
@@ -254,4 +224,17 @@ const Container = styled(ScrollScreen)`
 const ElementStack = styled(Stack)`
 	padding: 25px 20px;
 	background-color: ${colors.lightgray};
+`;
+const ImageContainer = styled.Pressable`
+	align-items: center;
+`;
+const GraphSwitcherButton = styled(Image)`
+	margin-left: 7px;
+	margin-right: 7px;
+	margin-bottom: 4px;
+	/* margin-top: 4px; */
+	width: 40px;
+	height: 40px;
+	align-items: center;
+	justify-content: center;
 `;

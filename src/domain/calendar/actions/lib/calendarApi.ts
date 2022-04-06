@@ -1,6 +1,8 @@
 import { ApiService } from "@core/api/apiService";
 import { toServerDate } from "@core/utils";
 import { CalendarNote, CalendarTag, CalendarTagCategory } from "@domain/calendar/calendar";
+import { getUTCISODayFromLocalDate, getUTCISODayFromUTCDate, isUTCDate } from "@domain/common/business";
+import { ISODay } from "@domain/common/type";
 
 interface CalendarNoteDto {
 	id: number;
@@ -10,7 +12,7 @@ interface CalendarNoteDto {
 }
 
 interface CalendarDto {
-	date: string;
+	date: ISODay;
 	streak: boolean;
 	notes: CalendarNoteDto[];
 }
@@ -67,11 +69,24 @@ export class CalendarApi {
 		isoLocalDate: string;
 		useForceRefresh?: boolean;
 	}): Promise<CalendarDto[]> {
-		const result = await this.apiService.get<CalendarDto[]>("/calendar", {
+		const result = await this.apiService.get<
+			Array<{
+				date: string;
+				streak: boolean;
+				notes: CalendarNoteDto[];
+			}>
+		>("/calendar", {
 			params: { date: isoLocalDate },
 			useForceRefresh,
 		});
-		return result.data;
+		return (
+			result.data
+				// TODO remove condition when backend will be set to UTC
+				.map((day) => ({
+					...day,
+					date: isUTCDate(day.date) ? getUTCISODayFromUTCDate(day.date) : getUTCISODayFromLocalDate(day.date),
+				}))
+		);
 	}
 
 	async createNote(tags: CalendarTag[], startTime: Date, endTime: Date) {

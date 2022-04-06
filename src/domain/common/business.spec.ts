@@ -12,6 +12,7 @@ import {
 	getTimeZone,
 	getUTCISODayFromLocalDate,
 	getUTCISODayFromUTCDate,
+	isBetween,
 	isISODay,
 	isISOMonth,
 	isToday,
@@ -173,4 +174,26 @@ test("getLast7Days", function () {
 		"2022-02-24",
 		"2022-02-23",
 	]);
+	timezone_mock.register("Etc/GMT+1");
+	expect(getLast7Days("2022-03-03")).toEqual([
+		"2022-03-03",
+		"2022-03-02",
+		"2022-03-01",
+		"2022-02-28",
+		"2022-02-27",
+		"2022-02-26",
+		"2022-02-25",
+	]);
+});
+
+test("isBetween", function () {
+	expect(isBetween("2022-03-15T00:00:00.000Z", "2022-03-10T00:00:00.000Z", "2022-03-20T00:00:00.000Z")).toBeTruthy();
+	expect(isBetween("2022-03-09T00:00:00.000Z", "2022-03-10T00:00:00.000Z", "2022-03-20T00:00:00.000Z")).toBeFalsy();
+	expect(isBetween("2022-03-21T00:00:00.000Z", "2022-03-10T00:00:00.000Z", "2022-03-20T00:00:00.000Z")).toBeFalsy();
+	expect(isBetween("2022-03-10T00:00:00.000Z", "2022-03-10T00:00:00.000Z", "2022-03-20T00:00:00.000Z")).toBeTruthy();
+	expect(isBetween("2022-03-20T00:00:00.000Z", "2022-03-10T00:00:00.000Z", "2022-03-20T00:00:00.000Z")).toBeTruthy();
+	// Intra day
+	expect(
+		isBetween("2022-03-09T23:00:00.000+01:00", "2022-03-08T23:00:00.000Z", "2022-03-09T22:59:59.999Z")
+	).toBeTruthy();
 });

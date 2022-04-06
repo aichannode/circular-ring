@@ -3,7 +3,7 @@ import { colors } from "@ui/styles/colors";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
 import * as scale from "d3-scale";
 import * as shape from "d3-shape";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { Defs, LinearGradient, Stop } from "react-native-svg";
 import { Grid, LineChart, XAxis, YAxis } from "react-native-svg-charts";
@@ -89,6 +89,7 @@ export function StepChart({
 	const canShowAxes = !_hasNotEnoughData || defaultYAxis.length > 0;
 
 	const graphRect = useRef<Rect>();
+	const dataRef = useRef({ xMin, xMax, yMin, yMax, xValues, yValues, data }); // Allow PanResponder to access to the latest available data
 	const longPressTimeout = useRef<NodeJS.Timeout>();
 
 	const [tooltipVisible, setTooltipVisible] = useState(false);
@@ -130,6 +131,7 @@ export function StepChart({
 	// );
 
 	function updatePosition(cursorX: number, cursorY: number) {
+		const { xMin, xMax, yMin, yMax, xValues, data } = dataRef.current;
 		if (!graphRect.current || !data.length) {
 			return;
 		}
@@ -236,6 +238,18 @@ export function StepChart({
 			{renderTooltip(selected)}
 		</View>
 	);
+
+	useEffect(() => {
+		dataRef.current = {
+			xMin,
+			xMax,
+			yMin,
+			yMax,
+			xValues,
+			yValues,
+			data,
+		};
+	}, [data, xMin, xMax, yMin, yMax, xValues, yValues]);
 
 	useUnmount(() => {
 		if (longPressTimeout.current) {

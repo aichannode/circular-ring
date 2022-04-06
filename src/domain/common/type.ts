@@ -10,3 +10,8 @@ export type ISOMonth = `${YYYY}-${MM}`;
 export type ISODay = `${ISOMonth}-${DD}`;
 export type ISODate = ISOMonth | ISODay;
 export type TZ = `+${toTwelve}:${toFive}${d}` | `-${toTwelve}:${toFive}${d}`;
+
+// XXX: From https://stackoverflow.com/a/71700658/10203321
+export type Tuple<T, N extends number, R extends readonly T[] = []> = R["length"] extends N
+	? R
+	: Tuple<T, N, readonly [T, ...R]>;

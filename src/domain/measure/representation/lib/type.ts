@@ -13,6 +13,39 @@ export type StageInfos<T extends SleepStage | ActivityStage> = {
  * Metrics grouped by usage for the representation
  */
 
+// XXX: 05/04/2022 - Server does not send metrics
+export const sleep7DConstantMetrics = [
+	MetricType.User7DaysAwakeStageDuration,
+	MetricType.User7DaysPercawakeStage,
+	MetricType.User7DaysLightStageDuration,
+	MetricType.User7DaysPerclightStage,
+	MetricType.User7DaysDeepStageDuration,
+	MetricType.User7DaysPercdeepStage,
+	MetricType.User7DaysRemStageDuration,
+	MetricType.User7DaysPercremStage,
+] as const;
+export type Sleep7DConstantMetrics = typeof sleep7DConstantMetrics[number];
+
+export const sleepMonthlyStageMetrics = [
+	MetricType.UserMonthlyAwakeStageDuration,
+	MetricType.UserMonthlyLightStageDuration,
+	MetricType.UserMonthlyDeepStageDuration,
+	MetricType.UserMonthlyRemStageDuration,
+] as const;
+export type SleepMonthlyStageMetrics = typeof sleepMonthlyStageMetrics[number];
+
+export const sleepAllConstantMetrics = [
+	MetricType.UserLifetimeAwakeTimeDuration,
+	MetricType.UserLifetimeAwakeTimePercent,
+	MetricType.UserLifetimeLightStageDuration,
+	MetricType.UserLifetimeLightStagePercent,
+	MetricType.UserLifetimeDeepStageDuration,
+	MetricType.UserLifetimeDeepStagePercent,
+	MetricType.UserLifetimeREMStageDuration,
+	MetricType.UserLifetimeREMStagePercent,
+] as const;
+export type SleepAllConstantMetrics = typeof sleepAllConstantMetrics[number];
+
 export const dailyHRConstantMetrics = [
 	MetricType.UserDailyAwakeHRMax,
 	MetricType.UserDailyAwakeHRMin,

@@ -1,5 +1,5 @@
 import moment from "moment";
-import { ISODay, ISOMonth, TZ } from "./type";
+import { ISODay, ISOMonth, Tuple, TZ } from "./type";
 
 export function isYesterday(dateIso: string, todayIso: string) {
 	const today = moment(todayIso).startOf("day");
@@ -149,10 +149,38 @@ export function getTimeZone(): TZ {
 /**
  * Return the 7 previous date before the given date
  */
-export function getLast7Days(isoDay: ISODay): [ISODay, ISODay, ISODay, ISODay, ISODay, ISODay, ISODay] {
+export function getLast7Days(isoDay: ISODay): Tuple<ISODay, 7> {
 	return Array(7)
 		.fill(0)
 		.map((_, index) => {
 			return getUTCISODayFromUTCDate(moment(isoDay).subtract(index, "day").toISOString());
-		}) as [ISODay, ISODay, ISODay, ISODay, ISODay, ISODay, ISODay];
+		}) as unknown as Tuple<ISODay, 7>;
+}
+
+/**
+ * Return the 30 previous date before the given date
+ */
+export function getLast30Days(isoDay: ISODay): Tuple<ISODay, 30> {
+	return Array(30)
+		.fill(0)
+		.map((_, index) => {
+			return getUTCISODayFromUTCDate(moment(isoDay).subtract(index, "day").toISOString());
+		}) as unknown as Tuple<ISODay, 30>;
+}
+
+export function getMonthsBetween(beginIsoMonth: ISOMonth, endIsoMonth: ISOMonth): Array<ISOMonth> {
+	const n = moment(endIsoMonth).diff(beginIsoMonth, "months");
+	return Array(n)
+		.fill(0)
+		.map((_, index) => {
+			return moment(beginIsoMonth).add(index, "month").format("YYYY-MM") as ISOMonth;
+		});
+}
+
+/**
+ * Return true if the given isoTime is between (limit included) isoStart and isoEnd
+ */
+export function isBetween(isoTime: string, isoStart: string, isoEnd: string) {
+	const date = Date.parse(isoTime);
+	return Date.parse(isoStart) <= date && date <= Date.parse(isoEnd);
 }

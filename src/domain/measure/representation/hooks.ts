@@ -1,9 +1,10 @@
 import { ApiService } from "@core/api/apiService";
-import { getCurrentLocalISODay, getLast7Days } from "@domain/common/business";
-import { ISODay } from "@domain/common/type";
+import { getCurrentLocalISODay, getLast7Days, getMonthsBetween, toISOMonth } from "@domain/common/business";
+import { ISODay, ISOMonth } from "@domain/common/type";
 import { isDefined } from "@ui/utils/guard";
 import { action } from "mobx";
-import { useEffect } from "react";
+import moment from "moment";
+import { useEffect, useMemo } from "react";
 import { createActions } from "../actions";
 import { MeasureApi } from "../actions/lib/measureApi";
 import { MetricType } from "../metric";
@@ -14,8 +15,10 @@ import {
 	DailyActivityIntensityData,
 	DailyHr,
 	DailySleepData,
+	DataControlState,
 	Scores7D,
-	SleepItems,
+	Sleep7D,
+	SleepAll,
 } from "./api";
 import { canDisplay, getActivityControlState, getScoreControlStates, parseDailyHR } from "./business";
 import { createActivityPhasesGetter, createSleepStagesGetter, useDailyHeavyComputationData } from "./lib/business";
@@ -26,6 +29,122 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 	return {
 		actions,
 		hooks: {
+			use7DaysSleep(localISODay: ISODay = getCurrentLocalISODay()): Sleep7D | undefined {
+				// Compute the 7 previous date from the given date
+				const last7Days = getLast7Days(localISODay);
+
+				useEffect(
+					action(function () {
+						// Get the last 7 daily sleep stages metrics
+						last7Days
+							.filter((d) => !model.dailySleepMetrics.has(d))
+							.forEach((d) => actions.setDailySleepStagesMetrics(d, true));
+						// and the constants for the last 7 days
+						actions.pullLast7DSleepMetrics(localISODay);
+					}),
+					[localISODay]
+				);
+
+				const last7DSleepMetrics = model.last7DSleepMetrics.get(localISODay) || {};
+				const constant = {
+					awakeDuration: last7DSleepMetrics[MetricType.User7DaysAwakeStageDuration],
+					awakePerc: last7DSleepMetrics[MetricType.User7DaysPercawakeStage],
+					lightDuration: last7DSleepMetrics[MetricType.User7DaysLightStageDuration],
+					lightPerc: last7DSleepMetrics[MetricType.User7DaysPerclightStage],
+					deepDuration: last7DSleepMetrics[MetricType.User7DaysDeepStageDuration],
+					deepPerc: last7DSleepMetrics[MetricType.User7DaysPercdeepStage],
+					REMDuration: last7DSleepMetrics[MetricType.User7DaysRemStageDuration],
+					REMPerc: last7DSleepMetrics[MetricType.User7DaysPercremStage],
+				} as Sleep7D["constant"];
+
+				const sleepStages = last7Days.map((date) => {
+					const localMetrics = model.dailySleepMetrics.get(date)?.constant ?? {};
+					return {
+						awake: isDefined(localMetrics[MetricType.UserDailyAwakeStageDuration])
+							? moment.duration(localMetrics[MetricType.UserDailyAwakeStageDuration]).asHours()
+							: undefined,
+						light: isDefined(localMetrics[MetricType.UserDailyLightStageDuration])
+							? moment.duration(localMetrics[MetricType.UserDailyLightStageDuration]).asHours()
+							: undefined,
+						deep: isDefined(localMetrics[MetricType.UserDailyDeepStageDuration])
+							? moment.duration(localMetrics[MetricType.UserDailyDeepStageDuration]).asHours()
+							: undefined,
+						REM: isDefined(localMetrics[MetricType.UserDailyREMStageDuration])
+							? moment.duration(localMetrics[MetricType.UserDailyREMStageDuration]).asHours()
+							: undefined,
+						date,
+					};
+				}) as unknown as Sleep7D["sleepStages"];
+
+				const isLoaded =
+					model.last7DSleepMetrics.has(localISODay) && last7Days.every((date) => model.dailySleepMetrics.has(date));
+
+				const controlState = sleepStages.some((stage) => isDefined(stage?.light))
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
+
+				return isLoaded ? { sleepStages, constant, controlState } : undefined;
+			},
+			useAllMonthsSleep(
+				beginISOMonth: ISOMonth,
+				endISOMonth: ISOMonth = toISOMonth(getCurrentLocalISODay())
+			): SleepAll | undefined {
+				// Compute the 7 previous date from the given date
+				const months = useMemo(() => getMonthsBetween(beginISOMonth, endISOMonth), [beginISOMonth, endISOMonth]);
+
+				useEffect(
+					action(function () {
+						// Get the last 7 daily sleep stages metrics
+						months
+							.filter((d) => !model.monthlySleepStageMetrics.has(d))
+							.forEach((d) => actions.pullMonthlySleepStageMetrics(d, true));
+						// and the constants for the last 7 days
+						actions.pullLastAllSleepConstantMetrics(endISOMonth);
+					}),
+					[months]
+				);
+
+				const lastAllSleepMetrics = model.lastAllSleepStageMetrics.get(endISOMonth) || {};
+				const constant = {
+					awakeDuration: lastAllSleepMetrics[MetricType.UserLifetimeAwakeTimeDuration],
+					awakePerc: lastAllSleepMetrics[MetricType.UserLifetimeAwakeTimePercent],
+					lightDuration: lastAllSleepMetrics[MetricType.UserLifetimeLightStageDuration],
+					lightPerc: lastAllSleepMetrics[MetricType.UserLifetimeLightStagePercent],
+					deepDuration: lastAllSleepMetrics[MetricType.UserLifetimeDeepStageDuration],
+					deepPerc: lastAllSleepMetrics[MetricType.UserLifetimeDeepStagePercent],
+					REMDuration: lastAllSleepMetrics[MetricType.UserLifetimeREMStageDuration],
+					REMPerc: lastAllSleepMetrics[MetricType.UserLifetimeREMStagePercent],
+				} as SleepAll["constant"];
+
+				const sleepStages = months.map((date) => {
+					const localMetrics = model.monthlySleepStageMetrics.get(date) ?? {};
+					return {
+						awake: isDefined(localMetrics[MetricType.UserMonthlyAwakeStageDuration])
+							? moment.duration(localMetrics[MetricType.UserMonthlyAwakeStageDuration]).asHours()
+							: undefined,
+						light: isDefined(localMetrics[MetricType.UserMonthlyLightStageDuration])
+							? moment.duration(localMetrics[MetricType.UserMonthlyLightStageDuration]).asHours()
+							: undefined,
+						deep: isDefined(localMetrics[MetricType.UserMonthlyDeepStageDuration])
+							? moment.duration(localMetrics[MetricType.UserMonthlyDeepStageDuration]).asHours()
+							: undefined,
+						REM: isDefined(localMetrics[MetricType.UserMonthlyRemStageDuration])
+							? moment.duration(localMetrics[MetricType.UserMonthlyRemStageDuration]).asHours()
+							: undefined,
+						date,
+					};
+				}) as unknown as SleepAll["sleepStages"];
+
+				const isLoaded =
+					model.lastAllSleepStageMetrics.has(endISOMonth) &&
+					months.every((date) => model.monthlySleepStageMetrics.has(date));
+
+				const controlState = sleepStages.some((stage) => isDefined(stage?.light))
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
+
+				return isLoaded ? { sleepStages, constant, controlState } : undefined;
+			},
 			useDailyHR(localISODay = getCurrentLocalISODay()): DailyHr | undefined {
 				useEffect(() => {
 					__DEV__ && console.log("[MEASURE: Action] FETCH");
@@ -34,54 +153,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 				return parseDailyHR(model.dailyHRMetrics.get(localISODay));
 			},
-			use7DSleepStages(): SleepItems | undefined {
-				const items: SleepItems = [
-					{
-						awake: 1,
-						deep: 1.8,
-						rem: 3.6,
-						light: 5.2,
-					},
-					{
-						awake: 1.1,
-						deep: 1.9,
-						rem: 3.8,
-						light: 5.4,
-					},
-					{
-						awake: 1.7,
-						deep: 2.1,
-						rem: 3.9,
-						light: 5.4,
-					},
-					{
-						awake: 1.5,
-						deep: 1.7,
-						rem: 2,
-						light: 5.0,
-					},
-					{
-						awake: 1.4,
-						deep: 1.6,
-						rem: 3.8,
-						light: 4.8,
-					},
-					{
-						awake: 1.8,
-						deep: 2,
-						rem: 3,
-						light: 6.2,
-					},
-					{
-						awake: 2,
-						deep: 2.1,
-						rem: 3,
-						light: 5.4,
-					},
-				];
 
-				return items;
-			},
 			useDailyActivityIntensity({
 				localISODay = getCurrentLocalISODay(),
 				setData,

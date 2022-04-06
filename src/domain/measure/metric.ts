@@ -29,9 +29,41 @@ export enum MetricType {
 	UserDailySleepScore = "user.daily.sleep.score",
 	User2DaysSleepScore = "user.2days.sleep.score",
 
-	/////////////////////
-	// Score contributors
-	/////////////////////
+	///////////////////
+	// 7 Days sleep
+	///////////////////
+	User7DaysAwakeStageDuration = "user.7days.awake.stage.duration",
+	User7DaysPercawakeStage = "user.7days.percawake.stage",
+	User7DaysLightStageDuration = "user.7days.light.stage.duration",
+	User7DaysPerclightStage = "user.7days.perclight.stage",
+	User7DaysDeepStageDuration = "user.7days.deep.stage.duration",
+	User7DaysPercdeepStage = "user.7days.percdeep.stage",
+	User7DaysRemStageDuration = "user.7days.rem.stage.duration",
+	User7DaysPercremStage = "user.7days.percrem.stage",
+
+	///////////////////
+	// All Months sleep
+	///////////////////
+	UserMonthlyAwakeStageDuration = "user.monthly.awake.stage.duration",
+	UserMonthlyLightStageDuration = "user.monthly.light.stage.duration",
+	UserMonthlyDeepStageDuration = "user.monthly.deep.stage.duration",
+	UserMonthlyRemStageDuration = "user.monthly.rem.stage.duration",
+
+	///////////////////
+	// Lifetime sleep
+	///////////////////
+	UserLifetimeAwakeTimeDuration = "user.lifetime.awake.stage.duration",
+	UserLifetimeAwakeTimePercent = "user.lifetime.percawake.stage",
+	UserLifetimeLightStageDuration = "user.lifetime.light.stage.duration",
+	UserLifetimeLightStagePercent = "user.lifetime.perclight.stage",
+	UserLifetimeDeepStageDuration = "user.lifetime.deep.stage.duration",
+	UserLifetimeDeepStagePercent = "user.lifetime.percdeep.stage",
+	UserLifetimeREMStageDuration = "user.lifetime.rem.stage.duration",
+	UserLifetimeREMStagePercent = "user.lifetime.percrem.stage",
+
+	///////////////////
+	// Daily metabolism
+	///////////////////
 	UserDailyBodyRecovery = "user.daily.body.recovery",
 	UserDailyBodyRecoveryGoalMin = "user.daily.body.recovery.goal.min",
 	UserDailyBodyRecoveryGoalMax = "user.daily.body.recovery.goal.max",

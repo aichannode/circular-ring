@@ -1,5 +1,5 @@
 import { Present } from "@core/model";
-import { getCurrentLocalISODay, getLocalISODayFromUTCDate } from "@domain/common/business";
+import { getCurrentLocalISODay, getLocalISODayFromUTCDate, toISOMonth } from "@domain/common/business";
 import { ISODay, ISOMonth } from "@domain/common/type";
 import moment from "moment";
 import { Proposal } from "../common/type";
@@ -55,6 +55,12 @@ import {
 	dailySleepStageDuration,
 	DailySleepStageDuration,
 	dailyWakeUpScoreMetrics,
+	Sleep7DConstantMetrics,
+	sleep7DConstantMetrics,
+	sleepAllConstantMetrics,
+	SleepAllConstantMetrics,
+	SleepMonthlyStageMetrics,
+	sleepMonthlyStageMetrics,
 	SleepStagesMetrics,
 	sleepStagesMetrics,
 	stepsTaken,
@@ -71,7 +77,61 @@ import { MeasureApi } from "./lib/measureApi";
 
 export function createActions(measureApi: MeasureApi, present: Present<Proposal>) {
 	return {
-		async setDailyHRMetrics(localISODay: ISODay = moment().toISOString() as ISODay) {
+		async pullLast7DSleepMetrics(localISODay: ISODay = getCurrentLocalISODay(), useForceRefresh = false) {
+			const data = await measureApi.fetchLast7DaysMeasures<Sleep7DConstantMetrics>(
+				sleep7DConstantMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "pullLast7DSleepMetrics",
+					payload: {
+						localISODay,
+						data,
+					},
+				},
+			]);
+		},
+		async pullMonthlySleepStageMetrics(
+			localISOMonth: ISOMonth = toISOMonth(getCurrentLocalISODay()),
+			useForceRefresh = false
+		) {
+			const data = await measureApi.fetchLastMonthlyMeasures<SleepMonthlyStageMetrics>(
+				sleepMonthlyStageMetrics,
+				localISOMonth,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "pullMonthlySleepStageMetrics",
+					payload: {
+						localISOMonth,
+						data,
+					},
+				},
+			]);
+		},
+		async pullLastAllSleepConstantMetrics(
+			localISOMonth: ISOMonth = toISOMonth(getCurrentLocalISODay()),
+			useForceRefresh = false
+		) {
+			const data = await measureApi.fetchLastAllMeasures<SleepAllConstantMetrics>(
+				sleepAllConstantMetrics,
+				localISOMonth,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "pullLastAllSleepConstantMetrics",
+					payload: {
+						localISOMonth,
+						data,
+					},
+				},
+			]);
+		},
+		async setDailyHRMetrics(localISODay: ISODay = getCurrentLocalISODay()) {
 			Promise.all([
 				measureApi.fetchDailyMeasures<DailyHRTimeSeriesMetrics>(dailyHRTimeSeriesMetrics, localISODay),
 				measureApi.fetchLastDailyMeasures<DailyHRConstantMetrics>(dailyHRConstantMetrics, localISODay),
@@ -256,7 +316,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
-		async setDailySleepScoreContributorsMetrics(isoDay: ISODay = moment().toISOString() as ISODay) {
+		async setDailySleepScoreContributorsMetrics(isoDay: ISODay = getCurrentLocalISODay()) {
 			const data = await measureApi.fetchLastDailyMeasures<
 				| ContributorAwakeDuration
 				| ContributorRealSleepDuration
@@ -293,14 +353,15 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		 * This actions will update the model with the sleep stages and duration for
 		 * the given day.
 		 */
-		async setDailySleepStagesMetrics(localISODay: ISODay = moment().toISOString() as ISODay) {
+		async setDailySleepStagesMetrics(localISODay: ISODay = moment().toISOString() as ISODay, useForceRefresh = false) {
 			Promise.all([
 				measureApi.fetchMeasures<SleepStagesMetrics>(
 					sleepStagesMetrics,
 					// Grab data from the noon before the day to make sure to get the ensleepment.
 					// TODO: implement day/night worker
 					moment(localISODay).startOf("day").subtract(12, "hours").toISOString(),
-					moment(localISODay).endOf("day").toISOString()
+					moment(localISODay).endOf("day").toISOString(),
+					useForceRefresh
 				),
 				measureApi.fetchLastDailyMeasures<DailySleepStageDuration>(dailySleepStageDuration, localISODay),
 			]).then(function ([timeline, duration]) {

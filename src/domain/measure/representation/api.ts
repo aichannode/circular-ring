@@ -1,4 +1,4 @@
-import { ISODay } from "@domain/common/type";
+import { ISODay, Tuple } from "@domain/common/type";
 import { ActivityStage, SleepStage } from "../type";
 import { StageInfos } from "./lib/type";
 
@@ -36,6 +36,11 @@ export enum ActivityControlState {
 	POOR = "POOR",
 	GOOD = "GOOD",
 	OPTIMAL = "OPTIMAL",
+}
+
+export enum DataControlState {
+	READY = "READY",
+	NO_DATA = "NO_DATA",
 }
 
 export interface Contributor {
@@ -91,3 +96,40 @@ export interface SleepItem {
 	light: number;
 }
 export type SleepItems = SleepItem[];
+export interface SleepStageData {
+	awake: number;
+	light: number;
+	deep: number;
+	REM: number;
+	date: ISODay;
+}
+
+export interface Sleep7D {
+	controlState: DataControlState;
+	sleepStages: Tuple<SleepStageData, 7>;
+	constant: {
+		awakeDuration?: number;
+		lightDuration?: number;
+		deepDuration?: number;
+		REMDuration?: number;
+		awakePerc?: number;
+		lightPerc?: number;
+		deepPerc?: number;
+		REMPerc?: number;
+	};
+}
+
+export interface SleepAll {
+	controlState: DataControlState;
+	sleepStages: Array<SleepStageData>;
+	constant: {
+		awakeDuration?: number;
+		lightDuration?: number;
+		deepDuration?: number;
+		REMDuration?: number;
+		awakePerc?: number;
+		lightPerc?: number;
+		deepPerc?: number;
+		REMPerc?: number;
+	};
+}

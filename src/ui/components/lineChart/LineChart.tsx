@@ -75,7 +75,9 @@ export function LineChart({
 }: LineChartProps) {
 	const [scaleX, setScaleX] = useState(1);
 	const linesLength = daysItem ? daysItem[0].lines.length : 0;
-	const _hasNotEnoughData = hasNotEnoughData || (linesLength === 0 && data?.length === 0);
+	const dataLength = data ? data.length : 0;
+	const hasValidData = linesLength !== 0 || dataLength !== 0;
+	const shouldDisplay = !hasNotEnoughData && hasValidData;
 	const { format } = useI18n();
 	const [selectedX, setSelectedX] = useState<number | undefined>(onSelect ? data?.[0].x : -1);
 
@@ -221,11 +223,7 @@ export function LineChart({
 		: [];
 	return (
 		<Container>
-			{_hasNotEnoughData ? (
-				<View style={{ flex: 1 }}>
-					<TextPlaceholder content={format("global.no_data_yet")} />
-				</View>
-			) : (
+			{shouldDisplay ? (
 				<LineComponent
 					highlights={highlights}
 					legend={{
@@ -256,6 +254,10 @@ export function LineChart({
 						}
 					}}
 				></LineComponent>
+			) : (
+				<View style={{ flex: 1 }}>
+					<TextPlaceholder content={format("global.no_data_yet")} />
+				</View>
 			)}
 		</Container>
 	);

@@ -1,4 +1,4 @@
-import { ISODay } from "@domain/common/type";
+import { ISODay, ISOMonth } from "@domain/common/type";
 import { Metrics, MetricType, RangeMetrics } from "../metric";
 import {
 	CaloriesBurned,
@@ -28,11 +28,35 @@ import {
 	DailySleepScoreMetrics,
 	DailySleepStageDuration,
 	DailyWakeUpScoreMetrics,
+	Sleep7DConstantMetrics,
+	SleepAllConstantMetrics,
+	SleepMonthlyStageMetrics,
 	StepsTaken,
 	WalkingEquivalency,
 } from "../representation/lib/type";
 
 export type Mutations =
+	| {
+			type: "pullLast7DSleepMetrics";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<Sleep7DConstantMetrics>;
+			};
+	  }
+	| {
+			type: "pullMonthlySleepStageMetrics";
+			payload: {
+				localISOMonth: ISOMonth;
+				data: Metrics<SleepMonthlyStageMetrics>;
+			};
+	  }
+	| {
+			type: "pullLastAllSleepConstantMetrics";
+			payload: {
+				localISOMonth: ISOMonth;
+				data: Metrics<SleepAllConstantMetrics>;
+			};
+	  }
 	| {
 			type: "setDailyHRMetrics";
 			payload: {
