@@ -7,7 +7,6 @@ import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
-import { useObservable } from "micro-observables";
 import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components/native";
 import { DateFormatBottomSheet } from "./dateFormatBottomSheet";
@@ -15,9 +14,8 @@ import { DateFormatBottomSheet } from "./dateFormatBottomSheet";
 export const SettingsScreen: React.FC = () => {
 	const { format } = useI18n();
 	const userSettings = useUserSettings();
-	const { userService, ringApi } = useServices();
+	const { userService } = useServices();
 	const { navigate } = useRoutesNavigation();
-	const firwareVersion = useObservable(ringApi.firmwareVersion);
 
 	const [heightFormat, setHeightFormat] = useState(userSettings?.heightFormat);
 	const [weightFormat, setWeightFormat] = useState(userSettings?.weightFormat);
@@ -97,7 +95,7 @@ export const SettingsScreen: React.FC = () => {
 				hasDisclosure
 				action={() => navigate(Routes.WebView, { uri: format("url.privacy"), label: format("settings.privacy") })}
 			/>
-			<InfoListItem name={format("settings.app_version")} value={firwareVersion} />
+			<InfoListItem name={format("settings.app_version")} value={"alpha1.0"} />
 			<InfoListHeader>{format("settings.help")}</InfoListHeader>
 			<InfoListItem
 				name={format("settings.faq")}
