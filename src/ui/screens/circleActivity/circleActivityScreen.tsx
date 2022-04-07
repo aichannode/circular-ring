@@ -7,7 +7,7 @@ import sport from "@assets/images/sport.png";
 import { useRepresentations } from "@core/representation";
 import { getCurrentLocalISODay, isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { DailyActivityIntensityData } from "@domain/measure/representation/api";
+import { DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
 import { activities, activityScoreContributors } from "@domain/measure/representation/lib/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
@@ -52,6 +52,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
 	const [activityIntensity, setData] = useState<DailyActivityIntensityData>({
 		stages: [],
+		controlState: DataControlState.NO_DATA,
 		duration: {
 			total: 0,
 			highActivity: 0,
@@ -109,6 +110,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 				<ActivityDurationPieChart
 					isToday={selectedDay === getCurrentLocalISODay()}
 					stages={activityIntensity.stages}
+					controlState={activityIntensity.controlState}
 					sportSessionDates={activityIntensity.sportSessionDates}
 					duration={activityIntensity.duration.total}
 					hasNotEnoughData={!enoughData}

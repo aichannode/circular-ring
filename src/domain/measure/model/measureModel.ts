@@ -138,12 +138,10 @@ export class MeasureModel implements Model<Proposal> {
 					);
 				}
 			} else if (mutation.type === "setDailyHRMetrics") {
-				if (Object.keys(mutation.payload.range.constant).length && mutation.payload.range.timeSeries.length) {
-					if (Object.keys(mutation.payload.range.constant).length && mutation.payload.range.timeSeries.length) {
-						mutate.call(this, mutation, () =>
-							this.dailyHRMetrics.set(mutation.payload.localISODay, mutation.payload.range)
-						);
-					}
+				if (Object.keys(mutation.payload.range.constant).length || mutation.payload.range.timeSeries.length) {
+					mutate.call(this, mutation, () =>
+						this.dailyHRMetrics.set(mutation.payload.localISODay, mutation.payload.range)
+					);
 				}
 			} else if (mutation.type === "pullLast7DActivityIntensityMetrics") {
 				if (Object.keys(mutation.payload.data).length) {
@@ -152,13 +150,13 @@ export class MeasureModel implements Model<Proposal> {
 					);
 				}
 			} else if (mutation.type === "pullDailyActivityIntensityMetrics") {
-				if (Object.keys(mutation.payload.range.constant).length && mutation.payload.range.timeSeries.length) {
+				if (Object.keys(mutation.payload.range.constant).length || mutation.payload.range.timeSeries.length) {
 					mutate.call(this, mutation, () =>
 						this.dailyActivityIntensityMetrics.set(mutation.payload.localISODay, mutation.payload.range)
 					);
 				}
 			} else if (mutation.type === "setDailySleepMetrics") {
-				if (Object.keys(mutation.payload.range.constant).length && mutation.payload.range.timeSeries.length) {
+				if (Object.keys(mutation.payload.range.constant).length || mutation.payload.range.timeSeries.length) {
 					mutate.call(this, mutation, () =>
 						this.dailySleepMetrics.set(mutation.payload.localISODay, mutation.payload.range)
 					);

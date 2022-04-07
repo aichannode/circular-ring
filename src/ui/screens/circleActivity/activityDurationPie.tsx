@@ -1,4 +1,5 @@
 import { isDefined } from "@domain/common/business";
+import { DataControlState } from "@domain/measure/representation/api";
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { ActivityStage } from "@domain/measure/type";
 import { DailyPieChart } from "@ui/components/measure/dailyPieChart";
@@ -12,6 +13,7 @@ import styled from "styled-components/native";
 type Props = {
 	isToday: boolean;
 	duration: number;
+	controlState: DataControlState;
 	sportSessionDates: [string | undefined, string | undefined][];
 	stages: Array<StageInfos<ActivityStage>>;
 	hasNotEnoughData?: boolean;
@@ -26,9 +28,14 @@ function getPhaseLevel(phase = 1) {
  * @implements 00023: the chart should end at 00:00
  * @implements 00023: the arc during a sport session is always bold and red
  */
-export function ActivityDurationPieChart({ stages, duration, sportSessionDates, isToday, hasNotEnoughData }: Props) {
-	const _hasNotEnoughData = hasNotEnoughData || isNaN(duration);
-
+export function ActivityDurationPieChart({
+	controlState,
+	stages,
+	duration,
+	sportSessionDates,
+	isToday,
+	hasNotEnoughData,
+}: Props) {
 	// Check if the stage start at 00:00 and add a dummy stage if not
 	const correctedStages = produce(stages, function (draft) {
 		if (!draft.length) {
@@ -47,7 +54,7 @@ export function ActivityDurationPieChart({ stages, duration, sportSessionDates, 
 			});
 		}
 		// Add a fake stage to end the pie at 00:00 if not today pie
-		if (isToday && moment(draft[stages.length - 1].end).isBefore(endOfDay)) {
+		if (!isToday && moment(draft[stages.length - 1].end).isBefore(endOfDay)) {
 			draft.push({
 				level: ActivityStage.SEDENTARY,
 				start: draft[stages.length - 2].end ?? startOfDay,
@@ -70,7 +77,7 @@ export function ActivityDurationPieChart({ stages, duration, sportSessionDates, 
 			<DailyPieChart
 				stages={correctedStages}
 				totalDuration={duration}
-				title="activity.duration.total"
+				title="activity.active.minutes"
 				chartSize={200}
 				phaseColors={[
 					colors.business.activityDurationNone,
@@ -80,7 +87,7 @@ export function ActivityDurationPieChart({ stages, duration, sportSessionDates, 
 				]}
 				phaseWidths={[5, 7, 7, 7]}
 				getPhaseLevel={getPhaseLevel}
-				hasNotEnoughData={_hasNotEnoughData}
+				hasNotEnoughData={hasNotEnoughData || controlState === DataControlState.NO_DATA}
 				noDataPhaseColor={colors.business.activityDurationNone}
 			>
 				<DailyPieChartLabel

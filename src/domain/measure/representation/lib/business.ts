@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 import { InteractionManager } from "react-native";
 import { MetricType, RangeMetrics } from "../../metric";
 import { ActivityStage, SleepStage } from "../../type";
-import { DailyActivityIntensityData, DailySleepData } from "../api";
+import { DailyActivityIntensityData, DailySleepData, DataControlState } from "../api";
 import {
 	DailyActivityIntensityDuration,
 	DailyActivityIntensityMetrics,
@@ -56,8 +56,13 @@ export const createActivityPhasesGetter =
 			}
 		}
 
+		const controlState = data.timeSeries.some((block) => MetricType.UserDataActivityIntensity in block.metrics)
+			? DataControlState.READY
+			: DataControlState.NO_DATA;
+
 		return {
 			stages,
+			controlState,
 			duration: {
 				total: (data.constant[MetricType.UserDailyActiveMinute] as number) ?? 0,
 				highActivity: (data.constant[MetricType.UserDailyHighActivityIntensityDuration] as number) ?? 0,

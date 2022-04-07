@@ -10,6 +10,7 @@ export type DailyActivityIntensityData = {
 		mediumActivity: number;
 		lowActivity: number;
 	};
+	controlState: DataControlState;
 	sportSessionDates: Array<[string | undefined, string | undefined]>;
 };
 export type DailySleepData = {

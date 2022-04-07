@@ -232,7 +232,12 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				setData: (data: DailyActivityIntensityData) => void;
 			}) {
 				const modelField = model.dailyActivityIntensityMetrics;
-				const fetchData = () => actions.pullDailyActivityIntensityMetrics(localISODay, shouldForceRefresh(localISODay));
+				const fetchData = () => {
+					actions.pullDailyActivityIntensityMetrics(
+						localISODay,
+						!model.dailyActivityIntensityMetrics.has(localISODay) || shouldForceRefresh(localISODay)
+					);
+				};
 				useDailyHeavyComputationData(
 					localISODay,
 					modelField,

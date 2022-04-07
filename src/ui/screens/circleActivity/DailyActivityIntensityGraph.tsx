@@ -1,7 +1,7 @@
 import { useRepresentations } from "@core/representation";
 import { getLocalISODayFromLocalDate } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { DailyActivityIntensityData } from "@domain/measure/representation/api";
+import { DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
 import { useIs24h } from "@domain/user/hooks/useUser";
 import { CalendarTags } from "@ui/components/calendar/CalendarTags";
 import { TextPlaceholder } from "@ui/components/placeholder/TextPlaceholder";
@@ -31,6 +31,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 
 	const [dataActivityIntensity, setData] = useState<DailyActivityIntensityData>({
 		stages: [],
+		controlState: DataControlState.NO_DATA,
 		duration: {
 			total: 0,
 			highActivity: 0,
