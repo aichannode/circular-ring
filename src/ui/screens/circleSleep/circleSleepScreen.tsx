@@ -1,5 +1,5 @@
 import { useRepresentations } from "@core/representation";
-import { getCurrentLocalISODay } from "@domain/common/business";
+import { getCurrentLocalISODay, isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DailySleepData } from "@domain/measure/representation/api";
 import { sleepScoreContributors } from "@domain/measure/representation/lib/type";
@@ -19,7 +19,6 @@ import { ScoreGauge } from "@ui/containers/scoreGauge";
 import { ScoreSection } from "@ui/containers/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import { isDefined } from "@ui/utils/filter";
 import { observer } from "mobx-react-lite";
 import React, { useRef, useState } from "react";
 import { Image, LayoutAnimation, View } from "react-native";

@@ -1,11 +1,12 @@
 import { useRepresentations } from "@core/representation";
+import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { ActivityData } from "@domain/measure/representation/api";
 import { CalendarTags } from "@ui/components/calendar/CalendarTags";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { Spinner } from "@ui/components/spinner";
 import { colors } from "@ui/styles/colors";
-import { hasAttributesDefined, isDefined } from "@ui/utils/filter";
+import { hasAttributesDefined } from "@ui/utils/filter";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React from "react";

@@ -166,7 +166,7 @@ export type Mutations =
 			type: "setLast7DEnergyScore";
 			payload: {
 				localISODay: ISODay;
-				score: number;
+				score?: number;
 			};
 	  };
 

@@ -1,9 +1,9 @@
+import { isDefined } from "@domain/common/business";
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { ActivityStage } from "@domain/measure/type";
 import { DailyPieChart } from "@ui/components/measure/dailyPieChart";
 import { DailyPieChartLabel } from "@ui/components/measure/dailyPieChartLabel";
 import { colors } from "@ui/styles/colors";
-import { isDefined } from "@ui/utils/filter";
 import produce from "immer";
 import moment from "moment";
 import React from "react";

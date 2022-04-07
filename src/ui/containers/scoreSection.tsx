@@ -1,3 +1,4 @@
+import { isDefined } from "@domain/common/business";
 import { ScoreQuality } from "@domain/measure/representation/api";
 import { ResponsiveCenterView, Stack } from "@ui/components/layout";
 import { ScoreView } from "@ui/components/scoreView/ScoreView";
@@ -5,7 +6,6 @@ import { SecondaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors, ScoreQualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
-import { isDefined } from "@ui/utils/filter";
 import React from "react";
 import { StyleProp, View, ViewStyle } from "react-native";
 import styled from "styled-components/native";

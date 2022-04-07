@@ -184,3 +184,5 @@ export function isBetween(isoTime: string, isoStart: string, isoEnd: string) {
 	const date = Date.parse(isoTime);
 	return Date.parse(isoStart) <= date && date <= Date.parse(isoEnd);
 }
+
+export const isDefined = <T>(a: T | undefined): a is T => typeof a !== "undefined";

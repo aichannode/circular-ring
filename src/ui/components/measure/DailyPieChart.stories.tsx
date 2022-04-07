@@ -1,10 +1,10 @@
 // components/Task.stories.js
+import { isDefined } from "@domain/common/business";
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { ActivityStage } from "@domain/measure/type";
 import { boolean, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react-native";
 import { colors } from "@ui/styles/colors";
-import { isDefined } from "@ui/utils/filter";
 import produce from "immer";
 import moment from "moment";
 import * as React from "react";

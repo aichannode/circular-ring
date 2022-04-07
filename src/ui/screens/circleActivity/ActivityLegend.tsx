@@ -1,7 +1,7 @@
+import { isDefined } from "@domain/common/business";
 import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { ActivityIntensityColors } from "@ui/styles/colors";
-import { isDefined } from "@ui/utils/filter";
 import React from "react";
 import { View } from "react-native";
 

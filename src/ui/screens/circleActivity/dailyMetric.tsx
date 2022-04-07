@@ -1,9 +1,9 @@
+import { isDefined } from "@domain/common/business";
 import { ActivityControlState, ScoreQuality } from "@domain/measure/representation/api";
 import { Grow } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { colors, ScoreQualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
-import { isDefined } from "@ui/utils/filter";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
