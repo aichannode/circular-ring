@@ -289,10 +289,11 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						}),
 					},
 					[MetricType.UserDailyCardioPoints]: {
-						value: data[MetricType.UserDailyCardioPointsGoalMin] as number,
+						value: data[MetricType.UserDailyCardioPoints] as number,
 						controlState: getActivityControlState({
 							lowThreshold: data[MetricType.UserDailyCardioPointsGoalMin] as number,
-							value: data[MetricType.UserDailyCardioPointsGoalMin] as number,
+							highThreshold: data[MetricType.UserDailyCardioPointsGoalMax] as number,
+							value: data[MetricType.UserDailyCardioPoints] as number,
 						}),
 					},
 					[MetricType.UserDailyVO2Max]: {

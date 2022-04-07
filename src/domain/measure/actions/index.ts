@@ -5,10 +5,10 @@ import moment from "moment";
 import { Proposal } from "../common/type";
 import { MetricType } from "../metric";
 import {
+	AcitivityMetrics,
 	activityIntensity7DAverageMetrics,
 	ActivityIntensity7DAverageMetrics,
-	caloriesBurned,
-	CaloriesBurned,
+	activityMetrics,
 	ContributorActivityVolume,
 	contributorActivityVolume,
 	ContributorAwakeDuration,
@@ -65,10 +65,6 @@ import {
 	sleepMonthlyStageMetrics,
 	SleepStagesMetrics,
 	sleepStagesMetrics,
-	stepsTaken,
-	StepsTaken,
-	walkingEquivalency,
-	WalkingEquivalency,
 } from "../representation/lib/type";
 import { MeasureApi } from "./lib/measureApi";
 
@@ -296,16 +292,8 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async setDailyActivitiesMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures<
-				StepsTaken | WalkingEquivalency | CaloriesBurned | MetricType.UserDailyVO2Max | MetricType.UserDailyAwakeHRMax
-			>(
-				[
-					...stepsTaken,
-					...walkingEquivalency,
-					...caloriesBurned,
-					MetricType.UserDailyVO2Max,
-					MetricType.UserDailyAwakeHRMax,
-				],
+			const data = await measureApi.fetchLastDailyMeasures<AcitivityMetrics>(
+				activityMetrics,
 				localISODay,
 				useForceRefresh
 			);

@@ -271,6 +271,16 @@ export const cardioPoints = [
 ] as const;
 export type CardioPoints = typeof cardioPoints[number];
 
+export const activityMetrics = [
+	...stepsTaken,
+	...walkingEquivalency,
+	...caloriesBurned,
+	...cardioPoints,
+	MetricType.UserDailyVO2Max,
+	MetricType.UserDailyAwakeHRMax,
+];
+export type AcitivityMetrics = typeof activityMetrics[number];
+
 /**
  * Those metrics are used for the stages circle and hypnogram.
  * They represents the different sleep stages (core sleep and naps)
