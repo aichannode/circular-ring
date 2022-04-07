@@ -3,12 +3,12 @@ import { toLocale } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DailySleepData } from "@domain/measure/representation/api";
 import { SleepStage } from "@domain/measure/type";
+import { CalendarTags } from "@ui/components/calendar/CalendarTags";
 import moment from "moment";
 import React from "react";
 import { View } from "react-native";
 import { Hypnogram } from "./hypnogram";
 import { SleepLegend } from "./SleepLegend";
-import { SleepTags } from "./SleepTags";
 
 interface Props {
 	data: DailySleepData;
@@ -31,7 +31,7 @@ export function DailySleepChart({ data, selectedDay, hasNotEnoughData }: Props) 
 	return (
 		<View style={{ flex: 1, position: "relative" }}>
 			<View style={{ position: "absolute", top: 0, right: 0 }}>
-				<SleepTags tags={tags} />
+				<CalendarTags tags={tags} />
 			</View>
 			<Hypnogram data={data.stages} hasNotEnoughData={hasNotEnoughData} />
 			<View style={{ marginTop: 30 }}>

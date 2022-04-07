@@ -133,3 +133,19 @@ export interface SleepAll {
 		REMPerc?: number;
 	};
 }
+
+export interface ActivityData {
+	high: number;
+	medium: number;
+	low: number;
+	date: ISODay;
+}
+export interface Activity7D {
+	controlState: DataControlState;
+	activityMetrics: Tuple<ActivityData, 7>;
+	constant: {
+		highDuration?: number;
+		mediumDuration?: number;
+		lowDuration?: number;
+	};
+}

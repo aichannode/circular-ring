@@ -57,6 +57,20 @@ export type DailyHRConstantMetrics = typeof dailyHRConstantMetrics[number];
 export const dailyHRTimeSeriesMetrics = [MetricType.UserHR] as const;
 export type DailyHRTimeSeriesMetrics = typeof dailyHRTimeSeriesMetrics[number];
 
+export const dailyActivityIntensityDurationMetrics = [
+	MetricType.UserDailyHighActivityIntensityDuration,
+	MetricType.UserDailyMediumActivityIntensityDuration,
+	MetricType.UserDailyLowActivityIntensityDuration,
+] as const;
+export type DailyActivityIntensityDurationMetrics = typeof dailyActivityIntensityDurationMetrics[number];
+
+export const activityIntensity7DAverageMetrics = [
+	MetricType.User7DaysAverageHighIntensityDuration,
+	MetricType.User7DaysAverageMediumIntensityDuration,
+	MetricType.User7DaysAverageLowIntensityDuration,
+] as const;
+export type ActivityIntensity7DAverageMetrics = typeof activityIntensity7DAverageMetrics[number];
+
 /**
  * Score flasks
  */

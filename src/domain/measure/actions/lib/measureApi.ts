@@ -92,9 +92,10 @@ export class MeasureApi {
 
 	public async fetchDailyMeasures<T extends MetricType>(
 		measures: ReadonlyArray<T>,
-		isoDay: ISODay
+		isoDay: ISODay,
+		useForceRefresh = false
 	): Promise<Array<DatedMetrics<T>>> {
-		return await this.getMeasures(measures, toUTCTimeSegment(isoDay, TimeFrame.DAY));
+		return await this.getMeasures(measures, toUTCTimeSegment(isoDay, TimeFrame.DAY), useForceRefresh);
 	}
 
 	public async fetchLast7DaysMeasures<T extends MetricType>(

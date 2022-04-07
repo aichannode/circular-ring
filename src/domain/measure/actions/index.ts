@@ -5,6 +5,8 @@ import moment from "moment";
 import { Proposal } from "../common/type";
 import { MetricType } from "../metric";
 import {
+	activityIntensity7DAverageMetrics,
+	ActivityIntensity7DAverageMetrics,
 	caloriesBurned,
 	CaloriesBurned,
 	ContributorActivityVolume,
@@ -237,14 +239,25 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
-		async setDailyActivityIntensityMetrics(localISODay: ISODay = moment().toISOString() as ISODay) {
+		async pullDailyActivityIntensityMetrics(
+			localISODay: ISODay = moment().toISOString() as ISODay,
+			useForceRefresh = false
+		) {
 			Promise.all([
-				measureApi.fetchDailyMeasures<DailyActivityIntensityMetrics>(dailyActivityIntensityMetrics, localISODay),
-				measureApi.fetchLastDailyMeasures<DailyActivityIntensityDuration>(dailyActivityIntensityDuration, localISODay),
+				measureApi.fetchDailyMeasures<DailyActivityIntensityMetrics>(
+					dailyActivityIntensityMetrics,
+					localISODay,
+					useForceRefresh
+				),
+				measureApi.fetchLastDailyMeasures<DailyActivityIntensityDuration>(
+					dailyActivityIntensityDuration,
+					localISODay,
+					useForceRefresh
+				),
 			]).then(function ([timeSeries, duration]) {
 				present([
 					{
-						type: "setDailyActivityIntensityMetrics",
+						type: "pullDailyActivityIntensityMetrics",
 						payload: {
 							localISODay,
 							range: {
@@ -255,6 +268,25 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					},
 				]);
 			});
+		},
+		async pullLast7DActivityIntensityMetrics(
+			localISODay: ISODay = moment().toISOString() as ISODay,
+			useForceRefresh = false
+		) {
+			const data = await measureApi.fetchLast7DaysMeasures<ActivityIntensity7DAverageMetrics>(
+				activityIntensity7DAverageMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "pullLast7DActivityIntensityMetrics",
+					payload: {
+						localISODay,
+						data,
+					},
+				},
+			]);
 		},
 		async setDailyActivitiesMetrics(localISODay: ISODay = moment().toISOString() as ISODay) {
 			const data = await measureApi.fetchLastDailyMeasures<

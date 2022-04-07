@@ -8,7 +8,7 @@ interface Props {
 	tags?: Array<{ tag: CalendarTag; nb: number }>;
 }
 
-export const SleepTags = ({ tags = [] }: Props) => (
+export const CalendarTags = ({ tags = [] }: Props) => (
 	<View style={{ flex: 1, flexDirection: "row-reverse", flexWrap: "wrap" }}>
 		{tags.map(({ tag, nb }) => (
 			<Tag

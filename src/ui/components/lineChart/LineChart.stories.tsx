@@ -23,67 +23,74 @@ const items = [
 		deep: 1.8,
 		rem: 3.6,
 		light: 5.2,
+		isoTime: "2022-02-13T00:54:00Z",
 	},
 	{
 		awake: 1.1,
 		deep: 1.9,
 		rem: 3.8,
 		light: 5.4,
+		isoTime: "2022-02-14T02:18:00Z",
 	},
 	{
 		awake: 1.7,
 		deep: 2.1,
 		rem: 3.9,
 		light: 5.4,
+		isoTime: "2022-02-15T04:14:00Z",
 	},
 	{
 		awake: 1.5,
 		deep: 1.7,
 		rem: 2,
 		light: 5.0,
+		isoTime: "2022-02-16T04:20:00Z",
 	},
 	{
 		awake: 1.4,
 		deep: 1.6,
 		rem: 3.8,
 		light: 4.8,
+		isoTime: "2022-02-17T04:22:00Z",
 	},
 	{
 		awake: 1.8,
 		deep: 2,
 		rem: 3,
 		light: 6.2,
+		isoTime: "2022-02-18T04:26:00Z",
 	},
 	{
 		awake: 2,
 		deep: 2.1,
 		rem: 3,
 		light: 5.4,
+		isoTime: "2022-02-19T04:30:00Z",
 	},
 ];
 
 const dataSets: MultipleDataSets = [
 	{
-		lines: items.map(({ awake }, index) => {
-			return { x: index, y: awake };
+		lines: items.map(({ isoTime, awake }) => {
+			return { x: moment(isoTime).valueOf(), y: awake };
 		}),
 		color: colors.business.sleepAwake,
 	},
 	{
-		lines: items.map(({ deep }, index) => {
-			return { x: index, y: deep };
+		lines: items.map(({ isoTime, deep }) => {
+			return { x: moment(isoTime).valueOf(), y: deep };
 		}),
 		color: colors.business.sleepDeep,
 	},
 	{
-		lines: items.map(({ rem }, index) => {
-			return { x: index, y: rem };
+		lines: items.map(({ isoTime, rem }) => {
+			return { x: moment(isoTime).valueOf(), y: rem };
 		}),
 		color: colors.business.sleepRem,
 	},
 	{
-		lines: items.map(({ light }, index) => {
-			return { x: index, y: light };
+		lines: items.map(({ isoTime, light }) => {
+			return { x: moment(isoTime).valueOf(), y: light };
 		}),
 		color: colors.business.sleepLight,
 	},
@@ -169,7 +176,27 @@ storiesOf("LineChart", module)
 				shouldDrawCircles={true}
 				valueFormatter={["S", "M", "T", "W", "T", "F", "S"]}
 				scaleXEnabled={false}
-				shouldShowMarker={true}
+				shouldShowMarker={false}
+				shouldShowLabel={true}
+				highlightPerTapEnabled={true}
+				onSelect={(date) => console.log(date)}
+			/>
+		);
+	})
+	.add("Multiple Line with custom y values", () => {
+		return (
+			<LineChart
+				isMultipleLines={true}
+				xColor={colors.textPrimary}
+				yColor={colors.darkGray}
+				daysItem={dataSets}
+				shouldDrawCircles={true}
+				valueFormatter={["S", "M", "T", "W", "T", "F", "S"]}
+				yValueFormatter={dataSets[0].lines.map(({ x }) => {
+					return `${moment(x).format("h")}h:${moment(x).format("m")}`;
+				})}
+				scaleXEnabled={false}
+				shouldShowMarker={false}
 				shouldShowLabel={true}
 				highlightPerTapEnabled={true}
 				onSelect={(date) => console.log(date)}
@@ -288,6 +315,17 @@ storiesOf("LineChart", module)
 				graphColor={colors.red}
 				valueFormatter="date"
 				valueFormatterPattern="H'h'"
+			/>
+		);
+	})
+	.add("Activity intensity (7 days)", () => {
+		return (
+			<LineChart
+				isMultipleLines={true}
+				xColor={colors.textPrimary}
+				yColor={colors.darkGray}
+				shouldDrawCircles={true}
+				valueFormatter={["S", "M", "T", "W", "T", "F", "S"]}
 			/>
 		);
 	});

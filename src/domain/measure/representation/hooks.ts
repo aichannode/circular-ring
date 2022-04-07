@@ -10,6 +10,7 @@ import { MeasureApi } from "../actions/lib/measureApi";
 import { MetricType } from "../metric";
 import { MeasureModel } from "../model/measureModel";
 import {
+	Activity7D,
 	ActivityControlState,
 	Contributor,
 	DailyActivityIntensityData,
@@ -23,6 +24,7 @@ import {
 import { canDisplay, getActivityControlState, getScoreControlStates, parseDailyHR } from "./business";
 import { createActivityPhasesGetter, createSleepStagesGetter, useDailyHeavyComputationData } from "./lib/business";
 import { Activities, ActivityScoreContributors, SleepScoreContributors } from "./lib/type";
+
 export function createRepresentation(apiService: ApiService, model: MeasureModel) {
 	const actions = createActions(new MeasureApi(apiService), model.present);
 
@@ -145,6 +147,56 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 				return isLoaded ? { sleepStages, constant, controlState } : undefined;
 			},
+			use7DaysActivity(localISODay = getCurrentLocalISODay()): Activity7D | undefined {
+				// Compute the 7 previous date from the given date
+				const last7Days = getLast7Days(localISODay);
+
+				useEffect(
+					action(function () {
+						// Get the last 7 daily acitivity intensity metrics
+						last7Days
+							.filter((d) => !model.dailyActivityIntensityMetrics.has(d))
+							.forEach((d) => actions.pullDailyActivityIntensityMetrics(d, true));
+						// and the constants for the last 7 days
+						actions.pullLast7DActivityIntensityMetrics(localISODay);
+					}),
+					[localISODay]
+				);
+
+				const last7DActivityIntensityAverageMetrics =
+					model.last7DActivityIntensityAverageMetrics.get(localISODay) || {};
+				const constant = {
+					highDuration: last7DActivityIntensityAverageMetrics[MetricType.User7DaysAverageHighIntensityDuration],
+					mediumDuration: last7DActivityIntensityAverageMetrics[MetricType.User7DaysAverageMediumIntensityDuration],
+					lowDuration: last7DActivityIntensityAverageMetrics[MetricType.User7DaysAverageLowIntensityDuration],
+				} as Activity7D["constant"];
+
+				const activityMetrics = last7Days.map((date) => {
+					const localMetrics = model.dailyActivityIntensityMetrics.get(date)?.constant ?? {};
+					return {
+						high: isDefined(localMetrics[MetricType.UserDailyHighActivityIntensityDuration])
+							? moment.duration(localMetrics[MetricType.UserDailyHighActivityIntensityDuration]).asHours()
+							: undefined,
+						medium: isDefined(localMetrics[MetricType.UserDailyMediumActivityIntensityDuration])
+							? moment.duration(localMetrics[MetricType.UserDailyMediumActivityIntensityDuration]).asHours()
+							: undefined,
+						low: isDefined(localMetrics[MetricType.UserDailyLowActivityIntensityDuration])
+							? moment.duration(localMetrics[MetricType.UserDailyLowActivityIntensityDuration]).asHours()
+							: undefined,
+						date,
+					};
+				}) as unknown as Activity7D["activityMetrics"];
+
+				const isLoaded =
+					model.last7DActivityIntensityAverageMetrics.has(localISODay) &&
+					last7Days.every((date) => model.dailyActivityIntensityMetrics.has(date));
+
+				const controlState = activityMetrics.some((metric) => isDefined(metric?.low))
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
+
+				return isLoaded ? { activityMetrics, constant, controlState } : undefined;
+			},
 			useDailyHR(localISODay = getCurrentLocalISODay()): DailyHr | undefined {
 				useEffect(() => {
 					__DEV__ && console.log("[MEASURE: Action] FETCH");
@@ -162,7 +214,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				setData: (data: DailyActivityIntensityData) => void;
 			}) {
 				const modelField = model.dailyActivityIntensityMetrics;
-				const fetchData = () => actions.setDailyActivityIntensityMetrics(localISODay);
+				const fetchData = () => actions.pullDailyActivityIntensityMetrics(localISODay);
 				useDailyHeavyComputationData(
 					localISODay,
 					modelField,

@@ -34,9 +34,10 @@ interface LineChartProps {
 	yColor: string;
 	shouldDrawCircles?: boolean;
 	valueFormatterPattern?: string | string[];
-	yValueFormatterPattern?: string | undefined;
 	valueFormatter?: string | string[] | undefined;
+	yValueFormatter?: string | string[] | undefined;
 	shouldShowLabel?: boolean;
+	labelFormatter?: (x: number, y: number, index: number) => string;
 	yMin?: number;
 	yMax?: number;
 	yMinIndex?: number;
@@ -54,8 +55,8 @@ export function LineChart({
 	averages,
 	daysItem,
 	valueFormatterPattern,
-	yValueFormatterPattern,
 	valueFormatter,
+	yValueFormatter,
 	isMultipleLines = false,
 	graphColor = colors.red,
 	shouldDrawCircles = false,
@@ -68,6 +69,7 @@ export function LineChart({
 	yMaxIndex,
 	labelCount,
 	shouldShowMarker = false,
+	labelFormatter = (x, y) => `${moment(x).format("Y-MM-DD")}\n${y}`,
 	highlightPerTapEnabled = false,
 	scaleXEnabled = true,
 	hasNotEnoughData,
@@ -119,7 +121,7 @@ export function LineChart({
 			gridColor: processColor(colors.extraLightGray),
 			granularityEnabled: true,
 			granularity: 1,
-			valueFormatterPattern: yValueFormatterPattern,
+			valueFormatter: yValueFormatter,
 			axisLineColor: processColor("white"),
 			limitLines: averages?.map(({ value, color }) => {
 				return {
@@ -139,10 +141,10 @@ export function LineChart({
 	const dataSets = {
 		dataSets: [
 			{
-				values: data?.map(({ x, y }) => {
+				values: data?.map(({ x, y }, index) => {
 					let marker = "";
 					if (!!shouldShowMarker) {
-						marker = `${moment(x).format("Y-MM-DD")}\n${y}`;
+						marker = labelFormatter(x, y, index);
 					} else if (y == yMin || y == yMax) {
 						marker = `${y}`;
 					}
@@ -182,7 +184,7 @@ export function LineChart({
 						values: lines!.map(({ x, y }, index) => {
 							let marker = "";
 							if (!!shouldShowMarker) {
-								marker = `${moment(x).format("Y-MM-DD")}\n${y}`;
+								marker = labelFormatter(x, y, index);
 							}
 							return { x: index, y, marker, value: x };
 						}),
@@ -215,6 +217,7 @@ export function LineChart({
 			  })
 			: [],
 	};
+
 	const highlights = data?.length
 		? [
 				{ x: yMinIndex ? data?.[yMinIndex].x : 0, y: yMinIndex ? data?.[yMinIndex].y : 0 },

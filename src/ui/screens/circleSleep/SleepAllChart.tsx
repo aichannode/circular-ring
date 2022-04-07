@@ -3,6 +3,7 @@ import { toISOMonth } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { Lines, SleepStageData } from "@domain/measure/representation/api";
 import { useUser } from "@domain/user/hooks/useUser";
+import { CalendarTags } from "@ui/components/calendar/CalendarTags";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { Spinner } from "@ui/components/spinner";
 import { colors } from "@ui/styles/colors";
@@ -12,7 +13,6 @@ import moment from "moment";
 import React from "react";
 import { View } from "react-native";
 import { SleepLegend } from "./SleepLegend";
-import { SleepTags } from "./SleepTags";
 
 interface Props {
 	selectedDay: ISODay;
@@ -52,7 +52,7 @@ export const SleepAllChart = observer(function SleepAllChart({ selectedDay, hasN
 
 	return isLoaded ? (
 		<>
-			<SleepTags tags={shouldDisplay ? tags : []} />
+			<CalendarTags tags={shouldDisplay ? tags : []} />
 			<View style={{ height: 200 }}>
 				<LineChart
 					daysItem={[

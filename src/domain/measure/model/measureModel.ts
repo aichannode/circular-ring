@@ -4,6 +4,7 @@ import { action, IObservableArray, makeAutoObservable, observable } from "mobx";
 import { Proposal } from "../common/type";
 import { Metrics, MetricType, RangeMetrics } from "../metric";
 import {
+	ActivityIntensity7DAverageMetrics,
 	CaloriesBurned,
 	CardioPoints,
 	ContributorActivityVolume,
@@ -76,6 +77,7 @@ export class MeasureModel implements Model<Proposal> {
 	public dailySleepMetrics: Map<ISODay, RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>> = new Map();
 	public dailyEnergyScore: Map<ISODay, number | undefined> = new Map();
 	public last7DEnergyScore: Map<ISODay, number> = new Map();
+	public last7DActivityIntensityAverageMetrics: Map<ISODay, Metrics<ActivityIntensity7DAverageMetrics>> = new Map();
 	public dailyActivityIntensityMetrics: Map<
 		ISODay,
 		RangeMetrics<DailyActivityIntensityMetrics, DailyActivityIntensityDuration>
@@ -109,6 +111,7 @@ export class MeasureModel implements Model<Proposal> {
 			last7DSleepMetrics: observable.shallow,
 			monthlySleepStageMetrics: observable.shallow,
 			lastAllSleepStageMetrics: observable.shallow,
+			last7DActivityIntensityAverageMetrics: observable.shallow,
 			present: action,
 		});
 	}
@@ -131,7 +134,11 @@ export class MeasureModel implements Model<Proposal> {
 				mutate.call(this, mutation, () =>
 					this.dailyHRMetrics.set(mutation.payload.localISODay, mutation.payload.range)
 				);
-			} else if (mutation.type === "setDailyActivityIntensityMetrics") {
+			} else if (mutation.type === "pullLast7DActivityIntensityMetrics") {
+				mutate.call(this, mutation, () =>
+					this.last7DActivityIntensityAverageMetrics.set(mutation.payload.localISODay, mutation.payload.data)
+				);
+			} else if (mutation.type === "pullDailyActivityIntensityMetrics") {
 				mutate.call(this, mutation, () =>
 					this.dailyActivityIntensityMetrics.set(mutation.payload.localISODay, mutation.payload.range)
 				);
