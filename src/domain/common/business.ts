@@ -153,7 +153,7 @@ export function getLast7Days(isoDay: ISODay): Tuple<ISODay, 7> {
 	return Array(7)
 		.fill(0)
 		.map((_, index) => {
-			return getUTCISODayFromUTCDate(moment(isoDay).subtract(index, "day").toISOString());
+			return getUTCISODayFromUTCDate(moment.utc(isoDay).subtract(index, "day").toISOString());
 		}) as unknown as Tuple<ISODay, 7>;
 }
 
