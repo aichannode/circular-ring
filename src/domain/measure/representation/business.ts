@@ -1,6 +1,6 @@
 import { isToday } from "@domain/common/business";
 import { MetricType, RangeMetrics } from "../metric";
-import { ActivityControlState, DailyHr, DailySpo2, DataControlState, ScoreQuality } from "./api";
+import { ActivityControlState, DailyBr, DailyHr, DailySpo2, DataControlState, ScoreQuality } from "./api";
 import { DailySleepStageDuration, SleepStagesMetrics } from "./lib/type";
 
 /**
@@ -109,4 +109,37 @@ export function parseDailySpo2(
 	dailySpo2Data.controlState = controlState;
 
 	return dailySpo2Data;
+}
+export function parseDailyBR(
+	dailyBR:
+		| RangeMetrics<MetricType.UserBR, MetricType.UserDailyAsleepBR | MetricType.UserDailyAsleepBRReference>
+		| undefined,
+	dailySleepStageDuration: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined
+): DailyBr | undefined {
+	if (dailyBR === undefined || dailyBR?.timeSeries.length === 0) return undefined;
+
+	const userSleepBegin = dailySleepStageDuration?.constant[MetricType.UserCoreSleepBegin] as number;
+	const userSleepEnd = dailySleepStageDuration?.constant[MetricType.UserCoreSleepEnd] as number;
+
+	const data: DailyBr = {
+		constant: {
+			average: dailyBR.constant[MetricType.UserDailyAsleepBR] as number,
+			reference: dailyBR.constant[MetricType.UserDailyAsleepBRReference] as number,
+		},
+		lines: [],
+		controlState: DataControlState.NO_DATA,
+	};
+	dailyBR.timeSeries.map((timeSerie) => {
+		data.lines.push({
+			x: Date.parse(timeSerie.timestamp),
+			y: timeSerie.metrics[MetricType.UserBR] as number,
+		});
+	});
+
+	const controlState = data.lines.some(({ x }) => x > userSleepBegin * 1000 && x < userSleepEnd * 1000)
+		? DataControlState.READY
+		: DataControlState.NO_DATA;
+	data.controlState = controlState;
+
+	return data;
 }

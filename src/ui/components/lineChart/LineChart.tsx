@@ -75,7 +75,7 @@ export function LineChart({
 	const shouldDisplay = !hasNotEnoughData && hasValidData;
 	const { format } = useI18n();
 	const [selectedX, setSelectedX] = useState<number | undefined>(onSelect ? data?.[0].x : -1);
-
+	const axisMinimum = yMin ? yMin - ((yMin % 10) + 10) : 0;
 	const xAxis = {
 		valueFormatter: valueFormatter,
 		valueFormatterPattern: Array.isArray(valueFormatterPattern)
@@ -103,7 +103,7 @@ export function LineChart({
 	const yAxis = {
 		left: {
 			labelCount: 4,
-			axisMinimum: yMin ? yMin - ((yMin % 10) + 10) : 0,
+			axisMinimum: axisMinimum > 0 ? axisMinimum : 0,
 			enabled: true,
 			textColor: processColor(yColor),
 			drawGridLines: true,

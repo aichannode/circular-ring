@@ -23,6 +23,7 @@ import { observer } from "mobx-react-lite";
 import React, { useRef, useState } from "react";
 import { Image, LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
+import { BreathingRateGraph } from "./breathingRateGraph";
 import { DailySleepChart } from "./DailySleepChart";
 import { getSleepGaugesConfig } from "./measureDisplayInfos";
 import { Sleep7DChart } from "./Sleep7DChart";
@@ -173,6 +174,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 				)}
 				{activeItem === 1 && <></>}
 				{activeItem === 3 && <Spo2Graph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
+				{activeItem === 4 && <BreathingRateGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
 					<Row style={{ justifyContent: "center" }}>
 						<ImageContainer onPress={() => setActiveItem(0)}>
@@ -201,6 +203,16 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 									activeItem === 3
 										? require(`@assets/images/spo2Blue.png`)
 										: require(`@assets/images/spo2BlueTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+						<ImageContainer onPress={() => setActiveItem(4)}>
+							<GraphSwitcherButton
+								style={{ marginLeft: 0 }}
+								source={
+									activeItem === 4
+										? require(`@assets/images/brBlue.png`)
+										: require(`@assets/images/brBlueTransparent.png`)
 								}
 							/>
 						</ImageContainer>

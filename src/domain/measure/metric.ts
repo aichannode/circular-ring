@@ -73,6 +73,7 @@ export enum MetricType {
 	UserDailyWakeUpScoreGoalMax = "user.daily.wake.up.score.goal.max",
 
 	UserDailyAsleepBR = "user.daily.asleep.br",
+	UserDailyAsleepBRReference = "user.reference.asleep.br",
 	UserDailyScoreBR = "user.daily.score.br",
 	UserDailyScoreBRGoalMin = "user.daily.score.br.goal.min",
 	UserDailyScoreBRGoalMax = "user.daily.score.br.goal.max",
@@ -210,4 +211,9 @@ export enum MetricType {
 	UserDailyAwakeHRMin = "user.daily.awake.hr.min",
 	UserDailyAwakeHRAverage = "user.daily.awake.hr",
 	UserDailyAwakeHRReference = "user.reference.awake.hr",
+
+	///////////////////
+	// BR
+	///////////////////
+	UserBR = "user.br",
 }

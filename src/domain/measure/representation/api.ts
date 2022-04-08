@@ -69,6 +69,14 @@ export interface DailySpo2 {
 	};
 	controlState: DataControlState;
 }
+export interface DailyBr {
+	lines: Lines;
+	constant: {
+		average: number;
+		reference: number;
+	};
+	controlState: DataControlState;
+}
 
 export interface Line {
 	/** timestamp */

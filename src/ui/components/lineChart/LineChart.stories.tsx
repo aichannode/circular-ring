@@ -167,6 +167,18 @@ storiesOf("LineChart", module)
 			valueFormatterPattern={["H'h'", "HH'h':mm"]}
 		/>
 	))
+	.add("AM/PM", () => (
+		<LineChart
+			averages={object("averages", averages)}
+			xColor={colors.textPrimary}
+			yColor={colors.darkGray}
+			data={lines}
+			shouldDrawCircles={false}
+			graphColor={colors.red}
+			valueFormatter="date"
+			valueFormatterPattern={["h a", "h:mm a"]}
+		/>
+	))
 	.add("Multiple Line", () => {
 		return (
 			<LineChart

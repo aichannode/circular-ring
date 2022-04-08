@@ -21,6 +21,7 @@ import {
 	Cardio7D,
 	Contributor,
 	DailyActivityIntensityData,
+	DailyBr,
 	DailyHr,
 	DailySleepData,
 	DailySpo2,
@@ -29,7 +30,14 @@ import {
 	Sleep7D,
 	SleepAll,
 } from "./api";
-import { canDisplay, getActivityControlState, getScoreControlStates, parseDailyHR, parseDailySpo2 } from "./business";
+import {
+	canDisplay,
+	getActivityControlState,
+	getScoreControlStates,
+	parseDailyBR,
+	parseDailyHR,
+	parseDailySpo2,
+} from "./business";
 import { createActivityPhasesGetter, createSleepStagesGetter, useDailyHeavyComputationData } from "./lib/business";
 import { Activities, ActivityScoreContributors, SleepScoreContributors } from "./lib/type";
 
@@ -235,6 +243,17 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				const data = model.dailySleepMetrics.get(localISODay) ?? undefined;
 
 				return parseDailySpo2(model.dailySpo2Metrics.get(localISODay), data);
+			},
+			useDailyBR(localISODay = getCurrentLocalISODay()): DailyBr | undefined {
+				useEffect(() => {
+					__DEV__ && console.log("[MEASURE: Action] FETCH");
+					if (!model.dailyBRMetrics.has(localISODay)) {
+						actions.pullDailyBRMetrics(localISODay, true);
+					}
+				}, [localISODay]);
+				const data = model.dailySleepMetrics.get(localISODay) ?? undefined;
+
+				return parseDailyBR(model.dailyBRMetrics.get(localISODay), data);
 			},
 
 			useDailyActivityIntensity({

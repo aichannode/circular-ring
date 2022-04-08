@@ -25,6 +25,8 @@ import {
 	ContributorWakeUpScore,
 	DailyActivityIntensityDuration,
 	DailyActivityIntensityMetrics,
+	DailyBRConstantMetrics,
+	DailyBRTimeSeriesMetrics,
 	DailyHRConstantMetrics,
 	DailyHRTimeSeriesMetrics,
 	DailySleepScoreMetrics,
@@ -87,6 +89,13 @@ export type Mutations =
 			payload: {
 				localISODay: ISODay;
 				range: RangeMetrics<DailySpo2TimeSeriesMetrics, DailySpo2ConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setDailyBRMetrics";
+			payload: {
+				localISODay: ISODay;
+				range: RangeMetrics<DailyBRTimeSeriesMetrics, DailyBRConstantMetrics>;
 			};
 	  }
 	| {

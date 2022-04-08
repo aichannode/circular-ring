@@ -82,7 +82,15 @@ export const dailySpo2ConstantMetrics = [
 	MetricType.UserDailyAsleepSPO2Reference,
 ] as const;
 export type DailySpo2ConstantMetrics = typeof dailySpo2ConstantMetrics[number];
+/**
+ * Breathing rate
+ */
 
+export const dailyBRTimeSeriesMetrics = [MetricType.UserBR] as const;
+export type DailyBRTimeSeriesMetrics = typeof dailyBRTimeSeriesMetrics[number];
+
+export const dailyBRConstantMetrics = [MetricType.UserDailyAsleepBR, MetricType.UserDailyAsleepBRReference] as const;
+export type DailyBRConstantMetrics = typeof dailyBRConstantMetrics[number];
 /**
  * Score flasks
  */

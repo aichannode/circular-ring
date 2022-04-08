@@ -51,6 +51,10 @@ import {
 	DailyActivityIntensityDuration,
 	dailyActivityIntensityMetrics,
 	DailyActivityIntensityMetrics,
+	dailyBRConstantMetrics,
+	DailyBRConstantMetrics,
+	DailyBRTimeSeriesMetrics,
+	dailyBRTimeSeriesMetrics,
 	dailyHRConstantMetrics,
 	DailyHRConstantMetrics,
 	dailyHRTimeSeriesMetrics,
@@ -190,6 +194,26 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				present([
 					{
 						type: "setDailySpo2Metrics",
+						payload: {
+							localISODay,
+							range: {
+								timeSeries,
+								constant,
+							},
+						},
+					},
+				]);
+			});
+		},
+		async pullDailyBRMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
+			Promise.all([
+				measureApi.fetchDailyMeasures<DailyBRTimeSeriesMetrics>(dailyBRTimeSeriesMetrics, localISODay, useForceRefresh),
+				measureApi.fetchLastDailyMeasures<DailyBRConstantMetrics>(dailyBRConstantMetrics, localISODay, useForceRefresh),
+			]).then(function ([timeSeries, constant]) {
+				present([
+					{
+						type: "setDailyBRMetrics",
+
 						payload: {
 							localISODay,
 							range: {
