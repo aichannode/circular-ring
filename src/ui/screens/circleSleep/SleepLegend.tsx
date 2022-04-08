@@ -1,7 +1,6 @@
 import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import moment from "moment";
 import React from "react";
 import { View } from "react-native";
 
@@ -30,7 +29,7 @@ interface Props {
 }
 
 export const SleepLegend = ({ REMDuration, awakeDuration, deepDuration, lightDuration, hasNotEnoughData }: Props) => {
-	const { format } = useI18n();
+	const { format, formatDuration } = useI18n();
 
 	return (
 		<GraphLegend
@@ -42,11 +41,7 @@ export const SleepLegend = ({ REMDuration, awakeDuration, deepDuration, lightDur
 						key: "sleep.stage.awake",
 						node: <Circle color={colors.business.sleepAwake} />,
 					},
-					value:
-						awakeDuration &&
-						`${moment.duration(awakeDuration.duration).hours()} h ${moment
-							.duration(awakeDuration.duration)
-							.minutes()} min (${awakeDuration.percent}%)`,
+					value: awakeDuration && `${formatDuration(awakeDuration.duration * 60)} (${awakeDuration.percent * 100}%)`,
 				},
 				{
 					label: format("sleep.stage.REM"),
@@ -54,11 +49,7 @@ export const SleepLegend = ({ REMDuration, awakeDuration, deepDuration, lightDur
 						key: "sleep.stage.REM",
 						node: <Circle color={colors.business.sleepRem} />,
 					},
-					value:
-						REMDuration &&
-						`${moment.duration(REMDuration.duration).hours()} h ${moment
-							.duration(REMDuration.duration)
-							.minutes()} min (${REMDuration.percent}%)`,
+					value: REMDuration && `${formatDuration(REMDuration.duration * 60)} (${REMDuration.percent * 100}%)`,
 				},
 				{
 					label: format("sleep.stage.light"),
@@ -66,11 +57,7 @@ export const SleepLegend = ({ REMDuration, awakeDuration, deepDuration, lightDur
 						key: "sleep.stage.light",
 						node: <Circle color={colors.business.sleepLight} />,
 					},
-					value:
-						lightDuration &&
-						`${moment.duration(lightDuration.duration).hours()} h ${moment
-							.duration(lightDuration.duration)
-							.minutes()} min (${lightDuration.percent}%)`,
+					value: lightDuration && `${formatDuration(lightDuration.duration * 60)} (${lightDuration.percent * 100}%)`,
 				},
 				{
 					label: format("sleep.stage.deep"),
@@ -78,11 +65,7 @@ export const SleepLegend = ({ REMDuration, awakeDuration, deepDuration, lightDur
 						key: "sleep.stage.deep",
 						node: <Circle color={colors.business.sleepDeep} />,
 					},
-					value:
-						deepDuration &&
-						`${moment.duration(deepDuration.duration).hours()} h ${moment
-							.duration(deepDuration.duration)
-							.minutes()} min (${deepDuration.percent})`,
+					value: deepDuration && `${formatDuration(deepDuration.duration * 60)} (${deepDuration.percent * 100}%)`,
 				},
 			]}
 		/>
