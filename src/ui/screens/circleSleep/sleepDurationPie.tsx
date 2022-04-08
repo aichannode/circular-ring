@@ -32,13 +32,20 @@ export function SleepDurationPieChart({ coreSleepTiming, duration, napTimings = 
 	];
 
 	// Add naps
-	if (napTimings) {
+	if (napTimings.length) {
 		stages.push(
-			...napTimings.map(([start, end]) => ({
-				start,
-				end,
-				level: 1,
-			}))
+			...napTimings.flatMap(([start, end], index) => [
+				{
+					start: index === 0 ? coreSleepTiming?.[1] ?? moment().startOf("day").toString() : napTimings[index - 1][1],
+					end: start,
+					level: 4,
+				},
+				{
+					start,
+					end,
+					level: 1,
+				},
+			])
 		);
 	}
 
@@ -50,9 +57,7 @@ export function SleepDurationPieChart({ coreSleepTiming, duration, napTimings = 
 		start: stages[stages.length - 1]?.end,
 		end: wasAsleepBeforeMidnight
 			? moment(coreSleepTiming?.[0]).add(1, "day").toISOString()
-			: moment(stages[stages.length - 1]?.end)
-					.endOf("day")
-					.toISOString(),
+			: moment(coreSleepTiming?.[1]).endOf("day").toISOString(),
 		level: 4,
 	});
 
