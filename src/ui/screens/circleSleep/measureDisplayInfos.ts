@@ -11,7 +11,7 @@ export function getSleepGaugesConfig(format: (v: WordingKey) => string): SleepQu
 			// Disturbance 2 metrics
 			titleKey: "sleep.quality.disturbance.label",
 			descriptionKey: "sleep.quality.disturbance.description",
-			renderValue: ({ value, percent }) => `${value} min (${Math.round((1 - percent) * 100)}%)`,
+			renderValue: ({ value, percent }) => `${Math.ceil(value)} min (${Math.round((1 - percent) * 100)}%)`,
 		},
 		[MetricType.UserDailyRealSleepDuration]: {
 			// Real sleep
@@ -48,13 +48,13 @@ export function getSleepGaugesConfig(format: (v: WordingKey) => string): SleepQu
 			// Time to fall asleep: 2 metrics
 			titleKey: "sleep.quality.fall_asleep.label",
 			descriptionKey: "sleep.quality.fall_asleep.description",
-			renderValue: ({ value }) => `${value} min`,
+			renderValue: ({ value }) => `${Math.ceil(value)} min`,
 		},
 		[MetricType.UserDailySleepDebt]: {
 			// Sleep debt: 2 metrics
 			titleKey: "sleep.quality.debt.label",
 			descriptionKey: "sleep.quality.debt.description",
-			renderValue: ({ value }) => `${value} min`,
+			renderValue: ({ value }) => `${Math.ceil(value)} min`,
 		},
 	};
 }
