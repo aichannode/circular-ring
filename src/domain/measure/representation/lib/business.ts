@@ -1,5 +1,6 @@
 import { getLogger } from "@core/logger/logger";
 import { hasMetric } from "@ui/utils/guard";
+import produce from "immer";
 import { action, reaction } from "mobx";
 import { useEffect, useRef } from "react";
 import { InteractionManager } from "react-native";
@@ -74,6 +75,64 @@ export const createActivityPhasesGetter =
 	};
 
 /**
+ * Return the period of stages without the first/last awake period
+ * Spec for sleep stages
+ * - the data begins at user.core.sleep.begin minus user.time.to.fall.asleep
+ * - the data ends after naps if any
+ */
+export function trimSleepStages({
+	stages,
+	coreSleepTiming,
+	napTimings,
+	userTimeToFallAsleep,
+}: {
+	stages: StageInfos<SleepStage>[];
+	coreSleepTiming?: [string, string];
+	napTimings: Array<[string, string]>;
+	userTimeToFallAsleep: number;
+}) {
+	if (coreSleepTiming === undefined) {
+		return stages;
+	}
+	if (!stages.length) {
+		return [];
+	}
+	// Update the first stage to reflect the start of the sleep
+	return produce(stages, function (draft) {
+		// Retrieve the phase where the core sleep begins
+		const coreSleepStart = Date.parse(coreSleepTiming[0]);
+		draft.splice(
+			0,
+			draft.findIndex((stage) => Date.parse(stage.start) <= coreSleepStart && Date.parse(stage.end) > coreSleepStart)
+		);
+
+		// Start of sleep
+		const correctedStart = new Date(coreSleepStart - userTimeToFallAsleep).toISOString();
+
+		if (draft[0].start) {
+			draft[0].start = correctedStart;
+		}
+
+		// End of sleep. We need to take nap in account
+		const coreSleepEnd = Date.parse(coreSleepTiming[1]);
+		const didNap = napTimings.length;
+		const endBlockIndex = didNap
+			? stages.findIndex((block) => {
+					const napEnd = napTimings[napTimings.length - 1][1];
+					// user woke up during this block
+					return Date.parse(napEnd) >= Date.parse(block.start) && Date.parse(napEnd) <= Date.parse(block.end);
+			  })
+			: stages.findIndex((block) => {
+					// user woke up during this block
+					return coreSleepEnd >= Date.parse(block.start) && coreSleepEnd <= Date.parse(block.end);
+			  });
+		if (draft[endBlockIndex]) {
+			draft[endBlockIndex].end = didNap ? napTimings[napTimings.length - 1][1] : new Date(coreSleepEnd).toISOString();
+		}
+	});
+}
+
+/**
  * Return the phases of sleep for the given metrics
  */
 export const createSleepStagesGetter =
@@ -133,7 +192,12 @@ export const createSleepStagesGetter =
 
 		return {
 			totalMinutesSleepDuration,
-			stages,
+			stages: trimSleepStages({
+				stages,
+				userTimeToFallAsleep: (data.constant[MetricType.UserDailyCoreTimeToFallAsleep] as number) ?? 30 * 60 * 1000,
+				napTimings,
+				coreSleepTiming,
+			}),
 			timeToFallASleep: data.constant[MetricType.UserDailyCoreTimeToFallAsleep] as number,
 			coreSleepTiming,
 			napTimings,

@@ -4,6 +4,7 @@ import { ISODay } from "@domain/common/type";
 import { DailySleepData } from "@domain/measure/representation/api";
 import { SleepStage } from "@domain/measure/type";
 import { CalendarTags } from "@ui/components/calendar/CalendarTags";
+import produce from "immer";
 import moment from "moment";
 import React from "react";
 import { View } from "react-native";
@@ -28,12 +29,31 @@ export function DailySleepChart({ data, selectedDay, hasNotEnoughData }: Props) 
 	const lightDuration = data.sleepStagesDuration[SleepStage.LIGHT];
 	const deepDuration = data.sleepStagesDuration[SleepStage.DEEP];
 
+	// Spec 00033 The graph always needs to start in an “awake” phase and always needs to end in an “awake” phase.
+	const correctedStages = produce(data.stages, function (draft) {
+		if (draft.length) {
+			draft.unshift({
+				start: moment(draft[0].start)
+					.subtract((data.timeToFallASleep ?? 1) * 60 * 1000)
+					.toISOString(),
+				end: draft[0].start,
+				level: 4,
+			});
+			draft.push({
+				start: draft[draft.length - 1].end,
+				end: moment(draft[draft.length - 1].end)
+					.add(5, "minutes")
+					.toISOString(),
+				level: 4,
+			});
+		}
+	});
 	return (
 		<View style={{ flex: 1, position: "relative" }}>
 			<View style={{ position: "absolute", top: 0, right: 0 }}>
 				<CalendarTags tags={tags} />
 			</View>
-			<Hypnogram data={data.stages} hasNotEnoughData={hasNotEnoughData} />
+			<Hypnogram data={correctedStages} hasNotEnoughData={hasNotEnoughData} />
 			<View style={{ marginTop: 30 }}>
 				<SleepLegend
 					hasNotEnoughData={hasNotEnoughData}

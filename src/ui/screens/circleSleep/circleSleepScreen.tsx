@@ -23,7 +23,6 @@ import { observer } from "mobx-react-lite";
 import React, { useRef, useState } from "react";
 import { Image, LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
-import { trimSleepStages } from "./business";
 import { DailySleepChart } from "./DailySleepChart";
 import { getSleepGaugesConfig } from "./measureDisplayInfos";
 import { Sleep7DChart } from "./Sleep7DChart";
@@ -44,13 +43,6 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const { format } = useI18n();
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const sleepGaugesConfig = getSleepGaugesConfig(format);
-	const sleepStages = trimSleepStages({
-		stages: dailySleep?.stages ?? [],
-		isoDay: selectedDay,
-		userTimeToFallAsleep: dailySleep?.timeToFallASleep,
-		napFrames: dailySleep?.napTimings,
-		coreSleepFrame: dailySleep?.coreSleepTiming,
-	});
 
 	useDailySleepStages({ setData: setDailyData, localISODay: selectedDay });
 
@@ -78,7 +70,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 			<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
 			{dailySleep ? (
 				<SleepDurationPieChart
-					stages={sleepStages}
+					stages={dailySleep.stages}
 					coreSleepTiming={dailySleep.coreSleepTiming}
 					napTimings={dailySleep.napTimings}
 					duration={dailySleep.totalMinutesSleepDuration ?? 0}
