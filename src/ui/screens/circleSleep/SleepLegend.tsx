@@ -41,7 +41,9 @@ export const SleepLegend = ({ REMDuration, awakeDuration, deepDuration, lightDur
 						key: "sleep.stage.awake",
 						node: <Circle color={colors.business.sleepAwake} />,
 					},
-					value: awakeDuration && `${formatDuration(awakeDuration.duration * 60)} (${awakeDuration.percent * 100}%)`,
+					value:
+						awakeDuration &&
+						`${formatDuration(awakeDuration.duration * 60)} (${(awakeDuration.percent * 100).toFixed(2)}%)`,
 				},
 				{
 					label: format("sleep.stage.REM"),
@@ -49,7 +51,8 @@ export const SleepLegend = ({ REMDuration, awakeDuration, deepDuration, lightDur
 						key: "sleep.stage.REM",
 						node: <Circle color={colors.business.sleepRem} />,
 					},
-					value: REMDuration && `${formatDuration(REMDuration.duration * 60)} (${REMDuration.percent * 100}%)`,
+					value:
+						REMDuration && `${formatDuration(REMDuration.duration * 60)} (${(REMDuration.percent * 100).toFixed(2)}%)`,
 				},
 				{
 					label: format("sleep.stage.light"),
@@ -57,7 +60,9 @@ export const SleepLegend = ({ REMDuration, awakeDuration, deepDuration, lightDur
 						key: "sleep.stage.light",
 						node: <Circle color={colors.business.sleepLight} />,
 					},
-					value: lightDuration && `${formatDuration(lightDuration.duration * 60)} (${lightDuration.percent * 100}%)`,
+					value:
+						lightDuration &&
+						`${formatDuration(lightDuration.duration * 60)} (${(lightDuration.percent * 100).toFixed(2)}%)`,
 				},
 				{
 					label: format("sleep.stage.deep"),
@@ -65,7 +70,9 @@ export const SleepLegend = ({ REMDuration, awakeDuration, deepDuration, lightDur
 						key: "sleep.stage.deep",
 						node: <Circle color={colors.business.sleepDeep} />,
 					},
-					value: deepDuration && `${formatDuration(deepDuration.duration * 60)} (${deepDuration.percent * 100}%)`,
+					value:
+						deepDuration &&
+						`${formatDuration(deepDuration.duration * 60)} (${(deepDuration.percent * 100).toFixed(2)}%)`,
 				},
 			]}
 		/>
