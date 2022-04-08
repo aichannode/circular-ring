@@ -1,3 +1,4 @@
+import { getLocalISODayFromUTCDate } from "@domain/common/business";
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { SleepStage } from "@domain/measure/type";
 import { DailyPieChart } from "@ui/components/measure/dailyPieChart";
@@ -20,23 +21,41 @@ function getPhaseLevel(phase = 4) {
 	return phase < 4 ? 1 : 0;
 }
 
-export function SleepDurationPieChart({
-	coreSleepTiming,
-	stages: _stages,
-	duration,
-	napTimings = [],
-	hasNotEnoughData,
-}: Props) {
-	// Complete circle with dummy data
-	const endCircle = {
-		start: _stages[_stages.length - 1]?.end,
-		end: moment(_stages[_stages.length - 1]?.end)
-			.endOf("day")
-			.toISOString(),
-		level: 4,
-	};
+export function SleepDurationPieChart({ coreSleepTiming, duration, napTimings = [], hasNotEnoughData }: Props) {
+	// Draw the core sleep
+	const stages = [
+		{
+			start: coreSleepTiming?.[0] ?? moment().startOf("day").toString(),
+			end: coreSleepTiming?.[1] ?? moment().endOf("day").toISOString(),
+			level: coreSleepTiming ? 1 : 4,
+		},
+	];
 
-	const stages = endCircle.start ? _stages.concat([endCircle]) : _stages;
+	// Add naps
+	if (napTimings) {
+		stages.push(
+			...napTimings.map(([start, end]) => ({
+				start,
+				end,
+				level: 1,
+			}))
+		);
+	}
+
+	// Complete the circle with awake state
+	const wasAsleepBeforeMidnight =
+		coreSleepTiming &&
+		getLocalISODayFromUTCDate(coreSleepTiming?.[0]) !== getLocalISODayFromUTCDate(coreSleepTiming?.[1]);
+	stages.push({
+		start: stages[stages.length - 1]?.end,
+		end: wasAsleepBeforeMidnight
+			? moment(coreSleepTiming?.[0]).add(1, "day").toISOString()
+			: moment(stages[stages.length - 1]?.end)
+					.endOf("day")
+					.toISOString(),
+		level: 4,
+	});
+
 	return (
 		<Container>
 			<DailyPieChart
