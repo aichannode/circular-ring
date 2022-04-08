@@ -34,7 +34,7 @@ export function DailySleepChart({ data, selectedDay, hasNotEnoughData }: Props) 
 		if (draft.length) {
 			draft.unshift({
 				start: moment(draft[0].start)
-					.subtract((data.timeToFallASleep ?? 1) * 60 * 1000)
+					.subtract(10 * 60 * 1000) // add 10 minutes of awake phase at the begining of the graph
 					.toISOString(),
 				end: draft[0].start,
 				level: 4,
