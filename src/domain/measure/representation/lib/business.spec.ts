@@ -7,13 +7,8 @@ test("getSleepStages", function () {
 		timeToFallASleep: 1800000,
 		stages: [
 			{
-				level: 4,
-				start: "2021-12-20T15:10:00:000Z",
-				end: "2021-12-20T23:24:00.000Z",
-			},
-			{
 				level: 2,
-				start: "2021-12-20T23:24:00.000Z",
+				start: "2021-12-20T22:54:00.000Z",
 				end: "2021-12-20T23:36:00.000Z",
 			},
 			{
