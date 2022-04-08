@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { processColor, View } from "react-native";
 import { LineChart as LineComponent } from "react-native-charts-wrapper";
 import styled from "styled-components/native";
-import { MultipleDataSets } from "../../type";
+import { Averages, MultipleDataSets, SelectEventPayload } from "../../type";
 import { TextPlaceholder } from "../placeholder/TextPlaceholder";
 export interface DayItem {
 	awake: number;
@@ -14,15 +14,8 @@ export interface DayItem {
 	rem: number;
 	light: number;
 }
-export interface Average {
-	/** value */
-	value: number;
-	/** color */
-	color: string;
-}
-export type Averages = Average[];
+
 export type DaysItem = DayItem[];
-type SelectEventPayload = { data: { x: number; y: number } };
 
 interface LineChartProps {
 	data?: Lines;

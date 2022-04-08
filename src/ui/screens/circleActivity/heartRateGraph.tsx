@@ -1,6 +1,6 @@
 import { useRepresentations } from "@core/representation";
 import { ISODay } from "@domain/common/type";
-import { Averages, LineChart } from "@ui/components/lineChart/LineChart";
+import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { Spinner } from "@ui/components/spinner";
@@ -8,6 +8,7 @@ import { Tag } from "@ui/components/tag";
 import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import { Averages } from "@ui/type";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";

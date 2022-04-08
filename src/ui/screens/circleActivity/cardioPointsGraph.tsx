@@ -1,9 +1,10 @@
 import { useRepresentations } from "@core/representation";
 import { CalendarTag } from "@domain/calendar/calendar";
+import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { Lines } from "@domain/measure/representation/api";
+import { DataControlState, Lines } from "@domain/measure/representation/api";
 import { TimeFrame } from "@domain/measure/type";
-import { LineChart } from "@ui/components/lineChart/LineChart";
+import { BarChart } from "@ui/components/measure/barChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
@@ -22,61 +23,71 @@ import DashedLine from "react-native-dashed-line";
 type Props = {
 	selectedDay: ISODay;
 };
-export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGraph({ selectedDay }: Props) {
+export const CardioPointsGraph: React.FC<Props> = observer(function CardioPointsGraph({ selectedDay }: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	const [tags, setTags] = useState<CalendarTag[]>([]);
+
 	const {
 		measure: {
-			hooks: { useLast7DaysEnergyScore },
+			hooks: { useLast7DaysCardioPoints, hasEnoughData },
 		},
 		calendar: {
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
-	const data = useLast7DaysEnergyScore(selectedDay);
+
+	const data = useLast7DaysCardioPoints(selectedDay);
 	const lines: Lines = data
 		? data.series
 				.map((el) => {
 					return {
 						x: el ? moment(el.date).valueOf() : 0,
-						y: el?.value ? el.value * 100 : 0,
+						y: el?.value ? el.value : 0,
 					};
 				})
 				.reverse()
 		: [];
+
 	const valueFormatter = lines.map(({ x, y }) => {
 		const day = moment(x).format("dd");
 		return day !== "Invalid date" ? day[0] : "";
 	});
-	const [yMin, yMax] =
-		lines.length > 0 ? [Math.min(...lines!.map((line) => line.y)), Math.max(...lines!.map((line) => line.y))] : [0, 0];
+
 	const constant = data?.constant;
 	const averages: Averages = [];
-	if (typeof constant !== "undefined") {
+	if (typeof constant?.average !== "undefined") {
 		averages.push({
-			value: constant?.average,
+			value: constant.average,
 			color: colors.red,
+		});
+	}
+	if (typeof constant?.baseline !== "undefined") {
+		averages.push({
+			value: constant.baseline,
+
+			color: colors.redLight,
 		});
 	}
 
 	useEffect(() => {
-		setTimeout(() => {
+		if (isDefined(data)) {
 			setLoading(false);
-		}, 500);
-	}, []);
+		}
+	}, [data]);
 
 	const toUpdateTag = (x: number) => {
 		const date = moment(lines[x].x).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
+	const enoughData = hasEnoughData(selectedDay);
 	return isLoading ? (
 		<Spinner size={24} />
-	) : !!lines.length ? (
+	) : !!lines ? (
 		<View>
 			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("activity.energy_score")}
+				{format("metric.cardio")}
 			</TitleText>
 			<View style={{ display: "none" }}>
 				<TimeFrameSwitcher
@@ -108,25 +119,20 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 						</View>
 					))}
 				</View>
-				<LineChart
-					yMin={yMin}
-					yMax={yMax}
+				<BarChart
+					averages={averages}
+					shouldShowMarker={true}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
-					daysItem={[{ lines: lines, color: colors.red }]}
-					averages={averages}
-					shouldShowLabel={true}
-					shouldDrawCircles={true}
-					graphColor={colors.red}
+					data={lines}
 					valueFormatter={valueFormatter}
-					shouldShowMarker={true}
-					highlightPerTapEnabled={true}
-					scaleXEnabled={false}
+					graphColor={colors.red}
 					onSelect={(x) => toUpdateTag(x)}
-					isMultipleLines={true}
+					hasNotEnoughData={!enoughData || data?.controlState === DataControlState.NO_DATA}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
+						hasNotEnoughData={!enoughData || data?.controlState === DataControlState.NO_DATA}
 						rows={[
 							{
 								label: format("activity.energy_score.7day"),
@@ -143,7 +149,33 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 										</View>
 									),
 								},
-								value: constant ? `${constant?.average} %` : "- %",
+								value: isDefined(constant?.average) ? `${constant?.average}` : "-",
+							},
+							{
+								label: format("cardio.baseline"),
+								element: {
+									key: "cardio.baseline",
+									node: (
+										<View
+											style={{
+												width: 40,
+												marginTop: 5,
+											}}
+										>
+											<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
+										</View>
+									),
+								},
+								value: isDefined(constant?.baseline) ? `${constant?.baseline}` : "-",
+							},
+							{
+								label: format("cardio.7day.total"),
+								element: {
+									key: "cardio.7day.total",
+									node: <></>,
+								},
+
+								value: isDefined(constant?.total) ? `${constant?.total}` : "-",
 							},
 						]}
 					/>

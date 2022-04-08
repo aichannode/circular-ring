@@ -8,6 +8,7 @@ import {
 	ActivityIntensity7DAverageMetrics,
 	CaloriesBurned,
 	CardioPoints,
+	CardioPointsConstantMetrics,
 	ContributorActivityVolume,
 	ContributorAwakeDuration,
 	ContributorBodyRecovery,
@@ -79,6 +80,9 @@ export class MeasureModel implements Model<Proposal> {
 	public dailyEnergyScore: Map<ISODay, number> = new Map();
 	public last7DEnergyScore: Map<ISODay, number> = new Map();
 	public last7DActivityIntensityAverageMetrics: Map<ISODay, Metrics<ActivityIntensity7DAverageMetrics>> = new Map();
+	public dailyCardioPoints: Map<ISODay, number> = new Map();
+	public last7DCardioPointConstants: Map<ISODay, Metrics<CardioPointsConstantMetrics>> = new Map();
+
 	public dailyActivityIntensityMetrics: Map<
 		ISODay,
 		RangeMetrics<DailyActivityIntensityMetrics, DailyActivityIntensityDuration>
@@ -170,6 +174,17 @@ export class MeasureModel implements Model<Proposal> {
 				if (isDefined(mutation.payload.score)) {
 					const score = mutation.payload.score;
 					mutate.call(this, mutation, () => this.dailyEnergyScore.set(mutation.payload.localISODay, score));
+				}
+			} else if (mutation.type === "setDailyCardioPoints") {
+				if (isDefined(mutation.payload.cardio)) {
+					const cardio = mutation.payload.cardio;
+					mutate.call(this, mutation, () => this.dailyCardioPoints.set(mutation.payload.localISODay, cardio));
+				}
+			} else if (mutation.type === "setLast7DCardioPoints") {
+				if (Object.keys(mutation.payload.data).length) {
+					mutate.call(this, mutation, () =>
+						this.last7DCardioPointConstants.set(mutation.payload.localISODay, mutation.payload.data)
+					);
 				}
 			} else if (mutation.type === "setDailyWakeUpScore") {
 				if (Object.keys(mutation.payload.data).length) {

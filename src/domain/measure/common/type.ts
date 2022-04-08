@@ -4,6 +4,7 @@ import {
 	ActivityIntensity7DAverageMetrics,
 	CaloriesBurned,
 	CardioPoints,
+	CardioPointsConstantMetrics,
 	ContributorActivityVolume,
 	ContributorAwakeDuration,
 	ContributorBodyRecovery,
@@ -63,6 +64,20 @@ export type Mutations =
 			payload: {
 				localISODay: ISODay;
 				range: RangeMetrics<DailyHRTimeSeriesMetrics, DailyHRConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setDailyCardioPoints";
+			payload: {
+				localISODay: ISODay;
+				cardio?: number;
+			};
+	  }
+	| {
+			type: "setLast7DCardioPoints";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<CardioPointsConstantMetrics>;
 			};
 	  }
 	| {

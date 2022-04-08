@@ -75,8 +75,9 @@ export interface Score {
 	/** value */
 	value: number;
 }
-export interface Scores7D {
-	scores: [
+
+export interface Range7<T> {
+	series: [
 		Score | undefined,
 		Score | undefined,
 		Score | undefined,
@@ -85,10 +86,19 @@ export interface Scores7D {
 		Score | undefined,
 		Score | undefined
 	];
-	constant: {
-		average: number;
-	};
+	controlState: DataControlState;
+	constant: T;
 }
+
+export type Scores7D = Range7<{
+	average: number;
+}>;
+
+export type Cardio7D = Range7<{
+	average: number;
+	baseline: number;
+	total: number;
+}>;
 
 export interface SleepItem {
 	awake: number;

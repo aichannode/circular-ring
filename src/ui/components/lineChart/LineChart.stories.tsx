@@ -1,13 +1,13 @@
 // components/Task.stories.js
-import { Lines, Scores7D } from "@domain/measure/representation/api";
+import { DataControlState, Lines, Scores7D } from "@domain/measure/representation/api";
 import { boolean, object, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react-native";
 import { colors } from "@ui/styles/colors";
-import { MultipleDataSets } from "@ui/type";
+import { Averages, MultipleDataSets } from "@ui/type";
 import moment from "moment";
 import * as React from "react";
 import { GraphContainer } from "../measure/graphContainer";
-import { Averages, LineChart } from "./LineChart";
+import { LineChart } from "./LineChart";
 import { data } from "./mockedDataHR.json";
 
 const lines: Lines = data.map((e) => {
@@ -111,7 +111,7 @@ const [yMin, yMax] = [Math.min(...lines!.map((line) => line.y)), Math.max(...lin
 const [yMinIndex, yMaxIndex] = [lines!.findIndex((line) => line.y == yMin), lines!.findIndex((line) => line.y == yMax)];
 
 const scores: Scores7D = {
-	scores: [
+	series: [
 		{
 			date: "2022-03-03",
 			value: 80,
@@ -144,8 +144,9 @@ const scores: Scores7D = {
 	constant: {
 		average: 73,
 	},
+	controlState: DataControlState.READY,
 };
-const scoresLines: Lines = scores.scores.map((el) => {
+const scoresLines: Lines = scores.series.map((el) => {
 	return {
 		x: el ? moment(el.date).valueOf() : 0,
 		y: el?.value ? el.value * 100 : 0,
@@ -203,17 +204,7 @@ storiesOf("LineChart", module)
 			/>
 		);
 	})
-	.add("no data", () => (
-		<LineChart
-			xColor={colors.textPrimary}
-			yColor={colors.darkGray}
-			data={[]}
-			shouldDrawCircles={false}
-			graphColor={colors.red}
-			valueFormatter="date"
-			valueFormatterPattern="H'h'"
-		/>
-	))
+
 	.add("no data", () => (
 		<LineChart
 			xColor={colors.textPrimary}

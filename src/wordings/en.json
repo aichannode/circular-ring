@@ -575,5 +575,7 @@
 	"hr.average": "Average",
 	"hr.reference": "Reference",
 	"hr.hrMax": "HR Max",
-	"hr.hrMin": "HR Min"
+	"hr.hrMin": "HR Min",
+	"cardio.baseline": "Baseline",
+	"cardio.7day.total": "7 day total"
 }

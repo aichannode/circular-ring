@@ -25,6 +25,7 @@ import { Image, LayoutAnimation, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
+import { CardioPointsGraph } from "./cardioPointsGraph";
 import { DailyMetric } from "./dailyMetric";
 import { EnergyScoreGraph } from "./energyScoreGraph";
 import { HeartRateGraph } from "./heartRateGraph";
@@ -181,14 +182,15 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 
 				<ElementStack gap={10} style={{ display: "flex" }}>
 					{activeItem === 0 && <ActivityIntensityGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
+					{activeItem === 1 && <CardioPointsGraph selectedDay={selectedDay} />}
+					{activeItem === 2 && <EnergyScoreGraph selectedDay={selectedDay} />}
 
-					{activeItem === 1 && (
+					{activeItem === 3 && (
 						<HeartRateGraph
 							selectedDay={selectedDay}
 							// hasNotEnoughData={!enoughData} TODO: Add this prop when hasNotEnoughData is implemented in HeartRateGraph
 						/>
 					)}
-					{activeItem === 2 && <EnergyScoreGraph selectedDay={selectedDay} />}
 				</ElementStack>
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
@@ -208,8 +210,8 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							<GraphSwitcherButton
 								source={
 									activeItem === 1
-										? require(`@assets/images/heartCircle.png`)
-										: require(`@assets/images/heartCircleTransparent.png`)
+										? require(`@assets/images/cardioPoints.png`)
+										: require(`@assets/images/cardioPointsTransparent.png`)
 								}
 							/>
 						</ImageContainer>
@@ -219,6 +221,16 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 									activeItem === 2
 										? require(`@assets/images/energyScore.png`)
 										: require(`@assets/images/energyScoreTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+
+						<ImageContainer onPress={() => setActiveItem(3)}>
+							<GraphSwitcherButton
+								source={
+									activeItem === 3
+										? require(`@assets/images/heartCircle.png`)
+										: require(`@assets/images/heartCircleTransparent.png`)
 								}
 							/>
 						</ImageContainer>

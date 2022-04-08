@@ -9,6 +9,8 @@ import {
 	activityIntensity7DAverageMetrics,
 	ActivityIntensity7DAverageMetrics,
 	activityMetrics,
+	CardioPointsConstantMetrics,
+	cardioPointsConstantMetrics,
 	ContributorActivityVolume,
 	contributorActivityVolume,
 	ContributorAwakeDuration,
@@ -244,6 +246,38 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 							[MetricType.UserDailyWakeUpScoreGoalMin]: data[MetricType.UserDailyWakeUpScoreGoalMin] as number,
 							[MetricType.UserDailyWakeUpScoreGoalMax]: data[MetricType.UserDailyWakeUpScoreGoalMax] as number,
 						},
+					},
+				},
+			]);
+		},
+		async pullDailyCardioPoints(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures(
+				[MetricType.UserDailyCardioPoints],
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailyCardioPoints",
+					payload: {
+						localISODay,
+						cardio: data[MetricType.UserDailyCardioPoints] ? Number(data[MetricType.UserDailyCardioPoints]) : undefined,
+					},
+				},
+			]);
+		},
+		async pullLast7DCardioPoints(localISODay: ISODay, useForceRefresh?: boolean) {
+			const constant = await measureApi.fetchLastDailyMeasures<CardioPointsConstantMetrics>(
+				cardioPointsConstantMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setLast7DCardioPoints",
+					payload: {
+						localISODay,
+						data: constant,
 					},
 				},
 			]);

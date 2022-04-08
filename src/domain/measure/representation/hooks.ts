@@ -18,6 +18,7 @@ import { MeasureModel } from "../model/measureModel";
 import {
 	Activity7D,
 	ActivityControlState,
+	Cardio7D,
 	Contributor,
 	DailyActivityIntensityData,
 	DailyHr,
@@ -571,7 +572,6 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 			useLast7DaysEnergyScore(localISODay: ISODay = getCurrentLocalISODay()): Scores7D | undefined {
 				// Compute the 7 previous date from the given date
 				const last7Days = getLast7Days(localISODay);
-
 				useEffect(
 					function () {
 						// Get the last 7 daily energy scores
@@ -584,23 +584,70 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					[localISODay]
 				);
 
-				const scores = last7Days.map((date) => ({
+				const series = last7Days.map((date) => ({
 					value: model.dailyEnergyScore.get(date),
 					date,
-				})) as Scores7D["scores"];
+				})) as Scores7D["series"];
 
 				// Spec 00026: IS_READY if has some historical data
-				const isReady = scores.some(isDefined);
-
+				const isReady = series.some(isDefined);
+				const controlState = true ? DataControlState.READY : DataControlState.NO_DATA;
 				return isReady
 					? {
-							scores,
+							series,
 							constant: {
 								average: model.last7DEnergyScore.get(localISODay) ?? 0,
 							},
+							controlState,
 					  }
 					: undefined;
 			},
+			useLast7DaysCardioPoints(localISODay: ISODay = getCurrentLocalISODay()): Cardio7D | undefined {
+				// Compute the 7 previous date from the given date
+				const last7Days = getLast7Days(localISODay);
+
+				useEffect(
+					function () {
+						// Get the last 7 daily energy scores
+						last7Days
+							.filter((d) => !model.dailyCardioPoints.has(d))
+							.forEach((d) => actions.pullDailyCardioPoints(d, true));
+						// and the average for the last 7 days
+						if (!model.last7DCardioPointConstants.has(localISODay)) {
+							actions.pullLast7DCardioPoints(localISODay, true);
+						}
+					},
+					[localISODay]
+				);
+				const isLoaded = last7Days.some((date) => model.dailyCardioPoints.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				// Spec 00026: IS_READY if has some historical data
+				const controlState = last7Days.some((date) => isDefined(model.dailyCardioPoints.get(date)))
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
+
+				const series = last7Days.map((date) => ({
+					value: model.dailyCardioPoints.get(date),
+					date,
+				})) as Cardio7D["series"];
+
+				const constants = model.last7DCardioPointConstants.get(localISODay);
+
+				return {
+					series,
+					constant: {
+						average: constants?.[MetricType.UserCardioPointAverage] as number,
+						baseline: constants?.[MetricType.UserCardioPointBaseline] as number,
+						total: constants?.[MetricType.UserCardioPointTotal] as number,
+					},
+					controlState,
+				};
+			},
+
 			useDailySleepQualityScore(localISODay: ISODay = getCurrentLocalISODay()) {
 				useEffect(
 					action(function () {
