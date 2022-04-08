@@ -28,6 +28,7 @@ import { getSleepGaugesConfig } from "./measureDisplayInfos";
 import { Sleep7DChart } from "./Sleep7DChart";
 import { SleepAllChart } from "./SleepAllChart";
 import { SleepDurationPieChart } from "./sleepDurationPie";
+import { Spo2Graph } from "./spo2Graph";
 
 export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
@@ -127,47 +128,51 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 			</ElementStack>
 			<InfoListHeader>{format("sleep.details.title")}</InfoListHeader>
 			<ElementStack gap={10}>
-				<TitleText style={{ textAlign: "center", textTransform: "uppercase" }}>
-					{format("sleep.details.stages")}
-				</TitleText>
-				<View style={{ marginBottom: 25, marginTop: 20 }}>
-					<TimeFrameSwitcher
-						setGraphPeriod={setGraphPeriod}
-						graphPeriod={graphPeriod}
-						color={colors.business.sleepPrimary}
-						frames={[
-							{
-								label: "graph.time_frame.today",
-								duration: TimeFrame.TODAY,
-							},
-							{
-								label: "graph.time_frame.7days",
-								duration: TimeFrame.LAST_7_DAYS,
-							},
-							{
-								label: "graph.time_frame.all",
-								duration: TimeFrame.ALL,
-							},
-						]}
-					/>
-				</View>
-				{activeItem === 0 &&
-					(dailySleep ? (
-						<GraphContainer>
-							{graphPeriod === TimeFrame.TODAY && (
-								<DailySleepChart data={dailySleep} selectedDay={selectedDay} hasNotEnoughData={!enoughData} />
-							)}
-							{graphPeriod === TimeFrame.LAST_7_DAYS && (
-								<Sleep7DChart selectedDay={selectedDay} hasNotEnoughData={!enoughData} />
-							)}
-							{graphPeriod === TimeFrame.ALL && (
-								<SleepAllChart selectedDay={selectedDay} hasNotEnoughData={!enoughData} />
-							)}
-						</GraphContainer>
-					) : (
-						<Spinner />
-					))}
+				{activeItem === 0 && (
+					<>
+						<TitleText style={{ textAlign: "center", textTransform: "uppercase" }}>
+							{format("sleep.details.stages")}
+						</TitleText>
+						<View style={{ marginBottom: 25, marginTop: 20 }}>
+							<TimeFrameSwitcher
+								setGraphPeriod={setGraphPeriod}
+								graphPeriod={graphPeriod}
+								color={colors.business.sleepPrimary}
+								frames={[
+									{
+										label: "graph.time_frame.today",
+										duration: TimeFrame.TODAY,
+									},
+									{
+										label: "graph.time_frame.7days",
+										duration: TimeFrame.LAST_7_DAYS,
+									},
+									{
+										label: "graph.time_frame.all",
+										duration: TimeFrame.ALL,
+									},
+								]}
+							/>
+						</View>
+						{dailySleep ? (
+							<GraphContainer>
+								{graphPeriod === TimeFrame.TODAY && (
+									<DailySleepChart data={dailySleep} selectedDay={selectedDay} hasNotEnoughData={!enoughData} />
+								)}
+								{graphPeriod === TimeFrame.LAST_7_DAYS && (
+									<Sleep7DChart selectedDay={selectedDay} hasNotEnoughData={!enoughData} />
+								)}
+								{graphPeriod === TimeFrame.ALL && (
+									<SleepAllChart selectedDay={selectedDay} hasNotEnoughData={!enoughData} />
+								)}
+							</GraphContainer>
+						) : (
+							<Spinner />
+						)}
+					</>
+				)}
 				{activeItem === 1 && <></>}
+				{activeItem === 3 && <Spo2Graph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
 					<Row style={{ justifyContent: "center" }}>
 						<ImageContainer onPress={() => setActiveItem(0)}>
@@ -189,10 +194,20 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 								}
 							/>
 						</ImageContainer>
+						<ImageContainer onPress={() => setActiveItem(3)}>
+							<GraphSwitcherButton
+								style={{ marginLeft: 0 }}
+								source={
+									activeItem === 3
+										? require(`@assets/images/spo2Blue.png`)
+										: require(`@assets/images/spo2BlueTransparent.png`)
+								}
+							/>
+						</ImageContainer>
 					</Row>
 				</ElementStack>
 			</ElementStack>
-			{/* TODO: Refactor this because it is copy/paste from circleActivityScreen */}
+
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
 				<View style={{ padding: 20 }}>
 					<CalendarView

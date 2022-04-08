@@ -23,12 +23,13 @@ import {
 	DailyActivityIntensityData,
 	DailyHr,
 	DailySleepData,
+	DailySpo2,
 	DataControlState,
 	Scores7D,
 	Sleep7D,
 	SleepAll,
 } from "./api";
-import { canDisplay, getActivityControlState, getScoreControlStates, parseDailyHR } from "./business";
+import { canDisplay, getActivityControlState, getScoreControlStates, parseDailyHR, parseDailySpo2 } from "./business";
 import { createActivityPhasesGetter, createSleepStagesGetter, useDailyHeavyComputationData } from "./lib/business";
 import { Activities, ActivityScoreContributors, SleepScoreContributors } from "./lib/type";
 
@@ -223,6 +224,17 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				}, [localISODay]);
 
 				return parseDailyHR(model.dailyHRMetrics.get(localISODay));
+			},
+			useDailySpo2(localISODay = getCurrentLocalISODay()): DailySpo2 | undefined {
+				useEffect(() => {
+					if (!model.dailySpo2Metrics.has(localISODay)) {
+						actions.pullDailySpo2Metrics(localISODay, true);
+					}
+				}, [localISODay]);
+
+				const data = model.dailySleepMetrics.get(localISODay) ?? undefined;
+
+				return parseDailySpo2(model.dailySpo2Metrics.get(localISODay), data);
 			},
 
 			useDailyActivityIntensity({

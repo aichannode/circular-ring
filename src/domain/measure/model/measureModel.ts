@@ -33,6 +33,8 @@ import {
 	DailyHRTimeSeriesMetrics,
 	DailySleepScoreMetrics,
 	DailySleepStageDuration,
+	DailySpo2ConstantMetrics,
+	DailySpo2TimeSeriesMetrics,
 	DailyWakeUpScoreMetrics,
 	Sleep7DConstantMetrics,
 	SleepAllConstantMetrics,
@@ -47,6 +49,8 @@ export class MeasureModel implements Model<Proposal> {
 	public monthlySleepStageMetrics: Map<ISOMonth, Metrics<SleepMonthlyStageMetrics>> = new Map();
 	public lastAllSleepStageMetrics: Map<ISOMonth, Metrics<SleepAllConstantMetrics>> = new Map();
 	public dailyHRMetrics: Map<ISODay, RangeMetrics<DailyHRTimeSeriesMetrics, DailyHRConstantMetrics> | undefined> =
+		new Map();
+	public dailySpo2Metrics: Map<ISODay, RangeMetrics<DailySpo2TimeSeriesMetrics, DailySpo2ConstantMetrics> | undefined> =
 		new Map();
 	public dailySleepScoreContributorsMetrics: Map<
 		ISODay,
@@ -145,6 +149,13 @@ export class MeasureModel implements Model<Proposal> {
 				if (Object.keys(mutation.payload.range.constant).length || mutation.payload.range.timeSeries.length) {
 					mutate.call(this, mutation, () =>
 						this.dailyHRMetrics.set(mutation.payload.localISODay, mutation.payload.range)
+					);
+				}
+			}
+			if (mutation.type === "setDailySpo2Metrics") {
+				if (Object.keys(mutation.payload.range.constant).length || mutation.payload.range.timeSeries.length) {
+					mutate.call(this, mutation, () =>
+						this.dailySpo2Metrics.set(mutation.payload.localISODay, mutation.payload.range)
 					);
 				}
 			} else if (mutation.type === "pullLast7DActivityIntensityMetrics") {

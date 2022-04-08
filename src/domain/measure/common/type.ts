@@ -29,6 +29,8 @@ import {
 	DailyHRTimeSeriesMetrics,
 	DailySleepScoreMetrics,
 	DailySleepStageDuration,
+	DailySpo2ConstantMetrics,
+	DailySpo2TimeSeriesMetrics,
 	DailyWakeUpScoreMetrics,
 	Sleep7DConstantMetrics,
 	SleepAllConstantMetrics,
@@ -78,6 +80,13 @@ export type Mutations =
 			payload: {
 				localISODay: ISODay;
 				data: Metrics<CardioPointsConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setDailySpo2Metrics";
+			payload: {
+				localISODay: ISODay;
+				range: RangeMetrics<DailySpo2TimeSeriesMetrics, DailySpo2ConstantMetrics>;
 			};
 	  }
 	| {

@@ -72,6 +72,18 @@ export const activityIntensity7DAverageMetrics = [
 export type ActivityIntensity7DAverageMetrics = typeof activityIntensity7DAverageMetrics[number];
 
 /**
+ * SPO2
+ */
+export const dailySpo2TimeSeriesMetrics = [MetricType.UserDailySPO2] as const;
+export type DailySpo2TimeSeriesMetrics = typeof dailySpo2TimeSeriesMetrics[number];
+
+export const dailySpo2ConstantMetrics = [
+	MetricType.UserDailyAsleepSPO2,
+	MetricType.UserDailyAsleepSPO2Reference,
+] as const;
+export type DailySpo2ConstantMetrics = typeof dailySpo2ConstantMetrics[number];
+
+/**
  * Score flasks
  */
 export const dailySleepScoreMetrics = [

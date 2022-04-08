@@ -58,6 +58,10 @@ import {
 	dailySleepScoreMetrics,
 	dailySleepStageDuration,
 	DailySleepStageDuration,
+	dailySpo2ConstantMetrics,
+	DailySpo2ConstantMetrics,
+	DailySpo2TimeSeriesMetrics,
+	dailySpo2TimeSeriesMetrics,
 	dailyWakeUpScoreMetrics,
 	Sleep7DConstantMetrics,
 	sleep7DConstantMetrics,
@@ -169,6 +173,33 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					};
 				})
 			);
+		},
+		async pullDailySpo2Metrics(localISODay: ISODay, useForceRefresh?: boolean) {
+			Promise.all([
+				measureApi.fetchDailyMeasures<DailySpo2TimeSeriesMetrics>(
+					dailySpo2TimeSeriesMetrics,
+					localISODay,
+					useForceRefresh
+				),
+				measureApi.fetchLastDailyMeasures<DailySpo2ConstantMetrics>(
+					dailySpo2ConstantMetrics,
+					localISODay,
+					useForceRefresh
+				),
+			]).then(function ([timeSeries, constant]) {
+				present([
+					{
+						type: "setDailySpo2Metrics",
+						payload: {
+							localISODay,
+							range: {
+								timeSeries,
+								constant,
+							},
+						},
+					},
+				]);
+			});
 		},
 		async setDailyGlobalScore(localISODay: ISODay, useForceRefresh?: boolean) {
 			const data = await measureApi.fetchLastDailyMeasures(
