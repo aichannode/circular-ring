@@ -8,26 +8,27 @@ import styled from "styled-components/native";
 import { TouchableOpacity } from "react-native";
 import { useObservable } from "micro-observables";
 import { CircleEntity } from "../../../domain/circles/type";
+import { mergeDefaultAndUserCirle } from "../business";
 
 function createViews(myArray: CircleEntity[]) {
 	const { circlesService } = useServices();
 	const { format } = useI18n();
 	return myArray.map((circle, i) => {
-		const titleString = format(circle.key);
+		const titleString = format(circle.name);
 		const title = titleString.replace(/(\r\n|\n|\r)/gm, " ");
 		return (
 			<BoxContainer key={circle.id}>
 				<InnerContainer>
-					<Draggable source={circle.source}></Draggable>
+					<Draggable source={circlesService.getIcon(circle.icon)}></Draggable>
 					<RightContainer>
-						<View style={{flexDirection: "row", width: "100%"}}>
+						<View style={{ flexDirection: "row", width: "100%" }}>
 							<Bold>{title}</Bold>
-							<TouchableOpacity style={{width: "10%"}} onPress={() => circlesService.toggleCircle(circle.id)}>
-								<Status>{circle.on ? "ON" : "OFF"}</Status>
+							<TouchableOpacity style={{ width: "10%" }} onPress={() => circlesService.toggleCircle(circle.id)}>
+								<Status>{circle.enabled ? "ON" : "OFF"}</Status>
 							</TouchableOpacity>
 						</View>
 						<View>
-							<Light>{format(circle.desc)}</Light>
+							<Light>{format(circle.description)}</Light>
 						</View>
 					</RightContainer>
 				</InnerContainer>
@@ -37,10 +38,14 @@ function createViews(myArray: CircleEntity[]) {
 }
 
 export const CircleAddScreen: React.FC = () => {
-	const { circlesService } = useServices();
-	const circles = useObservable(circlesService.circles);
-	const circlesVibration = circles.filter((circle) => circle.type === "Vibration");
-	const circlesWellness = circles.filter((circle) => circle.type === "Wellness");
+	const { appStateService } = useServices();
+	const circles = mergeDefaultAndUserCirle(
+		useObservable(appStateService.userCircles),
+		useObservable(appStateService.defaultCircles)
+	);
+	console.log("useObservable(appStateService.userCircles)", useObservable(appStateService.userCircles));
+	const circlesVibration = circles.filter((circle) => circle.category === "cicle.category.vibration");
+	const circlesWellness = circles.filter((circle) => circle.category === "cicle.category.wellness");
 	const boxViewsWellness = createViews(circlesWellness);
 	const boxViewsVibration = createViews(circlesVibration);
 	return (

@@ -43,6 +43,7 @@ export class CognitoAuthService<
 
 	async init(): Promise<void> {
 		return new Promise((resolve) => {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			this._userPool.storage.sync((err, result) => {
 				if (!err && result === "SUCCESS") {
@@ -52,7 +53,7 @@ export class CognitoAuthService<
 						currentUser.getSession((error: Error | null, session: CognitoUserSession | null) => {
 							if (!error && session) {
 								this._accessToken.set(session.getAccessToken());
-								console.log("Auth Token", session.getAccessToken().getJwtToken());
+								this.logger.info(session.getAccessToken().getJwtToken());
 								resolve();
 							} else {
 								this.logger.warn("Refresh user failed", error);
@@ -210,10 +211,8 @@ export class CognitoAuthService<
 				this._cognitoUser.get()?.getSession((error: Error | null, session: CognitoUserSession | null) => {
 					if (error) reject(error);
 					else {
-						//console.log("session", session);
 						if (session) {
 							const idToken = session.getIdToken();
-							console.log("idToken", idToken);
 							if (idToken.payload.email && idToken.payload.email_verified) {
 								resolve(true);
 							}

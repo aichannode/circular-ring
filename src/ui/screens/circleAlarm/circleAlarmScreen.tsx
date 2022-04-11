@@ -1,30 +1,41 @@
+import { useRepresentations } from "@core/representation";
 import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
+import { getCurrentLocalISODay } from "@domain/common/business";
 import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
 import { useAutoConnectState } from "@domain/device/hooks";
-import { useDailySleepQualityScore } from "@domain/measure/representation/hooks";
+import { DailySleepData } from "@domain/measure/representation/api";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader } from "@ui/components/infoList";
-import { ScoreSection } from "@ui/components/measure/scoreSection";
 import { Spinner } from "@ui/components/spinner";
+import { ScoreSection } from "@ui/containers/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { WarningBottomSheet } from "@ui/screens/circleAlarm/warningBottomSheet";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image, Pressable, ScrollView } from "react-native";
 import styled from "styled-components/native";
+import { MiniHypnogram } from "../circleSleep/miniHypnogram";
 import { AlarmCard } from "./alarmCard";
 import { AlarmWeekOverview } from "./alarmWeekOverview";
 
-export const CircleAlarmScreen: React.FC = observer(() => {
+export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen() {
 	const navigation = useRoutesNavigation();
 	const { loading, alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
 	const warningBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const wakeUpScore = useDailySleepQualityScore();
+	const wakeUpScore = useRepresentations().measure.hooks.useDailyWakeUpScore();
 	const autoConnectState = useAutoConnectState();
+	const { hasEnoughData } = useRepresentations().measure.hooks;
+	const enoughData = hasEnoughData(getCurrentLocalISODay());
+	const [displayGraph, setDisplayGraph] = useState(false);
+	const [dailySleep, setData] = useState<DailySleepData | undefined>();
+
+	const { useDailySleepStages } = useRepresentations().measure.hooks;
+
+	useDailySleepStages({ setData });
 
 	useEffect(() => {
 		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
@@ -36,12 +47,27 @@ export const CircleAlarmScreen: React.FC = observer(() => {
 	return (
 		<Container>
 			<ScrollView>
-				<ScoreSection
-					label={format("alarm.wake_up_score")}
-					color={colors.blue}
-					score={wakeUpScore}
-					style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
-				/>
+				{wakeUpScore && (
+					<ScoreSection
+						hasNotEnoughData={!enoughData}
+						label={format("alarm.wake_up_score")}
+						color={colors.blue}
+						score={wakeUpScore.score}
+						quality={wakeUpScore.controlState}
+						style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
+						setState={setDisplayGraph}
+						state={displayGraph}
+					/>
+				)}
+				{displayGraph && dailySleep && (
+					<GraphWrapper>
+						<Cross onPress={() => setDisplayGraph(false)}>
+							<Image source={require("@assets/images/close.png")} />
+						</Cross>
+						<MiniHypnogram data={dailySleep.stages} />
+					</GraphWrapper>
+				)}
+
 				<InfoListHeader>{format("alarm.score.programmed")}</InfoListHeader>
 				<AlarmContainer>
 					{alarms?.map((value) => (
@@ -83,6 +109,14 @@ export const CircleAlarmScreen: React.FC = observer(() => {
 		</Container>
 	);
 });
+
+const GraphWrapper = styled.View``;
+const Cross = styled.TouchableOpacity`
+	position: absolute;
+	z-index: 100;
+	top: 40px;
+	right: 40px;
+`;
 
 const Container = styled.View`
 	flex: 1;

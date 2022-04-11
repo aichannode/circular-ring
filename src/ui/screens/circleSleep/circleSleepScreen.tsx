@@ -1,74 +1,52 @@
-import {
-	useSleepDuration,
-	useDailySleepQualityScore,
-	useDailySleepStages,
-	useDailySleepDetails,
-} from "@domain/measure/representation/hooks";
-import { dailySleepDetailsMetrics } from "@domain/measure/representation/type";
-import { SleepStage, TimeFrame } from "@domain/measure/type";
+import { useRepresentations } from "@core/representation";
+import { getCurrentLocalISODay, isDefined } from "@domain/common/business";
+import { ISODay } from "@domain/common/type";
+import { DailySleepData } from "@domain/measure/representation/api";
+import { sleepScoreContributors } from "@domain/measure/representation/lib/type";
+import { TimeFrame } from "@domain/measure/type";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
-import { CalendarView } from "@ui/components/calendar/calendarView";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
-import { Stack } from "@ui/components/layout";
+import { Row, Stack } from "@ui/components/layout";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
-import { GraphLegend } from "@ui/components/measure/graphLegend";
-import { ScoreGauge } from "@ui/components/measure/scoreGauge";
-import { ScoreSection } from "@ui/components/measure/scoreSection";
+import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { ScrollScreen } from "@ui/components/scrollScreen";
+import { Spinner } from "@ui/components/spinner";
 import { TitleText } from "@ui/components/text";
+import { CalendarView } from "@ui/containers/calendarView";
+import { ScoreGauge } from "@ui/containers/scoreGauge";
+import { ScoreSection } from "@ui/containers/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
-import moment from "moment";
-import React, { useEffect, useRef, useState } from "react";
-import { LayoutAnimation, View } from "react-native";
+import React, { useRef, useState } from "react";
+import { Image, LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
-import { Hypnogram } from "./hypnogram";
-import { getSleepQualityDetails } from "./measureDisplayInfos";
+import { BreathingRateGraph } from "./breathingRateGraph";
+import { DailySleepChart } from "./DailySleepChart";
+import { getSleepGaugesConfig } from "./measureDisplayInfos";
+import { Sleep7DChart } from "./Sleep7DChart";
+import { SleepAllChart } from "./SleepAllChart";
 import { SleepDurationPieChart } from "./sleepDurationPie";
+import { Spo2Graph } from "./spo2Graph";
 
-/* const scoreGoodThreshold = 0.8;
-const scoreOptimalThreshold = 0.9;
- */
-export const CircleSleepScreen: React.FC = observer(() => {
-	const [selectedDay, setSelectedDay] = useState<string>(moment().format("YYYY-MM-DD"));
-	const centerCircleSleepDuration = useSleepDuration(selectedDay);
-	const details = useDailySleepDetails(selectedDay);
+export const CircleSleepScreen = observer(function CircleSleepScreen() {
+	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
+	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
+	const { useDailySleepScoreContributors, useDailySleepQualityScore, useDailySleepStages, hasEnoughData } =
+		useRepresentations().measure.hooks;
+	const enoughData = hasEnoughData(selectedDay);
+	const sleepScoreContributorsData = useDailySleepScoreContributors(selectedDay);
 	const qualityScore = useDailySleepQualityScore(selectedDay);
-	const stages = useDailySleepStages();
+	const [dailySleep, setDailyData] = useState<DailySleepData | undefined>();
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
+	const [activeItem, setActiveItem] = useState<number>(0);
 	const { format } = useI18n();
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const [graphPeriod /* , setGraphPeriod */] = useState(TimeFrame.TODAY);
-	const sleepQualityDetails = getSleepQualityDetails(format)
+	const sleepGaugesConfig = getSleepGaugesConfig(format);
 
-	// TODO remove and use the hook
-	const sleepDuration = moment(stages[stages.length - 1].end)
-		.diff(stages[0].start)
-		.valueOf();
-
-	useEffect(() => {
-		console.log("CURRENT PERIOD = ", graphPeriod);
-	}, [graphPeriod]);
-
-	const awakeDuration = stages
-		.filter(({ type }) => type === SleepStage.AWAKE)
-		.reduce((sum, { start, end }) => sum + moment(end).diff(start).valueOf(), 0);
-	const REMDuration = stages
-		.filter(({ type }) => type === SleepStage.REM)
-		.reduce((sum, { start, end }) => sum + moment(end).diff(start).valueOf(), 0);
-	const lightDuration = stages
-		.filter(({ type }) => type === SleepStage.LIGHT)
-		.reduce((sum, { start, end }) => sum + moment(end).diff(start).valueOf(), 0);
-	const deepDuration = stages
-		.filter(({ type }) => type === SleepStage.DEEP)
-		.reduce((sum, { start, end }) => sum + moment(end).diff(start).valueOf(), 0);
-
-	console.log("FIX SLEEP END ", moment(stages[stages.length - 1].end).format("HH:mm"));
-
-	console.log("AWAKE DURATION", awakeDuration);
+	useDailySleepStages({ setData: setDailyData, localISODay: selectedDay });
 
 	return (
 		<Container>
@@ -76,8 +54,10 @@ export const CircleSleepScreen: React.FC = observer(() => {
 				<ScoreSection
 					style={{ marginTop: 20 }}
 					label={format("sleep.quality_score")}
-					score={qualityScore}
-					color={colors.darkBlue}
+					score={qualityScore["user.daily.sleep.score"]}
+					quality={qualityScore.controlState}
+					color={colors.business.sleepPrimary}
+					hasNotEnoughData={!enoughData}
 				/>
 				<CircleCalendarButton
 					currentDay={selectedDay}
@@ -90,42 +70,50 @@ export const CircleSleepScreen: React.FC = observer(() => {
 				/>
 			</View>
 			<InfoListHeader>{format("sleep.duration.title")}</InfoListHeader>
-			<SleepDurationPieChart stages={stages} duration={centerCircleSleepDuration ?? 0} />
+			{dailySleep ? (
+				<SleepDurationPieChart
+					stages={dailySleep.stages}
+					coreSleepTiming={dailySleep.coreSleepTiming}
+					napTimings={dailySleep.napTimings}
+					duration={dailySleep.totalMinutesSleepDuration ?? 0}
+					hasNotEnoughData={!enoughData}
+				/>
+			) : (
+				<Spinner />
+			)}
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
 				{
-					dailySleepDetailsMetrics
+					sleepScoreContributors
 						.map((metric, index) => {
-							const dataInfos = sleepQualityDetails[metric];
-							const values: {
-								value: number,
-								thresholdLow: number,
-								thresholdHigh: number,
-								gaugeFilling: number
-							} = {
-								value: (details as any)[dataInfos.metricsName.value],
-								thresholdLow: (details as any)[dataInfos.metricsName.thresholdLow],
-								thresholdHigh: (details as any)[dataInfos.metricsName.thresholdHigh],
-								gaugeFilling: (details as any)[dataInfos.metricsName.gaugeFilling],
-							}
+							const uiConfig = sleepGaugesConfig[metric];
+							const data = sleepScoreContributorsData[metric];
 							return [
 								<ScoreGauge
 									key={metric}
-									value={dataInfos.renderValue(values)}
-									gaugeFilling={values.gaugeFilling}
-									color={dataInfos.getGaugeColor(values)}
-									label={format(dataInfos.titleKey)}
-									isInverted={dataInfos.isInverted}
+									value={uiConfig.renderValue({
+										...data,
+									})}
+									percent={data.percent}
+									label={format(uiConfig.titleKey)}
+									quality={data.controlState}
 									onPress={() => {
 										LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 										setFocusedGauge((current) => (current === index ? null : index));
 									}}
+									hasNotEnoughData={
+										!enoughData ||
+										!isDefined(data.value) ||
+										!isDefined(data.percent) ||
+										isNaN(data.value) ||
+										isNaN(data.percent)
+									}
 								/>,
 								focusedGauge === index && (
 									<GaugeDescription
 										key={metric + "description"}
-										label={format(dataInfos.titleKey)}
-										description={format(dataInfos.descriptionKey)}
+										label={format(uiConfig.titleKey)}
+										description={format(uiConfig.descriptionKey)}
 										colorType="Sleep"
 										onClose={() => {
 											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -141,84 +129,102 @@ export const CircleSleepScreen: React.FC = observer(() => {
 			</ElementStack>
 			<InfoListHeader>{format("sleep.details.title")}</InfoListHeader>
 			<ElementStack gap={10}>
-				<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-					{format("sleep.details.stages")}
-				</TitleText>
-				<View style={{ marginVertical: 10 }}>
-					{/* <TimeFrameSwitcher
-						setGraphPeriod={setGraphPeriod}
-						color={colors.business.sleepPrimary}
-						frames={[
-							{
-								label: "graph.time_frame.today",
-								duration: TimeFrame.TODAY,
-							},
-							{
-								label: "graph.time_frame.7days",
-								duration: TimeFrame.LAST_7_DAYS,
-							},
-							{
-								label: "graph.time_frame.all",
-								duration: TimeFrame.ALL,
-							},
-						]}
-					/> */}
-				</View>
-				<GraphContainer>
-					<Hypnogram data={stages} />
-					<View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
-						<GraphLegend
-							rows={[
-								{
-									label: format("sleep.stage.awake"),
-									element: {
-										key: "sleep.stage.awake",
-										node: <></>,
+				{activeItem === 0 && (
+					<>
+						<TitleText style={{ textAlign: "center", textTransform: "uppercase" }}>
+							{format("sleep.details.stages")}
+						</TitleText>
+						<View style={{ marginBottom: 25, marginTop: 20 }}>
+							<TimeFrameSwitcher
+								setGraphPeriod={setGraphPeriod}
+								graphPeriod={graphPeriod}
+								color={colors.business.sleepPrimary}
+								frames={[
+									{
+										label: "graph.time_frame.today",
+										duration: TimeFrame.TODAY,
 									},
-									value: `${moment.duration(awakeDuration).hours()} h ${moment.duration(awakeDuration).minutes()} min ${
-										sleepDuration ? `${Math.round((awakeDuration * 100) / sleepDuration)}%` : ""
-									}`,
-								},
-								{
-									label: format("sleep.stage.REM"),
-									element: {
-										key: "sleep.stage.REM",
-										node: <></>,
+									{
+										label: "graph.time_frame.7days",
+										duration: TimeFrame.LAST_7_DAYS,
 									},
-									value: `${moment.duration(REMDuration).hours()} h ${moment.duration(REMDuration).minutes()} min ${
-										sleepDuration ? `${Math.round((REMDuration * 100) / sleepDuration)}%` : ""
-									}`,
-								},
-								{
-									label: format("sleep.stage.light"),
-									element: {
-										key: "sleep.stage.light",
-										node: <></>,
+									{
+										label: "graph.time_frame.all",
+										duration: TimeFrame.ALL,
 									},
-									value: `${moment.duration(lightDuration).hours()} h ${moment.duration(lightDuration).minutes()} min ${
-										sleepDuration ? `${Math.round((lightDuration * 100) / sleepDuration)}%` : ""
-									}`,
-								},
-								{
-									label: format("sleep.stage.deep"),
-									element: {
-										key: "sleep.stage.deep",
-										node: <></>,
-									},
-									value: `${moment.duration(deepDuration).hours()} h ${moment.duration(deepDuration).minutes()} min ${
-										sleepDuration ? `${Math.round((deepDuration * 100) / sleepDuration)}%` : ""
-									}`,
-								},
-							]}
-						/>
-					</View>
-				</GraphContainer>
+								]}
+							/>
+						</View>
+						{dailySleep ? (
+							<GraphContainer>
+								{graphPeriod === TimeFrame.TODAY && (
+									<DailySleepChart data={dailySleep} selectedDay={selectedDay} hasNotEnoughData={!enoughData} />
+								)}
+								{graphPeriod === TimeFrame.LAST_7_DAYS && (
+									<Sleep7DChart selectedDay={selectedDay} hasNotEnoughData={!enoughData} />
+								)}
+								{graphPeriod === TimeFrame.ALL && (
+									<SleepAllChart selectedDay={selectedDay} hasNotEnoughData={!enoughData} />
+								)}
+							</GraphContainer>
+						) : (
+							<Spinner />
+						)}
+					</>
+				)}
+				{activeItem === 1 && <></>}
+				{activeItem === 3 && <Spo2Graph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
+				{activeItem === 4 && <BreathingRateGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
+				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
+					<Row style={{ justifyContent: "center" }}>
+						<ImageContainer onPress={() => setActiveItem(0)}>
+							<GraphSwitcherButton
+								source={
+									activeItem === 0
+										? require(`@assets/images/sleepCircleBlue.png`)
+										: require(`@assets/images/sleepCircleBlueTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+						<ImageContainer onPress={() => setActiveItem(1)}>
+							<GraphSwitcherButton
+								style={{ marginLeft: 0 }}
+								source={
+									activeItem === 1
+										? require(`@assets/images/heartCircleBlue.png`)
+										: require(`@assets/images/heartCircleBlueTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+						<ImageContainer onPress={() => setActiveItem(3)}>
+							<GraphSwitcherButton
+								style={{ marginLeft: 0 }}
+								source={
+									activeItem === 3
+										? require(`@assets/images/spo2Blue.png`)
+										: require(`@assets/images/spo2BlueTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+						<ImageContainer onPress={() => setActiveItem(4)}>
+							<GraphSwitcherButton
+								style={{ marginLeft: 0 }}
+								source={
+									activeItem === 4
+										? require(`@assets/images/brBlue.png`)
+										: require(`@assets/images/brBlueTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+					</Row>
+				</ElementStack>
 			</ElementStack>
+
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
 				<View style={{ padding: 20 }}>
 					<CalendarView
 						autoSelectDayOnMonthChange={false}
-						selectedDay={selectedDay}
+						selectedLocalIsoDay={selectedDay}
 						onDaySelected={async (day) => {
 							await calendarBottomSheet.current?.asyncClose();
 							setSelectedDay(day);
@@ -236,4 +242,17 @@ const Container = styled(ScrollScreen)`
 const ElementStack = styled(Stack)`
 	padding: 25px 20px;
 	background-color: ${colors.lightgray};
+`;
+const ImageContainer = styled.Pressable`
+	align-items: center;
+`;
+const GraphSwitcherButton = styled(Image)`
+	margin-left: 7px;
+	margin-right: 7px;
+	margin-bottom: 4px;
+	/* margin-top: 4px; */
+	width: 40px;
+	height: 40px;
+	align-items: center;
+	justify-content: center;
 `;

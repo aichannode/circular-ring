@@ -1,3 +1,4 @@
+import { useServices } from "@core/services";
 import { round2Digits } from "@core/utils";
 import { cmToFt, ftToCm, HeightUnit, strideValuesCm, strideValuesFt } from "@domain/units";
 import { useUser, useUserSettings } from "@domain/user/hooks/useUser";
@@ -18,7 +19,7 @@ interface StrideBottomSheetProps {
 
 export const StrideBottomSheet = ({ onSaved }: StrideBottomSheetProps) => {
 	const { format } = useI18n();
-	// const { userService } = useServices();
+	const { userService } = useServices();
 	const user = useUser();
 	const userSettings = useUserSettings();
 	const userStrideUnit = userSettings?.heightFormat || HeightUnit.cm;
@@ -31,7 +32,7 @@ export const StrideBottomSheet = ({ onSaved }: StrideBottomSheetProps) => {
 		setLoading(true);
 		setErrorMessage("");
 		try {
-			// await userService.FAKE_updateUserAdvancedInfo({ stride }); // Waiting API
+			await userService.updateUserAdvancedInfo({ stride }); // Waiting API
 			setLoading(false);
 			onSaved();
 		} catch (error) {

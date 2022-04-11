@@ -1,245 +1,111 @@
-import { ScoreUnit } from "@domain/measure/score";
-import {
-	DailyActivityGoals,
-	MetricType,
-} from "@domain/measure/metric";
+import { MetricType } from "@domain/measure/metric";
+import { Activities, ActivityScoreContributors } from "@domain/measure/representation/lib/type";
+import { useIsCelsius } from "@domain/user/hooks/useUser";
+import { useI18n } from "@ui/i18n";
 import { WordingKey } from "src/wordings";
-import { DailyActivityDetailsMetrics, DailyEnergyScoreMetrics, DailyEnergyScoreGaugeCalibrationMetrics } from "@domain/measure/representation/type";
-import { getGaugeColor, getScoreQualityLabel } from "../business";
-import { GaugeDisplayConfig } from "../type";
+import { getScoreQualityLabel } from "../business";
+import { GaugeDisplayConfig, MetricDisplayConfig } from "../type";
 
-export type DailyEnergyScoreGaugeConfigs = Record<DailyEnergyScoreMetrics, GaugeDisplayConfig>
+export type DailyEnergyScoreGaugeConfigs = Record<ActivityScoreContributors, GaugeDisplayConfig>;
 
-export type DailyMetricsData = {
-	[key in DailyActivityDetailsMetrics]: {
-		icon: number;
-		labelKey: WordingKey;
-		goodGoal?: DailyActivityGoals;
-		optimalGoal?: DailyActivityGoals;
-	};
-};
-
-export type ScoreDetailsData = {
-	[key in DailyEnergyScoreMetrics]: {
-		titleKey: WordingKey;
-		descriptionKey: WordingKey;
-		unit: ScoreUnit;
-		gauge?: DailyEnergyScoreGaugeCalibrationMetrics;
-	};
-};
-
-export function getActivityQualityDetails(format: (v: WordingKey) => string): DailyEnergyScoreGaugeConfigs {
+export function getActivityGaugesConfig(format: (v: WordingKey) => string): DailyEnergyScoreGaugeConfigs {
+	const { formatTemperature } = useI18n();
+	const isCelsius = useIsCelsius();
 	return {
 		// Body recovery
-		[MetricType.UserDailyScoreRecovery]: {
-			metricsName: {
-				value: MetricType.UserDailyScoreRecovery,
-				thresholdLow: MetricType.UserDailyScoreRecoveryGoalMin,
-				thresholdHigh: MetricType.UserDailyScoreRecoveryGoalMax,
-				gaugeFilling: MetricType.UserDailyScoreRecovery,
-			},
+		[MetricType.UserDailyBodyRecovery]: {
 			titleKey: "score.details.recovery.label",
 			descriptionKey: "score.details.recovery.description",
-			displaySegment: [.6, 1],
 			renderValue: getScoreQualityLabel(format),
-			getGaugeColor: getGaugeColor(),
 		},
-		[MetricType.UserDailyWakeUpScore]:{
+		[MetricType.UserDailyWakeUpScore]: {
 			// Wakeup score
-			metricsName: {
-				value: MetricType.UserDailyWakeUpScore,
-				thresholdLow: MetricType.UserDailyWakeUpScoreGoalMin,
-				thresholdHigh: MetricType.UserDailyWakeUpScoreGoalMax,
-				gaugeFilling: MetricType.UserDailyWakeUpScore,
-			},
 			titleKey: "score.details.wake_up.label",
 			descriptionKey: "score.details.wake_up.description",
-			renderValue: ({
-				value,
-				thresholdLow,
-				thresholdHigh,
-			}: {
-				value: number,
-				thresholdLow: number,
-				thresholdHigh: number,
-				gaugeFilling: number,
-			}) => `${value*100}%`,
-			getGaugeColor: getGaugeColor(),
+			renderValue: ({ value }: { value: number }) => `${Math.round(value * 100)}%`,
 		},
-		[MetricType.UserDailySleepBR]: {
+		[MetricType.UserDailyScoreBR]: {
 			// Breathing rate
-			metricsName: {
-				value: MetricType.UserDailySleepBR,
-				thresholdLow: MetricType.UserDailyScoreBRGoalMin,
-				thresholdHigh: MetricType.UserDailyScoreBRGoalMax,
-				gaugeFilling: MetricType.UserDailyScoreBr,
-			},
 			titleKey: "score.details.breathing.label",
 			descriptionKey: "score.details.breathing.description",
-			renderValue: ({
-				value,
-				thresholdLow,
-				thresholdHigh,
-			}: {
-				value: number,
-				thresholdLow: number,
-				thresholdHigh: number,
-				gaugeFilling: number,
-			}) => `${value} rpm`,
-			getGaugeColor: getGaugeColor(),
+			renderValue: ({ value }: { value: number }) => `${Math.round(value)} rpm`,
 		},
-		[MetricType.UserDailySleepHRV]: {
+		[MetricType.UserDailyScoreSPO2]: {
+			// SPO2
+			titleKey: "score.details.spo2.label",
+			descriptionKey: "score.details.spo2.description",
+			renderValue: ({ value }: { value: number }) => `${Math.round(value)} %`,
+		},
+		[MetricType.UserDailyScoreHRV]: {
 			// Heart rate variability
-			metricsName: {
-				value: MetricType.UserDailySleepHRV,
-				thresholdLow: MetricType.UserDailyScoreHRVGoalMin,
-				thresholdHigh: MetricType.UserDailyScoreHRVGoalMax,
-				gaugeFilling: MetricType.UserDailyScoreHRV,
-			},
 			titleKey: "score.details.hrv.label",
 			descriptionKey: "score.details.hrv.description",
-			renderValue: ({
-				value,
-				thresholdLow,
-				thresholdHigh,
-			}: {
-				value: number,
-				thresholdLow: number,
-				thresholdHigh: number,
-				gaugeFilling: number,
-			}) => `${value} ms`,
-			getGaugeColor: getGaugeColor(),
+			renderValue: ({ value }: { value: number }) => `${Math.round(value)} ms`,
 		},
-		[MetricType.UserDailyRHR]: {
+		[MetricType.UserDailyScoreRHR]: {
 			// Resting heart rate
-			metricsName: {
-				value: MetricType.UserDailyRHR,
-				thresholdLow: MetricType.UserDailyScoreRHRGoalMin,
-				thresholdHigh: MetricType.UserDailyScoreRHRGoalMax,
-				gaugeFilling: MetricType.UserDailyScoreRHR,
-			},
 			titleKey: "score.details.resting_heart_rate.label",
 			descriptionKey: "score.details.resting_heart_rate.description",
-			renderValue: ({
-				value,
-				thresholdLow,
-				thresholdHigh,
-			}: {
-				value: number,
-				thresholdLow: number,
-				thresholdHigh: number,
-				gaugeFilling: number,
-			}) => `${value} bpm`,
-			getGaugeColor: getGaugeColor(),
+			renderValue: ({ value }: { value: number }) => `${Math.round(value)} bpm`,
 		},
-		[MetricType.UserDailySleepVarTemperature]: {
+		[MetricType.UserDailySleepScoreVarTemperature]: {
 			// Temperature variation
-			metricsName: {
-				value: MetricType.UserDailySleepVarTemperature,
-				thresholdLow: MetricType.UserDailyScoreVarTemperatureGoalMin,
-				thresholdHigh: MetricType.UserDailyScoreVarTemperatureGoalMax,
-				gaugeFilling: MetricType.UserDailyScoreVarTemperature,
-			},
 			titleKey: "score.details.temperature.label",
 			descriptionKey: "score.details.temperature.description",
-			renderValue: ({
-				value,
-				thresholdLow,
-				thresholdHigh,
-				gaugeFilling
-			}: {
-				value: number,
-				thresholdLow: number,
-				thresholdHigh: number,
-				gaugeFilling: number,
-			}) => `${value > 0 ? '+' : '-'} ${value}°C`,
-			getGaugeColor: getGaugeColor(),
+			renderValue: ({ value }: { value: number }) => formatTemperature(value, isCelsius),
 		},
 		[MetricType.UserDailySleepScore]: {
 			// Sleep quality
-			metricsName: {
-				value: MetricType.UserDailySleepScore,
-				thresholdLow: MetricType.UserDailySleepScoreGoalMin,
-				thresholdHigh: MetricType.UserDailySleepScoreGoalMax,
-				gaugeFilling: MetricType.UserDailySleepScore,
-			},
 			titleKey: "score.details.sleep_quality.label",
 			descriptionKey: "score.details.sleep_quality.description",
-			renderValue: ({
-				value,
-				thresholdLow,
-				thresholdHigh,
-			}: {
-				value: number,
-				thresholdLow: number,
-				thresholdHigh: number,
-				gaugeFilling: number,
-			}) => `${value*100}%`,
-			getGaugeColor: getGaugeColor(),
+			renderValue: ({ value }: { value: number }) => `${Math.round(value * 100)}%`,
 		},
-		[MetricType.UserDailyScoreSleepBalance]: {
+		[MetricType.UserDailySleepBalance]: {
 			// Sleep balance
-			metricsName: {
-				value: MetricType.UserDailyScoreSleepBalance,
-				thresholdLow: MetricType.UserDailyScoreSleepBalanceGoalMin,
-				thresholdHigh: MetricType.UserDailyScoreSleepBalanceGoalMax,
-				gaugeFilling: MetricType.UserDailyScoreSleepBalance,
-			},
 			titleKey: "score.details.sleep_balance.label",
 			descriptionKey: "score.details.sleep_balance.description",
 			renderValue: getScoreQualityLabel(format),
-			getGaugeColor: getGaugeColor(),
 		},
-		[MetricType.UserDailyScoreActivityVolume]: {
+		[MetricType.UserDailyActivityVolume]: {
 			// Activity volume
-			metricsName: {
-				value: MetricType.UserDailyScoreActivityVolume,
-				thresholdLow: MetricType.UserDailyScoreActivityVolumeGoalMin,
-				thresholdHigh: MetricType.UserDailyScoreActivityVolumeGoalMax,
-				gaugeFilling: MetricType.UserDailyScoreActivityVolume,
-			},
 			titleKey: "score.details.activity_volume.label",
 			descriptionKey: "score.details.activity_volume.description",
 			renderValue: getScoreQualityLabel(format),
-			getGaugeColor: getGaugeColor(),
-		}
-	}
+		},
+	};
 }
 
+type MetricsDetails = Record<Activities, MetricDisplayConfig>;
 
-export const dailyMetricsDataInfos: DailyMetricsData = {
+export const dailyActivitiesUIConfig: MetricsDetails = {
 	[MetricType.UserDailySteps]: {
-		icon: require("@assets/images/shoes.png"),
+		icon: "@assets/images/shoes.png",
 		labelKey: "metric.steps",
-		goodGoal: MetricType.UserDailyStepsGoalMin,
-		optimalGoal: MetricType.UserDailyStepsGoalMax,
+		decimalNb: 0,
 	},
 	[MetricType.UserDailyWalkingEquivalency]: {
-		icon: require("@assets/images/journey.png"),
+		icon: "@assets/images/journey.png",
 		labelKey: "metric.walking",
-		goodGoal: MetricType.UserDailyWalkingEquivalencyGoalMin,
-		optimalGoal: MetricType.UserDailyWalkingEquivalencyGoalMax,
+		decimalNb: 1,
 	},
-	// TODO enable when back will be ready
-	/* 
-	[MetricType.UserDailyCaloriesBurnedGoal]: {
-		icon: require("@assets/images/fire.png"),
+	[MetricType.UserDailyCaloriesBurned]: {
+		icon: "@assets/images/fire.png",
 		labelKey: "metric.calories",
-		goodGoal: MetricType.UserDailyCaloriesBurnedGoalMin, // not implemented
-		optimalGoal: MetricType.UserDailyCardioPointsGoalMax,// not implemented
+		decimalNb: 0,
 	},
-	"user.daily.cardio.points": {
-		icon: require("@assets/images/sport.png"),
+	[MetricType.UserDailyCardioPoints]: {
+		icon: "@assets/images/sport.png",
 		labelKey: "metric.cardio",
-		goodGoal: "user.daily.cardio.points.goal.min",
-		optimalGoal: "user.daily.cardio.points.goal.max",
+		decimalNb: 0,
 	},
-	"user.daily.vo2max": {
-		icon: require("@assets/images/lungs.png"),
+	[MetricType.UserDailyVO2Max]: {
+		icon: "@assets/images/lungs.png",
 		labelKey: "metric.vo2_max",
-	}, */
-	[MetricType.UserDailyAwakeHrMax]: {
-		icon: require("@assets/images/heart.png"),
+		decimalNb: 0,
+	},
+	[MetricType.UserDailyAwakeHRMax]: {
+		icon: "@assets/images/heart.png",
 		labelKey: "metric.hr_max",
+		decimalNb: 0,
 	},
 };

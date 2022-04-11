@@ -1,4 +1,7 @@
 import { useServices } from "@core/services";
+import { DeviceConnectionState } from "@domain/device/bleDeviceService";
+import { Channel } from "@domain/device/channels";
+import { NamedUserRing } from "@domain/ring/ring";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListItem } from "@ui/components/infoList";
 import { RingBatteryView } from "@ui/components/ring/ringBatteryView";
@@ -6,27 +9,23 @@ import { PrimaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { FactoryResetBottomSheet } from "@ui/screens/myRing/factoryResetBottomSheet";
-import React, { useRef, useState } from "react";
-import { Alert } from "react-native";
-import styled from "styled-components/native";
-import { Channel } from "@domain/device/channels";
-import { useObservable } from "micro-observables";
-import { NamedUserRing } from "@domain/ring/ring";
 import { RingViewModel } from "@ui/screens/myRing/viewModel/RingViewModel";
 import { colors } from "@ui/styles/colors";
-import { DeviceConnectionState } from "@domain/device/bleDeviceService";
+import { useObservable } from "micro-observables";
+import React, { useEffect, useRef, useState } from "react";
+import { Alert } from "react-native";
 import Dialog from "react-native-dialog";
+import styled from "styled-components/native";
 
 const RING_NAME_PREFIX = "Circular ";
 
 export const MyRingScreen: React.FC = () => {
-	const { bleDeviceService } = useServices();
+	const { bleDeviceService, appStateService } = useServices();
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
-	const { ringManagementService } = useServices();
 	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const viewModel = new RingViewModel();
-	const userRings = useObservable(ringManagementService.userRings);
+	const userRings = useObservable(appStateService.userRings);
 	const currentRing: NamedUserRing = userRings.filter((ring) => ring.connected)[0];
 	const connected = useObservable(bleDeviceService.connectionState);
 	const [showPrompt, setShowPrompt] = useState<boolean>(false);
@@ -34,12 +33,17 @@ export const MyRingScreen: React.FC = () => {
 		currentRing?.name ? currentRing?.name.slice(RING_NAME_PREFIX.length) : ""
 	);
 
+	useEffect(() => {
+		const currentRing: NamedUserRing = userRings.filter((ring) => ring.connected)[0];
+		setEditedName(currentRing?.name ? currentRing?.name.slice(RING_NAME_PREFIX.length) : "");
+	}, [currentRing]);
+
 	const renameRing = async () => {
 		if (editedName && editedName !== "") {
 			try {
 				bleDeviceService.favoriteDevice.set({ name: RING_NAME_PREFIX + viewModel.formatRingName(editedName) });
 				await bleDeviceService.write(`${Channel.RENAME}${viewModel.formatRingName(editedName)}`);
-				ringManagementService.userRings.set(
+				appStateService.userRings.set(
 					userRings.map((ring) => {
 						if (ring.connected)
 							return {
@@ -50,7 +54,6 @@ export const MyRingScreen: React.FC = () => {
 					})
 				);
 			} catch (err) {
-				console.log("error");
 				Alert.alert("Error", "An error occured while trying to change ring name (no ring connected)", [
 					{ text: "OK", onPress: () => console.log("OK Pressed") },
 				]);
@@ -83,7 +86,6 @@ export const MyRingScreen: React.FC = () => {
 				<>
 					<EditText
 						onPress={() => {
-							console.log("Edit");
 							setShowPrompt(true);
 						}}
 					>

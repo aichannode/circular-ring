@@ -21,9 +21,9 @@ interface I_IsUpToDate {
 export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 	const { bleDeviceService } = useServices();
 	const { format } = useI18n();
-	const { ringManagementService, ringApi } = useServices();
+	const { ringApi, appStateService } = useServices();
 	const [outOfDate, setOutOfDate] = useState(true);
-	const userRings = useObservable(ringManagementService.userRings);
+	const userRings = useObservable(appStateService.userRings);
 	const lastFirmwareVersion = useObservable(ringApi.firmwareVersion);
 	const { goBack } = useNavigation();
 	const ringBattery = useRingBattery();
@@ -33,7 +33,7 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 
 	const startUpdate = async () => {
 		await UpdateFailedBottomSheetRef.current?.close();
-		if (ringBattery && ringBattery?.charge <= 20) {
+		if (ringBattery && ringBattery?.charge <= 19) {
 			setTimeout(() => {
 				UpdateFailedBottomSheetRef.current?.present();
 			}, 250);
@@ -43,18 +43,13 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 	const firmwareDiff = async () => {
 		if (lastFirmwareVersion !== currentRing.firmware) setOutOfDate(true);
 		else {
-			console.log("FIRMWARE UPTODATE");
 			setOutOfDate(false);
 		}
 	};
 
-	console.log("Ring BATTERY", ringBattery);
-
 	useEffect(() => {
 		firmwareDiff();
 	}, [userRings]);
-
-	console.log("FIRMWARE UPDATE CURRENT RING", currentRing);
 
 	return (
 		<>
@@ -85,7 +80,6 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 			{outOfDate ? (
 				<PrimaryButton
 					onPress={() => {
-						console.log("Current Rings", connectedRing?.id);
 						startUpdate();
 					}}
 					style={{ position: "absolute", bottom: "10%" }}
@@ -97,7 +91,6 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 				<View style={{ display: "flex", flexDirection: "row", position: "absolute", bottom: "10%" }}>
 					<PrimaryButton
 						onPress={() => {
-							console.log("Current Rings", connectedRing?.id);
 							startUpdate();
 						}}
 					>
@@ -158,7 +151,7 @@ const UpToDate = styled.Text`
 
 const OutOfDate = styled.Text`
 	font-size: 18px;
-	color: ${colors.orangeRed};
+	color: ${colors.redOrange};
 	margin: auto;
 	margin-top: 12px;
 	margin-bottom: 22px;

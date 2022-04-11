@@ -17,10 +17,10 @@ export const TitleText = styled.Text`
 `;
 export const SubTitleText = styled.Text`
 	${textStyles.subtitle};
-`
+`;
 export const MetaDataText = styled.Text`
 	${textStyles.meta};
-`
+`;
 export const MediumTitleText = styled.Text`
 	${textStyles.mediumTitle};
 `;
@@ -29,7 +29,7 @@ export const Strong = styled.Text`
 	color: ${colors.primary};
 `;
 export const Colored = styled.Text<TextStyle>`
-	${props => props.color?.toString() ?? `color: ${colors.primary}`};
+	${(props) => props.color?.toString() ?? `color: ${colors.primary}`};
 `;
 export const Bold = styled.Text`
 	font-weight: bold;

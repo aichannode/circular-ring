@@ -21,8 +21,6 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 	const [showCountdown, setShowCountdown] = useState(false);
 	const [isPlaying, setPlaying] = useState(true);
 
-	// console.log("Selected Second", selectedSeconde);
-
 	const sixty = useMemo(() => Array.from({ length: 60 }, (_, i) => ("0" + i).slice(-2)), []);
 	const secondes = useMemo(() => Array.from({ length: 12 }, (_, i) => ("0" + i * 5).slice(-2)), []);
 	const twelve = useMemo(() => Array.from({ length: 12 }, (_, i) => ("0" + i).slice(-2)), []);
@@ -35,7 +33,7 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 				<CountdownCircleTimer
 					isPlaying={isPlaying}
 					duration={selectedMinute * 60 + selectedSeconde * 5 + selectedHour * 60 * 60}
-					colors={colors.orangeRed}
+					colors={colors.redOrange}
 					size={250}
 					strokeWidth={8}
 				>
@@ -173,7 +171,7 @@ export const TimerTile = () => {
 					<Light>{timer ? countdown(timer) : "off"}</Light>
 				</TouchableOpacity>
 			</Tile>
-			<CircularBottomScrollSheet snapPoints={[480]} ref={TimerBottomSheetRef}  allowSwipeDownToClose={false}>
+			<CircularBottomScrollSheet snapPoints={[480]} ref={TimerBottomSheetRef} allowSwipeDownToClose={false}>
 				<TimerBottomSheet onClose={() => TimerBottomSheetRef.current?.close()} />
 			</CircularBottomScrollSheet>
 		</>
@@ -184,6 +182,7 @@ const Tile = styled.View`
 	flex: 1;
 	height: 50px;
 	justify-content: center;
+	background-color: white;
 `;
 
 const SheetContainer = styled(ResponsiveCenterView)`

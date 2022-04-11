@@ -7,7 +7,7 @@ import LinearGradient from "react-native-linear-gradient";
 import { StyleSheet, View } from "react-native";
 import { DraxProvider, DraxView } from "react-native-drax";
 import { useServices } from "@core/services";
-import { I_Active } from "@domain/quickaccess/quickAccess";
+import { I_QuickAccessElem } from "@domain/appState/type";
 
 export const QuickAccess: React.FC = () => {
 	const { format } = useI18n();
@@ -42,18 +42,14 @@ export const QuickAccess: React.FC = () => {
 
 	const [receiver, setReceiver] = useState(-1);
 	const [disabledReceiver, setDisabledReceiver] = useState(-1);
-	const [quickAccess, setQuickAccess] = useState<I_Active[]>(_quickAccess);
-	const [disabledQuickAccess, setDisabledQuickAccess] = useState<I_Active[]>(_disabledQuickAccess);
-	const { userQuickAccess } = useServices();
+	const [quickAccess, setQuickAccess] = useState<I_QuickAccessElem[]>(_quickAccess);
+	const [disabledQuickAccess, setDisabledQuickAccess] = useState<I_QuickAccessElem[]>(_disabledQuickAccess);
+	const { appStateService } = useServices();
 
 	useEffect(() => {
-		if (userQuickAccess.quickaccess.get().active.length || userQuickAccess.quickaccess.get().disabled.length) {
-			console.log(
-				"## INITIAL RUN",
-				userQuickAccess.quickaccess.get()?.active.map((t) => t.id)
-			);
-			setQuickAccess(userQuickAccess.quickaccess.get()?.active);
-			setDisabledQuickAccess(userQuickAccess.quickaccess.get()?.disabled);
+		if (appStateService.quickAccess.get().active.length || appStateService.quickAccess.get().disabled.length) {
+			setQuickAccess(appStateService.quickAccess.get()?.active);
+			setDisabledQuickAccess(appStateService.quickAccess.get()?.disabled);
 		}
 	}, []);
 
@@ -72,7 +68,7 @@ export const QuickAccess: React.FC = () => {
 							setReceiver(-1);
 						}}
 						onReceiveDragDrop={({ dragged: { payload } }) => {
-							userQuickAccess.update({
+							appStateService.updateQuickaccess({
 								active: [disabledQuickAccess[payload.i]],
 								disabled: disabledQuickAccess.filter((t) => t.id != payload.tile.id),
 							});
@@ -102,7 +98,7 @@ export const QuickAccess: React.FC = () => {
 											const newArrayWithoutTile = quickAccess.filter((t) => t.id != payload.tile.id);
 											const newBeginning = newArrayWithoutTile.slice(0, i);
 											const newEnd = newArrayWithoutTile.slice(i, quickAccess.length);
-											userQuickAccess.update({
+											appStateService.updateQuickaccess({
 												active: [...newBeginning, quickAccess[payload.i], ...newEnd],
 												disabled: disabledQuickAccess,
 											});
@@ -110,7 +106,7 @@ export const QuickAccess: React.FC = () => {
 										} else {
 											const newBeginning = quickAccess.slice(0, i);
 											const newEnd = quickAccess.slice(i, disabledQuickAccess.length);
-											userQuickAccess.update({
+											appStateService.updateQuickaccess({
 												active: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
 												disabled: disabledQuickAccess.filter((t) => t.id != payload.tile.id),
 											});
@@ -130,14 +126,11 @@ export const QuickAccess: React.FC = () => {
 									setDragged(i);
 									setReceiver(-1);
 									setDisabledReceiver(-1);
-									console.log("CIR-275 start drag", i);
 								}}
 								onDragEnd={() => {
-									console.log("CIR-275 OnDragEnd");
 									setDragged(-1);
 								}}
 								onDragExit={() => {
-									console.log("CIR-275 OnDragExit");
 									setReceiver(-1);
 								}}
 								payload={{ tile, i }}
@@ -157,11 +150,9 @@ export const QuickAccess: React.FC = () => {
 								<DraxView
 									style={receiver === i + 1 ? styles.receiverfocus : styles.receiver}
 									onReceiveDragEnter={({ dragged: { payload } }) => {
-										console.log(`CIR-275  OnDragENterReceive ${payload}`);
 										setReceiver(i + 1);
 									}}
 									onReceiveDragExit={({ dragged: { payload } }) => {
-										console.log(`CIR-275  DragExitReceive ${payload}`);
 										setReceiver(-1);
 									}}
 									onReceiveDragDrop={({ dragged: { payload } }) => {
@@ -171,7 +162,7 @@ export const QuickAccess: React.FC = () => {
 											const newArrayWithoutTile = quickAccess.filter((t) => t.id != payload.tile.id);
 											const newBeginning = newArrayWithoutTile.slice(0, i + 1);
 											const newEnd = newArrayWithoutTile.slice(i + 1, quickAccess.length);
-											userQuickAccess.update({
+											appStateService.updateQuickaccess({
 												active: [...newBeginning, quickAccess[payload.i], ...newEnd],
 												disabled: disabledQuickAccess,
 											});
@@ -179,7 +170,7 @@ export const QuickAccess: React.FC = () => {
 										} else {
 											const newBeginning = quickAccess.slice(0, i + 1);
 											const newEnd = quickAccess.slice(i + 1, disabledQuickAccess.length);
-											userQuickAccess.update({
+											appStateService.updateQuickaccess({
 												active: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
 												disabled: disabledQuickAccess.filter((t) => t.id != payload.tile.id),
 											});
@@ -206,11 +197,9 @@ export const QuickAccess: React.FC = () => {
 									<DraxView
 										style={disabledReceiver === i ? styles.receiverfocus : styles.receiver}
 										onReceiveDragEnter={({ dragged: { payload } }) => {
-											console.log(`CIR-275  OnDragENterReceive ${payload}`);
 											setDisabledReceiver(i);
 										}}
 										onReceiveDragExit={({ dragged: { payload } }) => {
-											console.log(`CIR-275  DragExitReceive ${payload}`);
 											setDisabledReceiver(-1);
 											setReceiver(-1);
 										}}
@@ -220,24 +209,16 @@ export const QuickAccess: React.FC = () => {
 											if (isInQuickAccess) {
 												const newBeginning = disabledQuickAccess.slice(0, i);
 												const newEnd = disabledQuickAccess.slice(i, disabledQuickAccess.length);
-												userQuickAccess.update({
+												appStateService.updateQuickaccess({
 													active: quickAccess.filter((t) => t.id != payload.tile.id),
 													disabled: [...newBeginning, quickAccess[payload.i], ...newEnd],
 												});
-												console.log(
-													"CIR-402 newBeginning : ",
-													newBeginning.map((i) => i.title),
-													"            New elem :",
-													quickAccess[payload.i].id,
-													"       newEnd :",
-													newEnd.map((i) => i.title)
-												);
 												setDisabledQuickAccess([...newBeginning, quickAccess[payload.i], ...newEnd]);
 												setQuickAccess(quickAccess.filter((t) => t.id != payload.tile.id));
 											} else {
 												const newBeginning = disabledQuickAccess.slice(0, i);
 												const newEnd = disabledQuickAccess.slice(i, disabledQuickAccess.length);
-												userQuickAccess.update({
+												appStateService.updateQuickaccess({
 													active: quickAccess,
 													disabled: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
 												});
@@ -257,7 +238,6 @@ export const QuickAccess: React.FC = () => {
 									setReceiver(-1);
 								}}
 								onDragEnd={() => {
-									console.log("CIR-275 OnDragEnd");
 									setDragged(-1);
 									setDisabledDragged(-1);
 								}}
@@ -281,32 +261,20 @@ export const QuickAccess: React.FC = () => {
 								<DraxView
 									style={disabledReceiver === i + 1 ? styles.receiverfocus : styles.receiver}
 									onReceiveDragEnter={({ dragged: { payload } }) => {
-										console.log(`CIR-275  OnDragENterReceive ${payload}`);
 										setDisabledReceiver(i + 1);
 									}}
 									onReceiveDragExit={({ dragged: { payload } }) => {
-										console.log(`CIR-275  DragExitReceive ${payload}`);
 										setDisabledReceiver(-1);
 										setReceiver(-1);
 									}}
 									onReceiveDragDrop={({ dragged: { payload } }) => {
-										console.log(`CIR-275  received ${payload}`);
-
 										const isInQuickAccess = quickAccess.findIndex((el) => el.id === payload.tile.id) !== -1;
 										if (isInQuickAccess) {
 											const newBeginning = disabledQuickAccess.slice(0, i + 1);
 											const newEnd = disabledQuickAccess.slice(i + 1, disabledQuickAccess.length);
-											console.log(
-												"CIR-402 newBeginning : ",
-												newBeginning.map((i) => i.title),
-												"            New elem :",
-												quickAccess[payload.i].id,
-												"       newEnd :",
-												newEnd.map((i) => i.title)
-											);
 											setDisabledQuickAccess([...newBeginning, quickAccess[payload.i], ...newEnd]);
 											setQuickAccess(quickAccess.filter((t) => t.id != payload.tile.id));
-											userQuickAccess.update({
+											appStateService.updateQuickaccess({
 												active: quickAccess.filter((t) => t.id != payload.tile.id),
 												disabled: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
 											});
@@ -314,7 +282,7 @@ export const QuickAccess: React.FC = () => {
 											const newArrayWithoutTile = disabledQuickAccess.filter((t) => t.id != payload.tile.id);
 											const newBeginning = newArrayWithoutTile.slice(0, i);
 											const newEnd = newArrayWithoutTile.slice(i, disabledQuickAccess.length);
-											userQuickAccess.update({
+											appStateService.updateQuickaccess({
 												active: quickAccess,
 												disabled: [...newBeginning, disabledQuickAccess[payload.i], ...newEnd],
 											});

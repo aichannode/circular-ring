@@ -1,23 +1,25 @@
 import { getLogger } from "@core/logger/logger";
 import { base64decode, base64encode, delay, observableToPromise, timedPromise } from "@core/utils";
+import { AppStateService } from "@domain/appState/appStateService";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { Channel } from "@domain/device/channels";
 import { FakeDeviceService } from "@domain/fake/fakeDeviceService";
+import { NamedUserRing } from "@domain/ring/ring";
+import { RingApi } from "@domain/ring/ringApi";
 import { deserializeBattery, RingBattery } from "@domain/ring/ringBattery";
 import { deserializeLiveData, RingLiveData } from "@domain/ring/ringLiveData";
+import { getUTCTimestamp } from "@utils/date";
 import { observable, Observable } from "micro-observables";
 import { Signal } from "micro-signals";
 import { Platform } from "react-native";
+import BleManager from "react-native-ble-manager";
 import { BleError, Device, ScanMode, State, Subscription } from "react-native-ble-plx";
-import { getUTCTimestamp } from "@utils/date";
-import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
-import { RingApi } from "@domain/ring/ringApi";
-import { LocationEnabler } from "./locationEnabler";
-import { NamedDevice } from "./namedDevice";
-import { NordicDFU } from "react-native-nordic-dfu";
 import RNFetchBlob from "react-native-blob-util";
 import RNFS from "react-native-fs";
-import BleManager from "react-native-ble-manager";
+import { NordicDFU } from "react-native-nordic-dfu";
+import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
+import { LocationEnabler } from "./locationEnabler";
+import { NamedDevice } from "./namedDevice";
 import { UserDevice } from "./userDevice";
 
 const FB = RNFetchBlob.config({
@@ -47,6 +49,11 @@ export enum DeviceAutoConnectState {
 	CONNECTING = "CONNECTING",
 	CONNECTED = "CONNECTED",
 	UPDATE = "UPDATE",
+}
+
+interface I_Disconnect {
+	dissociate: boolean;
+	ring?: NamedUserRing;
 }
 
 interface I_UpdateState {
@@ -131,10 +138,10 @@ export class BleDeviceService {
 		private readonly bluetoothService: BluetoothService,
 		private readonly fakeDeviceService: FakeDeviceService,
 		private readonly favoriteDeviceStorage: FavoriteDeviceStorage,
-		private readonly ringApi: RingApi
+		private readonly ringApi: RingApi,
+		private readonly appStateService: AppStateService
 	) {
 		this._favoriteDevice.subscribe((device) => {
-			console.log("SAVE DEVICE");
 			if (device) this.favoriteDeviceStorage.save(device);
 			return device;
 		});
@@ -197,15 +204,19 @@ export class BleDeviceService {
 
 	async init() {
 		const loadedDevice = await this.favoriteDeviceStorage.load();
-		console.log(" CIR-266 BLE DEVICE INIT LOADED DEVICE", loadedDevice);
 		this.checkSettings();
 		this._favoriteDevice.set(loadedDevice);
-		console.log("CIR-266 INIT");
 		if (loadedDevice) {
-			console.log("CIR-266 init LOADED DEVICE");
 			this.autoConnectFavoriteDevice();
 		}
 	}
+
+	async reset() {
+		this._favoriteDevice.set(null);
+		this._favoriteDeviceSNU.set(null);
+		this.favoriteDeviceStorage.clear();
+	}
+
 	async setFavoriteDeviceName(name: string) {
 		await this.favoriteDeviceStorage.save({ name });
 		this._favoriteDevice.set({ name });
@@ -214,7 +225,8 @@ export class BleDeviceService {
 	async startScan() {
 		if (this._scanning.get()) {
 			this.logger.warn("Cannot scan: Already scanning");
-			return;
+			this.stopScan(); // get main priority when scanning for new ring
+			// return;
 		}
 		await this.bluetoothService.enable();
 		if (Platform.OS === "android") {
@@ -231,11 +243,11 @@ export class BleDeviceService {
 				});
 			}
 		}
+
 		const manager = this.bluetoothService.manager;
 		this.logger.info("SCAN STARTED");
 		this._scanning.set(true);
 		manager.startDeviceScan([NUServiceUUID], null, (error, device) => {
-			console.log("Scanned Device CIR-141", device?.name, device?.id);
 			if (error) {
 				this.logger.error(error);
 				this.stopScan();
@@ -249,6 +261,9 @@ export class BleDeviceService {
 			if (!currentDevices.has(device.id)) {
 				this._scannedDevices.set(new Map(currentDevices).set(device.id, device));
 				this.logger.info("New device", device?.name, device?.id);
+			}
+			if (currentDevices.has(device.id) && currentDevices.get(device.id)?.name !== device.name) {
+				this._scannedDevices.set(new Map(currentDevices).set(device.id, device));
 			}
 		});
 	}
@@ -273,19 +288,14 @@ export class BleDeviceService {
 
 		try {
 			const latestFirmware = await this.ringApi.getLatestFirmware();
-			console.log("134 latest Firmware", latestFirmware);
 			firmwareFile = (await FB.fetch("GET", latestFirmware.fileUrl)).path();
 			const hashOfFMW = await RNFS.hash(firmwareFile, "sha1");
-			console.log("134 hashOfFMW", hashOfFMW, latestFirmware.hash);
 			if (hashOfFMW !== latestFirmware.hash) {
-				console.log("FWM DOESNT MATCH");
 				this.updateState.set(UpdateState.UPDATE_ERROR_DOWNLOAD_FAILED);
 				throw Error("FIRMWARE DONT MATCH");
 			}
-			console.log("134 irmwareFile 1", firmwareFile);
 			this.startDFUScan(firmwareFile);
 		} catch (err) {
-			console.log("134 firmwareFile 2", firmwareFile, err);
 			this.updateState.set(UpdateState.UPDATE_ERROR_DOWNLOAD_FAILED);
 			return null;
 		}
@@ -340,21 +350,17 @@ export class BleDeviceService {
 
 		try {
 			const dfuDevice = await timedPromise(DFUScanPromise, findDeviceTimeout);
-			console.log("DFU MODE Scanned Device", dfuDevice.name);
 			try {
-				console.log("firmwareFile 4", firmwareFile);
 				this.updateState.set(UpdateState.SENDING_FIRMWARE_OVER_BLUETOOTH);
-				const dfu = await NordicDFU.startDFU({
+				await NordicDFU.startDFU({
 					deviceAddress: dfuDevice?.id,
 					deviceName: dfuDevice?.name ? dfuDevice.name : "Circular Update",
 					filePath: Platform.OS === "android" ? firmwareFile : "file://" + firmwareFile,
 				});
 				this.updateState.set(UpdateState.RECONNECTING);
 				this.autoConnectFavoriteDevice();
-				console.log(" DFU ", dfu);
 			} catch (err) {
 				this.updateState.set(UpdateState.UPDATE_ERROR_SENDING_FIRMWARE_OVER_BLUETOOTH);
-				console.log("FIRMWARE ERROR ", err);
 			}
 		} catch (e) {
 			this.logger.warn("Device not found:", e, "retrying in 10 seconds ");
@@ -386,26 +392,42 @@ export class BleDeviceService {
 			this._connectedDevice.set(device);
 			this._connectionState.set(DeviceConnectionState.CONNECTED);
 			this._onDeviceDisconnectedSubscription = device.onDisconnected((error, disconnectedDevice) => {
-				console.log("CIR-266 Device disconnection");
 				this.handleDeviceDisconnection(error, disconnectedDevice);
 			});
 			const storedDevice = { name: device.name };
-			const favDevices = this._favoriteDevice.get();
-			const storedDevices = await this.favoriteDeviceStorage.load();
-			console.log("CIR-266 11");
-			console.log("ELSE CIR-266 favDevices && storedDevices", favDevices, storedDevices);
 			await this.favoriteDeviceStorage.save(storedDevice);
 			this._favoriteDevice.set(storedDevice);
-			console.log("CIR-266 22");
 			await this.startMonitoring();
 			const snu = await this.getResponse(Channel.SNU);
 			if (snu) {
 				this._favoriteDeviceSNU.set(snu);
 			}
-			console.log("CIR-266 3");
 			await this.write(`${Channel.CALENDAR}${getUTCTimestamp()}`);
 			this.logger.info("🕒 Time set to device", device.name, getUTCTimestamp());
 			await this.listenBattery();
+			if (
+				this.appStateService.userRings.get().find((userRing: NamedUserRing) => userRing.name === device.name) ===
+				undefined
+			) {
+				const firmware = await this.getResponse(Channel.FIRMWARE_VERSION);
+				this.appStateService.userRings.update((userRing) => {
+					const rings = userRing.map((ring) => ({ ...ring, connected: false }));
+					const newRing = {
+						name: device.name ? device.name : undefined,
+						id: snu ? snu : "000000000000",
+						ringId: device.id,
+						firmware,
+						connected: true,
+						lastSyncDate: new Date(),
+						userId: undefined,
+					};
+					return [...rings, newRing];
+				});
+			} else {
+				this.appStateService.userRings.update((userRing) => {
+					return userRing.map((userRing) => ({ ...userRing, connected: userRing.name === device.name ? true : false }));
+				});
+			}
 		} catch (e) {
 			this.logger.error("Error connecting to device", e);
 			this._connectionState.set(DeviceConnectionState.DISCONNECTED);
@@ -415,7 +437,6 @@ export class BleDeviceService {
 	}
 
 	private handleDeviceDisconnection(error: BleError | null, device: Device) {
-		console.log("HANDLE DISCONNECTION");
 		const connectedDevice = this._connectedDevice.get();
 		if (!connectedDevice) {
 			return;
@@ -430,7 +451,6 @@ export class BleDeviceService {
 			this._currentRingBattery.set(null);
 			if (this.updateState.get().status !== UpdateState.IDLE.status) {
 				// this.startDFUScan();
-				console.log("UPDATE STATE", this.updateState.get());
 			} else {
 				this.logger.info("Trying to reconnect to", connectedDevice.name);
 				this.autoConnectFavoriteDevice();
@@ -438,13 +458,15 @@ export class BleDeviceService {
 		} else {
 			this.logger.warn("Disconnected from unknown device");
 		}
+		this.appStateService.userRings.update((userRing) => {
+			return userRing.map((userRing) => ({ ...userRing, connected: false }));
+		});
 	}
 
 	async autoConnectFavoriteDevice() {
 		this.logger.info("autoConnectFavoriteDevice");
 		const name = this._favoriteDevice.get()?.name;
 		if (name === undefined) {
-			console.log("favorite device null", name);
 			return;
 		}
 		this.logger.info("Trying to autoconnect to", name);
@@ -453,7 +475,6 @@ export class BleDeviceService {
 		const manager = this.bluetoothService.manager;
 		try {
 			const connectedDevices = await manager.connectedDevices([NUServiceUUID]);
-			console.log("autoConnectFavoriteDevice  CONNECTED DEVICES = ", connectedDevices);
 			if (connectedDevices.length > 0) {
 				const alreadyConnectedDevice = connectedDevices[0];
 				this.logger.info("Already connected to", alreadyConnectedDevice.name);
@@ -461,7 +482,6 @@ export class BleDeviceService {
 				this._connectionState.set(DeviceConnectionState.CONNECTED);
 			}
 			const device = await this.findFavoriteDevice();
-			console.log("Favorite Devecies");
 			if (device) {
 				return this.connect(device);
 			}
@@ -595,7 +615,6 @@ export class BleDeviceService {
 
 	private async startMonitoring() {
 		const device = this._connectedDevice.get() ?? (await observableToPromise(this._connectedDevice));
-		console.log("CIR-266 Monitoring device ->", device);
 
 		if (!device) {
 			this.logger.error("Error : no device connected");
@@ -609,7 +628,7 @@ export class BleDeviceService {
 				subscription.remove();
 			} else {
 				const decodedOutput = base64decode(charac?.value ?? "");
-				this.logger.debug("✅ BleDeviceService | decodedOutput : ", decodedOutput);
+				this.logger.debug("✅ BleDeviceService | decodedOutput : ", decodedOutput);
 				this.onMessageReceived.dispatch(decodedOutput);
 			}
 		});
@@ -618,9 +637,23 @@ export class BleDeviceService {
 		return subscription;
 	}
 
-	async disconnect() {
+	async disconnect(options: I_Disconnect) {
+		this._scannedDevices.set(new Map()); //  flush scanned device on dissociate or factory reset
 		const device = this._connectedDevice.get();
 		await this.forgetBeforeDisconnection();
+		if (options.dissociate) {
+			this.appStateService.userRings.update((userRing) => {
+				if (options.ring) {
+					return userRing.filter((ring) => ring.name !== options.ring?.name);
+				} else {
+					return userRing.filter((ring) => ring.name !== device?.name);
+				}
+			});
+		} else {
+			this.appStateService.userRings.update((userRing) => {
+				return userRing.map((userRing) => ({ ...userRing, connected: false }));
+			});
+		}
 		if (!device) {
 			this.logger.info("Already disconnected");
 			return;
@@ -636,13 +669,16 @@ export class BleDeviceService {
 			this.logger.warn("No connected device");
 			throw Error("No connected device");
 		}
+		this.appStateService.userRings.update((userRing) => {
+			return userRing.filter((ring) => ring.name !== device?.name);
+		});
 		this.logger.info("Factory-reset device", device.name);
 		await this.forgetBeforeDisconnection();
 		await this.writeToDevice(device, Channel.FRS);
+		this._favoriteDevice.set({ name: "noring" });
 	}
 
 	private async forgetBeforeDisconnection() {
-		console.log("CIR-266 Forget Before Disconnection");
 		this._connectedDevice.set(null);
 		this._connectionState.set(DeviceConnectionState.DISCONNECTED);
 		this._onDeviceDisconnectedSubscription?.remove();
@@ -671,28 +707,12 @@ export class BleDeviceService {
 			if (value) {
 				const deserializedData = deserializeLiveData(value);
 				if (deserializedData) {
-					console.log("Deserialized Data", deserializedData);
 					this._currentRingLiveData.update((c) => {
-						console.log("C", c);
-
 						const maxHeartRate =
-							c.data && !isNaN(Math.max(deserializedData.heartRate!, c.data.heartRate!))
-								? Math.max(deserializedData.heartRate!, c.data.maxHeartRate!)
+							c.data && !isNaN(Math.max(deserializedData.heartRate, c.data.heartRate ?? deserializedData.heartRate))
+								? Math.max(deserializedData.heartRate, c.data.maxHeartRate ?? deserializedData.heartRate)
 								: deserializedData.heartRate;
 
-						// if (maxHeartRate === undefined || isNaN(maxHeartRate)) maxHeartRate: c?.data?.heartRate;
-						console.log("MAXHEARTRATE", maxHeartRate, "HEARTRATE", deserializedData.heartRate);
-
-						// if (deserializedData?.correlation < CORRELATION_GOOD_THRESHOLD) {
-						// 	console.log("LOW CORRELATION");
-						// 	console.log("LOW CORRELATION");
-						// 	console.log("LOW CORRELATION");
-						// 	console.log("LOW CORRELATION");
-						// 	console.log("LOW CORRELATION");
-						// 	console.log("LOW CORRELATION");
-
-						// 	return { ...c, data: { ...c?.data, correlation: deserializedData.correlation, maxHeartRate } };
-						// }
 						if (deserializedData.heartRate === 0) {
 							return { ...c, data: { ...c.data, correlation: 0 } };
 						}

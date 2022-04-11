@@ -98,7 +98,7 @@ const Description = styled.Text`
 `;
 
 const DescriptionHighlight = styled.Text`
-	color: ${colors.orangeRed};
+	color: ${colors.redOrange};
 	font-weight: 800;
 `;
 

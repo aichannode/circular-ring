@@ -1,37 +1,20 @@
-import { MetricType } from "@domain/measure/metric";
 import { WordingKey } from "src/wordings";
 
-export enum GaugeColor {
+export enum MetricColor {
 	RED,
 	ORANGE,
-	GREEN
+	GREEN,
 }
 
+export type MetricDisplayConfig = {
+	icon: string;
+	labelKey: WordingKey;
+	decimalNb: number;
+};
+
 export type GaugeDisplayConfig = {
-    metricsName: {
-        value: MetricType,
-        thresholdLow: MetricType
-        thresholdHigh: MetricType
-        gaugeFilling: MetricType,
-    },
-    isInverted?: boolean,
-    titleKey: WordingKey,
-    descriptionKey: WordingKey,
-	displaySegment?: [number, number],
-    renderValue: (metrics: {
-        value: number,
-        thresholdLow: number,
-        thresholdHigh: number,
-        gaugeFilling: number,
-    }) => string
-	getGaugeColor: ({
-        value,
-        thresholdLow,
-        thresholdHigh,
-    }: {
-        value: number,
-        thresholdLow: number,
-        thresholdHigh: number,
-        gaugeFilling: number,
-    }) => GaugeColor,
-}
+	titleKey: WordingKey;
+	descriptionKey: WordingKey;
+	displaySegment?: [number, number];
+	renderValue: (metrics: { value: number; thresholdLow: number; thresholdHigh: number; percent: number }) => string;
+};

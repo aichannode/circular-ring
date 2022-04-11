@@ -1,11 +1,11 @@
+import { useServices } from "@core/services";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { useObservable } from "micro-observables";
 import React from "react";
 import styled from "styled-components/native";
-import { useServices } from "@core/services";
-import { useObservable } from "micro-observables";
 
 export const NotificationsScreen: React.FC = () => {
 	const { format } = useI18n();
@@ -75,7 +75,8 @@ export const NotificationsScreen: React.FC = () => {
 			/>
 			<InfoListItem
 				name={format("notifications.lowBloodOxygenation")}
-				lightTheme
+				disabled={true}
+				lightTheme={false}
 				hasDisclosure
 				action={() => navigate(Routes.LowSpo2)}
 			/>

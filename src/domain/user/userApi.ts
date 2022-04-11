@@ -1,44 +1,12 @@
 import { ApiService } from "@core/api/apiService";
-import { DateFormat, HeightUnit, HourFormat, WeightUnit } from "@domain/units";
+import { addRequestInterceptor } from "@core/api/interceptors/interceptor";
+import { serializeArrayParametersInterceptor } from "@core/api/interceptors/serializeArrayParametersInterceptor";
 import { AdvancedInfo } from "@domain/user/advancedInfo";
 import { Sex, User } from "@domain/user/user";
 import { UserSettings } from "@domain/user/userSettings";
 import axios, { AxiosInstance } from "axios";
-import { addRequestInterceptor } from "@core/api/interceptors/interceptor";
-import { serializeArrayParametersInterceptor } from "@core/api/interceptors/serializeArrayParametersInterceptor";
-
-interface UserDtoBase {
-	firstName: string;
-	lastName: string;
-	country: string;
-	phoneNumber: string | null;
-	profilePictureUrl: string | null;
-	weight: number;
-	height: number;
-	sex: string;
-	bornDate: string;
-	language: string;
-	scorePublic: boolean;
-	stride: number;
-	tutorialCompleted: boolean;
-}
-
-interface UserDto extends UserDtoBase {
-	id: string;
-	email: string;
-	validated: boolean;
-	createdAt: string;
-}
-
-export type UserPutDto = UserDtoBase;
-
-interface UserSettingsDto {
-	id: string;
-	dateFormat: DateFormat;
-	heightFormat: string;
-	hourFormat: HourFormat;
-	weightFormat: string;
-}
+import { userSettingsFromDto } from "./business";
+import { UserDto, UserPutDto, UserSettingsDto } from "./type";
 
 export class UserApi {
 	private readonly instance: AxiosInstance;
@@ -51,7 +19,7 @@ export class UserApi {
 	/** User **/
 
 	async getUser(): Promise<User> {
-		const result = await this.apiService.get<UserDto>("/user");
+		const result = await this.apiService.get<UserDto>("/user", { useForceRefresh: true });
 		return UserApi.userFromDto(result.data);
 	}
 
@@ -78,27 +46,13 @@ export class UserApi {
 	/** User Settings **/
 
 	async getUserSettings(): Promise<UserSettings> {
-		const result = await this.apiService.get<UserSettings>("/user/setting");
-		return UserApi.userSettingsFromDto(result.data);
+		const result = await this.apiService.get<UserSettingsDto>("/user/setting");
+		return userSettingsFromDto(result.data);
 	}
 
-	async updateUserSettings(userSettings: {
-		dateFormat: string;
-		heightFormat: string;
-		weightFormat: string;
-		timezone: string;
-	}): Promise<UserSettings> {
+	async updateUserSettings(userSettings: UserSettingsDto): Promise<UserSettings> {
 		const result = await this.apiService.put<UserSettingsDto>("/user/setting", userSettings);
-		return UserApi.userSettingsFromDto(result.data);
-	}
-
-	private static userSettingsFromDto(userSettingsDto: UserSettingsDto): UserSettings {
-		return {
-			...userSettingsDto,
-			hourFormat: (userSettingsDto.hourFormat === "12" ? "12" : "24") as HourFormat,
-			weightFormat: userSettingsDto.weightFormat === "kg" ? WeightUnit.kg : WeightUnit.lbs,
-			heightFormat: userSettingsDto.heightFormat === "cm" ? HeightUnit.cm : HeightUnit.ft,
-		};
+		return userSettingsFromDto(result.data);
 	}
 
 	/** User Advanced Info **/
@@ -114,32 +68,22 @@ export class UserApi {
 	}
 
 	async uploadUserProfilPic(uri: string, name: string, type: string) {
-		console.log("type.split('/')[1]", type.split("/")[1]);
-		try {
-			const splitType = type.split("/")[1];
-			console.log("Type", type);
-			const data = (
-				await this.apiService.post<{ url: string; fields: Record<string, any>; taskId: string }>("/user/me/avatar", {
-					type: splitType,
-				})
-			).data;
-			console.log("data", data);
-			const formData = new FormData();
-			Object.entries(data.fields).forEach(([k, v]) => {
-				formData.append(k, v);
-			});
-			formData.append("Content-Type", type);
-			formData.append("file", {
-				uri,
-				type,
-				name,
-			});
-			console.log("Data.url", data.url, " formData", formData);
-			const res = await this.instance.post(data.url, formData);
-			console.log("REs", res);
-		} catch (err) {
-			console.log("Err", JSON.stringify(err));
-			throw err;
-		}
+		const splitType = type.split("/")[1];
+		const data = (
+			await this.apiService.post<{ url: string; fields: Record<string, any>; taskId: string }>("/user/me/avatar", {
+				type: splitType,
+			})
+		).data;
+		const formData = new FormData();
+		Object.entries(data.fields).forEach(([k, v]) => {
+			formData.append(k, v);
+		});
+		formData.append("Content-Type", type);
+		formData.append("file", {
+			uri,
+			type,
+			name,
+		});
+		await this.instance.post(data.url, formData);
 	}
 }

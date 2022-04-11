@@ -5,19 +5,16 @@ import { TouchableOpacity } from "react-native";
 import { Stack } from "@ui/components/layout";
 import styled from "styled-components/native";
 import { useServices } from "@core/services";
-import { I_Active } from "@domain/quickaccess/quickAccess";
+import { I_QuickAccessElem } from "@domain/appState/type";
 import { AlarmTile } from "./Alarm";
 
 import { TimerTile } from "./Timer";
 import { useI18n } from "@ui/i18n";
+import { useObservable } from "micro-observables";
 
-const SleepTile = () => {
-	// const { format } = useI18n();
-	const [sleepMode, setSleepMode] = useState<boolean>(false);
-
-	useEffect(() => {
-		console.log("SLEEP MODE = ", sleepMode);
-	}, [sleepMode]);
+export const SleepTile = () => {
+	const { appStateService } = useServices();
+	const sleepMode = useObservable(appStateService.isInSleepMode);
 
 	const sleepTextColor = sleepMode ? "white" : "black";
 	const sleepBackGound = sleepMode ? colors.sleepBlue : "white";
@@ -26,7 +23,7 @@ const SleepTile = () => {
 		<Tile style={{ backgroundColor: sleepBackGound }}>
 			<TouchableOpacity
 				onPress={() => {
-					setSleepMode(!sleepMode);
+					appStateService.updateSleepMode(!sleepMode);
 				}}
 			>
 				<Bold style={{ color: sleepTextColor }}>Sleep mode</Bold>
@@ -36,7 +33,7 @@ const SleepTile = () => {
 	);
 };
 
-const CalendarTile = () => {
+export const CalendarTile = () => {
 	const navigation = useRoutesNavigation();
 	return (
 		<Tile>
@@ -49,7 +46,7 @@ const CalendarTile = () => {
 
 export const QuickAccess: React.FC = () => {
 	const { format } = useI18n();
-	const [active, setActive] = useState<I_Active[] | undefined>([]);
+	const [active, setActive] = useState<I_QuickAccessElem[] | undefined>([]);
 
 	const _quickAccess = [
 		{
@@ -69,15 +66,15 @@ export const QuickAccess: React.FC = () => {
 		},
 	];
 
-	const { userQuickAccess } = useServices();
+	const { appStateService } = useServices();
 
 	useEffect(() => {
 		setActive(
-			userQuickAccess.quickaccess.get().active.length || userQuickAccess.quickaccess.get().disabled.length
-				? userQuickAccess.quickaccess.get()?.active
+			appStateService.quickAccess.get().active.length || appStateService.quickAccess.get().disabled.length
+				? appStateService.quickAccess.get()?.active
 				: _quickAccess
 		);
-		userQuickAccess.quickaccess.subscribe((data) => {
+		appStateService.quickAccess.subscribe((data) => {
 			if (data?.active) {
 				setActive(data?.active);
 			}
@@ -92,20 +89,17 @@ export const QuickAccess: React.FC = () => {
 	if (active?.length === 0) return null;
 
 	return (
-		<>
-			<Container gap={15}>
-				{displaySleep && <SleepTile />}
-				{displayAlarm && <AlarmTile />}
-				{displayCalendar && <CalendarTile />}
-				{displayTimer && <TimerTile />}
-			</Container>
-		</>
+		<Container gap={15}>
+			{displaySleep && <SleepTile />}
+			{displayAlarm && <AlarmTile />}
+			{displayCalendar && <CalendarTile />}
+			{displayTimer && <TimerTile />}
+		</Container>
 	);
 };
 
 const Container = styled(Stack)`
-	background-color: ${colors.white};
-	height: 50px;
+	height: 51px;
 	margin-top: 10px;
 	display: flex;
 	flex-direction: row;
@@ -129,4 +123,5 @@ const Tile = styled.View`
 	border-right-width: 0.25px;
 	border-left-width: 0.25px;
 	border-color: ${colors.gray};
+	background-color: ${colors.white};
 `;

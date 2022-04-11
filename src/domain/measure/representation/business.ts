@@ -1,161 +1,145 @@
-import moment from "moment";
-import { getKeyFromDate, MeasureService } from "../measureService";
-import { DatedMetrics } from "../metric";
-import { ActivityStage, SleepStage } from "../type";
-import { ActivityIntensityMetrics, SleepStageMetrics, StageInfos } from "./type";
+import { isToday } from "@domain/common/business";
+import { MetricType, RangeMetrics } from "../metric";
+import { ActivityControlState, DailyBr, DailyHr, DailySpo2, DataControlState, ScoreQuality } from "./api";
+import { DailySleepStageDuration, SleepStagesMetrics } from "./lib/type";
 
 /**
- * Return the phases of sleep for the given metrics
+ * Return either we can display the data of this day or not
+ * @implements spec [00000](https://docs.google.com/document/d/16SRBS_XPqDhePKuCi6rQm399n72H_82GTPAiay6AQlQ/edit?disco=AAAAWIm9aec)
  */
-export function getSleepPhases(
-	chain: Array<DatedMetrics<SleepStageMetrics>>
-): StageInfos<SleepStage>[] {
-	return [
-        {
-            type: SleepStage.AWAKE,
-            start: moment().subtract(1, "day").hour(23).toISOString(),
-            end: moment().hour(1).toISOString(),
-        },
-        {
-            type: SleepStage.REM,
-            start: moment().hour(1).toISOString(),
-            end: moment().hour(2).toISOString(),
-        },
-        {
-            type: SleepStage.LIGHT,
-            start: moment().hour(2).toISOString(),
-            end: moment().hour(6).minute(0).toISOString(),
-        },
-        {
-            type: SleepStage.DEEP,
-            start: moment().hour(6).minute(0).toISOString(),
-            end: moment().hour(14).toISOString(),
-        },
-        {
-            type: SleepStage.REM,
-            start: moment().hour(14).toISOString(),
-            end: moment().hour(15).toISOString(),
-        },
-        {
-            type: SleepStage.AWAKE,
-            start: moment().hour(15).toISOString(),
-            end: moment().hour(19).toISOString(),
-        },
-    ]
+export function canDisplay(isoDay: string, userCoreSleepEnd: number) {
+	return isToday(new Date(userCoreSleepEnd).toISOString(), isoDay);
 }
 
 /**
- * Return the total duration of activity for the given activity data
+ * Compute an activity control state
  */
-export function getActivityDuration(
-    phases: Array<StageInfos<ActivityStage>>
-) {
-    return phases.reduce(function(duration, phase) {
-        if ( phase.type >= ActivityStage.MEDIUM) {
-            duration + moment(phase.start).diff(moment(phase.end))
-        }
-        return duration
-    }, 0)
+export function getActivityControlState(model: { lowThreshold: number; highThreshold?: number; value: number }) {
+	if (model.highThreshold === undefined) {
+		if (model.value >= model.lowThreshold) {
+			return ActivityControlState.OPTIMAL;
+		}
+		return ActivityControlState.POOR;
+	} else if (model.value >= model.lowThreshold && model.value < model.highThreshold) {
+		return ActivityControlState.GOOD;
+	} else if (model.value < model.lowThreshold) {
+		return ActivityControlState.POOR;
+	} else {
+		return ActivityControlState.OPTIMAL;
+	}
 }
 
 /**
- * Return the phases of sleep for the given metrics
+ * Compute the control states for the sleep score
+ * @implements spec [00001](https://docs.google.com/document/d/16SRBS_XPqDhePKuCi6rQm399n72H_82GTPAiay6AQlQ/edit?disco=AAAAWInQrBs)
  */
- export function getActivityPhases(
-	chain: Array<DatedMetrics<ActivityIntensityMetrics>>
-): Array<StageInfos<ActivityStage>> {
-	return [
-        {
-            type: ActivityStage.SEDENTARY,
-            start: moment().hour(0).minutes(0).toISOString(),
-            end: moment().hour(11).minutes(55).toISOString(),
-        },
-        {
-            type: ActivityStage.LOW,
-            start: moment().hour(11).minutes(55).toISOString(),
-            end: moment().hour(12).minutes(10).toISOString()
-        },
-        {
-            type: ActivityStage.MEDIUM,
-            start: moment().hour(12).minutes(10).toISOString(),
-            end: moment().hour(12).minutes(40).toISOString(),
-        },
-        {
-            type: ActivityStage.HIGH,
-            start: moment().hour(12).minutes(40).toISOString(),
-            end: moment().hour(12).minutes(55).toISOString()
-        },
-        {
-            type: ActivityStage.MEDIUM,
-            start: moment().hour(12).minutes(55).toISOString(),
-            end: moment().hour(13).minutes(11).toISOString()
-        },
-        {
-            type: ActivityStage.LOW,
-            start: moment().hour(13).minutes(11).toISOString(),
-            end: moment().hour(13).minutes(30).toISOString()
-        },
-        {
-            type: ActivityStage.SEDENTARY,
-            start: moment().hour(13).minutes(30).toISOString(),
-            end: moment().hour(18).minutes(0).toISOString(),
-        },
-        {
-            type: ActivityStage.LOW,
-            start: moment().hour(18).minutes(0).toISOString(),
-            end: moment().hour(18).minutes(20).toISOString()
-        },
-        {
-            type: ActivityStage.SEDENTARY,
-            start: moment().hour(18).minutes(20).toISOString(),
-            end: moment().hour(20).minutes(0).toISOString()
-        }
-    ]
+export function getScoreControlStates(model: {
+	lowThreshold: number;
+	highThreshold: number;
+	score: number;
+	isInverted?: boolean;
+}) {
+	if (model.score >= model.lowThreshold && model.score < model.highThreshold) {
+		return ScoreQuality.GOOD;
+	} else if (model.score < model.lowThreshold) {
+		return model.isInverted ? ScoreQuality.OPTIMAL : ScoreQuality.POOR;
+	} else {
+		return model.isInverted ? ScoreQuality.POOR : ScoreQuality.OPTIMAL;
+	}
 }
 
-/**
- * Return the phases of activity for the given date.
- * Return the data for the current day if date is omitted.
- */
-export function getDailyActivityPhases({ date, service }: { date?: Date; service: MeasureService; }) {
-    const data = service.dailyActivityIntensityMetrics.get(getKeyFromDate(date))
-    return data
-        ? getActivityPhases(data)
-        : undefined
+export function parseDailyHR(
+	dailyHR:
+		| RangeMetrics<
+				MetricType.UserHR,
+				| MetricType.UserDailyAwakeHRMax
+				| MetricType.UserDailyAwakeHRMin
+				| MetricType.UserDailyAwakeHRAverage
+				| MetricType.UserDailyAwakeHRReference
+		  >
+		| undefined
+): DailyHr | undefined {
+	if (dailyHR === undefined || dailyHR?.timeSeries.length === 0) return undefined;
+	const dailyHr: DailyHr = {
+		constant: {
+			hr: dailyHR.constant[MetricType.UserDailyAwakeHRAverage] as number,
+			hrMin: dailyHR.constant[MetricType.UserDailyAwakeHRMin] as number,
+			hrMax: dailyHR.constant[MetricType.UserDailyAwakeHRMax] as number,
+			reference: dailyHR.constant[MetricType.UserDailyAwakeHRReference] as number,
+		},
+		lines: [],
+	};
+	dailyHR.timeSeries.map((timeSerie) => {
+		dailyHr.lines.push({
+			x: Date.parse(timeSerie.timestamp),
+			y: typeof timeSerie.metrics["user.hr"] === "number" ? timeSerie.metrics["user.hr"] : 0,
+		});
+	});
+	return dailyHr;
 }
 
-/**
- * Return the total duration of activity for the given day
- */
-export function getDailyActivityDuration({ date, service }: { date?: Date; service: MeasureService; }) {
-    const data = service.dailyActivityIntensityMetrics.get(getKeyFromDate(date))
-    return data
-        ? getActivityDuration(getActivityPhases(data))
-        : undefined
-}
+export function parseDailySpo2(
+	dailySpo2:
+		| RangeMetrics<MetricType.UserDailySPO2, MetricType.UserDailyAsleepSPO2 | MetricType.UserDailyAsleepSPO2Reference>
+		| undefined,
+	dailySleepStageDuration: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined
+): DailySpo2 | undefined {
+	if (dailySpo2 === undefined || dailySpo2?.timeSeries.length === 0) return undefined;
 
-/**
- * Return the phases of sleep for the given date
- * Return the data for the current day if date is omitted.
- */
-export function getDailySleepDurations({ date, service }: { date?: Date; service: MeasureService; }) {
-	const data = service.dailySleepLevelMetrics.get(getKeyFromDate(date))
-	return data
-		? getSleepPhases(data)
-		: undefined
-}
+	const userSleepBegin = dailySleepStageDuration?.constant[MetricType.UserCoreSleepBegin] as number;
+	const userSleepEnd = dailySleepStageDuration?.constant[MetricType.UserCoreSleepEnd] as number;
 
-/**
- * Return the total duration of activity for the given day
- */
-export function getDailySleepDuration({ date, service }: { date?: Date; service: MeasureService; }) {
-    return service.dailySleepDuration.get(getKeyFromDate(date))
-}
+	const dailySpo2Data: DailySpo2 = {
+		constant: {
+			average: dailySpo2.constant[MetricType.UserDailyAsleepSPO2] as number,
+			reference: dailySpo2.constant[MetricType.UserDailyAsleepSPO2Reference] as number,
+		},
+		lines: [],
+		controlState: DataControlState.NO_DATA,
+	};
+	dailySpo2.timeSeries.map((timeSerie) => {
+		dailySpo2Data.lines.push({
+			x: Date.parse(timeSerie.timestamp),
+			y: typeof timeSerie.metrics["user.spo2"] === "number" ? timeSerie.metrics["user.spo2"] : 0,
+		});
+	});
+	const controlState = dailySpo2Data.lines.some(({ x }) => x > userSleepBegin * 1000 && x < userSleepEnd * 1000)
+		? DataControlState.READY
+		: DataControlState.NO_DATA;
+	dailySpo2Data.controlState = controlState;
 
-/**
- * Return the daily energy score for the given day
- */
-export function getDailyEnergyScore({ date, service }: { date?: Date; service: MeasureService; }) {
-    return service.dailyEnergyScore.get(getKeyFromDate(date))
+	return dailySpo2Data;
 }
-	
+export function parseDailyBR(
+	dailyBR:
+		| RangeMetrics<MetricType.UserBR, MetricType.UserDailyAsleepBR | MetricType.UserDailyAsleepBRReference>
+		| undefined,
+	dailySleepStageDuration: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined
+): DailyBr | undefined {
+	if (dailyBR === undefined || dailyBR?.timeSeries.length === 0) return undefined;
+
+	const userSleepBegin = dailySleepStageDuration?.constant[MetricType.UserCoreSleepBegin] as number;
+	const userSleepEnd = dailySleepStageDuration?.constant[MetricType.UserCoreSleepEnd] as number;
+
+	const data: DailyBr = {
+		constant: {
+			average: dailyBR.constant[MetricType.UserDailyAsleepBR] as number,
+			reference: dailyBR.constant[MetricType.UserDailyAsleepBRReference] as number,
+		},
+		lines: [],
+		controlState: DataControlState.NO_DATA,
+	};
+	dailyBR.timeSeries.map((timeSerie) => {
+		data.lines.push({
+			x: Date.parse(timeSerie.timestamp),
+			y: timeSerie.metrics[MetricType.UserBR] as number,
+		});
+	});
+
+	const controlState = data.lines.some(({ x }) => x > userSleepBegin * 1000 && x < userSleepEnd * 1000)
+		? DataControlState.READY
+		: DataControlState.NO_DATA;
+	data.controlState = controlState;
+
+	return data;
+}

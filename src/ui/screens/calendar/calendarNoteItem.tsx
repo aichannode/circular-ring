@@ -1,14 +1,16 @@
-import { useServices } from "@core/services";
+import { useRepresentations } from "@core/representation";
 import { CalendarNote } from "@domain/calendar/calendar";
+import { useIs24h } from "@domain/user/hooks/useUser";
 import { Grow } from "@ui/components/layout";
-import { Spinner } from "@ui/components/spinner";
+import { TimeEditor, TimeEditorRef } from "@ui/components/timeEditor";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useState, useRef, useEffect } from "react";
-import { TouchableOpacity, Pressable, StyleProp, ViewStyle } from "react-native";
+import { action } from "mobx";
+import { observer } from "mobx-react-lite";
+import React, { useEffect, useRef, useState } from "react";
+import { Pressable, StyleProp, TouchableOpacity, ViewStyle } from "react-native";
 import styled from "styled-components/native";
-import { TimeEditor, TimeEditorRef } from "@ui/components/timeEditor";
 
 interface CalendarNoteItemProps {
 	note: CalendarNote;
@@ -24,18 +26,22 @@ interface TimeEditorConfig {
 	saveTime: (time: Date) => void;
 }
 
-export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, color, canDelete = false, style }) => {
+export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = observer(function CalendarNoteItem({
+	note,
+	tags,
+	color,
+	canDelete = false,
+	style,
+}) {
 	const { format, formatHour, formatNoteIntervalLinker } = useI18n();
-	// const dateWithHour = useCallback((hour: number) => dayjs(day).hour(hour).toDate(), [day]);
-	const { calendarService } = useServices();
-	const [isLoading, setLoading] = useState(false);
-	const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
-	const [startDate, setStartDate] = useState(note.startTime);
-	const [endDate, setEndDate] = useState(note.endTime);
-
-	// console.log(" StartDate ", startDate, " EndDate ", endDate);
-	// console.log("NOTE", note);
-
+	const is24h = useIs24h();
+	const [startTime, setStartDate] = useState(note.startTime);
+	const [endTime, setEndDate] = useState(note.endTime);
+	const {
+		calendar: {
+			actions: { updateNote, deleteNote },
+		},
+	} = useRepresentations();
 	const startTimeEditionConfig = {
 		title: format("calendar.edit_start.title"),
 		description: format("calendar.edit_start.description"),
@@ -48,53 +54,22 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 		saveTime: setEndDate,
 	};
 
-	const [config, setConfig] = useState<TimeEditorConfig>({ ...startTimeEditionConfig, time: startDate });
+	const [config, setConfig] = useState<TimeEditorConfig>({ ...startTimeEditionConfig, time: startTime });
 	const timeEditorRef = useRef<TimeEditorRef>(null);
 
-	useEffect(() => {
-		if (startDate !== note.startTime || endDate !== note.endTime) {
-			// avoid first Render
-			calendarService
-				.updateNoteDate(note, startDate, endDate)
-				.then(() => {
-					console.log("Cir-397 Sucees Update Hour");
-				})
-				.catch((err) => console.log("CIR-397 error pdating date", err));
-		}
-	}, [startDate, endDate]);
-
-	const deleteNote = async () => {
-		setErrorMessage(undefined);
-		setLoading(true);
-
-		try {
-			await calendarService.deleteNote(note);
-			setLoading(false);
-		} catch (e) {
-			setLoading(false);
-		}
-		// try {
-		// 	const newTags = tags
-		// 		.filter((element: CalendarNote) => element.id === note.id)
-		// 		.filter((element: CalendarNote) => {
-		// 			return note.tag.id != element.tag.id;
-		// 		});
-
-		// 	if (newTags.length > 0) {
-		// 		await calendarService.updateNote(
-		// 			note,
-		// 			newTags.map((item) => item.tag.id)
-		// 		);
-		// 	} else {
-		// 		await calendarService.deleteNote(note);
-		// 	}
-
-		// 	setLoading(false);
-		// } catch (e) {
-		// 	setLoading(false);
-		// 	setErrorMessage(format("global.default_error"));
-		// }
-	};
+	useEffect(
+		action(() => {
+			if (startTime !== note.startTime || endTime !== note.endTime) {
+				// avoid first Render
+				updateNote({
+					...note,
+					startTime,
+					endTime,
+				});
+			}
+		}),
+		[startTime, endTime]
+	);
 
 	return (
 		<>
@@ -108,34 +83,32 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 				<EditableNoteHourContainer>
 					<TouchableOpacity
 						onPress={async () => {
-							console.log("OnStart");
-							setConfig({ ...startTimeEditionConfig, time: startDate });
+							setConfig({ ...startTimeEditionConfig, time: startTime });
 							timeEditorRef.current?.present();
 						}}
 					>
-						<Value>{formatHour(note.startTime)}</Value>
+						<Value>{formatHour(note.startTime, is24h)}</Value>
 					</TouchableOpacity>
 					<Value>{formatNoteIntervalLinker()}</Value>
 					<TouchableOpacity
 						onPress={async () => {
-							setConfig({ ...endTimeEditionConfig, time: endDate });
+							setConfig({ ...endTimeEditionConfig, time: endTime });
 							timeEditorRef.current?.present();
 						}}
 					>
-						<Value>{formatHour(note.endTime)}</Value>
+						<Value>{formatHour(note.endTime, is24h)}</Value>
 					</TouchableOpacity>
 				</EditableNoteHourContainer>
-				{canDelete ? (
-					isLoading ? (
-						<SpinnerContainer>
-							<Spinner size={24} />
-						</SpinnerContainer>
-					) : (
-						<Pressable onPress={deleteNote}>
-							<DeleteText>{format("calendar.delete_note")}</DeleteText>
-						</Pressable>
-					)
-				) : null}
+				{canDelete && (
+					<Pressable
+						onPress={() => {
+							console.log("delete", deleteNote);
+							deleteNote(note);
+						}}
+					>
+						<DeleteText>{format("calendar.delete_note")}</DeleteText>
+					</Pressable>
+				)}
 				<TimeEditor
 					ref={timeEditorRef}
 					defaultTime={config.time}
@@ -144,10 +117,9 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = ({ note, tags, 
 					saveTime={config.saveTime}
 				/>
 			</Container>
-			{errorMessage ? <ErrorMessage>{errorMessage}</ErrorMessage> : null}
 		</>
 	);
-};
+});
 
 const Container = styled.View`
 	width: 100%;
@@ -178,11 +150,6 @@ const Value = styled.Text`
 	margin-left: 10px;
 `;
 
-const SpinnerContainer = styled.View`
-	width: 59px;
-	align-items: flex-end;
-`;
-
 const EditableNoteHourContainer = styled.View`
 	display: flex;
 	flex-direction: row;
@@ -192,9 +159,4 @@ const DeleteText = styled.Text`
 	font-size: 14px;
 	color: ${colors.primary};
 	padding: 6px 0 6px 10px;
-`;
-
-const ErrorMessage = styled.Text`
-	${textStyles.errorMessage};
-	padding: 0 20px;
 `;

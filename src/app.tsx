@@ -1,25 +1,41 @@
-import "react-native-gesture-handler";
-import "react-native-get-random-values";
+import { useLogger } from "@core/logger/hooks/useLogger";
 import { useSentry } from "@core/logger/hooks/useSentry";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import { RepresentationsProvider } from "@core/representation";
+import { initializeServices, ServicesProvider } from "@core/services";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import { RootNavigator } from "@ui/navigation/rootNavigator";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import utc from "dayjs/plugin/utc";
+import { enableES5 } from "immer";
+import { configure } from "mobx";
 import React, { useEffect, useState } from "react";
 import { createIntl, IntlProvider } from "react-intl";
-import { LogBox, StatusBar, Platform, UIManager } from "react-native";
-import * as RNLocalize from "react-native-localize";
-import { initializeServices, ServicesProvider } from "@core/services";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { translations } from "./wordings";
-import SplashScreen from "react-native-splash-screen";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import utc from "dayjs/plugin/utc";
+import { DevSettings, LogBox, Platform, StatusBar, UIManager } from "react-native";
 import { LocaleConfig } from "react-native-calendars";
-import { enableES5 } from "immer"
+import "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import "react-native-get-random-values";
+import * as RNLocalize from "react-native-localize";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import SplashScreen from "react-native-splash-screen";
+import StorybookUIRoot from "../storybook";
+import { translations } from "./wordings";
 
+// Setup Mobx for RN
+configure({
+	enforceActions: "always",
+	computedRequiresReaction: true,
+	reactionRequiresObservable: true,
+	observableRequiresReaction: true,
+	useProxies: "never",
+});
+
+LogBox.ignoreAllLogs(true);
+LogBox.ignoreLogs(["EventEmitter.removeListener"]);
 LogBox.ignoreLogs(["new NativeEventEmitter()"]);
+
 dayjs.extend(customParseFormat);
 dayjs.extend(utc);
 
@@ -28,7 +44,7 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 // Configure immer for RN
-enableES5()
+enableES5();
 
 const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: "white" } };
 
@@ -36,12 +52,20 @@ const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: "
 export const App = () => {
 	const locale = getPreferredLangageCode(Object.keys(translations)) as "en"; // For some reason it can't be done in the main script
 	const [initialized, setInitialized] = useState(false);
+	const [isStoryBookDisplayed, toggleStoryBook] = useState(false);
+
 	useSentry();
+	const logger = useLogger("App.tsx");
 
 	useEffect(() => {
 		initializeServices().then(() => {
 			setInitialized(true);
 			SplashScreen.hide();
+		});
+
+		// Add Storybook toggle command to the menu
+		DevSettings.addMenuItem("Toggle Storybook", function () {
+			toggleStoryBook((isDisplayed) => !isDisplayed);
 		});
 	}, []);
 
@@ -53,6 +77,7 @@ export const App = () => {
 				monthNamesShort: intl.formatMessage({ id: "months_short" }).split(","),
 				dayNames: intl.formatMessage({ id: "days" }).split(","),
 				dayNamesShort: intl.formatMessage({ id: "days_short" }).split(","),
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				//@ts-ignore
 				today: intl.formatMessage({ id: "today" }),
 			};
@@ -60,28 +85,44 @@ export const App = () => {
 		LocaleConfig.defaultLocale = locale;
 	}, []);
 
-	return initialized ? (
-		<IntlProvider
-			locale={locale}
-			messages={translations[locale]}
-			onError={() => {
-				console.log("intlError");
-			}}
-		>
-			<GestureHandlerRootView style={{ flex: 1 }}>
-				<StatusBar translucent={true} barStyle="dark-content" backgroundColor="transparent" />
-				<SafeAreaProvider>
-					<ServicesProvider>
-						<NavigationContainer theme={theme}>
-							<BottomSheetModalProvider>
-								<RootNavigator />
-							</BottomSheetModalProvider>
-						</NavigationContainer>
-					</ServicesProvider>
-				</SafeAreaProvider>
-			</GestureHandlerRootView>
-		</IntlProvider>
-	) : null;
+	if (isStoryBookDisplayed) {
+		return (
+			<IntlProvider
+				locale={locale}
+				messages={translations[locale]}
+				onError={(err) => {
+					logger.error(err);
+				}}
+			>
+				<StorybookUIRoot />
+			</IntlProvider>
+		);
+	} else {
+		return initialized ? (
+			<IntlProvider
+				locale={locale}
+				messages={translations[locale]}
+				onError={(err) => {
+					logger.error(err);
+				}}
+			>
+				<GestureHandlerRootView style={{ flex: 1 }}>
+					<StatusBar translucent={true} barStyle="dark-content" backgroundColor="transparent" />
+					<SafeAreaProvider>
+						<ServicesProvider>
+							<RepresentationsProvider>
+								<NavigationContainer theme={theme}>
+									<BottomSheetModalProvider>
+										<RootNavigator />
+									</BottomSheetModalProvider>
+								</NavigationContainer>
+							</RepresentationsProvider>
+						</ServicesProvider>
+					</SafeAreaProvider>
+				</GestureHandlerRootView>
+			</IntlProvider>
+		) : null;
+	}
 };
 
 const defaultLanguageCode = "en";

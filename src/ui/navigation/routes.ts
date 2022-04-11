@@ -1,4 +1,5 @@
 import { CalendarTag } from "@domain/calendar/calendar";
+import { ISODay } from "@domain/common/type";
 import { RingAlarm } from "@domain/ring/ringAlarm";
 import { HeightUnit, WeightUnit } from "@domain/units";
 import { Sex } from "@domain/user/user";
@@ -55,6 +56,8 @@ export enum Routes {
 	HighHR = "HighHR",
 	LowHr = "LowHr",
 	LowSpo2 = "LowSpo2",
+
+	Storybook = "Storybook",
 }
 
 export type AppRoutesParams = {
@@ -99,10 +102,11 @@ export type AppRoutesParams = {
 	[Routes.ProfileAdvancedInformation]: undefined;
 	[Routes.ProfileBirthControl]: undefined;
 	[Routes.Settings]: undefined;
+	[Routes.Storybook]: undefined;
 	[Routes.Live]: undefined;
 	[Routes.Calendar]: undefined;
-	[Routes.CalendarEditNotes]: { day: string; selectedTags?: CalendarTag[] };
-	[Routes.AllTags]: { day: string; selectedTags: CalendarTag[] };
+	[Routes.CalendarEditNotes]: { day: ISODay; selectedTags?: CalendarTag[] };
+	[Routes.AllTags]: { day: ISODay; selectedTags: CalendarTag[] };
 	[Routes.QuickAccess]: undefined;
 	[Routes.RingFirmwareUpdate]: undefined;
 	[Routes.NewRingSetupScreen]: undefined;

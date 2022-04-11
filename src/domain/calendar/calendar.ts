@@ -1,17 +1,18 @@
+import { ISODay } from "@domain/common/type";
 import { WordingKey } from "src/wordings";
 
-export interface CalendarTag {
+export type CalendarTag = Readonly<{
 	id: number;
 	name: string;
 	system: boolean;
 	categoryId: number;
-}
+}>;
 
 export type CalendarTagCategory = {
-	id:	number
-	label: WordingKey
-	order: number
-}
+	id: number;
+	label: WordingKey;
+	order: number;
+};
 
 export interface CalendarNote {
 	id: number;
@@ -21,7 +22,7 @@ export interface CalendarNote {
 }
 
 export interface Calendar {
-	day: string; // ymd
+	day: ISODay;
 	streak: boolean;
 	notes: CalendarNote[];
 }

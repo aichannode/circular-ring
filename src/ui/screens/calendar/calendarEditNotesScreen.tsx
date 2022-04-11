@@ -1,7 +1,7 @@
-import { FetchStrategy } from "@betomorrow/micro-stores";
-import { useServices } from "@core/services";
+import { useRepresentations } from "@core/representation";
+import { useLastUsedTags } from "@domain/appState/representation/hooks";
 import { CalendarTag } from "@domain/calendar/calendar";
-import { useCalendar } from "@domain/calendar/hooks/useCalendar";
+import { useIs24h } from "@domain/user/hooks/useUser";
 import { PrimaryButton } from "@ui/components/buttons";
 import { CalendarDay } from "@ui/components/calendar/calendarDay";
 import { circularCalendarTheme } from "@ui/components/calendar/circularCalendarTheme";
@@ -17,11 +17,13 @@ import { TagSelectionView } from "@ui/screens/calendar/tagSelectionView";
 import { colors } from "@ui/styles/colors";
 import { shadow } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
+import { deduplicate } from "@ui/utils/filter";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
-import dayjs from "dayjs";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { action, IObservableArray, runInAction, toJS, when } from "mobx";
+import { observer, useLocalObservable } from "mobx-react-lite";
+import moment from "moment";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { LayoutAnimation, Pressable, View } from "react-native";
-// import { Marking } from "react-native-calendars";
 import styled from "styled-components/native";
 
 interface TimeEditorConfig {
@@ -31,29 +33,80 @@ interface TimeEditorConfig {
 	saveTime: (time: Date) => void;
 }
 
-export const CalendarEditNotesScreen: React.FC = () => {
+/**
+ * This hooks encapsulate the logic to get the list of selected tags from two sources:
+ * - from the route params coming from the tag selection screen
+ * - tags which are also selected on the last used tags list
+ * It will also handle the deselection of tags.
+ */
+function useTagsSelection(
+	tagsFromRoute: CalendarTag[],
+	lastUsedTags: CalendarTag[]
+): [CalendarTag[], (tag: CalendarTag) => void, () => void] {
+	const tags = useLocalObservable<CalendarTag[]>(() => []) as IObservableArray<CalendarTag>;
+
+	// Turn all tags in a string of ids to easily compare new/old version
+	const tagsListIdentity = tagsFromRoute
+		.map(({ id }) => id)
+		.sort()
+		.join();
+
+	const selectTag = action(function (tag: CalendarTag) {
+		const isAlreadySelected = tags.map((t) => t.id).indexOf(tag.id) >= 0;
+		if (isAlreadySelected) {
+			tags.replace(tags.filter((t) => t.id !== tag.id));
+		} else {
+			tags.push(tag);
+		}
+		// CIR-402, put selected tag first, then put the last used tags.
+		tags.replace(tags.concat(lastUsedTags).filter(deduplicate("id")));
+	});
+	const clearSelectedTags = useCallback(function () {
+		runInAction(() => tags.replace(lastUsedTags));
+	}, []);
+	/**
+	 * Each time the allTagsScreen is close, this screen is refreshed
+	 * with a new route selectedTags params.
+	 * We need to recompute selectedTags state.
+	 */
+	useEffect(() => {
+		runInAction(() => tags.replace(tagsFromRoute));
+	}, [tagsListIdentity]);
+
+	return [tags, selectTag, clearSelectedTags];
+}
+
+export const CalendarEditNotesScreen: React.FC = observer(function CalendarEditNotesScreen() {
 	const { format, formatHour } = useI18n();
+	const is24h = useIs24h();
 	const navigation = useRoutesNavigation();
 	const navigate = navigation.navigate;
 
 	const route = useAppRoute<Routes.CalendarEditNotes>();
-	const originalTags = useMemo(() => route.params.selectedTags ?? [], [route.params.selectedTags]);
+	const initialSelectedTags = route.params.selectedTags ?? [];
 	const day = route.params.day;
-	const date = new Date(day);
-	const dateJS = dayjs(date);
+	const date = moment(day);
 
-	const { calendarService } = useServices();
-	const calendar = useCalendar(day, FetchStrategy.Never);
+	const {
+		calendar: {
+			hooks: { useCalendar },
+			actions: { createNote },
+		},
+	} = useRepresentations();
+	const calendar = useCalendar(day);
+	const dateWithHour = useCallback((hour: number) => date.hour(hour).toDate(), [day]);
 
-	const dateWithHour = useCallback((hour: number) => dayjs(day).hour(hour).toDate(), [day]);
+	const {
+		lastUsedTags,
+		actions: { setLastUsedTags },
+	} = useLastUsedTags();
+	const [tags, selectTag, clearSelectedTags] = useTagsSelection(initialSelectedTags, lastUsedTags);
 
-	const [selectedTags, setSelectedTags] = useState<CalendarTag[]>(originalTags);
 	const [startDate, setStartDate] = useState(dateWithHour(19));
 	const [endDate, setEndDate] = useState(dateWithHour(20));
 	const [isLoading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [noteAddedText, setNoteAddedText] = useState<string | undefined>(undefined);
-	const [visibleTags, setVisibleTags] = useState<CalendarTag[]>([]);
 
 	const startTimeEditionConfig = {
 		title: format("calendar.edit_start.title"),
@@ -72,10 +125,6 @@ export const CalendarEditNotesScreen: React.FC = () => {
 
 	const dismissHeaderTimeout = useRef<NodeJS.Timeout>();
 
-	useEffect(() => {
-		setSelectedTags(originalTags);
-	}, [JSON.stringify(originalTags)]);
-
 	const dismissHeader = useCallback(() => {
 		if (noteAddedText !== undefined) {
 			LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -88,6 +137,28 @@ export const CalendarEditNotesScreen: React.FC = () => {
 			clearTimeout(dismissHeaderTimeout.current);
 		}
 	}, []);
+
+	useEffect(
+		function () {
+			if (!!calendar && isLoading) {
+				return when(
+					() => calendar.notes.length > 0,
+					function () {
+						const noteNames = tags.map((t) => t.name).join(", ");
+						LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+						setNoteAddedText(
+							format(tags.length === 1 ? "calendar.note_added_success.one" : "calendar.note_added_success.many", {
+								notes: noteNames,
+							})
+						);
+						setLoading(false);
+						clearSelectedTags();
+					}
+				);
+			}
+		},
+		[calendar]
+	);
 
 	useEffect(() => {
 		if (noteAddedText !== undefined) {
@@ -103,73 +174,35 @@ export const CalendarEditNotesScreen: React.FC = () => {
 		setLoading(true);
 		setErrorMessage("");
 		try {
-			await calendarService.createNote(selectedTags, startDate, endDate);
-			const noteNames = selectedTags.map((t) => t.name).join(", ");
-			LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-			setNoteAddedText(
-				format(selectedTags.length === 1 ? "calendar.note_added_success.one" : "calendar.note_added_success.many", {
-					notes: noteNames,
-				})
-			);
-			setLoading(false);
-			setSelectedTags([]);
+			createNote(tags, startDate, endDate);
+			setLastUsedTags(tags);
 		} catch (e) {
 			setLoading(false);
 			setErrorMessage(format("global.default_error"));
 		}
-	}, [selectedTags, startDate, endDate, dismissHeader]);
+	}, [tags, startDate, endDate, dismissHeader]);
 
-	const allRawTags = selectedTags.sort((t1, t2) => {
-		return t1.name.localeCompare(t2.name);
-	});
+	const disableRegisterNote = endDate < startDate || tags.length === 0;
 
-	// console.log("allRawTags", allRawTags, popularTags, selectedTags, debugTags);
-
-	useEffect(() => {
-		let _allRawTags = allRawTags.filter((item, pos) => {
-			return allRawTags.indexOf(item) == pos;
-		});
-
-		_allRawTags = _allRawTags.sort((a, b) => {
-			console.log(
-				"CIR-402",
-				selectedTags.findIndex((el) => el.name == a.name)
-			);
-			if (selectedTags.findIndex((el) => el.name == a.name) > selectedTags.findIndex((el) => el.name == b.name))
-				return 1;
-			else return -1;
-		});
-
-		console.log();
-
-		setVisibleTags(_allRawTags);
-	}, [selectedTags]);
-
-	console.log(
-		"CIR-402 visibleTags",
-		visibleTags.map((i) => i.name)
-	);
-	// console.log("CIR-402 allRawTags", allRawTags);
-
-	const disableRegisterNote = endDate < startDate || selectedTags.length === 0;
-	console.log("Calendar", calendar);
+	// Always slice an mobx array to return a serializable object,
+	const selectedTags = toJS(tags);
 
 	return calendar ? (
 		<View style={{ flex: 1 }}>
 			<ScrollScreen contentContainerStyle={{ paddingVertical: 20 }}>
 				<DayContainer>
 					<DateText>
-						<DateStrong>{dateJS.format("MMMM")}</DateStrong> {dateJS.format("YYYY")}
+						<DateStrong>{date.format("MMMM")}</DateStrong> {date.format("YYYY")}
 					</DateText>
 					<CalendarDay
 						date={{
 							dateString: day,
-							day: date.getDate(),
-							month: date.getMonth(),
-							year: date.getFullYear(),
-							timestamp: dateJS.date(),
+							day: date.date(),
+							month: date.month(),
+							year: date.year(),
+							timestamp: date.date(),
 						}}
-						marking={{ selected: true } as unknown as []}
+						marking={{ selected: true } as any} // TO REFACTOR
 						onPress={() => null}
 						onLongPress={() => null}
 						state={"selected"}
@@ -183,14 +216,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 							{!calendar
 								? null
 								: calendar.notes.map((note) => {
-										return (
-											<CalendarNoteItem
-												key={`${note.id}-${note.tag.name}`}
-												note={note}
-												tags={calendar.notes}
-												canDelete
-											/>
-										);
+										return <CalendarNoteItem key={`${note.id}`} note={note} tags={calendar.notes} canDelete />;
 								  })}
 						</Stack>
 					</>
@@ -199,29 +225,30 @@ export const CalendarEditNotesScreen: React.FC = () => {
 				<PopularTagContainer>
 					<PopularTagHeader>
 						<PopularTagHeaderText>{format("calendar.popular_tags_header")}</PopularTagHeaderText>
-						<Pressable onPress={() => navigate(Routes.AllTags, { day, selectedTags })}>
+						<Pressable
+							onPress={() =>
+								navigate(Routes.AllTags, {
+									day,
+									selectedTags,
+								})
+							}
+						>
 							<AllTagButton>{format("calendar.see_all_tags")}</AllTagButton>
 						</Pressable>
 					</PopularTagHeader>
-					{visibleTags ? (
+					{!!tags.length && (
 						<TagSelectionView
-							displayCount={14}
-							tags={visibleTags}
-							selectedTags={selectedTags}
-							onClickTag={(tag) => {
-								const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
-								if (isAlreadySelected) {
-									setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
-								} else {
-									setSelectedTags([...selectedTags, tag]);
-								}
-							}}
+							// CIR-402 highlighted is display first
+							shouldDisplayHighlightedFirst
+							tags={tags}
+							highlightedTagIds={tags.map(({ id }) => id)}
+							onClickTag={selectTag}
 						/>
-					) : null}
+					)}
 				</PopularTagContainer>
 				<InfoListItem
 					name={format("calendar.start_time")}
-					value={formatHour(startDate)}
+					value={formatHour(startDate, is24h)}
 					hasDisclosure
 					action={async () => {
 						setConfig({ ...startTimeEditionConfig, time: startDate });
@@ -230,7 +257,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 				/>
 				<InfoListItem
 					name={format("calendar.end_time")}
-					value={formatHour(endDate)}
+					value={formatHour(endDate, is24h)}
 					hasDisclosure
 					action={async () => {
 						setConfig({ ...endTimeEditionConfig, time: endDate });
@@ -264,7 +291,7 @@ export const CalendarEditNotesScreen: React.FC = () => {
 			)}
 		</View>
 	) : null;
-};
+});
 
 const NoteAddedHeader = styled.View`
 	position: absolute;

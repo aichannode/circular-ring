@@ -12,15 +12,12 @@ interface ComfirmChangePasswordBottomSheetProps {
 export const ConfirmChangePasswordBottomSheet: React.FC<ComfirmChangePasswordBottomSheetProps> = ({ onClose }) => {
 	const { format } = useI18n();
 
-
 	return (
 		<Container horizontalPadding={0}>
 			<Description>{format("change_password.bottom.confirm")}</Description>
 			<Grow />
 			<ButtonContainer gap={35}>
-				<PrimaryButton onPress={onClose}>
-					{format("ok")}
-				</PrimaryButton>
+				<PrimaryButton onPress={onClose}>{format("ok")}</PrimaryButton>
 			</ButtonContainer>
 		</Container>
 	);

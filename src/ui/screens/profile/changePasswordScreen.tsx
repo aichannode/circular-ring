@@ -39,8 +39,7 @@ export const ChangePasswordScreen = () => {
 		} catch (e: any) {
 			if (e.code === "NotAuthorizedException") {
 				setErrorMessage(format("change_password.current.error"));
-			}
-			else if (e.message) setErrorMessage(e.message);
+			} else if (e.message) setErrorMessage(e.message);
 			else setErrorMessage(format("login.error.default"));
 		} finally {
 			setLoading(false);
@@ -50,7 +49,7 @@ export const ChangePasswordScreen = () => {
 	const checkAndValidatePassword = useCallback(async () => {
 		setErrorMessage("");
 		if (currentPassword === newPassword) {
-			setErrorMessage(format("change_password.error.same"))
+			setErrorMessage(format("change_password.error.same"));
 		} else if (!isCorrectPassword(newPassword)) {
 			setErrorMessage(format("signup.error.password_format"));
 		} else if (newPassword !== confirmPassword) {
@@ -71,7 +70,7 @@ export const ChangePasswordScreen = () => {
 		<ScrollScreen contentContainerStyle={{ paddingTop: 20, alignItems: "center", paddingBottom: 100 }}>
 			<ResponsiveCenterView>
 				<Title>{format("change_password.description")}</Title>
-				
+
 				<InputField
 					title={format("change_password.current.title")}
 					placeholder={format("change_password.current.placeholder")}

@@ -1,9 +1,11 @@
+import { NotificationsFormat, TemperatureFormat } from "../units";
 import { DateFormat, HeightUnit, HourFormat, WeightUnit } from "@domain/units";
 
 export interface UserSettings {
-	id: string;
 	dateFormat: DateFormat;
 	heightFormat: HeightUnit;
 	weightFormat: WeightUnit;
-	hourFormat: HourFormat
+	hourFormat: HourFormat;
+	temperatureFormat: TemperatureFormat;
+	notifications: NotificationsFormat[];
 }

@@ -75,7 +75,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 				});
 			}
 		}
-	}, [birthDate, sex, weight, height]);
+	}, [birthDate, sex, weight, height, heightUnit, weightUnit]);
 
 	return (
 		<StyledScrollScreen>

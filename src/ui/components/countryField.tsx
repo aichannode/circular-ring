@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import CountryPicker from "react-native-country-picker-modal";

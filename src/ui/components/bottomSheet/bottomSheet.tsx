@@ -17,7 +17,7 @@ interface BottomSheetProps {
 	onChange?: (index: number) => void;
 }
 export const CircularBottomSheet = React.forwardRef<CircularBottomSheetHandle, BottomSheetProps>(
-	({ onChange, children, snapPoints, allowSwipeDownToClose = true }, ref) => {
+	function CircularBottomSheet({ onChange, children, snapPoints, allowSwipeDownToClose = true }, ref) {
 		const closedSignal = useRef(new Signal<void>());
 
 		const safeArea = useSafeAreaInsets();
@@ -73,7 +73,7 @@ export const CircularBottomSheet = React.forwardRef<CircularBottomSheetHandle, B
 );
 
 export const CircularBottomScrollSheet = React.forwardRef<BottomSheetModal, BottomSheetProps>(
-	({ children, snapPoints, allowSwipeDownToClose = true }, ref) => {
+	function CircularBottomScrollSheet({ children, snapPoints, allowSwipeDownToClose = true }, ref) {
 		const closedSignal = useRef(new Signal<void>());
 		const safeArea = useSafeAreaInsets();
 		const renderBackdrop = useCallback(

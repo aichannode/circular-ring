@@ -1,56 +1,146 @@
-import moment from "moment";
-import { FeedEntityAction, FeedEntityComponentDto, FeedEntityComponentType, FeedEntityStyle, FeedEntityType, ClientAction, ParagraphStyle } from "./type";
-
-/**
- * For debuging purpose only
- */
-type UpdateUserFeedEntityDto = {
-	id?: number,
-	type: FeedEntityType
-	style?: FeedEntityStyle
-	title?: string
-	secondaryTitle: string
-	priority: number
-	actions?: ClientAction[]
-	targetUserId?: number
-	startDate?: string
-	endDate?: string
-	templateId?: number
-	iconId?: number
-	components: FeedEntityComponentDto[]
-}
+import {
+	FeedEntityComponentType,
+	FeedEntityStyle,
+	FeedEntityType,
+	InputType,
+	ParagraphStyle,
+	UserInputStyle,
+} from "./type";
 
 /**
  * Factory for the notification data post query.
  */
-export function createRecommendation(id: number): UpdateUserFeedEntityDto {
-	return {
-		"type": FeedEntityType.NOTIFICATION,
-		"style": FeedEntityStyle.ORANGE_GRADIENT,
-		"title": "banner.calibration.title",
-		"secondaryTitle": "",
-		"priority": 10,
-		"actions": [
-			{
-				"type": FeedEntityAction.OPEN_WEB,
-				"data": "https://expo.io"
-			}
-		],
-		"startDate": moment().toISOString(),
-		"endDate": moment().add(10, "d").toISOString(),
-		"iconId": 1,
-		"components": [
-			{
-				"id": 0,
-				"type": FeedEntityComponentType.PARAGRAPH,
-				"configuration": {
-					"style": ParagraphStyle.DEFAULT,
-					"translationKey": "banner.calibration.message",
-					"properties": {
-						"days": id
-					}
-				}
-			}
-		]
-	}
+export function createTemplates() {
+	return [
+		{
+			type: FeedEntityType.CALIBRATION,
+			style: FeedEntityStyle.WHITE_WITH_PURPLE_GRADIENT_BORDER,
+			title: "banner.calibration.title",
+			secondaryTitle: "banner.calibration.title",
+			priority: 1,
+			name: "Calibration with question 0",
+			actions: [],
+			iconId: 1,
+			components: [
+				{
+					type: FeedEntityComponentType.PARAGRAPH,
+					configuration: {
+						style: ParagraphStyle.DEFAULT,
+						translationKey: "onboarding.wear.info.top",
+						properties: {},
+					},
+				},
+				{
+					type: FeedEntityComponentType.USER_INPUT,
+					configuration: {
+						style: UserInputStyle.DEFAULT,
+						inputType: InputType.SELECT,
+						title: "home.banner.common.select",
+						inputConfig: {
+							label: "calibration.recommandation.6.question.label",
+							minCount: 1,
+							maxCount: 2,
+							options: [
+								{
+									label: "calibration.recommandation.6.question.option.0",
+									actions: [],
+								},
+								{
+									label: "calibration.recommandation.6.question.option.1",
+									actions: [],
+								},
+								{
+									label: "calibration.recommandation.6.question.option.2",
+									actions: [],
+								},
+							],
+						},
+					},
+				},
+			],
+		},
+		{
+			type: FeedEntityType.CALIBRATION,
+			style: FeedEntityStyle.WHITE_WITH_RED_BORDER,
+			title: "banner.calibration.title",
+			secondaryTitle: "banner.calibration.title",
+			priority: 1,
+			name: "Calibration with question 0",
+			actions: [],
+			iconId: 1,
+			components: [
+				{
+					type: FeedEntityComponentType.PARAGRAPH,
+					configuration: {
+						style: ParagraphStyle.DEFAULT,
+						translationKey: "onboarding.wear.info.top",
+						properties: {},
+					},
+				},
+				{
+					type: FeedEntityComponentType.USER_INPUT,
+					configuration: {
+						style: UserInputStyle.DEFAULT,
+						inputType: InputType.SELECT,
+						title: "home.banner.common.select",
+						inputConfig: {
+							label: "calibration.recommandation.6.question.label",
+							minCount: 1,
+							maxCount: 1,
+							options: [
+								{
+									label: "global.yes",
+									actions: [],
+								},
+								{
+									label: "global.no",
+									actions: [],
+								},
+							],
+						},
+					},
+				},
+			],
+		},
+		{
+			type: FeedEntityType.CALIBRATION,
+			style: FeedEntityStyle.WHITE_WITH_BLUE_BORDER,
+			title: "banner.calibration.title",
+			secondaryTitle: "banner.calibration.title",
+			priority: 1,
+			name: "Calibration with question 0",
+			actions: [],
+			iconId: 1,
+			components: [
+				{
+					type: FeedEntityComponentType.PARAGRAPH,
+					configuration: {
+						style: ParagraphStyle.DEFAULT,
+						translationKey: "onboarding.wear.info.top",
+						properties: {},
+					},
+				},
+			],
+		},
+		{
+			type: FeedEntityType.CALIBRATION,
+			style: FeedEntityStyle.WHITE_WITH_LIGHT_BLUE_BORDER,
+			title: "banner.calibration.title",
+			secondaryTitle: "banner.calibration.title",
+			priority: 1,
+			name: "Calibration with question 0",
+			actions: [],
+			iconId: 1,
+			components: [
+				{
+					type: FeedEntityComponentType.PARAGRAPH,
+					configuration: {
+						style: ParagraphStyle.DEFAULT,
+						translationKey: "onboarding.wear.info.top",
+						properties: {},
+					},
+				},
+			],
+		},
+	];
 }

@@ -28,11 +28,7 @@ export function Switch<T>({
 			style={styles}
 			start={{ x: 0, y: 1 }}
 			end={{ x: 1, y: 0.5 }}
-			colors={
-				disabled
-					? [colors.disabled, colors.disabled]
-					: colors.gradient.orange.concat(colors.gradient.orange[0])
-			}
+			colors={disabled ? [colors.disabled, colors.disabled] : colors.gradient.orange.concat(colors.gradient.orange[0])}
 		>
 			<LeftOption onPress={() => (disabled ? null : onSelectOption(options[0]))}>
 				<UnselectedLeftBackground visible={!leftSelected} bgColor={containerBgColor}>

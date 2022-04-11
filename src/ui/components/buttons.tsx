@@ -59,11 +59,7 @@ export const TertiaryButton: React.FC<TertiaryButtonProps> = ({
 		<Pressable onPress={onPress} style={style}>
 			{({ pressed }) => (
 				<TertiaryBorder
-					colors={
-						pressed
-							? [...colors.gradient.orange].reverse()
-							: [...colors.gradient.orange]
-					}
+					colors={pressed ? [...colors.gradient.orange].reverse() : [...colors.gradient.orange]}
 					start={{ x: 0, y: 1 }}
 					end={{ x: 1, y: 0.5 }}
 				>
@@ -95,11 +91,7 @@ export const PrimaryBigButton: React.FC<CircularButtonProps> = ({ onPress, style
 				<PrimaryBigContent
 					start={{ x: 0, y: 1 }}
 					end={{ x: 1, y: 0.5 }}
-					colors={
-						pressed
-							? [...colors.gradient.orange].reverse()
-							: [...colors.gradient.orange]
-					}
+					colors={pressed ? [...colors.gradient.orange].reverse() : [...colors.gradient.orange]}
 				>
 					<PrimaryBigButtonText>{children}</PrimaryBigButtonText>
 				</PrimaryBigContent>
@@ -140,7 +132,7 @@ const SecondaryButtonText = styled.Text`
 
 const TertiaryButtonText = styled.Text`
 	${textStyles.primary};
-	color: ${colors.red};
+	color: ${colors.orangeRed};
 `;
 
 const PrimaryBigButtonText = styled.Text`

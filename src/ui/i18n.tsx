@@ -1,6 +1,8 @@
-import { ScoreQuality } from "@domain/measure/score";
+import { ScoreQuality } from "@domain/measure/representation/api";
+import { SignalQuality } from "@domain/measure/score";
 import { Melody, Weekdays } from "@domain/ring/ringAlarm";
 import { Intensity } from "@domain/ring/ringLiveData";
+import { useIsUSCS } from "@domain/user/hooks/useUser";
 import dayjs from "dayjs";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
@@ -9,13 +11,13 @@ import { WordingKey } from "../wordings";
 import { Bold, Colored, Strong } from "./components/text";
 
 export type FormatterOptions = Partial<{
-	color: ColorValue
-}>
+	color: ColorValue;
+}>;
 
 function createXmlFormatters(options?: FormatterOptions) {
 	return {
 		strong: (...chunks: string[]) => <Strong>{chunks}</Strong>,
-		colored: (...chunks: string[]) => <Colored style={{color: options?.color}}>{chunks}</Colored>,
+		colored: (...chunks: string[]) => <Colored style={{ color: options?.color }}>{chunks}</Colored>,
 		bold: (...chunks: string[]) => <Bold>{chunks}</Bold>,
 	} as const;
 }
@@ -29,7 +31,7 @@ export function useI18n(options?: FormatterOptions) {
 			(key: WordingKey, values?: Record<string, string | number | boolean | Date | null | undefined> | undefined) => {
 				try {
 					return intl.formatMessage({ id: key }, { ...values, ...createXmlFormatters(options) }) as string;
-				} catch(e) {
+				} catch (e) {
 					//TODO send to sentry
 					if (key === undefined) {
 						console.warn("[INTL] missing mandatory i18n key.");
@@ -62,6 +64,14 @@ export function useI18n(options?: FormatterOptions) {
 				return `${hourCount} h`;
 			} else {
 				return `${minuteCount} min`;
+			}
+		},
+		formatSignalQuality: (signalQuality: SignalQuality) => {
+			switch (signalQuality) {
+				case SignalQuality.POOR:
+					return intl.formatMessage({ id: "score.quality.poor" });
+				case SignalQuality.GOOD:
+					return intl.formatMessage({ id: "score.quality.good" });
 			}
 		},
 		formatScoreQuality: (scoreQuality: ScoreQuality) => {
@@ -188,9 +198,16 @@ export function useI18n(options?: FormatterOptions) {
 		formatNoteIntervalLinker: () => {
 			return `${intl.formatMessage({ id: "global.date_interval_linker" })}`;
 		},
-
-		formatHour: (date: Date, dateFormat: string | undefined = "hh : mm A") => {
-			return dayjs(date).format(dateFormat);
+		formatHour: (date: Date, is24h: boolean) =>
+			is24h ? dayjs(date).format("HH : mm") : dayjs(date).format("hh : mm A"),
+		formatDate: (date: Date | undefined) => {
+			if (date) {
+				const isUSCS = useIsUSCS();
+				// CIR-733 Stay in UTC to prevent date shift
+				return isUSCS ? dayjs.utc(date).format("MM/DD/YYYY") : dayjs(date).format("DD/MM/YYYY");
+			}
 		},
+		formatTemperature: (temperature: number, isCelsius: boolean) =>
+			`${temperature > 0 ? "+" : ""}${isCelsius ? temperature + " °C" : (temperature * 9) / 5 + 32 + " °F"}`,
 	};
 }

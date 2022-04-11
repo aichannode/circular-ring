@@ -1,4 +1,3 @@
-import { useUserSettings } from "@domain/user/hooks/useUser";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
@@ -15,8 +14,8 @@ interface CircleCalendarButtonProps {
 
 export const CircleCalendarButton: React.FC<CircleCalendarButtonProps> = ({ currentDay, onPress, style }) => {
 	const today = useMemo(() => dayjs().format("YYYY-MM-DD"), []);
-	const { format } = useI18n();
-	const userSettings = useUserSettings();
+	const { format, formatDate } = useI18n();
+	const currDay = formatDate(new Date(currentDay));
 
 	return (
 		<Container onPress={onPress} style={style}>
@@ -26,9 +25,7 @@ export const CircleCalendarButton: React.FC<CircleCalendarButtonProps> = ({ curr
 					source={require("@assets/images/calendar.png")}
 				/>
 			</CalendarIconWrapper>
-			<CurrentDay>
-				{currentDay === today ? format("today") : dayjs(currentDay).format(userSettings?.dateFormat)}
-			</CurrentDay>
+			<CurrentDay>{currentDay === today ? format("today") : currDay}</CurrentDay>
 		</Container>
 	);
 };

@@ -21,43 +21,58 @@ APPCENTER_OWNER = "Circular"
 platform :android do
   desc "Build dev version"
   lane :dev do
-    build("dev")
-    appcenter("dev", true)
+    apkName = getApkName("dev", nil)
+    build("dev", apkName, nil)
+    appcenter("dev", apkName, true)
   end
 
   desc "Build demo version"
   lane :demo do
-    build("demo")
-    appcenter("demo", true)
+    apkName = getApkName("demo", nil)
+    build("demo", apkName, nil)
+    appcenter("demo", apkName, true)
+  end
+
+  desc "Build staging version"
+  lane :staging do |values|
+    apkName = getApkName("staging", values[:buildName])
+    build("staging", apkName, values[:buildName])
+    appcenter("staging", apkName, true)
   end
 
   desc "Build prod version"
   lane :prod do
-    build("prod")
+    apkName = getApkName("prod", nil)
+    build("prod", apkName, nil)
     upload_to_play_store(track: "alpha", release_status: "draft")
   end
 end
 
-def build(flavor)
+def getApkName(flavor, buildName)
+  buildName ? "app-#{flavor}-#{buildName}-release" : "app-#{flavor}-release"
+end
+
+def build(flavor, apkName, buildName)
   gradle(
-    task: flavor === "prod" ? "bundle" : "assemble",
+    task: (flavor === "prod") ? "bundle" : "assemble",
     build_type: "Release",
     flavor: flavor.capitalize,
     properties: {
       "versionCode": number_of_commits,
-      "versionName": load_json(json_path: "../package.json")["version"]
+      "versionName": load_json(json_path: "../package.json")["version"],
+      "buildName": buildName
     },
     flags: "--no-daemon"
   )
 end
 
-def appcenter(flavor, notify)
+def appcenter(flavor, apkName, notify)
   appcenter_upload(
     app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
     owner_name: "#{APPCENTER_OWNER}",
     destinations: "Collaborators,Circular",
     destination_type: "group",
-    apk: "./app/build/outputs/apk/#{flavor}/release/app-#{flavor}-release.apk",
+    apk: "./app/build/outputs/apk/#{flavor}/release/#{apkName}.apk",
     release_notes: changelog(flavor),
     notify_testers: notify
   )

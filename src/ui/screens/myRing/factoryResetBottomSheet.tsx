@@ -26,6 +26,7 @@ export const FactoryResetBottomSheet: React.FC<FactoryResetBottomSheetProps> = (
 		try {
 			await ringManagementService.factoryResetCurrentRing();
 			setLoading(false);
+			onClose();
 		} catch (error) {
 			setLoading(false);
 			setErrorMessage(format("global.default_error"));

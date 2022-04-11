@@ -10,15 +10,15 @@ import { Spinner } from "@ui/components/spinner";
 import { PrimaryText, SecondaryText } from "@ui/components/text";
 import { IfAdmin } from "@ui/containers/IfAdmin";
 import { useI18n } from "@ui/i18n";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { SetUpFailed } from "@ui/screens/onboarding/ringSetup/setUpFailed";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
-import { SetUpFailed } from "@ui/screens/onboarding/ringSetup/setUpFailed";
-import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 
 interface IRingSetupScreen {
 	route: {
@@ -43,21 +43,17 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	const setupState = useSetupState();
 	const devices = useScannedDevices();
 
-	// console.log("CIR-141 SCANNED DEVICES -> ", devices);
-
 	const logout = useCallback(async () => {
 		await userService.logout();
 	}, []);
 
 	useEffect(() => {
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
-			console.log("CIR-266 setupScreen START SCAN");
 			bleDeviceService.startScan();
 		}
 		if (setupState === DeviceSetupState.LOCATION_DISABLED) {
 			bleDeviceService.checkSettings();
 		}
-		console.log("setupState", setupState);
 	}, [setupState]);
 
 	const [isConnecting, setConnecting] = useState(false);
@@ -68,7 +64,6 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 			<IfAdmin>
 				<PrimaryButton
 					onPress={() => {
-						console.log(props.route.params.onByPass);
 						props.route.params.onByPass();
 					}}
 				>
@@ -172,13 +167,15 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 														navigate(Routes.SetUpCompleted, { ringName: device.name, action: () => setWait(false) });
 													} catch (e) {
 														setConnecting(false);
-														setWait(false);
-														await bleDeviceService.disconnect();
+
+														await bleDeviceService.disconnect({ dissociate: false });
+														await bleDeviceService.favoriteDevice.set(null);
 														if ((e as { statusCode: number }).statusCode === 409) {
 															pairingFailedBottomSheet.current?.present();
 														} else {
 															setError(true);
 														}
+														setWait(false);
 													}
 												}}
 											>

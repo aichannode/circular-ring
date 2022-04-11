@@ -1,5 +1,5 @@
+import { useRepresentations } from "@core/representation";
 import { useServices } from "@core/services";
-import { useDailyGlobalScore } from "@domain/measure/representation/hooks";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ResponsiveCenterView } from "@ui/components/layout";
@@ -14,12 +14,12 @@ import { observer } from "mobx-react-lite";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components/native";
 
-export const ProfileScreen = observer(() => {
+export const ProfileScreen = observer(function ProfileScreen() {
 	const { format } = useI18n();
 	const { navigate } = useRoutesNavigation();
 	const { cognitoAuthService } = useServices();
 
-	const dailyScore = useDailyGlobalScore();
+	const dailyScore = useRepresentations().measure.hooks.useDailyGlobalScore();
 	const [isConnectedByEmail, setIsConnectedByEmail] = useState(false);
 
 	const goToProfileInformation = useCallback(() => {

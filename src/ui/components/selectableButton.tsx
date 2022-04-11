@@ -10,7 +10,7 @@ interface SelectableButtonProps {
 	onPress: () => void;
 	bgColor: string;
 	isDisabled?: boolean;
-	colors?: Readonly<[string, string]>
+	colors?: Readonly<[string, string]>;
 	style?: StyleProp<ViewStyle>;
 }
 
@@ -21,25 +21,23 @@ export const SelectableButton: React.FC<SelectableButtonProps> = ({
 	bgColor,
 	style,
 	children,
-	isDisabled
+	isDisabled,
 }) => {
-	const gradient = isDisabled ? [colors.disabled, colors.disabled] : palette
-	const textColor = gradient[0]
+	const gradient = isDisabled ? [colors.disabled, colors.disabled] : palette;
+	const textColor = gradient[0];
 	return (
 		<Pressable onPress={onPress} style={style}>
-			{({pressed}) => (
-			<TertiaryBorder
-				colors={
-					pressed
-						? gradient.slice(0).reverse()
-						: gradient.slice(0)
-				}
-				start={{ x: 0, y: 1 }}
-				end={{ x: 1, y: 0.5 }}
-			>
-				<TertiaryInner bgColor={bgColor} selected={selected}>
-					<TertiaryButtonText color={textColor} selected={selected}>{children}</TertiaryButtonText>
-				</TertiaryInner>
+			{({ pressed }) => (
+				<TertiaryBorder
+					colors={pressed ? gradient.slice(0).reverse() : gradient.slice(0)}
+					start={{ x: 0, y: 1 }}
+					end={{ x: 1, y: 0.5 }}
+				>
+					<TertiaryInner bgColor={bgColor} selected={selected}>
+						<TertiaryButtonText color={textColor} selected={selected}>
+							{children}
+						</TertiaryButtonText>
+					</TertiaryInner>
 				</TertiaryBorder>
 			)}
 		</Pressable>
@@ -57,7 +55,7 @@ const TertiaryInner = styled.View<{ bgColor: string; selected: boolean }>`
 	background-color: ${({ bgColor, selected }) => (selected ? "transparent" : bgColor)};
 `;
 
-const TertiaryButtonText = styled.Text<{ selected: boolean, color: string }>`
+const TertiaryButtonText = styled.Text<{ selected: boolean; color: string }>`
 	${textStyles.primary};
 	color: ${({ selected, color }) => (selected ? colors.white : color)};
 `;

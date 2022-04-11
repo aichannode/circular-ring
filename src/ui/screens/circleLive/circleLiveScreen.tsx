@@ -3,7 +3,8 @@ import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
 import { useAutoConnectState, useLiveData } from "@domain/device/hooks";
 import { getSignalQuality } from "@domain/measure/score";
 import { usePreferences } from "@domain/preferences/hooks";
-import { getIntensity, Intensity, getMaxHr } from "@domain/ring/ringLiveData";
+import { getIntensity, getMaxHr, Intensity } from "@domain/ring/ringLiveData";
+import { useUser } from "@domain/user/hooks/useUser";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
@@ -12,27 +13,24 @@ import { PrimaryText, TertiaryText, TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors, intensityColors, SignalQualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
+import moment from "moment";
 import React, { useEffect, useRef } from "react";
+import { View } from "react-native";
 import styled from "styled-components/native";
 import { HeartBeatCard } from "./heartBeatCard";
 import { LiveTutorialBottomSheet } from "./liveTutorialBottomSheet";
 import { NoRingConnectedBottomSheet } from "./noRingConnectedBottomSheet";
-import { View } from "react-native";
-import { useUser } from "@domain/user/hooks/useUser";
-import moment from "moment";
 
 export const CircleLiveScreen: React.FC = () => {
-	const { format, formatIntensity, formatScoreQuality } = useI18n();
+	const { format, formatIntensity, formatSignalQuality } = useI18n();
 	const { data, listening, start, stop, flush } = useLiveData();
 	const user = useUser();
 
 	const maxHrPercent = getMaxHr(user?.sex, moment().diff(user?.bornDate, "years"), data?.heartRate);
-	console.log("maxHr", maxHrPercent);
 
 	// const maxHeartRateRatio = data ? (data.heartRate! / data.maxHeartRate!) * 100 : null;
-	console.log("data correlation", data?.correlation);
 	const activityIntensity = getIntensity(maxHrPercent);
-	const dataQuality = getSignalQuality(data ? data.correlation! : 0);
+	const dataQuality = getSignalQuality(data?.correlation ?? 0);
 
 	const autoConnectState = useAutoConnectState();
 
@@ -41,8 +39,6 @@ export const CircleLiveScreen: React.FC = () => {
 
 	const disconnectedBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const tutorialBottomSheet = useRef<CircularBottomSheetHandle>(null);
-
-	console.log("LISTENNING DATA", listening, data);
 
 	useEffect(() => {
 		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
@@ -66,7 +62,7 @@ export const CircleLiveScreen: React.FC = () => {
 						<Row gap={5} align="center">
 							<TertiaryText>
 								{format("live.accuracy.label")}
-								{dataQuality ? <QualityValue> {formatScoreQuality(dataQuality)}</QualityValue> : null}
+								{dataQuality ? <QualityValue> {formatSignalQuality(dataQuality)}</QualityValue> : null}
 							</TertiaryText>
 							{dataQuality ? <ColoredDot color={SignalQualityColors[dataQuality]} /> : null}
 						</Row>

@@ -33,7 +33,7 @@ export interface TextFieldRef {
 	focus: () => void;
 }
 
-export const TextField = forwardRef<TextFieldRef, TextFieldProps>((props: TextFieldProps, ref) => {
+export const TextField = forwardRef<TextFieldRef, TextFieldProps>(function TextField(props: TextFieldProps, ref) {
 	const inputRef = useRef<TextInput | null>(null);
 
 	const [isSecure, setSecure] = useState(!!props.canBeSecure);

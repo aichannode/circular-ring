@@ -6,16 +6,15 @@ enum StorageKeys {
 	RECOMMENDATIONS = "@feed/recommendations",
 }
 
-
 /**
  * Simple storage for feed optimistic UI
  * This class is aware of the different business entities
  * for facilitate the implementation.
  */
 export class FeedStorage {
-    async removeById(id: number) {
-        await Storage.removeWithId(StorageKeys.RECOMMENDATIONS, id)
-    }
+	async removeById(id: number) {
+		await Storage.removeWithId(StorageKeys.RECOMMENDATIONS, id);
+	}
 	async saveNotificationsState(clientSideClosed: number[]) {
 		await Storage.save<NotificationsState>(StorageKeys.NOTIFICATIONS, { clientSideClosed });
 	}
@@ -31,22 +30,22 @@ export class FeedStorage {
 	/**
 	 * This returns a Recommendation state
 	 */
-	 async getRecommendationState(id: string) {
+	async getRecommendationState(id: string) {
 		return Storage.loadWithId<UserInputState>(StorageKeys.RECOMMENDATIONS, id);
 	}
 
 	/**
 	 * Returns all Recommendation states
 	 */
-	 async loadRecommendationsState() {
-		const data = await Storage.getAllIdsForKey(StorageKeys.RECOMMENDATIONS)
+	async loadRecommendationsState() {
+		const data = await Storage.getAllIdsForKey(StorageKeys.RECOMMENDATIONS);
 		/* await Promise.all(data.map(id => Storage.removeWithId(StorageKeys.RECOMMENDATIONS, id)))
 		console.log("removed") */
 		const recos = await Promise.all(
 			// Aggregate all stored recommandations
-			data.map(id => Storage.loadWithId<UserInputState>(StorageKeys.RECOMMENDATIONS, id))
-		)
-		return recos.filter(Boolean) as UserInputStates
+			data.map((id) => Storage.loadWithId<UserInputState>(StorageKeys.RECOMMENDATIONS, id))
+		);
+		return recos.filter(Boolean) as UserInputStates;
 	}
 
 	async loadNotificationsState(): Promise<NotificationsState | null> {

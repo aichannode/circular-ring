@@ -12,17 +12,16 @@ import { ConfirmSexBottomSheet } from "@ui/screens/profile/basicInformation/conf
 import { DeleteAccountBottomSheet } from "@ui/screens/profile/basicInformation/deleteAccountBottomSheet";
 import { HeightBottomSheet } from "@ui/screens/profile/basicInformation/heightBottomSheet";
 import { WeightBottomSheet } from "@ui/screens/profile/basicInformation/weightBottomSheet";
-import dayjs from "dayjs";
 import React, { useRef, useState } from "react";
 
 export const ProfileInformationScreen = () => {
-	const { format } = useI18n();
+	const { format, formatDate } = useI18n();
 	const { navigate } = useRoutesNavigation();
 	const userSettings = useUserSettings();
 	const user = useUser();
 	const { userService } = useServices();
 
-	const displayedBirthday = dayjs(user?.bornDate || new Date()).format(userSettings?.dateFormat);
+	const displayedBirthday = formatDate(user?.bornDate);
 
 	const height = user?.height ?? UNDEFINED_HEIGHT;
 	const heightUnit = userSettings?.heightFormat || HeightUnit.cm;

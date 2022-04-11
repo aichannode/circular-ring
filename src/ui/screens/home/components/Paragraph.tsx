@@ -6,31 +6,29 @@ import React from "react";
 import { ColorValue } from "react-native";
 
 type Props = ParagraphComponentConfigurationDto["configuration"] & {
-    /**
-     * Set to true when used on dark background
-     */
-    useContrastColor?: boolean
-    /**
-     * Set te color which will be used for <colored/> tag
-     */
-    coloredTagColor?: ColorValue
-}
-
+	/**
+	 * Set to true when used on dark background
+	 */
+	useContrastColor?: boolean;
+	/**
+	 * Set te color which will be used for <colored/> tag
+	 */
+	coloredTagColor?: ColorValue;
+};
 
 function getTextColor(style: ParagraphStyle, useContrastColor?: boolean) {
-    switch(style) {
-        default: return useContrastColor
-            ? colors.white
-            : colors.textPrimary
-    }
+	switch (style) {
+		default:
+			return useContrastColor ? colors.white : colors.textPrimary;
+	}
 }
 
-export function Paragraph({coloredTagColor, translationKey, style, properties, useContrastColor}: Props) {
-    const { format } = useI18n({color: coloredTagColor})
+export function Paragraph({ coloredTagColor, translationKey, style, properties, useContrastColor }: Props) {
+	const { format } = useI18n({ color: coloredTagColor });
 
-    return (
-        <SecondaryText style={{color: getTextColor(style, useContrastColor)}}>
-            {format(translationKey, properties)}
-        </SecondaryText>
-    )
+	return (
+		<SecondaryText style={{ color: getTextColor(style, useContrastColor) }}>
+			{format(translationKey, properties)}
+		</SecondaryText>
+	);
 }
