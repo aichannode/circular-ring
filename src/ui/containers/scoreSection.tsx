@@ -17,6 +17,8 @@ interface ScoreSectionProps {
 	color: string;
 	style?: StyleProp<ViewStyle>;
 	hasNotEnoughData?: boolean;
+	setState?: React.Dispatch<React.SetStateAction<boolean>>;
+	state?: boolean;
 }
 export const ScoreSection: React.FC<ScoreSectionProps> = ({
 	score,
@@ -25,6 +27,8 @@ export const ScoreSection: React.FC<ScoreSectionProps> = ({
 	style,
 	quality,
 	hasNotEnoughData,
+	setState,
+	state,
 }) => {
 	const _hasNotEnoughData = hasNotEnoughData || !isDefined(score) || isNaN(score) || !isDefined(quality);
 
@@ -33,25 +37,33 @@ export const ScoreSection: React.FC<ScoreSectionProps> = ({
 	return (
 		<ResponsiveCenterView style={style} maxWidth={175} align="stretch" horizontalPadding={0}>
 			<SecondaryText>{label}</SecondaryText>
-			<ScoreWrapper align="center" gap={12}>
-				<ScoreView value={score} color={color} textColor={colors.textPrimary} hasNotEnoughData={_hasNotEnoughData} />
-				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-					{!_hasNotEnoughData && <ColoredDot color={ScoreQualityColors[quality]} />}
-					{_hasNotEnoughData ? (
-						<TitleText style={{ color }}> {format("global.not_enough_data")}</TitleText>
-					) : (
-						<TitleText>{formatScoreQuality(quality)}</TitleText>
-					)}
-				</View>
-			</ScoreWrapper>
+			<Touchable activeOpacity={setState ? 0.2 : 1} onPress={() => (setState ? setState((state) => !state) : null)}>
+				<ScoreWrapper align="center" gap={12}>
+					<ScoreView value={score} color={color} textColor={colors.textPrimary} hasNotEnoughData={_hasNotEnoughData} />
+					<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+						{!_hasNotEnoughData && <ColoredDot color={ScoreQualityColors[quality]} />}
+						{_hasNotEnoughData ? (
+							<TitleText style={{ color }}> {format("global.not_enough_data")}</TitleText>
+						) : (
+							<TitleText>{formatScoreQuality(quality)}</TitleText>
+						)}
+					</View>
+				</ScoreWrapper>
+			</Touchable>
 		</ResponsiveCenterView>
 	);
 };
 
-const ScoreWrapper = styled(Stack)`
+const Touchable = styled.TouchableOpacity`
 	${roundedWhiteCardStyle};
 	margin-top: 15px;
 	padding-vertical: 30px;
+`;
+
+const ScoreWrapper = styled(Stack)`
+	/* ${roundedWhiteCardStyle};
+	margin-top: 15px;
+	padding-vertical: 30px; */
 `;
 
 const ColoredDot = styled.View<{ color: string }>`

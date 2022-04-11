@@ -49,6 +49,7 @@ export const colors = {
 	gradient: {
 		orange: ["#f44a59", "#f97444"],
 		purple: ["#AC7CD6", "#FD8081"],
+		blue: ["#2932ee", "#3960f7"],
 	},
 	// Place here all the colors relative to business semantic.
 	// TODO use some alias mechanisms to prevent update the same color in two places
