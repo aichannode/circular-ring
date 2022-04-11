@@ -22,6 +22,7 @@ import moment from "moment";
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, Platform, RefreshControl, View } from "react-native";
 import styled from "styled-components/native";
+import { SyncBanner } from "./syncBanner";
 
 const BANNER_TO_LOAD_ON_END = 2;
 
@@ -60,6 +61,7 @@ export const HomeScreen: React.FC = () => {
 
 	const data = [];
 	data.push(<QuickAccess />);
+	data.push(<SyncBanner onRetry={forceRefresh} />);
 	data.push(
 		<View style={{ paddingHorizontal: 6 }}>
 			<IfAdmin>
