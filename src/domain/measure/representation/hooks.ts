@@ -551,7 +551,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						controlState: getScoreControlStates({
 							lowThreshold: (data[MetricType.UserDailyPercDeepStageScoreGoalMin] as number) ?? 0.8,
 							highThreshold: (data[MetricType.UserDailyPercDeepStageScoreGoalMax] as number) ?? 0.9,
-							score: data[MetricType.UserDailyPercDeepStage] as number,
+							score: data[MetricType.UserDailyPercDeepStageScore] as number,
 						}),
 					},
 					[MetricType.UserDailyCoreTimeToFallAsleep]: {
