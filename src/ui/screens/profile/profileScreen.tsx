@@ -14,7 +14,7 @@ import { observer } from "mobx-react-lite";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components/native";
 
-export const ProfileScreen = observer(() => {
+export const ProfileScreen = observer(function ProfileScreen() {
 	const { format } = useI18n();
 	const { navigate } = useRoutesNavigation();
 	const { cognitoAuthService } = useServices();

@@ -1,117 +1,162 @@
-import { createSleepStagesGetter } from "./business";
+import { createSleepStagesGetter, getNaps } from "./business";
 import mockedData from "./mockedModelData.json";
 
 test("getSleepStages", function () {
 	expect(createSleepStagesGetter("2021-12-21")(mockedData)).toEqual({
 		totalMinutesSleepDuration: 496,
+		timeToFallASleep: 1800000,
 		stages: [
 			{
-				stage: 2,
-				start: "2021-12-20T23:24:00.000Z",
+				level: 2,
+				start: "2021-12-20T22:54:00.000Z",
 				end: "2021-12-20T23:36:00.000Z",
 			},
 			{
-				stage: 1,
+				level: 1,
 				start: "2021-12-20T23:36:00.000Z",
 				end: "2021-12-21T00:16:00.000Z",
 			},
 			{
-				stage: 2,
+				level: 2,
 				start: "2021-12-21T00:16:00.000Z",
 				end: "2021-12-21T00:25:00.000Z",
 			},
 			{
-				stage: 3,
+				level: 3,
 				start: "2021-12-21T00:25:00.000Z",
 				end: "2021-12-21T00:50:00.000Z",
 			},
 			{
-				stage: 2,
+				level: 2,
 				start: "2021-12-21T00:50:00.000Z",
 				end: "2021-12-21T01:02:01.000Z",
 			},
 			{
-				stage: 1,
+				level: 1,
 				start: "2021-12-21T01:02:01.000Z",
 				end: "2021-12-21T01:16:00.000Z",
 			},
 			{
-				stage: 2,
+				level: 2,
 				start: "2021-12-21T01:16:00.000Z",
 				end: "2021-12-21T01:52:00.000Z",
 			},
 			{
-				stage: 3,
+				level: 3,
 				start: "2021-12-21T01:52:00.000Z",
 				end: "2021-12-21T02:07:00.000Z",
 			},
 			{
-				stage: 2,
+				level: 2,
 				start: "2021-12-21T02:07:00.000Z",
 				end: "2021-12-21T03:32:01.000Z",
 			},
 			{
-				stage: 3,
+				level: 3,
 				start: "2021-12-21T03:32:01.000Z",
 				end: "2021-12-21T03:37:00.000Z",
 			},
 			{
-				stage: 2,
+				level: 2,
 				start: "2021-12-21T03:37:00.000Z",
 				end: "2021-12-21T03:46:01.000Z",
 			},
 			{
-				stage: 3,
+				level: 3,
 				start: "2021-12-21T03:46:01.000Z",
 				end: "2021-12-21T04:04:01.000Z",
 			},
 			{
-				stage: 2,
+				level: 2,
 				start: "2021-12-21T04:04:01.000Z",
 				end: "2021-12-21T04:42:01.000Z",
 			},
 			{
-				stage: 1,
+				level: 1,
 				start: "2021-12-21T04:42:01.000Z",
 				end: "2021-12-21T04:50:01.000Z",
 			},
 			{
-				stage: 2,
+				level: 2,
 				start: "2021-12-21T04:50:01.000Z",
 				end: "2021-12-21T05:06:01.000Z",
 			},
 			{
-				stage: 3,
+				level: 3,
 				start: "2021-12-21T05:06:01.000Z",
 				end: "2021-12-21T05:18:00.000Z",
 			},
 			{
-				stage: 2,
+				level: 2,
 				start: "2021-12-21T05:18:00.000Z",
 				end: "2021-12-21T05:49:00.000Z",
 			},
 			{
-				stage: 3,
+				level: 3,
 				start: "2021-12-21T05:49:00.000Z",
 				end: "2021-12-21T06:20:00.000Z",
 			},
 			{
-				stage: 2,
+				level: 2,
 				start: "2021-12-21T06:20:00.000Z",
 				end: "2021-12-21T07:32:00.000Z",
 			},
 			{
-				stage: 4,
+				level: 4,
 				start: "2021-12-21T07:32:00.000Z",
 				end: "2021-12-21T07:38:00.000Z",
 			},
 			{
-				stage: 3,
+				level: 3,
 				start: "2021-12-21T07:38:00.000Z",
 				end: "2021-12-21T07:42:00.000Z",
 			},
+			{
+				level: 4,
+				start: "2021-12-21T07:42:00.000Z",
+				end: "2021-12-21T13:28:00.000Z",
+			},
+			{
+				level: 3,
+				start: "2021-12-21T13:28:00.000Z",
+				end: "2021-12-21T13:35:00.000Z",
+			},
+			{
+				level: 2,
+				start: "2021-12-21T13:35:00.000Z",
+				end: "2021-12-21T13:45:00.000Z",
+			},
+			{
+				level: 3,
+				start: "2021-12-21T13:45:00.000Z",
+				end: "2021-12-21T13:48:00.000Z",
+			},
+			{
+				level: 4,
+				start: "2021-12-21T13:48:00.000Z",
+				end: "2021-12-21T17:00:00.000Z",
+			},
+			{
+				level: 3,
+				start: "2021-12-21T17:00:00.000Z",
+				end: "2021-12-21T17:05:00.000Z",
+			},
+			{
+				level: 2,
+				start: "2021-12-21T17:05:00.000Z",
+				end: "2021-12-21T17:10:00.000Z",
+			},
+			{
+				level: 3,
+				start: "2021-12-21T17:10:00.000Z",
+				end: "2021-12-21T17:12:00.000Z",
+			},
 		],
-		coreSleepTiming: ["2021-12-20T23:24:00", "2021-12-21T07:40:00"],
+		coreSleepTiming: ["2021-12-20T23:24:00.000Z", "2021-12-21T07:40:00.000Z"],
+		napTimings: [
+			["2021-12-21T13:28:00.000Z", "2021-12-21T13:48:00.000Z"],
+			["2021-12-21T17:00:00.000Z", "2021-12-21T17:12:00.000Z"],
+		],
 		sleepStagesDuration: {
 			1: {
 				duration: 89,
@@ -133,3 +178,10 @@ test("getSleepStages", function () {
 	});
 });
 test.todo("getActivityPhases");
+
+test("getNaps", function () {
+	expect(getNaps(mockedData)).toEqual([
+		["2021-12-21T13:28:00.000Z", "2021-12-21T13:48:00.000Z"],
+		["2021-12-21T17:00:00.000Z", "2021-12-21T17:12:00.000Z"],
+	]);
+});

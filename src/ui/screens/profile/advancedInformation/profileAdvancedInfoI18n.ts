@@ -16,7 +16,7 @@ export function advanceInfoI18nKey<T>(keys: Map<T, WordingKey>, infoKey: T | und
 	if (infoKey) {
 		return keys.get(infoKey) ?? "profile_advanced_info.unknown_option";
 	}
-	return "profile_advanced_info.unknown_option";
+	return Array.from(keys)[0][1];
 }
 
 export const workTimeKeys = new Map<WorkTime, WordingKey>([

@@ -1,6 +1,7 @@
 import { useServices } from "@core/services";
 import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { alarmTimeToDate, dateToAlarmTime, Melody, Weekdays } from "@domain/ring/ringAlarm";
+import { useIs24h } from "@domain/user/hooks/useUser";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
 	CircularBottomScrollSheet,
@@ -56,6 +57,7 @@ export const EditAlarmScreen: React.FC = () => {
 	const labelBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const snoozeBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const smartBottomSheet = useRef<CircularBottomSheetHandle>(null);
+	const is24h = useIs24h();
 
 	const submitTime = (newValue: Date) => {
 		setPickerVisible(false);
@@ -108,7 +110,7 @@ export const EditAlarmScreen: React.FC = () => {
 						<DateTimePicker
 							value={alarmTime}
 							mode={"time"}
-							is24Hour={true}
+							is24Hour={is24h}
 							onChange={(event: Event, selectedTime: Date | undefined) => {
 								selectedTime ? submitTime(selectedTime) : setPickerVisible(false);
 							}}
@@ -119,7 +121,7 @@ export const EditAlarmScreen: React.FC = () => {
 				<DateTimePicker
 					value={alarmTime}
 					mode={"time"}
-					is24Hour={true}
+					is24Hour={is24h}
 					display="spinner"
 					textColor={colors.textPrimary}
 					onChange={(event: Event, selectedTime: Date | undefined) => setAlarmTime(selectedTime || alarmTime)}
@@ -151,13 +153,13 @@ export const EditAlarmScreen: React.FC = () => {
 				style={{ marginTop: 20 }}
 				name={isSmart ? format("alarm.new.smart_snooze.title") : format("alarm.new.snooze.title")}
 				hasDisclosure
-				value={formatSnooze(smart)}
+				value={formatSnooze(snooze)}
 				action={() => snoozeBottomSheet.current?.present()}
 			/>
 			<InfoListItem
 				name={format("alarm.new.smart_alarm.title")}
 				hasDisclosure
-				value={formatSmart(snooze)}
+				value={formatSmart(smart)}
 				action={() => smartBottomSheet.current?.present()}
 			/>
 

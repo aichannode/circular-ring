@@ -11,114 +11,209 @@ export type Metrics<M extends MetricType> = Partial<{
  * Structure for measure model data for efficient search
  * Each range contains:
  * - the data evolution over range time for the given T metrics
- * - the fixed values: the last value of the range for the given F metrics
+ * - the last value of the range for the given F metrics
  */
 export type RangeMetrics<T extends MetricType = MetricType, F extends MetricType = MetricType> = {
-	timeline: Array<DatedMetrics<T>>;
-	fixedValues: Metrics<F>;
+	// le premier varie au cours du temps le deuxieme valeur fixes
+	timeSeries: Array<DatedMetrics<T>>;
+	constant: Metrics<F>;
 };
 
 export enum MetricType {
-	//////////////
-	// Daily sleep
-	//////////////
-	UserSleepStage = "user.sleep.stage",
-	UserCoreSleepBegin = "user.core.sleep.begin",
-	UserCoreSleepEnd = "user.core.sleep.end",
-	UserDailyLightStageDuration = "user.daily.light.stage.duration",
-	UserDailyDeepStageDuration = "user.daily.deep.stage.duration",
-	UserDailyREMStageDuration = "user.daily.rem.stage.duration",
-	UserDailyTimeToFallAsleep = "user.daily.time.to.fall.asleep",
-	UserDailyPercTimeToFallAsleep = "user.daily.perctime.to.fall.asleep",
-	UserDailySleepDebt = "user.daily.sleep.debt",
-	UserDailyPercSleepDebt = "user.daily.percsleep.debt",
-	UserDailyTranquility = "user.daily.tranquility",
-	UserDailyCircadianRhythm = "user.daily.circadian.rhythm",
-	UserDailyTotalSleepDuration = "user.daily.total.sleep.duration",
-	UserDailyRealSleepDuration = "user.daily.real.sleep.duration",
-	UserDailyAwakeStageDuration = "user.daily.awake.stage.duration",
-	UserDailyPercAwakeStage = "user.daily.percawake.stage",
-	UserDailyPercLightStage = "user.daily.perclight.stage",
-	UserDailyPercREMStage = "user.daily.percrem.stage",
-	UserDailyPercDeepStage = "user.daily.percdeep.stage",
-	UserDailyPercRealSleep = "user.daily.percreal.sleep",
-	UserDailyCorrectedPercREMStage = "user.daily.corrected.percrem.stage",
-	UserDailyCorrectedPercDeepStage = "user.daily.corrected.percdeep.stage",
+	/////////////////////
+	// Score per domain
+	/////////////////////
+	UserDailyGlobalScore = "user.daily.global.score",
+	UserDailyEnergyScore = "user.daily.energy.score",
+	User7DaysEnergyScore = "user.7days.energy.score",
 	UserDailySleepScore = "user.daily.sleep.score",
-	UserDailyPercAwakeStageDurationGoalMin = "user.daily.percawake.stage.duration.goal.min",
-	UserDailyPercAwakeStageDurationGoalMax = "user.daily.percawake.stage.duration.goal.max",
-	UserDailyPercRealSleepDurationGoalMin = "user.daily.percreal.sleep.duration.goal.min",
-	UserDailyPercRealSleepDurationGoalMax = "user.daily.percreal.sleep.duration.goal.max",
-	UserDailyTranquilityGoalMin = "user.daily.tranquility.goal.min",
-	UserDailyTranquilityGoalMax = "user.daily.tranquility.goal.max",
-	UserDailyCircadianRhythmGoalMin = "user.daily.circadian.rhythm.goal.min",
-	UserDailyCircadianRhythmGoalMax = "user.daily.circadian.rhythm.goal.max",
-	UserDailyPercREMStageScoreGoalMin = "user.daily.percrem.stage.score.goal.min",
-	UserDailyPercREMStageScoreGoalMax = "user.daily.percrem.stage.score.goal.max",
-	UserDailyPercDeepStageScoreGoalMin = "user.daily.percdeep.stage.score.goal.min",
-	UserDailyPercDeepStageScoreGoalMax = "user.daily.percdeep.stage.score.goal.max",
-	UserDailyPercTimeToFallAsleepGoalMin = "user.daily.perctime.to.fall.asleep.goal.min",
-	UserDailyPercTimeToFallAsleepGoalMax = "user.daily.perctime.to.fall.asleep.goal.max",
-	UserDailySleepDebtGoalMin = "user.daily.percsleep.debt.goal.min",
-	UserDailySleepDebtGoalMax = "user.daily.percsleep.debt.goal.max",
-	UserDailySleepBR = "user.daily.sleep.br",
-	UserDailySleepVarTemperature = "user.daily.sleep.var.temperature",
-	UserDailySleepScoreGoalMin = "user.daily.score.sleep.goal.min",
-	UserDailySleepScoreGoalMax = "user.daily.score.sleep.goal.max",
-	UserDailyScoreSleepBalanceGoalMin = "user.daily.score.sleep.balance.goal.min",
-	UserDailyScoreSleepBalanceGoalMax = "user.daily.score.sleep.balance.goal.max",
+	User2DaysSleepScore = "user.2days.sleep.score",
+
+	///////////////////
+	// 7 Days sleep
+	///////////////////
+	User7DaysAwakeStageDuration = "user.7days.awake.stage.duration",
+	User7DaysPercawakeStage = "user.7days.percawake.stage",
+	User7DaysLightStageDuration = "user.7days.light.stage.duration",
+	User7DaysPerclightStage = "user.7days.perclight.stage",
+	User7DaysDeepStageDuration = "user.7days.deep.stage.duration",
+	User7DaysPercdeepStage = "user.7days.percdeep.stage",
+	User7DaysRemStageDuration = "user.7days.rem.stage.duration",
+	User7DaysPercremStage = "user.7days.percrem.stage",
+
+	///////////////////
+	// All Months sleep
+	///////////////////
+	UserMonthlyAwakeStageDuration = "user.monthly.awake.stage.duration",
+	UserMonthlyLightStageDuration = "user.monthly.light.stage.duration",
+	UserMonthlyDeepStageDuration = "user.monthly.deep.stage.duration",
+	UserMonthlyRemStageDuration = "user.monthly.rem.stage.duration",
+
+	///////////////////
+	// Lifetime sleep
+	///////////////////
+	UserLifetimeAwakeTimeDuration = "user.lifetime.awake.stage.duration",
+	UserLifetimeAwakeTimePercent = "user.lifetime.percawake.stage",
+	UserLifetimeLightStageDuration = "user.lifetime.light.stage.duration",
+	UserLifetimeLightStagePercent = "user.lifetime.perclight.stage",
+	UserLifetimeDeepStageDuration = "user.lifetime.deep.stage.duration",
+	UserLifetimeDeepStagePercent = "user.lifetime.percdeep.stage",
+	UserLifetimeREMStageDuration = "user.lifetime.rem.stage.duration",
+	UserLifetimeREMStagePercent = "user.lifetime.percrem.stage",
 
 	///////////////////
 	// Daily metabolism
 	///////////////////
-	UserDailyGlobalScore = "user.daily.global.score",
-	UserDailyScoreRecovery = "user.daily.score.recovery",
-	UserDailyScoreBr = "user.daily.score.br",
-	UserDailySleepHRV = "user.daily.sleep.hrv",
-	UserDailyScoreHRV = "user.daily.score.hrv",
-	UserDailyRHR = "user.daily.rhr",
-	UserDailyScoreRHR = "user.daily.score.rhr",
-	UserDailyScoreVarTemperature = "user.daily.score.var.temperature",
-	UserDailyScoreSleepBalance = "user.daily.score.sleep.balance",
-	UserDailyScoreActivityVolume = "user.daily.score.activity.volume",
-	UserDailyScoreRecoveryGoalMin = "user.daily.score.recovery.goal.min",
-	UserDailyScoreRecoveryGoalMax = "user.daily.score.recovery.goal.max",
+	UserDailyBodyRecovery = "user.daily.body.recovery",
+	UserDailyBodyRecoveryGoalMin = "user.daily.body.recovery.goal.min",
+	UserDailyBodyRecoveryGoalMax = "user.daily.body.recovery.goal.max",
+
 	UserDailyWakeUpScore = "user.daily.wake.up.score",
 	UserDailyWakeUpScoreGoalMin = "user.daily.wake.up.score.goal.min",
 	UserDailyWakeUpScoreGoalMax = "user.daily.wake.up.score.goal.max",
+
+	UserDailyAsleepBR = "user.daily.asleep.br",
+	UserDailyAsleepBRReference = "user.reference.asleep.br",
+	UserDailyScoreBR = "user.daily.score.br",
 	UserDailyScoreBRGoalMin = "user.daily.score.br.goal.min",
-	UserDailyScoreBRGoalMax = "user.daily.sleep.br.goal.max",
+	UserDailyScoreBRGoalMax = "user.daily.score.br.goal.max",
+
+	UserDailySPO2 = "user.spo2",
+	UserDailyAsleepSPO2 = "user.daily.asleep.spo2",
+	UserDailyAsleepSPO2Reference = "user.reference.asleep.spo2",
+	UserDailyScoreSPO2 = "user.daily.score.spo2",
+	UserDailyScoreSPO2GoalMin = "user.daily.score.spo2.goal.min",
+	UserDailyScoreSPO2GoalMax = "user.daily.score.spo2.goal.max",
+
+	UserDailyAsleepHRV = "user.daily.asleep.hrv",
+	UserDailyScoreHRV = "user.daily.score.hrv",
 	UserDailyScoreHRVGoalMin = "user.daily.score.hrv.goal.min",
 	UserDailyScoreHRVGoalMax = "user.daily.score.hrv.goal.max",
+
+	UserDailyRHR = "user.daily.rhr",
+	UserDailyScoreRHR = "user.daily.score.rhr",
 	UserDailyScoreRHRGoalMin = "user.daily.score.rhr.goal.min",
 	UserDailyScoreRHRGoalMax = "user.daily.score.rhr.goal.max",
-	UserDailyScoreVarTemperatureGoalMin = "user.daily.score.var.temperature.goal.min",
-	UserDailyScoreVarTemperatureGoalMax = "user.daily.score.var.temperature.goal.max",
-	UserDailyScoreActivityVolumeGoalMin = "user.daily.score.activity.volume.goal.min",
-	UserDailyScoreActivityVolumeGoalMax = "user.daily.score.activity.volume.goal.max",
-	UserDailyCaloriesBurned = "user.daily.calories.burned",
-	UserDailyCardioPoints = "user.daily.cardio.points",
-	UserDailyVO2Max = "user.daily.vo2max",
-	UserDailyHRMax = "user.daily.hr.max",
-	UserDailyCaloriesBurnedGoalMin = "user.daily.calories.burned.goal.min",
-	UserDailyCaloriesBurnedGoalMax = "user.daily.calories.burned.goal.max",
-	UserWeeklyCardioPointsGoalMax = "user.weekly.cardio.points.goal.max",
-	UserWeeklyCardioPointsGoalMin = "user.weekly.cardio.points.goal.min",
-	UserDailyCardioPointsGoalMax = "user.daily.cardio.points.goal.max",
-	UserDailyCardioPointsGoalMin = "user.daily.cardio.points.goal.min",
+
+	UserDailySleepVarTemperature = "user.daily.sleep.var.temperature",
+	UserDailySleepScoreVarTemperature = "user.daily.sleep.score.var.temperature",
+	UserDailySleepScoreVarTemperatureGoalMin = "user.daily.sleep.score.var.temperature.goal.min",
+	UserDailySleepScoreVarTemperatureGoalMax = "user.daily.sleep.score.var.temperature.goal.max",
+
+	UserDailySleepScoreGoalMin = "user.daily.sleep.score.goal.min",
+	UserDailySleepScoreGoalMax = "user.daily.sleep.score.goal.max",
+
+	UserDailySleepBalance = "user.daily.sleep.balance",
+	UserDailySleepBalanceGoalMin = "user.daily.sleep.balance.goal.min",
+	UserDailySleepBalanceGoalMax = "user.daily.sleep.balance.goal.max",
+
+	UserDailyActivityVolume = "user.daily.activity.volume",
+	UserDailyActivityVolumeGoalMin = "user.daily.activity.volume.goal.max",
+	UserDailyActivityVolumeGoalMax = "user.daily.activity.volume.goal.min",
+
+	UserDailyAwakeStageDuration = "user.daily.awake.stage.duration",
+	UserDailyPercAwakeStage = "user.daily.percawake.stage",
+
+	UserDailyRealSleepDuration = "user.daily.real.sleep.duration",
+	UserDailyPercRealSleep = "user.daily.percreal.sleep",
+
+	UserDailyTranquility = "user.daily.tranquility",
+	UserDailyTranquilityGoalMin = "user.daily.tranquility.goal.min",
+	UserDailyTranquilityGoalMax = "user.daily.tranquility.goal.max",
+
+	UserDailyCircadianRhythm = "user.daily.circadian.rhythm",
+	UserDailyCircadianRhythmGoalMin = "user.daily.circadian.rhythm.goal.min",
+	UserDailyCircadianRhythmGoalMax = "user.daily.circadian.rhythm.goal.max",
+
+	UserDailyPercREMStageScore = "user.daily.percrem.stage.score",
+	UserDailyPercREMStageScoreGoalMin = "user.daily.percrem.stage.score.goal.min",
+	UserDailyPercREMStageScoreGoalMax = "user.daily.percrem.stage.score.goal.max",
+
+	UserDailyPercDeepStage = "user.daily.percdeep.stage",
+	UserDailyPercDeepStageScore = "user.daily.percdeep.stage.score",
+	UserDailyPercDeepStageScoreGoalMin = "user.daily.percdeep.stage.score.goal.min",
+	UserDailyPercDeepStageScoreGoalMax = "user.daily.percdeep.stage.score.goal.max",
+
+	UserDailyCoreTimeToFallAsleep = "user.daily.core.time.to.fall.asleep",
+	UserDailyCorePercTimeToFallAsleep = "user.daily.core.perctime.to.fall.asleep",
+	UserDailyCorePercTimeToFallAsleepGoalMin = "user.daily.core.perctime.to.fall.asleep.goal.min",
+	UserDailyCorePercTimeToFallAsleepGoalMax = "user.daily.core.perctime.to.fall.asleep.goal.max",
+
+	UserDailySleepDebt = "user.daily.sleep.debt",
+	UserDailyPercSleepDebt = "user.daily.percsleep.debt",
+	UserDailyPercSleepDebtGoalMin = "user.daily.percsleep.debt.goal.min",
+	UserDailyPercSleepDebtGoalMax = "user.daily.percsleep.debt.goal.max",
+
+	//////////////
+	// Daily sleep stages
+	//////////////
+	UserSleepStage = "user.sleep.stage",
+	UserCoreSleepBegin = "user.core.sleep.begin",
+	UserCoreSleepEnd = "user.core.sleep.end",
+	UserNapSleepBegin = "user.nap.sleep.begin",
+	UserNapSleepEnd = "user.nap.sleep.end",
+	UserDailyTotalSleepDuration = "user.daily.total.sleep.duration",
+	UserDailyLightStageDuration = "user.daily.light.stage.duration",
+	UserDailyDeepStageDuration = "user.daily.deep.stage.duration",
+	UserDailyREMStageDuration = "user.daily.rem.stage.duration",
+	UserDailyPercREMStage = "user.daily.percrem.stage",
+	UserDailyPercLightStage = "user.daily.perclight.stage",
 
 	/////////////////
-	// Daily activity
+	// Daily activity duration
 	/////////////////
-	UserDailyEnergyScore = "user.daily.energy.score",
 	UserDataActivityIntensity = "user.data.activity.intensity",
+	UserDailyActiveMinute = "user.daily.active.minute",
 	UserDailySportBegin = "user.daily.sport.begin",
 	UserDailySportEnd = "user.daily.sport.end",
-	UserDailyActivityTotal = "user.daily.activity.total",
+
+	UserDailyHighActivityIntensityDuration = "user.daily.high.activity.intensity.duration",
+	UserDailyMediumActivityIntensityDuration = "user.daily.medium.activity.intensity.duration",
+	UserDailyLowActivityIntensityDuration = "user.daily.low.activity.intensity.duration",
+
+	/////////////////
+	// 7D activity duration
+	/////////////////
+	User7DaysAverageHighIntensityDuration = "user.7days.average.high.intensity.duration",
+	User7DaysAverageMediumIntensityDuration = "user.7days.average.medium.intensity.duration",
+	User7DaysAverageLowIntensityDuration = "user.7days.average.low.intensity.duration",
+
+	///////////////////
+	// Daily activities
+	///////////////////
 	UserDailySteps = "user.daily.steps",
+	UserDailyStepsGoalMin = "user.daily.steps.goal.min",
+	UserDailyStepsGoalMax = "user.daily.steps.goal.max",
+
 	UserDailyWalkingEquivalency = "user.daily.walking.equivalency",
 	UserDailyWalkingEquivalencyGoalMin = "user.daily.walking.equivalency.goal.min",
 	UserDailyWalkingEquivalencyGoalMax = "user.daily.walking.equivalency.goal.max",
-	UserDailyStepsGoalMin = "user.daily.steps.goal.min",
-	UserDailyStepsGoalMax = "user.daily.steps.goal.max",
+
+	UserDailyCaloriesBurned = "user.daily.calories.burned",
+	UserDailyCaloriesBurnedGoal = "user.daily.calories.burned.goal",
+
+	UserDailyCardioPoints = "user.daily.cardio.points",
+	UserDailyCardioPointsGoalMax = "user.daily.cardio.points.goal.max",
+	UserDailyCardioPointsGoalMin = "user.daily.cardio.points.goal.min",
+
+	UserCardioPointAverage = "user.7days.average.cardio.points",
+	UserCardioPointBaseline = "user.baseline.cardio.points",
+	UserCardioPointTotal = "user.7days.total.cardio.points",
+
+	UserDailyVO2Max = "user.daily.vo2max",
+
+	///////////////////
+	// HR
+	///////////////////
+	UserHR = "user.hr",
+	UserDailyHRMax = "user.daily.hr.max",
+	UserDailyAwakeHRMax = "user.daily.awake.hr.max",
+	UserDailyAwakeHRMin = "user.daily.awake.hr.min",
+	UserDailyAwakeHRAverage = "user.daily.awake.hr",
+	UserDailyAwakeHRReference = "user.reference.awake.hr",
+
+	///////////////////
+	// BR
+	///////////////////
+	UserBR = "user.br",
 }

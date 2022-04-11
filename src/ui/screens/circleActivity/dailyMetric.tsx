@@ -1,4 +1,5 @@
-import { getScoreQuality, ScoreQuality } from "@domain/measure/score";
+import { isDefined } from "@domain/common/business";
+import { ActivityControlState, ScoreQuality } from "@domain/measure/representation/api";
 import { Grow } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { colors, ScoreQualityColors } from "@ui/styles/colors";
@@ -10,32 +11,30 @@ import styled from "styled-components/native";
 interface DailyMetricProps {
 	icon: number;
 	label: string;
-	value?: number;
-	goodThreshold?: number;
-	optimalThreshold?: number;
+	value?: string;
+	score?: number;
+	controlState?: ActivityControlState;
 	style?: StyleProp<ViewStyle>;
-	overWriteScoreQuality?: ScoreQuality | undefined;
+	hasNotEnoughData?: boolean;
 }
+
 export const DailyMetric: React.FC<DailyMetricProps> = ({
 	icon,
 	label,
 	value,
-	goodThreshold,
-	optimalThreshold,
+	controlState,
 	style,
-	overWriteScoreQuality,
+	hasNotEnoughData,
 }) => {
-	const scoreQuality =
-		goodThreshold && optimalThreshold && value !== undefined ? getScoreQuality(value ?? 0) : undefined;
+	const _hasNotEnoughData = hasNotEnoughData || !isDefined(value);
 
 	return (
 		<Container style={style}>
 			<MetricIcon source={icon} />
 			<SecondaryText>{label}</SecondaryText>
 			<Grow />
-			{!!scoreQuality && overWriteScoreQuality === undefined && <QualityIndicator quality={scoreQuality} />}
-			{overWriteScoreQuality !== undefined && <QualityIndicator quality={overWriteScoreQuality} />}
-			<Metric>{value !== undefined ? value : "-"}</Metric>
+			{controlState && !_hasNotEnoughData && <QualityIndicator quality={controlState} />}
+			<Metric>{_hasNotEnoughData ? "-" : value}</Metric>
 		</Container>
 	);
 };
@@ -51,7 +50,7 @@ const MetricIcon = styled.Image`
 	margin-right: 20px;
 `;
 
-const QualityIndicator = styled.View<{ quality: ScoreQuality }>`
+const QualityIndicator = styled.View<{ quality: ScoreQuality | ActivityControlState }>`
 	width: 10px;
 	height: 10px;
 	border-radius: 5px;

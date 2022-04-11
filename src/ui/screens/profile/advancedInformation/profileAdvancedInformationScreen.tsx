@@ -13,7 +13,7 @@ import { AdvancedInfoBottomSheetConfig } from "@ui/screens/profile/advancedInfor
 import {
 	AdvancedInfoEditionBottomSheet,
 	AdvancedInfoEditionConfig,
-	EditionInfoType,
+	EditionInfoType
 } from "@ui/screens/profile/advancedInformation/advancedInfoEditionBottomSheet";
 import { BMICard } from "@ui/screens/profile/advancedInformation/bmiCard";
 import { ChronotypeCard } from "@ui/screens/profile/advancedInformation/chronotypeCard";
@@ -27,9 +27,9 @@ import {
 	pillPackFormatKeys,
 	sleepDisorderKeys,
 	sleepingPillsKeys,
-	workTimeKeys,
+	workTimeKeys
 } from "@ui/screens/profile/advancedInformation/profileAdvancedInfoI18n";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import styled from "styled-components/native";
 import { CycleLengthBottomSheet } from "./cycleLengthBottomSheet";
@@ -54,6 +54,10 @@ export const ProfileAdvancedInformationScreen = () => {
 	const cycleLengthBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 	const [isLoading, setLoading] = useState(false);
+
+	useEffect(() => {
+		userService.retrieveUser();
+	}, []);
 
 	function configureEditionBottomSheet(config: AdvancedInfoEditionConfig<EditionInfoType>, option: EditionInfoType) {
 		setBottomSheetConfig(config);
@@ -92,7 +96,7 @@ export const ProfileAdvancedInformationScreen = () => {
 				name={format("profile_advanced_info.stride.title")}
 				hasDisclosure={true}
 				value={`${
-					heightUnit === HeightUnit.ft ? round2Digits(cmToFt(user.stride)) : Math.round(user.stride)
+					heightUnit === HeightUnit.ft ? round2Digits(cmToFt(advancedInfo.stride)) : Math.round(advancedInfo.stride)
 				} ${heightUnit}`}
 				action={() => {
 					strideBottomSheetRef.current?.present();

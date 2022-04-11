@@ -1,4 +1,5 @@
 import { DrawerActions, useNavigation } from "@react-navigation/native";
+import { IfAdmin } from "@ui/containers/IfAdmin";
 import { useI18n } from "@ui/i18n";
 import { DrawerEntry } from "@ui/navigation/drawer/drawerEntry";
 import { Routes } from "@ui/navigation/routes";
@@ -33,6 +34,10 @@ export const DrawerContent = () => {
 				<Separator />
 				<DrawerEntry route={Routes.Settings}>{format("drawer.settings")}</DrawerEntry>
 				<Separator />
+				<IfAdmin>
+					<DrawerEntry route={Routes.Storybook}>{format("drawer.storybook")}</DrawerEntry>
+					<Separator />
+				</IfAdmin>
 			</ScrollView>
 		</Container>
 	);

@@ -1,0 +1,77 @@
+import React, { useEffect, useRef } from "react";
+import { Animated, Easing, StyleProp, Text, ViewStyle } from "react-native";
+import styled from "styled-components/native";
+import { lerp } from "../business";
+import { SineWave } from "../shapes/sineWave";
+import { PrimaryText } from "../text";
+
+interface ScoreViewProps {
+	color: string;
+	textColor?: string;
+	value?: number;
+	style?: StyleProp<ViewStyle>;
+	hasNotEnoughData?: boolean;
+}
+
+const scoreWaveAmplitude = 15;
+const animationDuration = 2500;
+const noValueHeight = 60;
+/**
+ * @implements spec [00003](https://docs.google.com/document/d/16SRBS_XPqDhePKuCi6rQm399n72H_82GTPAiay6AQlQ/edit?disco=AAAAWbZAWfY) Flask is filled for a value from 50 to 100.
+ */
+export const ScoreView: React.FC<ScoreViewProps> = ({ color, textColor, value = 0, style, hasNotEnoughData }) => {
+	const _hasNotEnoughData = hasNotEnoughData || isNaN(value);
+	if (_hasNotEnoughData) {
+		value = 0;
+	}
+
+	const waveTranslateX = useRef(new Animated.Value(0)).current;
+	useEffect(() => {
+		const animation = Animated.timing(waveTranslateX, {
+			toValue: -100,
+			useNativeDriver: true,
+			easing: Easing.linear,
+			duration: animationDuration,
+		});
+		Animated.loop(animation).start();
+	}, []);
+
+	const integer = Math.floor(value * 100);
+	const decimals = (value * 100 - integer).toFixed(0);
+	const waveValue = lerp([0, 1], [-1, 1])(value); // Empty flask is 50, full flask is 100
+	const wavePosition = -scoreWaveAmplitude / 2 + (100 - (waveValue * 100 || noValueHeight));
+
+	return (
+		<Container color={color} style={style}>
+			<Animated.View
+				style={{
+					position: "absolute",
+					top: wavePosition,
+					left: 0,
+					transform: [{ translateX: waveTranslateX }],
+				}}
+			>
+				<SineWave color={color} amplitude={scoreWaveAmplitude} />
+			</Animated.View>
+			<ScoreValue style={{ color: textColor ?? color }}>
+				{_hasNotEnoughData ? "-" : integer}
+				{+decimals > 0 && <Text style={{ fontSize: 12 }}>,{decimals}</Text>}
+			</ScoreValue>
+		</Container>
+	);
+};
+
+const Container = styled.View<{ color: string }>`
+	border: 2px solid ${({ color }) => color};
+	width: 100px;
+	height: 100px;
+	border-radius: 50px;
+	overflow: hidden;
+	justify-content: center;
+	align-items: center;
+`;
+
+const ScoreValue = styled(PrimaryText)`
+	font-weight: bold;
+	font-size: 30px;
+`;

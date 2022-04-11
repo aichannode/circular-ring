@@ -1,5 +1,6 @@
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { ActivityStage, SleepStage } from "@domain/measure/type";
+import { colors } from "@ui/styles/colors";
 
 /**
  * Return the sections of the input segments array included in the given slide of time.
@@ -122,7 +123,7 @@ export function sample<T extends SleepStage | ActivityStage>(
 	const duration = endOfActivty.getTime() - startOfActivity.getTime();
 	const sampleNb = duration / sampleSize; // How many samples we need to do
 	const segments = stages.map((stage) => ({
-		value: stage.stage,
+		value: stage.level,
 		start: new Date(stage.start).getTime(),
 		end: new Date(stage.end).getTime(),
 	}));
@@ -136,4 +137,17 @@ export function sample<T extends SleepStage | ActivityStage>(
 		});
 	}
 	return samples;
+}
+
+export function getActivityIntensityBarColor(value: number) {
+	switch (value) {
+		case 1:
+			return colors.business.activityStageNone;
+		case 2:
+			return colors.business.activityStageLow;
+		case 3:
+			return colors.business.activityStageMedium;
+		case 4:
+			return colors.business.activityStageHigh;
+	}
 }

@@ -1,61 +1,110 @@
-import { useServices } from "@core/services";
+import { useRepresentations } from "@core/representation";
+import { CalendarErrorContext } from "@domain/calendar/common/type";
 import { PrimaryButton, TertiaryButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
+import { Spinner } from "@ui/components/spinner";
 import { MediumTitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useState } from "react";
-import { View, Image } from "react-native";
+import { reaction } from "mobx";
+import { observer } from "mobx-react-lite";
+import React, { useEffect, useState } from "react";
+import { Image, View } from "react-native";
 import styled from "styled-components/native";
+import { ErrorMessage } from "../../components/errorMessage";
 
 interface CreateCustomNoteBottomSheetProps {
 	onClose: () => void;
 }
 
-export const CreateCustomNoteBottomSheet: React.FC<CreateCustomNoteBottomSheetProps> = ({ onClose }) => {
-	const { format } = useI18n();
-	const { calendarService } = useServices();
-	const [search, setSearch] = useState("");
+export const CreateCustomNoteBottomSheet: React.FC<CreateCustomNoteBottomSheetProps> = observer(
+	function CreateCustomNoteBottomSheet({ onClose }) {
+		const { format } = useI18n();
+		const [name, setName] = useState("");
+		const [loading, setLoading] = useState(false);
+		const {
+			calendar: {
+				hooks: { useTags, useErrors },
+				actions: { createTag },
+			},
+		} = useRepresentations();
+		const hasAPIError = useErrors(CalendarErrorContext.TAG_CREATE);
+		const createCustomNote = () => {
+			if (name !== "") {
+				setLoading(true);
+				createTag(name);
+			}
+		};
 
-	const createCustomNote = async () => {
-		onClose();
-		await calendarService.createCustomTag(search, "Custom Notes");
-	};
+		useEffect(
+			function () {
+				if (hasAPIError) {
+					setLoading(false);
+				}
+			},
+			[hasAPIError]
+		);
 
-	return (
-		<Container horizontalPadding={0}>
-			<Title>{format("calendar.add_custom_note")}</Title>
-			<Grow />
-			<SearchWrapper>
-				<SearchInput
-					placeholder={format("calendar.add_custom_note")}
-					value={search}
-					onChangeText={setSearch}
-					autoFocus={true}
-				/>
-				{search.length > 0 && (
-					<CloseWrapper onPress={() => setSearch("")}>
-						<Image
-							style={{ tintColor: colors.textPrimary, width: 14, height: 13 }}
-							source={require("@assets/images/close.png")}
-						/>
-					</CloseWrapper>
+		useEffect(function () {
+			return reaction(
+				() => Array.from(useTags().values()).reduce((sum, tags) => sum + tags.length, 0),
+				(nbTags, prevNbTags) => {
+					if (prevNbTags > 0 && nbTags > prevNbTags) {
+						setTimeout(() => onClose(), 100);
+					}
+				}
+			);
+		}, []);
+
+		return (
+			<Container horizontalPadding={0}>
+				<Title>{format("calendar.add_custom_note")}</Title>
+				<Grow />
+				<SearchWrapper>
+					<SearchInput
+						placeholder={format("calendar.add_custom_note")}
+						value={name}
+						onChangeText={setName}
+						autoFocus={true}
+					/>
+					{name.length > 0 && (
+						<CloseWrapper onPress={() => setName("")}>
+							<Image
+								style={{ tintColor: colors.textPrimary, width: 14, height: 13 }}
+								source={require("@assets/images/close.png")}
+							/>
+						</CloseWrapper>
+					)}
+				</SearchWrapper>
+				<Grow />
+				{!loading ? (
+					<>
+						{hasAPIError && (
+							<View>
+								<ErrorMessage>{format("calendar.errors.add_custom_note")}</ErrorMessage>
+							</View>
+						)}
+
+						<ButtonContainer gap={35}>
+							<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
+								{format("global.cancel")}
+							</TertiaryButton>
+
+							<PrimaryButton key={"create"} onPress={createCustomNote}>
+								{format("global.create")}
+							</PrimaryButton>
+						</ButtonContainer>
+					</>
+				) : (
+					<View style={{ marginBottom: 20 }}>
+						<Spinner size={12}></Spinner>
+					</View>
 				)}
-			</SearchWrapper>
-			<Grow />
-			<ButtonContainer gap={35}>
-				<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
-					{format("global.cancel")}
-				</TertiaryButton>
-
-				<PrimaryButton key={"create"} onPress={createCustomNote}>
-					{format("global.create")}
-				</PrimaryButton>
-			</ButtonContainer>
-		</Container>
-	);
-};
+			</Container>
+		);
+	}
+);
 
 const SearchWrapper = styled(View)`
 	background-color: ${colors.white};
@@ -66,7 +115,7 @@ const SearchWrapper = styled(View)`
 	margin: 6px 16px;
 	display: flex;
 	flex-direction: row;
-  shadow-color: #000;
+  	shadow-color: #000;
 	shadow-offset: {
 	width: 0px,
 	height: 2px,

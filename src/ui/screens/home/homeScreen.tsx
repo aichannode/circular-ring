@@ -5,6 +5,7 @@ import { useSetupState } from "@domain/device/hooks";
 import { useNotifications, useRecommendations } from "@domain/feed/hooks";
 import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringManagementService";
+import { DateFormat } from "@domain/units";
 import { useUserSettings } from "@domain/user/hooks/useUser";
 import { PrimaryButton } from "@ui/components/buttons";
 import Fade from "@ui/components/fade";
@@ -18,15 +19,17 @@ import { Recommendation } from "@ui/screens/home/feedEntities/Recommendation";
 import { QuickAccess } from "@ui/screens/home/quickAccess/quickAccess";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
-import React, { useCallback, useEffect, useState } from "react";
-import { FlatList, Platform, RefreshControl, View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Animated, Platform, RefreshControl, View } from "react-native";
 import styled from "styled-components/native";
+import { SyncBanner } from "./syncBanner";
 
 const BANNER_TO_LOAD_ON_END = 2;
 
 export const HomeScreen: React.FC = () => {
 	const { feedService, bluetoothService, bleDeviceService, appStateService, ringManagementService } = useServices();
 	const [forceRefreshing, setForceRefreshing] = useState(false);
+	const [hideQuickaccess, setHideQuickaccess] = useState(true);
 	const syncState = useSyncState();
 
 	const setupState = useSetupState();
@@ -58,7 +61,7 @@ export const HomeScreen: React.FC = () => {
 	const { loading, result: recommendations } = useRecommendations();
 
 	const data = [];
-	data.push(<QuickAccess />);
+	data.push(<SyncBanner onRetry={forceRefresh} />);
 	data.push(
 		<View style={{ paddingHorizontal: 6 }}>
 			<IfAdmin>
@@ -75,15 +78,14 @@ export const HomeScreen: React.FC = () => {
 		</View>
 	);
 	Object.keys(recommendations).map((date, key) => {
+		const dateFormat = userSettings?.dateFormat === DateFormat.SI ? "DD/MM/YYYY" : "MM/DD/YYYY";
 		data.push(
 			<View style={{ paddingHorizontal: 6 }} key={date}>
 				{date !== "today" && (
 					<View style={{ alignItems: "center", marginTop: 15 }}>
 						<Separator />
 						<MetaDataText style={{ paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray }}>
-							{date === "yesterday"
-								? format("global.yesterday").toUpperCase()
-								: moment(date).format(userSettings?.dateFormat)}
+							{date === "yesterday" ? format("global.yesterday").toUpperCase() : moment(date).format(dateFormat)}
 						</MetaDataText>
 					</View>
 				)}
@@ -96,10 +98,30 @@ export const HomeScreen: React.FC = () => {
 	data.push(<SpinnerContainer>{loading && <Spinner size={20}></Spinner>}</SpinnerContainer>);
 	useFetchCircles();
 
+	const searchBarAnim = useRef(new Animated.Value(-45)).current;
+	useEffect(() => {
+		if (hideQuickaccess) {
+			Animated.timing(searchBarAnim, {
+				toValue: 0,
+				duration: 300,
+				useNativeDriver: true,
+			}).start();
+		} else {
+			Animated.timing(searchBarAnim, {
+				toValue: -60,
+				duration: 300,
+				useNativeDriver: true,
+			}).start();
+		}
+	}, [hideQuickaccess]);
+
 	return (
 		<Container>
 			<CirclesBanner />
-			<FlatList
+			<Animated.View style={{ zIndex: -1, transform: [{ translateY: searchBarAnim }] }}>
+				<QuickAccess />
+			</Animated.View>
+			<Animated.FlatList
 				refreshControl={
 					<RefreshControl
 						enabled={syncState === SyncState.NONE}
@@ -108,9 +130,16 @@ export const HomeScreen: React.FC = () => {
 					/>
 				}
 				data={data}
-				style={{ flex: 1 }}
+				style={{ flex: 1, transform: [{ translateY: searchBarAnim }] }}
 				renderItem={(item) => {
 					return item.item;
+				}}
+				onScroll={(event) => {
+					if (event.nativeEvent.contentOffset.y < 50 && !hideQuickaccess) {
+						setHideQuickaccess(true);
+					} else if (event.nativeEvent.contentOffset.y < 50 && hideQuickaccess) {
+						setHideQuickaccess(false);
+					}
 				}}
 				onEndReached={(end) => {
 					if (!loading) appStateService.recommendationsCount.update((state) => state + BANNER_TO_LOAD_ON_END);

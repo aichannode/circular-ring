@@ -1,15 +1,15 @@
-import { isYesterday } from "@domain/common/utils";
+import { isYesterday } from "@domain/common/business";
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import moment, { Moment } from "moment";
+import moment from "moment";
 import React from "react";
 import { Image, View } from "react-native";
+import { PieChart } from "react-native-svg-charts";
 import { WordingKey } from "src/wordings";
 import styled from "styled-components/native";
-import { CallbackArgs } from "victory-core";
-import { VictoryPie } from "victory-native";
 import { Row, Stack } from "../layout";
+import { angle, toRad } from "./business";
 
 type Props = {
 	stages: Array<StageInfos<any>>;
@@ -18,93 +18,81 @@ type Props = {
 	chartSize: number;
 	/** The title in the center of the pie */
 	title: WordingKey;
-	/** Current date as ISO string */
-	currentIsoDate: string;
 	/** Logic to know the color of the given phase */
 	getPhaseLevel(phase?: number | string): number;
 	/** Phase colors, indexed by phase level */
 	phaseColors: string[];
 	/** Phase stroke width, indexed by phase level */
 	phaseWidths: number[];
+	noDataPhaseColor: string;
+	hasNotEnoughData?: boolean;
 };
 
 export const DailyPieChart: React.FC<Props> = ({
 	stages,
 	totalDuration,
-	currentIsoDate,
 	chartSize,
 	phaseColors,
 	phaseWidths,
 	title,
 	children,
 	getPhaseLevel,
+	noDataPhaseColor,
+	hasNotEnoughData,
 }) => {
-	const startTime: string | undefined = stages[0]?.start;
-	const endTime: string | undefined = stages[stages.length - 1]?.end;
+	const _hasNotEnoughData = hasNotEnoughData || stages.length === 0 || isNaN(totalDuration);
+	if (_hasNotEnoughData) {
+		stages = [
+			{
+				start: moment().startOf("day").toString(),
+				end: moment().endOf("day").add(1, "minute").toString(),
+				level: 2,
+			},
+		];
+	}
+
+	const startTime: string | undefined = stages[0]?.start; //TODO convert to local time
+	const endTime: string | undefined = stages[stages.length - 1]?.end; //TODO convert to local time
 
 	// The first slice starts yesterday. We need to use a different start angle
-	const didStartYesterday = startTime !== undefined && isYesterday(startTime, currentIsoDate);
+	const didStartTheDayBefore = startTime !== undefined && isYesterday(startTime, endTime);
 
 	// Minus the chart radius with the bigger stroke to prevent cropped artefact
 	const chartRadius = chartSize / 2 - [...phaseWidths].sort().reverse()[0];
 
-	// const currentDate = moment(currentIsoDate);
-	const sliceColors = stages
-		.map((p) => phaseColors[getPhaseLevel(p.stage)])
-		// Add a last transparent dummy section which fills
-		// the gap between the last slice end time and the current time.
-		// TODO remove when back will be ready
-		.concat("#00000000");
-
-	function getSliceInnerRadius({ index }: CallbackArgs) {
-		// The last segment is a dummy
-		// TODO remove when back will be ready
-		if (stages[index as number] === undefined) {
-			return chartRadius - phaseWidths[0] / 2;
-		}
-		const phaseLevel = getPhaseLevel(stages[index as number]?.stage);
+	function getSliceInnerRadius(index: number) {
+		const phaseLevel = getPhaseLevel(stages[index]?.level);
 		return chartRadius - phaseWidths[phaseLevel] / 2;
 	}
 
-	function getSliceOutterRadius({ index }: CallbackArgs) {
-		// The last segment is a dummy
-		// TODO remove when back will be ready
-		if (stages[index as number] === undefined) {
-			return chartRadius + phaseWidths[0] / 2;
-		}
-		const phaseLevel = getPhaseLevel(stages[index as number]?.stage);
+	function getSliceOutterRadius(index: number) {
+		const phaseLevel = getPhaseLevel(stages[index]?.level);
 		return chartRadius + phaseWidths[phaseLevel] / 2;
 	}
 
 	// Start drawing the pie at this angle
-	const startPieAngle = angle(moment(startTime));
+	const startPieAngle = angle(new Date(startTime));
 	// The maximum drawable angle of the pie (the current hour)
-	// const endPieAngle = angle(currentDate);
-	const endPieAngle = angle(moment(endTime));
+	const endPieAngle = (didStartTheDayBefore ? 360 : 0) + angle(new Date(endTime));
 
-	// const lastSlideEndTime: string | undefined = stages[stages.length - 1]?.end;
-
-	const data = stages.map(({ start, end }) => ({
-		y: moment(end).diff(start),
+	const data = stages.map((stage, index) => ({
+		key: index,
+		value: Date.parse(stage.end) - Date.parse(stage.start),
+		svg: { fill: _hasNotEnoughData ? noDataPhaseColor : phaseColors[getPhaseLevel(stage.level)] },
+		arc: { innerRadius: getSliceInnerRadius(index), outerRadius: getSliceOutterRadius(index) },
 	}));
-	// Add a dummy section to leave a gap between the last known data time and the current date
-	// TODO remove when back will be ready
-	// .concat({ y: moment(currentDate).diff(lastSlideEndTime) });
+
 	const { format, formatDuration } = useI18n();
 
 	return (
-		<View>
-			<VictoryPie
-				colorScale={sliceColors}
+		<View style={{ width: chartSize, height: chartSize, justifyContent: "center" }}>
+			<PieChart
+				style={{ flex: 1 }}
 				data={data}
-				startAngle={startPieAngle}
-				endAngle={(didStartYesterday ? 360 : 0) + endPieAngle}
-				width={chartSize}
-				height={chartSize}
-				padding={0}
-				labels={[]}
-				radius={getSliceOutterRadius}
-				innerRadius={getSliceInnerRadius}
+				padAngle={0}
+				startAngle={toRad(startPieAngle)}
+				endAngle={toRad(endPieAngle)}
+				sort={(a, b) => a.key - b.key}
 			/>
 			<InsideInfos align="center" justify="space-between">
 				<Image source={require("@assets/images/night.png")} />
@@ -112,7 +100,10 @@ export const DailyPieChart: React.FC<Props> = ({
 					<Image source={require("@assets/images/evening.png")} />
 					<TotalDurationWrapper>
 						<SliceDurationLabel>{format(title)}</SliceDurationLabel>
-						<SliceDurationValue>{formatDuration(totalDuration * 60)}</SliceDurationValue>
+						{/* @TODO  format is24h below*/}
+						<SliceDurationValue>
+							{_hasNotEnoughData ? format("global.no_data") : formatDuration(totalDuration * 60)}
+						</SliceDurationValue>
 					</TotalDurationWrapper>
 					<Image source={require("@assets/images/morning.png")} />
 				</Row>
@@ -122,10 +113,6 @@ export const DailyPieChart: React.FC<Props> = ({
 		</View>
 	);
 };
-
-function angle(t: Moment) {
-	return ((t.hours() + t.minutes() / 60) / 24) * 360;
-}
 
 const InsideInfos = styled(Stack)`
 	position: absolute;

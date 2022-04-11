@@ -1,13 +1,13 @@
-import { InfoListItem } from "@ui/components/infoList";
+import { useServices } from "@core/services";
+import { useNotificationsSettings, useUserAdvancedInfo } from "@domain/user/hooks/useUser";
 import { SecondaryButton } from "@ui/components/buttons";
+import { InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
+import { SliderBetweenTwoValues } from "@ui/components/sliderBetweenTwoValues";
 import { useI18n } from "@ui/i18n";
 import { useRoutesNavigation } from "@ui/navigation/routes";
 import React, { useState } from "react";
 import styled from "styled-components/native";
-import { SliderBetweenTwoValues } from "@ui/components/sliderBetweenTwoValues";
-import { useServices } from "@core/services";
-import { useObservable } from "micro-observables";
 
 const start = 20;
 const stop = 50;
@@ -16,8 +16,10 @@ export const LowHrScreen: React.FC = () => {
 	const { format } = useI18n();
 	const { goBack } = useRoutesNavigation();
 	const { userService } = useServices();
-	const notificationsSettings = useObservable(userService.userNotificationsSettings);
+	const notificationsSettings = useNotificationsSettings();
 	const [value, setValue] = useState<number | number[]>(notificationsSettings.lowHR);
+	const advancedInfo = useUserAdvancedInfo();
+	const defaultValue = !advancedInfo || !advancedInfo?.comparativeRhr ? 35 : advancedInfo?.comparativeRhr - 10;
 
 	return (
 		<Container>
@@ -35,7 +37,7 @@ export const LowHrScreen: React.FC = () => {
 					start={start}
 					stop={stop}
 					value={value}
-					defaultValue={stop - 10}
+					defaultValue={defaultValue}
 					setValue={setValue}
 				></SliderBetweenTwoValues>
 				<ButtonContainer>

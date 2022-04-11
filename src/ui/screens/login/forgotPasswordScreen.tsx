@@ -10,6 +10,7 @@ import { textStyles } from "@ui/styles/textStyles";
 import { isEmail } from "@ui/utils/emailUtils";
 import React, { useState } from "react";
 import styled from "styled-components/native";
+import { parseEmail } from "../business";
 
 export const ForgotPasswordScreen: React.FC = () => {
 	const navigation = useRoutesNavigation();
@@ -49,7 +50,7 @@ export const ForgotPasswordScreen: React.FC = () => {
 				<InputField
 					placeholder={format("forgot_password.reset.email.placeholder")}
 					value={email}
-					onValueChanged={setEmail}
+					onValueChanged={(state) => setEmail(parseEmail(state))}
 					blurOnSubmit={true}
 					keyboardType={"email-address"}
 					autoCapitalize={"none"}

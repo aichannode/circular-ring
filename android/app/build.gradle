@@ -182,6 +182,7 @@ android {
             dimension "environment"
             applicationIdSuffix ".dev"
             versionNameSuffix "-dev"
+            resValue "string", "app_name", "Circular dev"
             manifestPlaceholders = [
                 appName: "Circular Dev",
             ]
@@ -190,6 +191,7 @@ android {
             dimension "environment"
             applicationIdSuffix ".demo"
             versionNameSuffix "-demo"
+            resValue "string", "app_name", "Circular demo"
             manifestPlaceholders = [
                 appName: "Circular Demo",
             ]
@@ -198,13 +200,14 @@ android {
             dimension "environment"
             applicationIdSuffix ".staging"
             versionNameSuffix "-staging" + (project.hasProperty("buildName") ? ("-" + project.property("buildName") as String) : "")
-
+            resValue "string", "app_name", "Circular staging"
             manifestPlaceholders = [
                 appName: "Circular Staging",
             ]
         }
         prod {
             dimension "environment"
+            resValue "string", "app_name", "Circular"
             manifestPlaceholders = [
                 appName: "Circular",
             ]
@@ -224,7 +227,7 @@ android {
                         defaultConfig.versionCode * 1000 + versionCodes.get(abi)
             }
             variant.productFlavors.each { flavor ->
-                def suffixe = project.hasProperty("buildName") ? ("-" + project.property("buildName") as String) : ""
+                def suffixe = (project.hasProperty("buildName") && project.property("buildName").length() > 0) ? ("-" + project.property("buildName") as String) : ""
                 variant.outputs.all {
                     outputFileName = "app-${flavor.name}${suffixe}-${buildType.name}.apk"
                 }

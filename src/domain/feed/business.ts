@@ -1,40 +1,35 @@
+import { isToday } from "@domain/common/business";
 import { HourFormat } from "@domain/units";
-import moment from "moment";
 import { produce } from "immer";
+import moment from "moment";
+import { FeedStorage } from "./feedStorage";
 import {
 	FeedEntity,
-	FeedNotification,
-	FeedEntityType,
-	FeedRecommendation,
 	FeedEntityComponentDto,
 	FeedEntityComponentType,
-	UserInputStates,
+	FeedEntityType,
+	FeedNotification,
+	FeedRecommendation,
 	UserInputComponentConfigurationDto,
+	UserInputStates,
 } from "./type";
-import { FeedStorage } from "./feedStorage";
 
 export const isNotification = (entity: FeedEntity): entity is FeedNotification =>
 	entity.type === FeedEntityType.NOTIFICATION;
 export const isRecommendation = (entity: FeedEntity): entity is FeedRecommendation =>
 	entity.type !== FeedEntityType.NOTIFICATION;
 
-export function isToday(dateIso: string, todayIso: string) {
-	const today = moment(todayIso).startOf("day");
-	const date = moment(dateIso);
-	return date.isSame(today, "d");
-}
-
-export function getFeedEntityDate(isoDate: string, todayIsoDate: string, format?: HourFormat) {
+export function getFeedEntityDate(isoDate: string, isoNow: string, format?: HourFormat) {
 	const date = moment(isoDate);
-	const today = moment(todayIsoDate);
+	const today = moment(isoNow);
 
 	// The entry appeared today, return the relative time
-	if (isToday(isoDate, todayIsoDate)) {
+	if (isToday(isoDate, isoNow)) {
 		return date.from(today);
 	}
 
 	// The entry is older than one day, return the hours
-	return date.format(format === "12" ? "hh:mm A" : "HH:mm");
+	return date.format(format === HourFormat.TWELVE ? "hh:mm A" : "HH:mm");
 }
 
 function isUserInput(reco: FeedEntityComponentDto): reco is UserInputComponentConfigurationDto {

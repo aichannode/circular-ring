@@ -1,8 +1,9 @@
-import { AppStateService } from "@domain/appState/appStateService";
 import { getLogger } from "@core/logger/logger";
 import { round2Digits, toServerDate } from "@core/utils";
+import { AppStateService } from "@domain/appState/appStateService";
 import { AuthService } from "@domain/auth/authService";
-import { DateFormat, HeightUnit, HourFormat, WeightUnit } from "@domain/units";
+import { BleDeviceService } from "@domain/device/bleDeviceService";
+import { DateFormat, HeightUnit, HourFormat, NotificationsFormat, TemperatureFormat, WeightUnit } from "@domain/units";
 import {
 	AdvancedInfo,
 	ChronoType,
@@ -17,14 +18,13 @@ import {
 } from "@domain/user/advancedInfo";
 import { TutorialInfo } from "@domain/user/tutorialInfo";
 import { Sex, User } from "@domain/user/user";
-import { UserApi, UserPutDto } from "@domain/user/userApi";
-import { UserSettings } from "@domain/user/userSettings";
+import { UserApi } from "@domain/user/userApi";
 import { UserNotificationsSettings } from "@domain/user/userNotificationsSettings";
+import { UserSettings } from "@domain/user/userSettings";
 import { UserStorage } from "@domain/user/userStorage";
-import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { observable } from "micro-observables";
-import * as RNLocalize from "react-native-localize";
-import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
+import { dtoFromUserSettings } from "./business";
+import { UserPutDto } from "./type";
 
 const defaultNotificationsSettings = {
 	kira: "On",
@@ -33,20 +33,21 @@ const defaultNotificationsSettings = {
 	period: "On",
 	PMS: "On",
 	fertility: "On",
-	highHRAlert: "On",
-	lowHRAlert: "On",
-	lowSPO2Alert: "On",
+	highHRAlert: "Off",
+	lowHRAlert: "Off",
+	lowSPO2Alert: "Off",
 	highHR: 190,
 	lowHR: 50,
 	SPO2: 90,
 };
 
 const defaultSettings = {
-	dateFormat: DateFormat.DMY,
+	dateFormat: DateFormat.USCS,
 	heightFormat: HeightUnit.cm,
 	weightFormat: WeightUnit.kg,
-	hourFormat: "12" as HourFormat,
-	id: "default_settings",
+	hourFormat: HourFormat.TWELVE,
+	temperatureFormat: TemperatureFormat.CELSIUS,
+	notifications: [NotificationsFormat.BANNER],
 };
 
 export class UserService {
@@ -71,8 +72,7 @@ export class UserService {
 		private readonly userApi: UserApi,
 		private readonly userStorage: UserStorage,
 		private readonly bleDeviceService: BleDeviceService,
-		private readonly appStateService: AppStateService,
-		private readonly favoriteDeviceStorage: FavoriteDeviceStorage
+		private readonly appStateService: AppStateService
 	) {}
 
 	async init() {
@@ -90,6 +90,23 @@ export class UserService {
 			}
 			this._authenticatedUserEmail.set(authenticatedEmail);
 		}
+	}
+
+	async reset() {
+		/** Clean user observable **/
+		this._user.set(null);
+		this._userSettings.set(null);
+		this._userNotificationsSettings.set(defaultNotificationsSettings);
+		this._userAdvancedInfo.set(null);
+		this._authenticatedUserEmail.set(null);
+		this._justRegisteredUserEmail.set(null);
+
+		/** Clean user Storage **/
+		this.userStorage.removeJustRegisteredUser();
+		this.userStorage.removeUser();
+		this.userStorage.removeUserAdvancedInfo();
+		this.userStorage.removeUserNotificationsSettings();
+		this.userStorage.removeUserSettings();
 	}
 
 	/** Login & Auth management **/
@@ -130,17 +147,10 @@ export class UserService {
 	async logout() {
 		// const appDataIds = await Storage.getAllKeys();
 		// Storage.multiRemove(appDataIds);
-		this.bleDeviceService.disconnect({ dissociate: true });
-		this._user.set(null);
-		this._authenticatedUserEmail.set(null);
-		await this.userStorage.removeUser();
-		await this.userStorage.removeUserSettings();
-		await this.userStorage.removeUserAdvancedInfo();
-		await this.userStorage.removeUserNotificationsSettings();
-		this.appStateService.userRings.set([]);
-		this.bleDeviceService.favoriteDevice.set(null);
-		this.bleDeviceService.favoriteDeviceSNU.set(null);
-		await this.favoriteDeviceStorage.clear();
+		this.bleDeviceService.disconnect({ dissociate: false });
+		this.bleDeviceService.reset();
+		this.reset();
+		this.appStateService.reset();
 		await this.authService.logout();
 	}
 
@@ -179,7 +189,7 @@ export class UserService {
 
 	/** Circular user **/
 
-	private async retrieveUser() {
+	async retrieveUser() {
 		// get User
 		try {
 			const user = await this.userApi.getUser();
@@ -221,17 +231,27 @@ export class UserService {
 			return { ...notifications, ...newValue };
 		});
 		await this.userStorage.saveUserNotificationsSettings({ ...this._userNotificationsSettings.get(), ...newValue });
+		const userNotifications = this._userNotificationsSettings.get();
+		if ("lowHR" in newValue || "lowHRAlert" in newValue) {
+			console.log("userNotifications.lowHRAlert", userNotifications.lowHRAlert);
+			const activated = userNotifications.lowHRAlert === "On" ? "01" : "00";
+			const value = userNotifications.lowHR.toString(16);
+			await this.bleDeviceService.write(`ALT01${activated}${value}`);
+		} else if ("highHR" in newValue || "highHRAlert" in newValue) {
+			const activated = userNotifications.highHRAlert === "On" ? "01" : "00";
+			const value = userNotifications.highHR.toString(16);
+			await this.bleDeviceService.write(`ALT02${activated}${value}`);
+		} else if ("SPO2" in newValue || "SPO2Alert") {
+			const activated = userNotifications.lowSPO2Alert === "On" ? "01" : "00";
+			const value = userNotifications.SPO2.toString(16);
+			await this.bleDeviceService.write(`ALT00${activated}${value}`);
+		}
 	}
 
-	async updateUserSettings(dateFormat: string, heightUnit: HeightUnit, weightUnit: WeightUnit) {
-		const timezone = RNLocalize.getTimeZone();
+	async updateUserSettings(settings: Partial<UserSettings>) {
 		try {
-			const userSettings = await this.userApi.updateUserSettings({
-				dateFormat,
-				heightFormat: heightUnit.toString(),
-				weightFormat: weightUnit === WeightUnit.kg ? "kg" : "lb",
-				timezone,
-			});
+			const dtoSettings = dtoFromUserSettings({ ...defaultSettings, ...settings });
+			const userSettings = await this.userApi.updateUserSettings(dtoSettings);
 			this._userSettings.set(userSettings);
 			await this.userStorage.saveUserSettings(userSettings);
 		} catch (error) {
@@ -313,10 +333,20 @@ export class UserService {
 		stride?: number;
 		cycleLength?: number;
 	}) {
+		const defaultUserAdvancedInfo = {
+			workTime: "DAY",
+			chronoType: "MORNING",
+			physicalDisabilities: "NONE",
+			sleepDisorder: "NONE",
+			dietarySupplements: "NONE",
+			sleeperType: "LIGHT",
+			sleepingPills: "NONE",
+		};
 		const currentInfo = this._userAdvancedInfo.get();
 		if (currentInfo) {
 			try {
 				const userAdvancedInfo = await this.userApi.updateAdvancedInfo({
+					...defaultUserAdvancedInfo,
 					...currentInfo,
 					...info,
 				});

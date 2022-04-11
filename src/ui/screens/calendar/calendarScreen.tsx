@@ -1,74 +1,52 @@
-import { FetchStrategy } from "@betomorrow/micro-stores";
 import { useRepresentations } from "@core/representation";
-import { useServices } from "@core/services";
-import { useCalendar } from "@domain/calendar/hooks/useCalendar";
-import { CalendarView } from "@ui/components/calendar/calendarView";
+import { getCurrentLocalISODay, toISOMonth } from "@domain/common/business";
+import { ISODay } from "@domain/common/type";
 import { InfoListHeader } from "@ui/components/infoList";
-import { ResponsiveCenterView, Stack } from "@ui/components/layout";
+import { ResponsiveCenterView } from "@ui/components/layout";
 import { GlobalScoreCard } from "@ui/components/measure/globalScoreCard";
 import { ScrollScreen } from "@ui/components/scrollScreen";
+import { CalendarView } from "@ui/containers/calendarView";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
-import { CalendarNoteItem } from "@ui/screens/calendar/calendarNoteItem";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
-import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable } from "react-native";
 import styled from "styled-components/native";
+import { DailyNotes } from "./DailyNotes";
 
-export const CalendarScreen: React.FC = observer(() => {
-	const { calendarService } = useServices();
+export const CalendarScreen = observer(function CalendarScreen() {
 	const {
 		measure: {
 			hooks: { useDailyGlobalScore },
-			actions: { setEachDayOfMonthScore: setMonthGlobalScore },
+			actions: { setEachDayOfMonthScore },
 		},
 	} = useRepresentations();
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
 
-	const [selectedDay, setSelectedDay] = useState(dayjs().format("YYYY-MM-DD"));
-	const calendar = useCalendar(selectedDay, FetchStrategy.Never);
-
-	const firstDayOfMonth = useMemo(() => dayjs(selectedDay).startOf("month").format("YYYY-MM-DD"), [selectedDay]);
+	const [selectedLocalIsoDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
 
 	useEffect(() => {
-		setMonthGlobalScore(firstDayOfMonth);
-		calendarService.calendarStore.fetch(firstDayOfMonth);
-	}, [firstDayOfMonth]);
+		setEachDayOfMonthScore(toISOMonth(selectedLocalIsoDay));
+	}, [selectedLocalIsoDay]);
 
-	const dailyScore = useDailyGlobalScore(selectedDay);
+	const dailyScore = useDailyGlobalScore(selectedLocalIsoDay);
 
 	return (
 		<Container>
 			<CalendarWrapper>
-				<CalendarView selectedDay={selectedDay} onDaySelected={(day) => setSelectedDay(day)} />
+				<CalendarView selectedLocalIsoDay={selectedLocalIsoDay} onDaySelected={(day) => setSelectedDay(day)} />
 			</CalendarWrapper>
-			<ResponsiveCenterView>
-				<GlobalScoreCard score={dailyScore} />
-			</ResponsiveCenterView>
+			<ResponsiveCenterView>{<GlobalScoreCard score={dailyScore} />}</ResponsiveCenterView>
 			<NoteHeader>
 				<InfoListHeader>{format("calendar.notes")}</InfoListHeader>
-				<Pressable onPress={() => navigate(Routes.CalendarEditNotes, { day: selectedDay })}>
+				<Pressable onPress={() => navigate(Routes.CalendarEditNotes, { day: selectedLocalIsoDay })}>
 					<EditButtonText>{format("calendar.edit_notes")}</EditButtonText>
 				</Pressable>
 			</NoteHeader>
-			<Stack gap={1}>
-				{!calendar
-					? null
-					: calendar.notes.map((note) => {
-							return (
-								<CalendarNoteItem
-									key={`${note.id}-${note.tag.name}`}
-									note={note}
-									color={colors.primary}
-									tags={calendar.notes}
-								/>
-							);
-					  })}
-			</Stack>
+			<DailyNotes isoDay={selectedLocalIsoDay} />
 		</Container>
 	);
 });

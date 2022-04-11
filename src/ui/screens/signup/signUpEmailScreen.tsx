@@ -14,6 +14,7 @@ import { isCorrectPassword } from "@ui/utils/passwordUtils";
 import React, { useCallback, useRef, useState } from "react";
 import { TextInput } from "react-native";
 import styled from "styled-components/native";
+import { parseEmail } from "../business";
 
 export const SignUpEmailScreen = () => {
 	const logger = useLogger("SignUpEmailScreen");
@@ -79,7 +80,7 @@ export const SignUpEmailScreen = () => {
 						title={format("signup.email.title")}
 						placeholder={format("signup.email.placeholder")}
 						value={email}
-						onValueChanged={setEmail}
+						onValueChanged={(state) => setEmail(parseEmail(state))}
 						keyboardType={"email-address"}
 						autoCapitalize={"none"}
 						returnKeyType={"next"}

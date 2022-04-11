@@ -10,6 +10,8 @@ import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback, useRef, useState } from "react";
 import { Keyboard, TextInput } from "react-native";
 import styled from "styled-components/native";
+import { ErrorMessage } from "../../components/errorMessage";
+import { parseEmail } from "../business";
 
 export const LoginScreen = () => {
 	const navigation = useRoutesNavigation();
@@ -60,7 +62,7 @@ export const LoginScreen = () => {
 					title={format("login.email.title")}
 					placeholder={format("login.email.placeholder")}
 					value={email}
-					onValueChanged={setEmail}
+					onValueChanged={(state) => setEmail(parseEmail(state))}
 					keyboardType={"email-address"}
 					autoCapitalize={"none"}
 					returnKeyType={"next"}
@@ -115,13 +117,6 @@ const Logo = styled.Image`
 const Title = styled.Text`
 	${textStyles.mediumTitle};
 	margin-bottom: 30px;
-`;
-
-const ErrorMessage = styled.Text`
-	${textStyles.errorMessage};
-	margin-bottom: 20px;
-	text-align: center;
-	align-self: center;
 `;
 
 const InputField = styled(TextField)`

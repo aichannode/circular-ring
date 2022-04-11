@@ -11,9 +11,6 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		1F1A8633272070980040D432 /* bridgingFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1A8632272070980040D432 /* bridgingFile.swift */; };
-		1F98285227ABDA550078857D /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F98285127ABDA550078857D /* File.swift */; };
-		1F98285327ABDA550078857D /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F98285127ABDA550078857D /* File.swift */; };
-		1F98285427ABDA550078857D /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F98285127ABDA550078857D /* File.swift */; };
 		78081657D6AFC5EC7D489752 /* libPods-Circular-Prod.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FACE0E271419AEAFA42C86B4 /* libPods-Circular-Prod.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		9098BDE8352B332A7AD71358 /* libPods-Circular-Dev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FF9425D117CF77AF68FA5DF9 /* libPods-Circular-Dev.a */; };
@@ -39,9 +36,6 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Circular/main.m; sourceTree = "<group>"; };
 		1F1A8631272070980040D432 /* Circular-Dev-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Circular-Dev-Bridging-Header.h"; sourceTree = "<group>"; };
 		1F1A8632272070980040D432 /* bridgingFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bridgingFile.swift; sourceTree = "<group>"; };
-		1F98284F27ABDA550078857D /* Circular-Prod-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Circular-Prod-Bridging-Header.h"; sourceTree = "<group>"; };
-		1F98285027ABDA550078857D /* Circular-Demo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Circular-Demo-Bridging-Header.h"; sourceTree = "<group>"; };
-		1F98285127ABDA550078857D /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		3CD945E67EF9CEBD7ED863AD /* Pods-Circular-Prod.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Prod.debug.xcconfig"; path = "Target Support Files/Pods-Circular-Prod/Pods-Circular-Prod.debug.xcconfig"; sourceTree = "<group>"; };
 		60826B8F89604C761FA88FE7 /* Pods-Circular-Dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Dev.release.xcconfig"; path = "Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev.release.xcconfig"; sourceTree = "<group>"; };
 		6A780E797143ADD5039F8D1C /* libPods-Circular-Demo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Circular-Demo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -149,7 +143,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				1F98285127ABDA550078857D /* File.swift */,
 				1F1A8632272070980040D432 /* bridgingFile.swift */,
 				13B07FAE1A68108700A75B9A /* Circular */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -158,8 +151,6 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				672D3529AA639A21F5DFE051 /* Pods */,
 				1F1A8631272070980040D432 /* Circular-Dev-Bridging-Header.h */,
-				1F98284F27ABDA550078857D /* Circular-Prod-Bridging-Header.h */,
-				1F98285027ABDA550078857D /* Circular-Demo-Bridging-Header.h */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -555,7 +546,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
-				1F98285227ABDA550078857D /* File.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -565,7 +555,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1001E6A26DE38D1000C80A0 /* AppDelegate.m in Sources */,
-				1F98285327ABDA550078857D /* File.swift in Sources */,
 				1F1A8633272070980040D432 /* bridgingFile.swift in Sources */,
 				A1001E6B26DE38D1000C80A0 /* main.m in Sources */,
 			);
@@ -576,7 +565,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1001E7D26DE38EA000C80A0 /* AppDelegate.m in Sources */,
-				1F98285427ABDA550078857D /* File.swift in Sources */,
 				A1001E7E26DE38EA000C80A0 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

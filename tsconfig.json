@@ -22,7 +22,8 @@
 			"@domain/*": ["src/domain/*"],
 			"@ui/*": ["src/ui/*"],
 			"@utils/*": ["src/utils/*"],
-			"@adapters/*": ["src/adapters/*"]
+			"@adapters/*": ["src/adapters/*"],
+			"@stories": ["storybook"],
 		},
 		"plugins": [
 			{
@@ -49,6 +50,7 @@
 	"include": [
 		"src/**/*",
 		"storybook/**/*",
+		"__mocks__/**/*.js",
 		"global.d.ts",
 		"./*.js",
 		"scripts/**/*.js",

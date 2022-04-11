@@ -1,9 +1,8 @@
-import { runInAction } from "mobx";
-
 export type Present<P> = (proposal: P) => void;
 
-export interface IModel<P> {
+export interface Model<P> {
 	present: Present<P>;
+	readonly lastAcceptedMutations: any[];
 }
 
 //////////
@@ -15,4 +14,7 @@ export interface IModel<P> {
  * Do not use directly from the action.
  * Use the Model.present function instead.
  */
-export const mutate = runInAction;
+export function mutate<M>(this: Model<any>, mutation: M, transaction: (mutation: M) => void) {
+	transaction(mutation);
+	this.lastAcceptedMutations.push(mutation);
+}

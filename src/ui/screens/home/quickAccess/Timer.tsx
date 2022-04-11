@@ -182,6 +182,7 @@ const Tile = styled.View`
 	flex: 1;
 	height: 50px;
 	justify-content: center;
+	background-color: white;
 `;
 
 const SheetContainer = styled(ResponsiveCenterView)`

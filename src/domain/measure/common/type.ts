@@ -1,77 +1,204 @@
+import { ISODay, ISOMonth } from "@domain/common/type";
 import { Metrics, MetricType, RangeMetrics } from "../metric";
 import {
-	DailyActivitiesMetrics,
-	DailyActivitiesMetricsGoals,
+	ActivityIntensity7DAverageMetrics,
+	CaloriesBurned,
+	CardioPoints,
+	CardioPointsConstantMetrics,
+	ContributorActivityVolume,
+	ContributorAwakeDuration,
+	ContributorBodyRecovery,
+	ContributorBRScore,
+	ContributorCircadianRhythm,
+	ContributorDailyTranquility,
+	ContributorDeepSleepuration,
+	ContributorHRV,
+	ContributorRealSleepDuration,
+	ContributorREMDuration,
+	ContributorRHR,
+	ContributorSleepBalance,
+	ContributorSleepDebt,
+	ContributorSleepQuality,
+	ContributorSPO2,
+	ContributorTimeToFallAsleep,
+	ContributorVarTemperature,
+	ContributorWakeUpScore,
+	DailyActivityIntensityDuration,
 	DailyActivityIntensityMetrics,
-	DailyEnergyScoreGaugeCalibrationMetrics,
-	DailyEnergyScoreMetrics,
-	DailyEnergyScoreMetricsGaugeSize,
-	DailySleepScoreContributorsGaugeCalibrationMetrics,
-	DailySleepScoreContributorsMetrics,
-	DailySleepScoreContributorsMetricsGaugeSize,
+	DailyBRConstantMetrics,
+	DailyBRTimeSeriesMetrics,
+	DailyHRConstantMetrics,
+	DailyHRTimeSeriesMetrics,
+	DailySleepScoreMetrics,
 	DailySleepStageDuration,
+	DailySpo2ConstantMetrics,
+	DailySpo2TimeSeriesMetrics,
+	DailyWakeUpScoreMetrics,
+	Sleep7DConstantMetrics,
+	SleepAllConstantMetrics,
+	SleepMonthlyStageMetrics,
+	StepsTaken,
+	WalkingEquivalency,
 } from "../representation/lib/type";
 
 export type Mutations =
 	| {
+			type: "pullLast7DSleepMetrics";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<Sleep7DConstantMetrics>;
+			};
+	  }
+	| {
+			type: "pullMonthlySleepStageMetrics";
+			payload: {
+				localISOMonth: ISOMonth;
+				data: Metrics<SleepMonthlyStageMetrics>;
+			};
+	  }
+	| {
+			type: "pullLastAllSleepConstantMetrics";
+			payload: {
+				localISOMonth: ISOMonth;
+				data: Metrics<SleepAllConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setDailyHRMetrics";
+			payload: {
+				localISODay: ISODay;
+				range: RangeMetrics<DailyHRTimeSeriesMetrics, DailyHRConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setDailyCardioPoints";
+			payload: {
+				localISODay: ISODay;
+				cardio?: number;
+			};
+	  }
+	| {
+			type: "setLast7DCardioPoints";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<CardioPointsConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setDailySpo2Metrics";
+			payload: {
+				localISODay: ISODay;
+				range: RangeMetrics<DailySpo2TimeSeriesMetrics, DailySpo2ConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setDailyBRMetrics";
+			payload: {
+				localISODay: ISODay;
+				range: RangeMetrics<DailyBRTimeSeriesMetrics, DailyBRConstantMetrics>;
+			};
+	  }
+	| {
 			type: "setDailySleepScoreContributorsMetrics";
 			payload: {
-				isoDate: string;
+				localISODay: ISODay;
 				data: Metrics<
-					| DailySleepScoreContributorsMetrics
-					| DailySleepScoreContributorsMetricsGaugeSize
-					| DailySleepScoreContributorsGaugeCalibrationMetrics
+					| ContributorAwakeDuration
+					| ContributorRealSleepDuration
+					| ContributorDailyTranquility
+					| ContributorCircadianRhythm
+					| ContributorREMDuration
+					| ContributorDeepSleepuration
+					| ContributorTimeToFallAsleep
+					| ContributorSleepDebt
 				>;
 			};
 	  }
 	| {
 			type: "setDailyEnergyScoreContributorsMetrics";
 			payload: {
-				isoDate: string;
+				localISODay: ISODay;
 				data: Metrics<
-					DailyEnergyScoreMetrics | DailyEnergyScoreMetricsGaugeSize | DailyEnergyScoreGaugeCalibrationMetrics
+					| ContributorBodyRecovery
+					| ContributorWakeUpScore
+					| ContributorBRScore
+					| ContributorSPO2
+					| ContributorHRV
+					| ContributorRHR
+					| ContributorVarTemperature
+					| ContributorSleepQuality
+					| ContributorSleepBalance
+					| ContributorActivityVolume
 				>;
 			};
 	  }
 	| {
 			type: "setDailyActivitiesMetrics";
 			payload: {
-				isoDate: string;
-				data: Metrics<DailyActivitiesMetrics | DailyActivitiesMetricsGoals>;
+				localISODay: ISODay;
+				data: Metrics<
+					| StepsTaken
+					| WalkingEquivalency
+					| CaloriesBurned
+					| CardioPoints
+					| MetricType.UserDailyVO2Max
+					| MetricType.UserDailyAwakeHRMax
+				>;
 			};
 	  }
 	| {
-			type: "setDailyActivityIntensityMetrics";
+			type: "pullDailyActivityIntensityMetrics";
 			payload: {
-				isoDate: string;
-				range: RangeMetrics<DailyActivityIntensityMetrics, MetricType.UserDailyActivityTotal>;
+				localISODay: ISODay;
+				range: RangeMetrics<DailyActivityIntensityMetrics, DailyActivityIntensityDuration>;
+			};
+	  }
+	| {
+			type: "pullLast7DActivityIntensityMetrics";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<ActivityIntensity7DAverageMetrics>;
 			};
 	  }
 	| {
 			type: "setDailySleepMetrics";
 			payload: {
-				isoDate: string;
+				localISODay: ISODay;
 				range: RangeMetrics<MetricType.UserSleepStage, DailySleepStageDuration>;
 			};
 	  }
 	| {
 			type: "setGlobalScore";
 			payload: {
-				isoDate: string;
+				localISODay: ISODay;
 				score?: number;
 			};
 	  }
 	| {
 			type: "setDailyEnergyScore";
 			payload: {
-				isoDate: string;
+				localISODay: ISODay;
 				score?: number;
 			};
 	  }
 	| {
 			type: "setSleepScore";
 			payload: {
-				isoDate: string;
+				localISODay: ISODay;
+				data: Record<DailySleepScoreMetrics, number>;
+			};
+	  }
+	| {
+			type: "setDailyWakeUpScore";
+			payload: {
+				localISODay: ISODay;
+				data: Record<DailyWakeUpScoreMetrics, number>;
+			};
+	  }
+	| {
+			type: "setLast7DEnergyScore";
+			payload: {
+				localISODay: ISODay;
 				score?: number;
 			};
 	  };

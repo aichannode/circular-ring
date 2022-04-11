@@ -1,8 +1,8 @@
 import { MetricType } from "../../metric";
-import { SleepStage, ActivityStage } from "../../type";
+import { ActivityStage, SleepStage } from "../../type";
 
 export type StageInfos<T extends SleepStage | ActivityStage> = {
-	stage: T;
+	level: T;
 	/** Iso date */
 	start: string;
 	/** Iso date */
@@ -10,141 +10,325 @@ export type StageInfos<T extends SleepStage | ActivityStage> = {
 };
 
 /**
- * Used by the representation, atomically select needed data
+ * Metrics grouped by usage for the representation
  */
 
+// XXX: 05/04/2022 - Server does not send metrics
+export const sleep7DConstantMetrics = [
+	MetricType.User7DaysAwakeStageDuration,
+	MetricType.User7DaysPercawakeStage,
+	MetricType.User7DaysLightStageDuration,
+	MetricType.User7DaysPerclightStage,
+	MetricType.User7DaysDeepStageDuration,
+	MetricType.User7DaysPercdeepStage,
+	MetricType.User7DaysRemStageDuration,
+	MetricType.User7DaysPercremStage,
+] as const;
+export type Sleep7DConstantMetrics = typeof sleep7DConstantMetrics[number];
+
+export const sleepMonthlyStageMetrics = [
+	MetricType.UserMonthlyAwakeStageDuration,
+	MetricType.UserMonthlyLightStageDuration,
+	MetricType.UserMonthlyDeepStageDuration,
+	MetricType.UserMonthlyRemStageDuration,
+] as const;
+export type SleepMonthlyStageMetrics = typeof sleepMonthlyStageMetrics[number];
+
+export const sleepAllConstantMetrics = [
+	MetricType.UserLifetimeAwakeTimeDuration,
+	MetricType.UserLifetimeAwakeTimePercent,
+	MetricType.UserLifetimeLightStageDuration,
+	MetricType.UserLifetimeLightStagePercent,
+	MetricType.UserLifetimeDeepStageDuration,
+	MetricType.UserLifetimeDeepStagePercent,
+	MetricType.UserLifetimeREMStageDuration,
+	MetricType.UserLifetimeREMStagePercent,
+] as const;
+export type SleepAllConstantMetrics = typeof sleepAllConstantMetrics[number];
+
+export const dailyHRConstantMetrics = [
+	MetricType.UserDailyAwakeHRMax,
+	MetricType.UserDailyAwakeHRMin,
+	MetricType.UserDailyAwakeHRAverage,
+	MetricType.UserDailyAwakeHRReference,
+] as const;
+export type DailyHRConstantMetrics = typeof dailyHRConstantMetrics[number];
+
+export const dailyHRTimeSeriesMetrics = [MetricType.UserHR] as const;
+export type DailyHRTimeSeriesMetrics = typeof dailyHRTimeSeriesMetrics[number];
+
+export const dailyActivityIntensityDurationMetrics = [
+	MetricType.UserDailyHighActivityIntensityDuration,
+	MetricType.UserDailyMediumActivityIntensityDuration,
+	MetricType.UserDailyLowActivityIntensityDuration,
+] as const;
+export type DailyActivityIntensityDurationMetrics = typeof dailyActivityIntensityDurationMetrics[number];
+
+export const activityIntensity7DAverageMetrics = [
+	MetricType.User7DaysAverageHighIntensityDuration,
+	MetricType.User7DaysAverageMediumIntensityDuration,
+	MetricType.User7DaysAverageLowIntensityDuration,
+] as const;
+export type ActivityIntensity7DAverageMetrics = typeof activityIntensity7DAverageMetrics[number];
+
+/**
+ * SPO2
+ */
+export const dailySpo2TimeSeriesMetrics = [MetricType.UserDailySPO2] as const;
+export type DailySpo2TimeSeriesMetrics = typeof dailySpo2TimeSeriesMetrics[number];
+
+export const dailySpo2ConstantMetrics = [
+	MetricType.UserDailyAsleepSPO2,
+	MetricType.UserDailyAsleepSPO2Reference,
+] as const;
+export type DailySpo2ConstantMetrics = typeof dailySpo2ConstantMetrics[number];
+/**
+ * Breathing rate
+ */
+
+export const dailyBRTimeSeriesMetrics = [MetricType.UserBR] as const;
+export type DailyBRTimeSeriesMetrics = typeof dailyBRTimeSeriesMetrics[number];
+
+export const dailyBRConstantMetrics = [MetricType.UserDailyAsleepBR, MetricType.UserDailyAsleepBRReference] as const;
+export type DailyBRConstantMetrics = typeof dailyBRConstantMetrics[number];
+/**
+ * Score flasks
+ */
+export const dailySleepScoreMetrics = [
+	MetricType.UserDailySleepScore,
+	MetricType.UserDailySleepScoreGoalMin,
+	MetricType.UserDailySleepScoreGoalMax,
+] as const;
+export type DailySleepScoreMetrics = typeof dailySleepScoreMetrics[number];
+
+export const dailyWakeUpScoreMetrics = [
+	MetricType.UserDailyWakeUpScore,
+	MetricType.UserDailyWakeUpScoreGoalMin,
+	MetricType.UserDailyWakeUpScoreGoalMax,
+] as const;
+export type DailyWakeUpScoreMetrics = typeof dailyWakeUpScoreMetrics[number];
+
+/**
+ * Score contributors
+ */
+
+export const contributorBodyRecovery = [
+	MetricType.UserDailyBodyRecovery,
+	MetricType.UserDailyBodyRecoveryGoalMin,
+	MetricType.UserDailyBodyRecoveryGoalMax,
+] as const;
+export type ContributorBodyRecovery = typeof contributorBodyRecovery[number];
+
+export const contributorWakeUpScore = [
+	MetricType.UserDailyWakeUpScore,
+	MetricType.UserDailyWakeUpScoreGoalMin,
+	MetricType.UserDailyWakeUpScoreGoalMax,
+] as const;
+export type ContributorWakeUpScore = typeof contributorWakeUpScore[number];
+
+export const contributorBRScore = [
+	MetricType.UserDailyAsleepBR,
+	MetricType.UserDailyScoreBR,
+	MetricType.UserDailyScoreBRGoalMin,
+	MetricType.UserDailyScoreBRGoalMax,
+] as const;
+export type ContributorBRScore = typeof contributorBRScore[number];
+
+export const contributorSPO2 = [
+	MetricType.UserDailyAsleepSPO2,
+	MetricType.UserDailyScoreSPO2,
+	MetricType.UserDailyScoreSPO2GoalMin,
+	MetricType.UserDailyScoreSPO2GoalMax,
+] as const;
+export type ContributorSPO2 = typeof contributorSPO2[number];
+
+export const contributorHRV = [
+	MetricType.UserDailyAsleepHRV,
+	MetricType.UserDailyScoreHRV,
+	MetricType.UserDailyScoreHRVGoalMin,
+	MetricType.UserDailyScoreHRVGoalMax,
+] as const;
+export type ContributorHRV = typeof contributorHRV[number];
+
+export const contributorRHR = [
+	MetricType.UserDailyRHR,
+	MetricType.UserDailyScoreRHR,
+	MetricType.UserDailyScoreRHRGoalMin,
+	MetricType.UserDailyScoreRHRGoalMax,
+] as const;
+export type ContributorRHR = typeof contributorRHR[number];
+
+export const contributorVarTemperature = [
+	MetricType.UserDailySleepVarTemperature,
+	MetricType.UserDailySleepScoreVarTemperature,
+	MetricType.UserDailySleepScoreVarTemperatureGoalMin,
+	MetricType.UserDailySleepScoreVarTemperatureGoalMax,
+] as const;
+export type ContributorVarTemperature = typeof contributorVarTemperature[number];
+
+export const contributorSleepQuality = [
+	MetricType.User2DaysSleepScore,
+	MetricType.UserDailySleepScore,
+	MetricType.UserDailySleepScoreGoalMin,
+	MetricType.UserDailySleepScoreGoalMax,
+] as const;
+export type ContributorSleepQuality = typeof contributorSleepQuality[number];
+
+export const contributorSleepBalance = [
+	MetricType.UserDailySleepBalance,
+	MetricType.UserDailySleepBalanceGoalMin,
+	MetricType.UserDailySleepBalanceGoalMax,
+] as const;
+export type ContributorSleepBalance = typeof contributorSleepBalance[number];
+
+export const contributorActivityVolume = [
+	MetricType.UserDailyActivityVolume,
+	MetricType.UserDailyActivityVolumeGoalMin,
+	MetricType.UserDailyActivityVolumeGoalMax,
+] as const;
+export type ContributorActivityVolume = typeof contributorActivityVolume[number];
+
+export const contributorAwakeDuration = [
+	MetricType.UserDailyAwakeStageDuration,
+	MetricType.UserDailyPercAwakeStage,
+] as const;
+export type ContributorAwakeDuration = typeof contributorAwakeDuration[number];
+
+export const contributorRealSleepDuration = [
+	MetricType.UserDailyRealSleepDuration,
+	MetricType.UserDailyPercRealSleep,
+] as const;
+export type ContributorRealSleepDuration = typeof contributorRealSleepDuration[number];
+
+export const contributorDailyTranquility = [
+	MetricType.UserDailyTranquility,
+	MetricType.UserDailyTranquilityGoalMin,
+	MetricType.UserDailyTranquilityGoalMax,
+] as const;
+export type ContributorDailyTranquility = typeof contributorDailyTranquility[number];
+
+export const contributorCircadianRhythm = [
+	MetricType.UserDailyCircadianRhythm,
+	MetricType.UserDailyCircadianRhythmGoalMin,
+	MetricType.UserDailyCircadianRhythmGoalMax,
+] as const;
+export type ContributorCircadianRhythm = typeof contributorCircadianRhythm[number];
+
+export const contributorREMDuration = [
+	MetricType.UserDailyPercREMStage,
+	MetricType.UserDailyPercREMStageScore,
+	MetricType.UserDailyPercREMStageScoreGoalMin,
+	MetricType.UserDailyPercREMStageScoreGoalMax,
+] as const;
+export type ContributorREMDuration = typeof contributorREMDuration[number];
+
+export const contributorDeepSleepuration = [
+	MetricType.UserDailyPercDeepStage,
+	MetricType.UserDailyPercDeepStageScore,
+	MetricType.UserDailyPercDeepStageScoreGoalMin,
+	MetricType.UserDailyPercDeepStageScoreGoalMax,
+] as const;
+export type ContributorDeepSleepuration = typeof contributorDeepSleepuration[number];
+
+export const contributorTimeToFallAsleep = [
+	MetricType.UserDailyCoreTimeToFallAsleep,
+	MetricType.UserDailyCorePercTimeToFallAsleep,
+	MetricType.UserDailyCorePercTimeToFallAsleepGoalMin,
+	MetricType.UserDailyCorePercTimeToFallAsleepGoalMax,
+] as const;
+export type ContributorTimeToFallAsleep = typeof contributorTimeToFallAsleep[number];
+
+export const contributorSleepDebt = [
+	MetricType.UserDailySleepDebt,
+	MetricType.UserDailyPercSleepDebt,
+	MetricType.UserDailyPercSleepDebtGoalMin,
+	MetricType.UserDailyPercSleepDebtGoalMax,
+] as const;
+export type ContributorSleepDebt = typeof contributorSleepDebt[number];
+
+/**
+ * Activity intensity
+ */
 export const dailyActivityIntensityMetrics = [
 	MetricType.UserDataActivityIntensity,
 	MetricType.UserDailySportBegin,
 	MetricType.UserDailySportEnd,
-	MetricType.UserDailyActivityTotal,
 ] as const;
 export type DailyActivityIntensityMetrics = typeof dailyActivityIntensityMetrics[number];
 
-export const dailyActivitiesMetrics = [
-	MetricType.UserDailySteps,
-	MetricType.UserDailyWalkingEquivalency,
-	MetricType.UserDailyCaloriesBurned,
-	MetricType.UserDailyCardioPoints,
-	MetricType.UserDailyVO2Max,
-	MetricType.UserDailyHRMax,
+export const dailyActivityIntensityDuration = [
+	MetricType.UserDailyActiveMinute,
+	MetricType.UserDailyHighActivityIntensityDuration,
+	MetricType.UserDailyMediumActivityIntensityDuration,
+	MetricType.UserDailyLowActivityIntensityDuration,
 ] as const;
-export type DailyActivitiesMetrics = typeof dailyActivitiesMetrics[number];
+export type DailyActivityIntensityDuration = typeof dailyActivityIntensityDuration[number];
 
-export const dailyActivitiesMetricsGoals = [
+/**
+ * Activities metrics
+ */
+export const stepsTaken = [
+	MetricType.UserDailySteps,
 	MetricType.UserDailyStepsGoalMin,
 	MetricType.UserDailyStepsGoalMax,
+] as const;
+export type StepsTaken = typeof stepsTaken[number];
+
+export const walkingEquivalency = [
+	MetricType.UserDailyWalkingEquivalency,
 	MetricType.UserDailyWalkingEquivalencyGoalMin,
 	MetricType.UserDailyWalkingEquivalencyGoalMax,
-	MetricType.UserDailyCaloriesBurnedGoalMin,
-	MetricType.UserDailyCaloriesBurnedGoalMax,
+] as const;
+export type WalkingEquivalency = typeof walkingEquivalency[number];
+
+export const caloriesBurned = [MetricType.UserDailyCaloriesBurned, MetricType.UserDailyCaloriesBurnedGoal] as const;
+export type CaloriesBurned = typeof caloriesBurned[number];
+
+export const cardioPoints = [
+	MetricType.UserDailyCardioPoints,
 	MetricType.UserDailyCardioPointsGoalMin,
 	MetricType.UserDailyCardioPointsGoalMax,
 ] as const;
-export type DailyActivitiesMetricsGoals = typeof dailyActivitiesMetricsGoals[number];
+export type CardioPoints = typeof cardioPoints[number];
 
-export const weeklyActivityGoals = [
-	MetricType.UserWeeklyCardioPointsGoalMax,
-	MetricType.UserWeeklyCardioPointsGoalMin,
-] as const;
-export type WeeklyActivityGoals = typeof weeklyActivityGoals[number];
+export const activityMetrics = [
+	...stepsTaken,
+	...walkingEquivalency,
+	...caloriesBurned,
+	...cardioPoints,
+	MetricType.UserDailyVO2Max,
+	MetricType.UserDailyAwakeHRMax,
+];
+export type AcitivityMetrics = typeof activityMetrics[number];
+export const dailyCardioPointsTimeSeriesMetrics = [MetricType.UserDailyCardioPoints] as const;
+export type DailyCardioPointsTimeSeriesMetrics = typeof dailyCardioPointsTimeSeriesMetrics[number];
 
-export const dailyEnergyScoreMetrics = [
-	MetricType.UserDailyScoreRecovery,
-	MetricType.UserDailyWakeUpScore,
-	MetricType.UserDailySleepBR,
-	MetricType.UserDailySleepHRV,
-	MetricType.UserDailyRHR,
-	MetricType.UserDailySleepVarTemperature,
-	MetricType.UserDailySleepScore,
-	MetricType.UserDailyScoreSleepBalance,
-	MetricType.UserDailyScoreActivityVolume,
-] as const;
-export type DailyEnergyScoreMetrics = typeof dailyEnergyScoreMetrics[number];
+export const dailyCardioPoints = [MetricType.UserDailyCardioPoints] as const;
+export type DailyCardioPoints = typeof dailyCardioPoints[number];
 
-export const dailyEnergyScoreMetricsGaugeSize = [
-	MetricType.UserDailyScoreBr,
-	MetricType.UserDailyScoreHRV,
-	MetricType.UserDailyScoreRHR,
-	MetricType.UserDailyScoreVarTemperature,
-] as const;
-export type DailyEnergyScoreMetricsGaugeSize = typeof dailyEnergyScoreMetricsGaugeSize[number];
-
-export const dailyEnergyScoreGaugeCalibrationMetrics = [
-	MetricType.UserDailyScoreRecoveryGoalMin,
-	MetricType.UserDailyScoreRecoveryGoalMax,
-	MetricType.UserDailyWakeUpScoreGoalMax,
-	MetricType.UserDailyWakeUpScoreGoalMin,
-	MetricType.UserDailyScoreBRGoalMax,
-	MetricType.UserDailyScoreBRGoalMin,
-	MetricType.UserDailyScoreHRVGoalMin,
-	MetricType.UserDailyScoreHRVGoalMax,
-	MetricType.UserDailyScoreRHRGoalMin,
-	MetricType.UserDailyScoreRHRGoalMax,
-	MetricType.UserDailyScoreVarTemperatureGoalMin,
-	MetricType.UserDailyScoreVarTemperatureGoalMax,
-	MetricType.UserDailySleepScoreGoalMin,
-	MetricType.UserDailySleepScoreGoalMax,
-	MetricType.UserDailyScoreSleepBalanceGoalMin,
-	MetricType.UserDailyScoreSleepBalanceGoalMax,
-	MetricType.UserDailyScoreActivityVolumeGoalMin,
-	MetricType.UserDailyScoreActivityVolumeGoalMax,
-] as const;
-export type DailyEnergyScoreGaugeCalibrationMetrics = typeof dailyEnergyScoreGaugeCalibrationMetrics[number];
-
+export const cardioPointsConstantMetrics = [
+	MetricType.UserCardioPointAverage,
+	MetricType.UserCardioPointBaseline,
+	MetricType.UserCardioPointTotal,
+];
+export type CardioPointsConstantMetrics = typeof cardioPointsConstantMetrics[number];
 /**
- * Those metrics are used for display the value of the gauge.
+ * Those metrics are used for the stages circle and hypnogram.
+ * They represents the different sleep stages (core sleep and naps)
+ * along a time slice.
  */
-export const dailySleepScoreContributorsMetrics = [
-	MetricType.UserDailyAwakeStageDuration,
-	MetricType.UserDailyRealSleepDuration,
-	MetricType.UserDailyTranquility,
-	MetricType.UserDailyCircadianRhythm,
-	MetricType.UserDailyPercREMStage,
-	MetricType.UserDailyPercDeepStage,
-	MetricType.UserDailyTimeToFallAsleep,
-	MetricType.UserDailySleepDebt,
-] as const;
-export type DailySleepScoreContributorsMetrics = typeof dailySleepScoreContributorsMetrics[number];
-
-export const dailySleepScoreContributorsMetricsGaugeSize = [
-	MetricType.UserDailyPercAwakeStage,
-	MetricType.UserDailyPercRealSleep,
-	MetricType.UserDailyCorrectedPercREMStage,
-	MetricType.UserDailyCorrectedPercDeepStage,
-	MetricType.UserDailyPercTimeToFallAsleep,
-	MetricType.UserDailyPercSleepDebt,
-] as const;
-export type DailySleepScoreContributorsMetricsGaugeSize = typeof dailySleepScoreContributorsMetricsGaugeSize[number];
+export const sleepStagesMetrics = [MetricType.UserSleepStage, MetricType.UserNapSleepBegin, MetricType.UserNapSleepEnd];
+export type SleepStagesMetrics = typeof sleepStagesMetrics[number];
 
 /**
- * Those metrics are used for the gauge calibration.
- */
-export const dailySleepScoreContributorsGaugeCalibrationMetrics = [
-	MetricType.UserDailyPercRealSleepDurationGoalMin,
-	MetricType.UserDailyPercRealSleepDurationGoalMax,
-	MetricType.UserDailyTranquilityGoalMin,
-	MetricType.UserDailyTranquilityGoalMax,
-	MetricType.UserDailyCircadianRhythmGoalMin,
-	MetricType.UserDailyCircadianRhythmGoalMax,
-	MetricType.UserDailyPercREMStageScoreGoalMin,
-	MetricType.UserDailyPercREMStageScoreGoalMax,
-	MetricType.UserDailyPercDeepStageScoreGoalMin,
-	MetricType.UserDailyPercDeepStageScoreGoalMax,
-	MetricType.UserDailyPercTimeToFallAsleepGoalMin,
-	MetricType.UserDailyPercTimeToFallAsleepGoalMax,
-	MetricType.UserDailySleepDebtGoalMin,
-	MetricType.UserDailySleepDebtGoalMax,
-] as const;
-export type DailySleepScoreContributorsGaugeCalibrationMetrics =
-	typeof dailySleepScoreContributorsGaugeCalibrationMetrics[number];
-
-/**
- * Those metrics are used for the stages circle and hypnogram
+ * This is a set of metrics used accross multiple components.
+ * They are computed metrics. That means that there value is
+ * the last known value for a time slice.
  */
 export const dailySleepStageDuration = [
 	MetricType.UserCoreSleepBegin,
 	MetricType.UserCoreSleepEnd,
+	MetricType.UserDailyCoreTimeToFallAsleep,
 	MetricType.UserDailyTotalSleepDuration,
 	MetricType.UserDailyRealSleepDuration,
 	MetricType.UserDailyAwakeStageDuration,
@@ -158,3 +342,43 @@ export const dailySleepStageDuration = [
 	MetricType.UserDailyPercDeepStage,
 ] as const;
 export type DailySleepStageDuration = typeof dailySleepStageDuration[number];
+
+/**
+ * List of score contributors and activities
+ */
+
+export const activityScoreContributors = [
+	MetricType.UserDailyBodyRecovery,
+	MetricType.UserDailyWakeUpScore,
+	MetricType.UserDailyScoreBR,
+	MetricType.UserDailyScoreSPO2,
+	MetricType.UserDailyScoreHRV,
+	MetricType.UserDailyScoreRHR,
+	MetricType.UserDailySleepScoreVarTemperature,
+	MetricType.UserDailySleepScore,
+	MetricType.UserDailySleepBalance,
+	MetricType.UserDailyActivityVolume,
+] as const;
+export type ActivityScoreContributors = typeof activityScoreContributors[number];
+
+export const activities = [
+	MetricType.UserDailySteps,
+	MetricType.UserDailyWalkingEquivalency,
+	MetricType.UserDailyCaloriesBurned,
+	MetricType.UserDailyCardioPoints,
+	MetricType.UserDailyVO2Max,
+	MetricType.UserDailyAwakeHRMax,
+] as const;
+export type Activities = typeof activities[number];
+
+export const sleepScoreContributors = [
+	MetricType.UserDailyAwakeStageDuration,
+	MetricType.UserDailyRealSleepDuration,
+	MetricType.UserDailyTranquility,
+	MetricType.UserDailyCircadianRhythm,
+	MetricType.UserDailyPercREMStageScore,
+	MetricType.UserDailyPercDeepStage,
+	MetricType.UserDailyCoreTimeToFallAsleep,
+	MetricType.UserDailySleepDebt,
+] as const;
+export type SleepScoreContributors = typeof sleepScoreContributors[number];

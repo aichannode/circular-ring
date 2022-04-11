@@ -1,68 +1,5 @@
+import { CircleEntity } from "@domain/circles/type";
 import { WordingKey } from "src/wordings";
-import { MetricColor } from "./type";
-
-export function getMetricColor({
-	value: _value,
-	thresholdLow,
-	thresholdHigh,
-}: {
-	value: number;
-	thresholdLow: number;
-	thresholdHigh: number;
-}): MetricColor {
-	const value = Math.abs(_value);
-	if (value >= thresholdHigh) {
-		return MetricColor.GREEN;
-	}
-	if (value >= thresholdLow && value < thresholdHigh) {
-		return MetricColor.ORANGE;
-	} else return MetricColor.RED;
-}
-
-export const getGaugeColor =
-	(getGaugeFilling?: boolean) =>
-	({
-		value: _value,
-		thresholdLow,
-		thresholdHigh,
-		gaugeFilling,
-	}: {
-		value: number;
-		thresholdLow: number;
-		thresholdHigh: number;
-		gaugeFilling: number;
-	}): MetricColor => {
-		const value = Math.abs(getGaugeFilling ? gaugeFilling : _value);
-		if (value >= thresholdHigh) {
-			return MetricColor.GREEN;
-		}
-		if (value >= thresholdLow && value < thresholdHigh) {
-			return MetricColor.ORANGE;
-		} else return MetricColor.RED;
-	};
-
-export const getInvertedGaugeColor =
-	(getGaugeFilling?: boolean) =>
-	({
-		value: _value,
-		thresholdLow,
-		thresholdHigh,
-		gaugeFilling,
-	}: {
-		value: number;
-		thresholdLow: number;
-		thresholdHigh: number;
-		gaugeFilling: number;
-	}): MetricColor => {
-		const value = Math.abs(getGaugeFilling ? gaugeFilling : _value);
-		if (value <= thresholdHigh) {
-			return MetricColor.GREEN;
-		}
-		if (value <= thresholdLow && value > thresholdHigh) {
-			return MetricColor.ORANGE;
-		}
-		return MetricColor.RED;
-	};
 
 export const getScoreQualityLabel =
 	(format: (v: WordingKey) => string) =>
@@ -74,7 +11,7 @@ export const getScoreQualityLabel =
 		value: number;
 		thresholdLow: number;
 		thresholdHigh: number;
-		gaugeFilling: number;
+		percent: number;
 	}): string => {
 		if (value >= thresholdHigh) {
 			return format("score.quality.optimal");
@@ -84,3 +21,18 @@ export const getScoreQualityLabel =
 		}
 		return format("score.quality.poor");
 	};
+
+export const parseEmail = (email: string) => {
+	return email.trim();
+};
+
+export const mergeDefaultAndUserCirle = (userCircles: CircleEntity[], defaultCircles: CircleEntity[]) => {
+	const mergedCircle = [];
+	for (const circle of defaultCircles) {
+		const c = userCircles.find((c) => c.id === circle.id);
+		if (c) mergedCircle.push(c);
+		else mergedCircle.push({ ...circle, enabled: false });
+	}
+	console.log("mergedCircle", mergedCircle);
+	return mergedCircle;
+};

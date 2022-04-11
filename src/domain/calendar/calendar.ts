@@ -1,3 +1,4 @@
+import { ISODay } from "@domain/common/type";
 import { WordingKey } from "src/wordings";
 
 export type CalendarTag = Readonly<{
@@ -21,7 +22,7 @@ export interface CalendarNote {
 }
 
 export interface Calendar {
-	day: string; // ymd
+	day: ISODay;
 	streak: boolean;
 	notes: CalendarNote[];
 }

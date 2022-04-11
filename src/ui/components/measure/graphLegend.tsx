@@ -1,3 +1,4 @@
+import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import { View } from "react-native";
@@ -8,19 +9,20 @@ type Props = {
 	rows: Array<{
 		label: string;
 		element: { key: string; node: React.ReactNode };
-		value: string;
+		value?: string;
 	}>;
+	hasNotEnoughData?: boolean;
 };
 
 function toColumns(rows: Props["rows"]): {
 	labels: string[];
 	elements: Array<{ key: string; node: React.ReactNode }>;
-	values: string[];
+	values: Array<string | undefined>;
 } {
 	const data: {
 		labels: string[];
 		elements: Array<{ key: string; node: React.ReactNode }>;
-		values: string[];
+		values: Array<string | undefined>;
 	} = {
 		labels: [],
 		elements: [],
@@ -34,8 +36,9 @@ function toColumns(rows: Props["rows"]): {
 	return data;
 }
 
-export function GraphLegend({ rows }: Props) {
+export function GraphLegend({ rows, hasNotEnoughData }: Props) {
 	const data = toColumns(rows);
+	const { format } = useI18n();
 	return (
 		<View style={{ flexDirection: "row" }}>
 			<Column>
@@ -58,8 +61,14 @@ export function GraphLegend({ rows }: Props) {
 			</Column>
 			<Column style={{ flex: 1 }}>
 				{data.values.map((value, index) => (
-					<Cell key={value} style={{ paddingRight: 30, justifyContent: "center" }} isEven={index % 2 === 0}>
-						<MetaDataText style={{ textAlign: "right" }}>{value}</MetaDataText>
+					<Cell
+						key={!value || hasNotEnoughData ? `no-data-${index}` : `${value}-${index}`}
+						style={{ paddingRight: 30, justifyContent: "center" }}
+						isEven={index % 2 === 0}
+					>
+						<MetaDataText style={{ textAlign: "right" }}>
+							{!value || hasNotEnoughData ? format("global.no_data") : value}
+						</MetaDataText>
 					</Cell>
 				))}
 			</Column>

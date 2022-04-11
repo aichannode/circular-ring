@@ -24,7 +24,13 @@ import StorybookUIRoot from "../storybook";
 import { translations } from "./wordings";
 
 // Setup Mobx for RN
-configure({ useProxies: "never" });
+configure({
+	enforceActions: "always",
+	computedRequiresReaction: true,
+	reactionRequiresObservable: true,
+	observableRequiresReaction: true,
+	useProxies: "never",
+});
 
 LogBox.ignoreAllLogs(true);
 LogBox.ignoreLogs(["EventEmitter.removeListener"]);
@@ -80,7 +86,17 @@ export const App = () => {
 	}, []);
 
 	if (isStoryBookDisplayed) {
-		return <StorybookUIRoot />;
+		return (
+			<IntlProvider
+				locale={locale}
+				messages={translations[locale]}
+				onError={(err) => {
+					logger.error(err);
+				}}
+			>
+				<StorybookUIRoot />
+			</IntlProvider>
+		);
 	} else {
 		return initialized ? (
 			<IntlProvider

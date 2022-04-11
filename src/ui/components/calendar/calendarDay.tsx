@@ -1,41 +1,37 @@
-import { FetchStrategy } from "@betomorrow/micro-stores";
-import { useCalendar } from "@domain/calendar/hooks/useCalendar";
+import { useRepresentations } from "@core/representation";
+import { getCurrentLocalISODay, getLocalISODayFromLocalDate } from "@domain/common/business";
 import { Row } from "@ui/components/layout";
 import { colors } from "@ui/styles/colors";
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { Image } from "react-native";
-// import { DayComponentProps } from "react-native-calendars";
+import { DateData } from "react-native-calendars";
+import { DayProps } from "react-native-calendars/src/calendar/day";
 import styled from "styled-components/native";
 
-type CustomDate = {
-	dateString: string;
-	day: number;
-	month: number;
-	year: number;
-	timestamp: number;
+type Props = DayProps & {
+	date?: DateData;
 };
 
-type Props = {
-	date: CustomDate;
-	marking?: { selected?: boolean };
-	onPress: (date: CustomDate) => void;
-	onLongPress: (date: CustomDate) => void;
-	state: "today" | "disabled" | "selected";
-	theme: any; // TO REFACTOR
-};
-
-export const CalendarDay: React.FC<Props> = React.memo(function CalendarDay({ date, marking, onPress, state }: Props) {
+export const CalendarDay = observer(function CalendarDay({ date, marking, onPress, state }: Props) {
 	const fixedMarking = marking;
-	const dayCalendar = useCalendar(date.dateString, FetchStrategy.Never);
+	const {
+		calendar: {
+			hooks: { useCalendar },
+		},
+	} = useRepresentations();
+	const dayCalendar = useCalendar(
+		date?.dateString ? getLocalISODayFromLocalDate(date.dateString) : getCurrentLocalISODay()
+	);
 
 	return (
-		<Container onPress={() => onPress(date)}>
+		<Container onPress={() => onPress?.(date)}>
 			<StarContainer>
 				{dayCalendar && dayCalendar.streak && <Image source={require("@assets/images/goldStar.png")} />}
 			</StarContainer>
 			<DayInfo selected={fixedMarking?.selected}>
 				<DayText today={state === "today"} disabled={state === "disabled"}>
-					{date.day}
+					{date?.day}
 				</DayText>
 				<TagsContainer>
 					<Row gap={2}>{dayCalendar && dayCalendar.notes.length > 0 ? <NoteDot /> : null}</Row>

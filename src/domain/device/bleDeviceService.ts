@@ -1,26 +1,26 @@
-import { NamedUserRing } from "@domain/ring/ring";
 import { getLogger } from "@core/logger/logger";
 import { base64decode, base64encode, delay, observableToPromise, timedPromise } from "@core/utils";
+import { AppStateService } from "@domain/appState/appStateService";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
 import { Channel } from "@domain/device/channels";
 import { FakeDeviceService } from "@domain/fake/fakeDeviceService";
+import { NamedUserRing } from "@domain/ring/ring";
+import { RingApi } from "@domain/ring/ringApi";
 import { deserializeBattery, RingBattery } from "@domain/ring/ringBattery";
 import { deserializeLiveData, RingLiveData } from "@domain/ring/ringLiveData";
+import { getUTCTimestamp } from "@utils/date";
 import { observable, Observable } from "micro-observables";
 import { Signal } from "micro-signals";
 import { Platform } from "react-native";
+import BleManager from "react-native-ble-manager";
 import { BleError, Device, ScanMode, State, Subscription } from "react-native-ble-plx";
-import { getUTCTimestamp } from "@utils/date";
-import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
-import { RingApi } from "@domain/ring/ringApi";
-import { LocationEnabler } from "./locationEnabler";
-import { NamedDevice } from "./namedDevice";
-import { NordicDFU } from "react-native-nordic-dfu";
 import RNFetchBlob from "react-native-blob-util";
 import RNFS from "react-native-fs";
-import BleManager from "react-native-ble-manager";
+import { NordicDFU } from "react-native-nordic-dfu";
+import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
+import { LocationEnabler } from "./locationEnabler";
+import { NamedDevice } from "./namedDevice";
 import { UserDevice } from "./userDevice";
-import { AppStateService } from "@domain/appState/appStateService";
 
 const FB = RNFetchBlob.config({
 	fileCache: true,
@@ -210,6 +210,13 @@ export class BleDeviceService {
 			this.autoConnectFavoriteDevice();
 		}
 	}
+
+	async reset() {
+		this._favoriteDevice.set(null);
+		this._favoriteDeviceSNU.set(null);
+		this.favoriteDeviceStorage.clear();
+	}
+
 	async setFavoriteDeviceName(name: string) {
 		await this.favoriteDeviceStorage.save({ name });
 		this._favoriteDevice.set({ name });

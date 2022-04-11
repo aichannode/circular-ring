@@ -25,16 +25,19 @@ export class CirclesService {
 
 	async toggleCircle(id: number) {
 		const circleToToggle = this.appStateService.userCircles.get().find((circle) => circle.id === id);
+		const defaultCircles = this.appStateService.defaultCircles.get().find((circle) => circle.id === id);
 		try {
-			if (circleToToggle && !circleToToggle.enabled) {
+			if (!circleToToggle) {
 				await this.circlesApi.addUserCircle(id);
+				if (defaultCircles)
+					this.appStateService.userCircles.update((circles) =>
+						[...circles, defaultCircles].sort((a, b) => a.order - b.order)
+					);
 			}
-			if (circleToToggle && circleToToggle.enabled) {
+			if (circleToToggle) {
 				await this.circlesApi.removeUserCircle(id);
+				this.appStateService.userCircles.update((circles) => circles.filter((circle) => circle.id !== id));
 			}
-			this.appStateService.userCircles.update((circles) =>
-				circles.map((circle) => (circle.id === id ? { ...circle, enabled: !circle.enabled } : circle))
-			);
 		} catch (err) {}
 	}
 

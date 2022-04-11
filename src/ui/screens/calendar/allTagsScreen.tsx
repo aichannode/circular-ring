@@ -1,32 +1,55 @@
-import { useTagCategories, useTags } from "@domain/calendar/hooks/useTags";
+import { useRepresentations } from "@core/representation";
+import { CalendarTag } from "@domain/calendar/calendar";
+import { CUSTOM_TAG_CATEGORY_ID } from "@domain/calendar/common/type";
 import { InfoListHeader } from "@ui/components/infoList";
-import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
-import { TagSelectionView } from "@ui/screens/calendar/tagSelectionView";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useLayoutEffect, useState } from "react";
+import { action, IObservableArray } from "mobx";
+import { observer, useLocalObservable } from "mobx-react-lite";
+import React, { useLayoutEffect, useMemo, useState } from "react";
 import { Image, Pressable, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import styled from "styled-components/native";
+import CustomNote from "./customNotes";
+import { TagSelectionView } from "./tagSelectionView";
 
-export const AllTagsScreen: React.FC = () => {
+export const AllTagsScreen = observer(function AllTagsScreen() {
 	const route = useAppRoute<Routes.AllTags>();
 	const originalSelectedTags = route.params.selectedTags;
-
+	const {
+		calendar: {
+			actions: { fetchAllTags },
+			hooks: { useTagCategories, useTags },
+		},
+	} = useRepresentations();
 	const allTags = useTags();
 	const allCategories = useTagCategories();
+
+	useMemo(() => {
+		fetchAllTags({ useForceRefresh: true });
+	}, []);
 
 	const navigation = useRoutesNavigation();
 	const navigate = navigation.navigate;
 	const { format } = useI18n();
 
-	const [selectedTags, setSelectedTags] = useState(originalSelectedTags);
+	const selectedTags = useLocalObservable(() => originalSelectedTags) as IObservableArray<CalendarTag>;
 	const [search, setSearch] = useState("");
 
-	const searchedTags = [...allTags.values()]
-		.flat()
-		.filter((tag) => tag.name.toLowerCase().includes(search.toLowerCase()));
+	const updateSelectedTags = action(function setSelectedTags(tag: CalendarTag) {
+		const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
+		if (isAlreadySelected) {
+			selectedTags.replace(selectedTags.filter((t) => t.id !== tag.id));
+		} else {
+			selectedTags.push(tag);
+		}
+	});
+
+	const filteredTags = Array.from(allTags.values()).flatMap((tags) =>
+		tags.filter((tag) => tag.name.toLowerCase().includes(search.toLowerCase()))
+	);
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
@@ -43,7 +66,7 @@ export const AllTagsScreen: React.FC = () => {
 	}, [selectedTags, originalSelectedTags]);
 
 	return (
-		<ScrollScreen>
+		<ScrollView>
 			<View style={{ backgroundColor: colors.lightgray }}>
 				<SearchWrapper>
 					<ImageCenter source={require("@assets/images/search.png")} />
@@ -65,47 +88,38 @@ export const AllTagsScreen: React.FC = () => {
 			{search ? (
 				<View style={{ paddingVertical: 30, paddingHorizontal: 20 }}>
 					<TagSelectionView
-						tags={searchedTags}
+						tags={filteredTags}
 						highlightedTagIds={selectedTags.map(({ id }) => id)}
-						onClickTag={(tag) => {
-							const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
-							if (isAlreadySelected) {
-								setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
-							} else {
-								setSelectedTags([...selectedTags, tag]);
-							}
-						}}
+						onClickTag={updateSelectedTags}
 					/>
 				</View>
 			) : (
-				<View>
+				<View style={{ flex: 1 }}>
+					<CustomNote
+						customNote={allTags.get(CUSTOM_TAG_CATEGORY_ID) ?? []}
+						selectedTags={selectedTags}
+						setSelectedTags={action((tags) => tags.forEach(updateSelectedTags))}
+					></CustomNote>
 					{allCategories.map(({ id: categoryId, label: categoryLabel }) => {
 						const categoryTags = allTags.get(categoryId) ?? [];
 						return categoryTags.length === 0 ? null : (
-							<React.Fragment key={categoryId}>
+							<View key={categoryId} style={{ flex: 1 }}>
 								<InfoListHeader>{format(categoryLabel)}</InfoListHeader>
 								<TagListContainer>
 									<TagSelectionView
 										tags={categoryTags}
 										highlightedTagIds={selectedTags.map(({ id }) => id)}
-										onClickTag={(tag) => {
-											const isAlreadySelected = selectedTags.map((t) => t.id).indexOf(tag.id) >= 0;
-											if (isAlreadySelected) {
-												setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
-											} else {
-												setSelectedTags([...selectedTags, tag]);
-											}
-										}}
+										onClickTag={updateSelectedTags}
 									/>
 								</TagListContainer>
-							</React.Fragment>
+							</View>
 						);
 					})}
 				</View>
 			)}
-		</ScrollScreen>
+		</ScrollView>
 	);
-};
+});
 
 const ImageCenter = styled(Image)`
 	align-self: center;

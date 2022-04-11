@@ -1,14 +1,17 @@
 import { ApiService } from "@core/api/apiService";
+import { AppStateService } from "@domain/appState/appStateService";
+import { AppStateStorage } from "@domain/appState/appStateStorage";
 import { CognitoAuthService } from "@domain/auth/cognito-auth/cognitoAuthService";
+import { TokenPayload } from "@domain/auth/type";
 import { BluetoothService } from "@domain/bluetooth/bluetoothService";
-import { CalendarApi } from "@domain/calendar/calendarApi";
-import { CalendarService } from "@domain/calendar/calendarService";
 import { CalibrationApi } from "@domain/calibration/calibrationApi";
 import { CalibrationService } from "@domain/calibration/calibrationService";
-import { CirclesService } from "@domain/circles/circlesService";
 import { CircleAlarmService } from "@domain/circleAlarm/circleAlarmService";
+import { CirclesApi } from "@domain/circles/circlesApi";
+import { CirclesService } from "@domain/circles/circlesService";
 import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { FavoriteDeviceStorage } from "@domain/device/favoriteDeviceStorage";
+import { UserDevicesStorage } from "@domain/device/userDevicesStorage";
 import { DevFakeDeviceService, EmptyFakeDeviceService } from "@domain/fake/fakeDeviceService";
 import { FeedApi } from "@domain/feed/feedApi";
 import { FeedService } from "@domain/feed/feedService";
@@ -18,17 +21,12 @@ import { UserPreferencesStorage } from "@domain/preferences/userPreferencesStora
 import { RingApi } from "@domain/ring/ringApi";
 import { RingDataStorage } from "@domain/ring/ringDataStorage";
 import { RingManagementService } from "@domain/ring/ringManagementService";
+import { TimerService } from "@domain/timer/timerService";
 import { UserApi } from "@domain/user/userApi";
 import { UserService } from "@domain/user/userService";
 import { UserStorage } from "@domain/user/userStorage";
 import React, { createContext, useContext } from "react";
 import { Config } from "react-native-config";
-import { TimerService } from "@domain/timer/timerService";
-import { TokenPayload } from "@domain/auth/type";
-import { UserDevicesStorage } from "@domain/device/userDevicesStorage";
-import { AppStateService } from "@domain/appState/appStateService";
-import { AppStateStorage } from "@domain/appState/appStateStorage";
-import { CirclesApi } from "@domain/circles/circlesApi";
 
 const fakeDeviceService = Config.ENVIRONNEMENT === "dev" ? new DevFakeDeviceService() : new EmptyFakeDeviceService();
 
@@ -58,14 +56,7 @@ const bleDeviceService = new BleDeviceService(
 const circleAlarmService = new CircleAlarmService(bleDeviceService);
 const ringManagementService = new RingManagementService(bleDeviceService, ringDataStorage, ringApi, appStateService);
 
-const userService = new UserService(
-	cognitoAuthService,
-	userApi,
-	userStorage,
-	bleDeviceService,
-	appStateService,
-	favoriteDeviceStorage
-);
+const userService = new UserService(cognitoAuthService, userApi, userStorage, bleDeviceService, appStateService);
 const circlesApi = new CirclesApi(apiService);
 const circlesService = new CirclesService(circlesApi, appStateService);
 
@@ -79,8 +70,6 @@ const feedStorage = new FeedStorage();
 const feedApi = new FeedApi(apiService);
 const feedService = new FeedService(feedStorage, feedApi, appStateService, userService);
 
-const calendarApi = new CalendarApi(apiService);
-const calendarService = new CalendarService(calendarApi, userService);
 const timerService = new TimerService(bleDeviceService);
 
 export const services = {
@@ -95,7 +84,6 @@ export const services = {
 	feedService,
 	circlesService,
 	fakeDeviceService,
-	calendarService,
 	timerService,
 	ringApi,
 	userDevicesStorage,
