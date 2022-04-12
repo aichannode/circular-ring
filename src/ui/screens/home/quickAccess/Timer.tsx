@@ -1,14 +1,15 @@
 // import { useI18n } from "@ui/i18n";
-import { colors } from "@ui/styles/colors";
-import React, { useState, useRef, useMemo, useEffect } from "react";
-import { TouchableOpacity, View, Text } from "react-native";
-import { ResponsiveCenterView } from "@ui/components/layout";
-import { CircularBottomScrollSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
-import styled from "styled-components/native";
-import WheelPicker2 from "react-native-wheely";
-import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
-import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import { useServices } from "@core/services";
+import { CircularBottomScrollSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
+import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
+import { ResponsiveCenterView } from "@ui/components/layout";
+import { colors } from "@ui/styles/colors";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Text, View } from "react-native";
+import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
+import WheelPicker2 from "react-native-wheely";
+import styled from "styled-components/native";
+import { Tile } from "../components/Tile";
 
 interface TimerBottomSheetProps {
 	onClose: () => void;
@@ -165,11 +166,9 @@ export const TimerTile = () => {
 
 	return (
 		<>
-			<Tile>
-				<TouchableOpacity onPress={() => TimerBottomSheetRef.current?.present()}>
-					<Bold>Timer</Bold>
-					<Light>{timer ? countdown(timer) : "off"}</Light>
-				</TouchableOpacity>
+			<Tile onPress={() => TimerBottomSheetRef.current?.present()}>
+				<Bold>Timer</Bold>
+				<Light>{timer ? countdown(timer) : "off"}</Light>
 			</Tile>
 			<CircularBottomScrollSheet snapPoints={[480]} ref={TimerBottomSheetRef} allowSwipeDownToClose={false}>
 				<TimerBottomSheet onClose={() => TimerBottomSheetRef.current?.close()} />
@@ -177,13 +176,6 @@ export const TimerTile = () => {
 		</>
 	);
 };
-
-const Tile = styled.View`
-	flex: 1;
-	height: 50px;
-	justify-content: center;
-	background-color: white;
-`;
 
 const SheetContainer = styled(ResponsiveCenterView)`
 	flex: 1;
