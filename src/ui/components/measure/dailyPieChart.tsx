@@ -40,8 +40,8 @@ export const DailyPieChart: React.FC<Props> = ({
 	noDataPhaseColor,
 	hasNotEnoughData,
 }) => {
-	const _hasNotEnoughData = hasNotEnoughData || stages.length === 0 || isNaN(totalDuration);
-	if (_hasNotEnoughData) {
+	const shouldDisplay = !hasNotEnoughData && !!stages.length && !isNaN(totalDuration);
+	if (shouldDisplay) {
 		stages = [
 			{
 				start: moment().startOf("day").toString(),
@@ -78,7 +78,7 @@ export const DailyPieChart: React.FC<Props> = ({
 	const data = stages.map((stage, index) => ({
 		key: index,
 		value: Date.parse(stage.end) - Date.parse(stage.start),
-		svg: { fill: _hasNotEnoughData ? noDataPhaseColor : phaseColors[getPhaseLevel(stage.level)] },
+		svg: { fill: shouldDisplay ? noDataPhaseColor : phaseColors[getPhaseLevel(stage.level)] },
 		arc: { innerRadius: getSliceInnerRadius(index), outerRadius: getSliceOutterRadius(index) },
 	}));
 
@@ -102,14 +102,14 @@ export const DailyPieChart: React.FC<Props> = ({
 						<SliceDurationLabel>{format(title)}</SliceDurationLabel>
 						{/* @TODO  format is24h below*/}
 						<SliceDurationValue>
-							{_hasNotEnoughData ? format("global.no_data") : formatDuration(totalDuration * 60)}
+							{shouldDisplay ? format("global.no_data") : formatDuration(totalDuration * 60)}
 						</SliceDurationValue>
 					</TotalDurationWrapper>
 					<Image source={require("@assets/images/morning.png")} />
 				</Row>
 				<Image source={require("@assets/images/day.png")} />
 			</InsideInfos>
-			{children}
+			{shouldDisplay && children}
 		</View>
 	);
 };
