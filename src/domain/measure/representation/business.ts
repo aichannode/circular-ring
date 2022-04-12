@@ -1,6 +1,6 @@
 import { isToday } from "@domain/common/business";
 import { MetricType, RangeMetrics } from "../metric";
-import { ActivityControlState, DailyBr, DailyHr, DailySpo2, DataControlState, ScoreQuality } from "./api";
+import { ActivityControlState, DailyBr, DailyHr, DailyHrv, DailySpo2, DataControlState, ScoreQuality } from "./api";
 import { DailySleepStageDuration, SleepStagesMetrics } from "./lib/type";
 
 /**
@@ -142,4 +142,36 @@ export function parseDailyBR(
 	data.controlState = controlState;
 
 	return data;
+}
+export function parseDailyHRV(
+	dailyHRV:
+		| RangeMetrics<MetricType.UserHRV, MetricType.UserDailyAsleepHRV | MetricType.UserDailyReferenceHRV>
+		| undefined,
+	dailySleepMetrics: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined
+): DailyHrv | undefined {
+	if (dailyHRV === undefined || dailyHRV?.timeSeries.length === 0) return undefined;
+	const dailyHrv: DailyHrv = {
+		constant: {
+			average: dailyHRV.constant[MetricType.UserDailyAsleepHRV] as number,
+			reference: dailyHRV.constant[MetricType.UserDailyReferenceHRV] as number,
+		},
+		lines: [],
+		controlState: DataControlState.NO_DATA,
+	};
+	const userSleepBegin = dailySleepMetrics?.constant[MetricType.UserCoreSleepBegin] as number;
+	const userSleepEnd = dailySleepMetrics?.constant[MetricType.UserCoreSleepEnd] as number;
+
+	dailyHRV.timeSeries.map((timeSerie) => {
+		dailyHrv.lines.push({
+			x: Date.parse(timeSerie.timestamp),
+			y: timeSerie.metrics[MetricType.UserHRV] as number,
+		});
+	});
+
+	const controlState = dailyHrv.lines.some(({ x }) => x > userSleepBegin * 1000 && x < userSleepEnd * 1000)
+		? DataControlState.READY
+		: DataControlState.NO_DATA;
+	dailyHrv.controlState = controlState;
+
+	return dailyHrv;
 }

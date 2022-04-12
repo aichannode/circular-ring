@@ -59,6 +59,10 @@ import {
 	DailyHRConstantMetrics,
 	dailyHRTimeSeriesMetrics,
 	DailyHRTimeSeriesMetrics,
+	dailyHRVConstantMetrics,
+	DailyHRVConstantMetrics,
+	dailyHRVTimeSeriesMetrics,
+	DailyHRVTimeSeriesMetrics,
 	dailySleepScoreMetrics,
 	dailySleepStageDuration,
 	DailySleepStageDuration,
@@ -194,6 +198,34 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				present([
 					{
 						type: "setDailySpo2Metrics",
+						payload: {
+							localISODay,
+							range: {
+								timeSeries,
+								constant,
+							},
+						},
+					},
+				]);
+			});
+		},
+		async pullDailyHRVMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
+			Promise.all([
+				measureApi.fetchDailyMeasures<DailyHRVTimeSeriesMetrics>(
+					dailyHRVTimeSeriesMetrics,
+					localISODay,
+					useForceRefresh
+				),
+				measureApi.fetchLastDailyMeasures<DailyHRVConstantMetrics>(
+					dailyHRVConstantMetrics,
+					localISODay,
+					useForceRefresh
+				),
+			]).then(function ([timeSeries, constant]) {
+				present([
+					{
+						type: "setDailyHRVMetrics",
+
 						payload: {
 							localISODay,
 							range: {

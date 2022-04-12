@@ -82,6 +82,17 @@ export const dailySpo2ConstantMetrics = [
 	MetricType.UserDailyAsleepSPO2Reference,
 ] as const;
 export type DailySpo2ConstantMetrics = typeof dailySpo2ConstantMetrics[number];
+
+/**
+ * HRV
+ */
+
+export const dailyHRVConstantMetrics = [MetricType.UserDailyAsleepHRV, MetricType.UserDailyReferenceHRV] as const;
+export type DailyHRVConstantMetrics = typeof dailyHRVConstantMetrics[number];
+
+export const dailyHRVTimeSeriesMetrics = [MetricType.UserHRV] as const;
+export type DailyHRVTimeSeriesMetrics = typeof dailyHRVTimeSeriesMetrics[number];
+
 /**
  * Breathing rate
  */
@@ -340,6 +351,7 @@ export const dailySleepStageDuration = [
 	MetricType.UserDailyPercREMStage,
 	MetricType.UserDailyPercLightStage,
 	MetricType.UserDailyPercDeepStage,
+	MetricType.UserHRV,
 ] as const;
 export type DailySleepStageDuration = typeof dailySleepStageDuration[number];
 

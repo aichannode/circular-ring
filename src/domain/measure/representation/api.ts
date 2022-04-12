@@ -78,6 +78,15 @@ export interface DailyBr {
 	controlState: DataControlState;
 }
 
+export interface DailyHrv {
+	lines: Lines;
+	constant: {
+		average: number;
+		reference: number;
+	};
+	controlState: DataControlState;
+}
+
 export interface Line {
 	/** timestamp */
 	x: number;
