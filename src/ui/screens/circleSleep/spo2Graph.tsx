@@ -60,6 +60,7 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({ selected
 			color: colors.darkBlue,
 		});
 	}
+	const shouldDisplay = !hasNotEnoughData && dailySpo2?.controlState === DataControlState.READY;
 
 	useEffect(() => {
 		if (isDefined(lines)) {
@@ -77,13 +78,15 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({ selected
 
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
-				<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-					{tags.map(({ name, id }) => (
-						<View key={id} style={{ marginLeft: 8 }}>
-							<Tag>{name}</Tag>
-						</View>
-					))}
-				</View>
+				{shouldDisplay && (
+					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+						{tags.map(({ name, id }) => (
+							<View key={id} style={{ marginLeft: 8 }}>
+								<Tag>{name}</Tag>
+							</View>
+						))}
+					</View>
+				)}
 				<LineChart
 					labelCount={5}
 					averages={averages}
@@ -99,11 +102,11 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({ selected
 					yMax={yMax}
 					yMinIndex={yMinIndex}
 					yMaxIndex={yMaxIndex}
-					hasNotEnoughData={hasNotEnoughData && dailySpo2?.controlState === DataControlState.READY}
+					hasNotEnoughData={!shouldDisplay}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
-						hasNotEnoughData={hasNotEnoughData || dailySpo2?.controlState === DataControlState.NO_DATA}
+						hasNotEnoughData={!shouldDisplay}
 						rows={[
 							{
 								label: format("hr.average"),

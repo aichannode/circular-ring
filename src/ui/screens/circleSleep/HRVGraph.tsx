@@ -61,6 +61,7 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDa
 			color: colors.darkBlue,
 		});
 	}
+	const shouldDisplay = !hasNotEnoughData && dailyHrv?.controlState === DataControlState.READY;
 
 	useEffect(() => {
 		if (isDefined(dailyHrv)) {
@@ -78,7 +79,7 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDa
 
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 600 }}>
-				{!hasNotEnoughData && dailyHrv?.controlState === DataControlState.READY && (
+				{shouldDisplay && (
 					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
 						{tags.map(({ name, id }) => (
 							<View key={id} style={{ marginLeft: 8 }}>
@@ -102,11 +103,11 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDa
 					yMax={yMax}
 					yMinIndex={yMinIndex}
 					yMaxIndex={yMaxIndex}
-					hasNotEnoughData={hasNotEnoughData || dailyHrv?.controlState === DataControlState.NO_DATA}
+					hasNotEnoughData={!shouldDisplay}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
-						hasNotEnoughData={hasNotEnoughData || dailyHrv?.controlState === DataControlState.NO_DATA}
+						hasNotEnoughData={!shouldDisplay}
 						rows={[
 							{
 								label: format("hr.average"),
