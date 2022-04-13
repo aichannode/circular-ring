@@ -1,11 +1,10 @@
 import { useServices } from "@core/services";
+import { UpdateState } from "@domain/device/bleDeviceService";
+import { useObservable } from "micro-observables";
 import React from "react";
 import styled from "styled-components/native";
-import { useObservable } from "micro-observables";
-import { UpdateState } from "@domain/device/bleDeviceService";
-
-import { UpdatingComponent } from "./updatingComponent";
 import { IsUpToDate } from "./IsUpToDate";
+import { UpdatingComponent } from "./updatingComponent";
 
 export const RingFirmwareUpdate: React.FC = () => {
 	const { bleDeviceService } = useServices();
