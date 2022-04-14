@@ -182,15 +182,10 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 
 				<ElementStack gap={10} style={{ display: "flex" }}>
 					{activeItem === 0 && <ActivityIntensityGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
-					{activeItem === 1 && <CardioPointsGraph selectedDay={selectedDay} />}
-					{activeItem === 2 && <EnergyScoreGraph selectedDay={selectedDay} />}
+					{activeItem === 1 && <CardioPointsGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
+					{activeItem === 2 && <EnergyScoreGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
 
-					{activeItem === 3 && (
-						<HeartRateGraph
-							selectedDay={selectedDay}
-							// hasNotEnoughData={!enoughData} TODO: Add this prop when hasNotEnoughData is implemented in HeartRateGraph
-						/>
-					)}
+					{activeItem === 3 && <HeartRateGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
 				</ElementStack>
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>

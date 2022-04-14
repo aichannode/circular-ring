@@ -51,7 +51,7 @@ export function DailySleepChart({ data, selectedDay, hasNotEnoughData }: Props) 
 	return (
 		<View style={{ flex: 1, position: "relative" }}>
 			<View style={{ position: "absolute", top: 0, right: 0 }}>
-				<CalendarTags tags={tags} />
+				<CalendarTags tags={!hasNotEnoughData ? tags : []} />
 			</View>
 			<Hypnogram data={correctedStages} hasNotEnoughData={hasNotEnoughData} />
 			<View style={{ marginTop: 30 }}>

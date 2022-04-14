@@ -17,11 +17,15 @@ import DashedLine from "react-native-dashed-line";
 
 type Props = {
 	selectedDay: ISODay;
+	hasNotEnoughData: boolean;
 };
 
 const tooltipSize = { width: 40, height: 20 };
 
-export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph({ selectedDay }: Props) {
+export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph({
+	selectedDay,
+	hasNotEnoughData,
+}: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 
@@ -68,6 +72,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 			setLoading(false);
 		}
 	}, [dailyHr]);
+	const shouldDisplay = !hasNotEnoughData;
 
 	return isLoading ? (
 		<Spinner size={24} />
@@ -79,13 +84,15 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 600 }}>
-				<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-					{tags.map(({ name, id }) => (
-						<View key={id} style={{ marginLeft: 8 }}>
-							<Tag>{name}</Tag>
-						</View>
-					))}
-				</View>
+				{shouldDisplay && (
+					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+						{tags.map(({ name, id }) => (
+							<View key={id} style={{ marginLeft: 8 }}>
+								<Tag>{name}</Tag>
+							</View>
+						))}
+					</View>
+				)}
 				<LineChart
 					labelCount={5}
 					averages={averages}
@@ -110,9 +117,11 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 							<Tag containerStyle={{ backgroundColor: colors.red, marginBottom: 4 }}>{`${value}`}</Tag>
 						</>
 					)}
+					hasNotEnoughData={!shouldDisplay}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
+						hasNotEnoughData={!shouldDisplay}
 						rows={[
 							{
 								label: format("hr.average"),
