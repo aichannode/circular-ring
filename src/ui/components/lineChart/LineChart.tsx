@@ -165,6 +165,7 @@ export function LineChart({
 					valueTextSize: 0,
 					legend: false,
 					circleRadius: 4,
+					mode: "HORIZONTAL_BEZIER" as const,
 				},
 			},
 		],
