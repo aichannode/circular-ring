@@ -77,7 +77,7 @@ const NoteHeader = styled.View`
 `;
 
 const EditButtonText = styled.Text`
-	padding: 10px 0 10px 10px;
+	padding: 10px 10px 10px 10px;
 	font-size: 14px;
 	color: ${colors.primary};
 `;

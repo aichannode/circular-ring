@@ -1,12 +1,11 @@
-import React from "react";
-import { View } from "react-native";
+import { useServices } from "@core/services";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import { useServices } from "@core/services";
-import styled from "styled-components/native";
-import { TouchableOpacity } from "react-native";
 import { useObservable } from "micro-observables";
+import React from "react";
+import { TouchableOpacity, View } from "react-native";
+import styled from "styled-components/native";
 import { CircleEntity } from "../../../domain/circles/type";
 import { mergeDefaultAndUserCirle } from "../business";
 
@@ -23,7 +22,10 @@ function createViews(myArray: CircleEntity[]) {
 					<RightContainer>
 						<View style={{ flexDirection: "row", width: "100%" }}>
 							<Bold>{title}</Bold>
-							<TouchableOpacity style={{ width: "10%" }} onPress={() => circlesService.toggleCircle(circle.id)}>
+							<TouchableOpacity
+								style={{ padding: 10, marginTop: -10 }}
+								onPress={() => circlesService.toggleCircle(circle.id)}
+							>
 								<Status>{circle.enabled ? "ON" : "OFF"}</Status>
 							</TouchableOpacity>
 						</View>

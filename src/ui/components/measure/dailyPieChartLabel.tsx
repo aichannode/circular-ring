@@ -27,6 +27,7 @@ export const DailyPieChartLabel: React.FC<Props> = ({ chartSize, labels }) => {
 	};
 
 	const { format, formatHour } = useI18n();
+	const is24h = useIs24h();
 
 	return (
 		<>
@@ -43,7 +44,7 @@ export const DailyPieChartLabel: React.FC<Props> = ({ chartSize, labels }) => {
 							>
 								<View>
 									<Label style={{ fontWeight: "500" }}>{text && format(text)}</Label>
-									<Label>{formatHour(new Date(date), useIs24h())}</Label>
+									<Label>{formatHour(new Date(date), is24h)}</Label>
 								</View>
 							</LabelPolarView>
 							<PolarSvg

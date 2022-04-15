@@ -355,7 +355,7 @@ const PopularTagHeaderText = styled.Text`
 const AllTagButton = styled.Text`
 	font-size: 14px;
 	color: ${colors.primary};
-	padding: 10px 0 10px 10px;
+	padding: 10px 10px 10px 10px;
 `;
 
 const ErrorMessage = styled.Text`

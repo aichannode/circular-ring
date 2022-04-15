@@ -55,6 +55,7 @@ export const AllTagsScreen = observer(function AllTagsScreen() {
 		navigation.setOptions({
 			headerRight: () => (
 				<Pressable
+					style={{ padding: 10, marginRight: -10 }}
 					onPress={() => {
 						navigate(Routes.CalendarEditNotes, { day: route.params.day, selectedTags });
 					}}

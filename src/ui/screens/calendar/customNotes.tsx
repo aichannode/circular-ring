@@ -54,7 +54,7 @@ const CustomNote = observer(function CustomNote({
 				<Name>Custom Notes</Name>
 				{!!customNote.length && (
 					<View style={{ justifyContent: "space-between" }}>
-						<TouchableOpacity onPress={() => setDelete((del) => !del)}>
+						<TouchableOpacity style={{ padding: 10 }} onPress={() => setDelete((del) => !del)}>
 							<OrangeText>{!deleteMode ? "Delete" : "Cancel"}</OrangeText>
 						</TouchableOpacity>
 					</View>

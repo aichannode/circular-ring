@@ -23,6 +23,7 @@ import {
 	DailyActivityIntensityData,
 	DailyBr,
 	DailyHr,
+	DailyHrv,
 	DailySleepData,
 	DailySpo2,
 	DataControlState,
@@ -36,6 +37,7 @@ import {
 	getScoreControlStates,
 	parseDailyBR,
 	parseDailyHR,
+	parseDailyHRV,
 	parseDailySpo2,
 } from "./business";
 import { createActivityPhasesGetter, createSleepStagesGetter, useDailyHeavyComputationData } from "./lib/business";
@@ -254,6 +256,19 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				const data = model.dailySleepMetrics.get(localISODay) ?? undefined;
 
 				return parseDailyBR(model.dailyBRMetrics.get(localISODay), data);
+			},
+
+			useDailyHRV(localISODay = getCurrentLocalISODay()): DailyHrv | undefined {
+				useEffect(() => {
+					__DEV__ && console.log("[MEASURE: Action] FETCH");
+					if (!model.dailyHRVMetrics.has(localISODay)) {
+						actions.pullDailyHRVMetrics(localISODay, true);
+					}
+				}, [localISODay]);
+
+				const data = model.dailySleepMetrics.get(localISODay) ?? undefined;
+
+				return parseDailyHRV(model.dailyHRVMetrics.get(localISODay), data);
 			},
 
 			useDailyActivityIntensity({

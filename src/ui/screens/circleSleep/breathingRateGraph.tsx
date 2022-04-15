@@ -63,6 +63,7 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 			color: colors.darkBlue,
 		});
 	}
+	const shouldDisplay = !hasNotEnoughData && dailyBr?.controlState === DataControlState.READY;
 
 	useEffect(() => {
 		if (isDefined(lines)) {
@@ -80,13 +81,15 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
-				<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-					{tags.map(({ name, id }) => (
-						<View key={id} style={{ marginLeft: 8 }}>
-							<Tag>{name}</Tag>
-						</View>
-					))}
-				</View>
+				{shouldDisplay && (
+					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+						{tags.map(({ name, id }) => (
+							<View key={id} style={{ marginLeft: 8 }}>
+								<Tag>{name}</Tag>
+							</View>
+						))}
+					</View>
+				)}
 				<LineChart
 					averages={averages}
 					xColor={colors.textPrimary}
@@ -101,12 +104,12 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 					yMax={yMax}
 					yMinIndex={yMinIndex}
 					yMaxIndex={yMaxIndex}
-					hasNotEnoughData={hasNotEnoughData && dailyBr?.controlState == DataControlState.READY}
+					hasNotEnoughData={!shouldDisplay}
 					labelCount={5}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
-						hasNotEnoughData={hasNotEnoughData || dailyBr?.controlState == DataControlState.NO_DATA}
+						hasNotEnoughData={!shouldDisplay}
 						rows={[
 							{
 								label: format("hr.average"),

@@ -1,6 +1,7 @@
 import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
+import { DataControlState } from "@domain/measure/representation/api";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { GraphLegend } from "@ui/components/measure/graphLegend";
@@ -20,28 +21,23 @@ type Props = {
 	hasNotEnoughData: boolean;
 };
 
-const tooltipSize = { width: 40, height: 20 };
-
-export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph({
-	selectedDay,
-	hasNotEnoughData,
-}: Props) {
+export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDay, hasNotEnoughData }: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 
 	const {
 		measure: {
-			hooks: { useDailyHR },
+			hooks: { useDailyHRV },
 		},
 		calendar: {
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
 
-	const dailyHr = useDailyHR(selectedDay);
+	const dailyHrv = useDailyHRV(selectedDay);
 	const [lines, constant] = [
-		dailyHr ? dailyHr.lines : [],
-		dailyHr ? dailyHr.constant : { hr: undefined, hrMax: undefined, hrMin: undefined, reference: undefined },
+		dailyHrv ? dailyHrv.lines : [],
+		dailyHrv ? dailyHrv.constant : { average: undefined, reference: undefined },
 	];
 
 	const [yMin, yMax] =
@@ -56,30 +52,29 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 	if (typeof constant.reference !== "undefined") {
 		averages.push({
 			value: constant.reference,
-			color: colors.red,
-		});
-	}
-	if (typeof constant.hr !== "undefined") {
-		averages.push({
-			value: constant.hr,
-
 			color: colors.redLight,
 		});
 	}
+	if (typeof constant.average !== "undefined") {
+		averages.push({
+			value: constant.average,
+			color: colors.darkBlue,
+		});
+	}
+	const shouldDisplay = !hasNotEnoughData && dailyHrv?.controlState === DataControlState.READY;
 
 	useEffect(() => {
-		if (isDefined(dailyHr)) {
+		if (isDefined(dailyHrv)) {
 			setLoading(false);
 		}
-	}, [dailyHr]);
-	const shouldDisplay = !hasNotEnoughData;
+	}, [dailyHrv]);
 
 	return isLoading ? (
 		<Spinner size={24} />
 	) : (
 		<View>
 			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("live.heart_rate.label")}
+				{format("sleep.details.title")}
 			</TitleText>
 
 			{/** Wait for available data on week/month */}
@@ -99,24 +94,15 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
 					data={lines}
-					shouldShowLabel={true}
+					shouldShowLabel={false}
 					shouldDrawCircles={false}
-					graphColor={colors.red}
+					graphColor={colors.darkBlue}
 					valueFormatter="date"
-					valueFormatterPattern={["H'h'", "HH'h':mm"]}
+					valueFormatterPattern={["h a", "h:mm a"]}
 					yMin={yMin}
 					yMax={yMax}
 					yMinIndex={yMinIndex}
 					yMaxIndex={yMaxIndex}
-					xAxisContentInset={15}
-					tooltipYMin={15}
-					tooltipYMax={-30}
-					tooltipSize={tooltipSize}
-					renderTooltip={(value) => (
-						<>
-							<Tag containerStyle={{ backgroundColor: colors.red, marginBottom: 4 }}>{`${value}`}</Tag>
-						</>
-					)}
 					hasNotEnoughData={!shouldDisplay}
 				/>
 				<View style={{ marginTop: 20 }}>
@@ -134,11 +120,11 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 												marginTop: 5,
 											}}
 										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
+											<DashedLine dashGap={5} dashLength={10} dashColor={colors.darkBlue} />
 										</View>
 									),
 								},
-								value: typeof constant.hr == "undefined" ? "- bpm" : `${constant.hr} bpm`,
+								value: typeof constant.average == "undefined" ? "- ms" : `${constant.average} ms`,
 							},
 							{
 								label: format("hr.reference"),
@@ -151,28 +137,11 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 												marginTop: 5,
 											}}
 										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.red} />
+											<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
 										</View>
 									),
 								},
-								value: typeof constant.reference == "undefined" ? "- bpm" : `${constant.reference} bpm`,
-							},
-							{
-								label: format("hr.hrMax"),
-								element: {
-									key: "hr.hrMax",
-									node: <></>,
-								},
-								value: typeof constant.hrMax == "undefined" ? "- bpm" : `${constant.hrMax} bpm`,
-							},
-							{
-								label: format("hr.hrMin"),
-								element: {
-									key: "hr.hrMin",
-									node: <></>,
-								},
-
-								value: typeof constant.hrMin == "undefined" ? "- bpm" : `${constant.hrMin} bpm`,
+								value: typeof constant.reference == "undefined" ? "- ms" : `${constant.reference} ms`,
 							},
 						]}
 					/>

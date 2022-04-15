@@ -6,6 +6,7 @@ import { colors } from "@ui/styles/colors";
 import { Averages, MultipleDataSets } from "@ui/type";
 import moment from "moment";
 import * as React from "react";
+import { Text } from "react-native";
 import { GraphContainer } from "../measure/graphContainer";
 import { LineChart } from "./LineChart";
 import { data } from "./mockedDataHR.json";
@@ -16,6 +17,8 @@ const lines: Lines = data.map((e) => {
 		y: e.metrics["user.hr"],
 	};
 });
+
+const tooltipSize = { width: 40, height: 20 };
 
 const items = [
 	{
@@ -277,6 +280,28 @@ storiesOf("LineChart", module)
 					yMax={yMax}
 					yMinIndex={yMinIndex}
 					yMaxIndex={yMaxIndex}
+					xAxisContentInset={15}
+					tooltipYMin={15}
+					tooltipYMax={-30}
+					tooltipSize={tooltipSize}
+					renderTooltip={(value) => (
+						<>
+							<Text
+								style={{
+									backgroundColor: colors.red,
+									borderRadius: 7.5,
+									width: tooltipSize.width,
+									height: tooltipSize.height,
+									color: colors.white,
+									fontSize: 12,
+									fontWeight: "bold",
+									textAlign: "center",
+								}}
+							>
+								{value}
+							</Text>
+						</>
+					)}
 				/>
 			</GraphContainer>
 		);

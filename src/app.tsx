@@ -1,3 +1,6 @@
+// Because importing storybook after some of the bellow imports will cause a runtime error (in release version), we need to import storybook before any of the bellow imports.
+import StorybookUIRoot from "@stories";
+
 import { useLogger } from "@core/logger/hooks/useLogger";
 import { useSentry } from "@core/logger/hooks/useSentry";
 import { RepresentationsProvider } from "@core/representation";
@@ -20,7 +23,6 @@ import "react-native-get-random-values";
 import * as RNLocalize from "react-native-localize";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import SplashScreen from "react-native-splash-screen";
-import StorybookUIRoot from "../storybook";
 import { translations } from "./wordings";
 
 // Setup Mobx for RN
@@ -64,9 +66,11 @@ export const App = () => {
 		});
 
 		// Add Storybook toggle command to the menu
-		DevSettings.addMenuItem("Toggle Storybook", function () {
-			toggleStoryBook((isDisplayed) => !isDisplayed);
-		});
+		if (__DEV__) {
+			DevSettings.addMenuItem("Toggle Storybook", function () {
+				toggleStoryBook((isDisplayed) => !isDisplayed);
+			});
+		}
 	}, []);
 
 	useEffect(() => {

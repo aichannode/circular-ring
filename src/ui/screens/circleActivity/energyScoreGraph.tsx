@@ -1,7 +1,8 @@
 import { useRepresentations } from "@core/representation";
 import { CalendarTag } from "@domain/calendar/calendar";
+import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { Lines } from "@domain/measure/representation/api";
+import { DataControlState, Lines } from "@domain/measure/representation/api";
 import { TimeFrame } from "@domain/measure/type";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
@@ -21,8 +22,12 @@ import DashedLine from "react-native-dashed-line";
 
 type Props = {
 	selectedDay: ISODay;
+	hasNotEnoughData: boolean;
 };
-export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGraph({ selectedDay }: Props) {
+export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGraph({
+	selectedDay,
+	hasNotEnoughData,
+}: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
@@ -62,15 +67,17 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 	}
 
 	useEffect(() => {
-		setTimeout(() => {
+		if (isDefined(data)) {
 			setLoading(false);
-		}, 500);
-	}, []);
+		}
+	}, [data]);
 
 	const toUpdateTag = (x: number) => {
 		const date = moment(lines[x].x).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
+	const shouldDisplay = !hasNotEnoughData && data?.controlState === DataControlState.READY;
+
 	return isLoading ? (
 		<Spinner size={24} />
 	) : !!lines.length ? (
@@ -101,13 +108,15 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 			</View>
 
 			<GraphContainer style={{ height: 400, marginTop: 20 }}>
-				<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-					{tags.map(({ name, id }) => (
-						<View key={id} style={{ marginLeft: 8 }}>
-							<Tag>{name}</Tag>
-						</View>
-					))}
-				</View>
+				{shouldDisplay && (
+					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+						{tags.map(({ name, id }) => (
+							<View key={id} style={{ marginLeft: 8 }}>
+								<Tag>{name}</Tag>
+							</View>
+						))}
+					</View>
+				)}
 				<LineChart
 					yMin={yMin}
 					yMax={yMax}
@@ -124,9 +133,11 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 					scaleXEnabled={false}
 					onSelect={(x) => toUpdateTag(x)}
 					isMultipleLines={true}
+					hasNotEnoughData={!shouldDisplay}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
+						hasNotEnoughData={!shouldDisplay}
 						rows={[
 							{
 								label: format("activity.energy_score.7day"),

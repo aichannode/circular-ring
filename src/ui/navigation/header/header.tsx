@@ -20,7 +20,10 @@ export const Header = ({ options, navigation }: NativeStackHeaderProps) => {
 					{navigation.canGoBack() ? (
 						<BackButton imageSource={options.headerBackImageSource} />
 					) : (
-						<Pressable onPress={() => navigation.dispatch(DrawerActions.openDrawer)}>
+						<Pressable
+							onPress={() => navigation.dispatch(DrawerActions.openDrawer)}
+							style={{ padding: 15, marginLeft: -15 }}
+						>
 							<Image source={require("@assets/images/menu.png")} style={{ marginLeft: 10 }} />
 						</Pressable>
 					)}
@@ -38,8 +41,11 @@ export const Header = ({ options, navigation }: NativeStackHeaderProps) => {
 						{navigation.canGoBack() ? (
 							<BackButton imageSource={options.headerBackImageSource} />
 						) : (
-							<Pressable onPress={() => navigation.dispatch(DrawerActions.openDrawer)}>
-								<Image source={require("@assets/images/menu.png")} style={{ marginLeft: 10 }} />
+							<Pressable
+								onPress={() => navigation.dispatch(DrawerActions.openDrawer)}
+								style={{ padding: 15, marginLeft: -15 }}
+							>
+								<Image source={require("@assets/images/menu.png")} />
 							</Pressable>
 						)}
 					</Left>

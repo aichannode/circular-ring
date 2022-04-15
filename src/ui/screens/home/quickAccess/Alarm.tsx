@@ -1,17 +1,18 @@
-import React, { useState, useRef } from "react";
-import { TouchableOpacity, Switch, Platform } from "react-native";
-import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
-import { useAlarms } from "@domain/circleAlarm/alarmHooks";
-import { WarningBottomSheet } from "@ui/screens/circleAlarm/warningBottomSheet";
-import { Weekdays, dateToAlarmTime, Melody, RingAlarm } from "@domain/ring/ringAlarm";
-import DatePicker from "react-native-date-picker";
-import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { useServices } from "@core/services";
-import styled from "styled-components/native";
-import { colors } from "@ui/styles/colors";
-import { useI18n } from "@ui/i18n";
+import { useAlarms } from "@domain/circleAlarm/alarmHooks";
+import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
+import { dateToAlarmTime, Melody, RingAlarm, Weekdays } from "@domain/ring/ringAlarm";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { ResponsiveCenterView } from "@ui/components/layout";
+import { useI18n } from "@ui/i18n";
+import { WarningBottomSheet } from "@ui/screens/circleAlarm/warningBottomSheet";
+import { colors } from "@ui/styles/colors";
 import { useObservable } from "micro-observables";
+import React, { useRef, useState } from "react";
+import { Platform, Switch } from "react-native";
+import DatePicker from "react-native-date-picker";
+import styled from "styled-components/native";
+import { Tile } from "../components/Tile";
 
 interface AlarmBottomSheetProps {
 	onClose: () => void;
@@ -155,21 +156,18 @@ export const AlarmTile = () => {
 	const isAlarmOn = quickAccessAlarm && quickAccessAlarm.isActivated;
 	return (
 		<>
-			<Tile style={{ borderLeftWidth: 0.5, borderRightWidth: 0.5, borderColor: colors.gray }}>
-				<TouchableOpacity
-					onPress={() => {
-						alarms.length >= MAX_ALARMS
-							? warningBottomSheet.current?.present()
-							: AlarmBottomSheetRef.current?.present();
-					}}
-				>
-					<Bold>
-						{quickAccessAlarm
-							? `${quickAccessAlarm.time.hour}:${("0" + quickAccessAlarm.time.minute).slice(-2)}`
-							: "Alarm"}
-					</Bold>
-					<Light>{isAlarmOn ? "on" : "off"}</Light>
-				</TouchableOpacity>
+			<Tile
+				style={{ borderLeftWidth: 0.5, borderRightWidth: 0.5, borderColor: colors.gray }}
+				onPress={() => {
+					alarms.length >= MAX_ALARMS ? warningBottomSheet.current?.present() : AlarmBottomSheetRef.current?.present();
+				}}
+			>
+				<Bold>
+					{quickAccessAlarm
+						? `${quickAccessAlarm.time.hour}:${("0" + quickAccessAlarm.time.minute).slice(-2)}`
+						: "Alarm"}
+				</Bold>
+				<Light>{isAlarmOn ? "on" : "off"}</Light>
 			</Tile>
 			<CircularBottomSheet snapPoints={[500]} ref={AlarmBottomSheetRef}>
 				<AlarmBottomSheet onClose={() => AlarmBottomSheetRef.current?.close()} />
@@ -185,16 +183,6 @@ export const AlarmTile = () => {
 		</>
 	);
 };
-
-const Tile = styled.View`
-	flex: 1;
-	height: 50px;
-	justify-content: center;
-	border-right-width: 0.25px;
-	border-left-width: 0.25px;
-	border-color: ${colors.gray};
-	background-color: white;
-`;
 
 const SheetContainer = styled(ResponsiveCenterView)`
 	flex: 1;

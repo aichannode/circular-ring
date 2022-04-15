@@ -1,36 +1,18 @@
+import { useServices } from "@core/services";
+import { UpdateState } from "@domain/device/bleDeviceService";
 import { useDeviceStored } from "@domain/device/hooks";
+import { UserRing } from "@domain/ring/ring";
 import { useAuthenticatedUserEmail, useUser } from "@domain/user/hooks/useUser";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import StorybookScreen from "@stories";
-import { MyRingBattery } from "@ui/components/navigation/myRingBattery";
-import { useI18n } from "@ui/i18n";
 import { DrawerContent } from "@ui/navigation/drawer/drawerContent";
-import { Header } from "@ui/navigation/header/header";
+import { MainHomeNavigator } from "@ui/navigation/MainHomeNavigator";
 import { Routes } from "@ui/navigation/routes";
-import { AllTagsScreen } from "@ui/screens/calendar/allTagsScreen";
-import { CalendarEditNotesScreen } from "@ui/screens/calendar/calendarEditNotesScreen";
-import { CalendarScreen } from "@ui/screens/calendar/calendarScreen";
-import { CircleActivityScreen } from "@ui/screens/circleActivity/circleActivityScreen";
-import { CircleAddScreen } from "@ui/screens/circleAdd/circleAddScreen";
-import { CircleAlarmScreen } from "@ui/screens/circleAlarm/circleAlarmScreen";
-import { EditAlarmScreen } from "@ui/screens/circleAlarm/editAlarmScreen";
-import { CircleLiveScreen } from "@ui/screens/circleLive/circleLiveScreen";
-import { CircleSleepScreen } from "@ui/screens/circleSleep/circleSleepScreen";
-import { HomeScreen } from "@ui/screens/home/homeScreen";
-import { LeaderboardScreen } from "@ui/screens/leaderboard/leaderboardScreen";
 import { ForgotPasswordScreen } from "@ui/screens/login/forgotPasswordScreen";
 import { LoginScreen } from "@ui/screens/login/loginScreen";
 import { ResetTokenScreen } from "@ui/screens/login/resetTokenScreen";
 import { LoginOrSignUpScreen } from "@ui/screens/loginOrRegister/loginOrSignUpScreen";
 import { RingFirmwareUpdate } from "@ui/screens/myRing/firmwareUpdate/ringFirmwareUpdate";
-import { ManageMyRingsScreen } from "@ui/screens/myRing/manageMyRingsScreen";
-import { MyRingScreen } from "@ui/screens/myRing/myRingScreen";
-import { NewRingSetupScreen } from "@ui/screens/myRing/newRingSetupScreen";
-import { HighHrScreen } from "@ui/screens/notifications/highHrScreen";
-import { LowHrScreen } from "@ui/screens/notifications/lowHrScreen";
-import { LowSpo2Screen } from "@ui/screens/notifications/lowSpo2Screen";
-import { NotificationsScreen } from "@ui/screens/notifications/notificationsScreen";
 import { OnboardingPersonalInfo1Screen } from "@ui/screens/onboarding/personalInfo/onboardingPersonalInfo1Screen";
 import { OnboardingPersonalInfo2Screen } from "@ui/screens/onboarding/personalInfo/onboardingPersonalInfo2Screen";
 import { OnboardingWearInfoScreen } from "@ui/screens/onboarding/personalInfo/onboardingWearInfoScreen";
@@ -38,283 +20,27 @@ import { RingSetupScreen } from "@ui/screens/onboarding/ringSetup/ringSetupScree
 import { RingSetupStartScreen } from "@ui/screens/onboarding/ringSetup/ringSetupStartScreen";
 import { SetUpCompleted } from "@ui/screens/onboarding/ringSetup/setUpCompleted";
 import { Tutorial } from "@ui/screens/onboarding/tutorial/tutorial";
-import { BirthControlEditionScreen } from "@ui/screens/profile/advancedInformation/birthControlEditionScreen";
-import { ProfileAdvancedInformationScreen } from "@ui/screens/profile/advancedInformation/profileAdvancedInformationScreen";
-import { ProfileEditBirthdayScreen } from "@ui/screens/profile/basicInformation/profileEditBirthdayScreen";
-import { ProfileEditNameScreen } from "@ui/screens/profile/basicInformation/profileEditNameScreen";
-import { ProfileInformationScreen } from "@ui/screens/profile/basicInformation/profileInformationScreen";
-import { ChangePasswordScreen } from "@ui/screens/profile/changePasswordScreen";
-import { ProfileScreen } from "@ui/screens/profile/profileScreen";
-import { QuickAccess } from "@ui/screens/quickaccess/quickAccess";
-import { SettingsScreen } from "@ui/screens/settings/settingsScreen";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
 import { WebViewScreen } from "@ui/screens/webViewScreen";
+import { useObservable } from "micro-observables";
 import React, { useState } from "react";
-import styled from "styled-components/native";
 
 const SetupStack = createNativeStackNavigator();
-
 const OnboardingStack = createNativeStackNavigator();
-
 const HomeDrawer = createDrawerNavigator();
-const MainStack = createNativeStackNavigator();
-
-const MainHomeNavigator = () => {
-	const { format } = useI18n();
-
-	return (
-		<MainStack.Navigator
-			screenOptions={{
-				header: (props) => <Header {...props} />,
-			}}
-		>
-			<MainStack.Screen
-				name={Routes.Home}
-				component={HomeScreen}
-				options={{
-					headerRight: () => <MyRingBattery full />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.MyRing}
-				component={MyRingScreen}
-				options={{ title: format("header.my_ring"), headerRight: undefined }}
-			/>
-			<MainStack.Screen
-				name={Routes.RingFirmwareUpdate}
-				component={RingFirmwareUpdate}
-				options={{ title: format("header.ringUpdateFirmware"), headerRight: undefined }}
-			/>
-
-			<MainStack.Screen
-				name={Routes.ManageMyRings}
-				component={ManageMyRingsScreen}
-				options={{ title: format("header.manage_my_rings"), headerRight: () => <MyRingBattery stalled /> }}
-			/>
-			<MainStack.Screen
-				name={Routes.Activity}
-				component={CircleActivityScreen}
-				options={{
-					title: format("header.activity"),
-					headerRight: undefined,
-					headerLeft: () => <CircleIcon source={require("@assets/images/circleActivity.png")} />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.Live}
-				component={CircleLiveScreen}
-				options={{
-					title: format("header.live"),
-					headerRight: undefined,
-					headerLeft: () => <CircleIcon source={require("@assets/images/circleLive.png")} />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.CircleAdd}
-				component={CircleAddScreen}
-				options={{
-					title: format("header.circle_add"),
-					headerRight: undefined,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.Alarm}
-				component={CircleAlarmScreen}
-				options={{
-					title: format("header.alarm"),
-					headerRight: undefined,
-					headerLeft: () => <CircleIcon source={require("@assets/images/circleAlarm.png")} />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.Sleep}
-				component={CircleSleepScreen}
-				options={{
-					title: format("header.sleep"),
-					headerRight: undefined,
-					headerLeft: () => <CircleIcon source={require("@assets/images/circleSleep.png")} />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.EditAlarm}
-				component={EditAlarmScreen}
-				options={{
-					title: format("header.alarm"),
-					headerRight: undefined,
-					headerLeft: () => <CircleIcon source={require("@assets/images/circleAlarm.png")} />,
-				}}
-			/>
-
-			<MainStack.Screen
-				name={Routes.Profile}
-				component={ProfileScreen}
-				options={{
-					title: format("header.profile"),
-					headerRight: () => <MyRingBattery />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.ProfileInformation}
-				component={ProfileInformationScreen}
-				options={{
-					title: format("header.profile_information"),
-					headerRight: () => <MyRingBattery />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.ProfileEditName}
-				component={ProfileEditNameScreen}
-				options={{ headerShown: false }}
-			/>
-			<MainStack.Screen
-				name={Routes.ProfileEditBirthday}
-				component={ProfileEditBirthdayScreen}
-				options={{ headerShown: false }}
-			/>
-			<MainStack.Screen
-				name={Routes.ChangePassword}
-				component={ChangePasswordScreen}
-				options={{
-					title: format("change_password.title"),
-					headerRight: () => <MyRingBattery />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.ProfileAdvancedInformation}
-				component={ProfileAdvancedInformationScreen}
-				options={{
-					title: format("header.profile_advanced_information"),
-					headerRight: () => <MyRingBattery />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.ProfileBirthControl}
-				component={BirthControlEditionScreen}
-				options={{
-					title: format("header.birth_control"),
-					headerRight: () => <MyRingBattery />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.Settings}
-				component={SettingsScreen}
-				options={{
-					title: format("header.settings"),
-					headerRight: () => <MyRingBattery />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.Calendar}
-				component={CalendarScreen}
-				options={{
-					title: format("header.calendar"),
-					headerRight: () => <MyRingBattery />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.CalendarEditNotes}
-				component={CalendarEditNotesScreen}
-				options={{
-					title: format("header.calendar"),
-					headerRight: () => <MyRingBattery />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.AllTags}
-				component={AllTagsScreen}
-				options={{
-					title: format("header.all_tags"),
-					headerBackImageSource: require("@assets/images/crossBig.png"),
-				}}
-			/>
-
-			<MainStack.Screen
-				name={Routes.QuickAccess}
-				component={QuickAccess}
-				options={{
-					title: format("header.quickaccess"),
-					headerRight: () => <MyRingBattery />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.NewRingSetupScreen}
-				component={NewRingSetupScreen}
-				options={{ headerShown: false }}
-			/>
-
-			<MainStack.Screen
-				name={Routes.Leaderboard}
-				component={LeaderboardScreen}
-				options={{
-					title: format("header.leaderboard"),
-					headerRight: () => <MyRingBattery />,
-				}}
-			/>
-
-			<MainStack.Screen name={Routes.SetUpCompleted} component={SetUpCompleted} options={{ headerShown: false }} />
-
-			<MainStack.Screen name={Routes.WebView} component={WebViewScreen} />
-
-			<MainStack.Screen
-				name={Routes.Notifications}
-				component={NotificationsScreen}
-				options={{
-					title: format("header.notifications"),
-					headerRight: () => <MyRingBattery />,
-				}}
-			/>
-
-			<MainStack.Screen
-				name={Routes.HighHR}
-				component={HighHrScreen}
-				options={{
-					title: format("header.highHr"),
-					headerRight: () => <MyRingBattery />,
-				}}
-			/>
-
-			<MainStack.Screen
-				name={Routes.LowHr}
-				component={LowHrScreen}
-				options={{
-					title: format("header.lowHr"),
-					headerRight: () => <MyRingBattery />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.LowSpo2}
-				component={LowSpo2Screen}
-				options={{
-					title: format("header.lowSPO2"),
-					headerRight: () => <MyRingBattery />,
-				}}
-			/>
-			<MainStack.Screen
-				name={Routes.Storybook}
-				component={StorybookScreen}
-				options={{
-					title: format("header.storybook"),
-				}}
-			/>
-		</MainStack.Navigator>
-	);
-};
-
-const CircleIcon = styled.Image`
-	width: 54px;
-	height: 54px;
-`;
 
 export const RootNavigator: React.FC = () => {
 	const [wait, setWait] = useState(false);
 	const isAuthenticated = !!useAuthenticatedUserEmail();
-
+	const { appStateService, ringApi, bleDeviceService } = useServices();
 	const hasUser = !!useUser();
 	const deviceStored = useDeviceStored(); // useObservable(useServices().bleDeviceService.favoriteDevice);
-
-	// CIR-467: will by pass the ring setup for debuging puropose
+	const userRings = useObservable(appStateService.userRings);
+	const currentRing: UserRing = userRings.filter((ring) => ring.connected)[0];
+	const lastFirmwareVersion = useObservable(ringApi.firmwareVersion);
 	const [useByPass, setByPass] = useState(false);
+	const updateState = useObservable(bleDeviceService.updateState);
 
 	const isOnboardingDone = isAuthenticated && hasUser;
 	if (!isAuthenticated) {
@@ -343,6 +69,9 @@ export const RootNavigator: React.FC = () => {
 				<OnboardingStack.Screen name={Routes.SetUpCompleted} initialParams={{ setWait }} component={SetUpCompleted} />
 			</OnboardingStack.Navigator>
 		);
+	}
+	if (updateState.status !== UpdateState.IDLE.status || (currentRing && lastFirmwareVersion !== currentRing.firmware)) {
+		return <RingFirmwareUpdate></RingFirmwareUpdate>;
 	}
 
 	return isOnboardingDone || useByPass ? (

@@ -25,6 +25,7 @@ import { Image, LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
 import { BreathingRateGraph } from "./breathingRateGraph";
 import { DailySleepChart } from "./DailySleepChart";
+import { HRVGraph } from "./HRVGraph";
 import { getSleepGaugesConfig } from "./measureDisplayInfos";
 import { Sleep7DChart } from "./Sleep7DChart";
 import { SleepAllChart } from "./SleepAllChart";
@@ -128,6 +129,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 				}
 			</ElementStack>
 			<InfoListHeader>{format("sleep.details.title")}</InfoListHeader>
+
 			<ElementStack gap={10}>
 				{activeItem === 0 && (
 					<>
@@ -173,8 +175,10 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 					</>
 				)}
 				{activeItem === 1 && <></>}
-				{activeItem === 3 && <Spo2Graph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
-				{activeItem === 4 && <BreathingRateGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
+				{activeItem === 2 && <Spo2Graph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
+				{activeItem === 3 && <BreathingRateGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
+				{activeItem === 4 && <HRVGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
+
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
 					<Row style={{ justifyContent: "center" }}>
 						<ImageContainer onPress={() => setActiveItem(0)}>
@@ -196,13 +200,23 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 								}
 							/>
 						</ImageContainer>
+						<ImageContainer onPress={() => setActiveItem(2)}>
+							<GraphSwitcherButton
+								style={{ marginLeft: 0 }}
+								source={
+									activeItem === 2
+										? require(`@assets/images/spo2Blue.png`)
+										: require(`@assets/images/spo2BlueTransparent.png`)
+								}
+							/>
+						</ImageContainer>
 						<ImageContainer onPress={() => setActiveItem(3)}>
 							<GraphSwitcherButton
 								style={{ marginLeft: 0 }}
 								source={
 									activeItem === 3
-										? require(`@assets/images/spo2Blue.png`)
-										: require(`@assets/images/spo2BlueTransparent.png`)
+										? require(`@assets/images/brBlue.png`)
+										: require(`@assets/images/brBlueTransparent.png`)
 								}
 							/>
 						</ImageContainer>
@@ -211,8 +225,8 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 								style={{ marginLeft: 0 }}
 								source={
 									activeItem === 4
-										? require(`@assets/images/brBlue.png`)
-										: require(`@assets/images/brBlueTransparent.png`)
+										? require(`@assets/images/HRVBlue.png`)
+										: require(`@assets/images/HRVBlueTransparent.png`)
 								}
 							/>
 						</ImageContainer>

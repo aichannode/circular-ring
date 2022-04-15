@@ -141,7 +141,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 	return (
 		<>
 			{/* TODO: This is temporary modification, use useRangeTags instead */}
-			<CalendarTags tags={tags.map((tag) => ({ nb: 1, tag }))} />
+			<CalendarTags tags={_hasNotEnoughData ? [] : tags.map((tag) => ({ nb: 1, tag }))} />
 			<View style={{ height: 200 }}>
 				{_hasNotEnoughData ? (
 					<View style={{ flex: 1 }}>

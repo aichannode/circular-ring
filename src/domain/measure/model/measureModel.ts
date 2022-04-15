@@ -33,6 +33,8 @@ import {
 	DailyBRTimeSeriesMetrics,
 	DailyHRConstantMetrics,
 	DailyHRTimeSeriesMetrics,
+	DailyHRVConstantMetrics,
+	DailyHRVTimeSeriesMetrics,
 	DailySleepScoreMetrics,
 	DailySleepStageDuration,
 	DailySpo2ConstantMetrics,
@@ -55,6 +57,8 @@ export class MeasureModel implements Model<Proposal> {
 	public dailySpo2Metrics: Map<ISODay, RangeMetrics<DailySpo2TimeSeriesMetrics, DailySpo2ConstantMetrics> | undefined> =
 		new Map();
 	public dailyBRMetrics: Map<ISODay, RangeMetrics<DailyBRTimeSeriesMetrics, DailyBRConstantMetrics> | undefined> =
+		new Map();
+	public dailyHRVMetrics: Map<ISODay, RangeMetrics<DailyHRVTimeSeriesMetrics, DailyHRVConstantMetrics> | undefined> =
 		new Map();
 
 	public dailySleepScoreContributorsMetrics: Map<
@@ -166,6 +170,12 @@ export class MeasureModel implements Model<Proposal> {
 				if (Object.keys(mutation.payload.range.constant).length || mutation.payload.range.timeSeries.length) {
 					mutate.call(this, mutation, () =>
 						this.dailyBRMetrics.set(mutation.payload.localISODay, mutation.payload.range)
+					);
+				}
+			} else if (mutation.type === "setDailyHRVMetrics") {
+				if (Object.keys(mutation.payload.range.constant).length || mutation.payload.range.timeSeries.length) {
+					mutate.call(this, mutation, () =>
+						this.dailyHRVMetrics.set(mutation.payload.localISODay, mutation.payload.range)
 					);
 				}
 			} else if (mutation.type === "pullLast7DActivityIntensityMetrics") {

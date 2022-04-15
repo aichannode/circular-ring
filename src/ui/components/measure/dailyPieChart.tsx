@@ -40,19 +40,19 @@ export const DailyPieChart: React.FC<Props> = ({
 	noDataPhaseColor,
 	hasNotEnoughData,
 }) => {
-	const _hasNotEnoughData = hasNotEnoughData || stages.length === 0 || isNaN(totalDuration);
-	if (_hasNotEnoughData) {
-		stages = [
-			{
-				start: moment().startOf("day").toString(),
-				end: moment().endOf("day").add(1, "minute").toString(),
-				level: 2,
-			},
-		];
-	}
+	const shouldDisplay = !hasNotEnoughData && !!stages.length && !isNaN(totalDuration);
+	const displayedStages = shouldDisplay
+		? stages
+		: [
+				{
+					start: moment().startOf("day").toString(),
+					end: moment().endOf("day").add(1, "minute").toString(),
+					level: 2,
+				},
+		  ];
 
-	const startTime: string | undefined = stages[0]?.start; //TODO convert to local time
-	const endTime: string | undefined = stages[stages.length - 1]?.end; //TODO convert to local time
+	const startTime: string | undefined = displayedStages[0]?.start; //TODO convert to local time
+	const endTime: string | undefined = displayedStages[displayedStages.length - 1]?.end; //TODO convert to local time
 
 	// The first slice starts yesterday. We need to use a different start angle
 	const didStartTheDayBefore = startTime !== undefined && isYesterday(startTime, endTime);
@@ -61,12 +61,12 @@ export const DailyPieChart: React.FC<Props> = ({
 	const chartRadius = chartSize / 2 - [...phaseWidths].sort().reverse()[0];
 
 	function getSliceInnerRadius(index: number) {
-		const phaseLevel = getPhaseLevel(stages[index]?.level);
+		const phaseLevel = getPhaseLevel(displayedStages[index]?.level);
 		return chartRadius - phaseWidths[phaseLevel] / 2;
 	}
 
 	function getSliceOutterRadius(index: number) {
-		const phaseLevel = getPhaseLevel(stages[index]?.level);
+		const phaseLevel = getPhaseLevel(displayedStages[index]?.level);
 		return chartRadius + phaseWidths[phaseLevel] / 2;
 	}
 
@@ -75,10 +75,10 @@ export const DailyPieChart: React.FC<Props> = ({
 	// The maximum drawable angle of the pie (the current hour)
 	const endPieAngle = (didStartTheDayBefore ? 360 : 0) + angle(new Date(endTime));
 
-	const data = stages.map((stage, index) => ({
+	const data = displayedStages.map((stage, index) => ({
 		key: index,
 		value: Date.parse(stage.end) - Date.parse(stage.start),
-		svg: { fill: _hasNotEnoughData ? noDataPhaseColor : phaseColors[getPhaseLevel(stage.level)] },
+		svg: { fill: shouldDisplay ? phaseColors[getPhaseLevel(stage.level)] : noDataPhaseColor },
 		arc: { innerRadius: getSliceInnerRadius(index), outerRadius: getSliceOutterRadius(index) },
 	}));
 
@@ -102,14 +102,14 @@ export const DailyPieChart: React.FC<Props> = ({
 						<SliceDurationLabel>{format(title)}</SliceDurationLabel>
 						{/* @TODO  format is24h below*/}
 						<SliceDurationValue>
-							{_hasNotEnoughData ? format("global.no_data") : formatDuration(totalDuration * 60)}
+							{shouldDisplay ? formatDuration(totalDuration * 60) : format("global.no_data")}
 						</SliceDurationValue>
 					</TotalDurationWrapper>
 					<Image source={require("@assets/images/morning.png")} />
 				</Row>
 				<Image source={require("@assets/images/day.png")} />
 			</InsideInfos>
-			{children}
+			{shouldDisplay && children}
 		</View>
 	);
 };

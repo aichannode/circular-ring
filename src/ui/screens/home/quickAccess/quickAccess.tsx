@@ -1,16 +1,15 @@
-import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
-import { colors } from "@ui/styles/colors";
-import React, { useState, useEffect } from "react";
-import { TouchableOpacity } from "react-native";
-import { Stack } from "@ui/components/layout";
-import styled from "styled-components/native";
 import { useServices } from "@core/services";
 import { I_QuickAccessElem } from "@domain/appState/type";
-import { AlarmTile } from "./Alarm";
-
-import { TimerTile } from "./Timer";
+import { Stack } from "@ui/components/layout";
 import { useI18n } from "@ui/i18n";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { colors } from "@ui/styles/colors";
 import { useObservable } from "micro-observables";
+import React, { useEffect, useState } from "react";
+import styled from "styled-components/native";
+import { Tile } from "../components/Tile";
+import { AlarmTile } from "./Alarm";
+import { TimerTile } from "./Timer";
 
 export const SleepTile = () => {
 	const { appStateService } = useServices();
@@ -20,15 +19,14 @@ export const SleepTile = () => {
 	const sleepBackGound = sleepMode ? colors.sleepBlue : "white";
 
 	return (
-		<Tile style={{ backgroundColor: sleepBackGound }}>
-			<TouchableOpacity
-				onPress={() => {
-					appStateService.updateSleepMode(!sleepMode);
-				}}
-			>
-				<Bold style={{ color: sleepTextColor }}>Sleep mode</Bold>
-				<Light>{sleepMode ? "on" : "off"}</Light>
-			</TouchableOpacity>
+		<Tile
+			style={{ backgroundColor: sleepBackGound }}
+			onPress={() => {
+				appStateService.updateSleepMode(!sleepMode);
+			}}
+		>
+			<Bold style={{ color: sleepTextColor }}>Sleep mode</Bold>
+			<Light>{sleepMode ? "on" : "off"}</Light>
 		</Tile>
 	);
 };
@@ -36,10 +34,8 @@ export const SleepTile = () => {
 export const CalendarTile = () => {
 	const navigation = useRoutesNavigation();
 	return (
-		<Tile>
-			<TouchableOpacity onPress={() => navigation.navigate(Routes.Calendar)}>
-				<Bold>Calendar</Bold>
-			</TouchableOpacity>
+		<Tile onPress={() => navigation.navigate(Routes.Calendar)}>
+			<Bold>Calendar</Bold>
 		</Tile>
 	);
 };
@@ -114,14 +110,4 @@ const Light = styled.Text`
 const Bold = styled.Text`
 	text-align: center;
 	font-size: 14px;
-`;
-
-const Tile = styled.View`
-	flex: 1;
-	height: 50px;
-	justify-content: center;
-	border-right-width: 0.25px;
-	border-left-width: 0.25px;
-	border-color: ${colors.gray};
-	background-color: ${colors.white};
 `;

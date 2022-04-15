@@ -86,9 +86,11 @@ export enum MetricType {
 	UserDailyScoreSPO2GoalMax = "user.daily.score.spo2.goal.max",
 
 	UserDailyAsleepHRV = "user.daily.asleep.hrv",
+	UserDailyReferenceHRV = "user.reference.sleep.hrv",
 	UserDailyScoreHRV = "user.daily.score.hrv",
 	UserDailyScoreHRVGoalMin = "user.daily.score.hrv.goal.min",
 	UserDailyScoreHRVGoalMax = "user.daily.score.hrv.goal.max",
+	UserHRV = "user.hrv",
 
 	UserDailyRHR = "user.daily.rhr",
 	UserDailyScoreRHR = "user.daily.score.rhr",

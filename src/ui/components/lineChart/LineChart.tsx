@@ -1,18 +1,32 @@
+import { isDefined } from "@domain/common/business";
 import { Lines } from "@domain/measure/representation/api";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import * as scale from "d3-scale";
 import moment from "moment";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { processColor, View } from "react-native";
 import { LineChart as LineComponent } from "react-native-charts-wrapper";
 import styled from "styled-components/native";
 import { Averages, MultipleDataSets, SelectEventPayload } from "../../type";
 import { TextPlaceholder } from "../placeholder/TextPlaceholder";
+import { getNearestDataIndexes } from "../stepChart/business";
+
 export interface DayItem {
 	awake: number;
 	deep: number;
 	rem: number;
 	light: number;
+}
+
+interface Position {
+	x: number;
+	y: number;
+}
+
+interface Rect extends Position {
+	width: number;
+	height: number;
 }
 
 export type DaysItem = DayItem[];
@@ -41,7 +55,14 @@ interface LineChartProps {
 	highlightPerTapEnabled?: boolean;
 	scaleXEnabled?: boolean;
 	onSelect?: (x: number) => void;
+	tooltipSize?: { width: number; height: number };
+	xAxisContentInset?: number;
+	tooltipYMin?: number;
+	tooltipYMax?: number;
+	renderTooltip?: (value: number) => React.ReactElement;
 }
+
+const verticalContentInset = { top: 40, bottom: 20 };
 
 export function LineChart({
 	data,
@@ -67,8 +88,21 @@ export function LineChart({
 	scaleXEnabled = true,
 	hasNotEnoughData,
 	onSelect,
+	tooltipSize = { width: 40, height: 20 },
+	xAxisContentInset = 0,
+	tooltipYMin = 0,
+	tooltipYMax = 0,
+	renderTooltip,
 }: LineChartProps) {
 	const [scaleX, setScaleX] = useState(1);
+	const graphRect = useRef<Rect>();
+	const [maxPosition, setMaxPosition] = useState<Position | null>(null);
+	const [minPosition, setMinPosition] = useState<Position | null>(null);
+
+	const [xMin, xMax] = !isMultipleLines
+		? [Math.min(...data!.map((line) => line.x)), Math.max(...data!.map((line) => line.x))]
+		: [0, 0];
+
 	const linesLength = daysItem ? daysItem[0].lines.length : 0;
 	const dataLength = data ? data.length : 0;
 	const hasValidData = linesLength !== 0 || dataLength !== 0;
@@ -76,6 +110,15 @@ export function LineChart({
 	const { format } = useI18n();
 	const [selectedX, setSelectedX] = useState<number | undefined>(onSelect ? data?.[0].x : -1);
 	const axisMinimum = yMin ? yMin - ((yMin % 10) + 10) : 0;
+
+	const yAxisContentInset = verticalContentInset.top;
+
+	const tooltipMinX = xAxisContentInset;
+	const tooltipMaxX = graphRect.current
+		? graphRect.current.width + xAxisContentInset - tooltipSize.width
+		: Number.MAX_VALUE;
+	const tooltipMinY = 0;
+
 	const xAxis = {
 		valueFormatter: valueFormatter,
 		valueFormatterPattern: Array.isArray(valueFormatterPattern)
@@ -138,8 +181,6 @@ export function LineChart({
 					let marker = "";
 					if (!!shouldShowMarker) {
 						marker = labelFormatter(x, y, index);
-					} else if (y == yMin || y == yMax) {
-						marker = `${y}`;
 					}
 					return { x, y, marker };
 				}),
@@ -149,7 +190,7 @@ export function LineChart({
 					lineWidth: shouldShowMarker ? 2 : 1,
 					drawCircles: shouldDrawCircles,
 					circleColors: !!shouldShowMarker
-						? data?.map(({ x, y }) => {
+						? data?.map(({ x }) => {
 								if (x == selectedX) {
 									return processColor("#333333");
 								}
@@ -165,6 +206,7 @@ export function LineChart({
 					valueTextSize: 0,
 					legend: false,
 					circleRadius: 4,
+					mode: "HORIZONTAL_BEZIER" as const,
 				},
 			},
 		],
@@ -217,39 +259,122 @@ export function LineChart({
 				{ x: yMaxIndex ? data?.[yMaxIndex].x : 0, y: yMaxIndex ? data?.[yMaxIndex].y : 0 },
 		  ]
 		: [];
+	const tooltip = (value: number, x: number, y: number, yOffset: number) =>
+		renderTooltip && (
+			<View
+				style={{
+					position: "absolute",
+					justifyContent: "center",
+					alignItems: "center",
+					width: tooltipSize.width,
+					height: tooltipSize.height,
+					top: Math.max(
+						tooltipMinY,
+						y + // position relative to the graph
+							yAxisContentInset - // offset to the top of the graph
+							tooltipSize.height + // align bottom tooltip to the point
+							yOffset // add spacing between tooltip and point
+					),
+					left: Math.max(
+						tooltipMinX,
+						Math.min(
+							tooltipMaxX,
+							x + // position relative to graph
+								xAxisContentInset - // offset to the left of the graph
+								tooltipSize.width / 2 // horizontally center tooltip
+						)
+					),
+				}}
+				pointerEvents="none"
+			>
+				{renderTooltip(value)}
+			</View>
+		);
 	return (
 		<Container>
 			{shouldDisplay ? (
-				<LineComponent
-					highlights={highlights}
-					legend={{
-						enabled: false,
-					}}
-					chartDescription={{ text: "" }}
-					xAxis={xAxis}
-					style={{ flex: 1 }}
-					data={isMultipleLines ? multipleDataSets : dataSets}
-					yAxis={yAxis}
-					autoScaleMinMaxEnabled={false}
-					marker={{
-						enabled: shouldShowLabel,
-						textColor: processColor(colors.white),
-						markerColor: processColor(colors.red),
-					}}
-					dragDecelerationEnabled={true}
-					highlightPerDragEnabled={false}
-					highlightPerTapEnabled={highlightPerTapEnabled}
-					scaleYEnabled={false}
-					scaleXEnabled={scaleXEnabled}
-					onChange={(e) => setScaleX(typeof e.nativeEvent.scaleX == "undefined" ? 1 : e.nativeEvent.scaleX)}
-					onSelect={(e) => {
-						const payload = e.nativeEvent as SelectEventPayload | null;
-						if (payload?.data) {
-							setSelectedX(payload.data.x);
-							e.nativeEvent && onSelect && onSelect(payload.data.x);
-						}
-					}}
-				></LineComponent>
+				<>
+					<View
+						style={{ flex: 1, position: "relative" }}
+						onLayout={(event) => {
+							const { x, y, width, height } = event.nativeEvent.layout;
+							graphRect.current = {
+								x: x + xAxisContentInset, // offset to the left of the graph
+								y: y + verticalContentInset.top, // offset to the top of the graph
+								width: width - xAxisContentInset * 2, // subtract the left and right content insets
+								height: height - verticalContentInset.top - verticalContentInset.bottom, // subtract the top and bottom content insets
+							};
+							const yScale = scale
+								.scaleLinear()
+								.domain([
+									isDefined(yMax) ? yMax - (yMax % 10) + 10 : 0,
+									isDefined(yMin) ? yMin - ((yMin % 10) + 10) : 0,
+								])
+								.range([graphRect.current.height, 0]);
+							const xScale = scale.scaleLinear().domain([xMax, xMin]).range([graphRect.current.width, 0]);
+
+							//find the x relative to yMax
+							const yValues = data?.length ? data.map((line) => line.y) : [];
+							const nearestMaxIdxs = getNearestDataIndexes(isDefined(yMax) ? yMax : 0, yValues);
+							const xLineMax = data?.length ? data[nearestMaxIdxs[0]] : null;
+
+							if (xLineMax) {
+								setMaxPosition({
+									x: xScale(xLineMax.x),
+									y: graphRect.current.height - yScale(xLineMax.y),
+								});
+							}
+
+							//find the x relative to yMin
+							const nearestMinIdxs = getNearestDataIndexes(isDefined(yMin) ? yMin : 0, yValues);
+							const xLineMin = data?.length ? data[nearestMinIdxs[0]] : null;
+							if (xLineMin) {
+								setMinPosition({
+									x: xScale(xLineMin.x),
+									y: graphRect.current.height - yScale(xLineMin.y),
+								});
+							}
+						}}
+					>
+						<LineComponent
+							highlights={highlights}
+							legend={{
+								enabled: false,
+							}}
+							chartDescription={{ text: "" }}
+							xAxis={xAxis}
+							style={{ flex: 1 }}
+							data={isMultipleLines ? multipleDataSets : dataSets}
+							yAxis={yAxis}
+							autoScaleMinMaxEnabled={false}
+							marker={{
+								enabled: shouldShowLabel,
+								textColor: processColor(colors.white),
+								markerColor: processColor(colors.red),
+							}}
+							dragDecelerationEnabled={true}
+							highlightPerDragEnabled={false}
+							highlightPerTapEnabled={highlightPerTapEnabled}
+							scaleYEnabled={false}
+							scaleXEnabled={scaleXEnabled}
+							onChange={(e) => setScaleX(typeof e.nativeEvent.scaleX == "undefined" ? 1 : e.nativeEvent.scaleX)}
+							onSelect={(e) => {
+								const payload = e.nativeEvent as SelectEventPayload | null;
+								if (payload?.data) {
+									setSelectedX(payload.data.x);
+									e.nativeEvent && onSelect && onSelect(payload.data.x);
+								}
+							}}
+						></LineComponent>
+					</View>
+					{shouldShowLabel && scaleX < 1.06 && (
+						<>
+							{maxPosition && yMax && tooltip(yMax, maxPosition.x, maxPosition.y, tooltipYMax)}
+
+							{minPosition && yMin && tooltip(yMin, minPosition.x, minPosition.y, tooltipYMin)}
+						</>
+					)}
+				</>
 			) : (
 				<View style={{ flex: 1 }}>
 					<TextPlaceholder content={format("global.no_data_yet")} />
