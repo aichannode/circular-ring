@@ -22,8 +22,12 @@ import DashedLine from "react-native-dashed-line";
 
 type Props = {
 	selectedDay: ISODay;
+	hasNotEnoughData: boolean;
 };
-export const CardioPointsGraph: React.FC<Props> = observer(function CardioPointsGraph({ selectedDay }: Props) {
+export const CardioPointsGraph: React.FC<Props> = observer(function CardioPointsGraph({
+	selectedDay,
+	hasNotEnoughData,
+}: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
@@ -31,7 +35,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 
 	const {
 		measure: {
-			hooks: { useLast7DaysCardioPoints, hasEnoughData },
+			hooks: { useLast7DaysCardioPoints },
 		},
 		calendar: {
 			hooks: { useDailyTags },
@@ -81,7 +85,8 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 		const date = moment(lines[x].x).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
-	const enoughData = hasEnoughData(selectedDay);
+	const shouldDisplay = !hasNotEnoughData && data?.controlState === DataControlState.READY;
+
 	return isLoading ? (
 		<Spinner size={24} />
 	) : !!lines ? (
@@ -113,11 +118,12 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 
 			<GraphContainer style={{ height: 400, marginTop: 20 }}>
 				<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-					{tags.map(({ name, id }) => (
-						<View key={id} style={{ marginLeft: 8 }}>
-							<Tag>{name}</Tag>
-						</View>
-					))}
+					{shouldDisplay &&
+						tags.map(({ name, id }) => (
+							<View key={id} style={{ marginLeft: 8 }}>
+								<Tag>{name}</Tag>
+							</View>
+						))}
 				</View>
 				<BarChart
 					averages={averages}
@@ -128,11 +134,11 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 					valueFormatter={valueFormatter}
 					graphColor={colors.red}
 					onSelect={(x) => toUpdateTag(x)}
-					hasNotEnoughData={!enoughData || data?.controlState === DataControlState.NO_DATA}
+					hasNotEnoughData={!shouldDisplay}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
-						hasNotEnoughData={!enoughData || data?.controlState === DataControlState.NO_DATA}
+						hasNotEnoughData={!shouldDisplay}
 						rows={[
 							{
 								label: format("activity.energy_score.7day"),
