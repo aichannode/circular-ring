@@ -1,7 +1,19 @@
-import { isToday } from "@domain/common/business";
-import { MetricType, RangeMetrics } from "../metric";
-import { ActivityControlState, DailyBr, DailyHr, DailyHrv, DailySpo2, DataControlState, ScoreQuality } from "./api";
-import { DailySleepStageDuration, SleepStagesMetrics } from "./lib/type";
+import { isDefined, isToday } from "@domain/common/business";
+import { ISOMonth } from "@domain/common/type";
+import { hasAttributesDefined } from "@ui/utils/filter";
+import moment from "moment";
+import { Metrics, MetricType, RangeMetrics } from "../metric";
+import {
+	ActivityAll,
+	ActivityControlState,
+	DailyBr,
+	DailyHr,
+	DailyHrv,
+	DailySpo2,
+	DataControlState,
+	ScoreQuality,
+} from "./api";
+import { ActivityIntensityAllAverageMetrics, DailySleepStageDuration, SleepStagesMetrics } from "./lib/type";
 
 /**
  * Return either we can display the data of this day or not
@@ -174,4 +186,53 @@ export function parseDailyHRV(
 	dailyHrv.controlState = controlState;
 
 	return dailyHrv;
+}
+export function parseAllActivity(
+	lastActivity: Metrics<ActivityIntensityAllAverageMetrics> | undefined,
+	allActivity: Array<{ activity?: Metrics<ActivityIntensityAllAverageMetrics>; date: ISOMonth } | undefined>
+): ActivityAll | undefined {
+	if (lastActivity === undefined || allActivity.length === 0) return undefined;
+
+	if (allActivity[0]) {
+		if (hasAttributesDefined(allActivity[0], ["activity"])) {
+			allActivity[0].activity;
+		}
+	}
+
+	const constant: ActivityAll["constant"] = {
+		highDuration: lastActivity[MetricType.UserMonthlyAverageHighIntensityDuration] as number,
+		mediumDuration: lastActivity[MetricType.UserMonthlyAverageMediumIntensityDuration] as number,
+		lowDuration: lastActivity[MetricType.UserMonthlyAverageLowIntensityDuration] as number,
+	};
+	const activityMetrics: ActivityAll["activityMetrics"] = allActivity
+		.map((item) => {
+			if (!isDefined(item) || !hasAttributesDefined(item, ["activity"])) {
+				return undefined;
+			}
+			const { activity, date } = item;
+			return {
+				high: isDefined(activity[MetricType.UserMonthlyAverageHighIntensityDuration])
+					? moment.duration(activity[MetricType.UserMonthlyAverageHighIntensityDuration]).asHours()
+					: undefined,
+				medium: isDefined(activity[MetricType.UserMonthlyAverageMediumIntensityDuration])
+					? moment.duration(activity[MetricType.UserMonthlyAverageMediumIntensityDuration]).asHours()
+					: undefined,
+				low: isDefined(activity[MetricType.UserMonthlyAverageLowIntensityDuration])
+					? moment.duration(activity[MetricType.UserMonthlyAverageLowIntensityDuration]).asHours()
+					: undefined,
+				date,
+			};
+		})
+		.filter(isDefined);
+	const controlState = activityMetrics.some((metric) => isDefined(metric?.low))
+		? DataControlState.READY
+		: DataControlState.NO_DATA;
+
+	const activityAll: ActivityAll = {
+		constant,
+		activityMetrics,
+		controlState,
+	};
+
+	return activityAll;
 }

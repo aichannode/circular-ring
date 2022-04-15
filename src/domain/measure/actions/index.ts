@@ -8,6 +8,10 @@ import {
 	AcitivityMetrics,
 	activityIntensity7DAverageMetrics,
 	ActivityIntensity7DAverageMetrics,
+	activityIntensityAllAverageMetrics,
+	ActivityIntensityAllAverageMetrics,
+	activityIntensityMonthlyMetrics,
+	ActivityIntensityMonthlyMetrics,
 	activityMetrics,
 	CardioPointsConstantMetrics,
 	cardioPointsConstantMetrics,
@@ -396,7 +400,30 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				]);
 			});
 		},
-		async pullLast7DActivityIntensityMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
+		async setMonthlyActivityIntensityMetrics(
+			localISOMonth: ISOMonth = toISOMonth(getCurrentLocalISODay()),
+			useForceRefresh = false
+		) {
+			const data = await measureApi.fetchLastMonthlyMeasures<ActivityIntensityMonthlyMetrics>(
+				activityIntensityMonthlyMetrics,
+				localISOMonth,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setMonthlyActivityIntensityMetrics",
+					payload: {
+						localISOMonth,
+						data,
+					},
+				},
+			]);
+		},
+
+		async pullLast7DActivityIntensityMetrics(
+			localISODay: ISODay = moment().toISOString() as ISODay,
+			useForceRefresh = false
+		) {
 			const data = await measureApi.fetchLast7DaysMeasures<ActivityIntensity7DAverageMetrics>(
 				activityIntensity7DAverageMetrics,
 				localISODay,
@@ -407,6 +434,25 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "pullLast7DActivityIntensityMetrics",
 					payload: {
 						localISODay,
+						data,
+					},
+				},
+			]);
+		},
+		async pullLastAllActivityIntensityMetrics(
+			localISOMonth: ISOMonth = toISOMonth(getCurrentLocalISODay()),
+			useForceRefresh = false
+		) {
+			const data = await measureApi.fetchLastAllMeasures<ActivityIntensityAllAverageMetrics>(
+				activityIntensityAllAverageMetrics,
+				localISOMonth,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "pullLastAllActivityIntensityMetrics",
+					payload: {
+						localISOMonth,
 						data,
 					},
 				},

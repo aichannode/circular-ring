@@ -138,6 +138,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 			</View>
 		);
 	}
+
 	return (
 		<>
 			{/* TODO: This is temporary modification, use useRangeTags instead */}
@@ -179,12 +180,14 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 					/>
 				)}
 			</View>
-			<ActivityLegend
-				hasNotEnoughData={hasNotEnoughData}
-				highDuration={dataActivityIntensity.duration.highActivity}
-				mediumDuration={dataActivityIntensity.duration.mediumActivity}
-				lowDuration={dataActivityIntensity.duration.lowActivity}
-			/>
+			<View style={{ marginTop: 30 }}>
+				<ActivityLegend
+					hasNotEnoughData={hasNotEnoughData}
+					highDuration={dataActivityIntensity.duration.highActivity}
+					mediumDuration={dataActivityIntensity.duration.mediumActivity}
+					lowDuration={dataActivityIntensity.duration.lowActivity}
+				/>
+			</View>
 		</>
 	);
 });
