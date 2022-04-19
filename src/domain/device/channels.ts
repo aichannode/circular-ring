@@ -11,4 +11,5 @@ export enum Channel {
 	CALENDAR = "CAL",
 	NAME = "NAM",
 	RENAME = "NAM",
+	DATA_QUANTITY = "FBQ",
 }
