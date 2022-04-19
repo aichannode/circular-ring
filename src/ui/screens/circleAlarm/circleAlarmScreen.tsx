@@ -25,18 +25,15 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 	const navigation = useRoutesNavigation();
 	const { loading, alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
+	const { hasEnoughData, useDailyWakeUpScore, useDailySleepStages } = useRepresentations().measure.hooks;
 	const warningBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const wakeUpScore = useRepresentations().measure.hooks.useDailyWakeUpScore();
+	const wakeUpScore = useDailyWakeUpScore();
 	const autoConnectState = useAutoConnectState();
-	const { hasEnoughData } = useRepresentations().measure.hooks;
 	const enoughData = hasEnoughData(getCurrentLocalISODay());
 	const [displayGraph, setDisplayGraph] = useState(false);
 	const [dailySleep, setData] = useState<DailySleepData | undefined>();
 
-	const { useDailySleepStages } = useRepresentations().measure.hooks;
-
 	useDailySleepStages({ setData });
-
 	useEffect(() => {
 		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
 			loadAlarms();
@@ -47,18 +44,16 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 	return (
 		<Container>
 			<ScrollView>
-				{wakeUpScore && (
-					<ScoreSection
-						hasNotEnoughData={!enoughData}
-						label={format("alarm.wake_up_score")}
-						color={colors.blue}
-						score={wakeUpScore.score}
-						quality={wakeUpScore.controlState}
-						style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
-						setState={setDisplayGraph}
-						state={displayGraph}
-					/>
-				)}
+				<ScoreSection
+					hasNotEnoughData={!enoughData}
+					label={format("alarm.wake_up_score")}
+					color={colors.blue}
+					score={wakeUpScore?.score}
+					quality={wakeUpScore?.controlState}
+					style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
+					setState={setDisplayGraph}
+					state={displayGraph}
+				/>
 				{displayGraph && dailySleep && (
 					<GraphWrapper>
 						<Cross onPress={() => setDisplayGraph(false)}>
