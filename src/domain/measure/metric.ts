@@ -180,6 +180,13 @@ export enum MetricType {
 	User7DaysAverageMediumIntensityDuration = "user.7days.average.medium.intensity.duration",
 	User7DaysAverageLowIntensityDuration = "user.7days.average.low.intensity.duration",
 
+	/////////////////
+	// Monthly activity duration
+	/////////////////
+	UserMonthlyAverageHighIntensityDuration = "user.monthly.average.high.intensity.duration",
+	UserMonthlyAverageMediumIntensityDuration = "user.monthly.average.medium.intensity.duration",
+	UserMonthlyAverageLowIntensityDuration = "user.monthly.average.low.intensity.duration",
+
 	///////////////////
 	// Daily activities
 	///////////////////

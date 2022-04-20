@@ -1,4 +1,4 @@
-import { ISODay, Tuple } from "@domain/common/type";
+import { ISODay, ISOMonth, Tuple } from "@domain/common/type";
 import { ActivityStage, SleepStage } from "../type";
 import { StageInfos } from "./lib/type";
 
@@ -171,14 +171,32 @@ export interface SleepAll {
 }
 
 export interface ActivityData {
-	high: number;
-	medium: number;
-	low: number;
+	high?: number;
+	medium?: number;
+	low?: number;
 	date: ISODay;
 }
+
 export interface Activity7D {
 	controlState: DataControlState;
 	activityMetrics: Tuple<ActivityData, 7>;
+	constant: {
+		highDuration?: number;
+		mediumDuration?: number;
+		lowDuration?: number;
+	};
+}
+
+export interface ActivityData30D {
+	high?: number;
+	medium?: number;
+	low?: number;
+	date: ISOMonth;
+}
+
+export interface ActivityAll {
+	controlState: DataControlState;
+	activityMetrics: Array<ActivityData30D>;
 	constant: {
 		highDuration?: number;
 		mediumDuration?: number;

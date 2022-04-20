@@ -6,6 +6,7 @@ import { Proposal } from "../common/type";
 import { Metrics, MetricType, RangeMetrics } from "../metric";
 import {
 	ActivityIntensity7DAverageMetrics,
+	ActivityIntensityAllAverageMetrics,
 	CaloriesBurned,
 	CardioPoints,
 	CardioPointsConstantMetrics,
@@ -95,11 +96,12 @@ export class MeasureModel implements Model<Proposal> {
 	public last7DActivityIntensityAverageMetrics: Map<ISODay, Metrics<ActivityIntensity7DAverageMetrics>> = new Map();
 	public dailyCardioPoints: Map<ISODay, number> = new Map();
 	public last7DCardioPointConstants: Map<ISODay, Metrics<CardioPointsConstantMetrics>> = new Map();
-
+	public lastAllActivityIntensityAverageMetrics: Map<ISOMonth, Metrics<ActivityIntensityAllAverageMetrics>> = new Map();
 	public dailyActivityIntensityMetrics: Map<
 		ISODay,
 		RangeMetrics<DailyActivityIntensityMetrics, DailyActivityIntensityDuration>
 	> = new Map();
+	public monthlyActivityIntensityMetrics: Map<ISOMonth, Metrics<ActivityIntensityAllAverageMetrics>> = new Map();
 	public dailyActivitiesMetrics: Map<
 		ISODay,
 		Metrics<
@@ -121,6 +123,7 @@ export class MeasureModel implements Model<Proposal> {
 		// Mark all the collections of object that does not need to be deeply observed
 		makeAutoObservable<MeasureModel>(this, {
 			dailyActivityIntensityMetrics: observable.shallow,
+			monthlyActivityIntensityMetrics: observable.shallow,
 			dailySleepMetrics: observable.shallow,
 			dailySleepScoreContributorsMetrics: observable.shallow,
 			dailyEnergyScoreContributorsMetrics: observable.shallow,
@@ -182,6 +185,16 @@ export class MeasureModel implements Model<Proposal> {
 				if (Object.keys(mutation.payload.data).length) {
 					mutate.call(this, mutation, () =>
 						this.last7DActivityIntensityAverageMetrics.set(mutation.payload.localISODay, mutation.payload.data)
+					);
+				}
+			} else if (mutation.type === "pullLastAllActivityIntensityMetrics") {
+				mutate.call(this, mutation, () =>
+					this.lastAllActivityIntensityAverageMetrics.set(mutation.payload.localISOMonth, mutation.payload.data)
+				);
+			} else if (mutation.type === "setMonthlyActivityIntensityMetrics") {
+				if (Object.keys(mutation.payload.data).length) {
+					mutate.call(this, mutation, () =>
+						this.monthlyActivityIntensityMetrics.set(mutation.payload.localISOMonth, mutation.payload.data)
 					);
 				}
 			} else if (mutation.type === "pullDailyActivityIntensityMetrics") {

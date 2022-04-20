@@ -23,7 +23,9 @@ export class RingManagementService {
 
 	// _userRings = observable<NamedUserRing[]>([]);
 	private _currentRingSyncState = observable<SyncState>(SyncState.NONE);
+	private _FBCQuantity = observable(0);
 
+	readonly FBCQuantity = this._FBCQuantity.readOnly();
 	// userRings = this._userRings;
 	currentRingSyncState = this._currentRingSyncState.readOnly();
 	constructor(
@@ -112,6 +114,11 @@ export class RingManagementService {
 				this.logger.info("Waiting data has to be sent, length:", waitingData.length);
 			}
 			this.logger.info("Retrieving data...");
+			let dataQuantity = 0;
+			const responseDataQuantiy = await this.deviceService.getResponse(Channel.DATA_QUANTITY);
+			if (typeof responseDataQuantiy === "string") dataQuantity = parseInt(responseDataQuantiy);
+			this.logger.info("FBC Quantity", dataQuantity);
+			this._FBCQuantity.set(dataQuantity);
 			const allData = await new Promise<string>(async (resolve) => {
 				let data = waitingData ?? "";
 
@@ -140,14 +147,17 @@ export class RingManagementService {
 				}
 				await this.ringDataStorage.clear();
 				this._currentRingSyncState.set(allData !== ringDataEOF ? SyncState.SUCCESS : SyncState.NONE);
+				this._FBCQuantity.set(0);
 			} catch (e) {
 				this.logger.warn("An error occured during save. Storing data, length:", allData.length);
+				this._FBCQuantity.set(0);
 				await this.ringDataStorage.save(allData);
 				throw e;
 			}
 		} catch (e) {
 			this.logger.warn("Error during sync:", e);
 			this._currentRingSyncState.set(SyncState.ERROR);
+			this._FBCQuantity.set(0);
 			throw e;
 		}
 	}

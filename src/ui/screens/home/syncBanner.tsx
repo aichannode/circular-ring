@@ -1,3 +1,4 @@
+import { useServices } from "@core/services";
 import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringManagementService";
 import { PrimaryButton } from "@ui/components/buttons";
@@ -6,6 +7,7 @@ import { Spinner } from "@ui/components/spinner";
 import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import { useObservable } from "micro-observables";
 import React, { useEffect } from "react";
 import { Dimensions, StyleProp, View, ViewStyle } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withRepeat, withTiming } from "react-native-reanimated";
@@ -19,6 +21,8 @@ interface SyncBannerProps {
 const { width } = Dimensions.get("screen");
 
 export const SyncBanner: React.FC<SyncBannerProps> = ({ style, onRetry }) => {
+	const { ringManagementService } = useServices();
+	const FBCQuantity = useObservable(ringManagementService.FBCQuantity);
 	const syncState = useSyncState();
 	const { format } = useI18n();
 	const progressWidth = useSharedValue(10);
@@ -37,7 +41,7 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({ style, onRetry }) => {
 				withDelay(
 					0,
 					withTiming((width - 20) * 0.9, {
-						duration: 15000,
+						duration: (FBCQuantity / 30) * 1000 + 5000,
 					})
 				),
 				1

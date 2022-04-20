@@ -101,7 +101,7 @@ export class RingApi {
 				gotExceptionOnly = true;
 				for (let i = 0; i < 5; ++i) {
 					try {
-						task = (await this.apiService.get<Task>(`/tasks/${data.taskId}`)).data;
+						task = (await this.apiService.get<Task>(`/tasks/${data.taskId}`, { useForceRefresh: true })).data;
 						this.logger.info(task);
 						retry = isTaskRunning(task.status);
 						gotExceptionOnly = false;

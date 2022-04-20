@@ -1,6 +1,7 @@
 import { useRepresentations } from "@core/representation";
-import { isDefined } from "@domain/common/business";
+import { isDefined, toISOMonth } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
+import { useUser } from "@domain/user/hooks/useUser";
 import { CalendarTags } from "@ui/components/calendar/CalendarTags";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { Spinner } from "@ui/components/spinner";
@@ -26,31 +27,31 @@ interface Data {
 }
 
 type Props = {
-	selectedDay: string;
+	selectedDay: ISODay;
 	hasNotEnoughData?: boolean;
 };
 
-export const ActivityIntensity7DGraph: React.FC<Props> = observer(function ActivityIntensity7DGraph({
+export const ActivityIntensityAllGraph: React.FC<Props> = observer(function ActivityIntensityAllGraph({
 	selectedDay,
 	hasNotEnoughData,
 }: Props) {
+	const user = useUser();
+	const beginDay = (user ? moment(user.createdAt).format("YYYY-MM-DD") : "2020-01-01") as ISODay;
+
 	const {
 		measure: {
-			hooks: { use7DaysActivity },
+			hooks: { useAllActivity },
 		},
 		calendar: {
 			hooks: { useRangeTags },
 		},
 	} = useRepresentations();
 
-	const tags = useRangeTags(
-		moment(selectedDay).subtract(7, "days").toISOString() as ISODay,
-		moment(selectedDay).endOf("day").toISOString() as ISODay
-	);
-	const activity7D = use7DaysActivity(selectedDay as ISODay);
+	const tags = useRangeTags(beginDay, moment(selectedDay).endOf("day").toISOString() as ISODay);
+	const allActivity = useAllActivity(toISOMonth(beginDay), toISOMonth(selectedDay));
 
-	const lines = activity7D
-		? [...activity7D.activityMetrics]
+	const lines = allActivity
+		? [...allActivity.activityMetrics]
 				.map((line) => (hasAttributesDefined(line, ["high", "low", "medium"]) ? line : undefined))
 				.filter(isDefined)
 				.reverse()
@@ -65,11 +66,11 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 		],
 		[[], [], []]
 	) || [[], [], []];
-	const xAxis = lines.map((item) => moment(item.date).format("dd")[0]);
+	const xAxis = lines.map((item) => moment(item.date).format("MMM."));
 
 	const hasValidData = lines.length > 0;
 	const shouldDisplay = !hasNotEnoughData && hasValidData;
-	const isLoading = !isDefined(activity7D);
+	const isLoading = !isDefined(allActivity);
 
 	if (isLoading) {
 		return (
@@ -103,7 +104,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 								const min = Math.floor((val % 1) * 60).toString();
 								return `${hours.padStart(2, "0")}:${min.padStart(2, "0")}`;
 							});
-						return `${moment(activity7D?.activityMetrics[index].date).format("ddd DD")}\n${values.join("\n")}`;
+						return `${moment(allActivity?.activityMetrics[index].date).format("ddd DD")}\n${values.join("\n")}`;
 					}}
 					highlightPerTapEnabled
 					scaleXEnabled={false}
@@ -113,7 +114,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 				/>
 			</View>
 			<View style={{ marginTop: 30 }}>
-				<ActivityLegend {...activity7D?.constant} hasNotEnoughData={hasNotEnoughData} />
+				<ActivityLegend {...allActivity?.constant} hasNotEnoughData={hasNotEnoughData} />
 			</View>
 		</>
 	);

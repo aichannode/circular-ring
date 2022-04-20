@@ -71,6 +71,20 @@ export const activityIntensity7DAverageMetrics = [
 ] as const;
 export type ActivityIntensity7DAverageMetrics = typeof activityIntensity7DAverageMetrics[number];
 
+export const activityIntensityAllAverageMetrics = [
+	MetricType.UserMonthlyAverageHighIntensityDuration,
+	MetricType.UserMonthlyAverageMediumIntensityDuration,
+	MetricType.UserMonthlyAverageLowIntensityDuration,
+] as const;
+export type ActivityIntensityAllAverageMetrics = typeof activityIntensityAllAverageMetrics[number];
+
+export const activityIntensityMonthlyMetrics = [
+	MetricType.UserMonthlyAverageHighIntensityDuration,
+	MetricType.UserMonthlyAverageMediumIntensityDuration,
+	MetricType.UserMonthlyAverageLowIntensityDuration,
+] as const;
+export type ActivityIntensityMonthlyMetrics = typeof activityIntensityMonthlyMetrics[number];
+
 /**
  * SPO2
  */

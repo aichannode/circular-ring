@@ -2,6 +2,8 @@ import { ISODay, ISOMonth } from "@domain/common/type";
 import { Metrics, MetricType, RangeMetrics } from "../metric";
 import {
 	ActivityIntensity7DAverageMetrics,
+	ActivityIntensityAllAverageMetrics,
+	ActivityIntensityMonthlyMetrics,
 	CaloriesBurned,
 	CardioPoints,
 	CardioPointsConstantMetrics,
@@ -163,10 +165,24 @@ export type Mutations =
 			};
 	  }
 	| {
+			type: "setMonthlyActivityIntensityMetrics";
+			payload: {
+				localISOMonth: ISOMonth;
+				data: Metrics<ActivityIntensityMonthlyMetrics>;
+			};
+	  }
+	| {
 			type: "pullLast7DActivityIntensityMetrics";
 			payload: {
 				localISODay: ISODay;
 				data: Metrics<ActivityIntensity7DAverageMetrics>;
+			};
+	  }
+	| {
+			type: "pullLastAllActivityIntensityMetrics";
+			payload: {
+				localISOMonth: ISOMonth;
+				data: Metrics<ActivityIntensityAllAverageMetrics>;
 			};
 	  }
 	| {

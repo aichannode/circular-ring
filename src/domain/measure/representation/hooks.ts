@@ -17,6 +17,7 @@ import { MetricType } from "../metric";
 import { MeasureModel } from "../model/measureModel";
 import {
 	Activity7D,
+	ActivityAll,
 	ActivityControlState,
 	Cardio7D,
 	Contributor,
@@ -35,6 +36,7 @@ import {
 	canDisplay,
 	getActivityControlState,
 	getScoreControlStates,
+	parseAllActivity,
 	parseDailyBR,
 	parseDailyHR,
 	parseDailyHRV,
@@ -121,16 +123,16 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				beginISOMonth: ISOMonth,
 				endISOMonth: ISOMonth = toISOMonth(getCurrentLocalISODay())
 			): SleepAll | undefined {
-				// Compute the 7 previous date from the given date
+				// Compute the all previous months from the given date
 				const months = useMemo(() => getMonthsBetween(beginISOMonth, endISOMonth), [beginISOMonth, endISOMonth]);
 
 				useEffect(
 					action(function () {
-						// Get the last 7 daily sleep stages metrics
+						// Get the previous monthly sleep stages metrics
 						months
 							.filter((d) => !model.monthlySleepStageMetrics.has(d))
 							.forEach((d) => actions.pullMonthlySleepStageMetrics(d, true));
-						// and the constants for the last 7 days
+						// and the constants for the last months
 						actions.pullLastAllSleepConstantMetrics(endISOMonth);
 					}),
 					[months]
@@ -226,6 +228,32 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					: DataControlState.NO_DATA;
 
 				return isLoaded ? { activityMetrics, constant, controlState } : undefined;
+			},
+			useAllActivity(
+				beginISOMonth: ISOMonth,
+				endISOMonth: ISOMonth = toISOMonth(getCurrentLocalISODay())
+			): ActivityAll | undefined {
+				// Compute the all previous months from the given date
+				const months = useMemo(() => getMonthsBetween(beginISOMonth, endISOMonth), [beginISOMonth, endISOMonth]);
+
+				useEffect(
+					action(function () {
+						// Get the previous monthly sleep stages metrics
+						months
+							.filter((d) => !model.monthlyActivityIntensityMetrics.has(d))
+							.forEach((d) => actions.setMonthlyActivityIntensityMetrics(d, true));
+						// and the constants for the last months
+						if (!model.lastAllActivityIntensityAverageMetrics.has(endISOMonth)) {
+							actions.pullLastAllActivityIntensityMetrics(endISOMonth);
+						}
+					}),
+					[months]
+				);
+
+				const lastActivity = model.lastAllActivityIntensityAverageMetrics.get(endISOMonth);
+				const allActivity = months.map((date) => ({ date, activity: model.monthlyActivityIntensityMetrics.get(date) }));
+
+				return parseAllActivity(lastActivity, allActivity);
 			},
 			useDailyHR(localISODay = getCurrentLocalISODay()): DailyHr | undefined {
 				useEffect(() => {

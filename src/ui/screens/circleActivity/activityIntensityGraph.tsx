@@ -8,6 +8,7 @@ import { colors } from "@ui/styles/colors";
 import React, { useState } from "react";
 import { View } from "react-native";
 import { ActivityIntensity7DGraph } from "./ActivityIntensity7DGraph";
+import { ActivityIntensityAllGraph } from "./ActivityIntensityAllGraph";
 import { DailyActivityIntensityGraph } from "./DailyActivityIntensityGraph";
 
 type Props = {
@@ -52,6 +53,9 @@ export function ActivityIntensityGraph({ selectedDay, hasNotEnoughData }: Props)
 				)}
 				{graphPeriod === TimeFrame.LAST_7_DAYS && (
 					<ActivityIntensity7DGraph selectedDay={selectedDay} hasNotEnoughData={hasNotEnoughData} />
+				)}
+				{graphPeriod === TimeFrame.ALL && (
+					<ActivityIntensityAllGraph selectedDay={selectedDay} hasNotEnoughData={hasNotEnoughData} />
 				)}
 			</GraphContainer>
 		</View>
