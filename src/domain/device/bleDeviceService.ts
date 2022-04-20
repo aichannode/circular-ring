@@ -405,11 +405,12 @@ export class BleDeviceService {
 			await this.write(`${Channel.CALENDAR}${getUTCTimestamp()}`);
 			this.logger.info("🕒 Time set to device", device.name, getUTCTimestamp());
 			await this.listenBattery();
+			const firmware = await this.getResponse(Channel.FIRMWARE_VERSION);
+			this.logger.info("🔧 Firmware Version", firmware);
 			if (
 				this.appStateService.userRings.get().find((userRing: NamedUserRing) => userRing.name === device.name) ===
 				undefined
 			) {
-				const firmware = await this.getResponse(Channel.FIRMWARE_VERSION);
 				this.appStateService.userRings.update((userRing) => {
 					const rings = userRing.map((ring) => ({ ...ring, connected: false }));
 					const newRing = {
@@ -425,7 +426,10 @@ export class BleDeviceService {
 				});
 			} else {
 				this.appStateService.userRings.update((userRing) => {
-					return userRing.map((userRing) => ({ ...userRing, connected: userRing.name === device.name ? true : false }));
+					return userRing.map((userRing) => ({
+						...userRing,
+						connected: userRing.name === device.name ? true : false,
+					}));
 				});
 			}
 		} catch (e) {

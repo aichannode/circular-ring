@@ -130,6 +130,8 @@ export class RingApi {
 
 	async getLatestFirmware(): Promise<I_latestFirmware> {
 		const result = await this.apiService.get<I_latestFirmware>("/firmware/latest");
+		this.logger.info("🔧 Latest firmware version: ", result.data.version);
+		this._firmwareVersion.set(result.data.version);
 		return result.data;
 	}
 
