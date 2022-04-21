@@ -73,6 +73,7 @@ export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 const Container = styled(Stack)`
 	background-color: ${colors.white};
 	padding: 15px 0px;
+	z-index: 11;
 `;
 
 const CircleLabel = styled(PrimaryText)`

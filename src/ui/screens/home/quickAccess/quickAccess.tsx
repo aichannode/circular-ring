@@ -99,6 +99,7 @@ const Container = styled(Stack)`
 	margin-top: 10px;
 	display: flex;
 	flex-direction: row;
+	background-color: ${colors.white};
 `;
 
 const Light = styled.Text`
