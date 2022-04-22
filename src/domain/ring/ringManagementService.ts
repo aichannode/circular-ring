@@ -138,19 +138,14 @@ export class RingManagementService {
 				// Api call
 				if (allData !== ringDataEOF) {
 					this.logger.info("Sending data to server...");
-					try {
-						await this.ringApi.sendData(ring, allData);
-						this.logger.info("Successfully sent data...");
-					} catch (err) {
-						this.logger.warn("Error sent data...", err);
-					}
+					await this.ringApi.sendData(ring, allData);
 					setTimeout(() => this._currentRingSyncState.set(SyncState.NONE), syncFinishedTimeout);
 				}
 				await this.ringDataStorage.clear();
 				this._currentRingSyncState.set(allData !== ringDataEOF ? SyncState.SUCCESS : SyncState.NONE);
 				this._FBCQuantity.set(0);
 			} catch (e) {
-				this.logger.warn("An error occured during save. Storing data, length:", allData.length);
+				this.logger.warn("An error occured during save. Storing data, length:", allData.length, "error:", e);
 				this._FBCQuantity.set(0);
 				await this.ringDataStorage.save(allData);
 				throw e;
