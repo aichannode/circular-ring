@@ -20,7 +20,7 @@ check:
     - npm ci --progress=false
     - npm run tsc
     - npm run lint
-    # - npm run test -- --ci  # none for now
+    - npm run test -- --ci
   only:
     - merge_requests
     - branches
