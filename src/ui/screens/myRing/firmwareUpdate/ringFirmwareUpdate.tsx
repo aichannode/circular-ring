@@ -1,5 +1,6 @@
 import { useServices } from "@core/services";
 import { UpdateState } from "@domain/device/bleDeviceService";
+import { colors } from "@ui/styles/colors";
 import { useObservable } from "micro-observables";
 import React from "react";
 import styled from "styled-components/native";
@@ -37,6 +38,7 @@ const Container = styled.View`
 	flex: 1;
 	align-items: center;
 	padding: 60px 0px;
+	background-color: ${colors.white};
 `;
 
 const CloseContainer = styled.View`
