@@ -40,7 +40,12 @@ export const RootNavigator: React.FC = () => {
 	const currentRing: UserRing = userRings.filter((ring) => ring.connected)[0];
 	const lastFirmwareVersion = useObservable(ringApi.firmwareVersion);
 	const [useByPass, setByPass] = useState(false);
+	const [byPassForcedFirmwareUpdate, setByPassForcedFirmwareUpdate] = useState(false);
 	const updateState = useObservable(bleDeviceService.updateState);
+	console.log("lastFirmwareVersion", lastFirmwareVersion);
+	const {
+		cognitoAuthService: { payload },
+	} = useServices();
 
 	const isOnboardingDone = isAuthenticated && hasUser;
 	if (!isAuthenticated) {
@@ -71,10 +76,16 @@ export const RootNavigator: React.FC = () => {
 		);
 	}
 	if (
-		updateState.status !== UpdateState.IDLE.status ||
-		(currentRing && lastFirmwareVersion !== currentRing.firmware && lastFirmwareVersion)
+		(updateState.status !== UpdateState.IDLE.status ||
+			(currentRing && lastFirmwareVersion !== currentRing.firmware && lastFirmwareVersion)) &&
+		!byPassForcedFirmwareUpdate
 	) {
-		return <RingFirmwareUpdate></RingFirmwareUpdate>;
+		return (
+			<RingFirmwareUpdate
+				showCross={payload.get()?.["cognito:groups"]?.some((groupName) => groupName === "admin")}
+				setByPassForcedFirmwareUpdate={setByPassForcedFirmwareUpdate}
+			></RingFirmwareUpdate>
+		);
 	}
 
 	return isOnboardingDone || useByPass ? (
