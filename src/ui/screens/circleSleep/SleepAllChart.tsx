@@ -3,9 +3,9 @@ import { isDefined, toISOMonth } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { Lines, SleepStageData } from "@domain/measure/representation/api";
 import { useUser } from "@domain/user/hooks/useUser";
-import { CalendarTags } from "@ui/components/calendar/CalendarTags";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { Spinner } from "@ui/components/spinner";
+import { Tags } from "@ui/components/Tags";
 import { colors } from "@ui/styles/colors";
 import { hasAttributesDefined } from "@ui/utils/filter";
 import { observer } from "mobx-react-lite";
@@ -52,7 +52,7 @@ export const SleepAllChart = observer(function SleepAllChart({ selectedDay, hasN
 
 	return isLoaded ? (
 		<>
-			<CalendarTags tags={shouldDisplay ? tags : []} />
+			<Tags tags={shouldDisplay ? tags : []} />
 			<View style={{ height: 200 }}>
 				<LineChart
 					daysItem={[

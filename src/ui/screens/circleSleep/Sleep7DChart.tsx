@@ -2,9 +2,9 @@ import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { Lines, SleepStageData } from "@domain/measure/representation/api";
-import { CalendarTags } from "@ui/components/calendar/CalendarTags";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { Spinner } from "@ui/components/spinner";
+import { Tags } from "@ui/components/Tags";
 import { colors } from "@ui/styles/colors";
 import { hasAttributesDefined } from "@ui/utils/filter";
 import { observer } from "mobx-react-lite";
@@ -52,7 +52,7 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, hasNo
 
 	return isLoaded ? (
 		<>
-			<CalendarTags tags={shouldDisplay ? tags : []} />
+			<Tags tags={shouldDisplay ? tags : []} />
 			<View style={{ height: 200 }}>
 				<LineChart
 					daysItem={[

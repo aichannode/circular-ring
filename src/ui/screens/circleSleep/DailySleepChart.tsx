@@ -3,7 +3,7 @@ import { toLocale } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DailySleepData } from "@domain/measure/representation/api";
 import { SleepStage } from "@domain/measure/type";
-import { CalendarTags } from "@ui/components/calendar/CalendarTags";
+import { Tags } from "@ui/components/Tags";
 import produce from "immer";
 import moment from "moment";
 import React from "react";
@@ -50,8 +50,8 @@ export function DailySleepChart({ data, selectedDay, hasNotEnoughData }: Props) 
 	});
 	return (
 		<View style={{ flex: 1, position: "relative" }}>
-			<View style={{ position: "absolute", top: 0, right: 0 }}>
-				<CalendarTags tags={!hasNotEnoughData ? tags : []} />
+			<View>
+				<Tags tags={!hasNotEnoughData ? tags : []} />
 			</View>
 			<Hypnogram data={correctedStages} hasNotEnoughData={hasNotEnoughData} />
 			<View style={{ marginTop: 30 }}>

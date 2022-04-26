@@ -3,9 +3,9 @@ import { getLocalISODayFromLocalDate } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
 import { useIs24h } from "@domain/user/hooks/useUser";
-import { CalendarTags } from "@ui/components/calendar/CalendarTags";
 import { TextPlaceholder } from "@ui/components/placeholder/TextPlaceholder";
 import { Spinner } from "@ui/components/spinner";
+import { Tags } from "@ui/components/Tags";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
@@ -142,7 +142,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 	return (
 		<>
 			{/* TODO: This is temporary modification, use useRangeTags instead */}
-			<CalendarTags tags={_hasNotEnoughData ? [] : tags.map((tag) => ({ nb: 1, tag }))} />
+			<Tags tags={_hasNotEnoughData ? [] : tags.map((tag) => ({ nb: 1, tag }))} />
 			<View style={{ height: 200 }}>
 				{_hasNotEnoughData ? (
 					<View style={{ flex: 1 }}>
