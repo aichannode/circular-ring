@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0-alpha.3](https://gitlab.com/circularing/mobile/app/compare/v0.1.0-alpha.2...v0.1.0-alpha.3) (2022-04-26)
+
+
+### Bug Fixes
+
+* dark mode ([4b43bcc](https://gitlab.com/circularing/mobile/app/commit/4b43bcce39b52a316d9dd946b19a2a5ccd312041))
+* disable dark mode on android and ios ([5bb9f17](https://gitlab.com/circularing/mobile/app/commit/5bb9f177a3b3bd863cbe603640dcce8f7197a7b5))
+* firmware update ([0689ef0](https://gitlab.com/circularing/mobile/app/commit/0689ef0a66cb8bd4a6dd975cb40c2e99491386a4))
+* firmware update ([f9cc40e](https://gitlab.com/circularing/mobile/app/commit/f9cc40ef9bb73e6bed872b2af6e5f519fa03bbe6))
+* fixed a bottom sheet that was overlaped by keyboard on ios ([1461594](https://gitlab.com/circularing/mobile/app/commit/146159405b774a36f09d16902056a14a1322f458))
+
 ## 0.1.0-alpha.2 (2022-04-20)
 
 

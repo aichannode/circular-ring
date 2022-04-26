@@ -98,18 +98,18 @@ export const HomeScreen: React.FC = () => {
 	data.push(<SpinnerContainer>{loading && <Spinner size={20}></Spinner>}</SpinnerContainer>);
 	useFetchCircles();
 
-	const searchBarAnim = useRef(new Animated.Value(-45)).current;
+	const quickAccessAnim = useRef(new Animated.Value(0)).current;
 	useEffect(() => {
 		if (hideQuickaccess) {
-			Animated.timing(searchBarAnim, {
+			Animated.timing(quickAccessAnim, {
 				toValue: 0,
-				duration: 300,
+				duration: 100,
 				useNativeDriver: true,
 			}).start();
 		} else {
-			Animated.timing(searchBarAnim, {
+			Animated.timing(quickAccessAnim, {
 				toValue: -60,
-				duration: 300,
+				duration: 100,
 				useNativeDriver: true,
 			}).start();
 		}
@@ -118,7 +118,12 @@ export const HomeScreen: React.FC = () => {
 	return (
 		<Container>
 			<CirclesBanner />
-			<Animated.View style={{ zIndex: -1, transform: [{ translateY: searchBarAnim }] }}>
+			<Animated.View
+				style={{
+					zIndex: 10,
+					transform: [{ translateY: quickAccessAnim }],
+				}}
+			>
 				<QuickAccess />
 			</Animated.View>
 			<Animated.FlatList
@@ -130,14 +135,27 @@ export const HomeScreen: React.FC = () => {
 					/>
 				}
 				data={data}
-				style={{ flex: 1, transform: [{ translateY: searchBarAnim }] }}
+				style={{
+					flex: 1,
+					marginTop: -60,
+					paddingTop: 60,
+					zIndex: 0,
+					flexGrow: 1,
+				}}
 				renderItem={(item) => {
 					return item.item;
 				}}
 				onScroll={(event) => {
-					if (event.nativeEvent.contentOffset.y < 50 && !hideQuickaccess) {
+					if (
+						(event.nativeEvent.velocity && event.nativeEvent.velocity?.y <= 0) ||
+						event.nativeEvent.contentOffset.y < 50
+					) {
 						setHideQuickaccess(true);
-					} else if (event.nativeEvent.contentOffset.y < 50 && hideQuickaccess) {
+					} else if (
+						event.nativeEvent.velocity &&
+						event.nativeEvent.velocity.y > 0 &&
+						event.nativeEvent.contentOffset.y > 50
+					) {
 						setHideQuickaccess(false);
 					}
 				}}
@@ -152,7 +170,7 @@ export const HomeScreen: React.FC = () => {
 };
 
 const SpinnerContainer = styled.View`
-	height: 40px;
+	height: 100px;
 	padding: 10px;
 `;
 

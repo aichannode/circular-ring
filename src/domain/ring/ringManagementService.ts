@@ -43,6 +43,7 @@ export class RingManagementService {
 		const firmware = await this.deviceService.getResponse(Channel.FIRMWARE_VERSION);
 		const deviceName = this.deviceService.favoriteDevice.get()?.name;
 		const id = await this.deviceService.favoriteDeviceSNU.get();
+		this.logger.info(`🔧 registerConnectedRing Firmware Version: ${firmware}`);
 		if (id && firmware && deviceName) {
 			try {
 				const userRing = await this.ringApi.addRing({ id, firmware });

@@ -1,12 +1,11 @@
 // Because importing storybook after some of the bellow imports will cause a runtime error (in release version), we need to import storybook before any of the bellow imports.
-import StorybookUIRoot from "@stories";
-
 import { useLogger } from "@core/logger/hooks/useLogger";
 import { useSentry } from "@core/logger/hooks/useSentry";
 import { RepresentationsProvider } from "@core/representation";
 import { initializeServices, ServicesProvider } from "@core/services";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
+import StorybookUIRoot from "@stories";
 import { RootNavigator } from "@ui/navigation/rootNavigator";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -24,6 +23,7 @@ import * as RNLocalize from "react-native-localize";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import SplashScreen from "react-native-splash-screen";
 import { translations } from "./wordings";
+
 
 // Setup Mobx for RN
 configure({
