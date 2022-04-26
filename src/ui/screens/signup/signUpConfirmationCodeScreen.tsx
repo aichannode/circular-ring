@@ -19,7 +19,7 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 	const logger = useLogger("SignUpConfirmationCodeScreen");
 	const navigation = useRoutesNavigation();
 	const { format } = useI18n();
-	const { userService } = useServices();
+	const { userService, ringApi } = useServices();
 	const email = useJustRegisteredUserEmail();
 
 	const [errorMessage, setErrorMessage] = useState("");
@@ -42,12 +42,14 @@ export const SignUpConfirmationCodeScreen: React.FC = () => {
 		logger.debug("Trying to validate code : " + code);
 		try {
 			await userService.validateSignUp(code);
+
 			setLoading(false);
 		} catch (error) {
 			setLoading(false);
 			setCode(["", "", "", "", "", ""]);
 			setErrorMessage(format("login.error.default"));
 		}
+		await ringApi.getLatestFirmware();
 	}, []);
 
 	const resendCode = async () => {
