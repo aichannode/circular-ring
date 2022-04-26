@@ -193,7 +193,7 @@ export function serializeAlarmData(alarmData: RingAlarm): string {
 		"m" +
 		gmtTime.minute.toString().padStart(2, "0") +
 		"v" +
-		vibrationPower.toString().padStart(2, "0") +
+		vibrationPower.toString(16).padStart(2, "0") +
 		"n" +
 		"0" +
 		vibrationRepetition +
