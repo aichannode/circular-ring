@@ -1,6 +1,8 @@
 import { useRepresentations } from "@core/representation";
-import { getCurrentLocalISODay, toISOMonth } from "@domain/common/business";
+import { getCurrentLocalISODay, isDefined, toISOMonth } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
+import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
+import { getInitMode, updateMode } from "@ui/business";
 import { InfoListHeader } from "@ui/components/infoList";
 import { ResponsiveCenterView } from "@ui/components/layout";
 import { GlobalScoreCard } from "@ui/components/measure/globalScoreCard";
@@ -19,7 +21,7 @@ import { DailyNotes } from "./DailyNotes";
 export const CalendarScreen = observer(function CalendarScreen() {
 	const {
 		measure: {
-			hooks: { useDailyGlobalScore },
+			hooks: { useDailyGlobalScore, useHasCompleteCoreSleep },
 			actions: { setEachDayOfMonthScore },
 		},
 	} = useRepresentations();
@@ -27,6 +29,11 @@ export const CalendarScreen = observer(function CalendarScreen() {
 	const { format } = useI18n();
 
 	const [selectedLocalIsoDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
+
+	const hasCompleteCoreSleep = useHasCompleteCoreSleep(selectedLocalIsoDay);
+	const nbRemainingDays = useUserCalibrationRemainingDays();
+	// XXX: https://circularing.atlassian.net/browse/CIR-93
+	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
 
 	useEffect(() => {
 		setEachDayOfMonthScore(toISOMonth(selectedLocalIsoDay));
@@ -39,7 +46,14 @@ export const CalendarScreen = observer(function CalendarScreen() {
 			<CalendarWrapper>
 				<CalendarView selectedLocalIsoDay={selectedLocalIsoDay} onDaySelected={(day) => setSelectedDay(day)} />
 			</CalendarWrapper>
-			<ResponsiveCenterView>{<GlobalScoreCard score={dailyScore} />}</ResponsiveCenterView>
+			<ResponsiveCenterView>
+				{
+					<GlobalScoreCard
+						score={dailyScore}
+						mode={updateMode(screenMode, !isDefined(dailyScore) || isNaN(dailyScore))}
+					/>
+				}
+			</ResponsiveCenterView>
 			<NoteHeader>
 				<InfoListHeader>{format("calendar.notes")}</InfoListHeader>
 				<Pressable onPress={() => navigate(Routes.CalendarEditNotes, { day: selectedLocalIsoDay })}>

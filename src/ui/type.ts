@@ -14,3 +14,18 @@ export interface Average {
 	color: string;
 }
 export type Averages = Average[];
+
+export interface CalibrationMode {
+	type: "calibration";
+	nbRemainingDays: number;
+}
+
+export interface ActiveMode {
+	type: "active";
+}
+
+export interface DisabledMode {
+	type: "disabled";
+}
+
+export type Mode = CalibrationMode | ActiveMode | DisabledMode;

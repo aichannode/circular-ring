@@ -1,7 +1,8 @@
 // components/Task.stories.js
 import { SleepStage } from "@domain/measure/type";
-import { boolean, withKnobs } from "@storybook/addon-knobs";
+import { select, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react-native";
+import { createActiveMode, createCalibrationMode, createDisabledMode } from "@ui/business";
 import { Tag } from "@ui/components/tag";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
@@ -105,15 +106,34 @@ storiesOf("StepChart", module)
 		return <StepChart data={defaultData} xAxisNbTicks={2} />;
 	})
 	.add("without data", () => {
-		return <StepChart data={[]} hasNotEnoughData={boolean("hasNotEnoughData", false)} />;
+		const modeType = select("mode", ["active", "disabled", "calibration"], "active", "mode");
+		return (
+			<StepChart
+				data={[]}
+				mode={
+					modeType === "disabled"
+						? createDisabledMode()
+						: modeType === "calibration"
+						? createCalibrationMode(3)
+						: createActiveMode()
+				}
+			/>
+		);
 	})
 	.add("without data and with placeholders", () => {
+		const modeType = select("mode", ["active", "disabled", "calibration"], "active", "mode");
 		return (
 			<StepChart
 				data={[]}
 				defaultYAxis={[1, 2, 3, 4]}
 				defaultXAxis={[0, 10]}
-				hasNotEnoughData={boolean("hasNotEnoughData", false)}
+				mode={
+					modeType === "disabled"
+						? createDisabledMode()
+						: modeType === "calibration"
+						? createCalibrationMode(3)
+						: createActiveMode()
+				}
 			/>
 		);
 	})
@@ -155,6 +175,7 @@ storiesOf("StepChart", module)
 		);
 	})
 	.add("hypnograme without data", () => {
+		const modeType = select("mode", ["active", "disabled", "calibration"], "active", "mode");
 		return (
 			<StepChart
 				data={[]}
@@ -175,7 +196,13 @@ storiesOf("StepChart", module)
 						<Tag containerStyle={{ backgroundColor: colors.blue }}>{yLabelFormat(step.y)}</Tag>
 					</>
 				)}
-				hasNotEnoughData={boolean("hasNotEnoughData", false)}
+				mode={
+					modeType === "disabled"
+						? createDisabledMode()
+						: modeType === "calibration"
+						? createCalibrationMode(3)
+						: createActiveMode()
+				}
 			/>
 		);
 	});

@@ -1,9 +1,12 @@
+import { isDefined } from "@domain/common/business";
 import { ScoreQuality } from "@domain/measure/representation/api";
+import { createActiveMode, isInActiveMode, isInCalibrationMode, isInDisabledMode, updateMode } from "@ui/business";
 import { Row } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { MetricColor } from "@ui/screens/type";
 import { colors, ScoreQualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
+import { Mode } from "@ui/type";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
@@ -11,43 +14,47 @@ import { lerp } from "../components/business";
 
 interface ScoreGaugeProps {
 	label: string;
-	value: string;
-	percent: number;
+	value?: string;
+	percent?: number;
 	quality: ScoreQuality;
 	isInverted?: boolean;
 	color?: MetricColor;
 	calibration?: [number, number];
 	style?: StyleProp<ViewStyle>;
 	onPress?: () => void;
-	hasNotEnoughData?: boolean;
+	mode?: Mode;
+	forceDisplayValue?: boolean;
 }
 
 /**
  * @implements spec 00003 gauge is filled for a value from 50 to 100.
  */
 export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
-	label,
 	value,
+	percent,
+	label,
 	style,
 	quality,
 	isInverted,
-	percent,
 	calibration = [-1, 1], // Default gauge calibration from spec 00003
 	onPress,
-	hasNotEnoughData,
+	mode = createActiveMode(),
+	forceDisplayValue = false,
 }) => {
-	const _hasNotEnoughData = hasNotEnoughData || isNaN(percent);
-	const perc = lerp([0, 1], calibration)(percent);
+	const updatedMode = updateMode(mode, !isDefined(value) || !isDefined(percent) || isNaN(percent));
+	const perc = isInActiveMode(updatedMode) ? lerp([0, 1], calibration)(percent as number) : undefined;
 
 	return (
 		<Container style={style} onPress={onPress}>
 			<Row justify="space-between">
 				<SecondaryText>{label}</SecondaryText>
-				<SecondaryText>{_hasNotEnoughData ? "-" : value}</SecondaryText>
+				<SecondaryText>
+					{isInDisabledMode(updatedMode) || (isInCalibrationMode(updatedMode) && !forceDisplayValue) ? "-" : value}
+				</SecondaryText>
 			</Row>
 			<Gauge>
 				<GaugeValue
-					perc={_hasNotEnoughData ? 0 : perc <= 0 ? 0.01 : perc} // always fill a bit the gauge
+					perc={isInActiveMode(updatedMode) ? Math.max(perc as number, 0.01) : 0} // always fill a bit the gauge
 					isInverted={isInverted}
 					style={{
 						backgroundColor: ScoreQualityColors[quality],

@@ -57,6 +57,7 @@ export interface UserDto extends UserDtoBase {
 	email: string;
 	validated: boolean;
 	createdAt: string;
+	calibrationRemainingDays: number;
 }
 
 export type UserPutDto = UserDtoBase;

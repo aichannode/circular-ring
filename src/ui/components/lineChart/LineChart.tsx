@@ -1,5 +1,6 @@
 import { isDefined } from "@domain/common/business";
 import { Lines } from "@domain/measure/representation/api";
+import { createActiveMode, isInActiveMode, isInCalibrationMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import * as scale from "d3-scale";
@@ -8,7 +9,7 @@ import React, { useRef, useState } from "react";
 import { processColor, View } from "react-native";
 import { LineChart as LineComponent } from "react-native-charts-wrapper";
 import styled from "styled-components/native";
-import { Averages, MultipleDataSets, SelectEventPayload } from "../../type";
+import { Averages, Mode, MultipleDataSets, SelectEventPayload } from "../../type";
 import { TextPlaceholder } from "../placeholder/TextPlaceholder";
 import { getNearestDataIndexes } from "../stepChart/business";
 
@@ -50,7 +51,7 @@ interface LineChartProps {
 	yMinIndex?: number;
 	yMaxIndex?: number;
 	labelCount?: number;
-	hasNotEnoughData?: boolean;
+	mode?: Mode;
 	shouldShowMarker?: boolean;
 	highlightPerTapEnabled?: boolean;
 	scaleXEnabled?: boolean;
@@ -65,7 +66,7 @@ interface LineChartProps {
 const verticalContentInset = { top: 40, bottom: 20 };
 
 export function LineChart({
-	data,
+	data = [],
 	averages,
 	daysItem,
 	valueFormatterPattern,
@@ -86,7 +87,7 @@ export function LineChart({
 	labelFormatter = (x, y) => `${moment(x).format("Y-MM-DD")}\n${y}`,
 	highlightPerTapEnabled = false,
 	scaleXEnabled = true,
-	hasNotEnoughData,
+	mode = createActiveMode(),
 	onSelect,
 	tooltipSize = { width: 40, height: 20 },
 	xAxisContentInset = 0,
@@ -100,15 +101,12 @@ export function LineChart({
 	const [minPosition, setMinPosition] = useState<Position | null>(null);
 
 	const [xMin, xMax] = !isMultipleLines
-		? [Math.min(...data!.map((line) => line.x)), Math.max(...data!.map((line) => line.x))]
+		? [Math.min(...data.map((line) => line.x)), Math.max(...data.map((line) => line.x))]
 		: [0, 0];
 
-	const linesLength = daysItem ? daysItem[0].lines.length : 0;
-	const dataLength = data ? data.length : 0;
-	const hasValidData = linesLength !== 0 || dataLength !== 0;
-	const shouldDisplay = !hasNotEnoughData && hasValidData;
+	const shouldDisplay = isInActiveMode(mode) || isInCalibrationMode(mode);
 	const { format } = useI18n();
-	const [selectedX, setSelectedX] = useState<number | undefined>(onSelect ? data?.[0].x : -1);
+	const [selectedX, setSelectedX] = useState<number | undefined>(data[0] ? (onSelect ? data[0].x : -1) : undefined);
 	const axisMinimum = yMin ? yMin - ((yMin % 10) + 10) : 0;
 
 	const yAxisContentInset = verticalContentInset.top;
@@ -177,7 +175,7 @@ export function LineChart({
 	const dataSets = {
 		dataSets: [
 			{
-				values: data?.map(({ x, y }, index) => {
+				values: data.map(({ x, y }, index) => {
 					let marker = "";
 					if (!!shouldShowMarker) {
 						marker = labelFormatter(x, y, index);
@@ -190,7 +188,7 @@ export function LineChart({
 					lineWidth: shouldShowMarker ? 2 : 1,
 					drawCircles: shouldDrawCircles,
 					circleColors: !!shouldShowMarker
-						? data?.map(({ x }) => {
+						? data.map(({ x }) => {
 								if (x == selectedX) {
 									return processColor("#333333");
 								}
@@ -213,50 +211,51 @@ export function LineChart({
 	};
 
 	const multipleDataSets = {
-		dataSets: isMultipleLines
-			? daysItem!.map(({ lines, color }) => {
-					return {
-						values: lines!.map(({ x, y }, index) => {
-							let marker = "";
-							if (!!shouldShowMarker) {
-								marker = labelFormatter(x, y, index);
-							}
-							return { x: index, y, marker, value: x };
-						}),
-						label: "",
-						config: {
-							drawValues: false,
-							lineWidth: 3,
-							drawCircleHole: false,
+		dataSets:
+			isMultipleLines && daysItem
+				? daysItem.map(({ lines, color }) => {
+						return {
+							values: lines.map(({ x, y }, index) => {
+								let marker = "";
+								if (!!shouldShowMarker) {
+									marker = labelFormatter(x, y, index);
+								}
+								return { x: index, y, marker, value: x };
+							}),
+							label: "",
+							config: {
+								drawValues: false,
+								lineWidth: 3,
+								drawCircleHole: false,
 
-							drawCircles: true,
-							circleRadius: 4,
-							circleColor: processColor(color),
-							circleHoleColor: processColor(color),
-							highlightColor: processColor("transparent"),
-							color: processColor(color),
-							axisLineColor: processColor("white"),
-							drawFilled: false,
-							valueTextSize: 0,
-							legend: false,
-							circleColors: !!shouldShowMarker
-								? lines?.map((_, i) => {
-										if (i == selectedX) {
-											return processColor("#333333");
-										}
-										return processColor(color);
-								  })
-								: [processColor(color)],
-						},
-					};
-			  })
-			: [],
+								drawCircles: true,
+								circleRadius: 4,
+								circleColor: processColor(color),
+								circleHoleColor: processColor(color),
+								highlightColor: processColor("transparent"),
+								color: processColor(color),
+								axisLineColor: processColor("white"),
+								drawFilled: false,
+								valueTextSize: 0,
+								legend: false,
+								circleColors: !!shouldShowMarker
+									? lines.map((_, i) => {
+											if (i == selectedX) {
+												return processColor("#333333");
+											}
+											return processColor(color);
+									  })
+									: [processColor(color)],
+							},
+						};
+				  })
+				: [],
 	};
 
-	const highlights = data?.length
+	const highlights = data.length
 		? [
-				{ x: yMinIndex ? data?.[yMinIndex].x : 0, y: yMinIndex ? data?.[yMinIndex].y : 0 },
-				{ x: yMaxIndex ? data?.[yMaxIndex].x : 0, y: yMaxIndex ? data?.[yMaxIndex].y : 0 },
+				{ x: yMinIndex ? data[yMinIndex].x : 0, y: yMinIndex ? data[yMinIndex].y : 0 },
+				{ x: yMaxIndex ? data[yMaxIndex].x : 0, y: yMaxIndex ? data[yMaxIndex].y : 0 },
 		  ]
 		: [];
 	const tooltip = (value: number, x: number, y: number, yOffset: number) =>
@@ -314,9 +313,9 @@ export function LineChart({
 							const xScale = scale.scaleLinear().domain([xMax, xMin]).range([graphRect.current.width, 0]);
 
 							//find the x relative to yMax
-							const yValues = data?.length ? data.map((line) => line.y) : [];
+							const yValues = data.length ? data.map((line) => line.y) : [];
 							const nearestMaxIdxs = getNearestDataIndexes(isDefined(yMax) ? yMax : 0, yValues);
-							const xLineMax = data?.length ? data[nearestMaxIdxs[0]] : null;
+							const xLineMax = data.length ? data[nearestMaxIdxs[0]] : null;
 
 							if (xLineMax) {
 								setMaxPosition({
@@ -327,7 +326,7 @@ export function LineChart({
 
 							//find the x relative to yMin
 							const nearestMinIdxs = getNearestDataIndexes(isDefined(yMin) ? yMin : 0, yValues);
-							const xLineMin = data?.length ? data[nearestMinIdxs[0]] : null;
+							const xLineMin = data.length ? data[nearestMinIdxs[0]] : null;
 							if (xLineMin) {
 								setMinPosition({
 									x: xScale(xLineMin.x),
@@ -370,7 +369,6 @@ export function LineChart({
 					{shouldShowLabel && scaleX < 1.06 && (
 						<>
 							{maxPosition && yMax && tooltip(yMax, maxPosition.x, maxPosition.y, tooltipYMax)}
-
 							{minPosition && yMin && tooltip(yMin, minPosition.x, minPosition.y, tooltipYMin)}
 						</>
 					)}

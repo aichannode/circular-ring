@@ -1,7 +1,8 @@
 // components/Task.stories.js
 import { DataControlState, Lines, Scores7D } from "@domain/measure/representation/api";
-import { boolean, object, withKnobs } from "@storybook/addon-knobs";
+import { object, select, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react-native";
+import { createActiveMode, createCalibrationMode, createDisabledMode } from "@ui/business";
 import { colors } from "@ui/styles/colors";
 import { Averages, MultipleDataSets } from "@ui/type";
 import moment from "moment";
@@ -220,18 +221,27 @@ storiesOf("LineChart", module)
 		);
 	})
 
-	.add("no data", () => (
-		<LineChart
-			xColor={colors.textPrimary}
-			yColor={colors.darkGray}
-			data={[]}
-			shouldDrawCircles={false}
-			graphColor={colors.red}
-			valueFormatter="date"
-			valueFormatterPattern="H'h'"
-			hasNotEnoughData={boolean("hasNotEnoughData", false)}
-		/>
-	))
+	.add("no data", () => {
+		const modeType = select("mode", ["active", "disabled", "calibration"], "disabled", "mode");
+		return (
+			<LineChart
+				xColor={colors.textPrimary}
+				yColor={colors.darkGray}
+				data={[]}
+				shouldDrawCircles={false}
+				graphColor={colors.red}
+				valueFormatter="date"
+				valueFormatterPattern="H'h'"
+				mode={
+					modeType === "disabled"
+						? createDisabledMode()
+						: modeType === "calibration"
+						? createCalibrationMode(3)
+						: createActiveMode()
+				}
+			/>
+		);
+	})
 	.add("Custom average value & color", () => {
 		return (
 			<LineChart

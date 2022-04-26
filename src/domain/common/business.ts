@@ -186,3 +186,6 @@ export function isBetween(isoTime: string, isoStart: string, isoEnd: string) {
 }
 
 export const isDefined = <T>(a: T | undefined): a is T => typeof a !== "undefined";
+
+export const hasNullMember = <T extends object>(o: Record<string, unknown> | T): boolean =>
+	Object.keys(o).some((k) => o[k as keyof typeof o] === null);

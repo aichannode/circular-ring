@@ -1,9 +1,11 @@
 import { useRepresentations } from "@core/representation";
-import { getCurrentLocalISODay, isDefined } from "@domain/common/business";
+import { getCurrentLocalISODay } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DailySleepData } from "@domain/measure/representation/api";
 import { sleepScoreContributors } from "@domain/measure/representation/lib/type";
 import { TimeFrame } from "@domain/measure/type";
+import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
+import { getInitMode } from "@ui/business";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
@@ -35,9 +37,8 @@ import { Spo2Graph } from "./spo2Graph";
 export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
-	const { useDailySleepScoreContributors, useDailySleepQualityScore, useDailySleepStages, hasEnoughData } =
+	const { useDailySleepScoreContributors, useDailySleepQualityScore, useDailySleepStages, useHasCompleteCoreSleep } =
 		useRepresentations().measure.hooks;
-	const enoughData = hasEnoughData(selectedDay);
 	const sleepScoreContributorsData = useDailySleepScoreContributors(selectedDay);
 	const qualityScore = useDailySleepQualityScore(selectedDay);
 	const [dailySleep, setDailyData] = useState<DailySleepData | undefined>();
@@ -47,6 +48,11 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const sleepGaugesConfig = getSleepGaugesConfig(format);
 
+	const hasCompleteCoreSleep = useHasCompleteCoreSleep(selectedDay);
+	const nbRemainingDays = useUserCalibrationRemainingDays();
+	// XXX: https://circularing.atlassian.net/browse/CIR-93
+	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
+
 	useDailySleepStages({ setData: setDailyData, localISODay: selectedDay });
 
 	return (
@@ -55,10 +61,10 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 				<ScoreSection
 					style={{ marginTop: 20 }}
 					label={format("sleep.quality_score")}
-					score={qualityScore["user.daily.sleep.score"]}
-					quality={qualityScore.controlState}
+					score={qualityScore ? qualityScore.score : undefined}
+					quality={qualityScore ? qualityScore.controlState : undefined}
 					color={colors.business.sleepPrimary}
-					hasNotEnoughData={!enoughData}
+					mode={screenMode}
 				/>
 				<CircleCalendarButton
 					currentDay={selectedDay}
@@ -77,15 +83,15 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 					coreSleepTiming={dailySleep.coreSleepTiming}
 					napTimings={dailySleep.napTimings}
 					duration={dailySleep.totalMinutesSleepDuration ?? 0}
-					hasNotEnoughData={!enoughData}
+					mode={screenMode}
 				/>
 			) : (
 				<Spinner />
 			)}
 			<InfoListHeader>{format("sleep.quality.details")}</InfoListHeader>
 			<ElementStack gap={10}>
-				{
-					sleepScoreContributors
+				{sleepScoreContributorsData ? (
+					(sleepScoreContributors
 						.map((metric, index) => {
 							const uiConfig = sleepGaugesConfig[metric];
 							const data = sleepScoreContributorsData[metric];
@@ -102,13 +108,8 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 										LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 										setFocusedGauge((current) => (current === index ? null : index));
 									}}
-									hasNotEnoughData={
-										!enoughData ||
-										!isDefined(data.value) ||
-										!isDefined(data.percent) ||
-										isNaN(data.value) ||
-										isNaN(data.percent)
-									}
+									mode={uiConfig.computeMode(screenMode)}
+									forceDisplayValue={uiConfig.shouldForceDisplayValue}
 								/>,
 								focusedGauge === index && (
 									<GaugeDescription
@@ -125,8 +126,10 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 							];
 						})
 						.flatMap((x) => x)
-						.filter(Boolean) as JSX.Element[]
-				}
+						.filter(Boolean) as JSX.Element[])
+				) : (
+					<Spinner size={24} />
+				)}
 			</ElementStack>
 			<InfoListHeader>{format("sleep.details.title")}</InfoListHeader>
 
@@ -160,14 +163,10 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 						{dailySleep ? (
 							<GraphContainer>
 								{graphPeriod === TimeFrame.TODAY && (
-									<DailySleepChart data={dailySleep} selectedDay={selectedDay} hasNotEnoughData={!enoughData} />
+									<DailySleepChart data={dailySleep} selectedDay={selectedDay} mode={screenMode} />
 								)}
-								{graphPeriod === TimeFrame.LAST_7_DAYS && (
-									<Sleep7DChart selectedDay={selectedDay} hasNotEnoughData={!enoughData} />
-								)}
-								{graphPeriod === TimeFrame.ALL && (
-									<SleepAllChart selectedDay={selectedDay} hasNotEnoughData={!enoughData} />
-								)}
+								{graphPeriod === TimeFrame.LAST_7_DAYS && <Sleep7DChart selectedDay={selectedDay} mode={screenMode} />}
+								{graphPeriod === TimeFrame.ALL && <SleepAllChart selectedDay={selectedDay} mode={screenMode} />}
 							</GraphContainer>
 						) : (
 							<Spinner />
@@ -175,10 +174,9 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 					</>
 				)}
 				{activeItem === 1 && <></>}
-				{activeItem === 2 && <Spo2Graph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
-				{activeItem === 3 && <BreathingRateGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
-				{activeItem === 4 && <HRVGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
-
+				{activeItem === 2 && <Spo2Graph selectedDay={selectedDay} mode={screenMode} />}
+				{activeItem === 3 && <BreathingRateGraph selectedDay={selectedDay} mode={screenMode} />}
+				{activeItem === 4 && <HRVGraph selectedDay={selectedDay} mode={screenMode} />}
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
 					<Row style={{ justifyContent: "center" }}>
 						<ImageContainer onPress={() => setActiveItem(0)}>

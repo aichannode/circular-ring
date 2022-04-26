@@ -1,5 +1,6 @@
+import { MetricType } from "../metric";
 import { ScoreQuality } from "./api";
-import { canDisplay, getScoreControlStates, parseDailyHR } from "./business";
+import { canDisplay, getScoreControlStates, hasNullish, parseDailyHR } from "./business";
 
 test("Specs: 00000. Display mode", function () {
 	const today = "2022-03-01";
@@ -15,29 +16,28 @@ test("Specs: 00001. Score control states", function () {
 	expect(
 		getScoreControlStates({
 			score: 0.2,
-			lowThreshold: 0.8,
-			highThreshold: 0.9,
+			thresholdLow: 0.8,
+			thresholdHigh: 0.9,
 		})
 	).toEqual(ScoreQuality.POOR);
 	expect(
 		getScoreControlStates({
 			score: 0.81,
-			lowThreshold: 0.8,
-			highThreshold: 0.9,
+			thresholdLow: 0.8,
+			thresholdHigh: 0.9,
 		})
 	).toEqual(ScoreQuality.GOOD);
 	expect(
 		getScoreControlStates({
 			score: 0.94,
-			lowThreshold: 0.8,
-			highThreshold: 0.9,
+			thresholdLow: 0.8,
+			thresholdHigh: 0.9,
 		})
 	).toEqual(ScoreQuality.OPTIMAL);
 });
 
 test("Specs: 00002. DailyHR hooks", () => {
 	expect(parseDailyHR(undefined)).toBeUndefined();
-	expect(parseDailyHR({ timeSeries: [], constant: {} })).toBeUndefined();
 	const exampleData = {
 		timeSeries: [
 			{ metrics: { "user.hr": 0 }, timestamp: "2022-03-10T14:10:00Z" },
@@ -49,7 +49,12 @@ test("Specs: 00002. DailyHR hooks", () => {
 			{ metrics: { "user.hr": 60 }, timestamp: "2022-03-10T14:22:00Z" },
 			{ metrics: { "user.hr": 70 }, timestamp: "2022-03-10T14:24:00Z" },
 		],
-		constant: { "user.daily.awake.hr": 69.34, "user.daily.awake.hr.max": 112, "user.daily.awake.hr.min": 30 },
+		constant: {
+			[MetricType.UserDailyAwakeHRAverage]: 69.34,
+			[MetricType.UserDailyAwakeHRMax]: 112,
+			[MetricType.UserDailyAwakeHRMin]: 30,
+			[MetricType.UserDailyAwakeHRReference]: null,
+		},
 	};
 	const expectedReturn = {
 		lines: [
@@ -62,7 +67,37 @@ test("Specs: 00002. DailyHR hooks", () => {
 			{ y: 60, x: Date.parse("2022-03-10T14:22:00Z") },
 			{ y: 70, x: Date.parse("2022-03-10T14:24:00Z") },
 		],
-		constant: { hr: 69.34, hrMax: 112, hrMin: 30 },
+		constant: { hr: 69.34, hrMax: 112, hrMin: 30, reference: 0, },
 	};
 	expect(expectedReturn).toEqual(parseDailyHR(exampleData));
+});
+
+test("hasNullish", function () {
+	expect(hasNullish(null)).toBeTruthy();
+	expect(hasNullish(0)).toBeFalsy();
+	expect(hasNullish(1)).toBeFalsy();
+	expect(hasNullish({ [MetricType.User2DaysSleepScore]: null })).toBeTruthy();
+	expect(hasNullish({ [MetricType.User2DaysSleepScore]: 0 })).toBeFalsy();
+	expect(
+		hasNullish({
+			timeSeries: [
+				{
+					metrics: { [MetricType.User2DaysSleepScore]: null },
+					timestamp: "0",
+				},
+			],
+			constant: { [MetricType.User2DaysSleepScore]: null },
+		})
+	).toBeTruthy();
+	expect(
+		hasNullish({
+			timeSeries: [
+				{
+					metrics: { [MetricType.User2DaysSleepScore]: 0 },
+					timestamp: "0",
+				},
+			],
+			constant: { [MetricType.User2DaysSleepScore]: 0 },
+		})
+	).toBeFalsy();
 });

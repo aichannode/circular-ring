@@ -2,8 +2,9 @@
 import { isDefined } from "@domain/common/business";
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { ActivityStage } from "@domain/measure/type";
-import { boolean, withKnobs } from "@storybook/addon-knobs";
+import { select, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react-native";
+import { createActiveMode, createCalibrationMode, createDisabledMode } from "@ui/business";
 import { colors } from "@ui/styles/colors";
 import produce from "immer";
 import moment from "moment";
@@ -56,6 +57,7 @@ export default storiesOf("DailyPieChart", module)
 				}
 			}
 		});
+		const modeType = select("mode", ["active", "disabled", "calibration"], "active", "mode");
 
 		return (
 			<DailyPieChart
@@ -66,7 +68,13 @@ export default storiesOf("DailyPieChart", module)
 				phaseWidths={[5, 7, 7, 7]}
 				phaseColors={[colors.lightBlue, colors.darkBlue]}
 				getPhaseLevel={getPhaseLevel}
-				hasNotEnoughData={boolean("hasNotEnoughData", false)}
+				mode={
+					modeType === "disabled"
+						? createDisabledMode()
+						: modeType === "calibration"
+						? createCalibrationMode(3)
+						: createActiveMode()
+				}
 				noDataPhaseColor={colors.lightBlue}
 			>
 				<DailyPieChartLabel

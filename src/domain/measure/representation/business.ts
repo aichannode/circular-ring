@@ -1,4 +1,4 @@
-import { isDefined, isToday } from "@domain/common/business";
+import { hasNullMember, isDefined, isToday } from "@domain/common/business";
 import { ISOMonth } from "@domain/common/type";
 import { hasAttributesDefined } from "@ui/utils/filter";
 import moment from "moment";
@@ -26,15 +26,15 @@ export function canDisplay(isoDay: string, userCoreSleepEnd: number) {
 /**
  * Compute an activity control state
  */
-export function getActivityControlState(model: { lowThreshold: number; highThreshold?: number; value: number }) {
-	if (model.highThreshold === undefined) {
-		if (model.value >= model.lowThreshold) {
+export function getActivityControlState(model: { thresholdLow: number; thresholdHigh?: number; value: number }) {
+	if (model.thresholdHigh === undefined) {
+		if (model.value >= model.thresholdLow) {
 			return ActivityControlState.OPTIMAL;
 		}
 		return ActivityControlState.POOR;
-	} else if (model.value >= model.lowThreshold && model.value < model.highThreshold) {
+	} else if (model.value >= model.thresholdLow && model.value < model.thresholdHigh) {
 		return ActivityControlState.GOOD;
-	} else if (model.value < model.lowThreshold) {
+	} else if (model.value < model.thresholdLow) {
 		return ActivityControlState.POOR;
 	} else {
 		return ActivityControlState.OPTIMAL;
@@ -46,14 +46,14 @@ export function getActivityControlState(model: { lowThreshold: number; highThres
  * @implements spec [00001](https://docs.google.com/document/d/16SRBS_XPqDhePKuCi6rQm399n72H_82GTPAiay6AQlQ/edit?disco=AAAAWInQrBs)
  */
 export function getScoreControlStates(model: {
-	lowThreshold: number;
-	highThreshold: number;
+	thresholdLow: number;
+	thresholdHigh: number;
 	score: number;
 	isInverted?: boolean;
 }) {
-	if (model.score >= model.lowThreshold && model.score < model.highThreshold) {
+	if (model.score >= model.thresholdLow && model.score < model.thresholdHigh) {
 		return ScoreQuality.GOOD;
-	} else if (model.score < model.lowThreshold) {
+	} else if (model.score < model.thresholdLow) {
 		return model.isInverted ? ScoreQuality.OPTIMAL : ScoreQuality.POOR;
 	} else {
 		return model.isInverted ? ScoreQuality.POOR : ScoreQuality.OPTIMAL;
@@ -71,20 +71,20 @@ export function parseDailyHR(
 		  >
 		| undefined
 ): DailyHr | undefined {
-	if (dailyHR === undefined || dailyHR?.timeSeries.length === 0) return undefined;
+	if (dailyHR === undefined) return undefined;
 	const dailyHr: DailyHr = {
 		constant: {
-			hr: dailyHR.constant[MetricType.UserDailyAwakeHRAverage] as number,
-			hrMin: dailyHR.constant[MetricType.UserDailyAwakeHRMin] as number,
-			hrMax: dailyHR.constant[MetricType.UserDailyAwakeHRMax] as number,
-			reference: dailyHR.constant[MetricType.UserDailyAwakeHRReference] as number,
+			hr: getOrElse<number>(dailyHR.constant, MetricType.UserDailyAwakeHRAverage, 0),
+			hrMin: getOrElse<number>(dailyHR.constant, MetricType.UserDailyAwakeHRMin, 0),
+			hrMax: getOrElse<number>(dailyHR.constant, MetricType.UserDailyAwakeHRMax, 0),
+			reference: getOrElse<number>(dailyHR.constant, MetricType.UserDailyAwakeHRReference, 0),
 		},
 		lines: [],
 	};
 	dailyHR.timeSeries.map((timeSerie) => {
 		dailyHr.lines.push({
 			x: Date.parse(timeSerie.timestamp),
-			y: typeof timeSerie.metrics["user.hr"] === "number" ? timeSerie.metrics["user.hr"] : 0,
+			y: getOrElse<number>(timeSerie.metrics, MetricType.UserHR, 0),
 		});
 	});
 	return dailyHr;
@@ -98,13 +98,10 @@ export function parseDailySpo2(
 ): DailySpo2 | undefined {
 	if (dailySpo2 === undefined || dailySpo2?.timeSeries.length === 0) return undefined;
 
-	const userSleepBegin = dailySleepStageDuration?.constant[MetricType.UserCoreSleepBegin] as number;
-	const userSleepEnd = dailySleepStageDuration?.constant[MetricType.UserCoreSleepEnd] as number;
-
 	const dailySpo2Data: DailySpo2 = {
 		constant: {
-			average: dailySpo2.constant[MetricType.UserDailyAsleepSPO2] as number,
-			reference: dailySpo2.constant[MetricType.UserDailyAsleepSPO2Reference] as number,
+			average: getOrElse<number>(dailySpo2.constant, MetricType.UserDailyAsleepSPO2, 0),
+			reference: getOrElse<number>(dailySpo2.constant, MetricType.UserDailyAsleepSPO2Reference, 0),
 		},
 		lines: [],
 		controlState: DataControlState.NO_DATA,
@@ -112,13 +109,18 @@ export function parseDailySpo2(
 	dailySpo2.timeSeries.map((timeSerie) => {
 		dailySpo2Data.lines.push({
 			x: Date.parse(timeSerie.timestamp),
-			y: typeof timeSerie.metrics["user.spo2"] === "number" ? timeSerie.metrics["user.spo2"] : 0,
+			y: getOrElse<number>(timeSerie.metrics, MetricType.UserDailySPO2, 0),
 		});
 	});
-	const controlState = dailySpo2Data.lines.some(({ x }) => x > userSleepBegin * 1000 && x < userSleepEnd * 1000)
-		? DataControlState.READY
-		: DataControlState.NO_DATA;
-	dailySpo2Data.controlState = controlState;
+	if (dailySleepStageDuration) {
+		const userSleepBegin = getOrElse<number>(dailySleepStageDuration?.constant, MetricType.UserCoreSleepBegin, 0);
+		const userSleepEnd = getOrElse<number>(dailySleepStageDuration?.constant, MetricType.UserCoreSleepEnd, 0);
+
+		const controlState = dailySpo2Data.lines.some(({ x }) => x > userSleepBegin * 1000 && x < userSleepEnd * 1000)
+			? DataControlState.READY
+			: DataControlState.NO_DATA;
+		dailySpo2Data.controlState = controlState;
+	}
 
 	return dailySpo2Data;
 }
@@ -130,13 +132,10 @@ export function parseDailyBR(
 ): DailyBr | undefined {
 	if (dailyBR === undefined || dailyBR?.timeSeries.length === 0) return undefined;
 
-	const userSleepBegin = dailySleepStageDuration?.constant[MetricType.UserCoreSleepBegin] as number;
-	const userSleepEnd = dailySleepStageDuration?.constant[MetricType.UserCoreSleepEnd] as number;
-
 	const data: DailyBr = {
 		constant: {
-			average: dailyBR.constant[MetricType.UserDailyAsleepBR] as number,
-			reference: dailyBR.constant[MetricType.UserDailyAsleepBRReference] as number,
+			average: getOrElse<number>(dailyBR.constant, MetricType.UserDailyAsleepBR, 0),
+			reference: getOrElse<number>(dailyBR.constant, MetricType.UserDailyAsleepBRReference, 0),
 		},
 		lines: [],
 		controlState: DataControlState.NO_DATA,
@@ -144,14 +143,19 @@ export function parseDailyBR(
 	dailyBR.timeSeries.map((timeSerie) => {
 		data.lines.push({
 			x: Date.parse(timeSerie.timestamp),
-			y: timeSerie.metrics[MetricType.UserBR] as number,
+			y: getOrElse<number>(timeSerie.metrics, MetricType.UserBR, 0),
 		});
 	});
 
-	const controlState = data.lines.some(({ x }) => x > userSleepBegin * 1000 && x < userSleepEnd * 1000)
-		? DataControlState.READY
-		: DataControlState.NO_DATA;
-	data.controlState = controlState;
+	if (dailySleepStageDuration) {
+		const userSleepBegin = getOrElse<number>(dailySleepStageDuration?.constant, MetricType.UserCoreSleepBegin, 0);
+		const userSleepEnd = getOrElse<number>(dailySleepStageDuration?.constant, MetricType.UserCoreSleepEnd, 0);
+
+		const controlState = data.lines.some(({ x }) => x > userSleepBegin * 1000 && x < userSleepEnd * 1000)
+			? DataControlState.READY
+			: DataControlState.NO_DATA;
+		data.controlState = controlState;
+	}
 
 	return data;
 }
@@ -161,32 +165,35 @@ export function parseDailyHRV(
 		| undefined,
 	dailySleepMetrics: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined
 ): DailyHrv | undefined {
-	if (dailyHRV === undefined || dailyHRV?.timeSeries.length === 0) return undefined;
+	if (dailyHRV === undefined) return undefined;
 	const dailyHrv: DailyHrv = {
 		constant: {
-			average: dailyHRV.constant[MetricType.UserDailyAsleepHRV] as number,
-			reference: dailyHRV.constant[MetricType.UserDailyReferenceHRV] as number,
+			average: getOrElse<number>(dailyHRV.constant, MetricType.UserDailyAsleepHRV, 0),
+			reference: getOrElse<number>(dailyHRV.constant, MetricType.UserDailyReferenceHRV, 0),
 		},
 		lines: [],
 		controlState: DataControlState.NO_DATA,
 	};
-	const userSleepBegin = dailySleepMetrics?.constant[MetricType.UserCoreSleepBegin] as number;
-	const userSleepEnd = dailySleepMetrics?.constant[MetricType.UserCoreSleepEnd] as number;
+	if (dailySleepMetrics) {
+		const userSleepBegin = getOrElse<number>(dailySleepMetrics?.constant, MetricType.UserCoreSleepBegin, 0);
+		const userSleepEnd = getOrElse<number>(dailySleepMetrics?.constant, MetricType.UserCoreSleepEnd, 0);
 
-	dailyHRV.timeSeries.map((timeSerie) => {
-		dailyHrv.lines.push({
-			x: Date.parse(timeSerie.timestamp),
-			y: timeSerie.metrics[MetricType.UserHRV] as number,
+		dailyHRV.timeSeries.map((timeSerie) => {
+			dailyHrv.lines.push({
+				x: Date.parse(timeSerie.timestamp),
+				y: getOrElse<number>(timeSerie.metrics, MetricType.UserHRV, 0),
+			});
 		});
-	});
 
-	const controlState = dailyHrv.lines.some(({ x }) => x > userSleepBegin * 1000 && x < userSleepEnd * 1000)
-		? DataControlState.READY
-		: DataControlState.NO_DATA;
-	dailyHrv.controlState = controlState;
+		const controlState = dailyHrv.lines.some(({ x }) => x > userSleepBegin * 1000 && x < userSleepEnd * 1000)
+			? DataControlState.READY
+			: DataControlState.NO_DATA;
+		dailyHrv.controlState = controlState;
+	}
 
 	return dailyHrv;
 }
+
 export function parseAllActivity(
 	lastActivity: Metrics<ActivityIntensityAllAverageMetrics> | undefined,
 	allActivity: Array<{ activity?: Metrics<ActivityIntensityAllAverageMetrics>; date: ISOMonth } | undefined>
@@ -200,9 +207,9 @@ export function parseAllActivity(
 	}
 
 	const constant: ActivityAll["constant"] = {
-		highDuration: lastActivity[MetricType.UserMonthlyAverageHighIntensityDuration] as number,
-		mediumDuration: lastActivity[MetricType.UserMonthlyAverageMediumIntensityDuration] as number,
-		lowDuration: lastActivity[MetricType.UserMonthlyAverageLowIntensityDuration] as number,
+		highDuration: getOrElse<number>(lastActivity, MetricType.UserMonthlyAverageHighIntensityDuration, 0),
+		mediumDuration: getOrElse<number>(lastActivity, MetricType.UserMonthlyAverageMediumIntensityDuration, 0),
+		lowDuration: getOrElse<number>(lastActivity, MetricType.UserMonthlyAverageLowIntensityDuration, 0),
 	};
 	const activityMetrics: ActivityAll["activityMetrics"] = allActivity
 		.map((item) => {
@@ -211,15 +218,18 @@ export function parseAllActivity(
 			}
 			const { activity, date } = item;
 			return {
-				high: isDefined(activity[MetricType.UserMonthlyAverageHighIntensityDuration])
-					? moment.duration(activity[MetricType.UserMonthlyAverageHighIntensityDuration]).asHours()
-					: undefined,
-				medium: isDefined(activity[MetricType.UserMonthlyAverageMediumIntensityDuration])
-					? moment.duration(activity[MetricType.UserMonthlyAverageMediumIntensityDuration]).asHours()
-					: undefined,
-				low: isDefined(activity[MetricType.UserMonthlyAverageLowIntensityDuration])
-					? moment.duration(activity[MetricType.UserMonthlyAverageLowIntensityDuration]).asHours()
-					: undefined,
+				high:
+					activity[MetricType.UserMonthlyAverageHighIntensityDuration] === null
+						? undefined
+						: moment.duration(activity[MetricType.UserMonthlyAverageHighIntensityDuration]).asHours(),
+				medium:
+					activity[MetricType.UserMonthlyAverageMediumIntensityDuration] === null
+						? undefined
+						: moment.duration(activity[MetricType.UserMonthlyAverageMediumIntensityDuration]).asHours(),
+				low:
+					activity[MetricType.UserMonthlyAverageLowIntensityDuration] === null
+						? undefined
+						: moment.duration(activity[MetricType.UserMonthlyAverageLowIntensityDuration]).asHours(),
 				date,
 			};
 		})
@@ -235,4 +245,30 @@ export function parseAllActivity(
 	};
 
 	return activityAll;
+}
+
+export function hasNullish(data: RangeMetrics<any, any> | Metrics<any> | number | string | null): boolean {
+	if (data === null) {
+		return true;
+	} else if (typeof data === "number" || typeof data === "string") {
+		return false;
+	} else if (data["timeSeries"]) {
+		return (
+			(data as RangeMetrics<any, any>)["timeSeries"].some((b) => hasNullMember(b.metrics)) ||
+			hasNullMember((data as RangeMetrics<any, any>)["constant"])
+		);
+	}
+	return hasNullMember(data);
+}
+
+export function toOptional<T extends number | string>(data: Metrics<any>, key: MetricType): T | undefined {
+	return hasNullish(data[key])
+		? undefined
+		: typeof data[key] === "string"
+		? (data[key] as T)
+		: (Number(data[key]) as T);
+}
+
+export function getOrElse<T extends number | string>(data: Metrics<any>, key: MetricType, defaultValue: T): T {
+	return hasNullish(data[key]) ? defaultValue : (data[key] as T);
 }

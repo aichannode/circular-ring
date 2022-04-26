@@ -1,9 +1,11 @@
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { SleepStage } from "@domain/measure/type";
+import { createActiveMode } from "@ui/business";
 import { StepChart } from "@ui/components/stepChart/StepChart";
 import { Tag } from "@ui/components/tag";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import { Mode } from "@ui/type";
 import moment from "moment";
 import React from "react";
 import { toStepsData } from "./business";
@@ -13,13 +15,13 @@ export type { Steps } from "@ui/components/stepChart/StepChart";
 
 type Props = {
 	data: HypnogramData;
-	hasNotEnoughData?: boolean;
+	mode?: Mode;
 };
 
 const defaultYAxis = [SleepStage.DEEP, SleepStage.LIGHT, SleepStage.REM, SleepStage.AWAKE];
 const defaultXAxis = [moment().hour(0).valueOf(), moment().hour(8).valueOf()];
 
-export function Hypnogram({ data, hasNotEnoughData }: Props) {
+export function Hypnogram({ data, mode = createActiveMode() }: Props) {
 	const stepsData = toStepsData(data);
 	const { format } = useI18n();
 
@@ -64,7 +66,7 @@ export function Hypnogram({ data, hasNotEnoughData }: Props) {
 			tooltipYOffset={-30}
 			tooltipSize={{ width: 40, height: 30 }}
 			chartHeight={200}
-			hasNotEnoughData={hasNotEnoughData}
+			mode={mode}
 			renderTooltip={(step) => (
 				<>
 					<Tag containerStyle={{ backgroundColor: colors.blue, marginBottom: 4 }}>{moment(step.x).format("HH:mm")}</Tag>

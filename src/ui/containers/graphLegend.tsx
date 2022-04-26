@@ -1,9 +1,12 @@
+import { isDefined } from "@domain/common/business";
+import { createActiveMode, isInDisabledMode, updateMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import { Mode } from "@ui/type";
 import React from "react";
 import { View } from "react-native";
 import styled from "styled-components/native";
-import { MetaDataText, PrimaryText } from "../text";
+import { MetaDataText, PrimaryText } from "../components/text";
 
 type Props = {
 	rows: Array<{
@@ -11,7 +14,7 @@ type Props = {
 		element: { key: string; node: React.ReactNode };
 		value?: string;
 	}>;
-	hasNotEnoughData?: boolean;
+	mode?: Mode;
 };
 
 function toColumns(rows: Props["rows"]): {
@@ -36,9 +39,10 @@ function toColumns(rows: Props["rows"]): {
 	return data;
 }
 
-export function GraphLegend({ rows, hasNotEnoughData }: Props) {
+export function GraphLegend({ rows, mode = createActiveMode() }: Props) {
 	const data = toColumns(rows);
 	const { format } = useI18n();
+
 	return (
 		<View style={{ flexDirection: "row" }}>
 			<Column>
@@ -60,17 +64,20 @@ export function GraphLegend({ rows, hasNotEnoughData }: Props) {
 				))}
 			</Column>
 			<Column style={{ flex: 1 }}>
-				{data.values.map((value, index) => (
-					<Cell
-						key={!value || hasNotEnoughData ? `no-data-${index}` : `${value}-${index}`}
-						style={{ paddingRight: 30, justifyContent: "center" }}
-						isEven={index % 2 === 0}
-					>
-						<MetaDataText style={{ textAlign: "right" }}>
-							{!value || hasNotEnoughData ? format("global.no_data") : value}
-						</MetaDataText>
-					</Cell>
-				))}
+				{data.values.map((value, index) => {
+					const updatedMode = updateMode(mode, !isDefined(value));
+					return (
+						<Cell
+							key={isInDisabledMode(updatedMode) ? `no-data-${index}` : `${value}-${index}`}
+							style={{ paddingRight: 30, justifyContent: "center" }}
+							isEven={index % 2 === 0}
+						>
+							<MetaDataText style={{ textAlign: "right" }}>
+								{isInDisabledMode(updatedMode) ? format("global.no_data") : value}
+							</MetaDataText>
+						</Cell>
+					);
+				})}
 			</Column>
 		</View>
 	);

@@ -1,5 +1,4 @@
 import { Model, mutate } from "@core/model";
-import { isDefined } from "@domain/common/business";
 import { ISODay, ISOMonth } from "@domain/common/type";
 import { action, IObservableArray, makeAutoObservable, observable } from "mobx";
 import { Proposal } from "../common/type";
@@ -50,7 +49,7 @@ import {
 } from "../representation/lib/type";
 
 export class MeasureModel implements Model<Proposal> {
-	public last7DSleepMetrics: Map<ISODay, Metrics<Sleep7DConstantMetrics>> = new Map();
+	public last7DSleepConstantMetrics: Map<ISODay, Metrics<Sleep7DConstantMetrics>> = new Map();
 	public monthlySleepStageMetrics: Map<ISOMonth, Metrics<SleepMonthlyStageMetrics>> = new Map();
 	public lastAllSleepStageMetrics: Map<ISOMonth, Metrics<SleepAllConstantMetrics>> = new Map();
 	public dailyHRMetrics: Map<ISODay, RangeMetrics<DailyHRTimeSeriesMetrics, DailyHRConstantMetrics> | undefined> =
@@ -91,10 +90,10 @@ export class MeasureModel implements Model<Proposal> {
 		>
 	> = new Map();
 	public dailySleepMetrics: Map<ISODay, RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>> = new Map();
-	public dailyEnergyScore: Map<ISODay, number> = new Map();
-	public last7DEnergyScore: Map<ISODay, number> = new Map();
+	public dailyEnergyScore: Map<ISODay, number | null> = new Map();
+	public last7DEnergyScore: Map<ISODay, number | null> = new Map();
 	public last7DActivityIntensityAverageMetrics: Map<ISODay, Metrics<ActivityIntensity7DAverageMetrics>> = new Map();
-	public dailyCardioPoints: Map<ISODay, number> = new Map();
+	public dailyCardioPoints: Map<ISODay, number | null> = new Map();
 	public last7DCardioPointConstants: Map<ISODay, Metrics<CardioPointsConstantMetrics>> = new Map();
 	public lastAllActivityIntensityAverageMetrics: Map<ISOMonth, Metrics<ActivityIntensityAllAverageMetrics>> = new Map();
 	public dailyActivityIntensityMetrics: Map<
@@ -113,9 +112,9 @@ export class MeasureModel implements Model<Proposal> {
 			| MetricType.UserDailyAwakeHRMax
 		>
 	> = new Map();
-	public dailyGlobalScore: Map<ISODay, number> = new Map();
-	public dailySleepScore: Map<ISODay, Record<DailySleepScoreMetrics, number>> = new Map();
-	public dailyWakeUpScore: Map<ISODay, Record<DailyWakeUpScoreMetrics, number>> = new Map();
+	public dailyGlobalScore: Map<ISODay, number | null> = new Map();
+	public dailySleepScore: Map<ISODay, Metrics<DailySleepScoreMetrics>> = new Map();
+	public dailyWakeUpScore: Map<ISODay, Metrics<DailyWakeUpScoreMetrics>> = new Map();
 
 	public lastAcceptedMutations: Proposal[] = [];
 
@@ -129,7 +128,7 @@ export class MeasureModel implements Model<Proposal> {
 			dailyEnergyScoreContributorsMetrics: observable.shallow,
 			dailyActivitiesMetrics: observable.shallow,
 			lastAcceptedMutations: observable.shallow,
-			last7DSleepMetrics: observable.shallow,
+			last7DSleepConstantMetrics: observable.shallow,
 			monthlySleepStageMetrics: observable.shallow,
 			lastAllSleepStageMetrics: observable.shallow,
 			last7DActivityIntensityAverageMetrics: observable.shallow,
@@ -140,47 +139,33 @@ export class MeasureModel implements Model<Proposal> {
 		(this.lastAcceptedMutations as IObservableArray).clear();
 		proposal.forEach((mutation) => {
 			if (mutation.type === "pullLast7DSleepMetrics") {
-				if (Object.keys(mutation.payload.data).length) {
-					mutate.call(this, mutation, () =>
-						this.last7DSleepMetrics.set(mutation.payload.localISODay, mutation.payload.data)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.last7DSleepConstantMetrics.set(mutation.payload.localISODay, mutation.payload.data)
+				);
 			} else if (mutation.type === "pullMonthlySleepStageMetrics") {
-				if (Object.keys(mutation.payload.data).length) {
-					mutate.call(this, mutation, () =>
-						this.monthlySleepStageMetrics.set(mutation.payload.localISOMonth, mutation.payload.data)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.monthlySleepStageMetrics.set(mutation.payload.localISOMonth, mutation.payload.data)
+				);
 			} else if (mutation.type === "pullLastAllSleepConstantMetrics") {
-				if (Object.keys(mutation.payload.data).length) {
-					mutate.call(this, mutation, () =>
-						this.lastAllSleepStageMetrics.set(mutation.payload.localISOMonth, mutation.payload.data)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.lastAllSleepStageMetrics.set(mutation.payload.localISOMonth, mutation.payload.data)
+				);
 			} else if (mutation.type === "setDailyHRMetrics") {
-				if (Object.keys(mutation.payload.range.constant).length || mutation.payload.range.timeSeries.length) {
-					mutate.call(this, mutation, () =>
-						this.dailyHRMetrics.set(mutation.payload.localISODay, mutation.payload.range)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.dailyHRMetrics.set(mutation.payload.localISODay, mutation.payload.range)
+				);
 			} else if (mutation.type === "setDailySpo2Metrics") {
-				if (Object.keys(mutation.payload.range.constant).length || mutation.payload.range.timeSeries.length) {
-					mutate.call(this, mutation, () =>
-						this.dailySpo2Metrics.set(mutation.payload.localISODay, mutation.payload.range)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.dailySpo2Metrics.set(mutation.payload.localISODay, mutation.payload.range)
+				);
 			} else if (mutation.type === "setDailyBRMetrics") {
-				if (Object.keys(mutation.payload.range.constant).length || mutation.payload.range.timeSeries.length) {
-					mutate.call(this, mutation, () =>
-						this.dailyBRMetrics.set(mutation.payload.localISODay, mutation.payload.range)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.dailyBRMetrics.set(mutation.payload.localISODay, mutation.payload.range)
+				);
 			} else if (mutation.type === "setDailyHRVMetrics") {
-				if (Object.keys(mutation.payload.range.constant).length || mutation.payload.range.timeSeries.length) {
-					mutate.call(this, mutation, () =>
-						this.dailyHRVMetrics.set(mutation.payload.localISODay, mutation.payload.range)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.dailyHRVMetrics.set(mutation.payload.localISODay, mutation.payload.range)
+				);
 			} else if (mutation.type === "pullLast7DActivityIntensityMetrics") {
 				if (Object.keys(mutation.payload.data).length) {
 					mutate.call(this, mutation, () =>
@@ -198,73 +183,49 @@ export class MeasureModel implements Model<Proposal> {
 					);
 				}
 			} else if (mutation.type === "pullDailyActivityIntensityMetrics") {
-				if (Object.keys(mutation.payload.range.constant).length || mutation.payload.range.timeSeries.length) {
-					mutate.call(this, mutation, () =>
-						this.dailyActivityIntensityMetrics.set(mutation.payload.localISODay, mutation.payload.range)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.dailyActivityIntensityMetrics.set(mutation.payload.localISODay, mutation.payload.range)
+				);
 			} else if (mutation.type === "setDailySleepMetrics") {
-				if (Object.keys(mutation.payload.range.constant).length || mutation.payload.range.timeSeries.length) {
-					mutate.call(this, mutation, () =>
-						this.dailySleepMetrics.set(mutation.payload.localISODay, mutation.payload.range)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.dailySleepMetrics.set(mutation.payload.localISODay, mutation.payload.range)
+				);
 			} else if (mutation.type === "setGlobalScore") {
-				if (isDefined(mutation.payload.score)) {
-					const score = mutation.payload.score;
-					mutate.call(this, mutation, () => this.dailyGlobalScore.set(mutation.payload.localISODay, score));
-				}
+				const score = mutation.payload.score;
+				mutate.call(this, mutation, () => this.dailyGlobalScore.set(mutation.payload.localISODay, score));
 			} else if (mutation.type === "setDailyEnergyScore") {
-				if (isDefined(mutation.payload.score)) {
-					const score = mutation.payload.score;
-					mutate.call(this, mutation, () => this.dailyEnergyScore.set(mutation.payload.localISODay, score));
-				}
+				const score = mutation.payload.score;
+				mutate.call(this, mutation, () => this.dailyEnergyScore.set(mutation.payload.localISODay, score));
 			} else if (mutation.type === "setDailyCardioPoints") {
-				if (isDefined(mutation.payload.cardio)) {
-					const cardio = mutation.payload.cardio;
-					mutate.call(this, mutation, () => this.dailyCardioPoints.set(mutation.payload.localISODay, cardio));
-				}
+				const cardio = mutation.payload.cardio;
+				mutate.call(this, mutation, () => this.dailyCardioPoints.set(mutation.payload.localISODay, cardio));
 			} else if (mutation.type === "setLast7DCardioPoints") {
-				if (Object.keys(mutation.payload.data).length) {
-					mutate.call(this, mutation, () =>
-						this.last7DCardioPointConstants.set(mutation.payload.localISODay, mutation.payload.data)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.last7DCardioPointConstants.set(mutation.payload.localISODay, mutation.payload.data)
+				);
 			} else if (mutation.type === "setDailyWakeUpScore") {
-				if (Object.keys(mutation.payload.data).length) {
-					mutate.call(this, mutation, () =>
-						this.dailyWakeUpScore.set(mutation.payload.localISODay, mutation.payload.data)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.dailyWakeUpScore.set(mutation.payload.localISODay, mutation.payload.data)
+				);
 			} else if (mutation.type === "setSleepScore") {
-				if (Object.keys(mutation.payload.data).length) {
-					mutate.call(this, mutation, () =>
-						this.dailySleepScore.set(mutation.payload.localISODay, mutation.payload.data)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.dailySleepScore.set(mutation.payload.localISODay, mutation.payload.data)
+				);
 			} else if (mutation.type === "setDailyActivitiesMetrics") {
-				if (Object.keys(mutation.payload.data).length) {
-					mutate.call(this, mutation, () =>
-						this.dailyActivitiesMetrics.set(mutation.payload.localISODay, mutation.payload.data)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.dailyActivitiesMetrics.set(mutation.payload.localISODay, mutation.payload.data)
+				);
 			} else if (mutation.type === "setDailyEnergyScoreContributorsMetrics") {
-				if (Object.keys(mutation.payload.data).length) {
-					mutate.call(this, mutation, () =>
-						this.dailyEnergyScoreContributorsMetrics.set(mutation.payload.localISODay, mutation.payload.data)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.dailyEnergyScoreContributorsMetrics.set(mutation.payload.localISODay, mutation.payload.data)
+				);
 			} else if (mutation.type === "setDailySleepScoreContributorsMetrics") {
-				if (Object.keys(mutation.payload.data).length) {
-					mutate.call(this, mutation, () =>
-						this.dailySleepScoreContributorsMetrics.set(mutation.payload.localISODay, mutation.payload.data)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.dailySleepScoreContributorsMetrics.set(mutation.payload.localISODay, mutation.payload.data)
+				);
 			} else if (mutation.type === "setLast7DEnergyScore") {
-				if (isDefined(mutation.payload.score)) {
-					const score = mutation.payload.score;
-					mutate.call(this, mutation, () => this.last7DEnergyScore.set(mutation.payload.localISODay, score));
-				}
+				const score = mutation.payload.score;
+				mutate.call(this, mutation, () => this.last7DEnergyScore.set(mutation.payload.localISODay, score));
 			}
 		});
 	};

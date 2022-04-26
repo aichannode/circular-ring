@@ -1,11 +1,12 @@
 import { ApiService } from "@core/api/apiService";
 import { getCurrentLocalISODay } from "@domain/common/business";
 import { ISODay, ISOMonth } from "@domain/common/type";
-import { toUTCTimeSegment } from "../../common/business";
+import { toUTCTimeSegment } from "@domain/measure/common/business";
 import { DatedMetrics, Metrics, MetricType } from "../../metric";
 import { TimeFrame } from "../../type";
+import { sanitize } from "./business";
 
-function createBlock(timestamp: string): DatedMetrics {
+function createBlock(timestamp: string): DatedMetrics<never> {
 	return {
 		timestamp,
 		metrics: {},
@@ -35,15 +36,15 @@ export class MeasureApi {
 			useForceRefresh,
 		});
 		if (data.length) {
-			const chain: DatedMetrics[] = [];
+			const chain: DatedMetrics<T>[] = [];
 			let currentTimestamp = data[0].timestamp;
-			let block: DatedMetrics = createBlock(currentTimestamp);
+			let block: DatedMetrics<never> = createBlock(currentTimestamp);
 			// Regroup metrics by timestamp
 			for (const serverBlock of data) {
 				// Need to create a new block
 				if (currentTimestamp !== serverBlock.timestamp) {
 					// Push the previous block
-					chain.push(block);
+					chain.push({ ...block, metrics: sanitize<T>(block.metrics as Metrics<T>, metrics) });
 					currentTimestamp = serverBlock.timestamp;
 					// Create a new block
 					block = createBlock(currentTimestamp);
@@ -65,12 +66,12 @@ export class MeasureApi {
 			isoEnd: string;
 		},
 		useForceRefresh?: boolean
-	): Promise<Partial<Metrics<T>>> {
-		const result = await this.apiService.get<Partial<Metrics<T>>>(latestMeasureApiUrl, {
+	): Promise<Metrics<T>> {
+		const result = await this.apiService.get<Metrics<T>>(latestMeasureApiUrl, {
 			params: { metrics, start: isoStart, end: isoEnd },
 			useForceRefresh,
 		});
-		return result.data;
+		return sanitize<T>(result.data, metrics);
 	}
 
 	public async fetchMeasures<T extends MetricType>(
@@ -86,7 +87,7 @@ export class MeasureApi {
 		measures: ReadonlyArray<T>,
 		isoDay: ISODay,
 		useForceRefresh?: boolean
-	): Promise<Partial<Metrics<T>>> {
+	): Promise<Metrics<T>> {
 		return await this.getLastMeasures(measures, toUTCTimeSegment(isoDay, TimeFrame.DAY), useForceRefresh);
 	}
 
@@ -102,7 +103,7 @@ export class MeasureApi {
 		measures: ReadonlyArray<T>,
 		isoToday: ISODay = getCurrentLocalISODay(),
 		useForceRefresh?: boolean
-	): Promise<Partial<Metrics<T>>> {
+	): Promise<Metrics<T>> {
 		return await this.getLastMeasures(measures, toUTCTimeSegment(isoToday, TimeFrame.LAST_7_DAYS), useForceRefresh);
 	}
 
@@ -134,7 +135,7 @@ export class MeasureApi {
 		measures: ReadonlyArray<T>,
 		isoMonth: ISOMonth,
 		useForceRefresh = false
-	): Promise<Partial<Metrics<T>>> {
+	): Promise<Metrics<T>> {
 		return await this.getLastMeasures(measures, toUTCTimeSegment(isoMonth, TimeFrame.MONTH), useForceRefresh);
 	}
 
@@ -142,7 +143,7 @@ export class MeasureApi {
 		measures: ReadonlyArray<T>,
 		isoMonth: ISOMonth,
 		useForceRefresh = false
-	): Promise<Partial<Metrics<T>>> {
+	): Promise<Metrics<T>> {
 		return await this.getLastMeasures(measures, toUTCTimeSegment(isoMonth, TimeFrame.ALL), useForceRefresh);
 	}
 }

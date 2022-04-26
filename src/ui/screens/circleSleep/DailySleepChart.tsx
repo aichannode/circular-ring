@@ -3,7 +3,9 @@ import { toLocale } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DailySleepData } from "@domain/measure/representation/api";
 import { SleepStage } from "@domain/measure/type";
+import { createActiveMode, isInDisabledMode } from "@ui/business";
 import { Tags } from "@ui/components/Tags";
+import { Mode } from "@ui/type";
 import produce from "immer";
 import moment from "moment";
 import React from "react";
@@ -14,10 +16,10 @@ import { SleepLegend } from "./SleepLegend";
 interface Props {
 	data: DailySleepData;
 	selectedDay: ISODay;
-	hasNotEnoughData?: boolean;
+	mode?: Mode;
 }
 
-export function DailySleepChart({ data, selectedDay, hasNotEnoughData }: Props) {
+export function DailySleepChart({ data, selectedDay, mode = createActiveMode() }: Props) {
 	const { useRangeTags } = useRepresentations().calendar.hooks;
 	const tags = useRangeTags(
 		toLocale(moment(selectedDay).startOf("day").toISOString()),
@@ -51,12 +53,12 @@ export function DailySleepChart({ data, selectedDay, hasNotEnoughData }: Props) 
 	return (
 		<View style={{ flex: 1, position: "relative" }}>
 			<View>
-				<Tags tags={!hasNotEnoughData ? tags : []} />
+				<Tags tags={isInDisabledMode(mode) ? [] : tags} />
 			</View>
-			<Hypnogram data={correctedStages} hasNotEnoughData={hasNotEnoughData} />
+			<Hypnogram data={correctedStages} mode={mode} />
 			<View style={{ marginTop: 30 }}>
 				<SleepLegend
-					hasNotEnoughData={hasNotEnoughData}
+					mode={mode}
 					REMDuration={REMDuration}
 					awakeDuration={awakeDuration}
 					lightDuration={lightDuration}

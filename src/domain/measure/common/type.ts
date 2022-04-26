@@ -41,8 +41,9 @@ import {
 	Sleep7DConstantMetrics,
 	SleepAllConstantMetrics,
 	SleepMonthlyStageMetrics,
+	SleepStagesMetrics,
 	StepsTaken,
-	WalkingEquivalency,
+	WalkingEquivalency
 } from "../representation/lib/type";
 
 export type Mutations =
@@ -78,7 +79,7 @@ export type Mutations =
 			type: "setDailyCardioPoints";
 			payload: {
 				localISODay: ISODay;
-				cardio?: number;
+				cardio: number | null;
 			};
 	  }
 	| {
@@ -189,42 +190,42 @@ export type Mutations =
 			type: "setDailySleepMetrics";
 			payload: {
 				localISODay: ISODay;
-				range: RangeMetrics<MetricType.UserSleepStage, DailySleepStageDuration>;
+				range: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>;
 			};
 	  }
 	| {
 			type: "setGlobalScore";
 			payload: {
 				localISODay: ISODay;
-				score?: number;
+				score: number | null;
 			};
 	  }
 	| {
 			type: "setDailyEnergyScore";
 			payload: {
 				localISODay: ISODay;
-				score?: number;
+				score: number | null;
 			};
 	  }
 	| {
 			type: "setSleepScore";
 			payload: {
 				localISODay: ISODay;
-				data: Record<DailySleepScoreMetrics, number>;
+				data: Metrics<DailySleepScoreMetrics>;
 			};
 	  }
 	| {
 			type: "setDailyWakeUpScore";
 			payload: {
 				localISODay: ISODay;
-				data: Record<DailyWakeUpScoreMetrics, number>;
+				data: Metrics<DailyWakeUpScoreMetrics>;
 			};
 	  }
 	| {
 			type: "setLast7DEnergyScore";
 			payload: {
 				localISODay: ISODay;
-				score?: number;
+				score: number | null;
 			};
 	  };
 

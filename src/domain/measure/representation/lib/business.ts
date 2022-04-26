@@ -7,6 +7,7 @@ import { InteractionManager } from "react-native";
 import { MetricType, RangeMetrics } from "../../metric";
 import { ActivityStage, SleepStage } from "../../type";
 import { DailyActivityIntensityData, DailySleepData, DataControlState } from "../api";
+import { getOrElse } from "../business";
 import {
 	DailyActivityIntensityDuration,
 	DailyActivityIntensityMetrics,
@@ -45,7 +46,7 @@ export const createActivityPhasesGetter =
 
 		for (let i = 0; i < data.timeSeries.length; i++) {
 			const currentBlock = data.timeSeries[i];
-			const doesStartSession = MetricType.UserDailySportBegin in currentBlock.metrics;
+			const doesStartSession = hasMetric(MetricType.UserDailySportBegin)(currentBlock.metrics);
 			if (doesStartSession) {
 				const startTime = currentBlock.timestamp;
 				// Find end block
@@ -57,7 +58,7 @@ export const createActivityPhasesGetter =
 			}
 		}
 
-		const controlState = data.timeSeries.some((block) => MetricType.UserDataActivityIntensity in block.metrics)
+		const controlState = data.timeSeries.some((block) => hasMetric(MetricType.UserDataActivityIntensity)(block.metrics))
 			? DataControlState.READY
 			: DataControlState.NO_DATA;
 
@@ -65,10 +66,10 @@ export const createActivityPhasesGetter =
 			stages,
 			controlState,
 			duration: {
-				total: (data.constant[MetricType.UserDailyActiveMinute] as number) ?? 0,
-				highActivity: (data.constant[MetricType.UserDailyHighActivityIntensityDuration] as number) ?? 0,
-				mediumActivity: (data.constant[MetricType.UserDailyMediumActivityIntensityDuration] as number) ?? 0,
-				lowActivity: (data.constant[MetricType.UserDailyLowActivityIntensityDuration] as number) ?? 0,
+				total: getOrElse<number>(data.constant, MetricType.UserDailyActiveMinute, 0),
+				highActivity: getOrElse<number>(data.constant, MetricType.UserDailyHighActivityIntensityDuration, 0),
+				mediumActivity: getOrElse<number>(data.constant, MetricType.UserDailyMediumActivityIntensityDuration, 0),
+				lowActivity: getOrElse<number>(data.constant, MetricType.UserDailyLowActivityIntensityDuration, 0),
 			},
 			sportSessionDates,
 		};
@@ -141,8 +142,8 @@ export const createSleepStagesGetter =
 		const stages: Array<StageInfos<SleepStage>> = [];
 		for (let i = 0; i < data.timeSeries.length; i++) {
 			const block = data.timeSeries[i];
-			if (MetricType.UserSleepStage in block.metrics) {
-				const stage = block.metrics[MetricType.UserSleepStage] as number;
+			if (hasMetric(MetricType.UserSleepStage)(block.metrics)) {
+				const stage = getOrElse<number>(block.metrics, MetricType.UserSleepStage, 0);
 				// Prevent duplicated user sleep stage value
 				// TODO ask the back to do this
 				const currentLevel = Math.min(4, Math.max(1, Math.round(stage))); //@TODO ask if it is normal to have decimal
@@ -179,11 +180,11 @@ export const createSleepStagesGetter =
 			}
 		}
 
-		const hasCoreSleep = MetricType.UserCoreSleepBegin in data.constant;
+		const hasCoreSleep = hasMetric(MetricType.UserCoreSleepBegin)(data.constant);
 		const coreSleepTiming = hasCoreSleep
 			? ([
-					new Date((data.constant[MetricType.UserCoreSleepBegin] as number) * 1000).toISOString(),
-					new Date((data.constant[MetricType.UserCoreSleepEnd] as number) * 1000).toISOString(),
+					new Date(getOrElse<number>(data.constant, MetricType.UserCoreSleepBegin, 0) * 1000).toISOString(),
+					new Date(getOrElse<number>(data.constant, MetricType.UserCoreSleepEnd, 0) * 1000).toISOString(),
 			  ] as [string, string])
 			: undefined;
 
@@ -194,40 +195,48 @@ export const createSleepStagesGetter =
 			totalMinutesSleepDuration,
 			stages: trimSleepStages({
 				stages,
-				userTimeToFallAsleep: (data.constant[MetricType.UserDailyCoreTimeToFallAsleep] as number) ?? 30 * 60 * 1000,
+				userTimeToFallAsleep: getOrElse<number>(
+					data.constant,
+					MetricType.UserDailyCoreTimeToFallAsleep,
+					30 * 60 * 1000
+				),
 				napTimings,
 				coreSleepTiming,
 			}),
-			timeToFallASleep: data.constant[MetricType.UserDailyCoreTimeToFallAsleep] as number,
+			timeToFallASleep: getOrElse<number>(data.constant, MetricType.UserDailyCoreTimeToFallAsleep, 0),
 			coreSleepTiming,
 			napTimings,
 			sleepStagesDuration: {
 				[SleepStage.AWAKE]:
-					MetricType.UserDailyAwakeStageDuration in data.constant && MetricType.UserDailyPercAwakeStage in data.constant
+					hasMetric(MetricType.UserDailyAwakeStageDuration)(data.constant) &&
+					hasMetric(MetricType.UserDailyPercAwakeStage)(data.constant)
 						? {
-								duration: data.constant[MetricType.UserDailyAwakeStageDuration] as number,
-								percent: data.constant[MetricType.UserDailyPercAwakeStage] as number,
+								duration: getOrElse<number>(data.constant, MetricType.UserDailyAwakeStageDuration, 0),
+								percent: getOrElse<number>(data.constant, MetricType.UserDailyPercAwakeStage, 0),
 						  }
 						: undefined,
 				[SleepStage.REM]:
-					MetricType.UserDailyREMStageDuration in data.constant && MetricType.UserDailyPercREMStage in data.constant
+					hasMetric(MetricType.UserDailyREMStageDuration)(data.constant) &&
+					hasMetric(MetricType.UserDailyPercREMStage)(data.constant)
 						? {
-								duration: data.constant[MetricType.UserDailyREMStageDuration] as number,
-								percent: data.constant[MetricType.UserDailyPercREMStage] as number,
+								duration: getOrElse<number>(data.constant, MetricType.UserDailyREMStageDuration, 0),
+								percent: getOrElse<number>(data.constant, MetricType.UserDailyPercREMStage, 0),
 						  }
 						: undefined,
 				[SleepStage.LIGHT]:
-					MetricType.UserDailyLightStageDuration in data.constant && MetricType.UserDailyPercLightStage in data.constant
+					hasMetric(MetricType.UserDailyLightStageDuration)(data.constant) &&
+					hasMetric(MetricType.UserDailyPercLightStage)(data.constant)
 						? {
-								duration: data.constant[MetricType.UserDailyLightStageDuration] as number,
-								percent: data.constant[MetricType.UserDailyPercLightStage] as number,
+								duration: getOrElse<number>(data.constant, MetricType.UserDailyLightStageDuration, 0),
+								percent: getOrElse<number>(data.constant, MetricType.UserDailyPercLightStage, 0),
 						  }
 						: undefined,
 				[SleepStage.DEEP]:
-					MetricType.UserDailyDeepStageDuration in data.constant && MetricType.UserDailyPercDeepStage in data.constant
+					hasMetric(MetricType.UserDailyDeepStageDuration)(data.constant) &&
+					hasMetric(MetricType.UserDailyPercDeepStage)(data.constant)
 						? {
-								duration: data.constant[MetricType.UserDailyDeepStageDuration] as number,
-								percent: data.constant[MetricType.UserDailyPercDeepStage] as number,
+								duration: getOrElse<number>(data.constant, MetricType.UserDailyDeepStageDuration, 0),
+								percent: getOrElse<number>(data.constant, MetricType.UserDailyPercDeepStage, 0),
 						  }
 						: undefined,
 			},
@@ -257,6 +266,7 @@ export function setAfterHeavyComputation<M, T>(
 export function useDailyHeavyComputationData<M, T>(
 	localISODay: string,
 	modelField: {
+		has(isoDay: string): boolean;
 		get(isoDay: string): M | undefined;
 	},
 	setData: (data: T) => void,
@@ -266,8 +276,13 @@ export function useDailyHeavyComputationData<M, T>(
 	const heavyComputationHandlerRef = useRef<HeavyComputationHandler>();
 	useEffect(
 		action(function () {
-			const metrics = modelField.get(localISODay);
-			if (metrics === undefined) {
+			const isLoaded = modelField.has(localISODay);
+			if (isLoaded) {
+				const metrics = modelField.get(localISODay);
+				if (metrics) {
+					setAfterHeavyComputation(setData, heavyComputation, heavyComputationHandlerRef, metrics);
+				}
+			} else {
 				__DEV__ && console.log("[MEASURE: Action] FETCH daily measure");
 				fetchData(localISODay);
 				const dispose = reaction(
@@ -281,8 +296,6 @@ export function useDailyHeavyComputationData<M, T>(
 						}
 					}
 				);
-			} else {
-				setAfterHeavyComputation(setData, heavyComputation, heavyComputationHandlerRef, metrics);
 			}
 		}),
 		[localISODay]
@@ -292,17 +305,21 @@ export function useDailyHeavyComputationData<M, T>(
 /**
  * Return the nap time frames
  */
-export const getNaps = (data: RangeMetrics<SleepStagesMetrics>): Array<[string, string]> => {
+export const getNaps = (data: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>): Array<[string, string]> => {
 	const napTimings: Array<[string, string]> = [];
 	for (let i = 0; i < data.timeSeries.length; i++) {
 		const currentBlock = data.timeSeries[i];
-		if (MetricType.UserNapSleepBegin in currentBlock.metrics) {
-			const startTime = new Date((currentBlock.metrics[MetricType.UserNapSleepBegin] as number) * 1000).toISOString();
+		if (hasMetric(MetricType.UserNapSleepBegin)(currentBlock)) {
+			const startTime = new Date(
+				getOrElse<number>(currentBlock.metrics, MetricType.UserNapSleepBegin, 0) * 1000
+			).toISOString();
 			// Find end block
-			const endIndex = data.timeSeries.slice(i).findIndex(hasMetric(MetricType.UserNapSleepEnd));
+			const endIndex = data.timeSeries.slice(i).findIndex((b) => b.metrics[MetricType.UserNapSleepEnd] !== null);
 			const endTime =
 				endIndex > -1
-					? new Date((data.timeSeries[i + endIndex].metrics[MetricType.UserNapSleepEnd] as number) * 1000).toISOString()
+					? new Date(
+							getOrElse<number>(data.timeSeries[i + endIndex].metrics, MetricType.UserNapSleepEnd, 0) * 1000
+					  ).toISOString()
 					: undefined;
 			if (!endTime) {
 				getLogger("MEASURE REPRESENTATION").debug(`A nap started at ${startTime} has no end`);

@@ -3,11 +3,13 @@ import { getLocalISODayFromLocalDate } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
 import { useIs24h } from "@domain/user/hooks/useUser";
+import { createActiveMode, isInDisabledMode, updateMode } from "@ui/business";
 import { TextPlaceholder } from "@ui/components/placeholder/TextPlaceholder";
 import { Spinner } from "@ui/components/spinner";
 import { Tags } from "@ui/components/Tags";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import { Mode } from "@ui/type";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { Platform, processColor, View } from "react-native";
@@ -17,12 +19,12 @@ import { getActivityIntensityBarColor } from "./business";
 
 type Props = {
 	selectedDay: ISODay;
-	hasNotEnoughData?: boolean;
+	mode?: Mode;
 };
 
 export const DailyActivityIntensityGraph: React.FC<Props> = observer(function DailyActivityIntensityGraph({
 	selectedDay,
-	hasNotEnoughData,
+	mode = createActiveMode(),
 }: Props) {
 	const { format, formatHour } = useI18n();
 	const [isLoading, setLoading] = useState(true);
@@ -55,9 +57,10 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 		isoTime: string;
 	}> = dataActivityIntensity.stages.map((stage) => ({ value: stage.level, isoTime: stage.start }));
 
-	const _hasNotEnoughData = hasNotEnoughData || graphData.length === 0;
+	const updatedMode = updateMode(mode, graphData.length === 0);
 
 	const tags = useDailyTags(getLocalISODayFromLocalDate(selectedDay));
+
 	const data = {
 		dataSets: [
 			{
@@ -81,7 +84,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 				}),
 				config: {
 					drawValues: false,
-					colors: graphData.map(({ value }) => processColor(getActivityIntensityBarColor(value))),
+					colors: graphData.map(({ value }) => processColor(getActivityIntensityBarColor(Math.round(value)))),
 
 					// Alpha value depends on plateform
 					// https://github.com/wuxudong/react-native-charts-wrapper#convention
@@ -142,9 +145,9 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 	return (
 		<>
 			{/* TODO: This is temporary modification, use useRangeTags instead */}
-			<Tags tags={_hasNotEnoughData ? [] : tags.map((tag) => ({ nb: 1, tag }))} />
+			<Tags tags={isInDisabledMode(updatedMode) ? [] : tags.map((tag) => ({ nb: 1, tag }))} />
 			<View style={{ height: 200 }}>
-				{_hasNotEnoughData ? (
+				{isInDisabledMode(updatedMode) ? (
 					<View style={{ flex: 1 }}>
 						<TextPlaceholder content={format("global.no_data_yet")} />
 					</View>
@@ -182,7 +185,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 			</View>
 			<View style={{ marginTop: 30 }}>
 				<ActivityLegend
-					hasNotEnoughData={hasNotEnoughData}
+					mode={updatedMode}
 					highDuration={dataActivityIntensity.duration.highActivity}
 					mediumDuration={dataActivityIntensity.duration.mediumActivity}
 					lowDuration={dataActivityIntensity.duration.lowActivity}

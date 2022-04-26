@@ -180,7 +180,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 							localISODay: getLocalISODayFromUTCDate(block.timestamp),
 							score: block.metrics[MetricType.UserDailyGlobalScore]
 								? Number(block.metrics[MetricType.UserDailyGlobalScore])
-								: undefined,
+								: null,
 						},
 					};
 				})
@@ -272,7 +272,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setGlobalScore",
 					payload: {
 						localISODay,
-						score: data[MetricType.UserDailyGlobalScore] ? Number(data[MetricType.UserDailyGlobalScore]) : undefined,
+						score: data[MetricType.UserDailyGlobalScore] ? Number(data[MetricType.UserDailyGlobalScore]) : null,
 					},
 				},
 			]);
@@ -285,9 +285,9 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					payload: {
 						localISODay,
 						data: {
-							[MetricType.UserDailySleepScore]: data[MetricType.UserDailySleepScore] as number,
-							[MetricType.UserDailySleepScoreGoalMin]: data[MetricType.UserDailySleepScoreGoalMin] as number,
-							[MetricType.UserDailySleepScoreGoalMax]: data[MetricType.UserDailySleepScoreGoalMax] as number,
+							[MetricType.UserDailySleepScore]: data[MetricType.UserDailySleepScore],
+							[MetricType.UserDailySleepScoreGoalMin]: data[MetricType.UserDailySleepScoreGoalMin],
+							[MetricType.UserDailySleepScoreGoalMax]: data[MetricType.UserDailySleepScoreGoalMax],
 						},
 					},
 				},
@@ -304,7 +304,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailyEnergyScore",
 					payload: {
 						localISODay,
-						score: data[MetricType.UserDailyEnergyScore] ? Number(data[MetricType.UserDailyEnergyScore]) : undefined,
+						score: data[MetricType.UserDailyEnergyScore] ? Number(data[MetricType.UserDailyEnergyScore]) : null,
 					},
 				},
 			]);
@@ -352,7 +352,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailyCardioPoints",
 					payload: {
 						localISODay,
-						cardio: data[MetricType.UserDailyCardioPoints] ? Number(data[MetricType.UserDailyCardioPoints]) : undefined,
+						cardio: data[MetricType.UserDailyCardioPoints] ? Number(data[MetricType.UserDailyCardioPoints]) : null,
 					},
 				},
 			]);

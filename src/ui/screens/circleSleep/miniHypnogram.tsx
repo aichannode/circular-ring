@@ -73,7 +73,8 @@ export function MiniHypnogram({ data, hasNotEnoughData }: Props) {
 				tooltipYOffset={-30}
 				tooltipSize={{ width: 40, height: 30 }}
 				chartHeight={200}
-				hasNotEnoughData={hasNotEnoughData}
+				// TODO: this is C/P from Hypnogram chart, refactor needed
+				// hasNotEnoughData={hasNotEnoughData}
 				renderTooltip={(step) => (
 					<>
 						<Tag containerStyle={{ backgroundColor: colors.blue, marginBottom: 4 }}>

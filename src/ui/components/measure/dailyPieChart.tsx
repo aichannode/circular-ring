@@ -1,7 +1,9 @@
 import { isYesterday } from "@domain/common/business";
 import { StageInfos } from "@domain/measure/representation/lib/type";
+import { createActiveMode, isInActiveMode, isInCalibrationMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import { Mode } from "@ui/type";
 import moment from "moment";
 import React from "react";
 import { Image, View } from "react-native";
@@ -25,7 +27,7 @@ type Props = {
 	/** Phase stroke width, indexed by phase level */
 	phaseWidths: number[];
 	noDataPhaseColor: string;
-	hasNotEnoughData?: boolean;
+	mode?: Mode;
 };
 
 export const DailyPieChart: React.FC<Props> = ({
@@ -38,18 +40,18 @@ export const DailyPieChart: React.FC<Props> = ({
 	children,
 	getPhaseLevel,
 	noDataPhaseColor,
-	hasNotEnoughData,
+	mode = createActiveMode(),
 }) => {
-	const shouldDisplay = !hasNotEnoughData && !!stages.length && !isNaN(totalDuration);
-	const displayedStages = shouldDisplay
-		? stages
-		: [
-				{
-					start: moment().startOf("day").toString(),
-					end: moment().endOf("day").add(1, "minute").toString(),
-					level: 2,
-				},
-		  ];
+	const displayedStages =
+		isInActiveMode(mode) || isInCalibrationMode(mode)
+			? stages
+			: [
+					{
+						start: moment().startOf("day").toISOString(),
+						end: moment().endOf("day").add(1, "minute").toISOString(),
+						level: 2,
+					},
+			  ];
 
 	const startTime: string | undefined = displayedStages[0]?.start; //TODO convert to local time
 	const endTime: string | undefined = displayedStages[displayedStages.length - 1]?.end; //TODO convert to local time
@@ -78,7 +80,10 @@ export const DailyPieChart: React.FC<Props> = ({
 	const data = displayedStages.map((stage, index) => ({
 		key: index,
 		value: Date.parse(stage.end) - Date.parse(stage.start),
-		svg: { fill: shouldDisplay ? phaseColors[getPhaseLevel(stage.level)] : noDataPhaseColor },
+		svg: {
+			fill:
+				isInActiveMode(mode) || isInCalibrationMode(mode) ? phaseColors[getPhaseLevel(stage.level)] : noDataPhaseColor,
+		},
 		arc: { innerRadius: getSliceInnerRadius(index), outerRadius: getSliceOutterRadius(index) },
 	}));
 
@@ -102,14 +107,16 @@ export const DailyPieChart: React.FC<Props> = ({
 						<SliceDurationLabel>{format(title)}</SliceDurationLabel>
 						{/* @TODO  format is24h below*/}
 						<SliceDurationValue>
-							{shouldDisplay ? formatDuration(totalDuration * 60) : format("global.no_data")}
+							{isInActiveMode(mode) || isInCalibrationMode(mode)
+								? formatDuration(totalDuration * 60)
+								: format("global.no_data")}
 						</SliceDurationValue>
 					</TotalDurationWrapper>
 					<Image source={require("@assets/images/morning.png")} />
 				</Row>
 				<Image source={require("@assets/images/day.png")} />
 			</InsideInfos>
-			{shouldDisplay && children}
+			{(isInActiveMode(mode) || isInCalibrationMode(mode)) && children}
 		</View>
 	);
 };

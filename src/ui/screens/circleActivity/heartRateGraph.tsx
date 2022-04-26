@@ -1,15 +1,16 @@
 import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
+import { createActiveMode, isInActiveMode, isInCalibrationMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
-import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { Spinner } from "@ui/components/spinner";
 import { Tag } from "@ui/components/tag";
 import { TitleText } from "@ui/components/text";
+import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import { Averages } from "@ui/type";
+import { Averages, Mode } from "@ui/type";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -17,14 +18,14 @@ import DashedLine from "react-native-dashed-line";
 
 type Props = {
 	selectedDay: ISODay;
-	hasNotEnoughData: boolean;
+	mode?: Mode;
 };
 
 const tooltipSize = { width: 40, height: 20 };
 
 export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph({
 	selectedDay,
-	hasNotEnoughData,
+	mode = createActiveMode(),
 }: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
@@ -41,7 +42,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 	const dailyHr = useDailyHR(selectedDay);
 	const [lines, constant] = [
 		dailyHr ? dailyHr.lines : [],
-		dailyHr ? dailyHr.constant : { hr: undefined, hrMax: undefined, hrMin: undefined, reference: undefined },
+		dailyHr ? dailyHr.constant : { hr: 0, hrMax: 0, hrMin: 0, reference: 0 },
 	];
 
 	const [yMin, yMax] =
@@ -53,13 +54,13 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 	];
 	const tags = useDailyTags(selectedDay);
 	const averages: Averages = [];
-	if (typeof constant.reference !== "undefined") {
+	if (isInActiveMode(mode) && constant.reference !== 0) {
 		averages.push({
 			value: constant.reference,
 			color: colors.red,
 		});
 	}
-	if (typeof constant.hr !== "undefined") {
+	if (isInActiveMode(mode) && constant.hr !== 0) {
 		averages.push({
 			value: constant.hr,
 
@@ -72,7 +73,6 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 			setLoading(false);
 		}
 	}, [dailyHr]);
-	const shouldDisplay = !hasNotEnoughData;
 
 	return isLoading ? (
 		<Spinner size={24} />
@@ -84,7 +84,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 600 }}>
-				{shouldDisplay && (
+				{(isInActiveMode(mode) || isInCalibrationMode(mode)) && (
 					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
 						{tags.map(({ name, id }) => (
 							<View key={id} style={{ marginLeft: 8 }}>
@@ -117,11 +117,11 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 							<Tag containerStyle={{ backgroundColor: colors.red, marginBottom: 4 }}>{`${value}`}</Tag>
 						</>
 					)}
-					hasNotEnoughData={!shouldDisplay}
+					mode={mode}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
-						hasNotEnoughData={!shouldDisplay}
+						mode={mode}
 						rows={[
 							{
 								label: format("hr.average"),
@@ -138,7 +138,12 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 										</View>
 									),
 								},
-								value: typeof constant.hr == "undefined" ? "- bpm" : `${constant.hr} bpm`,
+
+								value: isInCalibrationMode(mode)
+									? format("calibration.placeholder", { days: mode.nbRemainingDays })
+									: typeof constant.hr == "undefined" || constant.hr === 0
+									? "- bpm"
+									: `${constant.hr} bpm`,
 							},
 							{
 								label: format("hr.reference"),
@@ -155,7 +160,11 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 										</View>
 									),
 								},
-								value: typeof constant.reference == "undefined" ? "- bpm" : `${constant.reference} bpm`,
+								value: isInCalibrationMode(mode)
+									? format("calibration.placeholder", { days: mode.nbRemainingDays })
+									: typeof constant.reference == "undefined" || constant.reference === 0
+									? "- bpm"
+									: `${constant.reference} bpm`,
 							},
 							{
 								label: format("hr.hrMax"),
@@ -163,7 +172,11 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 									key: "hr.hrMax",
 									node: <></>,
 								},
-								value: typeof constant.hrMax == "undefined" ? "- bpm" : `${constant.hrMax} bpm`,
+								value: isInCalibrationMode(mode)
+									? format("calibration.placeholder", { days: mode.nbRemainingDays })
+									: typeof constant.hrMax == "undefined" || constant.hrMax === 0
+									? "- bpm"
+									: `${constant.hrMax} bpm`,
 							},
 							{
 								label: format("hr.hrMin"),
@@ -172,7 +185,11 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 									node: <></>,
 								},
 
-								value: typeof constant.hrMin == "undefined" ? "- bpm" : `${constant.hrMin} bpm`,
+								value: isInCalibrationMode(mode)
+									? format("calibration.placeholder", { days: mode.nbRemainingDays })
+									: typeof constant.hrMin == "undefined" || constant.hrMin === 0
+									? "- bpm"
+									: `${constant.hrMin} bpm`,
 							},
 						]}
 					/>
