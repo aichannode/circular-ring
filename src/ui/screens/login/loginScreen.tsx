@@ -16,7 +16,7 @@ import { parseEmail } from "../business";
 export const LoginScreen = () => {
 	const navigation = useRoutesNavigation();
 	const { format } = useI18n();
-	const { userService } = useServices();
+	const { userService, ringApi } = useServices();
 	const { navigate } = useRoutesNavigation();
 
 	const [email, setEmail] = useState("");
@@ -45,6 +45,7 @@ export const LoginScreen = () => {
 					setErrorMessage(format("login.error.default"));
 				}
 			}
+			await ringApi.getLatestFirmware();
 		}
 	}, [email, password]);
 

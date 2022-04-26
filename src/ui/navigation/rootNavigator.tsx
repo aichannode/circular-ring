@@ -70,7 +70,10 @@ export const RootNavigator: React.FC = () => {
 			</OnboardingStack.Navigator>
 		);
 	}
-	if (updateState.status !== UpdateState.IDLE.status || (currentRing && lastFirmwareVersion !== currentRing.firmware)) {
+	if (
+		updateState.status !== UpdateState.IDLE.status ||
+		(currentRing && lastFirmwareVersion !== currentRing.firmware && lastFirmwareVersion)
+	) {
 		return <RingFirmwareUpdate></RingFirmwareUpdate>;
 	}
 
