@@ -31,12 +31,16 @@ export function updateMode(prevMode: Mode, shouldDisabledMode: boolean) {
 	return prevMode;
 }
 
-export function getInitMode(nbRemainingDays: number, hasCompleteCoreSleep: boolean): Mode {
+export function getInitMode(
+	nbRemainingDays: number,
+	hasCompleteCoreSleep: boolean,
+	{ allowDisabled = true }: { allowDisabled?: boolean } = {}
+): Mode {
 	const isInCalibration = nbRemainingDays > 0;
 	if (isInCalibration) {
 		return createCalibrationMode(nbRemainingDays);
 	}
-	if (!hasCompleteCoreSleep) {
+	if (!hasCompleteCoreSleep && allowDisabled) {
 		return createDisabledMode();
 	}
 	return createActiveMode();

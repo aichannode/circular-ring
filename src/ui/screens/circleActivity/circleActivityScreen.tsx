@@ -10,7 +10,7 @@ import { ISODay } from "@domain/common/type";
 import { DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
 import { activities, activityScoreContributors } from "@domain/measure/representation/lib/type";
 import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
-import { getInitMode, updateMode } from "@ui/business";
+import { getInitMode } from "@ui/business";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
@@ -22,7 +22,6 @@ import { ScoreGauge } from "@ui/containers/scoreGauge";
 import { ScoreSection } from "@ui/containers/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import { hasAttributesDefined } from "@ui/utils/filter";
 import { observer } from "mobx-react-lite";
 import React, { useRef, useState } from "react";
 import { Image, LayoutAnimation, ScrollView, View } from "react-native";
@@ -89,6 +88,8 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const nbRemainingDays = useUserCalibrationRemainingDays();
 	// XXX: https://circularing.atlassian.net/browse/CIR-93
 	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
+	// XXX: https://circularing.atlassian.net/browse/CIR-830?focusedCommentId=11137
+	const screenModeWithoutDisabled = getInitMode(nbRemainingDays, hasCompleteCoreSleep, { allowDisabled: false });
 
 	const [activeItem, setActiveItem] = useState<number>(0);
 
@@ -121,7 +122,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 					controlState={activityIntensity.controlState}
 					sportSessionDates={activityIntensity.sportSessionDates}
 					duration={activityIntensity.duration.total}
-					mode={screenMode}
+					mode={screenModeWithoutDisabled}
 				/>
 				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
 				<ElementStack gap={10}>
@@ -129,7 +130,6 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 						activities.map((metric) => {
 							const dataInfos = dailyActivitiesUIConfig[metric];
 							const data = dailyActivitiesData[metric];
-							const updatedMode = updateMode(screenMode, !hasAttributesDefined(data, ["value"]) || isNaN(data.value));
 
 							return (
 								<DailyMetric
@@ -139,7 +139,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 									value={data?.value?.toFixed(dataInfos.decimalNb)}
 									score={data?.score}
 									controlState={data?.controlState}
-									mode={updatedMode}
+									mode={screenModeWithoutDisabled}
 								/>
 							);
 						})
@@ -192,10 +192,10 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 				</ElementStack>
 
 				<ElementStack gap={10} style={{ display: "flex" }}>
-					{activeItem === 0 && <ActivityIntensityGraph selectedDay={selectedDay} mode={screenMode} />}
-					{activeItem === 1 && <CardioPointsGraph selectedDay={selectedDay} mode={screenMode} />}
-					{activeItem === 2 && <EnergyScoreGraph selectedDay={selectedDay} mode={screenMode} />}
-					{activeItem === 3 && <HeartRateGraph selectedDay={selectedDay} mode={screenMode} />}
+					{activeItem === 0 && <ActivityIntensityGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 1 && <CardioPointsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 2 && <EnergyScoreGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 3 && <HeartRateGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
 				</ElementStack>
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
