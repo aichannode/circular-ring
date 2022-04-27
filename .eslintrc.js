@@ -21,6 +21,7 @@ module.exports = {
 		"plugin:react/recommended",
 	],
 	rules: {
+		"@typescript-eslint/no-non-null-assertion": "error",
 		"@typescript-eslint/no-empty-function": "off",
 		"@typescript-eslint/interface-name-prefix": "off",
 		"@typescript-eslint/explicit-function-return-type": "off",
