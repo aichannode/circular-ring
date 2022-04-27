@@ -43,7 +43,7 @@ import {
 	SleepMonthlyStageMetrics,
 	SleepStagesMetrics,
 	StepsTaken,
-	WalkingEquivalency
+	WalkingEquivalency,
 } from "../representation/lib/type";
 
 export type Mutations =
