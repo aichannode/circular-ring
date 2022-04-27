@@ -74,11 +74,11 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDa
 	) : (
 		<View>
 			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("sleep.details.title")}
+				{format("score.details.hrv.label")}
 			</TitleText>
 
 			{/** Wait for available data on week/month */}
-			<GraphContainer style={{ height: 600 }}>
+			<GraphContainer style={{ height: 400 }}>
 				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
 					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
 						{tags.map(({ name, id }) => (
