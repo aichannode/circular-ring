@@ -555,9 +555,9 @@ export class BleDeviceService {
 
 		this.logger.info("Listening to", channel, "->", returnChannel);
 
-		const listener = (output: string) => {
+		const listener = async (output: string) => {
 			if (output.startsWith(returnChannel)) {
-				cb(output);
+				await cb(output);
 			}
 		};
 
