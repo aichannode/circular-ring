@@ -42,12 +42,9 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 	const [lines, constant] = [dailyBr ? dailyBr.lines : [], dailyBr ? dailyBr.constant : { average: 0, reference: 0 }];
 	const updatedMode = updateMode(mode, dailyBr?.controlState !== DataControlState.READY);
 	const [yMin, yMax] =
-		lines.length > 0 ? [Math.min(...lines!.map((line) => line.y)), Math.max(...lines!.map((line) => line.y))] : [0, 0];
+		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
 
-	const [yMinIndex, yMaxIndex] = [
-		lines!.findIndex((line) => line.y == yMin),
-		lines!.findIndex((line) => line.y == yMax),
-	];
+	const [yMinIndex, yMaxIndex] = [lines.findIndex((line) => line.y == yMin), lines.findIndex((line) => line.y == yMax)];
 	const tags = useDailyTags(selectedDay);
 	const averages: Averages = [];
 	if (isInCalibrationMode(updatedMode) && constant.reference !== 0) {

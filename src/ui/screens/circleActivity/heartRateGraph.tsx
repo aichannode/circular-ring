@@ -46,12 +46,9 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 	];
 
 	const [yMin, yMax] =
-		lines.length > 0 ? [Math.min(...lines!.map((line) => line.y)), Math.max(...lines!.map((line) => line.y))] : [0, 0];
+		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
 
-	const [yMinIndex, yMaxIndex] = [
-		lines!.findIndex((line) => line.y == yMin),
-		lines!.findIndex((line) => line.y == yMax),
-	];
+	const [yMinIndex, yMaxIndex] = [lines.findIndex((line) => line.y == yMin), lines.findIndex((line) => line.y == yMax)];
 	const tags = useDailyTags(selectedDay);
 	const averages: Averages = [];
 	if (isInActiveMode(mode) && constant.reference !== 0) {

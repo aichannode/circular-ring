@@ -57,7 +57,7 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 		return day !== "Invalid date" ? day[0] : "";
 	});
 	const [yMin, yMax] =
-		lines.length > 0 ? [Math.min(...lines!.map((line) => line.y)), Math.max(...lines!.map((line) => line.y))] : [0, 0];
+		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
 	const constant = data?.constant;
 	const averages: Averages = [];
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);

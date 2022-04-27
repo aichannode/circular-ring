@@ -111,8 +111,8 @@ const averages: Averages = [
 	},
 ];
 
-const [yMin, yMax] = [Math.min(...lines!.map((line) => line.y)), Math.max(...lines!.map((line) => line.y))];
-const [yMinIndex, yMaxIndex] = [lines!.findIndex((line) => line.y == yMin), lines!.findIndex((line) => line.y == yMax)];
+const [yMin, yMax] = [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))];
+const [yMinIndex, yMaxIndex] = [lines.findIndex((line) => line.y == yMin), lines.findIndex((line) => line.y == yMax)];
 
 const scores: Scores7D = {
 	series: [

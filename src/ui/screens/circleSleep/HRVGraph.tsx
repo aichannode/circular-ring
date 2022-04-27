@@ -43,12 +43,9 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDa
 	const updatedMode = updateMode(mode, dailyHrv?.controlState !== DataControlState.READY);
 
 	const [yMin, yMax] =
-		lines.length > 0 ? [Math.min(...lines!.map((line) => line.y)), Math.max(...lines!.map((line) => line.y))] : [0, 0];
+		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
 
-	const [yMinIndex, yMaxIndex] = [
-		lines!.findIndex((line) => line.y == yMin),
-		lines!.findIndex((line) => line.y == yMax),
-	];
+	const [yMinIndex, yMaxIndex] = [lines.findIndex((line) => line.y == yMin), lines.findIndex((line) => line.y == yMax)];
 	const tags = useDailyTags(selectedDay);
 	const averages: Averages = [];
 	if (isInActiveMode(updatedMode) && isDefined(constant)) {
