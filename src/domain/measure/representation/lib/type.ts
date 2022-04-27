@@ -57,6 +57,17 @@ export type DailyHRConstantMetrics = typeof dailyHRConstantMetrics[number];
 export const dailyHRTimeSeriesMetrics = [MetricType.UserHR] as const;
 export type DailyHRTimeSeriesMetrics = typeof dailyHRTimeSeriesMetrics[number];
 
+export const dailyHRNightConstantMetrics = [
+	MetricType.UserHR,
+	MetricType.UserDailySleepHR,
+	MetricType.UserDailySleepHRMin,
+	MetricType.UserDailySleepHRMax,
+] as const;
+export type DailyHRNightConstantMetrics = typeof dailyHRNightConstantMetrics[number];
+
+export const dailyHRNightTimeSeriesMetrics = [MetricType.UserHR] as const;
+export type DailyHRNightTimeSeriesMetrics = typeof dailyHRNightTimeSeriesMetrics[number];
+
 export const dailyActivityIntensityDurationMetrics = [
 	MetricType.UserDailyHighActivityIntensityDuration,
 	MetricType.UserDailyMediumActivityIntensityDuration,

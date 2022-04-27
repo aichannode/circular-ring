@@ -32,6 +32,8 @@ import {
 	DailyBRConstantMetrics,
 	DailyBRTimeSeriesMetrics,
 	DailyHRConstantMetrics,
+	DailyHRNightConstantMetrics,
+	DailyHRNightTimeSeriesMetrics,
 	DailyHRTimeSeriesMetrics,
 	DailyHRVConstantMetrics,
 	DailyHRVTimeSeriesMetrics,
@@ -60,6 +62,10 @@ export class MeasureModel implements Model<Proposal> {
 		new Map();
 	public dailyHRVMetrics: Map<ISODay, RangeMetrics<DailyHRVTimeSeriesMetrics, DailyHRVConstantMetrics> | undefined> =
 		new Map();
+	public dailyHRNightMetrics: Map<
+		ISODay,
+		RangeMetrics<DailyHRNightTimeSeriesMetrics, DailyHRNightConstantMetrics> | undefined
+	> = new Map();
 
 	public dailySleepScoreContributorsMetrics: Map<
 		ISODay,
@@ -154,6 +160,10 @@ export class MeasureModel implements Model<Proposal> {
 				mutate.call(this, mutation, () =>
 					this.dailyHRMetrics.set(mutation.payload.localISODay, mutation.payload.range)
 				);
+			} else if (mutation.type === "setDailyHRNightMetrics") {
+				mutate.call(this, mutation, () =>
+					this.dailyHRNightMetrics.set(mutation.payload.localISODay, mutation.payload.range)
+				);
 			} else if (mutation.type === "setDailySpo2Metrics") {
 				mutate.call(this, mutation, () =>
 					this.dailySpo2Metrics.set(mutation.payload.localISODay, mutation.payload.range)
@@ -167,21 +177,17 @@ export class MeasureModel implements Model<Proposal> {
 					this.dailyHRVMetrics.set(mutation.payload.localISODay, mutation.payload.range)
 				);
 			} else if (mutation.type === "pullLast7DActivityIntensityMetrics") {
-				if (Object.keys(mutation.payload.data).length) {
-					mutate.call(this, mutation, () =>
-						this.last7DActivityIntensityAverageMetrics.set(mutation.payload.localISODay, mutation.payload.data)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.last7DActivityIntensityAverageMetrics.set(mutation.payload.localISODay, mutation.payload.data)
+				);
 			} else if (mutation.type === "pullLastAllActivityIntensityMetrics") {
 				mutate.call(this, mutation, () =>
 					this.lastAllActivityIntensityAverageMetrics.set(mutation.payload.localISOMonth, mutation.payload.data)
 				);
 			} else if (mutation.type === "setMonthlyActivityIntensityMetrics") {
-				if (Object.keys(mutation.payload.data).length) {
-					mutate.call(this, mutation, () =>
-						this.monthlyActivityIntensityMetrics.set(mutation.payload.localISOMonth, mutation.payload.data)
-					);
-				}
+				mutate.call(this, mutation, () =>
+					this.monthlyActivityIntensityMetrics.set(mutation.payload.localISOMonth, mutation.payload.data)
+				);
 			} else if (mutation.type === "pullDailyActivityIntensityMetrics") {
 				mutate.call(this, mutation, () =>
 					this.dailyActivityIntensityMetrics.set(mutation.payload.localISODay, mutation.payload.range)

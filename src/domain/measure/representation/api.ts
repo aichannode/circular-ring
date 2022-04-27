@@ -92,6 +92,16 @@ export interface DailyHrv {
 	};
 	controlState: DataControlState;
 }
+export interface DailyHRNight {
+	lines: Lines;
+	constant: {
+		hr: number;
+		hrMin: number;
+		hrMax: number;
+		reference: number;
+	};
+	controlState: DataControlState;
+}
 
 export interface Line {
 	/** timestamp */

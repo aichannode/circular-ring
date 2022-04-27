@@ -225,4 +225,11 @@ export enum MetricType {
 	// BR
 	///////////////////
 	UserBR = "user.br",
+
+	///////////////////
+	// HR night
+	///////////////////
+	UserDailySleepHR = "user.reference.asleep.hr",
+	UserDailySleepHRMax = "user.daily.asleep.hr.max",
+	UserDailySleepHRMin = "user.daily.asleep.hr.min",
 }

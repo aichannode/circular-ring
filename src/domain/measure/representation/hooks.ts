@@ -25,6 +25,7 @@ import {
 	DailyActivityIntensityData,
 	DailyBr,
 	DailyHr,
+	DailyHRNight,
 	DailyHrv,
 	DailySleepData,
 	DailySpo2,
@@ -42,6 +43,7 @@ import {
 	parseAllActivity,
 	parseDailyBR,
 	parseDailyHR,
+	parseDailyHRNight,
 	parseDailyHRV,
 	parseDailySpo2,
 	toOptional,
@@ -327,6 +329,18 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				const data = model.dailySleepMetrics.get(localISODay);
 
 				return parseDailySpo2(model.dailySpo2Metrics.get(localISODay), data);
+			},
+			useDailyHRNight(localISODay: ISODay): DailyHRNight | undefined {
+				useEffect(
+					action(function () {
+						actions.pullDailyHRNightMetrics(localISODay, shouldByPassCache(model.dailySpo2Metrics, localISODay));
+					}),
+					[localISODay]
+				);
+
+				const data = model.dailySleepMetrics.get(localISODay);
+
+				return parseDailyHRNight(model.dailyHRNightMetrics.get(localISODay), data);
 			},
 			useDailyBR(localISODay: ISODay): DailyBr | undefined {
 				useEffect(

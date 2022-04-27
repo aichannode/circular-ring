@@ -61,6 +61,10 @@ import {
 	dailyBRTimeSeriesMetrics,
 	dailyHRConstantMetrics,
 	DailyHRConstantMetrics,
+	dailyHRNightConstantMetrics,
+	DailyHRNightConstantMetrics,
+	dailyHRNightTimeSeriesMetrics,
+	DailyHRNightTimeSeriesMetrics,
 	dailyHRTimeSeriesMetrics,
 	DailyHRTimeSeriesMetrics,
 	dailyHRVConstantMetrics,
@@ -155,6 +159,33 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				present([
 					{
 						type: "setDailyHRMetrics",
+						payload: {
+							localISODay,
+							range: {
+								timeSeries,
+								constant,
+							},
+						},
+					},
+				]);
+			});
+		},
+		async pullDailyHRNightMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
+			Promise.all([
+				measureApi.fetchDailyMeasures<DailyHRNightTimeSeriesMetrics>(
+					dailyHRNightTimeSeriesMetrics,
+					localISODay,
+					useForceRefresh
+				),
+				measureApi.fetchLastDailyMeasures<DailyHRNightConstantMetrics>(
+					dailyHRNightConstantMetrics,
+					localISODay,
+					useForceRefresh
+				),
+			]).then(function ([timeSeries, constant]) {
+				present([
+					{
+						type: "setDailyHRNightMetrics",
 						payload: {
 							localISODay,
 							range: {

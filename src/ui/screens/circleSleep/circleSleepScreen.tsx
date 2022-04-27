@@ -27,6 +27,7 @@ import { Image, LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
 import { BreathingRateGraph } from "./breathingRateGraph";
 import { DailySleepChart } from "./DailySleepChart";
+import { HeartRateGraph } from "./heartRateGraph";
 import { HRVGraph } from "./HRVGraph";
 import { getSleepGaugesConfig } from "./measureDisplayInfos";
 import { Sleep7DChart } from "./Sleep7DChart";
@@ -173,7 +174,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 						)}
 					</>
 				)}
-				{activeItem === 1 && <></>}
+				{activeItem === 1 && <HeartRateGraph selectedDay={selectedDay} mode={screenMode} />}
 				{activeItem === 2 && <Spo2Graph selectedDay={selectedDay} mode={screenMode} />}
 				{activeItem === 3 && <BreathingRateGraph selectedDay={selectedDay} mode={screenMode} />}
 				{activeItem === 4 && <HRVGraph selectedDay={selectedDay} mode={screenMode} />}
