@@ -15,6 +15,7 @@ interface DailyMetricProps {
 	label: string;
 	value?: string;
 	score?: number;
+	/** Optional control state, some metrics does not use a control state (Vo2Max, MaxHR) */
 	controlState?: ActivityControlState;
 	style?: StyleProp<ViewStyle>;
 	mode?: Mode;
@@ -28,7 +29,7 @@ export const DailyMetric: React.FC<DailyMetricProps> = ({
 	style,
 	mode = createActiveMode(),
 }) => {
-	const updatedMode = updateMode(mode, !isDefined(value) || !isDefined(controlState));
+	const updatedMode = updateMode(mode, !isDefined(value));
 
 	return (
 		<Container style={style}>
