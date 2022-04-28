@@ -38,13 +38,16 @@ export function BarChart({
 	const dataSets = {
 		dataSets: [
 			{
-				values: data?.map(({ x, y }, index) => {
-					let marker = "";
-					if (!!shouldShowMarker && y != 0) {
-						marker = `${moment(x).format("Y-MM-DD")}\n${y}`;
-					}
-					return { x: index, y, marker };
-				}),
+				values: data
+					?.map((el, index) => ({ ...el, index }))
+					.filter(({ y }) => y > 0)
+					.map(({ x, y, index }) => {
+						let marker = "";
+						if (!!shouldShowMarker && y != 0) {
+							marker = `${moment(x).format("Y-MM-DD")}\n${y}`;
+						}
+						return { x: index, y, marker };
+					}),
 				label: "",
 				config: {
 					colors: data.map((el) => {
@@ -54,6 +57,7 @@ export function BarChart({
 					highlightEnabled: true,
 					valueTextSize: 0,
 					legend: false,
+					valueTextColor: processColor("rgba(0,0,0,0)"),
 					highlightAlpha: Platform.OS === "ios" ? 100 : 255,
 					highlightColor: processColor(colors.selected),
 				},
@@ -79,6 +83,8 @@ export function BarChart({
 		textColor: processColor(xColor),
 		granularityEnabled: true,
 		axisLineColor: processColor("white"),
+		axisMinimum: 0,
+		axisMaximum: data.length - 1,
 	};
 
 	const yAxis = {
@@ -131,7 +137,6 @@ export function BarChart({
 					pinchZoom={true}
 					scaleYEnabled={false}
 					doubleTapToZoomEnabled={false}
-					drawValueAboveBar={false}
 					highlightFullBarEnabled={true}
 					onSelect={(e) => {
 						const payload = e.nativeEvent as SelectEventPayload | null;
