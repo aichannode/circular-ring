@@ -61,6 +61,7 @@ interface LineChartProps {
 	tooltipYMin?: number;
 	tooltipYMax?: number;
 	renderTooltip?: (value: number) => React.ReactElement;
+	shouldUpdateYmin?: boolean;
 }
 
 const verticalContentInset = { top: 40, bottom: 20 };
@@ -94,6 +95,7 @@ export function LineChart({
 	tooltipYMin = 0,
 	tooltipYMax = 0,
 	renderTooltip,
+	shouldUpdateYmin = true,
 }: LineChartProps) {
 	const [scaleX, setScaleX] = useState(1);
 	const graphRect = useRef<Rect>();
@@ -107,7 +109,7 @@ export function LineChart({
 	const shouldDisplay = isInActiveMode(mode) || isInCalibrationMode(mode);
 	const { format } = useI18n();
 	const [selectedX, setSelectedX] = useState<number | undefined>(data[0] ? (onSelect ? data[0].x : -1) : undefined);
-	const axisMinimum = yMin ? yMin - ((yMin % 10) + 10) : 0;
+	const axisMinimum = yMin ? (shouldUpdateYmin ? yMin - ((yMin % 10) + 10) : yMin) : 0;
 
 	const yAxisContentInset = verticalContentInset.top;
 

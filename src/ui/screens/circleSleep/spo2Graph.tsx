@@ -47,7 +47,6 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 
 	const [yMin, yMax] =
 		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
-
 	const [yMinIndex, yMaxIndex] = [lines.findIndex((line) => line.y == yMin), lines.findIndex((line) => line.y == yMax)];
 	const tags = useDailyTags(selectedDay);
 
@@ -108,6 +107,7 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 					yMinIndex={yMinIndex}
 					yMaxIndex={yMaxIndex}
 					mode={updatedMode}
+					shouldUpdateYmin={false}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
