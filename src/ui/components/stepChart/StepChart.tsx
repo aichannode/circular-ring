@@ -5,7 +5,7 @@ import { Mode } from "@ui/type";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
 import * as scale from "d3-scale";
 import * as shape from "d3-shape";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import { Defs, LinearGradient, Stop } from "react-native-svg";
 import { Grid, LineChart, XAxis, YAxis } from "react-native-svg-charts";
@@ -75,8 +75,8 @@ export function StepChart({
 		}
 	}
 
-	const xValues = data.length ? data.map((step) => step.x) : defaultXAxis;
-	const yValues = data.length ? data.map((step) => step.y) : defaultYAxis;
+	const xValues = useMemo(() => (data.length ? data.map((step) => step.x) : defaultXAxis), [data, defaultXAxis]);
+	const yValues = useMemo(() => (data.length ? data.map((step) => step.y) : defaultYAxis), [data, defaultYAxis]);
 
 	const [xMin, xMax] = [Math.min(...xValues), Math.max(...xValues)];
 	const [yMin, yMax] = [Math.min(...yValues, ...defaultYAxis), Math.max(...yValues, ...defaultYAxis)];
@@ -165,6 +165,12 @@ export function StepChart({
 		setPosition({ x: nearestRelativeX, y: nearestRelativeY });
 	}
 
+	function resetTooltip() {
+		setTooltipVisible(false);
+		setSelected(null);
+		setPosition(null);
+	}
+
 	const gradient = (
 		<Defs key="gradient">
 			<LinearGradient id="gradient" x1="0" y1="1" x2="0" y2="0">
@@ -204,12 +210,13 @@ export function StepChart({
 		/>
 	);
 
+	const canDisplayTooltip = isInActiveMode(mode) || isInCalibrationMode(mode);
 	const tooltipMinX = xAxisContentInset;
 	const tooltipMaxX = graphRect.current
 		? graphRect.current.width + xAxisContentInset - tooltipSize.width
 		: Number.MAX_VALUE;
 	const tooltipMinY = 0;
-	const tooltip = renderTooltip && tooltipVisible && position && selected && (
+	const tooltip = renderTooltip && tooltipVisible && position && selected && canDisplayTooltip && (
 		<View
 			style={{
 				position: "absolute",
@@ -250,6 +257,7 @@ export function StepChart({
 			yValues,
 			data,
 		};
+		resetTooltip();
 	}, [data, xMin, xMax, yMin, yMax, xValues, yValues]);
 
 	useUnmount(() => {
@@ -268,9 +276,11 @@ export function StepChart({
 			<View style={{ marginBottom: 0, flexDirection: "row" }}>{yValues.length > 0 && yAxis}</View>
 			<View
 				onTouchStart={(evt) => {
-					updatePosition(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
-					if (!tooltipVisible) {
-						setTooltipVisible(true);
+					if (canDisplayTooltip) {
+						updatePosition(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
+						if (!tooltipVisible) {
+							setTooltipVisible(true);
+						}
 					}
 				}}
 				style={{ flex: 1, position: "relative" }}
