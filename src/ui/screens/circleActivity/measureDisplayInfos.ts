@@ -1,3 +1,4 @@
+import { isDefined } from "@domain/common/business";
 import { MetricType } from "@domain/measure/metric";
 import { Activities, ActivityScoreContributors } from "@domain/measure/representation/lib/type";
 import { useIsCelsius } from "@domain/user/hooks/useUser";
@@ -123,6 +124,7 @@ export const dailyActivitiesUIConfig: MetricsDetails = {
 	[MetricType.UserDailyWalkingEquivalency]: {
 		icon: "@assets/images/journey.png",
 		labelKey: "metric.walking",
+		renderValue: (distance) => (isDefined(distance) ? Number(distance) / 1000 : 0),
 		decimalNb: 1,
 	},
 	[MetricType.UserDailyCaloriesBurned]: {

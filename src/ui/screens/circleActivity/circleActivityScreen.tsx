@@ -129,6 +129,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 					{dailyActivitiesData ? (
 						activities.map((metric) => {
 							const dataInfos = dailyActivitiesUIConfig[metric];
+							const transform = dataInfos.renderValue;
 							const data = dailyActivitiesData[metric];
 
 							return (
@@ -136,7 +137,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 									key={metric}
 									icon={getIcon(dataInfos.icon)}
 									label={format(dataInfos.labelKey)}
-									value={data?.value?.toFixed(dataInfos.decimalNb)}
+									value={(transform ? transform(data?.value) : data?.value)?.toFixed(dataInfos.decimalNb)}
 									score={data?.score}
 									controlState={data?.controlState}
 									mode={screenModeWithoutDisabled}

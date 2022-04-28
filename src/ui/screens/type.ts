@@ -12,6 +12,7 @@ export type MetricDisplayConfig = {
 	icon: string;
 	labelKey: WordingKey;
 	decimalNb: number;
+	renderValue?: (value?: string | number) => number | undefined;
 };
 
 export type GaugeDisplayConfig = {
