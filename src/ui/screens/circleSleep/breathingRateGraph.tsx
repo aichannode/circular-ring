@@ -2,27 +2,29 @@ import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState } from "@domain/measure/representation/api";
+import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
-import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { Spinner } from "@ui/components/spinner";
 import { Tag } from "@ui/components/tag";
 import { TitleText } from "@ui/components/text";
+import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import { Averages } from "@ui/type";
+import { Averages, Mode } from "@ui/type";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import DashedLine from "react-native-dashed-line";
+
 type Props = {
 	selectedDay: ISODay;
-	hasNotEnoughData: boolean;
+	mode?: Mode;
 };
 
 export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRateGraph({
 	selectedDay,
-	hasNotEnoughData,
+	mode = createActiveMode(),
 }: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
@@ -37,33 +39,26 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 	} = useRepresentations();
 
 	const dailyBr = useDailyBR(selectedDay);
-
-	const [lines, constant] = [
-		dailyBr ? dailyBr.lines : [],
-		dailyBr ? dailyBr.constant : { average: undefined, reference: undefined },
-	];
+	const [lines, constant] = [dailyBr ? dailyBr.lines : [], dailyBr ? dailyBr.constant : { average: 0, reference: 0 }];
+	const updatedMode = updateMode(mode, dailyBr?.controlState !== DataControlState.READY);
 	const [yMin, yMax] =
-		lines.length > 0 ? [Math.min(...lines!.map((line) => line.y)), Math.max(...lines!.map((line) => line.y))] : [0, 0];
+		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
 
-	const [yMinIndex, yMaxIndex] = [
-		lines!.findIndex((line) => line.y == yMin),
-		lines!.findIndex((line) => line.y == yMax),
-	];
+	const [yMinIndex, yMaxIndex] = [lines.findIndex((line) => line.y == yMin), lines.findIndex((line) => line.y == yMax)];
 	const tags = useDailyTags(selectedDay);
 	const averages: Averages = [];
-	if (typeof constant.reference !== "undefined") {
+	if (isInCalibrationMode(updatedMode) && constant.reference !== 0) {
 		averages.push({
 			value: constant.reference,
 			color: colors.redLight,
 		});
 	}
-	if (typeof constant.average !== "undefined") {
+	if (isInActiveMode(updatedMode) && constant.average !== 0) {
 		averages.push({
 			value: constant.average,
 			color: colors.darkBlue,
 		});
 	}
-	const shouldDisplay = !hasNotEnoughData && dailyBr?.controlState === DataControlState.READY;
 
 	useEffect(() => {
 		if (isDefined(lines)) {
@@ -81,7 +76,7 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
-				{shouldDisplay && (
+				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
 					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
 						{tags.map(({ name, id }) => (
 							<View key={id} style={{ marginLeft: 8 }}>
@@ -90,6 +85,7 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 						))}
 					</View>
 				)}
+
 				<LineChart
 					averages={averages}
 					xColor={colors.textPrimary}
@@ -104,12 +100,12 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 					yMax={yMax}
 					yMinIndex={yMinIndex}
 					yMaxIndex={yMaxIndex}
-					hasNotEnoughData={!shouldDisplay}
+					mode={updatedMode}
 					labelCount={5}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
-						hasNotEnoughData={!shouldDisplay}
+						mode={updatedMode}
 						rows={[
 							{
 								label: format("hr.average"),
@@ -126,12 +122,13 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 										</View>
 									),
 								},
-								value:
-									lines.length == 0
-										? format("global.no_data")
-										: typeof constant.average == "undefined"
-										? "- rpm"
-										: `${constant.average.toFixed(1)} rpm`,
+								value: isInCalibrationMode(updatedMode)
+									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+									: lines.length == 0
+									? format("global.no_data")
+									: typeof constant.average == "undefined" || constant.average == 0
+									? "- rpm"
+									: `${constant.average.toFixed(1)} rpm`,
 							},
 							{
 								label: format("hr.reference"),
@@ -148,12 +145,13 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 										</View>
 									),
 								},
-								value:
-									lines.length == 0
-										? format("global.no_data")
-										: typeof constant.reference == "undefined"
-										? "- rpm"
-										: `${constant.reference.toFixed(1)} rpm`,
+								value: isInCalibrationMode(updatedMode)
+									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+									: lines.length == 0
+									? format("global.no_data")
+									: typeof constant.reference == "undefined" || constant.reference == 0
+									? "- rpm"
+									: `${constant.reference.toFixed(1)} rpm`,
 							},
 						]}
 					/>

@@ -1,10 +1,13 @@
 import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { CalendarTags } from "@ui/components/calendar/CalendarTags";
+import { ActivityData } from "@domain/measure/representation/api";
+import { createActiveMode, isInDisabledMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { Spinner } from "@ui/components/spinner";
+import { Tags } from "@ui/components/Tags";
 import { colors } from "@ui/styles/colors";
+import { Mode } from "@ui/type";
 import { hasAttributesDefined } from "@ui/utils/filter";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
@@ -27,12 +30,12 @@ interface Data {
 
 type Props = {
 	selectedDay: string;
-	hasNotEnoughData?: boolean;
+	mode?: Mode;
 };
 
 export const ActivityIntensity7DGraph: React.FC<Props> = observer(function ActivityIntensity7DGraph({
 	selectedDay,
-	hasNotEnoughData,
+	mode = createActiveMode(),
 }: Props) {
 	const {
 		measure: {
@@ -50,10 +53,9 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 	const activity7D = use7DaysActivity(selectedDay as ISODay);
 
 	const lines = activity7D
-		? [...activity7D.activityMetrics]
-				.map((line) => (hasAttributesDefined(line, ["high", "low", "medium"]) ? line : undefined))
-				.filter(isDefined)
-				.reverse()
+		? ([...activity7D.activityMetrics]
+				.filter((line) => hasAttributesDefined(line, ["high", "low", "medium"]))
+				.reverse() as Required<ActivityData>[])
 		: [];
 
 	const [highData, mediumData, lowData] = lines.reduce<[Data[], Data[], Data[]]>(
@@ -67,8 +69,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 	) || [[], [], []];
 	const xAxis = lines.map((item) => moment(item.date).format("dd")[0]);
 
-	const hasValidData = lines.length > 0;
-	const shouldDisplay = !hasNotEnoughData && hasValidData;
+	const updatedMode = updateMode(mode, lines.length === 0);
 	const isLoading = !isDefined(activity7D);
 
 	if (isLoading) {
@@ -80,7 +81,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 	}
 	return (
 		<>
-			<CalendarTags tags={shouldDisplay ? tags : []} />
+			<Tags tags={isInDisabledMode(updatedMode) ? [] : tags} />
 			<View style={{ height: 200 }}>
 				<LineChart
 					xColor={colors.textPrimary}
@@ -88,7 +89,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 					shouldDrawCircles={true}
 					valueFormatter={xAxis || []}
 					yValueFormatter={yValueFormatter}
-					hasNotEnoughData={hasNotEnoughData}
+					mode={updatedMode}
 					daysItem={[
 						{ lines: highData, color: colors.business.activityStageHigh },
 						{ lines: mediumData, color: colors.business.activityStageMedium },
@@ -113,7 +114,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 				/>
 			</View>
 			<View style={{ marginTop: 30 }}>
-				<ActivityLegend {...activity7D?.constant} hasNotEnoughData={hasNotEnoughData} />
+				<ActivityLegend {...activity7D?.constant} mode={updatedMode} />
 			</View>
 		</>
 	);

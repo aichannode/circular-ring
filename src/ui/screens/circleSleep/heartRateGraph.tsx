@@ -32,17 +32,17 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 
 	const {
 		measure: {
-			hooks: { useDailyHR },
+			hooks: { useDailyHRNight },
 		},
 		calendar: {
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
 
-	const dailyHr = useDailyHR(selectedDay);
+	const dailyHRNight = useDailyHRNight(selectedDay);
 	const [lines, constant] = [
-		dailyHr ? dailyHr.lines : [],
-		dailyHr ? dailyHr.constant : { hr: 0, hrMax: 0, hrMin: 0, reference: 0 },
+		dailyHRNight ? dailyHRNight.lines : [],
+		dailyHRNight ? dailyHRNight.constant : { hr: 0, hrMax: 0, hrMin: 0, reference: 0 },
 	];
 
 	const [yMin, yMax] =
@@ -51,25 +51,27 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 	const [yMinIndex, yMaxIndex] = [lines.findIndex((line) => line.y == yMin), lines.findIndex((line) => line.y == yMax)];
 	const tags = useDailyTags(selectedDay);
 	const averages: Averages = [];
-	if (isInActiveMode(mode) && constant.reference !== 0) {
-		averages.push({
-			value: constant.reference,
-			color: colors.red,
-		});
-	}
-	if (isInActiveMode(mode) && constant.hr !== 0) {
-		averages.push({
-			value: constant.hr,
+	if (isInActiveMode(mode)) {
+		if (constant.reference !== 0) {
+			averages.push({
+				value: constant.reference,
+				color: colors.redLight,
+			});
+		}
+		if (constant.hr !== 0) {
+			averages.push({
+				value: constant.hr,
 
-			color: colors.redLight,
-		});
+				color: colors.darkBlue,
+			});
+		}
 	}
 
 	useEffect(() => {
-		if (isDefined(dailyHr)) {
+		if (isDefined(dailyHRNight)) {
 			setLoading(false);
 		}
-	}, [dailyHr]);
+	}, [dailyHRNight]);
 
 	return isLoading ? (
 		<Spinner size={24} />
@@ -94,27 +96,27 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 					labelCount={5}
 					averages={averages}
 					xColor={colors.textPrimary}
+					shouldShowLabel={true}
 					yColor={colors.darkGray}
 					data={lines}
-					shouldShowLabel={true}
 					shouldDrawCircles={false}
-					graphColor={colors.red}
+					graphColor={colors.darkBlue}
 					valueFormatter="date"
-					valueFormatterPattern={["H'h'", "HH'h':mm"]}
+					valueFormatterPattern={["h a", "h:mm a"]}
 					yMin={yMin}
 					yMax={yMax}
 					yMinIndex={yMinIndex}
 					yMaxIndex={yMaxIndex}
+					mode={mode}
 					xAxisContentInset={15}
 					tooltipYMin={15}
 					tooltipYMax={-30}
 					tooltipSize={tooltipSize}
 					renderTooltip={(value) => (
 						<>
-							<Tag containerStyle={{ backgroundColor: colors.red, marginBottom: 4 }}>{`${value}`}</Tag>
+							<Tag containerStyle={{ backgroundColor: colors.sleepTag, marginBottom: 4 }}>{`${value}`}</Tag>
 						</>
 					)}
-					mode={mode}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
@@ -131,7 +133,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 												marginTop: 5,
 											}}
 										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
+											<DashedLine dashGap={5} dashLength={10} dashColor={colors.darkBlue} />
 										</View>
 									),
 								},
@@ -153,7 +155,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 												marginTop: 5,
 											}}
 										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.red} />
+											<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
 										</View>
 									),
 								},

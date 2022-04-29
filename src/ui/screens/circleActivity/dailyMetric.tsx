@@ -1,9 +1,11 @@
 import { isDefined } from "@domain/common/business";
 import { ActivityControlState, ScoreQuality } from "@domain/measure/representation/api";
+import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { Grow } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { colors, ScoreQualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
+import { Mode } from "@ui/type";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
@@ -13,9 +15,10 @@ interface DailyMetricProps {
 	label: string;
 	value?: string;
 	score?: number;
+	/** Optional control state, some metrics does not use a control state (Vo2Max, MaxHR) */
 	controlState?: ActivityControlState;
 	style?: StyleProp<ViewStyle>;
-	hasNotEnoughData?: boolean;
+	mode?: Mode;
 }
 
 export const DailyMetric: React.FC<DailyMetricProps> = ({
@@ -24,17 +27,19 @@ export const DailyMetric: React.FC<DailyMetricProps> = ({
 	value,
 	controlState,
 	style,
-	hasNotEnoughData,
+	mode = createActiveMode(),
 }) => {
-	const _hasNotEnoughData = hasNotEnoughData || !isDefined(value);
+	const updatedMode = updateMode(mode, !isDefined(value));
 
 	return (
 		<Container style={style}>
 			<MetricIcon source={icon} />
 			<SecondaryText>{label}</SecondaryText>
 			<Grow />
-			{controlState && !_hasNotEnoughData && <QualityIndicator quality={controlState} />}
-			<Metric>{_hasNotEnoughData ? "-" : value}</Metric>
+			{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && controlState && (
+				<QualityIndicator quality={controlState} />
+			)}
+			<Metric>{isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode) ? value : "-"}</Metric>
 		</Container>
 	);
 };

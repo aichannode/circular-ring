@@ -1,7 +1,9 @@
 import { isDefined } from "@domain/common/business";
-import { GraphLegend } from "@ui/components/measure/graphLegend";
+import { createActiveMode } from "@ui/business";
+import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { ActivityIntensityColors } from "@ui/styles/colors";
+import { Mode } from "@ui/type";
 import React from "react";
 import { View } from "react-native";
 
@@ -20,18 +22,15 @@ interface Props {
 	highDuration?: number;
 	mediumDuration?: number;
 	lowDuration?: number;
-	hasNotEnoughData?: boolean;
+	mode?: Mode;
 }
 
-export const ActivityLegend = ({ highDuration, lowDuration, mediumDuration, hasNotEnoughData }: Props) => {
+export const ActivityLegend = ({ highDuration, lowDuration, mediumDuration, mode = createActiveMode() }: Props) => {
 	const { format, formatDuration } = useI18n();
-
-	const isValidHighDuration = !hasNotEnoughData && isDefined(highDuration);
-	const isValidMediumDuration = !hasNotEnoughData && isDefined(mediumDuration);
-	const isValidLowDuration = !hasNotEnoughData && isDefined(lowDuration);
 
 	return (
 		<GraphLegend
+			mode={mode}
 			rows={[
 				{
 					label: format("intensity.high"),
@@ -39,7 +38,7 @@ export const ActivityLegend = ({ highDuration, lowDuration, mediumDuration, hasN
 						key: "intensity.high",
 						node: <Circle color={ActivityIntensityColors.HIGH} />,
 					},
-					value: isValidHighDuration ? `${formatDuration(highDuration)}` : undefined,
+					value: isDefined(highDuration) ? `${formatDuration(highDuration)}` : undefined,
 				},
 				{
 					label: format("intensity.medium"),
@@ -47,7 +46,7 @@ export const ActivityLegend = ({ highDuration, lowDuration, mediumDuration, hasN
 						key: "intensity.medium",
 						node: <Circle color={ActivityIntensityColors.MEDIUM} />,
 					},
-					value: isValidMediumDuration ? `${formatDuration(mediumDuration)}` : undefined,
+					value: isDefined(mediumDuration) ? `${formatDuration(mediumDuration)}` : undefined,
 				},
 				{
 					label: format("intensity.low"),
@@ -55,10 +54,9 @@ export const ActivityLegend = ({ highDuration, lowDuration, mediumDuration, hasN
 						key: "intensity.low",
 						node: <Circle color={ActivityIntensityColors.LOW} />,
 					},
-					value: isValidLowDuration ? `${formatDuration(lowDuration)}` : undefined,
+					value: isDefined(lowDuration) ? `${formatDuration(lowDuration)}` : undefined,
 				},
 			]}
-			hasNotEnoughData={hasNotEnoughData}
 		/>
 	);
 };

@@ -5,15 +5,18 @@ import lungs from "@assets/images/lungs.png";
 import shoes from "@assets/images/shoes.png";
 import sport from "@assets/images/sport.png";
 import { useRepresentations } from "@core/representation";
-import { getCurrentLocalISODay, isDefined } from "@domain/common/business";
+import { getCurrentLocalISODay } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
 import { activities, activityScoreContributors } from "@domain/measure/representation/lib/type";
+import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
+import { getInitMode } from "@ui/business";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
 import { Row, Stack } from "@ui/components/layout";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
+import { Spinner } from "@ui/components/spinner";
 import { CalendarView } from "@ui/containers/calendarView";
 import { ScoreGauge } from "@ui/containers/scoreGauge";
 import { ScoreSection } from "@ui/containers/scoreSection";
@@ -69,7 +72,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 				useDailyActivities,
 				useDailyEnergyScore,
 				useDailyActivityIntensity,
-				hasEnoughData,
+				useHasCompleteCoreSleep,
 			},
 		},
 	} = useRepresentations();
@@ -81,7 +84,12 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const activityContributorGaugesConfig = getActivityGaugesConfig(format);
 	useDailyActivityIntensity({ localISODay: selectedDay, setData });
 
-	const enoughData = hasEnoughData(selectedDay);
+	const hasCompleteCoreSleep = useHasCompleteCoreSleep(selectedDay);
+	const nbRemainingDays = useUserCalibrationRemainingDays();
+	// XXX: https://circularing.atlassian.net/browse/CIR-93
+	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
+	// XXX: https://circularing.atlassian.net/browse/CIR-830?focusedCommentId=11137
+	const screenModeWithoutDisabled = getInitMode(nbRemainingDays, hasCompleteCoreSleep, { allowDisabled: false });
 
 	const [activeItem, setActiveItem] = useState<number>(0);
 
@@ -92,10 +100,10 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 					<ScoreSection
 						style={{ marginTop: 20 }}
 						color={colors.orangeRed}
-						score={energyScore.score}
-						quality={energyScore.controlState}
+						score={energyScore?.score}
+						quality={energyScore?.controlState}
 						label={format("activity.energy_score")}
-						hasNotEnoughData={!enoughData}
+						mode={screenMode}
 					/>
 					<CircleCalendarButton
 						currentDay={selectedDay}
@@ -114,34 +122,39 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 					controlState={activityIntensity.controlState}
 					sportSessionDates={activityIntensity.sportSessionDates}
 					duration={activityIntensity.duration.total}
-					hasNotEnoughData={!enoughData}
+					mode={screenModeWithoutDisabled}
 				/>
 				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
 				<ElementStack gap={10}>
-					{activities.map((metric) => {
-						const dataInfos = dailyActivitiesUIConfig[metric];
-						const data = dailyActivitiesData[metric];
+					{dailyActivitiesData ? (
+						activities.map((metric) => {
+							const dataInfos = dailyActivitiesUIConfig[metric];
+							const transform = dataInfos.renderValue;
+							const data = dailyActivitiesData[metric];
 
-						return (
-							<DailyMetric
-								key={metric}
-								icon={getIcon(dataInfos.icon)}
-								label={format(dataInfos.labelKey)}
-								value={data.value?.toFixed(dataInfos.decimalNb)}
-								score={data.score}
-								controlState={data.controlState}
-								hasNotEnoughData={!enoughData || !isDefined(data.value) || isNaN(data.value)}
-							/>
-						);
-					})}
+							return (
+								<DailyMetric
+									key={metric}
+									icon={getIcon(dataInfos.icon)}
+									label={format(dataInfos.labelKey)}
+									value={(transform ? transform(data?.value) : data?.value)?.toFixed(dataInfos.decimalNb)}
+									score={data?.score}
+									controlState={data?.controlState}
+									mode={screenModeWithoutDisabled}
+								/>
+							);
+						})
+					) : (
+						<Spinner size={24} />
+					)}
 				</ElementStack>
 				<InfoListHeader>{format("activity.score.details")}</InfoListHeader>
 				<ElementStack gap={10}>
-					{
-						activityScoreContributors
+					{energyScoreDetails ? (
+						(activityScoreContributors
 							.map((metric, index) => {
 								const uiConfig = activityContributorGaugesConfig[metric];
-								const percent = energyScoreDetails[metric].percent;
+								const percent = energyScoreDetails?.[metric].percent;
 								return [
 									<ScoreGauge
 										key={metric}
@@ -155,11 +168,8 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 											setFocusedGauge((current) => (current === index ? null : index));
 										}}
-										hasNotEnoughData={
-											!enoughData ||
-											!isDefined(energyScoreDetails[metric].value) ||
-											!isDefined(energyScoreDetails[metric].percent)
-										}
+										mode={uiConfig.computeMode(screenMode)}
+										forceDisplayValue={uiConfig.shouldForceDisplayValue}
 									/>,
 									focusedGauge === index && (
 										<GaugeDescription
@@ -176,16 +186,17 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 								];
 							})
 							.flatMap((x) => x)
-							.filter(Boolean) as JSX.Element[]
-					}
+							.filter(Boolean) as JSX.Element[])
+					) : (
+						<Spinner size={24} />
+					)}
 				</ElementStack>
 
 				<ElementStack gap={10} style={{ display: "flex" }}>
-					{activeItem === 0 && <ActivityIntensityGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
-					{activeItem === 1 && <CardioPointsGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
-					{activeItem === 2 && <EnergyScoreGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
-
-					{activeItem === 3 && <HeartRateGraph selectedDay={selectedDay} hasNotEnoughData={!enoughData} />}
+					{activeItem === 0 && <ActivityIntensityGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 1 && <CardioPointsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 2 && <EnergyScoreGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 3 && <HeartRateGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
 				</ElementStack>
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>

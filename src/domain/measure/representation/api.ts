@@ -44,11 +44,17 @@ export enum DataControlState {
 	NO_DATA = "NO_DATA",
 }
 
+export interface ActivityDetail {
+	value?: number;
+	score?: number;
+	controlState?: ActivityControlState;
+}
+
 export interface Contributor {
-	value: number;
+	value?: number;
 	thresholdLow: number;
 	thresholdHigh: number;
-	percent: number;
+	percent?: number;
 	controlState: ScoreQuality;
 }
 
@@ -82,6 +88,16 @@ export interface DailyHrv {
 	lines: Lines;
 	constant: {
 		average: number;
+		reference: number;
+	};
+	controlState: DataControlState;
+}
+export interface DailyHRNight {
+	lines: Lines;
+	constant: {
+		hr: number;
+		hrMin: number;
+		hrMax: number;
 		reference: number;
 	};
 	controlState: DataControlState;

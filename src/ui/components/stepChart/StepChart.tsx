@@ -1,5 +1,7 @@
+import { createActiveMode, isInActiveMode, isInCalibrationMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import { Mode } from "@ui/type";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
 import * as scale from "d3-scale";
 import * as shape from "d3-shape";
@@ -44,7 +46,7 @@ interface StepChartProps {
 	tooltipYOffset?: number;
 	tooltipSize?: { width: number; height: number };
 	longPressDelay?: number;
-	hasNotEnoughData?: boolean;
+	mode?: Mode;
 }
 
 const verticalContentInset = { top: 50, bottom: 20 };
@@ -64,11 +66,9 @@ export function StepChart({
 	tooltipYOffset = 0,
 	tooltipSize = { width: 50, height: 30 },
 	longPressDelay = 400,
-	hasNotEnoughData,
+	mode = createActiveMode(),
 	renderTooltip,
 }: StepChartProps) {
-	const _hasNotEnoughData = hasNotEnoughData || data.length === 0;
-
 	if (__DEV__) {
 		if (xAxisNbTicks < 2) {
 			throw new Error("xAxisNbTicks must be at least 2");
@@ -86,7 +86,8 @@ export function StepChart({
 
 	const xContentInset = { left: xAxisContentInset, right: xAxisContentInset };
 	const yAxisContentInset = verticalContentInset.top;
-	const canShowAxes = !_hasNotEnoughData || defaultYAxis.length > 0;
+	const canShowAxes = isInActiveMode(mode) || isInCalibrationMode(mode) || defaultYAxis.length > 0;
+	const shouldDisplay = isInActiveMode(mode) || isInCalibrationMode(mode);
 
 	const graphRect = useRef<Rect>();
 	const dataRef = useRef({ xMin, xMax, yMin, yMax, xValues, yValues, data }); // Allow PanResponder to access to the latest available data
@@ -284,7 +285,7 @@ export function StepChart({
 				}}
 				// {...panResponder.current?.panHandlers}
 			>
-				{_hasNotEnoughData && (
+				{!shouldDisplay && (
 					<View
 						style={[
 							{
@@ -309,7 +310,7 @@ export function StepChart({
 							marginLeft: xAxisContentInset,
 							marginRight: xAxisContentInset,
 						}}
-						data={_hasNotEnoughData ? [] : data}
+						data={shouldDisplay ? data : []}
 						curve={shape.curveStep}
 						contentInset={verticalContentInset}
 						xAccessor={({ item }) => item.x}

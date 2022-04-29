@@ -21,4 +21,5 @@ export interface User {
 	stride: number;
 	tutorialCompleted: boolean;
 	createdAt: Date;
+	calibrationRemainingDays: number;
 }

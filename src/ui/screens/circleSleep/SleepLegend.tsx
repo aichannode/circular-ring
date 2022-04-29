@@ -1,6 +1,8 @@
-import { GraphLegend } from "@ui/components/measure/graphLegend";
+import { createActiveMode } from "@ui/business";
+import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import { Mode } from "@ui/type";
 import React from "react";
 import { View } from "react-native";
 
@@ -25,15 +27,21 @@ interface Props {
 	REMDuration?: Duration;
 	lightDuration?: Duration;
 	deepDuration?: Duration;
-	hasNotEnoughData?: boolean;
+	mode?: Mode;
 }
 
-export const SleepLegend = ({ REMDuration, awakeDuration, deepDuration, lightDuration, hasNotEnoughData }: Props) => {
+export const SleepLegend = ({
+	REMDuration,
+	awakeDuration,
+	deepDuration,
+	lightDuration,
+	mode = createActiveMode(),
+}: Props) => {
 	const { format, formatDuration } = useI18n();
 
 	return (
 		<GraphLegend
-			hasNotEnoughData={hasNotEnoughData}
+			mode={mode}
 			rows={[
 				{
 					label: format("sleep.stage.awake"),

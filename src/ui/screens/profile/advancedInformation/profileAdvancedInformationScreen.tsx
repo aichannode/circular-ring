@@ -13,7 +13,7 @@ import { AdvancedInfoBottomSheetConfig } from "@ui/screens/profile/advancedInfor
 import {
 	AdvancedInfoEditionBottomSheet,
 	AdvancedInfoEditionConfig,
-	EditionInfoType
+	EditionInfoType,
 } from "@ui/screens/profile/advancedInformation/advancedInfoEditionBottomSheet";
 import { BMICard } from "@ui/screens/profile/advancedInformation/bmiCard";
 import { ChronotypeCard } from "@ui/screens/profile/advancedInformation/chronotypeCard";
@@ -27,7 +27,7 @@ import {
 	pillPackFormatKeys,
 	sleepDisorderKeys,
 	sleepingPillsKeys,
-	workTimeKeys
+	workTimeKeys,
 } from "@ui/screens/profile/advancedInformation/profileAdvancedInfoI18n";
 import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";

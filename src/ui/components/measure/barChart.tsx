@@ -1,7 +1,8 @@
 import { Lines } from "@domain/measure/representation/api";
+import { createActiveMode, isInDisabledMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import { Averages, SelectEventPayload } from "@ui/type";
+import { Averages, Mode, SelectEventPayload } from "@ui/type";
 import moment from "moment";
 import React, { useState } from "react";
 import { Platform, processColor } from "react-native";
@@ -10,7 +11,6 @@ import styled from "styled-components/native";
 import { TextPlaceholder } from "../placeholder/TextPlaceholder";
 
 interface BarChartProps {
-	hasNotEnoughData?: boolean;
 	graphColor?: string;
 	xColor: string;
 	yColor: string;
@@ -19,10 +19,11 @@ interface BarChartProps {
 	valueFormatter?: string | string[];
 	onSelect?: (x: number) => void;
 	averages?: Averages;
+	mode?: Mode;
 }
 
 export function BarChart({
-	hasNotEnoughData,
+	mode = createActiveMode(),
 	graphColor = colors.red,
 	xColor = colors.textPrimary,
 	yColor = colors.darkGray,
@@ -112,7 +113,7 @@ export function BarChart({
 
 	return (
 		<Container>
-			{hasNotEnoughData ? (
+			{isInDisabledMode(mode) ? (
 				<TextPlaceholder content={format("global.no_data_yet")} />
 			) : (
 				<BarChartWrapper

@@ -1,5 +1,8 @@
 import { useRepresentations } from "@core/representation";
 import { useServices } from "@core/services";
+import { getCurrentLocalISODay, isDefined } from "@domain/common/business";
+import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
+import { getInitMode, updateMode } from "@ui/business";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ResponsiveCenterView } from "@ui/components/layout";
@@ -19,8 +22,19 @@ export const ProfileScreen = observer(function ProfileScreen() {
 	const { navigate } = useRoutesNavigation();
 	const { cognitoAuthService } = useServices();
 
-	const dailyScore = useRepresentations().measure.hooks.useDailyGlobalScore();
+	const {
+		measure: {
+			hooks: { useHasCompleteCoreSleep },
+		},
+	} = useRepresentations();
+
+	const dailyScore = useRepresentations().measure.hooks.useDailyGlobalScore(getCurrentLocalISODay());
 	const [isConnectedByEmail, setIsConnectedByEmail] = useState(false);
+
+	const hasCompleteCoreSleep = useHasCompleteCoreSleep(getCurrentLocalISODay());
+	const nbRemainingDays = useUserCalibrationRemainingDays();
+	// XXX: https://circularing.atlassian.net/browse/CIR-93
+	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
 
 	const goToProfileInformation = useCallback(() => {
 		navigate(Routes.ProfileInformation);
@@ -48,7 +62,10 @@ export const ProfileScreen = observer(function ProfileScreen() {
 		>
 			<UserAvatar />
 			<ResponsiveCenterView>
-				<GlobalScoreCard score={dailyScore} />
+				<GlobalScoreCard
+					score={dailyScore}
+					mode={updateMode(screenMode, !isDefined(dailyScore) || isNaN(dailyScore))}
+				/>
 			</ResponsiveCenterView>
 			<InfoListHeader>{format("profile.list_header.profile")}</InfoListHeader>
 			<InfoListItem name={format("profile.list.profile_information")} hasDisclosure action={goToProfileInformation} />

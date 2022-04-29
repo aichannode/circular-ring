@@ -1,4 +1,5 @@
 import { CircleEntity } from "@domain/circles/type";
+import { isDefined } from "@domain/common/business";
 import { WordingKey } from "src/wordings";
 
 export const getScoreQualityLabel =
@@ -8,11 +9,14 @@ export const getScoreQualityLabel =
 		thresholdLow,
 		thresholdHigh,
 	}: {
-		value: number;
-		thresholdLow: number;
-		thresholdHigh: number;
-		percent: number;
-	}): string => {
+		value?: number;
+		thresholdLow?: number;
+		thresholdHigh?: number;
+		percent?: number;
+	}): string | undefined => {
+		if (!isDefined(value) || !isDefined(thresholdLow) || !isDefined(thresholdHigh)) {
+			return undefined;
+		}
 		if (value >= thresholdHigh) {
 			return format("score.quality.optimal");
 		}

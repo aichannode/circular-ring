@@ -2,9 +2,11 @@ import { isDefined } from "@domain/common/business";
 import { DataControlState } from "@domain/measure/representation/api";
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { ActivityStage } from "@domain/measure/type";
+import { createActiveMode, updateMode } from "@ui/business";
 import { DailyPieChart } from "@ui/components/measure/dailyPieChart";
 import { DailyPieChartLabel } from "@ui/components/measure/dailyPieChartLabel";
 import { colors } from "@ui/styles/colors";
+import { Mode } from "@ui/type";
 import produce from "immer";
 import moment from "moment";
 import React from "react";
@@ -16,7 +18,7 @@ type Props = {
 	controlState: DataControlState;
 	sportSessionDates: [string | undefined, string | undefined][];
 	stages: Array<StageInfos<ActivityStage>>;
-	hasNotEnoughData?: boolean;
+	mode?: Mode;
 };
 
 function getPhaseLevel(phase = 1) {
@@ -34,8 +36,13 @@ export function ActivityDurationPieChart({
 	duration,
 	sportSessionDates,
 	isToday,
-	hasNotEnoughData,
+	mode = createActiveMode(),
 }: Props) {
+	const updatedMode = updateMode(
+		mode,
+		controlState === DataControlState.NO_DATA || stages.length === 0 || isNaN(duration)
+	);
+
 	// Check if the stage start at 00:00 and add a dummy stage if not
 	const correctedStages = produce(stages, function (draft) {
 		if (!draft.length) {
@@ -87,7 +94,7 @@ export function ActivityDurationPieChart({
 				]}
 				phaseWidths={[5, 7, 7, 7]}
 				getPhaseLevel={getPhaseLevel}
-				hasNotEnoughData={hasNotEnoughData || controlState === DataControlState.NO_DATA}
+				mode={updatedMode}
 				noDataPhaseColor={colors.business.activityDurationNone}
 			>
 				<DailyPieChartLabel

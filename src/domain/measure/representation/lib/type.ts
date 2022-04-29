@@ -57,6 +57,17 @@ export type DailyHRConstantMetrics = typeof dailyHRConstantMetrics[number];
 export const dailyHRTimeSeriesMetrics = [MetricType.UserHR] as const;
 export type DailyHRTimeSeriesMetrics = typeof dailyHRTimeSeriesMetrics[number];
 
+export const dailyHRNightConstantMetrics = [
+	MetricType.UserHR,
+	MetricType.UserDailySleepHR,
+	MetricType.UserDailySleepHRMin,
+	MetricType.UserDailySleepHRMax,
+] as const;
+export type DailyHRNightConstantMetrics = typeof dailyHRNightConstantMetrics[number];
+
+export const dailyHRNightTimeSeriesMetrics = [MetricType.UserHR] as const;
+export type DailyHRNightTimeSeriesMetrics = typeof dailyHRNightTimeSeriesMetrics[number];
+
 export const dailyActivityIntensityDurationMetrics = [
 	MetricType.UserDailyHighActivityIntensityDuration,
 	MetricType.UserDailyMediumActivityIntensityDuration,
@@ -323,7 +334,7 @@ export const activityMetrics = [
 	...cardioPoints,
 	MetricType.UserDailyVO2Max,
 	MetricType.UserDailyAwakeHRMax,
-];
+] as const;
 export type AcitivityMetrics = typeof activityMetrics[number];
 export const dailyCardioPointsTimeSeriesMetrics = [MetricType.UserDailyCardioPoints] as const;
 export type DailyCardioPointsTimeSeriesMetrics = typeof dailyCardioPointsTimeSeriesMetrics[number];
@@ -335,14 +346,18 @@ export const cardioPointsConstantMetrics = [
 	MetricType.UserCardioPointAverage,
 	MetricType.UserCardioPointBaseline,
 	MetricType.UserCardioPointTotal,
-];
+] as const;
 export type CardioPointsConstantMetrics = typeof cardioPointsConstantMetrics[number];
 /**
  * Those metrics are used for the stages circle and hypnogram.
  * They represents the different sleep stages (core sleep and naps)
  * along a time slice.
  */
-export const sleepStagesMetrics = [MetricType.UserSleepStage, MetricType.UserNapSleepBegin, MetricType.UserNapSleepEnd];
+export const sleepStagesMetrics = [
+	MetricType.UserSleepStage,
+	MetricType.UserNapSleepBegin,
+	MetricType.UserNapSleepEnd,
+] as const;
 export type SleepStagesMetrics = typeof sleepStagesMetrics[number];
 
 /**

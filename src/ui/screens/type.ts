@@ -1,3 +1,5 @@
+import { Contributor } from "@domain/measure/representation/api";
+import { Mode } from "@ui/type";
 import { WordingKey } from "src/wordings";
 
 export enum MetricColor {
@@ -10,11 +12,14 @@ export type MetricDisplayConfig = {
 	icon: string;
 	labelKey: WordingKey;
 	decimalNb: number;
+	renderValue?: (value?: string | number) => number | undefined;
 };
 
 export type GaugeDisplayConfig = {
 	titleKey: WordingKey;
 	descriptionKey: WordingKey;
 	displaySegment?: [number, number];
-	renderValue: (metrics: { value: number; thresholdLow: number; thresholdHigh: number; percent: number }) => string;
+	computeMode: (parentMode: Mode) => Mode;
+	renderValue: (metrics: Contributor) => string | undefined;
+	shouldForceDisplayValue?: boolean;
 };

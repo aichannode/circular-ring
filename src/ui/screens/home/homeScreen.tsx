@@ -28,9 +28,9 @@ const BANNER_TO_LOAD_ON_END = 2;
 
 export const HomeScreen: React.FC = () => {
 	const { feedService, bluetoothService, bleDeviceService, appStateService, ringManagementService } = useServices();
-	const [forceRefreshing, setForceRefreshing] = useState(false);
 	const [hideQuickaccess, setHideQuickaccess] = useState(true);
 	const syncState = useSyncState();
+	const previousScrollViewY = useRef(0);
 
 	const setupState = useSetupState();
 
@@ -49,10 +49,8 @@ export const HomeScreen: React.FC = () => {
 		if (syncState !== SyncState.NONE) {
 			return;
 		}
-		setForceRefreshing(true);
 		await ringManagementService.syncData();
 		await feedService.fetchAll();
-		setForceRefreshing(false);
 	}, [syncState]);
 
 	const userSettings = useUserSettings();
@@ -128,11 +126,7 @@ export const HomeScreen: React.FC = () => {
 			</Animated.View>
 			<Animated.FlatList
 				refreshControl={
-					<RefreshControl
-						enabled={syncState === SyncState.NONE}
-						refreshing={forceRefreshing}
-						onRefresh={() => forceRefresh()}
-					/>
+					<RefreshControl enabled={syncState === SyncState.NONE} refreshing={false} onRefresh={() => forceRefresh()} />
 				}
 				data={data}
 				style={{
@@ -145,19 +139,15 @@ export const HomeScreen: React.FC = () => {
 				renderItem={(item) => {
 					return item.item;
 				}}
-				onScroll={(event) => {
-					if (
-						(event.nativeEvent.velocity && event.nativeEvent.velocity?.y <= 0) ||
-						event.nativeEvent.contentOffset.y < 50
-					) {
+				onScroll={({ nativeEvent }) => {
+					const positionY = nativeEvent.contentOffset.y;
+					const isAtEnd = positionY + nativeEvent.layoutMeasurement.height > nativeEvent.contentSize.height;
+					if ((positionY - previousScrollViewY.current <= 0 || positionY < 50) && !isAtEnd) {
 						setHideQuickaccess(true);
-					} else if (
-						event.nativeEvent.velocity &&
-						event.nativeEvent.velocity.y > 0 &&
-						event.nativeEvent.contentOffset.y > 50
-					) {
+					} else if (positionY - previousScrollViewY.current > 0 && positionY > 50) {
 						setHideQuickaccess(false);
 					}
+					previousScrollViewY.current = positionY;
 				}}
 				onEndReached={(end) => {
 					if (!loading) appStateService.recommendationsCount.update((state) => state + BANNER_TO_LOAD_ON_END);

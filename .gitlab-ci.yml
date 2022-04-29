@@ -15,12 +15,12 @@ before_script:
 
 check:
   stage: check
-  image: betomorrow/ci-node:12_v1
+  image: betomorrow/ci-node:16_v18
   script:
     - npm ci --progress=false
     - npm run tsc
     - npm run lint
-    # - npm run test -- --ci  # none for now
+    - npm run test -- --ci
   only:
     - merge_requests
     - branches
@@ -47,7 +47,7 @@ android:build:staging:
     ENV: staging
   rules:
     - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH =~ /^release\/.*$/'
-  before_script: 
+  before_script:
     - export BUILD_NAME=$(sed 's/release\///g' <<< ${CI_COMMIT_BRANCH})
 
 android:build:prod:

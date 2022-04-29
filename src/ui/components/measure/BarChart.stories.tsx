@@ -1,7 +1,8 @@
 // components/Task.stories.js
 import { Lines } from "@domain/measure/representation/api";
-import { boolean, object, withKnobs } from "@storybook/addon-knobs";
+import { object, select, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react-native";
+import { createActiveMode, createCalibrationMode, createDisabledMode } from "@ui/business";
 import { colors } from "@ui/styles/colors";
 import { Averages } from "@ui/type";
 import moment from "moment";
@@ -37,6 +38,7 @@ const valueFormatter = data.map(({ x, y }) => {
 export default storiesOf("BarChart", module)
 	.addDecorator(withKnobs)
 	.add("default", () => {
+		const modeType = select("mode", ["active", "disabled", "calibration"], "active", "mode");
 		return (
 			<View style={{ height: 300 }}>
 				<BarChart
@@ -46,7 +48,13 @@ export default storiesOf("BarChart", module)
 					data={data}
 					valueFormatter={valueFormatter}
 					graphColor={colors.red}
-					hasNotEnoughData={boolean("hasNotEnoughData", false)}
+					mode={
+						modeType === "disabled"
+							? createDisabledMode()
+							: modeType === "calibration"
+							? createCalibrationMode(3)
+							: createActiveMode()
+					}
 				/>
 			</View>
 		);
@@ -62,7 +70,6 @@ export default storiesOf("BarChart", module)
 					data={data}
 					valueFormatter={valueFormatter}
 					graphColor={colors.red}
-					hasNotEnoughData={boolean("hasNotEnoughData", false)}
 				/>
 			</View>
 		);

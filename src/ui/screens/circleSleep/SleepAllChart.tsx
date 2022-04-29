@@ -3,10 +3,12 @@ import { isDefined, toISOMonth } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { Lines, SleepStageData } from "@domain/measure/representation/api";
 import { useUser } from "@domain/user/hooks/useUser";
-import { CalendarTags } from "@ui/components/calendar/CalendarTags";
+import { createActiveMode, isInDisabledMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { Spinner } from "@ui/components/spinner";
+import { Tags } from "@ui/components/Tags";
 import { colors } from "@ui/styles/colors";
+import { Mode } from "@ui/type";
 import { hasAttributesDefined } from "@ui/utils/filter";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
@@ -16,10 +18,10 @@ import { SleepLegend } from "./SleepLegend";
 
 interface Props {
 	selectedDay: ISODay;
-	hasNotEnoughData?: boolean;
+	mode?: Mode;
 }
 
-export const SleepAllChart = observer(function SleepAllChart({ selectedDay, hasNotEnoughData }: Props) {
+export const SleepAllChart = observer(function SleepAllChart({ selectedDay, mode = createActiveMode() }: Props) {
 	const user = useUser();
 	const beginDay = (user ? moment(user.createdAt).format("YYYY-MM-DD") : "2020-01-01") as ISODay;
 
@@ -45,14 +47,13 @@ export const SleepAllChart = observer(function SleepAllChart({ selectedDay, hasN
 		[[], [], [], []]
 	) || [[], [], [], []];
 
-	const hasValidData = lines.length !== 0;
-	const shouldDisplay = !hasNotEnoughData && hasValidData;
+	const updatedMode = updateMode(mode, lines.length === 0);
 	const sleepConstant = daysAllSleep?.constant;
 	const isLoaded = isDefined(daysAllSleep);
 
 	return isLoaded ? (
 		<>
-			<CalendarTags tags={shouldDisplay ? tags : []} />
+			<Tags tags={isInDisabledMode(updatedMode) ? [] : tags} />
 			<View style={{ height: 200 }}>
 				<LineChart
 					daysItem={[
@@ -78,7 +79,7 @@ export const SleepAllChart = observer(function SleepAllChart({ selectedDay, hasN
 					yColor={colors.darkGray}
 					shouldDrawCircles={true}
 					valueFormatter={valueFormatter}
-					hasNotEnoughData={hasNotEnoughData}
+					mode={updatedMode}
 				/>
 			</View>
 			<View style={{ marginTop: 30 }}>
@@ -115,7 +116,7 @@ export const SleepAllChart = observer(function SleepAllChart({ selectedDay, hasN
 							  }
 							: undefined
 					}
-					hasNotEnoughData={hasNotEnoughData}
+					mode={updatedMode}
 				/>
 			</View>
 		</>

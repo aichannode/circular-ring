@@ -3,9 +3,9 @@ export type DatedMetrics<T extends MetricType = MetricType> = {
 	metrics: Metrics<T>;
 };
 
-export type Metrics<M extends MetricType> = Partial<{
-	[k in M]: number | string;
-}>;
+export type Metrics<M extends MetricType> = {
+	[k in M]: number | string | null;
+};
 
 /**
  * Structure for measure model data for efficient search
@@ -15,7 +15,7 @@ export type Metrics<M extends MetricType> = Partial<{
  */
 export type RangeMetrics<T extends MetricType = MetricType, F extends MetricType = MetricType> = {
 	// le premier varie au cours du temps le deuxieme valeur fixes
-	timeSeries: Array<DatedMetrics<T>>;
+	timeSeries: ReadonlyArray<DatedMetrics<T>>;
 	constant: Metrics<F>;
 };
 
@@ -225,4 +225,11 @@ export enum MetricType {
 	// BR
 	///////////////////
 	UserBR = "user.br",
+
+	///////////////////
+	// HR night
+	///////////////////
+	UserDailySleepHR = "user.reference.asleep.hr",
+	UserDailySleepHRMax = "user.daily.asleep.hr.max",
+	UserDailySleepHRMin = "user.daily.asleep.hr.min",
 }

@@ -2,15 +2,16 @@ import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState } from "@domain/measure/representation/api";
+import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
-import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { Spinner } from "@ui/components/spinner";
 import { Tag } from "@ui/components/tag";
 import { TitleText } from "@ui/components/text";
+import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import { Averages } from "@ui/type";
+import { Averages, Mode } from "@ui/type";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -18,10 +19,10 @@ import DashedLine from "react-native-dashed-line";
 
 type Props = {
 	selectedDay: ISODay;
-	hasNotEnoughData: boolean;
+	mode?: Mode;
 };
 
-export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDay, hasNotEnoughData }: Props) {
+export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDay, mode = createActiveMode() }: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 
@@ -37,31 +38,30 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDa
 	const dailyHrv = useDailyHRV(selectedDay);
 	const [lines, constant] = [
 		dailyHrv ? dailyHrv.lines : [],
-		dailyHrv ? dailyHrv.constant : { average: undefined, reference: undefined },
+		dailyHrv ? dailyHrv.constant : { average: 0, reference: 0 },
 	];
+	const updatedMode = updateMode(mode, dailyHrv?.controlState !== DataControlState.READY);
 
 	const [yMin, yMax] =
-		lines.length > 0 ? [Math.min(...lines!.map((line) => line.y)), Math.max(...lines!.map((line) => line.y))] : [0, 0];
+		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
 
-	const [yMinIndex, yMaxIndex] = [
-		lines!.findIndex((line) => line.y == yMin),
-		lines!.findIndex((line) => line.y == yMax),
-	];
+	const [yMinIndex, yMaxIndex] = [lines.findIndex((line) => line.y == yMin), lines.findIndex((line) => line.y == yMax)];
 	const tags = useDailyTags(selectedDay);
 	const averages: Averages = [];
-	if (typeof constant.reference !== "undefined") {
-		averages.push({
-			value: constant.reference,
-			color: colors.redLight,
-		});
+	if (isInActiveMode(updatedMode) && isDefined(constant)) {
+		if (constant.reference !== 0) {
+			averages.push({
+				value: constant.reference,
+				color: colors.redLight,
+			});
+		}
+		if (constant.average !== 0) {
+			averages.push({
+				value: constant.average,
+				color: colors.darkBlue,
+			});
+		}
 	}
-	if (typeof constant.average !== "undefined") {
-		averages.push({
-			value: constant.average,
-			color: colors.darkBlue,
-		});
-	}
-	const shouldDisplay = !hasNotEnoughData && dailyHrv?.controlState === DataControlState.READY;
 
 	useEffect(() => {
 		if (isDefined(dailyHrv)) {
@@ -74,12 +74,12 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDa
 	) : (
 		<View>
 			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("sleep.details.title")}
+				{format("score.details.hrv.label")}
 			</TitleText>
 
 			{/** Wait for available data on week/month */}
-			<GraphContainer style={{ height: 600 }}>
-				{shouldDisplay && (
+			<GraphContainer style={{ height: 400 }}>
+				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
 					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
 						{tags.map(({ name, id }) => (
 							<View key={id} style={{ marginLeft: 8 }}>
@@ -103,11 +103,11 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDa
 					yMax={yMax}
 					yMinIndex={yMinIndex}
 					yMaxIndex={yMaxIndex}
-					hasNotEnoughData={!shouldDisplay}
+					mode={updatedMode}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
-						hasNotEnoughData={!shouldDisplay}
+						mode={updatedMode}
 						rows={[
 							{
 								label: format("hr.average"),
@@ -124,7 +124,13 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDa
 										</View>
 									),
 								},
-								value: typeof constant.average == "undefined" ? "- ms" : `${constant.average} ms`,
+								value: isInCalibrationMode(updatedMode)
+									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+									: lines.length == 0
+									? format("global.no_data")
+									: typeof constant.average == "undefined" || constant.average === 0
+									? "- ms"
+									: `${constant.average} ms`,
 							},
 							{
 								label: format("hr.reference"),
@@ -141,7 +147,13 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDa
 										</View>
 									),
 								},
-								value: typeof constant.reference == "undefined" ? "- ms" : `${constant.reference} ms`,
+								value: isInCalibrationMode(updatedMode)
+									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+									: lines.length == 0
+									? format("global.no_data")
+									: typeof constant.reference == "undefined" || constant.reference === 0
+									? "- ms"
+									: `${constant.reference} ms`,
 							},
 						]}
 					/>

@@ -26,3 +26,6 @@ export const useNotificationsSettings = () => useObservable(useServices().userSe
 
 export const useUserValidated = () => useObservable(useServices().userService.user)?.validated || false;
 export const useUserTutorialCompleted = () => useObservable(useServices().userService.user)?.tutorialCompleted || false;
+
+export const useUserCalibrationRemainingDays = () =>
+	useObservable(useServices().userService.user)?.calibrationRemainingDays || 0;

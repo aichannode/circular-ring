@@ -42,7 +42,6 @@ export const RootNavigator: React.FC = () => {
 	const [useByPass, setByPass] = useState(false);
 	const [byPassForcedFirmwareUpdate, setByPassForcedFirmwareUpdate] = useState(false);
 	const updateState = useObservable(bleDeviceService.updateState);
-	console.log("lastFirmwareVersion", lastFirmwareVersion);
 	const {
 		cognitoAuthService: { payload },
 	} = useServices();

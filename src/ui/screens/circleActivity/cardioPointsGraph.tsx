@@ -4,16 +4,17 @@ import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState, Lines } from "@domain/measure/representation/api";
 import { TimeFrame } from "@domain/measure/type";
+import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { BarChart } from "@ui/components/measure/barChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
-import { GraphLegend } from "@ui/components/measure/graphLegend";
 import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { Spinner } from "@ui/components/spinner";
 import { Tag } from "@ui/components/tag";
 import { TitleText } from "@ui/components/text";
+import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import { Averages } from "@ui/type";
+import { Averages, Mode } from "@ui/type";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -22,11 +23,11 @@ import DashedLine from "react-native-dashed-line";
 
 type Props = {
 	selectedDay: ISODay;
-	hasNotEnoughData: boolean;
+	mode?: Mode;
 };
 export const CardioPointsGraph: React.FC<Props> = observer(function CardioPointsGraph({
 	selectedDay,
-	hasNotEnoughData,
+	mode = createActiveMode(),
 }: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
@@ -53,28 +54,27 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 				})
 				.reverse()
 		: [];
+	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 
-	const valueFormatter = lines.map(({ x, y }) => {
+	const valueFormatter = lines.map(({ x }) => {
 		const day = moment(x).format("dd");
 		return day !== "Invalid date" ? day[0] : "";
 	});
 
 	const constant = data?.constant;
 	const averages: Averages = [];
-	if (typeof constant?.average !== "undefined") {
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.average !== 0) {
 		averages.push({
 			value: constant.average,
 			color: colors.red,
 		});
 	}
-	if (typeof constant?.baseline !== "undefined") {
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.baseline !== 0) {
 		averages.push({
 			value: constant.baseline,
-
 			color: colors.redLight,
 		});
 	}
-
 	useEffect(() => {
 		if (isDefined(data)) {
 			setLoading(false);
@@ -85,7 +85,6 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 		const date = moment(lines[x].x).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
-	const shouldDisplay = !hasNotEnoughData && data?.controlState === DataControlState.READY;
 
 	return isLoading ? (
 		<Spinner size={24} />
@@ -118,7 +117,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 
 			<GraphContainer style={{ height: 400, marginTop: 20 }}>
 				<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-					{shouldDisplay &&
+					{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
 						tags.map(({ name, id }) => (
 							<View key={id} style={{ marginLeft: 8 }}>
 								<Tag>{name}</Tag>
@@ -134,11 +133,11 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 					valueFormatter={valueFormatter}
 					graphColor={colors.red}
 					onSelect={(x) => toUpdateTag(x)}
-					hasNotEnoughData={!shouldDisplay}
+					mode={updatedMode}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
-						hasNotEnoughData={!shouldDisplay}
+						mode={updatedMode}
 						rows={[
 							{
 								label: format("activity.energy_score.7day"),
@@ -155,7 +154,11 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 										</View>
 									),
 								},
-								value: isDefined(constant?.average) ? `${constant?.average}` : "-",
+								value: isInCalibrationMode(updatedMode)
+									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+									: isDefined(constant) && constant.average != 0
+									? `${constant.average}`
+									: "-",
 							},
 							{
 								label: format("cardio.baseline"),
@@ -172,7 +175,11 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 										</View>
 									),
 								},
-								value: isDefined(constant?.baseline) ? `${constant?.baseline}` : "-",
+								value: isInCalibrationMode(updatedMode)
+									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+									: isDefined(constant) && constant.baseline != 0
+									? `${constant.baseline}`
+									: "-",
 							},
 							{
 								label: format("cardio.7day.total"),
@@ -181,7 +188,11 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 									node: <></>,
 								},
 
-								value: isDefined(constant?.total) ? `${constant?.total}` : "-",
+								value: isInCalibrationMode(updatedMode)
+									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+									: isDefined(constant) && constant.total != 0
+									? `${constant.total}`
+									: "-",
 							},
 						]}
 					/>

@@ -24,7 +24,6 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import SplashScreen from "react-native-splash-screen";
 import { translations } from "./wordings";
 
-
 // Setup Mobx for RN
 configure({
 	enforceActions: "always",

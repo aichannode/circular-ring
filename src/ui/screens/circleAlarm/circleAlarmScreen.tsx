@@ -5,6 +5,8 @@ import { getCurrentLocalISODay } from "@domain/common/business";
 import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
 import { useAutoConnectState } from "@domain/device/hooks";
 import { DailySleepData } from "@domain/measure/representation/api";
+import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
+import { getInitMode } from "@ui/business";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader } from "@ui/components/infoList";
 import { Spinner } from "@ui/components/spinner";
@@ -25,15 +27,22 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 	const navigation = useRoutesNavigation();
 	const { loading, alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
-	const { hasEnoughData, useDailyWakeUpScore, useDailySleepStages } = useRepresentations().measure.hooks;
 	const warningBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const wakeUpScore = useDailyWakeUpScore();
+	const currentISODay = getCurrentLocalISODay();
+	const wakeUpScore = useRepresentations().measure.hooks.useDailyWakeUpScore(currentISODay);
 	const autoConnectState = useAutoConnectState();
-	const enoughData = hasEnoughData(getCurrentLocalISODay());
+	const { useHasCompleteCoreSleep } = useRepresentations().measure.hooks;
 	const [displayGraph, setDisplayGraph] = useState(false);
 	const [dailySleep, setData] = useState<DailySleepData | undefined>();
+	const { useDailySleepStages } = useRepresentations().measure.hooks;
 
-	useDailySleepStages({ setData });
+	const hasCompleteCoreSleep = useHasCompleteCoreSleep(getCurrentLocalISODay());
+	const nbRemainingDays = useUserCalibrationRemainingDays();
+	// XXX: https://circularing.atlassian.net/browse/CIR-93
+	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
+
+	useDailySleepStages({ localISODay: currentISODay, setData });
+
 	useEffect(() => {
 		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
 			loadAlarms();
@@ -44,16 +53,18 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 	return (
 		<Container>
 			<ScrollView>
-				<ScoreSection
-					hasNotEnoughData={!enoughData}
-					label={format("alarm.wake_up_score")}
-					color={colors.blue}
-					score={wakeUpScore?.score}
-					quality={wakeUpScore?.controlState}
-					style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
-					setState={setDisplayGraph}
-					state={displayGraph}
-				/>
+				{wakeUpScore && (
+					<ScoreSection
+						mode={screenMode}
+						label={format("alarm.wake_up_score")}
+						color={colors.blue}
+						score={wakeUpScore.score}
+						quality={wakeUpScore.controlState}
+						style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
+						setState={setDisplayGraph}
+						state={displayGraph}
+					/>
+				)}
 				{displayGraph && dailySleep && (
 					<GraphWrapper>
 						<Cross onPress={() => setDisplayGraph(false)}>

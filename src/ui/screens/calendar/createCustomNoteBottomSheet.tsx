@@ -61,12 +61,12 @@ export const CreateCustomNoteBottomSheet: React.FC<CreateCustomNoteBottomSheetPr
 			<Container>
 				<Title>{format("calendar.add_custom_note")}</Title>
 				<Grow />
-					<NameInput
-						placeholder={format("calendar.add_custom_note")}
-						value={name}
-						onChangeText={setName}
-						autoFocus={true}
-					/>
+				<NameInput
+					placeholder={format("calendar.add_custom_note")}
+					value={name}
+					onChangeText={setName}
+					autoFocus={true}
+				/>
 				<Grow />
 				{!loading ? (
 					<>
@@ -96,8 +96,7 @@ export const CreateCustomNoteBottomSheet: React.FC<CreateCustomNoteBottomSheetPr
 	}
 );
 
-const NameInput = styled(BottomSheetInput)`
-`;
+const NameInput = styled(BottomSheetInput)``;
 
 const Container = styled(View)`
 	flex: 1;

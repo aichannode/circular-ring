@@ -123,7 +123,7 @@ export class RingManagementService {
 			const allData = await new Promise<string>(async (resolve) => {
 				let data = waitingData ?? "";
 
-				const unsubscribe = await this.deviceService.listen(Channel.DATA, Channel.DATA, (value) => {
+				const unsubscribe = await this.deviceService.listen(Channel.DATA, Channel.DATA, async (value) => {
 					this.logger.debug("FBC value", value);
 					if (value === ringDataEOF) {
 						unsubscribe();
@@ -132,25 +132,21 @@ export class RingManagementService {
 						data += value + "\n";
 						this._currentRingSyncState.set(SyncState.SYNCING);
 					}
+					await this.ringDataStorage.save(data);
 				});
 			});
 			try {
 				// Api call
 				if (allData !== ringDataEOF) {
 					this.logger.info("Sending data to server...");
-					try {
-						await this.ringApi.sendData(ring, allData);
-						this.logger.info("Successfully sent data...");
-					} catch (err) {
-						this.logger.warn("Error sent data...", err);
-					}
+					await this.ringApi.sendData(ring, allData);
 					setTimeout(() => this._currentRingSyncState.set(SyncState.NONE), syncFinishedTimeout);
 				}
 				await this.ringDataStorage.clear();
 				this._currentRingSyncState.set(allData !== ringDataEOF ? SyncState.SUCCESS : SyncState.NONE);
 				this._FBCQuantity.set(0);
 			} catch (e) {
-				this.logger.warn("An error occured during save. Storing data, length:", allData.length);
+				this.logger.warn("An error occured during save. Storing data, length:", allData.length, "error:", e);
 				this._FBCQuantity.set(0);
 				await this.ringDataStorage.save(allData);
 				throw e;

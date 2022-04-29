@@ -411,6 +411,7 @@ export class BleDeviceService {
 				this.appStateService.userRings.get().find((userRing: NamedUserRing) => userRing.name === device.name) ===
 				undefined
 			) {
+				this.ringApi.getLatestFirmware();
 				this.appStateService.userRings.update((userRing) => {
 					const rings = userRing.map((ring) => ({ ...ring, connected: false }));
 					const newRing = {
@@ -554,9 +555,9 @@ export class BleDeviceService {
 
 		this.logger.info("Listening to", channel, "->", returnChannel);
 
-		const listener = (output: string) => {
+		const listener = async (output: string) => {
 			if (output.startsWith(returnChannel)) {
-				cb(output);
+				await cb(output);
 			}
 		};
 

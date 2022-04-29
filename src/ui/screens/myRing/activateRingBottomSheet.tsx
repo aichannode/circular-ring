@@ -8,7 +8,6 @@ import React from "react";
 import { Image } from "react-native";
 import styled from "styled-components/native";
 
-
 interface ActivateRingBottomSheetProps {
 	onClose: () => void;
 	ring: NamedUserRing;

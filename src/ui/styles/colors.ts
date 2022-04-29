@@ -23,6 +23,7 @@ const palette = {
 	redLight: "#ff3d00cc",
 	orangeRed: "#ff1d1d",
 	blue: "#3996f7",
+	sleepTag: "#3960f7cc",
 	darkBlue: "#3960F7",
 	sleepBlue: "#001871",
 	redOrange: "#ff3d00",

@@ -2,10 +2,12 @@ import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { Lines, SleepStageData } from "@domain/measure/representation/api";
-import { CalendarTags } from "@ui/components/calendar/CalendarTags";
+import { createActiveMode, isInDisabledMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { Spinner } from "@ui/components/spinner";
+import { Tags } from "@ui/components/Tags";
 import { colors } from "@ui/styles/colors";
+import { Mode } from "@ui/type";
 import { hasAttributesDefined } from "@ui/utils/filter";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
@@ -15,12 +17,12 @@ import { SleepLegend } from "./SleepLegend";
 
 interface Props {
 	selectedDay: ISODay;
-	hasNotEnoughData?: boolean;
+	mode?: Mode;
 }
 
 // XXX: From @farook implementation (sleepStage7Days.tsx)
 // TODO: Add add on press, add yValueFormatter
-export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, hasNotEnoughData }: Props) {
+export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode = createActiveMode() }: Props) {
 	const { use7DaysSleep } = useRepresentations().measure.hooks;
 	const { useRangeTags } = useRepresentations().calendar.hooks;
 	const tags = useRangeTags(
@@ -45,14 +47,13 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, hasNo
 		[[], [], [], []]
 	) || [[], [], [], []];
 
-	const hasValidData = lines.length !== 0;
-	const shouldDisplay = !hasNotEnoughData && hasValidData;
+	const updatedMode = updateMode(mode, lines.length === 0);
 	const sleepConstant = days7DSleep?.constant;
 	const isLoaded = isDefined(days7DSleep);
 
 	return isLoaded ? (
 		<>
-			<CalendarTags tags={shouldDisplay ? tags : []} />
+			<Tags tags={isInDisabledMode(updatedMode) ? [] : tags} />
 			<View style={{ height: 200 }}>
 				<LineChart
 					daysItem={[
@@ -78,7 +79,7 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, hasNo
 					yColor={colors.darkGray}
 					shouldDrawCircles={true}
 					valueFormatter={valueFormatter}
-					hasNotEnoughData={hasNotEnoughData}
+					mode={updatedMode}
 				/>
 			</View>
 			<View style={{ marginTop: 30 }}>
@@ -115,7 +116,7 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, hasNo
 							  }
 							: undefined
 					}
-					hasNotEnoughData={hasNotEnoughData}
+					mode={updatedMode}
 				/>
 			</View>
 		</>

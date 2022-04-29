@@ -343,6 +343,7 @@
 	"calibration.recommandation.6.question.option.1": "No opinion",
 	"calibration.recommandation.6.question.option.2": "No, because once I sleep, I can't hear anything.",
 	"calibration.recommandation.7": "I've adjusted the default vibration intensity to your needs, but you can always change it, in the alarm clock settings by clicking on \"edit vibration\".",
+	"calibration.placeholder": "{days} days remaining",
 	"profile_advanced_info.about_you": "About you",
 	"profile_advanced_info.lifestyle_info": "Lifestyle information",
 	"profile_advanced_info.work_time.title": "Work Time",

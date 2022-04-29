@@ -2,14 +2,14 @@ import { CalendarTag } from "@domain/calendar/calendar";
 import { Tag } from "@ui/components/tag";
 import { colors } from "@ui/styles/colors";
 import React from "react";
-import { View } from "react-native";
+import { ScrollView } from "react-native";
 
 interface Props {
 	tags?: Array<{ tag: CalendarTag; nb: number }>;
 }
 
-export const CalendarTags = ({ tags = [] }: Props) => (
-	<View style={{ flex: 1, flexDirection: "row-reverse", flexWrap: "wrap" }}>
+export const Tags = ({ tags = [] }: Props) => (
+	<ScrollView horizontal style={{ direction: "rtl" }}>
 		{tags.map(({ tag, nb }) => (
 			<Tag
 				key={`tag-${tag.id}`}
@@ -22,5 +22,5 @@ export const CalendarTags = ({ tags = [] }: Props) => (
 				{nb > 1 ? `${tag.name} x${nb}` : tag.name}
 			</Tag>
 		))}
-	</View>
+	</ScrollView>
 );
