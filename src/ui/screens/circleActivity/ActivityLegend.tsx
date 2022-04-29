@@ -4,6 +4,7 @@ import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { ActivityIntensityColors } from "@ui/styles/colors";
 import { Mode } from "@ui/type";
+import moment, { unitOfTime } from "moment";
 import React from "react";
 import { View } from "react-native";
 
@@ -22,10 +23,17 @@ interface Props {
 	highDuration?: number;
 	mediumDuration?: number;
 	lowDuration?: number;
+	timeUnit?: unitOfTime.DurationAs;
 	mode?: Mode;
 }
 
-export const ActivityLegend = ({ highDuration, lowDuration, mediumDuration, mode = createActiveMode() }: Props) => {
+export const ActivityLegend = ({
+	highDuration,
+	lowDuration,
+	mediumDuration,
+	mode = createActiveMode(),
+	timeUnit = "minutes",
+}: Props) => {
 	const { format, formatDuration } = useI18n();
 
 	return (
@@ -38,7 +46,9 @@ export const ActivityLegend = ({ highDuration, lowDuration, mediumDuration, mode
 						key: "intensity.high",
 						node: <Circle color={ActivityIntensityColors.HIGH} />,
 					},
-					value: isDefined(highDuration) ? `${formatDuration(highDuration)}` : undefined,
+					value: isDefined(highDuration)
+						? `${formatDuration(moment.duration(highDuration, timeUnit).as("s"))}`
+						: undefined,
 				},
 				{
 					label: format("intensity.medium"),
@@ -46,7 +56,9 @@ export const ActivityLegend = ({ highDuration, lowDuration, mediumDuration, mode
 						key: "intensity.medium",
 						node: <Circle color={ActivityIntensityColors.MEDIUM} />,
 					},
-					value: isDefined(mediumDuration) ? `${formatDuration(mediumDuration)}` : undefined,
+					value: isDefined(mediumDuration)
+						? `${formatDuration(moment.duration(mediumDuration, timeUnit).as("s"))}`
+						: undefined,
 				},
 				{
 					label: format("intensity.low"),
@@ -54,7 +66,9 @@ export const ActivityLegend = ({ highDuration, lowDuration, mediumDuration, mode
 						key: "intensity.low",
 						node: <Circle color={ActivityIntensityColors.LOW} />,
 					},
-					value: isDefined(lowDuration) ? `${formatDuration(lowDuration)}` : undefined,
+					value: isDefined(lowDuration)
+						? `${formatDuration(moment.duration(lowDuration, timeUnit).as("s"))}`
+						: undefined,
 				},
 			]}
 		/>

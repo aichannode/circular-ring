@@ -262,15 +262,15 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						return {
 							high:
 								localMetrics && localMetrics[MetricType.UserDailyHighActivityIntensityDuration] !== null
-									? moment.duration(localMetrics[MetricType.UserDailyHighActivityIntensityDuration]).asHours()
+									? localMetrics[MetricType.UserDailyHighActivityIntensityDuration]
 									: null,
 							medium:
 								localMetrics && localMetrics[MetricType.UserDailyMediumActivityIntensityDuration] !== null
-									? moment.duration(localMetrics[MetricType.UserDailyMediumActivityIntensityDuration]).asHours()
+									? localMetrics[MetricType.UserDailyMediumActivityIntensityDuration]
 									: null,
 							low:
 								localMetrics && localMetrics[MetricType.UserDailyLowActivityIntensityDuration] !== null
-									? moment.duration(localMetrics[MetricType.UserDailyLowActivityIntensityDuration]).asHours()
+									? localMetrics[MetricType.UserDailyLowActivityIntensityDuration]
 									: null,
 							date,
 						};

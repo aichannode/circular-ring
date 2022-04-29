@@ -1,5 +1,5 @@
 import { useRepresentations } from "@core/representation";
-import { getLocalISODayFromLocalDate } from "@domain/common/business";
+import { toLocale } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
 import { useIs24h } from "@domain/user/hooks/useUser";
@@ -11,6 +11,7 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Mode } from "@ui/type";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Platform, processColor, View } from "react-native";
 import { BarChart } from "react-native-charts-wrapper";
@@ -47,7 +48,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 			hooks: { useDailyActivityIntensity },
 		},
 		calendar: {
-			hooks: { useDailyTags },
+			hooks: { useRangeTags },
 		},
 	} = useRepresentations();
 	useDailyActivityIntensity({ localISODay: selectedDay, setData });
@@ -59,7 +60,10 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 
 	const updatedMode = updateMode(mode, graphData.length === 0);
 
-	const tags = useDailyTags(getLocalISODayFromLocalDate(selectedDay));
+	const tags = useRangeTags(
+		toLocale(moment(selectedDay).startOf("day").toISOString()),
+		toLocale(moment(selectedDay).endOf("day").toISOString())
+	);
 
 	const data = {
 		dataSets: [
@@ -67,15 +71,15 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 				values: graphData.map(({ value, isoTime }) => {
 					const date = new Date(isoTime);
 					const marker = `${formatHour(date, is24h)}\n${
-						value > 4
-							? format("intensity.high")
-							: value === 4
-							? format("intensity.medium")
-							: value >= 2
-							? format("intensity.low")
-							: value >= 1
+						value === 0
+							? format("intensity.none")
+							: value === 1
 							? format("intensity.rest")
-							: format("intensity.none")
+							: value === 2
+							? format("intensity.low")
+							: value === 3
+							? format("intensity.medium")
+							: format("intensity.high")
 					}`;
 					return {
 						y: value,
@@ -144,8 +148,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 
 	return (
 		<>
-			{/* TODO: This is temporary modification, use useRangeTags instead */}
-			<Tags tags={isInDisabledMode(updatedMode) ? [] : tags.map((tag) => ({ nb: 1, tag }))} />
+			<Tags tags={isInDisabledMode(updatedMode) ? [] : tags} />
 			<View style={{ height: 200 }}>
 				{isInDisabledMode(updatedMode) ? (
 					<View style={{ flex: 1 }}>
@@ -179,7 +182,6 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 						visibleRange={{ x: { max: Math.min(graphData.length, 100) } }}
 						drawValueAboveBar={false}
 						highlightFullBarEnabled={true}
-						onSelect={console.log}
 					/>
 				)}
 			</View>
