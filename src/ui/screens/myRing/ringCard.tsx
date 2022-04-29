@@ -1,16 +1,16 @@
+import { useServices } from "@core/services";
 import { NamedUserRing } from "@domain/ring/ring";
+import { Melody, serializeMelody } from "@domain/ring/ringAlarm";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { Switch } from "@ui/components/switch";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import dayjs from "dayjs";
-import React, { useEffect, useState, useRef } from "react";
-import { Pressable, StyleProp, ViewStyle } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
-import { Melody, serializeMelody } from "@domain/ring/ringAlarm";
-import { useServices } from "@core/services";
-import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { ActivateRingBottomSheet } from "./activateRingBottomSheet";
 
 interface RingCardProps {
@@ -63,9 +63,9 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 		<Container style={style}>
 			<Card>
 				<DeleteContainer>
-					<Pressable onPress={onDeleteClicked}>
+					<CrossPressable onPress={onDeleteClicked}>
 						<DeleteIcon source={require("@assets/images/close.png")} tintColor={colors.primary} />
-					</Pressable>
+					</CrossPressable>
 				</DeleteContainer>
 				<TopContainer>
 					<Switch
@@ -175,10 +175,14 @@ const RingInfo = styled.Text`
 
 const DeleteContainer = styled.View`
 	position: absolute;
-	top: 15px;
-	right: 15px;
+	top: 0px;
+	right: 0px;
 `;
 
 const DeleteIcon = styled.Image<{ tintColor: string }>`
 	tint-color: ${({ tintColor }) => tintColor};
+`;
+
+const CrossPressable = styled.TouchableOpacity`
+	padding: 15px;
 `;
