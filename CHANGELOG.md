@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0-alpha.4](https://gitlab.com/circularing/mobile/app/compare/v0.1.0-alpha.3...v0.1.0-alpha.4) (2022-04-29)
+
+
+### Features
+
+* activity screen "no data" behaviour ([24d540b](https://gitlab.com/circularing/mobile/app/commit/24d540b863262ffa1d225ef3dc3631dbc90b0037))
+* add hr rate night ([24dff0a](https://gitlab.com/circularing/mobile/app/commit/24dff0a68f77664b0d4f233322ffd29ed18ca424))
+
+
+### Bug Fixes
+
+* (CIR-868) hide quickaccess on scroll ios ([47bc98d](https://gitlab.com/circularing/mobile/app/commit/47bc98d441c9f525cec154c0100399b484bd539a))
+* alarm vibration format ([1b04e32](https://gitlab.com/circularing/mobile/app/commit/1b04e325d7f5f3521eb4df65f0453dcc2a60a96d))
+* Clear data when the server received correctly ring data, store if not ([cd1f51e](https://gitlab.com/circularing/mobile/app/commit/cd1f51e01d13b8a61fe64aa93d3d1a160e010d3b))
+* **daily metrics:** metrics are not displayed ([79f4f9f](https://gitlab.com/circularing/mobile/app/commit/79f4f9f5769f9bee7e2fe6f45728d6bdc8a5ba4a))
+* dark mode ([9018268](https://gitlab.com/circularing/mobile/app/commit/9018268148e0e59f82dbd4a1f694751a8929b399))
+* force firmware update ([eedb752](https://gitlab.com/circularing/mobile/app/commit/eedb752ecd284d37b35a57c0eadd6fe74d0e2e64))
+* hrv title & height ([700eaf9](https://gitlab.com/circularing/mobile/app/commit/700eaf9dd20b6e0382b8a2b62ac939725d76f17f))
+* lint ([6e07438](https://gitlab.com/circularing/mobile/app/commit/6e074381e7c805762e0680a88ad05021545e2631))
+* metrics with 0 value are not displayed ([339e889](https://gitlab.com/circularing/mobile/app/commit/339e8892849ee259db9d3c250ca66f27fb805fd4))
+* token refresh ([651e0b0](https://gitlab.com/circularing/mobile/app/commit/651e0b0a6069d0761db35a4bc65e3a7163049297))
+* wrong walking equivalency unit ([dd15c03](https://gitlab.com/circularing/mobile/app/commit/dd15c03f98fb4a662addb8752261387f6d9ee2ee))
+
 ## [0.1.0-alpha.3](https://gitlab.com/circularing/mobile/app/compare/v0.1.0-alpha.2...v0.1.0-alpha.3) (2022-04-26)
 
 

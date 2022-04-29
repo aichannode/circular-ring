@@ -1,3 +1,4 @@
+import { isDefined } from "@domain/common/business";
 import { MetricType } from "@domain/measure/metric";
 import { Activities, ActivityScoreContributors } from "@domain/measure/representation/lib/type";
 import { useIsCelsius } from "@domain/user/hooks/useUser";
@@ -45,7 +46,7 @@ export function getActivityGaugesConfig(format: (v: WordingKey) => string): Dail
 			// Wakeup score
 			titleKey: "score.details.wake_up.label",
 			descriptionKey: "score.details.wake_up.description",
-			renderValue: ({ value }: { value?: number }) => (value ? `${Math.round(value * 100)}%` : undefined),
+			renderValue: ({ value }: { value?: number }) => (isDefined(value) ? `${Math.round(value * 100)}%` : undefined),
 			computeMode: computeModeFactory(MetricType.UserDailyWakeUpScore),
 			shouldForceDisplayValue: true,
 		},
@@ -53,7 +54,7 @@ export function getActivityGaugesConfig(format: (v: WordingKey) => string): Dail
 			// Breathing rate
 			titleKey: "score.details.breathing.label",
 			descriptionKey: "score.details.breathing.description",
-			renderValue: ({ value }: { value?: number }) => (value ? `${Math.round(value)} rpm` : undefined),
+			renderValue: ({ value }: { value?: number }) => (isDefined(value) ? `${Math.round(value)} rpm` : undefined),
 			computeMode: computeModeFactory(MetricType.UserDailyScoreBR),
 			shouldForceDisplayValue: true,
 		},
@@ -61,7 +62,7 @@ export function getActivityGaugesConfig(format: (v: WordingKey) => string): Dail
 			// SPO2
 			titleKey: "score.details.spo2.label",
 			descriptionKey: "score.details.spo2.description",
-			renderValue: ({ value }: { value?: number }) => (value ? `${Math.round(value)} %` : undefined),
+			renderValue: ({ value }: { value?: number }) => (isDefined(value) ? `${Math.round(value)} %` : undefined),
 			computeMode: computeModeFactory(MetricType.UserDailyScoreSPO2),
 			shouldForceDisplayValue: true,
 		},
@@ -69,7 +70,7 @@ export function getActivityGaugesConfig(format: (v: WordingKey) => string): Dail
 			// Heart rate variability
 			titleKey: "score.details.hrv.label",
 			descriptionKey: "score.details.hrv.description",
-			renderValue: ({ value }: { value?: number }) => (value ? `${Math.round(value)} ms` : undefined),
+			renderValue: ({ value }: { value?: number }) => (isDefined(value) ? `${Math.round(value)} ms` : undefined),
 			computeMode: computeModeFactory(MetricType.UserDailyScoreHRV),
 			shouldForceDisplayValue: true,
 		},
@@ -77,7 +78,7 @@ export function getActivityGaugesConfig(format: (v: WordingKey) => string): Dail
 			// Resting heart rate
 			titleKey: "score.details.resting_heart_rate.label",
 			descriptionKey: "score.details.resting_heart_rate.description",
-			renderValue: ({ value }: { value?: number }) => (value ? `${Math.round(value)} bpm` : undefined),
+			renderValue: ({ value }: { value?: number }) => (isDefined(value) ? `${Math.round(value)} bpm` : undefined),
 			computeMode: computeModeFactory(MetricType.UserDailyScoreRHR),
 			shouldForceDisplayValue: true,
 		},
@@ -85,14 +86,15 @@ export function getActivityGaugesConfig(format: (v: WordingKey) => string): Dail
 			// Temperature variation
 			titleKey: "score.details.temperature.label",
 			descriptionKey: "score.details.temperature.description",
-			renderValue: ({ value }: { value?: number }) => (value ? formatTemperature(value, isCelsius) : undefined),
+			renderValue: ({ value }: { value?: number }) =>
+				isDefined(value) ? formatTemperature(value, isCelsius) : undefined,
 			computeMode: computeModeFactory(MetricType.UserDailySleepScoreVarTemperature),
 		},
 		[MetricType.UserDailySleepScore]: {
 			// Sleep quality
 			titleKey: "score.details.sleep_quality.label",
 			descriptionKey: "score.details.sleep_quality.description",
-			renderValue: ({ value }: { value?: number }) => (value ? `${Math.round(value * 100)}%` : undefined),
+			renderValue: ({ value }: { value?: number }) => (isDefined(value) ? `${Math.round(value * 100)}%` : undefined),
 			computeMode: computeModeFactory(MetricType.UserDailySleepScore),
 		},
 		[MetricType.UserDailySleepBalance]: {
@@ -123,6 +125,7 @@ export const dailyActivitiesUIConfig: MetricsDetails = {
 	[MetricType.UserDailyWalkingEquivalency]: {
 		icon: "@assets/images/journey.png",
 		labelKey: "metric.walking",
+		renderValue: (distance) => (isDefined(distance) ? Number(distance) / 1000 : 0),
 		decimalNb: 1,
 	},
 	[MetricType.UserDailyCaloriesBurned]: {
