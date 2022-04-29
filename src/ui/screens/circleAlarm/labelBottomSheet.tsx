@@ -1,5 +1,7 @@
+import { QuickAccessAlarmDefaultLabel } from "@domain/common/constant";
 import { BottomSheetInput } from "@ui/components/bottomSheet/bottomSheetInput";
 import { QuadraryButton } from "@ui/components/buttons";
+import { ErrorMessage } from "@ui/components/errorMessage";
 import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import React, { useState } from "react";
@@ -12,6 +14,21 @@ interface LabelBottomSheetProps {
 export const LabelBottomSheet: React.FC<LabelBottomSheetProps> = ({ label, onClose }) => {
 	const { format } = useI18n();
 	const [newLabel, setNewLabel] = useState(label);
+	const [errorMessage, setErrorMessage] = useState("");
+
+	const editLabel = (editedlabel: string) => {
+		setErrorMessage("");
+		if (label === QuickAccessAlarmDefaultLabel) {
+			//@TODO export this to a constant somewhere
+			setErrorMessage(format("alarm.error.label.quickaccess"));
+			return;
+		}
+		if (editedlabel !== QuickAccessAlarmDefaultLabel) onClose(editedlabel);
+		//@TODO export this to a constant somewhere
+		else {
+			setErrorMessage(format("alarm.error.label.reserved"));
+		}
+	};
 
 	return (
 		<Container>
@@ -21,10 +38,11 @@ export const LabelBottomSheet: React.FC<LabelBottomSheetProps> = ({ label, onClo
 				onChangeText={setNewLabel}
 				returnKeyType="done"
 				onSubmitEditing={() => {
-					onClose(newLabel);
+					editLabel(newLabel);
 				}}
 			/>
-			<QuadraryButton style={{ alignSelf: "center" }} onPress={() => onClose(newLabel)}>
+			<ErrorMessage>{errorMessage}</ErrorMessage>
+			<QuadraryButton style={{ alignSelf: "center" }} onPress={() => editLabel(newLabel)}>
 				{format("alarm.new.save_button")}
 			</QuadraryButton>
 		</Container>

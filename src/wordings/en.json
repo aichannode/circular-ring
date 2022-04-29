@@ -307,6 +307,8 @@
 	"alarm.weekdays": "Weekdays",
 	"alarm.everydays": "Every day",
 	"alarm.weekends": "Weekends",
+	"alarm.error.label.reserved": "Error: this label is reserved.",
+	"alarm.error.label.quickaccess": "Error: this label can't be edited.",
 	"onboarding.wear.title": "How to wear Circular",
 	"onboarding.wear.info.top": "The best fingers to wear Circular are the <colored>index</colored>, <colored>middle finger</colored>, <colored>ring finger</colored>, pinky finger and thumb.\n\nTry as much as possible to use the same finger and same ring positioning each time you wear your Circular.",
 	"onboarding.wear.info.bottom": "The flat part of the ring should be on the <colored>palmar side</colored> of your finger.\n\nThe button should be <colored>facing your thumb</colored>, for ease of use.",

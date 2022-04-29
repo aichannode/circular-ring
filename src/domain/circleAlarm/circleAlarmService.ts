@@ -1,6 +1,8 @@
 import { getLogger } from "@core/logger/logger";
-import { Channel } from "@domain/device/channels";
+import { Storage } from "@core/storage";
+import { QuickAccessAlarmDefaultLabel } from "@domain/common/constant";
 import { BleDeviceService } from "@domain/device/bleDeviceService";
+import { Channel } from "@domain/device/channels";
 import {
 	deserializeAlarmData,
 	getAlarmId,
@@ -11,7 +13,6 @@ import {
 } from "@domain/ring/ringAlarm";
 import { alarmDataEOF } from "@domain/ring/ringData";
 import { observable } from "micro-observables";
-import { Storage } from "@core/storage";
 
 const quickAccessAlarmStorageKey = "@quickAccessAlarm";
 const ID_FOR_CREATION = 255;
@@ -21,20 +22,20 @@ export class CircleAlarmService {
 	private logger = getLogger("⏰ CircleAlarmService");
 
 	private _ringAlarms = observable<RingAlarm[]>([]);
-	quickAccessRingAlarmId = observable<RingAlarm | null>(null);
+	quickAccessRingAlarmId = observable<number | null>(null);
 	ringAlarms = this._ringAlarms.readOnly();
 
 	constructor(private readonly deviceService: BleDeviceService) {
 		this.loadQuickAccessAlarmFromStorage();
 	}
 
-	saveQuickAccessAlarm(quickAccessAlarm: RingAlarm) {
-		this.quickAccessRingAlarmId.update(() => ({ ...quickAccessAlarm }));
-		Storage.save(quickAccessAlarmStorageKey, quickAccessAlarm);
+	saveQuickAccessAlarm(quickAccessAlarmId: number) {
+		this.quickAccessRingAlarmId.set(quickAccessAlarmId);
+		Storage.save(quickAccessAlarmStorageKey, quickAccessAlarmId);
 	}
 
 	async loadQuickAccessAlarmFromStorage() {
-		const quickAccessAlarmStorage = await Storage.load<RingAlarm | null>(quickAccessAlarmStorageKey);
+		const quickAccessAlarmStorage = await Storage.load<number | null>(quickAccessAlarmStorageKey);
 		this.quickAccessRingAlarmId.set(quickAccessAlarmStorage);
 	}
 
@@ -62,6 +63,8 @@ export class CircleAlarmService {
 				newAlarmList.push(data);
 			}
 		}
+		const quickAccessAlarm = newAlarmList.find((el) => el.label === QuickAccessAlarmDefaultLabel); //@TODO export this to a constant somewhere
+		if (quickAccessAlarm) this.quickAccessRingAlarmId.set(quickAccessAlarm.id);
 		this._ringAlarms.set(newAlarmList);
 	}
 
@@ -85,6 +88,8 @@ export class CircleAlarmService {
 
 	async deleteAlarm(alarm: RingAlarm) {
 		await this.deviceService.write(serializeAlarmData({ ...alarm, isExisting: false }));
+		// await this.deviceService.write("ALR01r7Fh13m54v0En04M04i01LQuickAccess");
+		if (alarm.id === this.quickAccessRingAlarmId.get()) this.quickAccessRingAlarmId.set(null);
 		this._ringAlarms.update((alarms) => alarms.filter((el) => el.id !== alarm.id));
 	}
 

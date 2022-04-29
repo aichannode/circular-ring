@@ -141,7 +141,7 @@ export function deserializeAlarmData(alarmData: string): RingAlarm | undefined {
 		isExisting,
 		isActivated,
 		isSmart: !!isSmart,
-		vibrationPower: Number(vibrationPower),
+		vibrationPower: parseInt(vibrationPower, 16),
 		vibrationRepetition: Number(vibrationRepetition),
 		snooze,
 		smart,

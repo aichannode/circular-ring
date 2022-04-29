@@ -15,8 +15,8 @@ export const SleepTile = () => {
 	const { appStateService } = useServices();
 	const sleepMode = useObservable(appStateService.isInSleepMode);
 
-	const sleepTextColor = sleepMode ? "white" : "black";
-	const sleepBackGound = sleepMode ? colors.sleepBlue : "white";
+	const sleepTextColor = sleepMode ? colors.white : colors.black;
+	const sleepBackGound = sleepMode ? colors.sleepBlue : colors.white;
 
 	return (
 		<Tile
