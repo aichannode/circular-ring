@@ -77,19 +77,16 @@ export const QuickAccess: React.FC = () => {
 		});
 	}, []);
 
-	const displaySleep = active?.map((t) => t.id).indexOf("sleep") !== -1;
-	const displayAlarm = active?.map((t) => t.id).indexOf("alarm") !== -1;
-	const displayTimer = active?.map((t) => t.id).indexOf("timer") !== -1;
-	const displayCalendar = active?.map((t) => t.id).indexOf("calendar") !== -1;
-
 	if (active?.length === 0) return null;
 
 	return (
 		<Container gap={15}>
-			{displaySleep && <SleepTile />}
-			{displayAlarm && <AlarmTile />}
-			{displayCalendar && <CalendarTile />}
-			{displayTimer && <TimerTile />}
+			{active?.map((name) => {
+				if (name.id === "sleep") return <SleepTile />;
+				if (name.id === "alarm") return <AlarmTile />;
+				if (name.id === "timer") return <TimerTile />;
+				if (name.id === "calendar") return <CalendarTile />;
+			})}
 		</Container>
 	);
 };
