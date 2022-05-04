@@ -2,7 +2,7 @@ import { useRepresentations } from "@core/representation";
 import { CalendarTag } from "@domain/calendar/calendar";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { DataControlState, Lines } from "@domain/measure/representation/api";
+import { DataControlState, Points } from "@domain/measure/representation/api";
 import { TimeFrame } from "@domain/measure/type";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
@@ -42,7 +42,7 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 		},
 	} = useRepresentations();
 	const data = useLast7DaysEnergyScore(selectedDay);
-	const lines: Lines = data
+	const lines: Points = data
 		? data.series
 				.map((el) => {
 					return {

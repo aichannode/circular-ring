@@ -315,8 +315,8 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					}),
 					[localISODay]
 				);
-
-				return parseDailyHR(model.dailyHRMetrics.get(localISODay));
+				const data = model.dailySleepMetrics.get(localISODay);
+				return parseDailyHR(model.dailyHRMetrics.get(localISODay), data);
 			},
 			useDailySpo2(localISODay: ISODay): DailySpo2 | undefined {
 				useEffect(

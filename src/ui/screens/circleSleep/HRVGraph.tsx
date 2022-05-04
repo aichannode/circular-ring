@@ -37,7 +37,7 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDa
 
 	const dailyHrv = useDailyHRV(selectedDay);
 	const [lines, constant] = [
-		dailyHrv ? dailyHrv.lines : [],
+		dailyHrv ? dailyHrv.data : [],
 		dailyHrv ? dailyHrv.constant : { average: 0, reference: 0 },
 	];
 	const updatedMode = updateMode(mode, dailyHrv?.controlState !== DataControlState.READY);

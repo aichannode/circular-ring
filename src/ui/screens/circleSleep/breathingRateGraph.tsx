@@ -13,10 +13,10 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import DashedLine from "react-native-dashed-line";
-
 type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
@@ -39,7 +39,10 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 	} = useRepresentations();
 
 	const dailyBr = useDailyBR(selectedDay);
-	const [lines, constant] = [dailyBr ? dailyBr.lines : [], dailyBr ? dailyBr.constant : { average: 0, reference: 0 }];
+	const [lines, constant] = [
+		dailyBr ? dailyBr.data.filter(({ x }) => moment(x).format("Y-MM-D") == selectedDay) : [],
+		dailyBr ? dailyBr.constant : { average: 0, reference: 0 },
+	];
 	const updatedMode = updateMode(mode, dailyBr?.controlState !== DataControlState.READY);
 	const [yMin, yMax] =
 		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
@@ -59,7 +62,6 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 			color: colors.darkBlue,
 		});
 	}
-
 	useEffect(() => {
 		if (isDefined(lines)) {
 			setLoading(false);

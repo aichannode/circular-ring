@@ -1,7 +1,7 @@
-import { Lines } from "@domain/measure/representation/api";
+import { Points } from "@domain/measure/representation/api";
 
 export interface DataSet {
-	lines: Lines;
+	lines: Points;
 	color: string;
 }
 export type MultipleDataSets = DataSet[];

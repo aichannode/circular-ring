@@ -1,5 +1,5 @@
 // components/Task.stories.js
-import { Lines } from "@domain/measure/representation/api";
+import { Points } from "@domain/measure/representation/api";
 import { object, select, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react-native";
 import { createActiveMode, createCalibrationMode, createDisabledMode } from "@ui/business";
@@ -9,7 +9,7 @@ import moment from "moment";
 import * as React from "react";
 import { View } from "react-native";
 import { BarChart } from "./barChart";
-const data: Lines = [
+const data: Points = [
 	{ x: moment("2022-03-21").valueOf(), y: 102 },
 	{ x: moment("2022-03-22").valueOf(), y: 110 },
 	{ x: moment("2022-03-23").valueOf(), y: 114 },

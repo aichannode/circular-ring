@@ -1,4 +1,4 @@
-import { Lines } from "@domain/measure/representation/api";
+import { Points } from "@domain/measure/representation/api";
 import { createActiveMode, isInDisabledMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -14,7 +14,7 @@ interface BarChartProps {
 	graphColor?: string;
 	xColor: string;
 	yColor: string;
-	data: Lines;
+	data: Points;
 	shouldShowMarker?: boolean;
 	valueFormatter?: string | string[];
 	onSelect?: (x: number) => void;

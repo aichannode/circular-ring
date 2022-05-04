@@ -1,5 +1,5 @@
 import { isDefined } from "@domain/common/business";
-import { Lines } from "@domain/measure/representation/api";
+import { Points } from "@domain/measure/representation/api";
 import { createActiveMode, isInActiveMode, isInCalibrationMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -33,7 +33,7 @@ interface Rect extends Position {
 export type DaysItem = DayItem[];
 
 interface LineChartProps {
-	data?: Lines;
+	data?: Points;
 	isMultipleLines?: boolean;
 	averages?: Averages;
 	daysItem?: MultipleDataSets;

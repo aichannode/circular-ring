@@ -40,7 +40,7 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 
 	const dailySpo2 = useDailySpo2(selectedDay);
 	const [lines, constant] = [
-		dailySpo2 ? dailySpo2.lines : [],
+		dailySpo2 ? dailySpo2.data : [],
 		dailySpo2 ? dailySpo2.constant : { average: 0, reference: 0 },
 	];
 	const updatedMode = updateMode(mode, dailySpo2?.controlState !== DataControlState.READY);

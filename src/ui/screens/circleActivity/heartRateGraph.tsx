@@ -41,7 +41,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 
 	const dailyHr = useDailyHR(selectedDay);
 	const [lines, constant] = [
-		dailyHr ? dailyHr.lines : [],
+		dailyHr ? dailyHr.data : [],
 		dailyHr ? dailyHr.constant : { hr: 0, hrMax: 0, hrMin: 0, reference: 0 },
 	];
 

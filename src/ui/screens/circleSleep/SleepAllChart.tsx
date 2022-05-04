@@ -1,7 +1,7 @@
 import { useRepresentations } from "@core/representation";
 import { isDefined, toISOMonth } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { Lines, SleepStageData } from "@domain/measure/representation/api";
+import { Points, SleepStageData } from "@domain/measure/representation/api";
 import { useUser } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInDisabledMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
@@ -37,7 +37,7 @@ export const SleepAllChart = observer(function SleepAllChart({ selectedDay, mode
 		: [];
 	const valueFormatter = lines.map(({ date }) => moment(date).format("dd")[0]);
 
-	const [awakeData, deepData, REMData, lightData] = lines.reduce<[Lines, Lines, Lines, Lines]>(
+	const [awakeData, deepData, REMData, lightData] = lines.reduce<[Points, Points, Points, Points]>(
 		([awakeData, deepData, REMData, lightData], { awake, deep, REM, light }, index) => [
 			[...awakeData, { x: index, y: awake }],
 			[...deepData, { x: index, y: deep }],
