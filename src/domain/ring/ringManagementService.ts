@@ -120,19 +120,20 @@ export class RingManagementService {
 			if (typeof responseDataQuantiy === "string") dataQuantity = parseInt(responseDataQuantiy);
 			this.logger.info("FBC Quantity", dataQuantity);
 			this._FBCQuantity.set(dataQuantity);
+			this._currentRingSyncState.set(SyncState.SYNCING);
 			const allData = await new Promise<string>(async (resolve) => {
 				let data = waitingData ?? "";
 
 				const unsubscribe = await this.deviceService.listen(Channel.DATA, Channel.DATA, async (value) => {
 					this.logger.debug("FBC value", value);
 					if (value === ringDataEOF) {
+						await this.ringDataStorage.save(data);
 						unsubscribe();
 						resolve(data);
 					} else {
 						data += value + "\n";
 						this._currentRingSyncState.set(SyncState.SYNCING);
 					}
-					await this.ringDataStorage.save(data);
 				});
 			});
 			try {
@@ -154,6 +155,7 @@ export class RingManagementService {
 		} catch (e) {
 			this.logger.warn("Error during sync:", e);
 			this._currentRingSyncState.set(SyncState.ERROR);
+			setTimeout(() => this._currentRingSyncState.set(SyncState.NONE), 1000);
 			this._FBCQuantity.set(0);
 			throw e;
 		}

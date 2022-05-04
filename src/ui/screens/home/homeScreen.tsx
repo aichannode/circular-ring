@@ -59,12 +59,15 @@ export const HomeScreen: React.FC = () => {
 	const { loading, result: recommendations } = useRecommendations();
 
 	const data = [];
-	data.push(<SyncBanner onRetry={forceRefresh} />);
+	data.push(<SyncBanner onRetry={ringManagementService.syncData} />);
 	data.push(
 		<View style={{ paddingHorizontal: 6 }}>
 			<IfAdmin>
 				<PrimaryButton style={{ marginVertical: 8 }} onPress={feedService._DEBUG_resetFeed}>
 					RESET FEED
+				</PrimaryButton>
+				<PrimaryButton style={{ marginVertical: 8 }} onPress={() => bleDeviceService.write("RWF1S60")}>
+					GENERATE RING DATA
 				</PrimaryButton>
 				<PrimaryButton onPress={feedService._DEBUG_resetAnswers}>RESET ANSWERS</PrimaryButton>
 			</IfAdmin>
