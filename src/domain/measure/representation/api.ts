@@ -90,6 +90,13 @@ export type DailyHRNight = DailyData<{
 	hrMax: number;
 	reference: number;
 }>;
+export interface DailyHrvTrend {
+	data: Points;
+}
+
+export interface DailyHrTrend {
+	data: Points;
+}
 
 export interface Point {
 	/** timestamp */

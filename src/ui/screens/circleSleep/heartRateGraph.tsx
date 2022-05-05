@@ -32,7 +32,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 
 	const {
 		measure: {
-			hooks: { useDailyHRNight },
+			hooks: { useDailyHRNight, useDailyHRTrend },
 		},
 		calendar: {
 			hooks: { useDailyTags },
@@ -40,6 +40,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 	} = useRepresentations();
 
 	const dailyHRNight = useDailyHRNight(selectedDay);
+	const dailyHrTrend = useDailyHRTrend(selectedDay);
 	const [lines, constant] = [
 		dailyHRNight ? dailyHRNight.data : [],
 		dailyHRNight ? dailyHRNight.constant : { hr: 0, hrMax: 0, hrMin: 0, reference: 0 },
@@ -117,6 +118,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 							<Tag containerStyle={{ backgroundColor: colors.sleepTag, marginBottom: 4 }}>{`${value}`}</Tag>
 						</>
 					)}
+					movingAverage={dailyHrTrend?.data}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

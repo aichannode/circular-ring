@@ -62,6 +62,7 @@ interface LineChartProps {
 	tooltipYMax?: number;
 	renderTooltip?: (value: number) => React.ReactElement;
 	shouldUpdateYmin?: boolean;
+	movingAverage?: Points;
 }
 
 const verticalContentInset = { top: 40, bottom: 20 };
@@ -96,6 +97,7 @@ export function LineChart({
 	tooltipYMax = 0,
 	renderTooltip,
 	shouldUpdateYmin = true,
+	movingAverage,
 }: LineChartProps) {
 	const [scaleX, setScaleX] = useState(1);
 	const graphRect = useRef<Rect>();
@@ -210,6 +212,23 @@ export function LineChart({
 					valueTextSize: 0,
 					legend: false,
 					circleRadius: 4,
+					mode: "HORIZONTAL_BEZIER" as const,
+				},
+			},
+			{
+				values: movingAverage ?? [],
+				label: "",
+				config: {
+					drawValues: false,
+					lineWidth: 4,
+					drawCircles: false,
+					highlightColor: processColor("transparent"),
+					color: processColor(colors.blueExtraLight),
+					axisLineColor: processColor("white"),
+					highlightEnabled: true,
+					drawFilled: false,
+					valueTextSize: 0,
+					legend: false,
 					mode: "HORIZONTAL_BEZIER" as const,
 				},
 			},

@@ -33,8 +33,10 @@ import {
 	DailyHRNightConstantMetrics,
 	DailyHRNightTimeSeriesMetrics,
 	DailyHRTimeSeriesMetrics,
+	DailyHRTrendTimeSeriesMetrics,
 	DailyHRVConstantMetrics,
 	DailyHRVTimeSeriesMetrics,
+	DailyHRVTrendTimeSeriesMetrics,
 	DailySleepScoreMetrics,
 	DailySleepStageDuration,
 	DailySpo2ConstantMetrics,
@@ -117,6 +119,20 @@ export type Mutations =
 			payload: {
 				localISODay: ISODay;
 				range: RangeMetrics<DailyBRTimeSeriesMetrics, DailyBRConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setDailyHRVTrendMetrics";
+			payload: {
+				localISODay: ISODay;
+				range: RangeMetrics<DailyHRVTrendTimeSeriesMetrics, never>;
+			};
+	  }
+	| {
+			type: "setDailyHRTrendMetrics";
+			payload: {
+				localISODay: ISODay;
+				range: RangeMetrics<DailyHRTrendTimeSeriesMetrics, never>;
 			};
 	  }
 	| {

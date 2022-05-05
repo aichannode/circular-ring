@@ -9,7 +9,9 @@ import {
 	DailyBr,
 	DailyHr,
 	DailyHRNight,
+	DailyHrTrend,
 	DailyHrv,
+	DailyHrvTrend,
 	DailySpo2,
 	DataControlState,
 	Points,
@@ -161,6 +163,37 @@ export function parseDailyHRV(
 	};
 
 	return dailyHrv;
+}
+
+export function parseDailyHRVTrend(
+	dailyHRVTrend: RangeMetrics<MetricType.UserHRVTrend, never> | undefined
+): DailyHrvTrend | undefined {
+	if (dailyHRVTrend === undefined || dailyHRVTrend?.timeSeries.length === 0) return undefined;
+	const data: DailyHrvTrend = {
+		data: dailyHRVTrend.timeSeries.map((timeSerie) => {
+			return {
+				x: Date.parse(timeSerie.timestamp),
+				y: getOrElse<number>(timeSerie.metrics, MetricType.UserHRVTrend, 0),
+			};
+		}),
+	};
+
+	return data;
+}
+export function parseDailyHRTrend(
+	dailyHRTrend: RangeMetrics<MetricType.UserHRTrend, never> | undefined
+): DailyHrTrend | undefined {
+	if (dailyHRTrend === undefined || dailyHRTrend?.timeSeries.length === 0) return undefined;
+	const data: DailyHrvTrend = {
+		data: dailyHRTrend.timeSeries.map((timeSerie) => {
+			return {
+				x: Date.parse(timeSerie.timestamp),
+				y: getOrElse<number>(timeSerie.metrics, MetricType.UserHRTrend, 0),
+			};
+		}),
+	};
+
+	return data;
 }
 
 export function parseAllActivity(

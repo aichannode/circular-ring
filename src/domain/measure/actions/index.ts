@@ -67,10 +67,14 @@ import {
 	DailyHRNightTimeSeriesMetrics,
 	dailyHRTimeSeriesMetrics,
 	DailyHRTimeSeriesMetrics,
+	DailyHRTrendTimeSeriesMetrics,
+	dailyHRTrendTimeSeriesMetrics,
 	dailyHRVConstantMetrics,
 	DailyHRVConstantMetrics,
 	dailyHRVTimeSeriesMetrics,
 	DailyHRVTimeSeriesMetrics,
+	DailyHRVTrendTimeSeriesMetrics,
+	dailyHRVTrendTimeSeriesMetrics,
 	dailySleepScoreMetrics,
 	dailySleepStageDuration,
 	DailySleepStageDuration,
@@ -291,6 +295,44 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					},
 				]);
 			});
+		},
+		async pullDailyHRVTrendMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
+			const timeSeries = await measureApi.fetchDailyMeasures<DailyHRVTrendTimeSeriesMetrics>(
+				dailyHRVTrendTimeSeriesMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailyHRVTrendMetrics",
+					payload: {
+						localISODay,
+						range: {
+							timeSeries,
+							constant: {},
+						},
+					},
+				},
+			]);
+		},
+		async pullDailyHRTrendMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
+			const timeSeries = await measureApi.fetchDailyMeasures<DailyHRTrendTimeSeriesMetrics>(
+				dailyHRTrendTimeSeriesMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailyHRTrendMetrics",
+					payload: {
+						localISODay,
+						range: {
+							timeSeries,
+							constant: {},
+						},
+					},
+				},
+			]);
 		},
 		async setDailyGlobalScore(localISODay: ISODay, useForceRefresh?: boolean) {
 			const data = await measureApi.fetchLastDailyMeasures(

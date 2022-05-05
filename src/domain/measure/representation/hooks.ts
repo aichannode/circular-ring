@@ -26,7 +26,9 @@ import {
 	DailyBr,
 	DailyHr,
 	DailyHRNight,
+	DailyHrTrend,
 	DailyHrv,
+	DailyHrvTrend,
 	DailySleepData,
 	DailySpo2,
 	DataControlState,
@@ -44,7 +46,9 @@ import {
 	parseDailyBR,
 	parseDailyHR,
 	parseDailyHRNight,
+	parseDailyHRTrend,
 	parseDailyHRV,
+	parseDailyHRVTrend,
 	parseDailySpo2,
 	toOptional,
 } from "./business";
@@ -716,6 +720,25 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						thresholdHigh: 0.9,
 					}),
 				};
+			},
+			useDailyHRVTrend(localISODay = getCurrentLocalISODay()): DailyHrvTrend | undefined {
+				useEffect(
+					action(function () {
+						actions.pullDailyHRVTrendMetrics(localISODay, shouldByPassCache(model.dailyHRVTrendMetrics, localISODay));
+					}),
+					[localISODay]
+				);
+				return parseDailyHRVTrend(model.dailyHRVTrendMetrics.get(localISODay));
+			},
+			useDailyHRTrend(localISODay = getCurrentLocalISODay()): DailyHrTrend | undefined {
+				useEffect(
+					action(function () {
+						actions.pullDailyHRTrendMetrics(localISODay, shouldByPassCache(model.dailyHRVTrendMetrics, localISODay));
+					}),
+					[localISODay]
+				);
+
+				return parseDailyHRTrend(model.dailyHRTrendMetrics.get(localISODay));
 			},
 			/**
 			 * @implements spec 00026

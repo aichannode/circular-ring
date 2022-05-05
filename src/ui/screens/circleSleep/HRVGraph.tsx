@@ -28,7 +28,7 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDa
 
 	const {
 		measure: {
-			hooks: { useDailyHRV },
+			hooks: { useDailyHRV, useDailyHRVTrend },
 		},
 		calendar: {
 			hooks: { useDailyTags },
@@ -36,6 +36,7 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDa
 	} = useRepresentations();
 
 	const dailyHrv = useDailyHRV(selectedDay);
+	const dailyHrvTrend = useDailyHRVTrend(selectedDay);
 	const [lines, constant] = [
 		dailyHrv ? dailyHrv.data : [],
 		dailyHrv ? dailyHrv.constant : { average: 0, reference: 0 },
@@ -104,6 +105,7 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({ selectedDa
 					yMinIndex={yMinIndex}
 					yMaxIndex={yMaxIndex}
 					mode={updatedMode}
+					movingAverage={dailyHrvTrend?.data}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
