@@ -1,5 +1,5 @@
 import { isDefined } from "@domain/common/business";
-import { Points } from "@domain/measure/representation/api";
+import { Point, Points } from "@domain/measure/representation/api";
 import { createActiveMode, isInActiveMode, isInCalibrationMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -102,9 +102,11 @@ export function LineChart({
 	const [maxPosition, setMaxPosition] = useState<Position | null>(null);
 	const [minPosition, setMinPosition] = useState<Position | null>(null);
 
+	const maxDataLength = !isMultipleLines ? data.length : Math.max(...(daysItem ?? []).map(({ lines }) => lines.length));
+
 	const [xMin, xMax] = !isMultipleLines
 		? [Math.min(...data.map((line) => line.x)), Math.max(...data.map((line) => line.x))]
-		: [0, 0];
+		: [0, maxDataLength - 1];
 
 	const shouldDisplay = isInActiveMode(mode) || isInCalibrationMode(mode);
 	const { format } = useI18n();
@@ -141,6 +143,8 @@ export function LineChart({
 		textColor: processColor(xColor),
 		granularityEnabled: true,
 		axisLineColor: processColor("white"),
+		axisMinimum: xMin,
+		axisMaximum: xMax,
 	};
 
 	const yAxis = {
@@ -215,42 +219,61 @@ export function LineChart({
 	const multipleDataSets = {
 		dataSets:
 			isMultipleLines && daysItem
-				? daysItem.map(({ lines, color }) => {
-						return {
-							values: lines.map(({ x, y }, index) => {
-								let marker = "";
-								if (!!shouldShowMarker) {
-									marker = labelFormatter(x, y, index);
+				? daysItem
+						.flatMap(({ lines, color }) => {
+							const segmentedLines = [] as Array<Point & { index: number }>[];
+							let hasPrevValue = false;
+							for (let index = 0; index < lines.length; ++index) {
+								const indexedLine = { ...lines[index], index };
+								if (indexedLine.y !== 0) {
+									if (hasPrevValue) {
+										segmentedLines[segmentedLines.length - 1].push(indexedLine);
+									} else {
+										segmentedLines.push([indexedLine]);
+									}
+									hasPrevValue = true;
+								} else {
+									hasPrevValue = false;
 								}
-								return { x: index, y, marker, value: x };
-							}),
-							label: "",
-							config: {
-								drawValues: false,
-								lineWidth: 3,
-								drawCircleHole: false,
+							}
+							return segmentedLines.map((lines) => ({ lines, color }));
+						})
+						.map(({ lines, color }) => {
+							return {
+								values: lines.map(({ x, y, index }) => {
+									let marker = "";
+									if (!!shouldShowMarker) {
+										marker = labelFormatter(x, y, index);
+									}
+									return { x: index, y, marker, value: x };
+								}),
+								label: "",
+								config: {
+									drawValues: false,
+									lineWidth: 3,
+									drawCircleHole: false,
 
-								drawCircles: true,
-								circleRadius: 4,
-								circleColor: processColor(color),
-								circleHoleColor: processColor(color),
-								highlightColor: processColor("transparent"),
-								color: processColor(color),
-								axisLineColor: processColor("white"),
-								drawFilled: false,
-								valueTextSize: 0,
-								legend: false,
-								circleColors: !!shouldShowMarker
-									? lines.map((_, i) => {
-											if (i == selectedX) {
-												return processColor("#333333");
-											}
-											return processColor(color);
-									  })
-									: [processColor(color)],
-							},
-						};
-				  })
+									drawCircles: true,
+									circleRadius: 4,
+									circleColor: processColor(color),
+									circleHoleColor: processColor(color),
+									highlightColor: processColor("transparent"),
+									color: processColor(color),
+									axisLineColor: processColor("white"),
+									drawFilled: false,
+									valueTextSize: 0,
+									legend: false,
+									circleColors: !!shouldShowMarker
+										? lines.map((_, i) => {
+												if (i == selectedX) {
+													return processColor("#333333");
+												}
+												return processColor(color);
+										  })
+										: [processColor(color)],
+								},
+							};
+						})
 				: [],
 	};
 

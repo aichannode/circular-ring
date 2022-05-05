@@ -100,6 +100,33 @@ const dataSets: MultipleDataSets = [
 	},
 ];
 
+const dataSetsWithHoles: MultipleDataSets = [
+	{
+		lines: items.map(({ isoTime, awake }, i) => {
+			return { x: moment(isoTime).valueOf(), y: i >= 2 && i <= 4 ? 0 : awake };
+		}),
+		color: colors.business.sleepAwake,
+	},
+	{
+		lines: items.map(({ isoTime, deep }, i) => {
+			return { x: moment(isoTime).valueOf(), y: i >= 0 && i <= 2 ? 0 : deep };
+		}),
+		color: colors.business.sleepDeep,
+	},
+	{
+		lines: items.map(({ isoTime, rem }) => {
+			return { x: moment(isoTime).valueOf(), y: rem };
+		}),
+		color: colors.business.sleepRem,
+	},
+	{
+		lines: items.map(({ isoTime, light }, i) => {
+			return { x: moment(isoTime).valueOf(), y: i >= 4 && i <= 6 ? 0 : light };
+		}),
+		color: colors.business.sleepLight,
+	},
+];
+
 const averages: Averages = [
 	{
 		value: 98,
@@ -366,4 +393,19 @@ storiesOf("LineChart", module)
 				valueFormatter={["S", "M", "T", "W", "T", "F", "S"]}
 			/>
 		);
-	});
+	})
+	.add("With hole", () => (
+		<LineChart
+			isMultipleLines={true}
+			xColor={colors.textPrimary}
+			yColor={colors.darkGray}
+			daysItem={dataSetsWithHoles}
+			shouldDrawCircles={true}
+			valueFormatter={["S", "M", "T", "W", "T", "F", "S"]}
+			scaleXEnabled={false}
+			shouldShowMarker={false}
+			shouldShowLabel={true}
+			highlightPerTapEnabled={true}
+			onSelect={(date) => console.log(date)}
+		/>
+	));
