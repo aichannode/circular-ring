@@ -1,7 +1,16 @@
 import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { createActiveMode, isInActiveMode, isInCalibrationMode } from "@ui/business";
+import { Point } from "@domain/measure/representation/api";
+import {
+	createActiveMode,
+	isInActiveMode,
+	isInCalibrationMode,
+	isInSomeIntervals,
+	trimData,
+	TrimOptions,
+	updateMode,
+} from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
@@ -19,6 +28,7 @@ import DashedLine from "react-native-dashed-line";
 type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
+	dailyTrimOptions?: TrimOptions;
 };
 
 const tooltipSize = { width: 40, height: 20 };
@@ -26,6 +36,7 @@ const tooltipSize = { width: 40, height: 20 };
 export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph({
 	selectedDay,
 	mode = createActiveMode(),
+	dailyTrimOptions,
 }: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
@@ -45,19 +56,40 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 		dailyHr ? dailyHr.constant : { hr: 0, hrMax: 0, hrMin: 0, reference: 0 },
 	];
 
-	const [yMin, yMax] =
-		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
+	const getTimestampFromValue = (line: Point) => line.x;
+	const parsedLines = dailyTrimOptions
+		? trimData(lines, getTimestampFromValue, { includes: dailyTrimOptions.includes }).map((line) => ({
+				...line,
+				y: isInSomeIntervals(getTimestampFromValue(line), dailyTrimOptions.excludes ?? []) ? 0 : line.y,
+		  }))
+		: lines;
 
-	const [yMinIndex, yMaxIndex] = [lines.findIndex((line) => line.y == yMin), lines.findIndex((line) => line.y == yMax)];
+	// This allows to fix the x axis domain for any data.
+	let xAxisMin, xAxisMax;
+	if (isDefined(dailyTrimOptions) && isDefined(dailyTrimOptions.includes)) {
+		xAxisMin = Math.min(...dailyTrimOptions.includes.map(([start, end]) => start));
+		xAxisMax = Math.min(...dailyTrimOptions.includes.map(([start, end]) => end));
+	}
+
+	const [yMin, yMax] =
+		parsedLines.length > 0
+			? [Math.min(...parsedLines.map((line) => line.y)), Math.max(...parsedLines.map((line) => line.y))]
+			: [0, 0];
+
+	const [yMinIndex, yMaxIndex] = [
+		parsedLines.findIndex((line) => line.y == yMin),
+		parsedLines.findIndex((line) => line.y == yMax),
+	];
 	const tags = useDailyTags(selectedDay);
+	const updatedMode = updateMode(mode, parsedLines.length === 0);
 	const averages: Averages = [];
-	if (isInActiveMode(mode) && constant.reference !== 0) {
+	if (isInActiveMode(updatedMode) && constant.reference !== 0) {
 		averages.push({
 			value: constant.reference,
 			color: colors.red,
 		});
 	}
-	if (isInActiveMode(mode) && constant.hr !== 0) {
+	if (isInActiveMode(updatedMode) && constant.hr !== 0) {
 		averages.push({
 			value: constant.hr,
 
@@ -81,7 +113,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 600 }}>
-				{(isInActiveMode(mode) || isInCalibrationMode(mode)) && (
+				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
 					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
 						{tags.map(({ name, id }) => (
 							<View key={id} style={{ marginLeft: 8 }}>
@@ -95,7 +127,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
-					data={lines}
+					data={parsedLines}
 					shouldShowLabel={true}
 					shouldDrawCircles={false}
 					graphColor={colors.red}
@@ -114,11 +146,13 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 							<Tag containerStyle={{ backgroundColor: colors.red, marginBottom: 4 }}>{`${value}`}</Tag>
 						</>
 					)}
-					mode={mode}
+					mode={updatedMode}
+					xAxisMin={xAxisMin}
+					xAxisMax={xAxisMax}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
-						mode={mode}
+						mode={updatedMode}
 						rows={[
 							{
 								label: format("hr.average"),
@@ -136,8 +170,8 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 									),
 								},
 
-								value: isInCalibrationMode(mode)
-									? format("calibration.placeholder", { days: mode.nbRemainingDays })
+								value: isInCalibrationMode(updatedMode)
+									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
 									: typeof constant.hr == "undefined" || constant.hr === 0
 									? "- bpm"
 									: `${constant.hr} bpm`,
@@ -157,8 +191,8 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 										</View>
 									),
 								},
-								value: isInCalibrationMode(mode)
-									? format("calibration.placeholder", { days: mode.nbRemainingDays })
+								value: isInCalibrationMode(updatedMode)
+									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
 									: typeof constant.reference == "undefined" || constant.reference === 0
 									? "- bpm"
 									: `${constant.reference} bpm`,
@@ -169,8 +203,8 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 									key: "hr.hrMax",
 									node: <></>,
 								},
-								value: isInCalibrationMode(mode)
-									? format("calibration.placeholder", { days: mode.nbRemainingDays })
+								value: isInCalibrationMode(updatedMode)
+									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
 									: typeof constant.hrMax == "undefined" || constant.hrMax === 0
 									? "- bpm"
 									: `${constant.hrMax} bpm`,
@@ -182,8 +216,8 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 									node: <></>,
 								},
 
-								value: isInCalibrationMode(mode)
-									? format("calibration.placeholder", { days: mode.nbRemainingDays })
+								value: isInCalibrationMode(updatedMode)
+									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
 									: typeof constant.hrMin == "undefined" || constant.hrMin === 0
 									? "- bpm"
 									: `${constant.hrMin} bpm`,

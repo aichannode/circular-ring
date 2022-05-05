@@ -3,7 +3,7 @@ import { toLocale } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
 import { useIs24h } from "@domain/user/hooks/useUser";
-import { createActiveMode, isInDisabledMode, updateMode } from "@ui/business";
+import { createActiveMode, isInDisabledMode, isInSomeIntervals, trimData, TrimOptions, updateMode } from "@ui/business";
 import { TextPlaceholder } from "@ui/components/placeholder/TextPlaceholder";
 import { Spinner } from "@ui/components/spinner";
 import { Tags } from "@ui/components/Tags";
@@ -21,11 +21,13 @@ import { getActivityIntensityBarColor } from "./business";
 type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
+	trimOptions?: TrimOptions;
 };
 
 export const DailyActivityIntensityGraph: React.FC<Props> = observer(function DailyActivityIntensityGraph({
 	selectedDay,
 	mode = createActiveMode(),
+	trimOptions,
 }: Props) {
 	const { format, formatHour } = useI18n();
 	const [isLoading, setLoading] = useState(true);
@@ -65,10 +67,18 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 		toLocale(moment(selectedDay).endOf("day").toISOString())
 	);
 
+	const getTimestampFromValue = (x: { value: number; isoTime: string }) => moment(x.isoTime).valueOf();
+	const parsedData = trimOptions
+		? trimData(graphData, getTimestampFromValue, { includes: trimOptions.includes }).map((x) => ({
+				...x,
+				value: isInSomeIntervals(getTimestampFromValue(x), trimOptions.excludes ?? []) ? 1 : x.value,
+		  }))
+		: graphData;
+
 	const data = {
 		dataSets: [
 			{
-				values: graphData.map(({ value, isoTime }) => {
+				values: parsedData.map(({ value, isoTime }) => {
 					const date = new Date(isoTime);
 					const marker = `${formatHour(date, is24h)}\n${
 						value === 0
@@ -88,7 +98,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 				}),
 				config: {
 					drawValues: false,
-					colors: graphData.map(({ value }) => processColor(getActivityIntensityBarColor(Math.round(value)))),
+					colors: parsedData.map(({ value }) => processColor(getActivityIntensityBarColor(Math.round(value)))),
 
 					// Alpha value depends on plateform
 					// https://github.com/wuxudong/react-native-charts-wrapper#convention
@@ -106,7 +116,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 
 	const xAxis = {
 		position: "BOTTOM" as const,
-		valueFormatter: graphData.map(({ isoTime }) => {
+		valueFormatter: parsedData.map(({ isoTime }) => {
 			const date = new Date(isoTime);
 			return `${formatHour(date, is24h)}`;
 		}),
@@ -136,7 +146,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 		setTimeout(() => {
 			setLoading(false);
 		}, 500);
-	}, [graphData]);
+	}, [parsedData]);
 
 	if (isLoading) {
 		return (
@@ -174,12 +184,12 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 							textColor: processColor("white"),
 							textSize: 14,
 						}}
-						zoom={{ scaleX: 1, scaleY: 1, xValue: Math.floor(graphData.length / 2), yValue: 1 }}
+						zoom={{ scaleX: 1, scaleY: 1, xValue: Math.floor(parsedData.length / 2), yValue: 1 }}
 						pinchZoom={true}
 						scaleYEnabled={false}
 						doubleTapToZoomEnabled={false}
 						chartDescription={{ text: "" }}
-						visibleRange={{ x: { max: Math.min(graphData.length, 100) } }}
+						visibleRange={{ x: { max: Math.min(parsedData.length, 100) } }}
 						drawValueAboveBar={false}
 						highlightFullBarEnabled={true}
 					/>

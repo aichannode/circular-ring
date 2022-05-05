@@ -45,3 +45,26 @@ export function getInitMode(
 	}
 	return createActiveMode();
 }
+
+export interface TrimOptions {
+	includes?: Array<[number, number]>;
+	excludes?: Array<[number, number]>;
+}
+
+export function isInSomeIntervals(value: number, intervals: Array<[number, number]>): boolean {
+	return intervals.some(([start, end]) => value >= start && value <= end);
+}
+
+export function trimData<T>(
+	data: T[],
+	getTimestampFromValue: (value: T) => number,
+	{ excludes = [], includes = [] }: TrimOptions = {}
+): T[] {
+	const get = getTimestampFromValue;
+	return data.filter((item) => {
+		const timestamp = get(item);
+		const isIncluded = includes.length === 0 || isInSomeIntervals(timestamp, includes);
+		const isExcluded = isInSomeIntervals(timestamp, excludes);
+		return isIncluded && !isExcluded;
+	});
+}

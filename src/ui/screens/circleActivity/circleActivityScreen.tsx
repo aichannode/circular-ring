@@ -7,10 +7,10 @@ import sport from "@assets/images/sport.png";
 import { useRepresentations } from "@core/representation";
 import { getCurrentLocalISODay } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
+import { DailyActivityIntensityData, DailySleepData, DataControlState } from "@domain/measure/representation/api";
 import { activities, activityScoreContributors } from "@domain/measure/representation/lib/type";
 import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
-import { getInitMode } from "@ui/business";
+import { getInitMode, TrimOptions } from "@ui/business";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
@@ -23,6 +23,7 @@ import { ScoreSection } from "@ui/containers/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import React, { useRef, useState } from "react";
 import { Image, LayoutAnimation, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
@@ -65,6 +66,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 		},
 		sportSessionDates: [],
 	});
+	const [dailySleep, setDailyData] = useState<DailySleepData | undefined>();
 	const {
 		measure: {
 			hooks: {
@@ -73,6 +75,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 				useDailyEnergyScore,
 				useDailyActivityIntensity,
 				useHasCompleteCoreSleep,
+				useDailySleepStages,
 			},
 		},
 	} = useRepresentations();
@@ -82,7 +85,10 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const activityContributorGaugesConfig = getActivityGaugesConfig(format);
+
 	useDailyActivityIntensity({ localISODay: selectedDay, setData });
+	// TODO: This is out of the ticket CIR-874, this should be replaced by an hook for extracting only coreSleepStart and coreSleepEnd.
+	useDailySleepStages({ localISODay: selectedDay, setData: setDailyData });
 
 	const hasCompleteCoreSleep = useHasCompleteCoreSleep(selectedDay);
 	const nbRemainingDays = useUserCalibrationRemainingDays();
@@ -92,6 +98,17 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const screenModeWithoutDisabled = getInitMode(nbRemainingDays, hasCompleteCoreSleep, { allowDisabled: false });
 
 	const [activeItem, setActiveItem] = useState<number>(0);
+
+	const [] = dailySleep?.coreSleepTiming ?? [];
+	// XXX: https://circularing.atlassian.net/browse/CIR-874
+	const dailyTrimOptions: TrimOptions = {
+		includes: [
+			[moment(selectedDay).startOf("day").valueOf(), moment(selectedDay).startOf("day").add(1, "day").valueOf()],
+		],
+		excludes: dailySleep?.coreSleepTiming
+			? [[moment(dailySleep.coreSleepTiming[0]).valueOf(), moment(dailySleep.coreSleepTiming[1]).valueOf()]]
+			: [],
+	};
 
 	return (
 		<Container>
@@ -193,10 +210,22 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 				</ElementStack>
 
 				<ElementStack gap={10} style={{ display: "flex" }}>
-					{activeItem === 0 && <ActivityIntensityGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 0 && (
+						<ActivityIntensityGraph
+							selectedDay={selectedDay}
+							mode={screenModeWithoutDisabled}
+							dailyTrimOptions={dailyTrimOptions}
+						/>
+					)}
 					{activeItem === 1 && <CardioPointsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
 					{activeItem === 2 && <EnergyScoreGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-					{activeItem === 3 && <HeartRateGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 3 && (
+						<HeartRateGraph
+							selectedDay={selectedDay}
+							mode={screenModeWithoutDisabled}
+							dailyTrimOptions={dailyTrimOptions}
+						/>
+					)}
 				</ElementStack>
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
