@@ -4,4 +4,5 @@ export interface I_Timer {
 	remainingSecondes: number;
 	startDate: moment.Moment | null;
 	endDate: moment.Moment | null;
+	initialRemainingTime: number;
 }

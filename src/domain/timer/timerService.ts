@@ -1,12 +1,18 @@
-import { observable } from "micro-observables";
-import { I_Timer } from "./timer";
-import BackgroundTimer from "react-native-background-timer";
-import moment from "moment";
 import { BleDeviceService } from "@domain/device/bleDeviceService";
 import { Melody, serializeMelody } from "@domain/ring/ringAlarm";
+import { observable } from "micro-observables";
+import moment from "moment";
+import BackgroundTimer from "react-native-background-timer";
+import { I_Timer } from "./timer";
 
 export class TimerService {
-	timer = observable<I_Timer>({ status: "stop", remainingSecondes: 0, startDate: null, endDate: null });
+	timer = observable<I_Timer>({
+		status: "stop",
+		remainingSecondes: 0,
+		startDate: null,
+		endDate: null,
+		initialRemainingTime: 0,
+	});
 
 	constructor(private readonly deviceService: BleDeviceService) {}
 
@@ -17,14 +23,15 @@ export class TimerService {
 			remainingSecondes: remainingSecondes,
 			startDate: moment(),
 			endDate: moment().add(remainingSecondes, "seconds"),
+			initialRemainingTime: remainingSecondes,
 		});
 		BackgroundTimer.runBackgroundTimer(() => {
 			this.timer.update((previousState) => {
-				const { status, remainingSecondes, startDate, endDate } = previousState;
+				const { status, remainingSecondes, startDate, endDate, initialRemainingTime } = previousState;
 
 				if (remainingSecondes <= 0 && status === "play") {
 					BackgroundTimer.stopBackgroundTimer();
-					return { status: "stop", remainingSecondes: 0, startDate: null, endDate: null };
+					return { status: "stop", remainingSecondes: 0, startDate: null, endDate: null, initialRemainingTime: 0 };
 				}
 				if (status === "play" && endDate) {
 					return {
@@ -32,6 +39,7 @@ export class TimerService {
 						remainingSecondes: endDate.diff(startDate, "seconds"),
 						startDate: moment(),
 						endDate,
+						initialRemainingTime,
 					};
 				}
 				return previousState;
@@ -41,7 +49,13 @@ export class TimerService {
 
 	stop() {
 		BackgroundTimer.stopBackgroundTimer();
-		this.timer.update(() => ({ status: "stop", remainingSecondes: 0, startDate: null, endDate: null }));
+		this.timer.update(() => ({
+			status: "stop",
+			remainingSecondes: 0,
+			startDate: null,
+			endDate: null,
+			initialRemainingTime: 0,
+		}));
 		this.deviceService.write("TMR0");
 	}
 
@@ -49,12 +63,13 @@ export class TimerService {
 		this.deviceService.write("TMR0");
 		BackgroundTimer.stopBackgroundTimer();
 		this.timer.update((previousState) => {
-			const { remainingSecondes, startDate, endDate } = previousState;
+			const { remainingSecondes, startDate, endDate, initialRemainingTime } = previousState;
 			return {
 				status: "pause",
 				remainingSecondes,
 				startDate,
 				endDate,
+				initialRemainingTime,
 			};
 		});
 	}
