@@ -44,7 +44,8 @@ export class CalendarApi {
 		ids: number[];
 	}) {
 		const result = await this.apiService.get<CalendarTagCategory[]>(
-			`/notes/tags/categories?${ids.map((id) => `categoryId=${id}`).join("&")}`,
+			// adding categoryId=0 is a workaround until Nest will fix an issue where we need more than 1 item to consider an array
+			`/notes/tags/categories?categoryId=0&${ids.map((id) => `categoryId=${id}`).join("&")}`,
 			{ useForceRefresh }
 		);
 		return result.data;
