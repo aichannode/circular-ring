@@ -1,7 +1,7 @@
 import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { createActiveMode, isInActiveMode, isInCalibrationMode } from "@ui/business";
+import { createActiveMode, isInActiveMode, isInCalibrationMode, trimData, TrimOptions } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
@@ -19,6 +19,7 @@ import DashedLine from "react-native-dashed-line";
 type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
+	dailyTrimOptions?: TrimOptions;
 };
 
 const tooltipSize = { width: 40, height: 20 };
@@ -26,6 +27,7 @@ const tooltipSize = { width: 40, height: 20 };
 export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph({
 	selectedDay,
 	mode = createActiveMode(),
+	dailyTrimOptions,
 }: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
@@ -46,10 +48,17 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 		dailyHRNight ? dailyHRNight.constant : { hr: 0, hrMax: 0, hrMin: 0, reference: 0 },
 	];
 
-	const [yMin, yMax] =
-		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
+	const parsedData = dailyTrimOptions ? trimData(lines, (line) => line.x, dailyTrimOptions) : lines;
 
-	const [yMinIndex, yMaxIndex] = [lines.findIndex((line) => line.y == yMin), lines.findIndex((line) => line.y == yMax)];
+	const [yMin, yMax] =
+		parsedData.length > 0
+			? [Math.min(...parsedData.map((line) => line.y)), Math.max(...parsedData.map((line) => line.y))]
+			: [0, 0];
+
+	const [yMinIndex, yMaxIndex] = [
+		parsedData.findIndex((line) => line.y == yMin),
+		parsedData.findIndex((line) => line.y == yMax),
+	];
 	const tags = useDailyTags(selectedDay);
 	const averages: Averages = [];
 	if (isInActiveMode(mode)) {
@@ -99,7 +108,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 					xColor={colors.textPrimary}
 					shouldShowLabel={true}
 					yColor={colors.darkGray}
-					data={lines}
+					data={parsedData}
 					shouldDrawCircles={false}
 					graphColor={colors.darkBlue}
 					valueFormatter="date"
