@@ -35,6 +35,7 @@ export const ActivateRingBottomSheet: React.FC<ActivateRingBottomSheetProps> = (
 				</Stack>
 				<ButtonContainer>
 					<TertiaryButton
+						useOnBottomSheet
 						containerBackgroundColor={colors.white}
 						onPress={() => {
 							setTimeout(() => onClose(), 100);
@@ -45,6 +46,7 @@ export const ActivateRingBottomSheet: React.FC<ActivateRingBottomSheetProps> = (
 					</TertiaryButton>
 
 					<PrimaryButton
+						useOnBottomSheet
 						onPress={() => {
 							connectToRing(ring);
 							setTimeout(() => onClose(), 200);

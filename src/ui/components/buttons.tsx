@@ -1,37 +1,72 @@
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
-import React from "react";
+import React, { useState } from "react";
 import { Pressable, StyleProp, View, ViewStyle } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { TouchableOpacity as BottomSheetTouchableOpacity, TouchableOpacity } from "react-native-gesture-handler";
 import LinearGradient from "react-native-linear-gradient";
 import styled from "styled-components/native";
 
 interface CircularButtonProps {
 	style?: StyleProp<ViewStyle>;
+	useOnBottomSheet?: boolean;
 	onPress: () => void;
 	light?: boolean;
 	disabled?: boolean;
 }
 
-export const PrimaryButton: React.FC<CircularButtonProps> = ({ onPress, style, light, disabled, children }) => {
-	return (
-		<Pressable onPress={onPress} style={style}>
-			{({ pressed }) => (
-				<PrimaryContent
-					light={light}
-					start={{ x: 0, y: 1 }}
-					end={{ x: 1, y: 0.5 }}
-					colors={
-						disabled
-							? [colors.lightgray, colors.lightgray]
-							: pressed
-							? [...colors.gradient.orange].reverse()
-							: [...colors.gradient.orange]
-					}
-				>
-					<PrimaryButtonText light={light}>{children}</PrimaryButtonText>
-				</PrimaryContent>
-			)}
+export const PrimaryButton: React.FC<CircularButtonProps> = ({
+	onPress,
+	style,
+	useOnBottomSheet,
+	light,
+	disabled,
+	children,
+}) => {
+	const [isPressed, setIsPressed] = useState(false);
+
+	const content = (
+		<PrimaryContent
+			light={light}
+			start={{ x: 0, y: 1 }}
+			end={{ x: 1, y: 0.5 }}
+			colors={
+				disabled
+					? [colors.lightgray, colors.lightgray]
+					: isPressed
+					? [...colors.gradient.orange].reverse()
+					: [...colors.gradient.orange]
+			}
+		>
+			<PrimaryButtonText light={light}>{children}</PrimaryButtonText>
+		</PrimaryContent>
+	);
+
+	return useOnBottomSheet ? (
+		<BottomSheetTouchableOpacity
+			activeOpacity={1}
+			onPress={onPress}
+			onPressIn={function () {
+				setIsPressed(true);
+			}}
+			onPressOut={function () {
+				setIsPressed(false);
+			}}
+			style={style}
+		>
+			{content}
+		</BottomSheetTouchableOpacity>
+	) : (
+		<Pressable
+			onPress={onPress}
+			style={style}
+			onPressIn={function () {
+				setIsPressed(true);
+			}}
+			onPressOut={function () {
+				setIsPressed(false);
+			}}
+		>
+			{content}
 		</Pressable>
 	);
 };
@@ -52,22 +87,50 @@ interface TertiaryButtonProps extends CircularButtonProps {
 export const TertiaryButton: React.FC<TertiaryButtonProps> = ({
 	onPress,
 	style,
+	useOnBottomSheet,
 	children,
 	containerBackgroundColor,
 }) => {
-	return (
-		<Pressable onPress={onPress} style={style}>
-			{({ pressed }) => (
-				<TertiaryBorder
-					colors={pressed ? [...colors.gradient.orange].reverse() : [...colors.gradient.orange]}
-					start={{ x: 0, y: 1 }}
-					end={{ x: 1, y: 0.5 }}
-				>
-					<TertiaryInner bgColor={containerBackgroundColor}>
-						<TertiaryButtonText>{children}</TertiaryButtonText>
-					</TertiaryInner>
-				</TertiaryBorder>
-			)}
+	const [isPressed, setIsPressed] = useState(false);
+
+	const content = (
+		<TertiaryBorder
+			colors={isPressed ? [...colors.gradient.orange].reverse() : [...colors.gradient.orange]}
+			start={{ x: 0, y: 1 }}
+			end={{ x: 1, y: 0.5 }}
+		>
+			<TertiaryInner bgColor={containerBackgroundColor}>
+				<TertiaryButtonText>{children}</TertiaryButtonText>
+			</TertiaryInner>
+		</TertiaryBorder>
+	);
+
+	return useOnBottomSheet ? (
+		<BottomSheetTouchableOpacity
+			activeOpacity={1}
+			onPress={onPress}
+			onPressIn={function () {
+				setIsPressed(true);
+			}}
+			onPressOut={function () {
+				setIsPressed(false);
+			}}
+			style={style}
+		>
+			{content}
+		</BottomSheetTouchableOpacity>
+	) : (
+		<Pressable
+			onPress={onPress}
+			style={style}
+			onPressIn={function () {
+				setIsPressed(true);
+			}}
+			onPressOut={function () {
+				setIsPressed(false);
+			}}
+		>
+			{content}
 		</Pressable>
 	);
 };
