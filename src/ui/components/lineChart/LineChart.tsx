@@ -310,8 +310,8 @@ export function LineChart({
 									valueTextSize: 0,
 									legend: false,
 									circleColors: !!shouldShowMarker
-										? lines.map((_, i) => {
-												if (i == selectedX) {
+										? lines.map(({ index }) => {
+												if (index == selectedX) {
 													return processColor("#333333");
 												}
 												return processColor(color);
