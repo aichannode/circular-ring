@@ -138,13 +138,12 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({
 										</View>
 									),
 								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: parsedData.length == 0
-									? format("global.no_data")
-									: typeof constant.average == "undefined" || constant.average === 0
-									? "- ms"
-									: `${constant.average} ms`,
+								value:
+									parsedData.length == 0
+										? format("global.no_data")
+										: typeof constant.average == "undefined" || constant.average === 0
+										? "- ms"
+										: `${constant.average} ms`,
 							},
 							{
 								label: format("hr.reference"),

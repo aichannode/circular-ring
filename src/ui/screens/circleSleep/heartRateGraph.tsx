@@ -1,7 +1,7 @@
 import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { createActiveMode, isInActiveMode, isInCalibrationMode, trimData, TrimOptions } from "@ui/business";
+import { createActiveMode, isInActiveMode, isInCalibrationMode, trimData, TrimOptions, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
@@ -60,8 +60,9 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 		parsedData.findIndex((line) => line.y == yMax),
 	];
 	const tags = useDailyTags(selectedDay);
+	const updatedMode = updateMode(mode, parsedData.length === 0);
 	const averages: Averages = [];
-	if (isInActiveMode(mode)) {
+	if (isInActiveMode(updatedMode)) {
 		if (constant.reference !== 0) {
 			averages.push({
 				value: constant.reference,
@@ -117,7 +118,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 					yMax={yMax}
 					yMinIndex={yMinIndex}
 					yMaxIndex={yMaxIndex}
-					mode={mode}
+					mode={updatedMode}
 					xAxisContentInset={15}
 					tooltipYMin={15}
 					tooltipYMax={-30}
@@ -131,7 +132,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
-						mode={mode}
+						mode={updatedMode}
 						rows={[
 							{
 								label: format("hr.average"),
@@ -149,11 +150,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 									),
 								},
 
-								value: isInCalibrationMode(mode)
-									? format("calibration.placeholder", { days: mode.nbRemainingDays })
-									: typeof constant.hr == "undefined" || constant.hr === 0
-									? "- bpm"
-									: `${constant.hr} bpm`,
+								value: typeof constant.hr == "undefined" || constant.hr === 0 ? "- bpm" : `${constant.hr} bpm`,
 							},
 							{
 								label: format("hr.reference"),
@@ -170,8 +167,8 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 										</View>
 									),
 								},
-								value: isInCalibrationMode(mode)
-									? format("calibration.placeholder", { days: mode.nbRemainingDays })
+								value: isInCalibrationMode(updatedMode)
+									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
 									: typeof constant.reference == "undefined" || constant.reference === 0
 									? "- bpm"
 									: `${constant.reference} bpm`,
@@ -182,11 +179,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 									key: "hr.hrMax",
 									node: <></>,
 								},
-								value: isInCalibrationMode(mode)
-									? format("calibration.placeholder", { days: mode.nbRemainingDays })
-									: typeof constant.hrMax == "undefined" || constant.hrMax === 0
-									? "- bpm"
-									: `${constant.hrMax} bpm`,
+								value: typeof constant.hrMax == "undefined" || constant.hrMax === 0 ? "- bpm" : `${constant.hrMax} bpm`,
 							},
 							{
 								label: format("hr.hrMin"),
@@ -195,11 +188,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 									node: <></>,
 								},
 
-								value: isInCalibrationMode(mode)
-									? format("calibration.placeholder", { days: mode.nbRemainingDays })
-									: typeof constant.hrMin == "undefined" || constant.hrMin === 0
-									? "- bpm"
-									: `${constant.hrMin} bpm`,
+								value: typeof constant.hrMin == "undefined" || constant.hrMin === 0 ? "- bpm" : `${constant.hrMin} bpm`,
 							},
 						]}
 					/>

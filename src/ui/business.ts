@@ -34,10 +34,10 @@ export function updateMode(prevMode: Mode, shouldDisabledMode: boolean) {
 export function getInitMode(
 	nbRemainingDays: number,
 	hasCompleteCoreSleep: boolean,
-	{ allowDisabled = true }: { allowDisabled?: boolean } = {}
+	{ allowDisabled = true, allowCalibration = true }: { allowDisabled?: boolean; allowCalibration?: boolean } = {}
 ): Mode {
 	const isInCalibration = nbRemainingDays > 0;
-	if (isInCalibration) {
+	if (isInCalibration && allowCalibration) {
 		return createCalibrationMode(nbRemainingDays);
 	}
 	if (!hasCompleteCoreSleep && allowDisabled) {

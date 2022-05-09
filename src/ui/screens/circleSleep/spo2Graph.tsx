@@ -138,13 +138,12 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 										</View>
 									),
 								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: parsedLines.length == 0
-									? format("global.no_data")
-									: typeof constant.average == "undefined" || constant.average === 0
-									? "- %"
-									: `${constant.average} %`,
+								value:
+									parsedLines.length == 0
+										? format("global.no_data")
+										: typeof constant.average == "undefined" || constant.average === 0
+										? "- %"
+										: `${constant.average} %`,
 							},
 							{
 								label: format("hr.reference"),

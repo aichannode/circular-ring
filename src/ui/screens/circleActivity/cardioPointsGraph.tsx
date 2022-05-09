@@ -154,11 +154,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 										</View>
 									),
 								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(constant) && constant.average != 0
-									? `${constant.average}`
-									: "-",
+								value: isDefined(constant) && constant.average != 0 ? `${constant.average}` : "-",
 							},
 							{
 								label: format("cardio.baseline"),
@@ -188,11 +184,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 									node: <></>,
 								},
 
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(constant) && constant.total != 0
-									? `${constant.total}`
-									: "-",
+								value: isDefined(constant) && constant.total != 0 ? `${constant.total}` : "-",
 							},
 						]}
 					/>

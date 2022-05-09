@@ -49,7 +49,7 @@ export function GraphLegend({ rows, mode = createActiveMode() }: Props) {
 				{data.labels.map((label, index) => (
 					<Cell
 						key={label}
-						style={{ paddingLeft: 30, justifyContent: "center", alignContent: "flex-start" }}
+						style={{ paddingLeft: 15, justifyContent: "center", alignContent: "flex-start" }}
 						isEven={index % 2 === 0}
 					>
 						<PrimaryText>{label}</PrimaryText>
@@ -69,7 +69,7 @@ export function GraphLegend({ rows, mode = createActiveMode() }: Props) {
 					return (
 						<Cell
 							key={isInDisabledMode(updatedMode) ? `no-data-${index}` : `${value}-${index}`}
-							style={{ paddingRight: 30, justifyContent: "center" }}
+							style={{ paddingRight: 15, justifyContent: "center" }}
 							isEven={index % 2 === 0}
 						>
 							<MetaDataText style={{ textAlign: "right" }}>

@@ -156,11 +156,7 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 										</View>
 									),
 								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(constant) && constant.average != 0
-									? `${constant.average} %`
-									: "- %",
+								value: isDefined(constant) && constant.average != 0 ? `${constant.average} %` : "- %",
 							},
 						]}
 					/>

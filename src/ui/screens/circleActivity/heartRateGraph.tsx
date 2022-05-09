@@ -170,11 +170,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 									),
 								},
 
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: typeof constant.hr == "undefined" || constant.hr === 0
-									? "- bpm"
-									: `${constant.hr} bpm`,
+								value: typeof constant.hr == "undefined" || constant.hr === 0 ? "- bpm" : `${constant.hr} bpm`,
 							},
 							{
 								label: format("hr.reference"),
@@ -203,11 +199,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 									key: "hr.hrMax",
 									node: <></>,
 								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: typeof constant.hrMax == "undefined" || constant.hrMax === 0
-									? "- bpm"
-									: `${constant.hrMax} bpm`,
+								value: typeof constant.hrMax == "undefined" || constant.hrMax === 0 ? "- bpm" : `${constant.hrMax} bpm`,
 							},
 							{
 								label: format("hr.hrMin"),
@@ -216,11 +208,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 									node: <></>,
 								},
 
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: typeof constant.hrMin == "undefined" || constant.hrMin === 0
-									? "- bpm"
-									: `${constant.hrMin} bpm`,
+								value: typeof constant.hrMin == "undefined" || constant.hrMin === 0 ? "- bpm" : `${constant.hrMin} bpm`,
 							},
 						]}
 					/>

@@ -130,13 +130,12 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 										</View>
 									),
 								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: parsedData.length == 0
-									? format("global.no_data")
-									: typeof constant.average == "undefined" || constant.average == 0
-									? "- rpm"
-									: `${constant.average.toFixed(1)} rpm`,
+								value:
+									parsedData.length == 0
+										? format("global.no_data")
+										: typeof constant.average == "undefined" || constant.average == 0
+										? "- rpm"
+										: `${constant.average.toFixed(1)} rpm`,
 							},
 							{
 								label: format("hr.reference"),
