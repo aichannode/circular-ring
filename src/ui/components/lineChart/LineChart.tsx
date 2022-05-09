@@ -195,6 +195,23 @@ export function LineChart({
 
 	const dataSets = {
 		dataSets: [
+			{
+				values: movingAverage ?? [],
+				label: "",
+				config: {
+					drawValues: false,
+					lineWidth: 4,
+					drawCircles: false,
+					highlightColor: processColor("transparent"),
+					color: processColor(colors.blueExtraLight),
+					axisLineColor: processColor("white"),
+					highlightEnabled: true,
+					drawFilled: false,
+					valueTextSize: 0,
+					legend: false,
+					mode: "HORIZONTAL_BEZIER" as const,
+				},
+			},
 			...data
 				// remove `zero` points and create a new line each time a `zero` point is found.
 				.reduce(
@@ -241,23 +258,6 @@ export function LineChart({
 						mode: "HORIZONTAL_BEZIER" as const,
 					},
 				})),
-			{
-				values: movingAverage ?? [],
-				label: "",
-				config: {
-					drawValues: false,
-					lineWidth: 4,
-					drawCircles: false,
-					highlightColor: processColor("transparent"),
-					color: processColor(colors.blueExtraLight),
-					axisLineColor: processColor("white"),
-					highlightEnabled: true,
-					drawFilled: false,
-					valueTextSize: 0,
-					legend: false,
-					mode: "HORIZONTAL_BEZIER" as const,
-				},
-			},
 		],
 	};
 
