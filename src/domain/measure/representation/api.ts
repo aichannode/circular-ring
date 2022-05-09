@@ -136,6 +136,10 @@ export type Cardio7D = Range7<{
 	total: number;
 }>;
 
+export type TemperatureVariation7D = Range7<{
+	average: number;
+}>;
+
 export interface SleepItem {
 	awake: number;
 	deep: number;

@@ -354,6 +354,12 @@ export const cardioPointsConstantMetrics = [
 	MetricType.UserCardioPointTotal,
 ] as const;
 export type CardioPointsConstantMetrics = typeof cardioPointsConstantMetrics[number];
+
+export const dailyTemperatureVariation = [MetricType.UserDailyTemperature] as const;
+export type DailyTemperatureVariation = typeof dailyTemperatureVariation[number];
+
+export const temperatureVariationConstantMetrics = [MetricType.UserDailyVarTemperature] as const;
+export type TemperatureVariationConstantMetrics = typeof temperatureVariationConstantMetrics[number];
 /**
  * Those metrics are used for the stages circle and hypnogram.
  * They represents the different sleep stages (core sleep and naps)

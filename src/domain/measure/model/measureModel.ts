@@ -49,6 +49,7 @@ import {
 	SleepMonthlyStageMetrics,
 	SleepStagesMetrics,
 	StepsTaken,
+	TemperatureVariationConstantMetrics,
 	WalkingEquivalency,
 } from "../representation/lib/type";
 
@@ -105,7 +106,9 @@ export class MeasureModel implements Model<Proposal> {
 	public last7DEnergyScore: Map<ISODay, number | null> = new Map();
 	public last7DActivityIntensityAverageMetrics: Map<ISODay, Metrics<ActivityIntensity7DAverageMetrics>> = new Map();
 	public dailyCardioPoints: Map<ISODay, number | null> = new Map();
+	public dailyTemperatureVariation: Map<ISODay, number | null> = new Map();
 	public last7DCardioPointConstants: Map<ISODay, Metrics<CardioPointsConstantMetrics>> = new Map();
+	public last7DTemperatureVariationConstants: Map<ISODay, Metrics<TemperatureVariationConstantMetrics>> = new Map();
 	public lastAllActivityIntensityAverageMetrics: Map<ISOMonth, Metrics<ActivityIntensityAllAverageMetrics>> = new Map();
 	public dailyActivityIntensityMetrics: Map<
 		ISODay,
@@ -221,6 +224,15 @@ export class MeasureModel implements Model<Proposal> {
 			} else if (mutation.type === "setLast7DCardioPoints") {
 				mutate.call(this, mutation, () =>
 					this.last7DCardioPointConstants.set(mutation.payload.localISODay, mutation.payload.data)
+				);
+			} else if (mutation.type === "setDailyTemperatureVariation") {
+				const temperature = mutation.payload.temperature;
+				mutate.call(this, mutation, () =>
+					this.dailyTemperatureVariation.set(mutation.payload.localISODay, temperature)
+				);
+			} else if (mutation.type === "setLast7DTemperatureVariation") {
+				mutate.call(this, mutation, () =>
+					this.last7DTemperatureVariationConstants.set(mutation.payload.localISODay, mutation.payload.data)
 				);
 			} else if (mutation.type === "setDailyWakeUpScore") {
 				mutate.call(this, mutation, () =>

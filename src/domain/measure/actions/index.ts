@@ -91,6 +91,8 @@ import {
 	sleepMonthlyStageMetrics,
 	SleepStagesMetrics,
 	sleepStagesMetrics,
+	TemperatureVariationConstantMetrics,
+	temperatureVariationConstantMetrics,
 } from "../representation/lib/type";
 import { MeasureApi } from "./lib/measureApi";
 
@@ -446,6 +448,39 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
+		async pullDailyTemperatureVariation(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures(
+				[MetricType.UserDailyTemperature],
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailyTemperatureVariation",
+					payload: {
+						localISODay,
+						temperature: data[MetricType.UserDailyTemperature] ? Number(data[MetricType.UserDailyTemperature]) : null,
+					},
+				},
+			]);
+		},
+		async pullLast7DTemperatureVariation(localISODay: ISODay, useForceRefresh?: boolean) {
+			const constant = await measureApi.fetchLastDailyMeasures<TemperatureVariationConstantMetrics>(
+				temperatureVariationConstantMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setLast7DTemperatureVariation",
+					payload: {
+						localISODay,
+						data: constant,
+					},
+				},
+			]);
+		},
+
 		async pullDailyActivityIntensityMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
 			Promise.all([
 				measureApi.fetchDailyMeasures<DailyActivityIntensityMetrics>(

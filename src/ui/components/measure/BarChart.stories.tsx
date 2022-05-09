@@ -18,6 +18,15 @@ const data: Points = [
 	{ x: moment("2022-03-26").valueOf(), y: 99 },
 	{ x: moment("2022-03-27").valueOf(), y: 95 },
 ];
+const tempratures: Points = [
+	{ x: moment("2022-03-21").valueOf(), y: 1.0 },
+	{ x: moment("2022-03-22").valueOf(), y: 1.1 },
+	{ x: moment("2022-03-23").valueOf(), y: -0.2 },
+	{ x: moment("2022-03-24").valueOf(), y: 1 },
+	{ x: moment("2022-03-25").valueOf(), y: 1.5 },
+	{ x: moment("2022-03-26").valueOf(), y: -0.4 },
+	{ x: moment("2022-03-27").valueOf(), y: -0.6 },
+];
 
 const averages: Averages = [
 	{
@@ -46,6 +55,28 @@ export default storiesOf("BarChart", module)
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
 					data={data}
+					valueFormatter={valueFormatter}
+					graphColor={colors.red}
+					mode={
+						modeType === "disabled"
+							? createDisabledMode()
+							: modeType === "calibration"
+							? createCalibrationMode(3)
+							: createActiveMode()
+					}
+				/>
+			</View>
+		);
+	})
+	.add("Negatifs values", () => {
+		const modeType = select("mode", ["active", "disabled", "calibration"], "active", "mode");
+		return (
+			<View style={{ height: 300 }}>
+				<BarChart
+					shouldShowMarker={true}
+					xColor={colors.textPrimary}
+					yColor={colors.darkGray}
+					data={tempratures}
 					valueFormatter={valueFormatter}
 					graphColor={colors.red}
 					mode={
