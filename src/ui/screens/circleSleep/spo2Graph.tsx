@@ -2,7 +2,7 @@ import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState } from "@domain/measure/representation/api";
-import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
+import { createActiveMode, isInActiveMode, isInCalibrationMode, trimData, TrimOptions, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
@@ -20,11 +20,13 @@ import DashedLine from "react-native-dashed-line";
 type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
+	dailyTrimOptions?: TrimOptions;
 };
 
 export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 	selectedDay,
 	mode = createActiveMode(),
+	dailyTrimOptions,
 }: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
@@ -40,15 +42,22 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 
 	const dailySpo2 = useDailySpo2(selectedDay);
 	const [lines, constant] = [
-		dailySpo2 ? dailySpo2.lines : [],
+		dailySpo2 ? dailySpo2.data : [],
 		dailySpo2 ? dailySpo2.constant : { average: 0, reference: 0 },
 	];
+
+	const parsedLines = dailyTrimOptions ? trimData(lines, (line) => line.x, dailyTrimOptions) : lines;
+
 	const updatedMode = updateMode(mode, dailySpo2?.controlState !== DataControlState.READY);
 
 	const [yMin, yMax] =
-		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
-
-	const [yMinIndex, yMaxIndex] = [lines.findIndex((line) => line.y == yMin), lines.findIndex((line) => line.y == yMax)];
+		parsedLines.length > 0
+			? [Math.min(...parsedLines.map((line) => line.y)), Math.max(...parsedLines.map((line) => line.y))]
+			: [0, 0];
+	const [yMinIndex, yMaxIndex] = [
+		parsedLines.findIndex((line) => line.y == yMin),
+		parsedLines.findIndex((line) => line.y == yMax),
+	];
 	const tags = useDailyTags(selectedDay);
 
 	const averages: Averages = [];
@@ -97,7 +106,7 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
-					data={lines}
+					data={parsedLines}
 					shouldShowLabel={false}
 					shouldDrawCircles={false}
 					graphColor={colors.darkBlue}
@@ -108,6 +117,7 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 					yMinIndex={yMinIndex}
 					yMaxIndex={yMaxIndex}
 					mode={updatedMode}
+					shouldUpdateYmin={false}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
@@ -128,13 +138,12 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 										</View>
 									),
 								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: lines.length == 0
-									? format("global.no_data")
-									: typeof constant.average == "undefined" || constant.average === 0
-									? "- %"
-									: `${constant.average} %`,
+								value:
+									parsedLines.length == 0
+										? format("global.no_data")
+										: typeof constant.average == "undefined" || constant.average === 0
+										? "- %"
+										: `${constant.average} %`,
 							},
 							{
 								label: format("hr.reference"),
@@ -153,7 +162,7 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 								},
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: lines.length == 0
+									: parsedLines.length == 0
 									? format("global.no_data")
 									: typeof constant.reference == "undefined" || constant.reference === 0
 									? "- %"

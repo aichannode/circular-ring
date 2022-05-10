@@ -1,5 +1,5 @@
 // components/Task.stories.js
-import { DataControlState, Lines, Scores7D } from "@domain/measure/representation/api";
+import { DataControlState, Points, Scores7D } from "@domain/measure/representation/api";
 import { object, select, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react-native";
 import { createActiveMode, createCalibrationMode, createDisabledMode } from "@ui/business";
@@ -12,7 +12,7 @@ import { GraphContainer } from "../measure/graphContainer";
 import { LineChart } from "./LineChart";
 import { data } from "./mockedDataHR.json";
 
-const lines: Lines = data.map((e) => {
+const lines: Points = data.map((e) => {
 	return {
 		x: moment(e.timestamp).valueOf(),
 		y: e.metrics["user.hr"],
@@ -100,6 +100,33 @@ const dataSets: MultipleDataSets = [
 	},
 ];
 
+const dataSetsWithHoles: MultipleDataSets = [
+	{
+		lines: items.map(({ isoTime, awake }, i) => {
+			return { x: moment(isoTime).valueOf(), y: i >= 2 && i <= 4 ? 0 : awake };
+		}),
+		color: colors.business.sleepAwake,
+	},
+	{
+		lines: items.map(({ isoTime, deep }, i) => {
+			return { x: moment(isoTime).valueOf(), y: i >= 0 && i <= 2 ? 0 : deep };
+		}),
+		color: colors.business.sleepDeep,
+	},
+	{
+		lines: items.map(({ isoTime, rem }) => {
+			return { x: moment(isoTime).valueOf(), y: rem };
+		}),
+		color: colors.business.sleepRem,
+	},
+	{
+		lines: items.map(({ isoTime, light }, i) => {
+			return { x: moment(isoTime).valueOf(), y: i >= 4 && i <= 6 ? 0 : light };
+		}),
+		color: colors.business.sleepLight,
+	},
+];
+
 const averages: Averages = [
 	{
 		value: 98,
@@ -150,7 +177,7 @@ const scores: Scores7D = {
 	},
 	controlState: DataControlState.READY,
 };
-const scoresLines: Lines = scores.series.map((el) => {
+const scoresLines: Points = scores.series.map((el) => {
 	return {
 		x: el ? moment(el.date).valueOf() : 0,
 		y: el?.value ? el.value * 100 : 0,
@@ -366,4 +393,19 @@ storiesOf("LineChart", module)
 				valueFormatter={["S", "M", "T", "W", "T", "F", "S"]}
 			/>
 		);
-	});
+	})
+	.add("With hole", () => (
+		<LineChart
+			isMultipleLines={true}
+			xColor={colors.textPrimary}
+			yColor={colors.darkGray}
+			daysItem={dataSetsWithHoles}
+			shouldDrawCircles={true}
+			valueFormatter={["S", "M", "T", "W", "T", "F", "S"]}
+			scaleXEnabled={false}
+			shouldShowMarker={false}
+			shouldShowLabel={true}
+			highlightPerTapEnabled={true}
+			onSelect={(date) => console.log(date)}
+		/>
+	));

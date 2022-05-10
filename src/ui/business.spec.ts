@@ -6,6 +6,7 @@ import {
 	isInActiveMode,
 	isInCalibrationMode,
 	isInDisabledMode,
+	trimData,
 	updateMode,
 } from "./business";
 
@@ -41,4 +42,31 @@ test("get init mode", function () {
 	expect(getInitMode(0, false)).toEqual(createDisabledMode());
 	expect(getInitMode(3, true)).toEqual(createCalibrationMode(3));
 	expect(getInitMode(3, false)).toEqual(createCalibrationMode(3));
+});
+
+test("trimData", function () {
+	const getTimestampFromValue = (x: number) => x;
+	expect(trimData([], getTimestampFromValue)).toEqual([]);
+	expect(trimData([0], getTimestampFromValue, { includes: [[0, 1]] })).toEqual([0]);
+	expect(trimData([-2, -1, 0, 1, 2, 3], getTimestampFromValue, { includes: [[0, 1]] })).toEqual([0, 1]);
+	expect(trimData([-2, -1, 0, 1, 2, 3], getTimestampFromValue, { excludes: [[0, 1]] })).toEqual([-2, -1, 2, 3]);
+	expect(
+		trimData([-2, -1, 0, 1, 2, 3], getTimestampFromValue, {
+			includes: [
+				[0, 1],
+				[2, 3],
+			],
+		})
+	).toEqual([0, 1, 2, 3]);
+	expect(
+		trimData([-2, -1, 0, 1, 2, 3], getTimestampFromValue, {
+			excludes: [
+				[0, 1],
+				[2, 3],
+			],
+		})
+	).toEqual([-2, -1]);
+	expect(trimData([-2, -1, 0, 1, 2, 3], getTimestampFromValue, { includes: [[-1, 2]], excludes: [[0, 1]] })).toEqual([
+		-1, 2,
+	]);
 });

@@ -2,7 +2,7 @@ import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState } from "@domain/measure/representation/api";
-import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
+import { createActiveMode, isInActiveMode, isInCalibrationMode, trimData, TrimOptions, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
@@ -16,15 +16,16 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import DashedLine from "react-native-dashed-line";
-
 type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
+	dailyTrimOptions?: TrimOptions;
 };
 
 export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRateGraph({
 	selectedDay,
 	mode = createActiveMode(),
+	dailyTrimOptions,
 }: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
@@ -39,12 +40,20 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 	} = useRepresentations();
 
 	const dailyBr = useDailyBR(selectedDay);
-	const [lines, constant] = [dailyBr ? dailyBr.lines : [], dailyBr ? dailyBr.constant : { average: 0, reference: 0 }];
+	const [data, constant] = [dailyBr ? dailyBr.data : [], dailyBr ? dailyBr.constant : { average: 0, reference: 0 }];
+
+	const parsedData = dailyTrimOptions ? trimData(data, (line) => line.x, dailyTrimOptions) : data;
+
 	const updatedMode = updateMode(mode, dailyBr?.controlState !== DataControlState.READY);
 	const [yMin, yMax] =
-		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
+		parsedData.length > 0
+			? [Math.min(...parsedData.map((line) => line.y)), Math.max(...parsedData.map((line) => line.y))]
+			: [0, 0];
 
-	const [yMinIndex, yMaxIndex] = [lines.findIndex((line) => line.y == yMin), lines.findIndex((line) => line.y == yMax)];
+	const [yMinIndex, yMaxIndex] = [
+		parsedData.findIndex((line) => line.y == yMin),
+		parsedData.findIndex((line) => line.y == yMax),
+	];
 	const tags = useDailyTags(selectedDay);
 	const averages: Averages = [];
 	if (isInCalibrationMode(updatedMode) && constant.reference !== 0) {
@@ -59,12 +68,11 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 			color: colors.darkBlue,
 		});
 	}
-
 	useEffect(() => {
-		if (isDefined(lines)) {
+		if (isDefined(data)) {
 			setLoading(false);
 		}
-	}, [lines]);
+	}, [data]);
 
 	return isLoading ? (
 		<Spinner size={24} />
@@ -90,7 +98,7 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
-					data={lines}
+					data={parsedData}
 					shouldShowLabel={false}
 					shouldDrawCircles={false}
 					graphColor={colors.darkBlue}
@@ -122,13 +130,12 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 										</View>
 									),
 								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: lines.length == 0
-									? format("global.no_data")
-									: typeof constant.average == "undefined" || constant.average == 0
-									? "- rpm"
-									: `${constant.average.toFixed(1)} rpm`,
+								value:
+									parsedData.length == 0
+										? format("global.no_data")
+										: typeof constant.average == "undefined" || constant.average == 0
+										? "- rpm"
+										: `${constant.average.toFixed(1)} rpm`,
 							},
 							{
 								label: format("hr.reference"),
@@ -147,7 +154,7 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 								},
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: lines.length == 0
+									: parsedData.length == 0
 									? format("global.no_data")
 									: typeof constant.reference == "undefined" || constant.reference == 0
 									? "- rpm"

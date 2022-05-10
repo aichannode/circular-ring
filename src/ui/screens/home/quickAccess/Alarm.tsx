@@ -1,6 +1,9 @@
 import { useServices } from "@core/services";
 import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
+import { QuickAccessAlarmDefaultLabel } from "@domain/common/constant";
+import { DeviceAutoConnectState } from "@domain/device/bleDeviceService";
+import { useAutoConnectState } from "@domain/device/hooks";
 import { dateToAlarmTime, Melody, RingAlarm, Weekdays } from "@domain/ring/ringAlarm";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { ResponsiveCenterView } from "@ui/components/layout";
@@ -8,7 +11,7 @@ import { useI18n } from "@ui/i18n";
 import { WarningBottomSheet } from "@ui/screens/circleAlarm/warningBottomSheet";
 import { colors } from "@ui/styles/colors";
 import { useObservable } from "micro-observables";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Platform, Switch } from "react-native";
 import DatePicker from "react-native-date-picker";
 import styled from "styled-components/native";
@@ -20,7 +23,9 @@ interface AlarmBottomSheetProps {
 
 const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = () => {
 	const { circleAlarmService } = useServices();
-	const quickAccessAlarm = useObservable(circleAlarmService.quickAccessRingAlarmId);
+	const quickAccessAlarmId = useObservable(circleAlarmService.quickAccessRingAlarmId);
+	const { alarms } = useAlarms();
+	const quickAccessAlarm = alarms.find((el) => el.id === quickAccessAlarmId);
 	const [alarm, setAlarm] = useState(quickAccessAlarm?.isActivated);
 	const [date, setDate] = useState(new Date());
 	const [snooze, setSnooze] = useState(quickAccessAlarm?.snooze ? true : false);
@@ -46,17 +51,16 @@ const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = () => {
 		vibrationPower: 50,
 		vibrationRepetition: 4,
 		melody: Melody.ALERT,
-		label: "QuickAccess",
+		label: QuickAccessAlarmDefaultLabel,
 		isActivated: false,
 		isExisting: false,
 	};
 	const updateQuickAccessAlarm = async (_alarm: RingAlarm) => {
 		if (quickAccessAlarm) {
-			circleAlarmService.saveQuickAccessAlarm({ ..._alarm });
 			circleAlarmService.updateAlarm({ ..._alarm });
 		} else {
 			const response = await circleAlarmService.createAlarm(newAlarm);
-			circleAlarmService.quickAccessRingAlarmId.set(response);
+			circleAlarmService.quickAccessRingAlarmId.set(response.id);
 		}
 	};
 	return (
@@ -121,7 +125,8 @@ const SwitchButton = styled(Switch)`
 	margin-right: 10px;
 	border-color: ${colors.blue};
 `;
-
+//
+//ALR01r7fh13m54vNaNn04M04i01LQuickAccess
 const Divider = styled.View`
 	border-bottom-width: 0.5px;
 	border-bottom-color: ${colors.gray};
@@ -148,17 +153,28 @@ const TextAndSwitchContainer = styled.View`
 export const AlarmTile = () => {
 	const AlarmBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const warningBottomSheet = useRef<CircularBottomSheetHandle>(null);
-	const { alarms } = useAlarms();
+	const { alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
 	const { circleAlarmService } = useServices();
-	const quickAccessAlarm = useObservable(circleAlarmService.quickAccessRingAlarmId);
+	const quickAccessAlarmId = useObservable(circleAlarmService.quickAccessRingAlarmId);
+	const quickAccessAlarm = alarms.find((el) => el.id === quickAccessAlarmId);
+	const autoConnectState = useAutoConnectState();
+	const hasConnectedRing = autoConnectState === DeviceAutoConnectState.CONNECTED;
 
 	const isAlarmOn = quickAccessAlarm && quickAccessAlarm.isActivated;
+
+	useEffect(() => {
+		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
+			loadAlarms();
+		}
+	}, [loadAlarms, autoConnectState]);
+
 	return (
 		<>
 			<Tile
 				style={{ borderLeftWidth: 0.5, borderRightWidth: 0.5, borderColor: colors.gray }}
 				onPress={() => {
+					if (!hasConnectedRing) return;
 					alarms.length >= MAX_ALARMS ? warningBottomSheet.current?.present() : AlarmBottomSheetRef.current?.present();
 				}}
 			>

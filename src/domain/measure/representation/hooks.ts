@@ -26,7 +26,9 @@ import {
 	DailyBr,
 	DailyHr,
 	DailyHRNight,
+	DailyHrTrend,
 	DailyHrv,
+	DailyHrvTrend,
 	DailySleepData,
 	DailySpo2,
 	DataControlState,
@@ -44,7 +46,9 @@ import {
 	parseDailyBR,
 	parseDailyHR,
 	parseDailyHRNight,
+	parseDailyHRTrend,
 	parseDailyHRV,
+	parseDailyHRVTrend,
 	parseDailySpo2,
 	toOptional,
 } from "./business";
@@ -262,15 +266,15 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						return {
 							high:
 								localMetrics && localMetrics[MetricType.UserDailyHighActivityIntensityDuration] !== null
-									? moment.duration(localMetrics[MetricType.UserDailyHighActivityIntensityDuration]).asHours()
+									? localMetrics[MetricType.UserDailyHighActivityIntensityDuration]
 									: null,
 							medium:
 								localMetrics && localMetrics[MetricType.UserDailyMediumActivityIntensityDuration] !== null
-									? moment.duration(localMetrics[MetricType.UserDailyMediumActivityIntensityDuration]).asHours()
+									? localMetrics[MetricType.UserDailyMediumActivityIntensityDuration]
 									: null,
 							low:
 								localMetrics && localMetrics[MetricType.UserDailyLowActivityIntensityDuration] !== null
-									? moment.duration(localMetrics[MetricType.UserDailyLowActivityIntensityDuration]).asHours()
+									? localMetrics[MetricType.UserDailyLowActivityIntensityDuration]
 									: null,
 							date,
 						};
@@ -315,8 +319,8 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					}),
 					[localISODay]
 				);
-
-				return parseDailyHR(model.dailyHRMetrics.get(localISODay));
+				const data = model.dailySleepMetrics.get(localISODay);
+				return parseDailyHR(model.dailyHRMetrics.get(localISODay), data);
 			},
 			useDailySpo2(localISODay: ISODay): DailySpo2 | undefined {
 				useEffect(
@@ -716,6 +720,25 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						thresholdHigh: 0.9,
 					}),
 				};
+			},
+			useDailyHRVTrend(localISODay = getCurrentLocalISODay()): DailyHrvTrend | undefined {
+				useEffect(
+					action(function () {
+						actions.pullDailyHRVTrendMetrics(localISODay, shouldByPassCache(model.dailyHRVTrendMetrics, localISODay));
+					}),
+					[localISODay]
+				);
+				return parseDailyHRVTrend(model.dailyHRVTrendMetrics.get(localISODay));
+			},
+			useDailyHRTrend(localISODay = getCurrentLocalISODay()): DailyHrTrend | undefined {
+				useEffect(
+					action(function () {
+						actions.pullDailyHRTrendMetrics(localISODay, shouldByPassCache(model.dailyHRVTrendMetrics, localISODay));
+					}),
+					[localISODay]
+				);
+
+				return parseDailyHRTrend(model.dailyHRTrendMetrics.get(localISODay));
 			},
 			/**
 			 * @implements spec 00026

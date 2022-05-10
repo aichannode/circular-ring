@@ -2,16 +2,19 @@ import { hasNullMember, isDefined, isToday } from "@domain/common/business";
 import { ISOMonth } from "@domain/common/type";
 import { hasAttributesDefined } from "@ui/utils/filter";
 import moment from "moment";
-import { Metrics, MetricType, RangeMetrics } from "../metric";
+import { DatedMetrics, Metrics, MetricType, RangeMetrics } from "../metric";
 import {
 	ActivityAll,
 	ActivityControlState,
 	DailyBr,
 	DailyHr,
 	DailyHRNight,
+	DailyHrTrend,
 	DailyHrv,
+	DailyHrvTrend,
 	DailySpo2,
 	DataControlState,
+	Points,
 	ScoreQuality,
 } from "./api";
 import { ActivityIntensityAllAverageMetrics, DailySleepStageDuration, SleepStagesMetrics } from "./lib/type";
@@ -28,7 +31,7 @@ export function canDisplay(isoDay: string, userCoreSleepEnd: number) {
  * Compute an activity control state
  */
 export function getActivityControlState(model: { thresholdLow: number; thresholdHigh?: number; value: number }) {
-	if (model.thresholdHigh === undefined) {
+	if (!isDefined(model.thresholdHigh)) {
 		if (model.value >= model.thresholdLow) {
 			return ActivityControlState.OPTIMAL;
 		}
@@ -70,9 +73,11 @@ export function parseDailyHR(
 				| MetricType.UserDailyAwakeHRAverage
 				| MetricType.UserDailyAwakeHRReference
 		  >
-		| undefined
+		| undefined,
+	dailySleepMetrics: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined
 ): DailyHr | undefined {
-	if (dailyHR === undefined) return undefined;
+	if (!isDefined(dailyHR)) return undefined;
+	const lines = getTimeseries(dailyHR.timeSeries, MetricType.UserHR);
 	const dailyHr: DailyHr = {
 		constant: {
 			hr: getOrElse<number>(dailyHR.constant, MetricType.UserDailyAwakeHRAverage, 0),
@@ -80,14 +85,14 @@ export function parseDailyHR(
 			hrMax: getOrElse<number>(dailyHR.constant, MetricType.UserDailyAwakeHRMax, 0),
 			reference: getOrElse<number>(dailyHR.constant, MetricType.UserDailyAwakeHRReference, 0),
 		},
-		lines: [],
+		data: lines,
+		controlState: getControlState(
+			lines,
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepBegin, 0) : 0,
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepEnd, 0) : 0
+		),
 	};
-	dailyHR.timeSeries.map((timeSerie) => {
-		dailyHr.lines.push({
-			x: Date.parse(timeSerie.timestamp),
-			y: getOrElse<number>(timeSerie.metrics, MetricType.UserHR, 0),
-		});
-	});
+
 	return dailyHr;
 }
 
@@ -95,33 +100,22 @@ export function parseDailySpo2(
 	dailySpo2:
 		| RangeMetrics<MetricType.UserDailySPO2, MetricType.UserDailyAsleepSPO2 | MetricType.UserDailyAsleepSPO2Reference>
 		| undefined,
-	dailySleepStageDuration: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined
+	dailySleepMetrics: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined
 ): DailySpo2 | undefined {
-	if (dailySpo2 === undefined || dailySpo2?.timeSeries.length === 0) return undefined;
-
+	if (!isDefined(dailySpo2)) return undefined;
+	const lines = getTimeseries(dailySpo2.timeSeries, MetricType.UserDailySPO2);
 	const dailySpo2Data: DailySpo2 = {
 		constant: {
 			average: getOrElse<number>(dailySpo2.constant, MetricType.UserDailyAsleepSPO2, 0),
 			reference: getOrElse<number>(dailySpo2.constant, MetricType.UserDailyAsleepSPO2Reference, 0),
 		},
-		lines: [],
-		controlState: DataControlState.NO_DATA,
+		data: lines,
+		controlState: getControlState(
+			lines,
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepBegin, 0) : 0,
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepEnd, 0) : 0
+		),
 	};
-	dailySpo2.timeSeries.map((timeSerie) => {
-		dailySpo2Data.lines.push({
-			x: Date.parse(timeSerie.timestamp),
-			y: getOrElse<number>(timeSerie.metrics, MetricType.UserDailySPO2, 0),
-		});
-	});
-	if (dailySleepStageDuration) {
-		const userSleepBegin = getOrElse<number>(dailySleepStageDuration?.constant, MetricType.UserCoreSleepBegin, 0);
-		const userSleepEnd = getOrElse<number>(dailySleepStageDuration?.constant, MetricType.UserCoreSleepEnd, 0);
-
-		const controlState = dailySpo2Data.lines.some(({ x }) => x > userSleepBegin * 1000 && x < userSleepEnd * 1000)
-			? DataControlState.READY
-			: DataControlState.NO_DATA;
-		dailySpo2Data.controlState = controlState;
-	}
 
 	return dailySpo2Data;
 }
@@ -129,35 +123,22 @@ export function parseDailyBR(
 	dailyBR:
 		| RangeMetrics<MetricType.UserBR, MetricType.UserDailyAsleepBR | MetricType.UserDailyAsleepBRReference>
 		| undefined,
-	dailySleepStageDuration: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined
+	dailySleepMetrics: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined
 ): DailyBr | undefined {
-	if (dailyBR === undefined || dailyBR?.timeSeries.length === 0) return undefined;
-
+	if (!isDefined(dailyBR)) return undefined;
+	const lines = getTimeseries(dailyBR.timeSeries, MetricType.UserBR);
 	const data: DailyBr = {
 		constant: {
 			average: getOrElse<number>(dailyBR.constant, MetricType.UserDailyAsleepBR, 0),
 			reference: getOrElse<number>(dailyBR.constant, MetricType.UserDailyAsleepBRReference, 0),
 		},
-		lines: [],
-		controlState: DataControlState.NO_DATA,
+		data: lines,
+		controlState: getControlState(
+			lines,
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepBegin, 0) : 0,
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepEnd, 0) : 0
+		),
 	};
-	dailyBR.timeSeries.map((timeSerie) => {
-		data.lines.push({
-			x: Date.parse(timeSerie.timestamp),
-			y: getOrElse<number>(timeSerie.metrics, MetricType.UserBR, 0),
-		});
-	});
-
-	if (dailySleepStageDuration) {
-		const userSleepBegin = getOrElse<number>(dailySleepStageDuration?.constant, MetricType.UserCoreSleepBegin, 0);
-		const userSleepEnd = getOrElse<number>(dailySleepStageDuration?.constant, MetricType.UserCoreSleepEnd, 0);
-
-		const controlState = data.lines.some(({ x }) => x > userSleepBegin * 1000 && x < userSleepEnd * 1000)
-			? DataControlState.READY
-			: DataControlState.NO_DATA;
-		data.controlState = controlState;
-	}
-
 	return data;
 }
 export function parseDailyHRV(
@@ -166,40 +147,62 @@ export function parseDailyHRV(
 		| undefined,
 	dailySleepMetrics: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined
 ): DailyHrv | undefined {
-	if (dailyHRV === undefined) return undefined;
+	if (!isDefined(dailyHRV)) return undefined;
+	const lines = getTimeseries(dailyHRV.timeSeries, MetricType.UserHRV);
 	const dailyHrv: DailyHrv = {
 		constant: {
 			average: getOrElse<number>(dailyHRV.constant, MetricType.UserDailyAsleepHRV, 0),
 			reference: getOrElse<number>(dailyHRV.constant, MetricType.UserDailyReferenceHRV, 0),
 		},
-		lines: [],
-		controlState: DataControlState.NO_DATA,
+		data: lines,
+		controlState: getControlState(
+			lines,
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepBegin, 0) : 0,
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepEnd, 0) : 0
+		),
 	};
-	if (dailySleepMetrics) {
-		const userSleepBegin = getOrElse<number>(dailySleepMetrics?.constant, MetricType.UserCoreSleepBegin, 0);
-		const userSleepEnd = getOrElse<number>(dailySleepMetrics?.constant, MetricType.UserCoreSleepEnd, 0);
-
-		dailyHRV.timeSeries.map((timeSerie) => {
-			dailyHrv.lines.push({
-				x: Date.parse(timeSerie.timestamp),
-				y: getOrElse<number>(timeSerie.metrics, MetricType.UserHRV, 0),
-			});
-		});
-
-		const controlState = dailyHrv.lines.some(({ x }) => x > userSleepBegin * 1000 && x < userSleepEnd * 1000)
-			? DataControlState.READY
-			: DataControlState.NO_DATA;
-		dailyHrv.controlState = controlState;
-	}
 
 	return dailyHrv;
+}
+
+export function parseDailyHRVTrend(
+	dailyHRVTrend: RangeMetrics<MetricType.UserHRVTrend, never> | undefined
+): DailyHrvTrend | undefined {
+	if (dailyHRVTrend === undefined || dailyHRVTrend?.timeSeries.length === 0) return undefined;
+	const data: DailyHrvTrend = {
+		data: dailyHRVTrend.timeSeries.map((timeSerie) => {
+			return {
+				x: Date.parse(timeSerie.timestamp),
+				y: getOrElse<number>(timeSerie.metrics, MetricType.UserHRVTrend, 0),
+			};
+		}),
+	};
+
+	return data;
+}
+export function parseDailyHRTrend(
+	dailyHRTrend: RangeMetrics<MetricType.UserHRTrend, never> | undefined
+): DailyHrTrend | undefined {
+	if (dailyHRTrend === undefined || dailyHRTrend?.timeSeries.length === 0) return undefined;
+	const data: DailyHrvTrend = {
+		data: dailyHRTrend.timeSeries.map((timeSerie) => {
+			return {
+				x: Date.parse(timeSerie.timestamp),
+				y: getOrElse<number>(timeSerie.metrics, MetricType.UserHRTrend, 0),
+			};
+		}),
+	};
+
+	return data;
 }
 
 export function parseAllActivity(
 	lastActivity: Metrics<ActivityIntensityAllAverageMetrics> | undefined,
 	allActivity: Array<{ activity?: Metrics<ActivityIntensityAllAverageMetrics>; date: ISOMonth } | undefined>
 ): ActivityAll | undefined {
-	if (lastActivity === undefined || allActivity.length === 0) return undefined;
+	if (!isDefined(lastActivity)) {
+		return undefined;
+	}
 
 	if (allActivity[0]) {
 		if (hasAttributesDefined(allActivity[0], ["activity"])) {
@@ -273,6 +276,7 @@ export function toOptional<T extends number | string>(data: Metrics<any>, key: M
 export function getOrElse<T extends number | string>(data: Metrics<any>, key: MetricType, defaultValue: T): T {
 	return hasNullish(data[key]) ? defaultValue : (data[key] as T);
 }
+
 export function parseDailyHRNight(
 	dailyHRNight:
 		| RangeMetrics<
@@ -283,9 +287,10 @@ export function parseDailyHRNight(
 				| MetricType.UserDailySleepHRMax
 		  >
 		| undefined,
-	dailySleepStageDuration: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined
+	dailySleepMetrics: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined
 ): DailyHRNight | undefined {
-	if (dailyHRNight === undefined || dailyHRNight?.timeSeries.length === 0) return undefined;
+	if (!isDefined(dailyHRNight)) return undefined;
+	const lines = getTimeseries(dailyHRNight.timeSeries, MetricType.UserHR);
 	const data: DailyHRNight = {
 		constant: {
 			hr: getOrElse<number>(dailyHRNight.constant, MetricType.UserHR, 0),
@@ -293,23 +298,35 @@ export function parseDailyHRNight(
 			hrMax: getOrElse<number>(dailyHRNight.constant, MetricType.UserDailySleepHRMax, 0),
 			reference: getOrElse<number>(dailyHRNight.constant, MetricType.UserDailySleepHR, 0),
 		},
-		lines: dailyHRNight.timeSeries.map((timeSerie) => {
-			return {
-				x: Date.parse(timeSerie.timestamp),
-				y: getOrElse<number>(timeSerie.metrics, MetricType.UserHR, 0),
-			};
-		}),
-		controlState: DataControlState.NO_DATA,
+		data: lines,
+		controlState: getControlState(
+			lines,
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepBegin, 0) : 0,
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepEnd, 0) : 0
+		),
 	};
 
-	if (dailySleepStageDuration) {
-		const userSleepBegin = getOrElse<number>(dailySleepStageDuration?.constant, MetricType.UserCoreSleepBegin, 0);
-		const userSleepEnd = getOrElse<number>(dailySleepStageDuration?.constant, MetricType.UserCoreSleepEnd, 0);
-
-		const controlState = data.lines.some(({ x }) => x > userSleepBegin * 1000 && x < userSleepEnd * 1000)
-			? DataControlState.READY
-			: DataControlState.NO_DATA;
-		data.controlState = controlState;
-	}
 	return data;
+}
+
+export function getTimeseries(timeSeries: ReadonlyArray<DatedMetrics<any>>, key: MetricType): Points {
+	const lines = timeSeries.map((timeSerie) => {
+		return {
+			x: Date.parse(timeSerie.timestamp),
+			y: getOrElse<number>(timeSerie.metrics, key, 0),
+		};
+	});
+	return lines;
+}
+
+export function getControlState(
+	lines: Points,
+	userSleepBegin: number,
+	userSleepEnd: number
+): DataControlState.READY | DataControlState.NO_DATA {
+	const controlState = lines.some(({ x }) => x > userSleepBegin * 1000 && x < userSleepEnd * 1000)
+		? DataControlState.READY
+		: DataControlState.NO_DATA;
+
+	return controlState;
 }

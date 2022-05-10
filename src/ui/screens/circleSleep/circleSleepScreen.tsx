@@ -5,7 +5,7 @@ import { DailySleepData } from "@domain/measure/representation/api";
 import { sleepScoreContributors } from "@domain/measure/representation/lib/type";
 import { TimeFrame } from "@domain/measure/type";
 import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
-import { getInitMode } from "@ui/business";
+import { getInitMode, TrimOptions } from "@ui/business";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
@@ -22,6 +22,7 @@ import { ScoreSection } from "@ui/containers/scoreSection";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import React, { useRef, useState } from "react";
 import { Image, LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
@@ -55,6 +56,14 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
 
 	useDailySleepStages({ setData: setDailyData, localISODay: selectedDay });
+
+	// XXX: https://circularing.atlassian.net/browse/CIR-790
+	const [] = dailySleep?.coreSleepTiming ?? [];
+	const dailyTrimOptions: TrimOptions = {
+		includes: dailySleep?.coreSleepTiming
+			? [[moment(dailySleep.coreSleepTiming[0]).valueOf(), moment(dailySleep.coreSleepTiming[1]).valueOf()]]
+			: [],
+	};
 
 	return (
 		<Container>
@@ -174,10 +183,18 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 						)}
 					</>
 				)}
-				{activeItem === 1 && <HeartRateGraph selectedDay={selectedDay} mode={screenMode} />}
-				{activeItem === 2 && <Spo2Graph selectedDay={selectedDay} mode={screenMode} />}
-				{activeItem === 3 && <BreathingRateGraph selectedDay={selectedDay} mode={screenMode} />}
-				{activeItem === 4 && <HRVGraph selectedDay={selectedDay} mode={screenMode} />}
+				{activeItem === 1 && (
+					<HeartRateGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
+				)}
+				{activeItem === 2 && (
+					<Spo2Graph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
+				)}
+				{activeItem === 3 && (
+					<BreathingRateGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
+				)}
+				{activeItem === 4 && (
+					<HRVGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
+				)}
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
 					<Row style={{ justifyContent: "center" }}>
 						<ImageContainer onPress={() => setActiveItem(0)}>

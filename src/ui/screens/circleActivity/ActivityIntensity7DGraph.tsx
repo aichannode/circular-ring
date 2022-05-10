@@ -60,10 +60,10 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 
 	const [highData, mediumData, lowData] = lines.reduce<[Data[], Data[], Data[]]>(
 		([highData, mediumData, lowData], item, index) => [
-			// XXX: Graph unit is 30min so, as data are in hour, we need to multiply by 2.
-			[...highData, { x: index, y: item.high * 2 }],
-			[...mediumData, { x: index, y: item.medium * 2 }],
-			[...lowData, { x: index, y: item.low * 2 }],
+			// XXX: Graph unit is 30min so, as data are in minutes, we need to divide them by 30.
+			[...highData, { x: index, y: item.high / 30 }],
+			[...mediumData, { x: index, y: item.medium / 30 }],
+			[...lowData, { x: index, y: item.low / 30 }],
 		],
 		[[], [], []]
 	) || [[], [], []];
@@ -97,13 +97,10 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 					]}
 					labelFormatter={(x, y, index) => {
 						const values = [highData[index].y, mediumData[index].y, lowData[index].y]
-							.map((val) => val / 2)
+							// XXX: As graph data are expressed in 30minutes, we need to multiply them by 30 to get them in minutes.
+							.map((val) => val * 30)
 							.sort((a, b) => b - a)
-							.map((val) => {
-								const hours = Math.floor(val).toString();
-								const min = Math.floor((val % 1) * 60).toString();
-								return `${hours.padStart(2, "0")}:${min.padStart(2, "0")}`;
-							});
+							.map((val) => moment.utc(moment.duration(val, "minutes").as("ms")).format("HH:mm"));
 						return `${moment(activity7D?.activityMetrics[index].date).format("ddd DD")}\n${values.join("\n")}`;
 					}}
 					highlightPerTapEnabled

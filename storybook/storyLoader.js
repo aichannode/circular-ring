@@ -4,6 +4,7 @@
 // https://github.com/elderfo/react-native-storybook-loader.git
 
 function loadStories() {
+	require("../src/ui/components/buttons.stories");
 	require("../src/ui/components/lineChart/LineChart.stories");
 	require("../src/ui/components/stepChart/StepChart.stories");
 	require("../src/ui/components/scoreView/ScoreView.stories");
@@ -16,6 +17,7 @@ function loadStories() {
 }
 
 const stories = [
+	"../src/ui/components/buttons.stories",
 	"../src/ui/components/lineChart/LineChart.stories",
 	"../src/ui/components/stepChart/StepChart.stories",
 	"../src/ui/components/scoreView/ScoreView.stories",

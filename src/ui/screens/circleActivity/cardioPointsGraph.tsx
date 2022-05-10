@@ -2,7 +2,7 @@ import { useRepresentations } from "@core/representation";
 import { CalendarTag } from "@domain/calendar/calendar";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { DataControlState, Lines } from "@domain/measure/representation/api";
+import { DataControlState, Points } from "@domain/measure/representation/api";
 import { TimeFrame } from "@domain/measure/type";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { BarChart } from "@ui/components/measure/barChart";
@@ -44,7 +44,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 	} = useRepresentations();
 
 	const data = useLast7DaysCardioPoints(selectedDay);
-	const lines: Lines = data
+	const lines: Points = data
 		? data.series
 				.map((el) => {
 					return {
@@ -154,11 +154,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 										</View>
 									),
 								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(constant) && constant.average != 0
-									? `${constant.average}`
-									: "-",
+								value: isDefined(constant) && constant.average != 0 ? `${constant.average}` : "-",
 							},
 							{
 								label: format("cardio.baseline"),
@@ -188,11 +184,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 									node: <></>,
 								},
 
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(constant) && constant.total != 0
-									? `${constant.total}`
-									: "-",
+								value: isDefined(constant) && constant.total != 0 ? `${constant.total}` : "-",
 							},
 						]}
 					/>

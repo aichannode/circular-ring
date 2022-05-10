@@ -58,58 +58,53 @@ export interface Contributor {
 	controlState: ScoreQuality;
 }
 
-export interface DailyHr {
-	lines: Lines;
-	constant: {
-		hr: number;
-		hrMin: number;
-		hrMax: number;
-		reference: number;
-	};
-}
-export interface DailySpo2 {
-	lines: Lines;
-	constant: {
-		average: number;
-		reference: number;
-	};
+export interface DailyData<T> {
+	data: Points;
 	controlState: DataControlState;
-}
-export interface DailyBr {
-	lines: Lines;
-	constant: {
-		average: number;
-		reference: number;
-	};
-	controlState: DataControlState;
+	constant: T;
 }
 
-export interface DailyHrv {
-	lines: Lines;
-	constant: {
-		average: number;
-		reference: number;
-	};
-	controlState: DataControlState;
-}
-export interface DailyHRNight {
-	lines: Lines;
-	constant: {
-		hr: number;
-		hrMin: number;
-		hrMax: number;
-		reference: number;
-	};
-	controlState: DataControlState;
+export type DailyHr = DailyData<{
+	hr: number;
+	hrMin: number;
+	hrMax: number;
+	reference: number;
+}>;
+
+export type DailySpo2 = DailyData<{
+	average: number;
+	reference: number;
+}>;
+export type DailyBr = DailyData<{
+	average: number;
+	reference: number;
+}>;
+
+export type DailyHrv = DailyData<{
+	average: number;
+	reference: number;
+}>;
+export type DailyHRNight = DailyData<{
+	hr: number;
+	hrMin: number;
+	hrMax: number;
+	reference: number;
+}>;
+export interface DailyHrvTrend {
+	data: Points;
 }
 
-export interface Line {
+export interface DailyHrTrend {
+	data: Points;
+}
+
+export interface Point {
 	/** timestamp */
 	x: number;
 	/** bpm */
 	y: number;
 }
-export type Lines = Line[];
+export type Points = Point[];
 export interface Score {
 	/** isoday*/
 	date: ISODay;

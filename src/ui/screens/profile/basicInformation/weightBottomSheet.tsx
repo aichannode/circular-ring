@@ -55,7 +55,9 @@ export const WeightBottomSheet = ({ onSaved }: WeightBottomSheetProps) => {
 				{isLoading ? (
 					<Spinner size={24} />
 				) : (
-					<PrimaryButton onPress={saveWeight}>{format("global.save")}</PrimaryButton>
+					<PrimaryButton useOnBottomSheet onPress={saveWeight}>
+						{format("global.save")}
+					</PrimaryButton>
 				)}
 			</BottomContainer>
 		</Container>

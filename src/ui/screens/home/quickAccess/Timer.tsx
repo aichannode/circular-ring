@@ -1,6 +1,6 @@
 // import { useI18n } from "@ui/i18n";
 import { useServices } from "@core/services";
-import { CircularBottomScrollSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { ResponsiveCenterView } from "@ui/components/layout";
 import { colors } from "@ui/styles/colors";
@@ -33,7 +33,8 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 			<View style={{ width: 250, display: "flex", marginTop: 30 }}>
 				<CountdownCircleTimer
 					isPlaying={isPlaying}
-					duration={selectedMinute * 60 + selectedSeconde * 5 + selectedHour * 60 * 60}
+					duration={timerService.timer.get().initialRemainingTime}
+					initialRemainingTime={timerService.timer.get().remainingSecondes}
 					colors={colors.redOrange}
 					size={250}
 					strokeWidth={8}
@@ -170,9 +171,9 @@ export const TimerTile = () => {
 				<Bold>Timer</Bold>
 				<Light>{timer ? countdown(timer) : "off"}</Light>
 			</Tile>
-			<CircularBottomScrollSheet snapPoints={[480]} ref={TimerBottomSheetRef} allowSwipeDownToClose={false}>
+			<CircularBottomSheet snapPoints={[480]} ref={TimerBottomSheetRef} allowSwipeDownToClose={false}>
 				<TimerBottomSheet onClose={() => TimerBottomSheetRef.current?.close()} />
-			</CircularBottomScrollSheet>
+			</CircularBottomSheet>
 		</>
 	);
 };

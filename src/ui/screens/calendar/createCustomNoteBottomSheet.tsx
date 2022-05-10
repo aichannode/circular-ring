@@ -10,7 +10,7 @@ import { colors } from "@ui/styles/colors";
 import { reaction } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import styled from "styled-components/native";
 import { ErrorMessage } from "../../components/errorMessage";
 
@@ -77,12 +77,12 @@ export const CreateCustomNoteBottomSheet: React.FC<CreateCustomNoteBottomSheetPr
 						)}
 
 						<ButtonContainer gap={35}>
-							<TertiaryButton key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
-								{format("global.cancel")}
+							<TertiaryButton useOnBottomSheet key={"cancel"} containerBackgroundColor={colors.white} onPress={onClose}>
+								<Text>{format("global.cancel")}</Text>
 							</TertiaryButton>
 
-							<PrimaryButton key={"create"} onPress={createCustomNote}>
-								{format("global.create")}
+							<PrimaryButton useOnBottomSheet key={"create"} onPress={createCustomNote}>
+								<Text>{format("global.create")}</Text>
 							</PrimaryButton>
 						</ButtonContainer>
 					</>

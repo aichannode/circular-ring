@@ -35,8 +35,10 @@ import {
 	DailyHRNightConstantMetrics,
 	DailyHRNightTimeSeriesMetrics,
 	DailyHRTimeSeriesMetrics,
+	DailyHRTrendTimeSeriesMetrics,
 	DailyHRVConstantMetrics,
 	DailyHRVTimeSeriesMetrics,
+	DailyHRVTrendTimeSeriesMetrics,
 	DailySleepScoreMetrics,
 	DailySleepStageDuration,
 	DailySpo2ConstantMetrics,
@@ -66,6 +68,9 @@ export class MeasureModel implements Model<Proposal> {
 		ISODay,
 		RangeMetrics<DailyHRNightTimeSeriesMetrics, DailyHRNightConstantMetrics> | undefined
 	> = new Map();
+
+	public dailyHRVTrendMetrics: Map<ISODay, RangeMetrics<DailyHRVTrendTimeSeriesMetrics, never> | undefined> = new Map();
+	public dailyHRTrendMetrics: Map<ISODay, RangeMetrics<DailyHRTrendTimeSeriesMetrics, never> | undefined> = new Map();
 
 	public dailySleepScoreContributorsMetrics: Map<
 		ISODay,
@@ -175,6 +180,14 @@ export class MeasureModel implements Model<Proposal> {
 			} else if (mutation.type === "setDailyHRVMetrics") {
 				mutate.call(this, mutation, () =>
 					this.dailyHRVMetrics.set(mutation.payload.localISODay, mutation.payload.range)
+				);
+			} else if (mutation.type === "setDailyHRVTrendMetrics") {
+				mutate.call(this, mutation, () =>
+					this.dailyHRVTrendMetrics.set(mutation.payload.localISODay, mutation.payload.range)
+				);
+			} else if (mutation.type === "setDailyHRTrendMetrics") {
+				mutate.call(this, mutation, () =>
+					this.dailyHRTrendMetrics.set(mutation.payload.localISODay, mutation.payload.range)
 				);
 			} else if (mutation.type === "pullLast7DActivityIntensityMetrics") {
 				mutate.call(this, mutation, () =>

@@ -1,6 +1,6 @@
 import { isDefined } from "@domain/common/business";
-import { Lines } from "@domain/measure/representation/api";
-import { createActiveMode, isInActiveMode, isInCalibrationMode } from "@ui/business";
+import { Point, Points } from "@domain/measure/representation/api";
+import { createActiveMode, isInActiveMode, isInCalibrationMode, isInDisabledMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import * as scale from "d3-scale";
@@ -33,7 +33,7 @@ interface Rect extends Position {
 export type DaysItem = DayItem[];
 
 interface LineChartProps {
-	data?: Lines;
+	data?: Points;
 	isMultipleLines?: boolean;
 	averages?: Averages;
 	daysItem?: MultipleDataSets;
@@ -61,6 +61,10 @@ interface LineChartProps {
 	tooltipYMin?: number;
 	tooltipYMax?: number;
 	renderTooltip?: (value: number) => React.ReactElement;
+	shouldUpdateYmin?: boolean;
+	movingAverage?: Points;
+	xAxisMin?: number;
+	xAxisMax?: number;
 }
 
 const verticalContentInset = { top: 40, bottom: 20 };
@@ -94,20 +98,35 @@ export function LineChart({
 	tooltipYMin = 0,
 	tooltipYMax = 0,
 	renderTooltip,
+	shouldUpdateYmin = true,
+	movingAverage,
+	xAxisMin,
+	xAxisMax,
 }: LineChartProps) {
 	const [scaleX, setScaleX] = useState(1);
 	const graphRect = useRef<Rect>();
 	const [maxPosition, setMaxPosition] = useState<Position | null>(null);
 	const [minPosition, setMinPosition] = useState<Position | null>(null);
 
+	const maxDataLength = !isMultipleLines ? data.length : Math.max(...(daysItem ?? []).map(({ lines }) => lines.length));
+
+	if (__DEV__) {
+		// XXX: pre-conditions:
+		if (maxDataLength === 0 && !isInDisabledMode(mode)) {
+			throw new Error(
+				`Only 'disabled' mode can render LineChart without data. Found '${mode.type}' mode without data.`
+			);
+		}
+	}
+
 	const [xMin, xMax] = !isMultipleLines
-		? [Math.min(...data.map((line) => line.x)), Math.max(...data.map((line) => line.x))]
-		: [0, 0];
+		? [Math.min(...data.map((point) => point.x)), Math.max(...data.map((point) => point.x))]
+		: [0, maxDataLength - 1];
 
 	const shouldDisplay = isInActiveMode(mode) || isInCalibrationMode(mode);
 	const { format } = useI18n();
 	const [selectedX, setSelectedX] = useState<number | undefined>(data[0] ? (onSelect ? data[0].x : -1) : undefined);
-	const axisMinimum = yMin ? yMin - ((yMin % 10) + 10) : 0;
+	const axisMinimum = yMin ? (shouldUpdateYmin ? yMin - ((yMin % 10) + 10) : yMin) : 0;
 
 	const yAxisContentInset = verticalContentInset.top;
 
@@ -139,6 +158,8 @@ export function LineChart({
 		textColor: processColor(xColor),
 		granularityEnabled: true,
 		axisLineColor: processColor("white"),
+		axisMinimum: xAxisMin ?? (Number.isFinite(xMin) ? xMin : undefined),
+		axisMaximum: xAxisMax ?? (Number.isFinite(xMax) ? xMax : undefined),
 	};
 
 	const yAxis = {
@@ -175,80 +196,130 @@ export function LineChart({
 	const dataSets = {
 		dataSets: [
 			{
-				values: data.map(({ x, y }, index) => {
-					let marker = "";
-					if (!!shouldShowMarker) {
-						marker = labelFormatter(x, y, index);
-					}
-					return { x, y, marker };
-				}),
+				values: movingAverage ?? [],
 				label: "",
 				config: {
 					drawValues: false,
-					lineWidth: shouldShowMarker ? 2 : 1,
-					drawCircles: shouldDrawCircles,
-					circleColors: !!shouldShowMarker
-						? data.map(({ x }) => {
-								if (x == selectedX) {
-									return processColor("#333333");
-								}
-								return processColor(graphColor);
-						  })
-						: [processColor(graphColor)],
-					drawCircleHole: false,
+					lineWidth: 4,
+					drawCircles: false,
 					highlightColor: processColor("transparent"),
-					color: processColor(graphColor),
+					color: processColor(colors.blueExtraLight),
 					axisLineColor: processColor("white"),
 					highlightEnabled: true,
 					drawFilled: false,
 					valueTextSize: 0,
 					legend: false,
-					circleRadius: 4,
 					mode: "HORIZONTAL_BEZIER" as const,
 				},
 			},
+			...data
+				// remove `zero` points and create a new line each time a `zero` point is found.
+				.reduce(
+					(acc, point) => {
+						if (point.y === 0) {
+							return [...acc, []];
+						}
+						return [...acc.slice(0, -1), [...acc[acc.length - 1], point]];
+					},
+					[[]] as Points[]
+				)
+				// remove empty lines.
+				.filter((points) => points.length > 0)
+				.map((lines) => ({
+					values: lines.map(({ x, y }, index) => {
+						let marker = "";
+						if (!!shouldShowMarker) {
+							marker = labelFormatter(x, y, index);
+						}
+						return { x, y, marker };
+					}),
+					label: "",
+					config: {
+						drawValues: false,
+						lineWidth: shouldShowMarker ? 2 : 1,
+						drawCircles: shouldDrawCircles,
+						circleColors: !!shouldShowMarker
+							? data.map(({ x }) => {
+									if (x == selectedX) {
+										return processColor("#333333");
+									}
+									return processColor(graphColor);
+							  })
+							: [processColor(graphColor)],
+						drawCircleHole: false,
+						highlightColor: processColor("transparent"),
+						color: processColor(graphColor),
+						axisLineColor: processColor("white"),
+						highlightEnabled: true,
+						drawFilled: false,
+						valueTextSize: 0,
+						legend: false,
+						circleRadius: 4,
+						mode: "HORIZONTAL_BEZIER" as const,
+					},
+				})),
 		],
 	};
 
 	const multipleDataSets = {
 		dataSets:
 			isMultipleLines && daysItem
-				? daysItem.map(({ lines, color }) => {
-						return {
-							values: lines.map(({ x, y }, index) => {
-								let marker = "";
-								if (!!shouldShowMarker) {
-									marker = labelFormatter(x, y, index);
+				? daysItem
+						// remove `zero` points and create a new line each time a `zero` point is found.
+						.flatMap(({ lines, color }) => {
+							const segmentedLines = [] as Array<Point & { index: number }>[];
+							let hasPrevValue = false;
+							for (let index = 0; index < lines.length; ++index) {
+								const indexedLine = { ...lines[index], index };
+								if (indexedLine.y !== 0) {
+									if (hasPrevValue) {
+										segmentedLines[segmentedLines.length - 1].push(indexedLine);
+									} else {
+										segmentedLines.push([indexedLine]);
+									}
+									hasPrevValue = true;
+								} else {
+									hasPrevValue = false;
 								}
-								return { x: index, y, marker, value: x };
-							}),
-							label: "",
-							config: {
-								drawValues: false,
-								lineWidth: 3,
-								drawCircleHole: false,
+							}
+							return segmentedLines.map((lines) => ({ lines, color }));
+						})
+						.map(({ lines, color }) => {
+							return {
+								values: lines.map(({ x, y, index }) => {
+									let marker = "";
+									if (!!shouldShowMarker) {
+										marker = labelFormatter(x, y, index);
+									}
+									return { x: index, y, marker, value: x };
+								}),
+								label: "",
+								config: {
+									drawValues: false,
+									lineWidth: 3,
+									drawCircleHole: false,
 
-								drawCircles: true,
-								circleRadius: 4,
-								circleColor: processColor(color),
-								circleHoleColor: processColor(color),
-								highlightColor: processColor("transparent"),
-								color: processColor(color),
-								axisLineColor: processColor("white"),
-								drawFilled: false,
-								valueTextSize: 0,
-								legend: false,
-								circleColors: !!shouldShowMarker
-									? lines.map((_, i) => {
-											if (i == selectedX) {
-												return processColor("#333333");
-											}
-											return processColor(color);
-									  })
-									: [processColor(color)],
-							},
-						};
-				  })
+									drawCircles: true,
+									circleRadius: 4,
+									circleColor: processColor(color),
+									circleHoleColor: processColor(color),
+									highlightColor: processColor("transparent"),
+									color: processColor(color),
+									axisLineColor: processColor("white"),
+									drawFilled: false,
+									valueTextSize: 0,
+									legend: false,
+									circleColors: !!shouldShowMarker
+										? lines.map(({ index }) => {
+												if (index == selectedX) {
+													return processColor("#333333");
+												}
+												return processColor(color);
+										  })
+										: [processColor(color)],
+								},
+							};
+						})
 				: [],
 	};
 
@@ -313,7 +384,7 @@ export function LineChart({
 							const xScale = scale.scaleLinear().domain([xMax, xMin]).range([graphRect.current.width, 0]);
 
 							//find the x relative to yMax
-							const yValues = data.length ? data.map((line) => line.y) : [];
+							const yValues = data.length ? data.map((point) => point.y) : [];
 							const nearestMaxIdxs = getNearestDataIndexes(isDefined(yMax) ? yMax : 0, yValues);
 							const xLineMax = data.length ? data[nearestMaxIdxs[0]] : null;
 
@@ -368,8 +439,8 @@ export function LineChart({
 					</View>
 					{shouldShowLabel && scaleX < 1.06 && (
 						<>
-							{maxPosition && yMax && tooltip(yMax, maxPosition.x, maxPosition.y, tooltipYMax)}
-							{minPosition && yMin && tooltip(yMin, minPosition.x, minPosition.y, tooltipYMin)}
+							{maxPosition && isDefined(yMax) && tooltip(yMax, maxPosition.x, maxPosition.y, tooltipYMax)}
+							{minPosition && isDefined(yMin) && tooltip(yMin, minPosition.x, minPosition.y, tooltipYMin)}
 						</>
 					)}
 				</>

@@ -61,7 +61,9 @@ export const HeightBottomSheet = ({ onSaved }: HeightBottomSheetProps) => {
 				{isLoading ? (
 					<Spinner size={24} />
 				) : (
-					<PrimaryButton onPress={saveHeight}>{format("global.save")}</PrimaryButton>
+					<PrimaryButton useOnBottomSheet onPress={saveHeight}>
+						{format("global.save")}
+					</PrimaryButton>
 				)}
 			</BottomContainer>
 		</Container>

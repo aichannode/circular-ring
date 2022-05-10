@@ -1,4 +1,4 @@
-import { Lines } from "@domain/measure/representation/api";
+import { Points } from "@domain/measure/representation/api";
 import { createActiveMode, isInDisabledMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -14,7 +14,7 @@ interface BarChartProps {
 	graphColor?: string;
 	xColor: string;
 	yColor: string;
-	data: Lines;
+	data: Points;
 	shouldShowMarker?: boolean;
 	valueFormatter?: string | string[];
 	onSelect?: (x: number) => void;
@@ -38,13 +38,16 @@ export function BarChart({
 	const dataSets = {
 		dataSets: [
 			{
-				values: data?.map(({ x, y }, index) => {
-					let marker = "";
-					if (!!shouldShowMarker && y != 0) {
-						marker = `${moment(x).format("Y-MM-DD")}\n${y}`;
-					}
-					return { x: index, y, marker };
-				}),
+				values: data
+					?.map((el, index) => ({ ...el, index }))
+					.filter(({ y }) => y > 0)
+					.map(({ x, y, index }) => {
+						let marker = "";
+						if (!!shouldShowMarker && y != 0) {
+							marker = `${moment(x).format("Y-MM-DD")}\n${y}`;
+						}
+						return { x: index, y, marker };
+					}),
 				label: "",
 				config: {
 					colors: data.map((el) => {
@@ -54,6 +57,7 @@ export function BarChart({
 					highlightEnabled: true,
 					valueTextSize: 0,
 					legend: false,
+					valueTextColor: processColor("rgba(0,0,0,0)"),
 					highlightAlpha: Platform.OS === "ios" ? 100 : 255,
 					highlightColor: processColor(colors.selected),
 				},
@@ -131,7 +135,6 @@ export function BarChart({
 					pinchZoom={true}
 					scaleYEnabled={false}
 					doubleTapToZoomEnabled={false}
-					drawValueAboveBar={false}
 					highlightFullBarEnabled={true}
 					onSelect={(e) => {
 						const payload = e.nativeEvent as SelectEventPayload | null;

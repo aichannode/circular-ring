@@ -125,7 +125,7 @@ export const dailyActivitiesUIConfig: MetricsDetails = {
 	[MetricType.UserDailyWalkingEquivalency]: {
 		icon: "@assets/images/journey.png",
 		labelKey: "metric.walking",
-		renderValue: (distance) => (isDefined(distance) ? Number(distance) / 1000 : 0),
+		renderValue: (distance) => (isDefined(distance) ? Number(distance) / 1000 : undefined),
 		decimalNb: 1,
 	},
 	[MetricType.UserDailyCaloriesBurned]: {

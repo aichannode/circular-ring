@@ -108,6 +108,12 @@ export const dailySpo2ConstantMetrics = [
 ] as const;
 export type DailySpo2ConstantMetrics = typeof dailySpo2ConstantMetrics[number];
 
+export const dailyHRVTrendTimeSeriesMetrics = [MetricType.UserHRVTrend] as const;
+export type DailyHRVTrendTimeSeriesMetrics = typeof dailyHRVTrendTimeSeriesMetrics[number];
+
+export const dailyHRTrendTimeSeriesMetrics = [MetricType.UserHRTrend] as const;
+export type DailyHRTrendTimeSeriesMetrics = typeof dailyHRTrendTimeSeriesMetrics[number];
+
 /**
  * HRV
  */
