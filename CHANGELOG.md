@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0-alpha.5](https://gitlab.com/circularing/mobile/app/compare/v0.1.0-alpha.4...v0.1.0-alpha.5) (2022-05-10)
+
+
+### Features
+
+* **activity:** change x-axis to be fixed from midnight to midnight excluding sleep core sleep core ([8798729](https://gitlab.com/circularing/mobile/app/commit/879872965b3f919415b189c795a22ce07ca185ff))
+* add moving average ([8e4d512](https://gitlab.com/circularing/mobile/app/commit/8e4d5126523eb5ebc4694eb21a1545605b13aeea))
+* handle holes in charts ([5411e43](https://gitlab.com/circularing/mobile/app/commit/5411e43ce9f38a47a881100e14bb5b5393654132))
+* trim data on sleep graphs ([b36af27](https://gitlab.com/circularing/mobile/app/commit/b36af271ca76b7676cd7d766f8cf944c53998b58))
+* update body recovery description ([6713936](https://gitlab.com/circularing/mobile/app/commit/6713936e5974c7de1b5311aa1621e2100c4734f7))
+
+
+### Bug Fixes
+
+* activity intensity graphs ([c9d0197](https://gitlab.com/circularing/mobile/app/commit/c9d0197ddd329402b8c1c1140f0907c237690704))
+* added quickaccess order ([d894e1d](https://gitlab.com/circularing/mobile/app/commit/d894e1db68999c4b99f74e9e68f12919e649e802))
+* bar chart ([7bd51dc](https://gitlab.com/circularing/mobile/app/commit/7bd51dcacdb7c2934ca7f2fa5a9ee74fccc0ea9c))
+* bar chart on IOS ([7a21ae2](https://gitlab.com/circularing/mobile/app/commit/7a21ae2a429eb5908f610c23e7156234c7aa9525))
+* calibration period feedback ([791ba58](https://gitlab.com/circularing/mobile/app/commit/791ba580628e9088a2e7058d5031eb4563205b9f))
+* can't click on bottom sheet button ([1703e10](https://gitlab.com/circularing/mobile/app/commit/1703e1071c3953194a874c9d44deeeb51f0d51c1))
+* circle live screen ([af11823](https://gitlab.com/circularing/mobile/app/commit/af118237511e5b76de6f7427ea4e8921e5493117))
+* fetch tag categories ([71ff4a6](https://gitlab.com/circularing/mobile/app/commit/71ff4a6296e4109eea6584958892421be7c667db))
+* grow cross pressable in RingCard component ([4c25672](https://gitlab.com/circularing/mobile/app/commit/4c25672330b455b1c0942b2126f67fe2f0df4714))
+* heap size ([2d253fb](https://gitlab.com/circularing/mobile/app/commit/2d253fb6e82fc49ee086104e91973e6a94b32294))
+* heart rate graph's height ([62629b2](https://gitlab.com/circularing/mobile/app/commit/62629b2f1fbfe1cdf296c6cba15b015cea779009))
+* hide barchart tooltip when data is updated ([67797d5](https://gitlab.com/circularing/mobile/app/commit/67797d55b5119dc3bdbccea9dad7f4667c7dd791))
+* moving average order ([9fc0add](https://gitlab.com/circularing/mobile/app/commit/9fc0add77954d1b7f84929f356fe358c12610ccc))
+* quickaccess alarm ([7556562](https://gitlab.com/circularing/mobile/app/commit/755656221c0be0410b5d1edd21cdcaf891b7c730))
+* selected point on LineChart ([25e66c1](https://gitlab.com/circularing/mobile/app/commit/25e66c146505cf4226dd9308b3297f03c96d8b50))
+* spo2 graph ([60ee6c1](https://gitlab.com/circularing/mobile/app/commit/60ee6c18e8987ca555ef1920de1a50d92060cc97))
+* the loader was blank ([a3783fe](https://gitlab.com/circularing/mobile/app/commit/a3783fe54a9a6cb4cd74dd84b85f23de13d9de12))
+
 ## [0.1.0-alpha.4](https://gitlab.com/circularing/mobile/app/compare/v0.1.0-alpha.3...v0.1.0-alpha.4) (2022-04-29)
 
 
