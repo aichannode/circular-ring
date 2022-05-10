@@ -141,6 +141,7 @@ export function sample<T extends SleepStage | ActivityStage>(
 
 export function getActivityIntensityBarColor(value: number) {
 	switch (value) {
+		default:
 		case 1:
 			return colors.business.activityStageNone;
 		case 2:
