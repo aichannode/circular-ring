@@ -83,8 +83,6 @@ export function BarChart({
 		textColor: processColor(xColor),
 		granularityEnabled: true,
 		axisLineColor: processColor("white"),
-		axisMinimum: 0,
-		axisMaximum: data.length - 1,
 	};
 
 	const yAxis = {

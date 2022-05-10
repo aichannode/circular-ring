@@ -39,7 +39,9 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 	const hasCompleteCoreSleep = useHasCompleteCoreSleep(getCurrentLocalISODay());
 	const nbRemainingDays = useUserCalibrationRemainingDays();
 	// XXX: https://circularing.atlassian.net/browse/CIR-93
-	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
+	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep, {
+		allowCalibration: false,
+	});
 
 	useDailySleepStages({ localISODay: currentISODay, setData });
 
@@ -53,18 +55,16 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 	return (
 		<Container>
 			<ScrollView>
-				{wakeUpScore && (
-					<ScoreSection
-						mode={screenMode}
-						label={format("alarm.wake_up_score")}
-						color={colors.blue}
-						score={wakeUpScore.score}
-						quality={wakeUpScore.controlState}
-						style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
-						setState={setDisplayGraph}
-						state={displayGraph}
-					/>
-				)}
+				<ScoreSection
+					mode={screenMode}
+					label={format("alarm.wake_up_score")}
+					color={colors.blue}
+					score={wakeUpScore?.score}
+					quality={wakeUpScore?.controlState}
+					style={{ paddingTop: 20, paddingBottom: hasConnectedRing ? 0 : 20, alignSelf: "center" }}
+					setState={setDisplayGraph}
+					state={displayGraph}
+				/>
 				{displayGraph && dailySleep && (
 					<GraphWrapper>
 						<Cross onPress={() => setDisplayGraph(false)}>
@@ -73,7 +73,6 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 						<MiniHypnogram data={dailySleep.stages} />
 					</GraphWrapper>
 				)}
-
 				<InfoListHeader>{format("alarm.score.programmed")}</InfoListHeader>
 				<AlarmContainer>
 					{alarms?.map((value) => (
@@ -98,7 +97,6 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 						<AddAlarmText>{format("alarm.score.add_button")}</AddAlarmText>
 					</AddAlarmButton>
 				</AlarmContainer>
-
 				<InfoListHeader>{format("alarm.week_overview")}</InfoListHeader>
 				<AlarmOverviewContainer>
 					<AlarmWeekOverview style={{ marginVertical: 25 }} />
