@@ -423,7 +423,7 @@ export function LineChart({
 							marker={{
 								enabled: shouldShowLabel,
 								textColor: processColor(colors.white),
-								markerColor: processColor(colors.red),
+								markerColor: processColor(graphColor),
 							}}
 							dragDecelerationEnabled={true}
 							highlightPerDragEnabled={false}

@@ -71,7 +71,7 @@ export const SleepQualityScoreGraph: React.FC<Props> = observer(function EnergyS
 	if (isDefined(constant) && constant.average !== 0) {
 		averages.push({
 			value: constant.average * 100,
-			color: colors.red,
+			color: colors.darkBlue,
 		});
 	}
 
@@ -130,11 +130,11 @@ export const SleepQualityScoreGraph: React.FC<Props> = observer(function EnergyS
 					yMax={yMax}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
-					daysItem={[{ lines: lines, color: colors.red }]}
+					daysItem={[{ lines: lines, color: colors.darkBlue }]}
 					averages={averages}
 					shouldShowLabel={true}
 					shouldDrawCircles={true}
-					graphColor={colors.red}
+					graphColor={colors.darkBlue}
 					valueFormatter={valueFormatter}
 					shouldShowMarker={true}
 					highlightPerTapEnabled={true}
@@ -158,11 +158,11 @@ export const SleepQualityScoreGraph: React.FC<Props> = observer(function EnergyS
 												marginTop: 5,
 											}}
 										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.red} />
+											<DashedLine dashGap={5} dashLength={10} dashColor={colors.darkBlue} />
 										</View>
 									),
 								},
-								value: isDefined(constant) && constant.average != 0 ? `${constant.average} %` : "- %",
+								value: isDefined(constant) && constant.average != 0 ? `${Math.round(constant.average * 100)} %` : "- %",
 							},
 						]}
 					/>
