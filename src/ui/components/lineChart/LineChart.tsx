@@ -196,7 +196,10 @@ export function LineChart({
 	const dataSets = {
 		dataSets: [
 			{
-				values: movingAverage ?? [],
+				values:
+					movingAverage?.map(({ x, y }) => {
+						return { x, y, marker: "" };
+					}) ?? [],
 				label: "",
 				config: {
 					drawValues: false,
