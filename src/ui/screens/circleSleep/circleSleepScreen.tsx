@@ -5,7 +5,7 @@ import { DailySleepData } from "@domain/measure/representation/api";
 import { sleepScoreContributors } from "@domain/measure/representation/lib/type";
 import { TimeFrame } from "@domain/measure/type";
 import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
-import { getInitMode, TrimOptions } from "@ui/business";
+import { getInitMode, isInCalibrationMode, TrimOptions, updateMode } from "@ui/business";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
@@ -185,7 +185,14 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 						)}
 					</>
 				)}
-				{activeItem === 1 && <SleepQualityScoreGraph selectedDay={selectedDay} mode={screenMode} />}
+				{activeItem === 1 && (
+					<SleepQualityScoreGraph
+						selectedDay={selectedDay}
+						// XXX: Sleep quality score should not be displayed in calibration mode.
+						// https://circularing.atlassian.net/browse/CIR-904
+						mode={updateMode(screenMode, isInCalibrationMode(screenMode))}
+					/>
+				)}
 				{activeItem === 2 && (
 					<HeartRateGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
 				)}
