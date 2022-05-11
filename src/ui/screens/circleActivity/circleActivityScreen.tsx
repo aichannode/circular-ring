@@ -29,6 +29,7 @@ import { Image, LayoutAnimation, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
+import { CaloriesBurnedGraph } from "./caloriesBurnedGraph";
 import { CardioPointsGraph } from "./cardioPointsGraph";
 import { DailyMetric } from "./dailyMetric";
 import { EnergyScoreGraph } from "./energyScoreGraph";
@@ -218,16 +219,17 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							dailyTrimOptions={dailyTrimOptions}
 						/>
 					)}
-					{activeItem === 1 && <CardioPointsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-					{activeItem === 2 && <EnergyScoreGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-					{activeItem === 3 && (
+					{activeItem === 1 && <StepsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 2 && <CaloriesBurnedGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 3 && <CardioPointsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 4 && <EnergyScoreGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 5 && (
 						<HeartRateGraph
 							selectedDay={selectedDay}
 							mode={screenModeWithoutDisabled}
 							dailyTrimOptions={dailyTrimOptions}
 						/>
 					)}
-					{activeItem === 4 && <StepsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
 				</ElementStack>
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
@@ -243,22 +245,12 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							/>
 						</ImageContainer>
 
-						<ImageContainer onPress={() => setActiveItem(4)}>
-							<GraphSwitcherButton
-								source={
-									activeItem === 4
-										? require(`@assets/images/numberOfSteps.png`)
-										: require(`@assets/images/numberOfStepsTransparent.png`)
-								}
-							/>
-						</ImageContainer>
-
 						<ImageContainer onPress={() => setActiveItem(1)}>
 							<GraphSwitcherButton
 								source={
 									activeItem === 1
-										? require(`@assets/images/cardioPoints.png`)
-										: require(`@assets/images/cardioPointsTransparent.png`)
+										? require(`@assets/images/numberOfSteps.png`)
+										: require(`@assets/images/numberOfStepsTransparent.png`)
 								}
 							/>
 						</ImageContainer>
@@ -266,8 +258,8 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							<GraphSwitcherButton
 								source={
 									activeItem === 2
-										? require(`@assets/images/energyScore.png`)
-										: require(`@assets/images/energyScoreTransparent.png`)
+										? require(`@assets/images/caloriesBurned.png`)
+										: require(`@assets/images/caloriesBurnedTransparent.png`)
 								}
 							/>
 						</ImageContainer>
@@ -276,6 +268,27 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							<GraphSwitcherButton
 								source={
 									activeItem === 3
+										? require(`@assets/images/cardioPoints.png`)
+										: require(`@assets/images/cardioPointsTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+
+						<ImageContainer onPress={() => setActiveItem(4)}>
+							<GraphSwitcherButton
+								source={
+									activeItem === 4
+										? require(`@assets/images/energyScore.png`)
+										: require(`@assets/images/energyScoreTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+					</Row>
+					<Row style={{ marginBottom: 30, justifyContent: "center" }}>
+						<ImageContainer onPress={() => setActiveItem(5)}>
+							<GraphSwitcherButton
+								source={
+									activeItem === 5
 										? require(`@assets/images/heartCircle.png`)
 										: require(`@assets/images/heartCircleTransparent.png`)
 								}

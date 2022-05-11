@@ -206,6 +206,9 @@ export enum MetricType {
 
 	UserDailyCaloriesBurned = "user.daily.calories.burned",
 	UserDailyCaloriesBurnedGoal = "user.daily.calories.burned.goal",
+	UserCalorieBurnedAverage = "user.7days.average.calories.burned",
+	UserCalorieBurnedBaseline = "user.baseline.calories.burned",
+	UserCalorieBurnedTotal = "user.7days.total.calories.burned",
 
 	UserDailyCardioPoints = "user.daily.cardio.points",
 	UserDailyCardioPointsGoalMax = "user.daily.cardio.points.goal.max",

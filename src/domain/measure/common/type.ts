@@ -4,6 +4,7 @@ import {
 	ActivityIntensity7DAverageMetrics,
 	ActivityIntensityAllAverageMetrics,
 	ActivityIntensityMonthlyMetrics,
+	CalorieBurnedConstantMetrics,
 	CaloriesBurned,
 	CardioPoints,
 	CardioPointsConstantMetrics,
@@ -96,6 +97,13 @@ export type Mutations =
 			};
 	  }
 	| {
+			type: "setDailyCalorieBurned";
+			payload: {
+				localISODay: ISODay;
+				calorie: number | null;
+			};
+	  }
+	| {
 			type: "setLast7DCardioPoints";
 			payload: {
 				localISODay: ISODay;
@@ -128,6 +136,13 @@ export type Mutations =
 			payload: {
 				localISODay: ISODay;
 				data: Metrics<StepsConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setLast7DCalorieBurned";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<CalorieBurnedConstantMetrics>;
 			};
 	  }
 	| {

@@ -20,6 +20,7 @@ import {
 	Activity7D,
 	ActivityAll,
 	ActivityDetail,
+	CalorieBurned7D,
 	Cardio7D,
 	Contributor,
 	DailyActivityIntensityData,
@@ -951,6 +952,53 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					};
 				}
 			},
+			useLast7DaysCaloriesBurned(localISODay: ISODay): CalorieBurned7D | undefined {
+				// Compute the 7 previous date from the given date
+				const last7Days = getLast7Days(localISODay);
+
+				useEffect(
+					action(function () {
+						// Get the last 7 daily energy scores
+						last7Days.forEach((d) => actions.pullDailyCalorieBurned(d, shouldByPassCache(model.dailyCalorieBurned, d)));
+						// and the average for the last 7 days
+						actions.pullLast7DCalorieBurned(
+							localISODay,
+							shouldByPassCache(model.last7DCalorieBurnedConstants, localISODay)
+						);
+					}),
+					[localISODay]
+				);
+				const isLoaded = last7Days.some((date) => model.dailyCalorieBurned.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				// Spec 00026: IS_READY if has some historical data
+				const controlState = last7Days.some((date) => isDefined(model.dailyCalorieBurned.get(date)))
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
+
+				const series = last7Days.map((date) => ({
+					value: model.dailyCalorieBurned.get(date),
+					date,
+				})) as CalorieBurned7D["series"];
+
+				const constants = model.last7DCalorieBurnedConstants.get(localISODay);
+
+				if (constants) {
+					return {
+						series,
+						constant: {
+							average: Number(constants[MetricType.UserCalorieBurnedAverage]),
+							baseline: Number(constants[MetricType.UserCalorieBurnedBaseline]),
+							total: Number(constants[MetricType.UserCalorieBurnedTotal]),
+						},
+						controlState,
+					};
+				}
+			},
+
 			useDailySleepQualityScore(localISODay: ISODay) {
 				useEffect(
 					action(function () {

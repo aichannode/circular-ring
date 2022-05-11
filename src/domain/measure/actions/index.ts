@@ -13,6 +13,8 @@ import {
 	activityIntensityMonthlyMetrics,
 	ActivityIntensityMonthlyMetrics,
 	activityMetrics,
+	CalorieBurnedConstantMetrics,
+	calorieBurnedConstantMetrics,
 	CardioPointsConstantMetrics,
 	cardioPointsConstantMetrics,
 	ContributorActivityVolume,
@@ -466,6 +468,22 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
+		async pullDailyCalorieBurned(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures(
+				[MetricType.UserDailyCaloriesBurned],
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailyCalorieBurned",
+					payload: {
+						localISODay,
+						calorie: data[MetricType.UserDailyCaloriesBurned] ? Number(data[MetricType.UserDailyCaloriesBurned]) : null,
+					},
+				},
+			]);
+		},
 		async pullLast7DCardioPoints(localISODay: ISODay, useForceRefresh?: boolean) {
 			const constant = await measureApi.fetchLastDailyMeasures<CardioPointsConstantMetrics>(
 				cardioPointsConstantMetrics,
@@ -507,6 +525,22 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			present([
 				{
 					type: "setLast7DTemperatureVariation",
+					payload: {
+						localISODay,
+						data: constant,
+					},
+				},
+			]);
+		},
+		async pullLast7DCalorieBurned(localISODay: ISODay, useForceRefresh?: boolean) {
+			const constant = await measureApi.fetchLastDailyMeasures<CalorieBurnedConstantMetrics>(
+				calorieBurnedConstantMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setLast7DCalorieBurned",
 					payload: {
 						localISODay,
 						data: constant,

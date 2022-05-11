@@ -6,6 +6,7 @@ import { Metrics, MetricType, RangeMetrics } from "../metric";
 import {
 	ActivityIntensity7DAverageMetrics,
 	ActivityIntensityAllAverageMetrics,
+	CalorieBurnedConstantMetrics,
 	CaloriesBurned,
 	CardioPoints,
 	CardioPointsConstantMetrics,
@@ -114,6 +115,8 @@ export class MeasureModel implements Model<Proposal> {
 	public dailyTemperatureVariation: Map<ISODay, number | null> = new Map();
 	public last7DCardioPointConstants: Map<ISODay, Metrics<CardioPointsConstantMetrics>> = new Map();
 	public last7DTemperatureVariationConstants: Map<ISODay, Metrics<TemperatureVariationConstantMetrics>> = new Map();
+	public dailyCalorieBurned: Map<ISODay, number | null> = new Map();
+	public last7DCalorieBurnedConstants: Map<ISODay, Metrics<CalorieBurnedConstantMetrics>> = new Map();
 	public lastAllActivityIntensityAverageMetrics: Map<ISOMonth, Metrics<ActivityIntensityAllAverageMetrics>> = new Map();
 	public dailyActivityIntensityMetrics: Map<
 		ISODay,
@@ -229,6 +232,9 @@ export class MeasureModel implements Model<Proposal> {
 			} else if (mutation.type === "setDailyCardioPoints") {
 				const cardio = mutation.payload.cardio;
 				mutate.call(this, mutation, () => this.dailyCardioPoints.set(mutation.payload.localISODay, cardio));
+			} else if (mutation.type === "setDailyCalorieBurned") {
+				const calorie = mutation.payload.calorie;
+				mutate.call(this, mutation, () => this.dailyCalorieBurned.set(mutation.payload.localISODay, calorie));
 			} else if (mutation.type === "setLast7DCardioPoints") {
 				mutate.call(this, mutation, () =>
 					this.last7DCardioPointConstants.set(mutation.payload.localISODay, mutation.payload.data)
@@ -241,6 +247,10 @@ export class MeasureModel implements Model<Proposal> {
 			} else if (mutation.type === "setLast7DTemperatureVariation") {
 				mutate.call(this, mutation, () =>
 					this.last7DTemperatureVariationConstants.set(mutation.payload.localISODay, mutation.payload.data)
+				);
+			} else if (mutation.type === "setLast7DCalorieBurned") {
+				mutate.call(this, mutation, () =>
+					this.last7DCalorieBurnedConstants.set(mutation.payload.localISODay, mutation.payload.data)
 				);
 			} else if (mutation.type === "setDailyWakeUpScore") {
 				mutate.call(this, mutation, () =>
