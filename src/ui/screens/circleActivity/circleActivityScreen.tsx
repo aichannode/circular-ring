@@ -29,11 +29,13 @@ import { Image, LayoutAnimation, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
+import { CaloriesBurnedGraph } from "./caloriesBurnedGraph";
 import { CardioPointsGraph } from "./cardioPointsGraph";
 import { DailyMetric } from "./dailyMetric";
 import { EnergyScoreGraph } from "./energyScoreGraph";
 import { HeartRateGraph } from "./heartRateGraph";
 import { dailyActivitiesUIConfig, getActivityGaugesConfig } from "./measureDisplayInfos";
+import { StepsGraph } from "./StepsGraph";
 
 function getIcon(path: string) {
 	switch (path) {
@@ -217,8 +219,10 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							dailyTrimOptions={dailyTrimOptions}
 						/>
 					)}
-					{activeItem === 1 && <CardioPointsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-					{activeItem === 2 && (
+					{activeItem === 1 && <StepsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 2 && <CaloriesBurnedGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 3 && <CardioPointsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 4 && (
 						<EnergyScoreGraph
 							selectedDay={selectedDay}
 							// XXX: Energy score should not be displayed in calibration mode.
@@ -226,7 +230,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenModeWithoutDisabled))}
 						/>
 					)}
-					{activeItem === 3 && (
+					{activeItem === 5 && (
 						<HeartRateGraph
 							selectedDay={selectedDay}
 							mode={screenModeWithoutDisabled}
