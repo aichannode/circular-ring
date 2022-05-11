@@ -34,6 +34,7 @@ import { getSleepGaugesConfig } from "./measureDisplayInfos";
 import { Sleep7DChart } from "./Sleep7DChart";
 import { SleepAllChart } from "./SleepAllChart";
 import { SleepDurationPieChart } from "./sleepDurationPie";
+import { SleepQualityScoreGraph } from "./sleepQualityScoreGraph";
 import { Spo2Graph } from "./spo2Graph";
 import { TemperatureVariation7DGraph } from "./temperatureVariation7DGraph";
 
@@ -184,17 +185,19 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 						)}
 					</>
 				)}
-				{activeItem === 1 && (
+				{activeItem === 1 && <SleepQualityScoreGraph selectedDay={selectedDay} mode={screenMode} />}
+				{activeItem === 2 && (
 					<HeartRateGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
 				)}
-				{activeItem === 2 && (
-					<BreathingRateGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
-				)}
-				{activeItem === 3 && <TemperatureVariation7DGraph selectedDay={selectedDay} mode={screenMode} />}
-				{activeItem === 4 && (
+				{activeItem === 3 && (
 					<HRVGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
 				)}
-				{activeItem === 5 && (
+				{activeItem === 4 && (
+					<BreathingRateGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
+				)}
+				{activeItem === 5 && <TemperatureVariation7DGraph selectedDay={selectedDay} mode={screenMode} />}
+
+				{activeItem === 6 && (
 					<Spo2Graph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
 				)}
 
@@ -211,21 +214,21 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 						</ImageContainer>
 						<ImageContainer onPress={() => setActiveItem(1)}>
 							<GraphSwitcherButton
-								style={{ marginLeft: 0 }}
 								source={
 									activeItem === 1
-										? require(`@assets/images/heartCircleBlue.png`)
-										: require(`@assets/images/heartCircleBlueTransparent.png`)
+										? require(`@assets/images/sleepQualityScore.png`)
+										: require(`@assets/images/sleepQualityScoreTransparent.png`)
 								}
 							/>
 						</ImageContainer>
+
 						<ImageContainer onPress={() => setActiveItem(2)}>
 							<GraphSwitcherButton
 								style={{ marginLeft: 0 }}
 								source={
 									activeItem === 2
-										? require(`@assets/images/brBlue.png`)
-										: require(`@assets/images/brBlueTransparent.png`)
+										? require(`@assets/images/heartCircleBlue.png`)
+										: require(`@assets/images/heartCircleBlueTransparent.png`)
 								}
 							/>
 						</ImageContainer>
@@ -234,18 +237,20 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 								style={{ marginLeft: 0 }}
 								source={
 									activeItem === 3
-										? require(`@assets/images/temperatureVariationBlue.png`)
-										: require(`@assets/images/temperatureVariationTransparent.png`)
+										? require(`@assets/images/HRVBlue.png`)
+										: require(`@assets/images/HRVBlueTransparent.png`)
 								}
 							/>
 						</ImageContainer>
+					</Row>
+					<Row style={{ justifyContent: "center" }}>
 						<ImageContainer onPress={() => setActiveItem(4)}>
 							<GraphSwitcherButton
 								style={{ marginLeft: 0 }}
 								source={
 									activeItem === 4
-										? require(`@assets/images/HRVBlue.png`)
-										: require(`@assets/images/HRVBlueTransparent.png`)
+										? require(`@assets/images/brBlue.png`)
+										: require(`@assets/images/brBlueTransparent.png`)
 								}
 							/>
 						</ImageContainer>
@@ -254,6 +259,17 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 								style={{ marginLeft: 0 }}
 								source={
 									activeItem === 5
+										? require(`@assets/images/temperatureVariationBlue.png`)
+										: require(`@assets/images/temperatureVariationTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+
+						<ImageContainer onPress={() => setActiveItem(6)}>
+							<GraphSwitcherButton
+								style={{ marginLeft: 0 }}
+								source={
+									activeItem === 6
 										? require(`@assets/images/spo2Blue.png`)
 										: require(`@assets/images/spo2BlueTransparent.png`)
 								}

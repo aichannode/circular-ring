@@ -248,6 +248,13 @@ export type Mutations =
 			};
 	  }
 	| {
+			type: "setDailySleepScore";
+			payload: {
+				localISODay: ISODay;
+				score: number | null;
+			};
+	  }
+	| {
 			type: "setSleepScore";
 			payload: {
 				localISODay: ISODay;
@@ -263,6 +270,13 @@ export type Mutations =
 	  }
 	| {
 			type: "setLast7DEnergyScore";
+			payload: {
+				localISODay: ISODay;
+				score: number | null;
+			};
+	  }
+	| {
+			type: "setLast7DSleepScore";
 			payload: {
 				localISODay: ISODay;
 				score: number | null;

@@ -104,6 +104,8 @@ export class MeasureModel implements Model<Proposal> {
 	public dailySleepMetrics: Map<ISODay, RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>> = new Map();
 	public dailyEnergyScore: Map<ISODay, number | null> = new Map();
 	public last7DEnergyScore: Map<ISODay, number | null> = new Map();
+	public dailySleepScoreQuality: Map<ISODay, number | null> = new Map();
+	public last7DSleepScore: Map<ISODay, number | null> = new Map();
 	public last7DActivityIntensityAverageMetrics: Map<ISODay, Metrics<ActivityIntensity7DAverageMetrics>> = new Map();
 	public dailyCardioPoints: Map<ISODay, number | null> = new Map();
 	public dailyTemperatureVariation: Map<ISODay, number | null> = new Map();
@@ -218,6 +220,9 @@ export class MeasureModel implements Model<Proposal> {
 			} else if (mutation.type === "setDailyEnergyScore") {
 				const score = mutation.payload.score;
 				mutate.call(this, mutation, () => this.dailyEnergyScore.set(mutation.payload.localISODay, score));
+			} else if (mutation.type === "setDailySleepScore") {
+				const score = mutation.payload.score;
+				mutate.call(this, mutation, () => this.dailySleepScoreQuality.set(mutation.payload.localISODay, score));
 			} else if (mutation.type === "setDailyCardioPoints") {
 				const cardio = mutation.payload.cardio;
 				mutate.call(this, mutation, () => this.dailyCardioPoints.set(mutation.payload.localISODay, cardio));
@@ -257,6 +262,9 @@ export class MeasureModel implements Model<Proposal> {
 			} else if (mutation.type === "setLast7DEnergyScore") {
 				const score = mutation.payload.score;
 				mutate.call(this, mutation, () => this.last7DEnergyScore.set(mutation.payload.localISODay, score));
+			} else if (mutation.type === "setLast7DSleepScore") {
+				const score = mutation.payload.score;
+				mutate.call(this, mutation, () => this.last7DSleepScore.set(mutation.payload.localISODay, score));
 			}
 		});
 	};

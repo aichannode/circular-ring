@@ -26,6 +26,7 @@ export enum MetricType {
 	UserDailyGlobalScore = "user.daily.global.score",
 	UserDailyEnergyScore = "user.daily.energy.score",
 	User7DaysEnergyScore = "user.7days.energy.score",
+	User7DaysSleepScore = "user.7days.sleep.score",
 	UserDailySleepScore = "user.daily.sleep.score",
 	User2DaysSleepScore = "user.2days.sleep.score",
 

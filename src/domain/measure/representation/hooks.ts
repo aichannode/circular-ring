@@ -778,6 +778,44 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					controlState,
 				};
 			},
+			/**
+			 * @implements spec 00037
+			 */
+			useLast7DaysSleepScore(localISODay: ISODay): Scores7D | undefined {
+				// Compute the 7 previous date from the given date
+				const last7Days = getLast7Days(localISODay);
+				useEffect(
+					action(function () {
+						// Get the last 7 daily sleep scores
+						last7Days.forEach((d) =>
+							actions.setDailySleepQualityScore(d, shouldByPassCache(model.dailySleepScoreQuality, d))
+						);
+						// and the average for the last 7 days
+						actions.setLast7DSleepScore(localISODay, shouldByPassCache(model.last7DSleepScore, localISODay));
+					}),
+					[localISODay]
+				);
+
+				const isLoaded = last7Days.every((date) => model.dailySleepScoreQuality.has(date));
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last7Days.map((date) => ({
+					value: model.dailySleepScoreQuality.get(date),
+					date,
+				})) as Scores7D["series"];
+
+				// Spec 00026: IS_READY if has some historical data
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+				return {
+					series,
+					constant: {
+						average: model.last7DSleepScore.get(localISODay) ?? 0,
+					},
+					controlState,
+				};
+			},
 			useLast7DaysCardioPoints(localISODay: ISODay): Cardio7D | undefined {
 				// Compute the 7 previous date from the given date
 				const last7Days = getLast7Days(localISODay);

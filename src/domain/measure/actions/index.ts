@@ -400,6 +400,38 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
+		async setDailySleepQualityScore(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures(
+				[MetricType.UserDailySleepScore],
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailySleepScore",
+					payload: {
+						localISODay,
+						score: data[MetricType.UserDailySleepScore] ? Number(data[MetricType.UserDailySleepScore]) : null,
+					},
+				},
+			]);
+		},
+		async setLast7DSleepScore(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures(
+				[MetricType.User7DaysSleepScore],
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setLast7DSleepScore",
+					payload: {
+						localISODay,
+						score: data[MetricType.User7DaysSleepScore] as number,
+					},
+				},
+			]);
+		},
 		async setDailyWakeUpScore(localISODay: ISODay, useForceRefresh?: boolean) {
 			const data = await measureApi.fetchLastDailyMeasures(dailyWakeUpScoreMetrics, localISODay, useForceRefresh);
 			present([
