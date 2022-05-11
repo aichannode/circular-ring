@@ -140,6 +140,7 @@ export type UserInputState<T extends InputType = any> = {
 	id: number;
 	answeredAt: string;
 	answer: InputAnswer<T>;
+	feedEntryId: number;
 };
 
 export type UserInputStates = Array<UserInputState>;

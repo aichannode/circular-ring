@@ -129,7 +129,7 @@ export const FakeRecommendation: React.FC<Props> = ({ recommendation, maskRecomm
 			</Mask>
 			{userInput && !maskUserInput && (
 				<Mask masked={maskUserInput}>
-					<UserInput compId={userInput.id} palette={recommendation.style} {...userInput} />
+					<UserInput feedEntryId={recommendation.id} compId={userInput.id} palette={recommendation.style} {...userInput} />
 				</Mask>
 			)}
 		</>

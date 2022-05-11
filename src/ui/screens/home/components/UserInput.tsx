@@ -22,6 +22,7 @@ import { PrimaryButton } from "@ui/components/buttons";
 type Props = UserInputComponentConfigurationDto & {
 	palette: Activity["style"];
 	compId: number;
+	feedEntryId: number;
 };
 
 function Header({ title, isAnswered, isClosed }: UserInputConfiguration & { isClosed: boolean; isAnswered: boolean }) {
@@ -65,7 +66,8 @@ function Select({
 	compId,
 	canSave,
 	onLayout,
-}: SelectProps & { compId: number }) {
+	feedEntryId,
+}: SelectProps & { compId: number, feedEntryId: number }) {
 	const { format } = useI18n();
 	const [selectedIds, setSelectedIds] = useState<number[]>(selectedOptions ?? []);
 	const isRadio = minCount === 1 && maxCount === 1;
@@ -127,7 +129,7 @@ function Select({
 					<PrimaryButton
 						disabled={!isValidAnswer}
 						onPress={function () {
-							feedService.answerRecommendation(compId, selectedIds);
+							feedService.answerRecommendation(feedEntryId, compId, selectedIds);
 						}}
 					>
 						{format("global.save")}
@@ -203,7 +205,7 @@ function animate(
 	);
 }
 
-export function UserInput({ compId, configuration, palette }: Props) {
+export function UserInput({ feedEntryId, compId, configuration, palette }: Props) {
 	const { inputType, inputConfig } = configuration;
 	const [isClosed, setIsClosed] = useState(!!inputConfig.answeredAt);
 	const paperHeightRef = useSharedValue(0);
@@ -231,6 +233,7 @@ export function UserInput({ compId, configuration, palette }: Props) {
 				{inputType === InputType.SELECT && (
 					<Select
 						canSave={!inputConfig.answeredAt}
+						feedEntryId={feedEntryId}
 						compId={compId}
 						onLayout={(e) => (paperHeightRef.value = e.nativeEvent.layout.height)}
 						palette={palette as FeedEntityStyle}

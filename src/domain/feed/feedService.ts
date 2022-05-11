@@ -149,11 +149,11 @@ export class FeedService {
 	 * until fetching recommandations again.
 	 * Then we clear answers that has been taken in account to the server.
 	 */
-	answerRecommendation(componentId: number, answer: InputAnswer<InputType.SELECT>) {
+	answerRecommendation(feedEntryId: number, componentId: number, answer: InputAnswer<InputType.SELECT>) {
 		// CIR-429 need at least one option
 		if (!answer.length) return;
 		const answeredAt = moment().utc().toISOString();
-		const userInputState = { id: componentId, answeredAt, answer };
+		const userInputState = { id: componentId, answeredAt, answer, feedEntryId };
 		// Upsert the anwser in the locale state
 		this.localyAnsweredQuestions.update((state) => {
 			const reco = state.find(({ id: _id }) => _id === componentId) as UserInputState<InputType.SELECT> | undefined;
@@ -171,7 +171,7 @@ export class FeedService {
 		// TODO turn into reaction to the above update
 		// side effect (fire and forget)
 		this.feedApi
-			.answerQuestion(answer)
+			.answerQuestion([{feedEntryId, selectedOptionIds: answer}])
 			// now, refetch the notifications to sync with the server
 			.then(() => this.fetchRecommendations(this.appStateService.recommendationsCount.get()));
 	}
