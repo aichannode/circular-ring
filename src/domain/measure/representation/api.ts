@@ -140,6 +140,12 @@ export type TemperatureVariation7D = Range7<{
 	average: number;
 }>;
 
+export type Steps7D = Range7<{
+	average: number;
+	baseline: number;
+	total: number;
+}>;
+
 export interface SleepItem {
 	awake: number;
 	deep: number;

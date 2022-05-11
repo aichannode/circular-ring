@@ -48,12 +48,14 @@ import {
 	SleepAllConstantMetrics,
 	SleepMonthlyStageMetrics,
 	SleepStagesMetrics,
+	StepsConstantMetrics,
 	StepsTaken,
 	TemperatureVariationConstantMetrics,
 	WalkingEquivalency,
 } from "../representation/lib/type";
 
 export class MeasureModel implements Model<Proposal> {
+	public last7DStepsConstants: Map<ISODay, Metrics<StepsConstantMetrics>> = new Map();
 	public last7DSleepConstantMetrics: Map<ISODay, Metrics<Sleep7DConstantMetrics>> = new Map();
 	public monthlySleepStageMetrics: Map<ISOMonth, Metrics<SleepMonthlyStageMetrics>> = new Map();
 	public lastAllSleepStageMetrics: Map<ISOMonth, Metrics<SleepAllConstantMetrics>> = new Map();
@@ -102,6 +104,7 @@ export class MeasureModel implements Model<Proposal> {
 		>
 	> = new Map();
 	public dailySleepMetrics: Map<ISODay, RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>> = new Map();
+	public dailyStepsMetrics: Map<ISODay, number | null> = new Map();
 	public dailyEnergyScore: Map<ISODay, number | null> = new Map();
 	public last7DEnergyScore: Map<ISODay, number | null> = new Map();
 	public dailySleepScoreQuality: Map<ISODay, number | null> = new Map();
@@ -259,12 +262,20 @@ export class MeasureModel implements Model<Proposal> {
 				mutate.call(this, mutation, () =>
 					this.dailySleepScoreContributorsMetrics.set(mutation.payload.localISODay, mutation.payload.data)
 				);
+			} else if (mutation.type === "setDailyStepsMetrics") {
+				mutate.call(this, mutation, () =>
+					this.dailyStepsMetrics.set(mutation.payload.localISODay, mutation.payload.data)
+				);
 			} else if (mutation.type === "setLast7DEnergyScore") {
 				const score = mutation.payload.score;
 				mutate.call(this, mutation, () => this.last7DEnergyScore.set(mutation.payload.localISODay, score));
 			} else if (mutation.type === "setLast7DSleepScore") {
 				const score = mutation.payload.score;
 				mutate.call(this, mutation, () => this.last7DSleepScore.set(mutation.payload.localISODay, score));
+			} else if (mutation.type === "setLast7DStepsConstants") {
+				mutate.call(this, mutation, () =>
+					this.last7DStepsConstants.set(mutation.payload.localISODay, mutation.payload.data)
+				);
 			}
 		});
 	};

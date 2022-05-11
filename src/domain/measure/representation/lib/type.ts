@@ -372,6 +372,13 @@ export const sleepStagesMetrics = [
 ] as const;
 export type SleepStagesMetrics = typeof sleepStagesMetrics[number];
 
+export const stepsConstantMetrics = [
+	MetricType.UserStepsAverage,
+	MetricType.UserStepsBaseline,
+	MetricType.UserStepsTotal,
+] as const;
+export type StepsConstantMetrics = typeof stepsConstantMetrics[number];
+
 /**
  * This is a set of metrics used accross multiple components.
  * They are computed metrics. That means that there value is

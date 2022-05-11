@@ -46,6 +46,7 @@ import {
 	SleepAllConstantMetrics,
 	SleepMonthlyStageMetrics,
 	SleepStagesMetrics,
+	StepsConstantMetrics,
 	StepsTaken,
 	TemperatureVariationConstantMetrics,
 	WalkingEquivalency,
@@ -113,6 +114,20 @@ export type Mutations =
 			payload: {
 				localISODay: ISODay;
 				data: Metrics<TemperatureVariationConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setDailyStepsMetrics";
+			payload: {
+				localISODay: ISODay;
+				data: number | null;
+			};
+	  }
+	| {
+			type: "setLast7DStepsConstants";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<StepsConstantMetrics>;
 			};
 	  }
 	| {

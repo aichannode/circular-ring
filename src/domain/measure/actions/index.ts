@@ -91,6 +91,8 @@ import {
 	sleepMonthlyStageMetrics,
 	SleepStagesMetrics,
 	sleepStagesMetrics,
+	stepsConstantMetrics,
+	StepsConstantMetrics,
 	TemperatureVariationConstantMetrics,
 	temperatureVariationConstantMetrics,
 } from "../representation/lib/type";
@@ -539,6 +541,34 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					},
 				]);
 			});
+		},
+		async pullDailySteps(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailySteps], localISODay, useForceRefresh);
+			present([
+				{
+					type: "setDailyStepsMetrics",
+					payload: {
+						localISODay,
+						data: data[MetricType.UserDailySteps] ? Number(data[MetricType.UserDailySteps]) : null,
+					},
+				},
+			]);
+		},
+		async pullLast7DSteps(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures<StepsConstantMetrics>(
+				stepsConstantMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setLast7DStepsConstants",
+					payload: {
+						localISODay,
+						data,
+					},
+				},
+			]);
 		},
 		async setMonthlyActivityIntensityMetrics(
 			localISOMonth: ISOMonth = toISOMonth(getCurrentLocalISODay()),

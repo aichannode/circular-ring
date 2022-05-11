@@ -196,6 +196,9 @@ export enum MetricType {
 	UserDailySteps = "user.daily.steps",
 	UserDailyStepsGoalMin = "user.daily.steps.goal.min",
 	UserDailyStepsGoalMax = "user.daily.steps.goal.max",
+	UserStepsAverage = "user.7days.everage.steps",
+	UserStepsBaseline = "user.baseline.steps",
+	UserStepsTotal = "user.7days.total.steps",
 
 	UserDailyWalkingEquivalency = "user.daily.walking.equivalency",
 	UserDailyWalkingEquivalencyGoalMin = "user.daily.walking.equivalency.goal.min",
