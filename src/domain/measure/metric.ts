@@ -244,5 +244,6 @@ export enum MetricType {
 	// temperature variation
 	///////////////////
 	UserDailyTemperature = "user.daily.asleep.temperature",
+	UserDailyTemperatureScore = "user.daily.sleep.var.temperature",
 	UserDailyVarTemperature = "user.7days.sleep.var.temperature",
 }

@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0-alpha.6](https://gitlab.com/circularing/mobile/app/compare/v0.1.0-alpha.5...v0.1.0-alpha.6) (2022-05-12)
+
+
+### Features
+
+* add calorie burned 7days graph ([866c699](https://gitlab.com/circularing/mobile/app/commit/866c6996d8e9894b50c0396a52e1463946b46f5b))
+* add sleep quality score graph ([686ee91](https://gitlab.com/circularing/mobile/app/commit/686ee91386257f54eacd33027aa0ecda23b9989f))
+* add steps graph ([895ccd7](https://gitlab.com/circularing/mobile/app/commit/895ccd75908fcc3a2db77d0d417f998254a2fad7))
+
+
+### Bug Fixes
+
+* activity rebase issue ([d985d8d](https://gitlab.com/circularing/mobile/app/commit/d985d8d9ee368778daf1dd413e77a6e377275bb8))
+* **activity:** crash ([8d85851](https://gitlab.com/circularing/mobile/app/commit/8d8585120c5e04067e630e4e21fddedb6575b220))
+* **activity:** crash ([9e1bb8a](https://gitlab.com/circularing/mobile/app/commit/9e1bb8a7c71f4d7177d1aed4b33986ba150d2c5f))
+* **activity:** crash ([13fb798](https://gitlab.com/circularing/mobile/app/commit/13fb7982021a9a771684ad38c95559d66f394c79))
+* **activity:** set disabled mode when screen is in calibration mode for some graphs ([7580018](https://gitlab.com/circularing/mobile/app/commit/75800189507f212c86f0e3ecb88f099a26fac26a))
+* **asset:** cropped logos ([d65cf46](https://gitlab.com/circularing/mobile/app/commit/d65cf46e63a8e535f9ef575469ba81c3549ce09f))
+* crash on activity for value 0 ([74982e1](https://gitlab.com/circularing/mobile/app/commit/74982e17227a9aff9ec9715e29a3df9ce6da6da8))
+* crash on activity for value 0 ([4f75eb5](https://gitlab.com/circularing/mobile/app/commit/4f75eb5ee3a15204dd5539c87e6c2cb411800ccf))
+* crash on activity for value 0 ([e9703b3](https://gitlab.com/circularing/mobile/app/commit/e9703b32703a61a2e8ecc9b3b701aa84b2c68b5b))
+* sleep quality score ([69951b8](https://gitlab.com/circularing/mobile/app/commit/69951b8b29c002c3e0dbdd2d4695410a4a38f253))
+* temperature variation graph ([5892904](https://gitlab.com/circularing/mobile/app/commit/58929042d77b8960c88e34ef7956c450517c68e5))
+* tsc ([8c820ad](https://gitlab.com/circularing/mobile/app/commit/8c820ad246fd537c83a406e04c41063c833c5e2b))
+
 ## [0.1.0-alpha.5](https://gitlab.com/circularing/mobile/app/compare/v0.1.0-alpha.4...v0.1.0-alpha.5) (2022-05-10)
 
 

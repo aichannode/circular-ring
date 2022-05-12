@@ -76,7 +76,16 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 		const date = moment(lines[x].x).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
+	const [yMin, yMax] =
+		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
 
+	const toGetAverageValue = (value: number | undefined): string => {
+		if (!isDefined(value)) return "-";
+		if (value > 0) {
+			return `+ ${value} °C`;
+		}
+		return `${value} °C`;
+	};
 	return isLoading ? (
 		<Spinner size={24} />
 	) : (
@@ -106,6 +115,9 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 					graphColor={colors.business.sleepPrimary}
 					onSelect={(x) => toUpdateTag(x)}
 					mode={updatedMode}
+					yMin={yMin}
+					yMax={yMax}
+					shouldAddOperator={true}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
@@ -126,7 +138,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 										</View>
 									),
 								},
-								value: isDefined(constant?.average) ? `${constant?.average} °C` : "-",
+								value: isDefined(constant?.average) ? toGetAverageValue(constant?.average) : "-",
 							},
 						]}
 					/>

@@ -1,3 +1,4 @@
+import { isDefined } from "@domain/common/business";
 import { Points } from "@domain/measure/representation/api";
 import { createActiveMode, isInDisabledMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
@@ -20,6 +21,9 @@ interface BarChartProps {
 	onSelect?: (x: number) => void;
 	averages?: Averages;
 	mode?: Mode;
+	yMin?: number;
+	yMax?: number;
+	shouldAddOperator?: boolean;
 }
 
 export function BarChart({
@@ -32,6 +36,9 @@ export function BarChart({
 	data,
 	onSelect,
 	averages,
+	yMin,
+	yMax,
+	shouldAddOperator = false,
 }: BarChartProps) {
 	const [selectedX, setSelectedX] = useState<number | undefined>(-1);
 
@@ -40,11 +47,14 @@ export function BarChart({
 			{
 				values: data
 					?.map((el, index) => ({ ...el, index }))
-					.filter(({ y }) => y > 0)
 					.map(({ x, y, index }) => {
 						let marker = "";
 						if (!!shouldShowMarker && y != 0) {
-							marker = `${moment(x).format("Y-MM-DD")}\n${y}`;
+							if (shouldAddOperator) {
+								marker = `${moment(x).format("Y-MM-DD")}\n${y > 0 ? "+" : ""}${y}`;
+							} else {
+								marker = `${moment(x).format("Y-MM-DD")}\n${y}`;
+							}
 						}
 						return { x: index, y, marker };
 					}),
@@ -88,6 +98,8 @@ export function BarChart({
 	const yAxis = {
 		left: {
 			enabled: true,
+			axisMinimum: isDefined(yMin) ? yMin - (yMin + 1) : undefined,
+			axisMaximum: isDefined(yMax) ? yMax + 1 : undefined,
 			textColor: processColor(yColor),
 			gridLineWidth: 0.5,
 			drawLabels: true,
@@ -146,7 +158,7 @@ export function BarChart({
 					marker={{
 						enabled: shouldShowMarker,
 						textColor: processColor(colors.white),
-						markerColor: processColor(colors.red),
+						markerColor: processColor(graphColor),
 					}}
 				/>
 			)}

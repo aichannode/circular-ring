@@ -221,6 +221,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 						</ImageContainer>
 						<ImageContainer onPress={() => setActiveItem(1)}>
 							<GraphSwitcherButton
+								style={{ marginLeft: 0 }}
 								source={
 									activeItem === 1
 										? require(`@assets/images/sleepQualityScore.png`)
