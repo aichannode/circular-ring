@@ -26,6 +26,7 @@ export enum MetricType {
 	UserDailyGlobalScore = "user.daily.global.score",
 	UserDailyEnergyScore = "user.daily.energy.score",
 	User7DaysEnergyScore = "user.7days.energy.score",
+	User7DaysSleepScore = "user.7days.sleep.score",
 	UserDailySleepScore = "user.daily.sleep.score",
 	User2DaysSleepScore = "user.2days.sleep.score",
 
@@ -195,6 +196,9 @@ export enum MetricType {
 	UserDailySteps = "user.daily.steps",
 	UserDailyStepsGoalMin = "user.daily.steps.goal.min",
 	UserDailyStepsGoalMax = "user.daily.steps.goal.max",
+	UserStepsAverage = "user.7days.everage.steps",
+	UserStepsBaseline = "user.baseline.steps",
+	UserStepsTotal = "user.7days.total.steps",
 
 	UserDailyWalkingEquivalency = "user.daily.walking.equivalency",
 	UserDailyWalkingEquivalencyGoalMin = "user.daily.walking.equivalency.goal.min",
@@ -202,6 +206,9 @@ export enum MetricType {
 
 	UserDailyCaloriesBurned = "user.daily.calories.burned",
 	UserDailyCaloriesBurnedGoal = "user.daily.calories.burned.goal",
+	UserCalorieBurnedAverage = "user.7days.average.calories.burned",
+	UserCalorieBurnedBaseline = "user.baseline.calories.burned",
+	UserCalorieBurnedTotal = "user.7days.total.calories.burned",
 
 	UserDailyCardioPoints = "user.daily.cardio.points",
 	UserDailyCardioPointsGoalMax = "user.daily.cardio.points.goal.max",
@@ -234,4 +241,9 @@ export enum MetricType {
 	UserDailySleepHR = "user.reference.asleep.hr",
 	UserDailySleepHRMax = "user.daily.asleep.hr.max",
 	UserDailySleepHRMin = "user.daily.asleep.hr.min",
+	// temperature variation
+	///////////////////
+	UserDailyTemperature = "user.daily.asleep.temperature",
+	UserDailyTemperatureScore = "user.daily.sleep.var.temperature",
+	UserDailyVarTemperature = "user.7days.sleep.var.temperature",
 }

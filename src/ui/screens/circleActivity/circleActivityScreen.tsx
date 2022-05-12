@@ -10,7 +10,7 @@ import { ISODay } from "@domain/common/type";
 import { DailyActivityIntensityData, DailySleepData, DataControlState } from "@domain/measure/representation/api";
 import { activities, activityScoreContributors } from "@domain/measure/representation/lib/type";
 import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
-import { getInitMode, TrimOptions } from "@ui/business";
+import { getInitMode, isInCalibrationMode, TrimOptions, updateMode } from "@ui/business";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
@@ -29,11 +29,13 @@ import { Image, LayoutAnimation, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
+import { CaloriesBurnedGraph } from "./caloriesBurnedGraph";
 import { CardioPointsGraph } from "./cardioPointsGraph";
 import { DailyMetric } from "./dailyMetric";
 import { EnergyScoreGraph } from "./energyScoreGraph";
 import { HeartRateGraph } from "./heartRateGraph";
 import { dailyActivitiesUIConfig, getActivityGaugesConfig } from "./measureDisplayInfos";
+import { StepsGraph } from "./StepsGraph";
 
 function getIcon(path: string) {
 	switch (path) {
@@ -217,9 +219,18 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							dailyTrimOptions={dailyTrimOptions}
 						/>
 					)}
-					{activeItem === 1 && <CardioPointsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-					{activeItem === 2 && <EnergyScoreGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-					{activeItem === 3 && (
+					{activeItem === 1 && <StepsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 2 && <CaloriesBurnedGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 3 && <CardioPointsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+					{activeItem === 4 && (
+						<EnergyScoreGraph
+							selectedDay={selectedDay}
+							// XXX: Energy score should not be displayed in calibration mode.
+							// https://circularing.atlassian.net/browse/CIR-904
+							mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenModeWithoutDisabled))}
+						/>
+					)}
+					{activeItem === 5 && (
 						<HeartRateGraph
 							selectedDay={selectedDay}
 							mode={screenModeWithoutDisabled}
@@ -245,8 +256,8 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							<GraphSwitcherButton
 								source={
 									activeItem === 1
-										? require(`@assets/images/cardioPoints.png`)
-										: require(`@assets/images/cardioPointsTransparent.png`)
+										? require(`@assets/images/numberOfSteps.png`)
+										: require(`@assets/images/numberOfStepsTransparent.png`)
 								}
 							/>
 						</ImageContainer>
@@ -254,8 +265,8 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							<GraphSwitcherButton
 								source={
 									activeItem === 2
-										? require(`@assets/images/energyScore.png`)
-										: require(`@assets/images/energyScoreTransparent.png`)
+										? require(`@assets/images/caloriesBurned.png`)
+										: require(`@assets/images/caloriesBurnedTransparent.png`)
 								}
 							/>
 						</ImageContainer>
@@ -264,6 +275,27 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							<GraphSwitcherButton
 								source={
 									activeItem === 3
+										? require(`@assets/images/cardioPoints.png`)
+										: require(`@assets/images/cardioPointsTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+
+						<ImageContainer onPress={() => setActiveItem(4)}>
+							<GraphSwitcherButton
+								source={
+									activeItem === 4
+										? require(`@assets/images/energyScore.png`)
+										: require(`@assets/images/energyScoreTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+					</Row>
+					<Row style={{ marginBottom: 30, justifyContent: "center" }}>
+						<ImageContainer onPress={() => setActiveItem(5)}>
+							<GraphSwitcherButton
+								source={
+									activeItem === 5
 										? require(`@assets/images/heartCircle.png`)
 										: require(`@assets/images/heartCircleTransparent.png`)
 								}

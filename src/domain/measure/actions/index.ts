@@ -13,6 +13,8 @@ import {
 	activityIntensityMonthlyMetrics,
 	ActivityIntensityMonthlyMetrics,
 	activityMetrics,
+	CalorieBurnedConstantMetrics,
+	calorieBurnedConstantMetrics,
 	CardioPointsConstantMetrics,
 	cardioPointsConstantMetrics,
 	ContributorActivityVolume,
@@ -91,6 +93,10 @@ import {
 	sleepMonthlyStageMetrics,
 	SleepStagesMetrics,
 	sleepStagesMetrics,
+	stepsConstantMetrics,
+	StepsConstantMetrics,
+	TemperatureVariationConstantMetrics,
+	temperatureVariationConstantMetrics,
 } from "../representation/lib/type";
 import { MeasureApi } from "./lib/measureApi";
 
@@ -398,6 +404,38 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
+		async setDailySleepQualityScore(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures(
+				[MetricType.UserDailySleepScore],
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailySleepScore",
+					payload: {
+						localISODay,
+						score: data[MetricType.UserDailySleepScore] ? Number(data[MetricType.UserDailySleepScore]) : null,
+					},
+				},
+			]);
+		},
+		async setLast7DSleepScore(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures(
+				[MetricType.User7DaysSleepScore],
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setLast7DSleepScore",
+					payload: {
+						localISODay,
+						score: data[MetricType.User7DaysSleepScore] as number,
+					},
+				},
+			]);
+		},
 		async setDailyWakeUpScore(localISODay: ISODay, useForceRefresh?: boolean) {
 			const data = await measureApi.fetchLastDailyMeasures(dailyWakeUpScoreMetrics, localISODay, useForceRefresh);
 			present([
@@ -430,6 +468,22 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
+		async pullDailyCalorieBurned(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures(
+				[MetricType.UserDailyCaloriesBurned],
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailyCalorieBurned",
+					payload: {
+						localISODay,
+						calorie: data[MetricType.UserDailyCaloriesBurned] ? Number(data[MetricType.UserDailyCaloriesBurned]) : null,
+					},
+				},
+			]);
+		},
 		async pullLast7DCardioPoints(localISODay: ISODay, useForceRefresh?: boolean) {
 			const constant = await measureApi.fetchLastDailyMeasures<CardioPointsConstantMetrics>(
 				cardioPointsConstantMetrics,
@@ -446,6 +500,57 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
+		async pullDailyTemperatureVariation(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures(
+				[MetricType.UserDailyTemperatureScore],
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailyTemperatureVariation",
+					payload: {
+						localISODay,
+						temperature: data[MetricType.UserDailyTemperatureScore]
+							? Number(data[MetricType.UserDailyTemperatureScore])
+							: null,
+					},
+				},
+			]);
+		},
+		async pullLast7DTemperatureVariation(localISODay: ISODay, useForceRefresh?: boolean) {
+			const constant = await measureApi.fetchLastDailyMeasures<TemperatureVariationConstantMetrics>(
+				temperatureVariationConstantMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setLast7DTemperatureVariation",
+					payload: {
+						localISODay,
+						data: constant,
+					},
+				},
+			]);
+		},
+		async pullLast7DCalorieBurned(localISODay: ISODay, useForceRefresh?: boolean) {
+			const constant = await measureApi.fetchLastDailyMeasures<CalorieBurnedConstantMetrics>(
+				calorieBurnedConstantMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setLast7DCalorieBurned",
+					payload: {
+						localISODay,
+						data: constant,
+					},
+				},
+			]);
+		},
+
 		async pullDailyActivityIntensityMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
 			Promise.all([
 				measureApi.fetchDailyMeasures<DailyActivityIntensityMetrics>(
@@ -472,6 +577,34 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					},
 				]);
 			});
+		},
+		async pullDailySteps(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailySteps], localISODay, useForceRefresh);
+			present([
+				{
+					type: "setDailyStepsMetrics",
+					payload: {
+						localISODay,
+						data: data[MetricType.UserDailySteps] ? Number(data[MetricType.UserDailySteps]) : null,
+					},
+				},
+			]);
+		},
+		async pullLast7DSteps(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures<StepsConstantMetrics>(
+				stepsConstantMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setLast7DStepsConstants",
+					payload: {
+						localISODay,
+						data,
+					},
+				},
+			]);
 		},
 		async setMonthlyActivityIntensityMetrics(
 			localISOMonth: ISOMonth = toISOMonth(getCurrentLocalISODay()),

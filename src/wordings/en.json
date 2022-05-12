@@ -578,5 +578,7 @@
 	"hr.hrMax": "HR Max",
 	"hr.hrMin": "HR Min",
 	"cardio.baseline": "Baseline",
-	"cardio.7day.total": "7 day total"
+	"steps.title": "Number of steps",
+	"cardio.7day.total": "7 day total",
+	"calories.burned": "calories burned"
 }

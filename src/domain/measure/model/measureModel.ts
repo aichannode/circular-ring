@@ -6,6 +6,7 @@ import { Metrics, MetricType, RangeMetrics } from "../metric";
 import {
 	ActivityIntensity7DAverageMetrics,
 	ActivityIntensityAllAverageMetrics,
+	CalorieBurnedConstantMetrics,
 	CaloriesBurned,
 	CardioPoints,
 	CardioPointsConstantMetrics,
@@ -48,11 +49,14 @@ import {
 	SleepAllConstantMetrics,
 	SleepMonthlyStageMetrics,
 	SleepStagesMetrics,
+	StepsConstantMetrics,
 	StepsTaken,
+	TemperatureVariationConstantMetrics,
 	WalkingEquivalency,
 } from "../representation/lib/type";
 
 export class MeasureModel implements Model<Proposal> {
+	public last7DStepsConstants: Map<ISODay, Metrics<StepsConstantMetrics>> = new Map();
 	public last7DSleepConstantMetrics: Map<ISODay, Metrics<Sleep7DConstantMetrics>> = new Map();
 	public monthlySleepStageMetrics: Map<ISOMonth, Metrics<SleepMonthlyStageMetrics>> = new Map();
 	public lastAllSleepStageMetrics: Map<ISOMonth, Metrics<SleepAllConstantMetrics>> = new Map();
@@ -101,11 +105,18 @@ export class MeasureModel implements Model<Proposal> {
 		>
 	> = new Map();
 	public dailySleepMetrics: Map<ISODay, RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>> = new Map();
+	public dailyStepsMetrics: Map<ISODay, number | null> = new Map();
 	public dailyEnergyScore: Map<ISODay, number | null> = new Map();
 	public last7DEnergyScore: Map<ISODay, number | null> = new Map();
+	public dailySleepScoreQuality: Map<ISODay, number | null> = new Map();
+	public last7DSleepScore: Map<ISODay, number | null> = new Map();
 	public last7DActivityIntensityAverageMetrics: Map<ISODay, Metrics<ActivityIntensity7DAverageMetrics>> = new Map();
 	public dailyCardioPoints: Map<ISODay, number | null> = new Map();
+	public dailyTemperatureVariation: Map<ISODay, number | null> = new Map();
 	public last7DCardioPointConstants: Map<ISODay, Metrics<CardioPointsConstantMetrics>> = new Map();
+	public last7DTemperatureVariationConstants: Map<ISODay, Metrics<TemperatureVariationConstantMetrics>> = new Map();
+	public dailyCalorieBurned: Map<ISODay, number | null> = new Map();
+	public last7DCalorieBurnedConstants: Map<ISODay, Metrics<CalorieBurnedConstantMetrics>> = new Map();
 	public lastAllActivityIntensityAverageMetrics: Map<ISOMonth, Metrics<ActivityIntensityAllAverageMetrics>> = new Map();
 	public dailyActivityIntensityMetrics: Map<
 		ISODay,
@@ -215,12 +226,31 @@ export class MeasureModel implements Model<Proposal> {
 			} else if (mutation.type === "setDailyEnergyScore") {
 				const score = mutation.payload.score;
 				mutate.call(this, mutation, () => this.dailyEnergyScore.set(mutation.payload.localISODay, score));
+			} else if (mutation.type === "setDailySleepScore") {
+				const score = mutation.payload.score;
+				mutate.call(this, mutation, () => this.dailySleepScoreQuality.set(mutation.payload.localISODay, score));
 			} else if (mutation.type === "setDailyCardioPoints") {
 				const cardio = mutation.payload.cardio;
 				mutate.call(this, mutation, () => this.dailyCardioPoints.set(mutation.payload.localISODay, cardio));
+			} else if (mutation.type === "setDailyCalorieBurned") {
+				const calorie = mutation.payload.calorie;
+				mutate.call(this, mutation, () => this.dailyCalorieBurned.set(mutation.payload.localISODay, calorie));
 			} else if (mutation.type === "setLast7DCardioPoints") {
 				mutate.call(this, mutation, () =>
 					this.last7DCardioPointConstants.set(mutation.payload.localISODay, mutation.payload.data)
+				);
+			} else if (mutation.type === "setDailyTemperatureVariation") {
+				const temperature = mutation.payload.temperature;
+				mutate.call(this, mutation, () =>
+					this.dailyTemperatureVariation.set(mutation.payload.localISODay, temperature)
+				);
+			} else if (mutation.type === "setLast7DTemperatureVariation") {
+				mutate.call(this, mutation, () =>
+					this.last7DTemperatureVariationConstants.set(mutation.payload.localISODay, mutation.payload.data)
+				);
+			} else if (mutation.type === "setLast7DCalorieBurned") {
+				mutate.call(this, mutation, () =>
+					this.last7DCalorieBurnedConstants.set(mutation.payload.localISODay, mutation.payload.data)
 				);
 			} else if (mutation.type === "setDailyWakeUpScore") {
 				mutate.call(this, mutation, () =>
@@ -242,9 +272,20 @@ export class MeasureModel implements Model<Proposal> {
 				mutate.call(this, mutation, () =>
 					this.dailySleepScoreContributorsMetrics.set(mutation.payload.localISODay, mutation.payload.data)
 				);
+			} else if (mutation.type === "setDailyStepsMetrics") {
+				mutate.call(this, mutation, () =>
+					this.dailyStepsMetrics.set(mutation.payload.localISODay, mutation.payload.data)
+				);
 			} else if (mutation.type === "setLast7DEnergyScore") {
 				const score = mutation.payload.score;
 				mutate.call(this, mutation, () => this.last7DEnergyScore.set(mutation.payload.localISODay, score));
+			} else if (mutation.type === "setLast7DSleepScore") {
+				const score = mutation.payload.score;
+				mutate.call(this, mutation, () => this.last7DSleepScore.set(mutation.payload.localISODay, score));
+			} else if (mutation.type === "setLast7DStepsConstants") {
+				mutate.call(this, mutation, () =>
+					this.last7DStepsConstants.set(mutation.payload.localISODay, mutation.payload.data)
+				);
 			}
 		});
 	};

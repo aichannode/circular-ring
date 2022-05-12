@@ -78,7 +78,7 @@ export class FeedApi {
 	/**
 	 * Answer to a Kira question which uses a Select user input.
 	 */
-	async answerQuestion(selections: number[]) {
+	async answerQuestion(selections: { feedEntryId: number, selectedOptionIds: number[] }[]) {
 		return await this.apiService.post(`${interactionsBaseUrl}/selections`, { selections });
 	}
 }

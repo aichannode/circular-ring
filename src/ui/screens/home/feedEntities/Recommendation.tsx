@@ -128,7 +128,7 @@ export const Recommendation: React.FC<Props> = ({ recommendation }) => {
 					</View>
 				</Stack>
 			</Container>
-			{userInput && <UserInput compId={userInput.id} palette={recommendation.style} {...userInput} />}
+			{userInput && <UserInput feedEntryId={recommendation.id} compId={userInput.id} palette={recommendation.style} {...userInput} />}
 		</>
 	);
 };

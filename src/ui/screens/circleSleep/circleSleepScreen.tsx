@@ -5,7 +5,7 @@ import { DailySleepData } from "@domain/measure/representation/api";
 import { sleepScoreContributors } from "@domain/measure/representation/lib/type";
 import { TimeFrame } from "@domain/measure/type";
 import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
-import { getInitMode, TrimOptions } from "@ui/business";
+import { getInitMode, isInCalibrationMode, TrimOptions, updateMode } from "@ui/business";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButton";
 import { InfoListHeader } from "@ui/components/infoList";
@@ -34,7 +34,9 @@ import { getSleepGaugesConfig } from "./measureDisplayInfos";
 import { Sleep7DChart } from "./Sleep7DChart";
 import { SleepAllChart } from "./SleepAllChart";
 import { SleepDurationPieChart } from "./sleepDurationPie";
+import { SleepQualityScoreGraph } from "./sleepQualityScoreGraph";
 import { Spo2Graph } from "./spo2Graph";
+import { TemperatureVariation7DGraph } from "./temperatureVariation7DGraph";
 
 export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
@@ -184,17 +186,28 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 					</>
 				)}
 				{activeItem === 1 && (
-					<HeartRateGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
+					<SleepQualityScoreGraph
+						selectedDay={selectedDay}
+						// XXX: Sleep quality score should not be displayed in calibration mode.
+						// https://circularing.atlassian.net/browse/CIR-904
+						mode={updateMode(screenMode, isInCalibrationMode(screenMode))}
+					/>
 				)}
 				{activeItem === 2 && (
-					<Spo2Graph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
+					<HeartRateGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
 				)}
 				{activeItem === 3 && (
-					<BreathingRateGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
-				)}
-				{activeItem === 4 && (
 					<HRVGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
 				)}
+				{activeItem === 4 && (
+					<BreathingRateGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
+				)}
+				{activeItem === 5 && <TemperatureVariation7DGraph selectedDay={selectedDay} mode={screenMode} />}
+
+				{activeItem === 6 && (
+					<Spo2Graph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
+				)}
+
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
 					<Row style={{ justifyContent: "center" }}>
 						<ImageContainer onPress={() => setActiveItem(0)}>
@@ -211,18 +224,19 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 								style={{ marginLeft: 0 }}
 								source={
 									activeItem === 1
-										? require(`@assets/images/heartCircleBlue.png`)
-										: require(`@assets/images/heartCircleBlueTransparent.png`)
+										? require(`@assets/images/sleepQualityScore.png`)
+										: require(`@assets/images/sleepQualityScoreTransparent.png`)
 								}
 							/>
 						</ImageContainer>
+
 						<ImageContainer onPress={() => setActiveItem(2)}>
 							<GraphSwitcherButton
 								style={{ marginLeft: 0 }}
 								source={
 									activeItem === 2
-										? require(`@assets/images/spo2Blue.png`)
-										: require(`@assets/images/spo2BlueTransparent.png`)
+										? require(`@assets/images/heartCircleBlue.png`)
+										: require(`@assets/images/heartCircleBlueTransparent.png`)
 								}
 							/>
 						</ImageContainer>
@@ -231,18 +245,41 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 								style={{ marginLeft: 0 }}
 								source={
 									activeItem === 3
-										? require(`@assets/images/brBlue.png`)
-										: require(`@assets/images/brBlueTransparent.png`)
+										? require(`@assets/images/HRVBlue.png`)
+										: require(`@assets/images/HRVBlueTransparent.png`)
 								}
 							/>
 						</ImageContainer>
+					</Row>
+					<Row style={{ justifyContent: "center" }}>
 						<ImageContainer onPress={() => setActiveItem(4)}>
 							<GraphSwitcherButton
 								style={{ marginLeft: 0 }}
 								source={
 									activeItem === 4
-										? require(`@assets/images/HRVBlue.png`)
-										: require(`@assets/images/HRVBlueTransparent.png`)
+										? require(`@assets/images/brBlue.png`)
+										: require(`@assets/images/brBlueTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+						<ImageContainer onPress={() => setActiveItem(5)}>
+							<GraphSwitcherButton
+								style={{ marginLeft: 0 }}
+								source={
+									activeItem === 5
+										? require(`@assets/images/temperatureVariationBlue.png`)
+										: require(`@assets/images/temperatureVariationTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+
+						<ImageContainer onPress={() => setActiveItem(6)}>
+							<GraphSwitcherButton
+								style={{ marginLeft: 0 }}
+								source={
+									activeItem === 6
+										? require(`@assets/images/spo2Blue.png`)
+										: require(`@assets/images/spo2BlueTransparent.png`)
 								}
 							/>
 						</ImageContainer>

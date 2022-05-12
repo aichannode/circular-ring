@@ -112,7 +112,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 			</TitleText>
 
 			{/** Wait for available data on week/month */}
-			<GraphContainer style={{ height: 600 }}>
+			<GraphContainer style={{ height: 400 }}>
 				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
 					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
 						{tags.map(({ name, id }) => (

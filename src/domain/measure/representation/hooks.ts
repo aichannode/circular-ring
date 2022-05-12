@@ -20,6 +20,7 @@ import {
 	Activity7D,
 	ActivityAll,
 	ActivityDetail,
+	CalorieBurned7D,
 	Cardio7D,
 	Contributor,
 	DailyActivityIntensityData,
@@ -35,6 +36,8 @@ import {
 	Scores7D,
 	Sleep7D,
 	SleepAll,
+	Steps7D,
+	TemperatureVariation7D,
 } from "./api";
 import {
 	canDisplay,
@@ -777,6 +780,44 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					controlState,
 				};
 			},
+			/**
+			 * @implements spec 00037
+			 */
+			useLast7DaysSleepScore(localISODay: ISODay): Scores7D | undefined {
+				// Compute the 7 previous date from the given date
+				const last7Days = getLast7Days(localISODay);
+				useEffect(
+					action(function () {
+						// Get the last 7 daily sleep scores
+						last7Days.forEach((d) =>
+							actions.setDailySleepQualityScore(d, shouldByPassCache(model.dailySleepScoreQuality, d))
+						);
+						// and the average for the last 7 days
+						actions.setLast7DSleepScore(localISODay, shouldByPassCache(model.last7DSleepScore, localISODay));
+					}),
+					[localISODay]
+				);
+
+				const isLoaded = last7Days.every((date) => model.dailySleepScoreQuality.has(date));
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last7Days.map((date) => ({
+					value: model.dailySleepScoreQuality.get(date),
+					date,
+				})) as Scores7D["series"];
+
+				// Spec 00026: IS_READY if has some historical data
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+				return {
+					series,
+					constant: {
+						average: model.last7DSleepScore.get(localISODay) ?? 0,
+					},
+					controlState,
+				};
+			},
 			useLast7DaysCardioPoints(localISODay: ISODay): Cardio7D | undefined {
 				// Compute the 7 previous date from the given date
 				const last7Days = getLast7Days(localISODay);
@@ -818,6 +859,140 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 							average: Number(constants[MetricType.UserCardioPointAverage]),
 							baseline: Number(constants[MetricType.UserCardioPointBaseline]),
 							total: Number(constants[MetricType.UserCardioPointTotal]),
+						},
+						controlState,
+					};
+				}
+			},
+			useLast7DaysTemperatureVariation(localISODay: ISODay): TemperatureVariation7D | undefined {
+				// Compute the 7 previous date from the given date
+				const last7Days = getLast7Days(localISODay);
+
+				useEffect(
+					action(function () {
+						// Get the last 7 daily energy scores
+						last7Days.forEach((d) =>
+							actions.pullDailyTemperatureVariation(d, shouldByPassCache(model.dailyTemperatureVariation, d))
+						);
+						// and the average for the last 7 days
+						actions.pullLast7DTemperatureVariation(
+							localISODay,
+							shouldByPassCache(model.last7DTemperatureVariationConstants, localISODay)
+						);
+					}),
+					[localISODay]
+				);
+				const isLoaded = last7Days.some((date) => model.dailyTemperatureVariation.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				// Spec 00026: IS_READY if has some historical data
+				const controlState = last7Days.some((date) => isDefined(model.dailyTemperatureVariation.get(date)))
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
+
+				const series = last7Days.map((date) => ({
+					value: model.dailyTemperatureVariation.get(date),
+					date,
+				})) as TemperatureVariation7D["series"];
+
+				const constants = model.last7DTemperatureVariationConstants.get(localISODay);
+				if (constants) {
+					return {
+						series,
+						constant: {
+							average: Number(constants[MetricType.UserDailyVarTemperature]),
+						},
+						controlState,
+					};
+				}
+			},
+			useLast7DaysSteps(localISODay: ISODay): Steps7D | undefined {
+				// Compute the 7 previous date from the given date
+				const last7Days = getLast7Days(localISODay);
+
+				useEffect(
+					action(function () {
+						// Get the last 7 daily energy scores
+						last7Days.forEach((d) => actions.pullDailySteps(d, shouldByPassCache(model.dailyCardioPoints, d)));
+						// and the average for the last 7 days
+						actions.pullLast7DSteps(localISODay, shouldByPassCache(model.last7DStepsConstants, localISODay));
+					}),
+					[localISODay]
+				);
+				const isLoaded = last7Days.some((date) => model.dailyStepsMetrics.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				// Spec 00026: IS_READY if has some historical data
+				const controlState = last7Days.some((date) => isDefined(model.dailyStepsMetrics.get(date)))
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
+
+				const series = last7Days.map((date) => ({
+					value: model.dailyStepsMetrics.get(date),
+					date,
+				})) as Cardio7D["series"];
+
+				const constants = model.last7DStepsConstants.get(localISODay);
+
+				if (constants) {
+					return {
+						series,
+						constant: {
+							average: Number(constants[MetricType.UserStepsAverage]),
+							baseline: Number(constants[MetricType.UserStepsBaseline]),
+							total: Number(constants[MetricType.UserStepsTotal]),
+						},
+						controlState,
+					};
+				}
+			},
+			useLast7DaysCaloriesBurned(localISODay: ISODay): CalorieBurned7D | undefined {
+				// Compute the 7 previous date from the given date
+				const last7Days = getLast7Days(localISODay);
+
+				useEffect(
+					action(function () {
+						// Get the last 7 daily energy scores
+						last7Days.forEach((d) => actions.pullDailyCalorieBurned(d, shouldByPassCache(model.dailyCalorieBurned, d)));
+						// and the average for the last 7 days
+						actions.pullLast7DCalorieBurned(
+							localISODay,
+							shouldByPassCache(model.last7DCalorieBurnedConstants, localISODay)
+						);
+					}),
+					[localISODay]
+				);
+				const isLoaded = last7Days.some((date) => model.dailyCalorieBurned.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				// Spec 00026: IS_READY if has some historical data
+				const controlState = last7Days.some((date) => isDefined(model.dailyCalorieBurned.get(date)))
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
+
+				const series = last7Days.map((date) => ({
+					value: model.dailyCalorieBurned.get(date),
+					date,
+				})) as CalorieBurned7D["series"];
+
+				const constants = model.last7DCalorieBurnedConstants.get(localISODay);
+
+				if (constants) {
+					return {
+						series,
+						constant: {
+							average: Number(constants[MetricType.UserCalorieBurnedAverage]),
+							baseline: Number(constants[MetricType.UserCalorieBurnedBaseline]),
+							total: Number(constants[MetricType.UserCalorieBurnedTotal]),
 						},
 						controlState,
 					};

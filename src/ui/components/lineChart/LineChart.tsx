@@ -196,7 +196,10 @@ export function LineChart({
 	const dataSets = {
 		dataSets: [
 			{
-				values: movingAverage ?? [],
+				values:
+					movingAverage?.map(({ x, y }) => {
+						return { x, y, marker: "" };
+					}) ?? [],
 				label: "",
 				config: {
 					drawValues: false,
@@ -420,7 +423,7 @@ export function LineChart({
 							marker={{
 								enabled: shouldShowLabel,
 								textColor: processColor(colors.white),
-								markerColor: processColor(colors.red),
+								markerColor: processColor(graphColor),
 							}}
 							dragDecelerationEnabled={true}
 							highlightPerDragEnabled={false}

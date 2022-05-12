@@ -4,6 +4,7 @@ import {
 	ActivityIntensity7DAverageMetrics,
 	ActivityIntensityAllAverageMetrics,
 	ActivityIntensityMonthlyMetrics,
+	CalorieBurnedConstantMetrics,
 	CaloriesBurned,
 	CardioPoints,
 	CardioPointsConstantMetrics,
@@ -46,7 +47,9 @@ import {
 	SleepAllConstantMetrics,
 	SleepMonthlyStageMetrics,
 	SleepStagesMetrics,
+	StepsConstantMetrics,
 	StepsTaken,
+	TemperatureVariationConstantMetrics,
 	WalkingEquivalency,
 } from "../representation/lib/type";
 
@@ -94,10 +97,52 @@ export type Mutations =
 			};
 	  }
 	| {
+			type: "setDailyCalorieBurned";
+			payload: {
+				localISODay: ISODay;
+				calorie: number | null;
+			};
+	  }
+	| {
 			type: "setLast7DCardioPoints";
 			payload: {
 				localISODay: ISODay;
 				data: Metrics<CardioPointsConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setDailyTemperatureVariation";
+			payload: {
+				localISODay: ISODay;
+				temperature: number | null;
+			};
+	  }
+	| {
+			type: "setLast7DTemperatureVariation";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<TemperatureVariationConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setDailyStepsMetrics";
+			payload: {
+				localISODay: ISODay;
+				data: number | null;
+			};
+	  }
+	| {
+			type: "setLast7DStepsConstants";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<StepsConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setLast7DCalorieBurned";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<CalorieBurnedConstantMetrics>;
 			};
 	  }
 	| {
@@ -233,6 +278,13 @@ export type Mutations =
 			};
 	  }
 	| {
+			type: "setDailySleepScore";
+			payload: {
+				localISODay: ISODay;
+				score: number | null;
+			};
+	  }
+	| {
 			type: "setSleepScore";
 			payload: {
 				localISODay: ISODay;
@@ -248,6 +300,13 @@ export type Mutations =
 	  }
 	| {
 			type: "setLast7DEnergyScore";
+			payload: {
+				localISODay: ISODay;
+				score: number | null;
+			};
+	  }
+	| {
+			type: "setLast7DSleepScore";
 			payload: {
 				localISODay: ISODay;
 				score: number | null;
