@@ -502,7 +502,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		},
 		async pullDailyTemperatureVariation(localISODay: ISODay, useForceRefresh?: boolean) {
 			const data = await measureApi.fetchLastDailyMeasures(
-				[MetricType.UserDailyTemperature],
+				[MetricType.UserDailyTemperatureScore],
 				localISODay,
 				useForceRefresh
 			);
@@ -511,7 +511,9 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailyTemperatureVariation",
 					payload: {
 						localISODay,
-						temperature: data[MetricType.UserDailyTemperature] ? Number(data[MetricType.UserDailyTemperature]) : null,
+						temperature: data[MetricType.UserDailyTemperatureScore]
+							? Number(data[MetricType.UserDailyTemperatureScore])
+							: null,
 					},
 				},
 			]);
