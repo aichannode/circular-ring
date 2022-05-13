@@ -67,6 +67,10 @@ import {
 	DailyHRNightConstantMetrics,
 	dailyHRNightTimeSeriesMetrics,
 	DailyHRNightTimeSeriesMetrics,
+	DailyHRSConstantMetrics,
+	dailyHRSConstantMetrics,
+	DailyHRSMetrics,
+	dailyHRSMetrics,
 	dailyHRTimeSeriesMetrics,
 	DailyHRTimeSeriesMetrics,
 	DailyHRTrendTimeSeriesMetrics,
@@ -599,6 +603,38 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			present([
 				{
 					type: "setLast7DStepsConstants",
+					payload: {
+						localISODay,
+						data,
+					},
+				},
+			]);
+		},
+		async pullDailyHRSMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures<DailyHRSMetrics>(
+				dailyHRSMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailyHRSMetrics",
+					payload: {
+						localISODay,
+						data,
+					},
+				},
+			]);
+		},
+		async pullDailyHRSConstantMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures<DailyHRSConstantMetrics>(
+				dailyHRSConstantMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailyHRSConstantMetrics",
 					payload: {
 						localISODay,
 						data,

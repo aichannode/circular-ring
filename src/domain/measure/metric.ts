@@ -95,6 +95,10 @@ export enum MetricType {
 	UserHRVTrend = "user.asleep.hrv.trend",
 	UserHRTrend = "user.asleep.hr.trend",
 
+	User7DaysTotalSleepDuration = "user.7days.total.sleep.duration",
+	User7DaysRealSleepDuration = "user.7days.real.sleep.duration",
+	UserIdealSleepDuration = "user.ideal.sleep.duration",
+
 	UserDailyRHR = "user.daily.rhr",
 	UserDailyScoreRHR = "user.daily.score.rhr",
 	UserDailyScoreRHRGoalMin = "user.daily.score.rhr.goal.min",

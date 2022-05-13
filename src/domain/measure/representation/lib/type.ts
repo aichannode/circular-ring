@@ -115,6 +115,19 @@ export const dailyHRTrendTimeSeriesMetrics = [MetricType.UserHRTrend] as const;
 export type DailyHRTrendTimeSeriesMetrics = typeof dailyHRTrendTimeSeriesMetrics[number];
 
 /**
+ * HRS
+ */
+export const dailyHRSMetrics = [MetricType.UserDailyRealSleepDuration, MetricType.UserDailyTotalSleepDuration] as const;
+export type DailyHRSMetrics = typeof dailyHRSMetrics[number];
+
+export const dailyHRSConstantMetrics = [
+	MetricType.User7DaysTotalSleepDuration,
+	MetricType.User7DaysRealSleepDuration,
+	MetricType.UserIdealSleepDuration,
+] as const;
+export type DailyHRSConstantMetrics = typeof dailyHRSConstantMetrics[number];
+
+/**
  * HRV
  */
 

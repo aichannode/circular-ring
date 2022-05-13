@@ -33,6 +33,8 @@ import {
 	DailyHRConstantMetrics,
 	DailyHRNightConstantMetrics,
 	DailyHRNightTimeSeriesMetrics,
+	DailyHRSConstantMetrics,
+	DailyHRSMetrics,
 	DailyHRTimeSeriesMetrics,
 	DailyHRTrendTimeSeriesMetrics,
 	DailyHRVConstantMetrics,
@@ -303,6 +305,20 @@ export type Mutations =
 			payload: {
 				localISODay: ISODay;
 				score: number | null;
+			};
+	  }
+	| {
+			type: "setDailyHRSMetrics";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<DailyHRSMetrics>;
+			};
+	  }
+	| {
+			type: "setDailyHRSConstantMetrics";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<DailyHRSConstantMetrics>;
 			};
 	  }
 	| {

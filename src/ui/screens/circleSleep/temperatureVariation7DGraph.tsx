@@ -117,7 +117,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 					mode={updatedMode}
 					yMin={yMin}
 					yMax={yMax}
-					shouldAddOperator={true}
+					mapMarker={({ y }) => `${y > 0 ? "+" : ""}`}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

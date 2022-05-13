@@ -105,22 +105,22 @@ export interface Point {
 	y: number;
 }
 export type Points = Point[];
-export interface Score {
+export interface Score<T = number> {
 	/** isoday*/
 	date: ISODay;
 	/** value */
-	value: number;
+	value: T;
 }
 
-export interface Range7<T> {
+export interface Range7<T, U = number> {
 	series: [
-		Score | undefined,
-		Score | undefined,
-		Score | undefined,
-		Score | undefined,
-		Score | undefined,
-		Score | undefined,
-		Score | undefined
+		Score<U> | undefined,
+		Score<U> | undefined,
+		Score<U> | undefined,
+		Score<U> | undefined,
+		Score<U> | undefined,
+		Score<U> | undefined,
+		Score<U> | undefined
 	];
 	controlState: DataControlState;
 	constant: T;
@@ -150,6 +150,15 @@ export type Steps7D = Range7<{
 	baseline: number;
 	total: number;
 }>;
+
+export type HRS7D = Range7<
+	{
+		totalAverage: number;
+		realAverage: number;
+		recommendation: number;
+	},
+	[number, number]
+>;
 
 export interface SleepItem {
 	awake: number;

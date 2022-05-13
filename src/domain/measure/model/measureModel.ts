@@ -35,6 +35,8 @@ import {
 	DailyHRConstantMetrics,
 	DailyHRNightConstantMetrics,
 	DailyHRNightTimeSeriesMetrics,
+	DailyHRSConstantMetrics,
+	DailyHRSMetrics,
 	DailyHRTimeSeriesMetrics,
 	DailyHRTrendTimeSeriesMetrics,
 	DailyHRVConstantMetrics,
@@ -106,6 +108,8 @@ export class MeasureModel implements Model<Proposal> {
 	> = new Map();
 	public dailySleepMetrics: Map<ISODay, RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>> = new Map();
 	public dailyStepsMetrics: Map<ISODay, number | null> = new Map();
+	public dailyHRSMetrics: Map<ISODay, Metrics<DailyHRSMetrics>> = new Map();
+	public dailyHRSContantMetrics: Map<ISODay, Metrics<DailyHRSConstantMetrics>> = new Map();
 	public dailyEnergyScore: Map<ISODay, number | null> = new Map();
 	public last7DEnergyScore: Map<ISODay, number | null> = new Map();
 	public dailySleepScoreQuality: Map<ISODay, number | null> = new Map();
@@ -154,6 +158,8 @@ export class MeasureModel implements Model<Proposal> {
 			monthlySleepStageMetrics: observable.shallow,
 			lastAllSleepStageMetrics: observable.shallow,
 			last7DActivityIntensityAverageMetrics: observable.shallow,
+			dailyHRSMetrics: observable.shallow,
+			dailyHRSContantMetrics: observable.shallow,
 			present: action,
 		});
 	}
@@ -282,6 +288,14 @@ export class MeasureModel implements Model<Proposal> {
 			} else if (mutation.type === "setLast7DSleepScore") {
 				const score = mutation.payload.score;
 				mutate.call(this, mutation, () => this.last7DSleepScore.set(mutation.payload.localISODay, score));
+			} else if (mutation.type === "setDailyHRSMetrics") {
+				mutate.call(this, mutation, () =>
+					this.dailyHRSMetrics.set(mutation.payload.localISODay, mutation.payload.data)
+				);
+			} else if (mutation.type === "setDailyHRSConstantMetrics") {
+				mutate.call(this, mutation, () =>
+					this.dailyHRSContantMetrics.set(mutation.payload.localISODay, mutation.payload.data)
+				);
 			} else if (mutation.type === "setLast7DStepsConstants") {
 				mutate.call(this, mutation, () =>
 					this.last7DStepsConstants.set(mutation.payload.localISODay, mutation.payload.data)

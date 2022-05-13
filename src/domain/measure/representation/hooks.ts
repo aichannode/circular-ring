@@ -14,7 +14,7 @@ import moment from "moment";
 import { useEffect, useMemo } from "react";
 import { createActions } from "../actions";
 import { MeasureApi } from "../actions/lib/measureApi";
-import { MetricType } from "../metric";
+import { Metrics, MetricType } from "../metric";
 import { MeasureModel } from "../model/measureModel";
 import {
 	Activity7D,
@@ -33,6 +33,7 @@ import {
 	DailySleepData,
 	DailySpo2,
 	DataControlState,
+	HRS7D,
 	Scores7D,
 	Sleep7D,
 	SleepAll,
@@ -56,7 +57,7 @@ import {
 	toOptional,
 } from "./business";
 import { createActivityPhasesGetter, createSleepStagesGetter, useDailyHeavyComputationData } from "./lib/business";
-import { Activities, ActivityScoreContributors, SleepScoreContributors } from "./lib/type";
+import { Activities, ActivityScoreContributors, DailyHRSMetrics, SleepScoreContributors } from "./lib/type";
 
 export function createRepresentation(apiService: ApiService, model: MeasureModel) {
 	const actions = createActions(new MeasureApi(apiService), model.present);
@@ -909,6 +910,88 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					};
 				}
 			},
+			useLast7DaysHRS(localISODay: ISODay): HRS7D | undefined {
+				// Compute the 7 previous date from the given date
+				const last7Days = getLast7Days(localISODay);
+
+				useEffect(
+					action(function () {
+						// Get the last 7 daily energy scores
+						last7Days.forEach((d) => actions.pullDailyHRSMetrics(d, shouldByPassCache(model.dailyHRSMetrics, d)));
+						// and the average for the last 7 days
+						actions.pullDailyHRSConstantMetrics(
+							localISODay,
+							shouldByPassCache(model.dailyHRSContantMetrics, localISODay)
+						);
+					}),
+					[localISODay]
+				);
+				const isLoaded = last7Days.some((date) => model.dailyHRSMetrics.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				// Spec 00026: IS_READY if has some historical data
+				const controlState = last7Days.some((date) => isDefined(model.dailyHRSMetrics.get(date)))
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
+
+				const series = last7Days.map((date) => {
+					const data = model.dailyHRSMetrics.get(date) || ({} as Metrics<DailyHRSMetrics>);
+					return {
+						value: [
+							Number(data[MetricType.UserDailyTotalSleepDuration]) || 0,
+							Number(data[MetricType.UserDailyRealSleepDuration]) || 0,
+						],
+						date,
+					};
+				}) as HRS7D["series"];
+
+				const constants = model.dailyHRSContantMetrics.get(localISODay);
+
+				if (constants) {
+					return {
+						series,
+						constant: {
+							totalAverage: Number(constants[MetricType.User7DaysTotalSleepDuration]),
+							realAverage: Number(constants[MetricType.User7DaysRealSleepDuration]),
+							recommendation: Number(constants[MetricType.UserIdealSleepDuration]),
+						},
+						controlState,
+					};
+				}
+			},
+			useDailySleepQualityScore(localISODay: ISODay) {
+				useEffect(
+					action(function () {
+						actions.setDailySleepScore(localISODay, shouldByPassCache(model.dailySleepScore, localISODay));
+					}),
+					[localISODay]
+				);
+				if (!model.dailySleepScore.has(localISODay)) {
+					return;
+				}
+
+				const data = model.dailySleepScore.get(localISODay);
+
+				if (data) {
+					const score = {
+						score: Number(data[MetricType.UserDailySleepScore]),
+						goalMin: Number(data[MetricType.UserDailySleepScoreGoalMin]) ?? 0.8,
+						goalMax: Number(data[MetricType.UserDailySleepScoreGoalMax]) ?? 0.9,
+					};
+					return {
+						// Default value according to the specs.
+						...score,
+						controlState: getScoreControlStates({
+							thresholdLow: score.goalMin,
+							thresholdHigh: score.goalMax,
+							score: score.score,
+						}),
+					};
+				}
+			},
 			useLast7DaysSteps(localISODay: ISODay): Steps7D | undefined {
 				// Compute the 7 previous date from the given date
 				const last7Days = getLast7Days(localISODay);
@@ -995,37 +1078,6 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 							total: Number(constants[MetricType.UserCalorieBurnedTotal]),
 						},
 						controlState,
-					};
-				}
-			},
-
-			useDailySleepQualityScore(localISODay: ISODay) {
-				useEffect(
-					action(function () {
-						actions.setDailySleepScore(localISODay, shouldByPassCache(model.dailySleepScore, localISODay));
-					}),
-					[localISODay]
-				);
-				if (!model.dailySleepScore.has(localISODay)) {
-					return;
-				}
-
-				const data = model.dailySleepScore.get(localISODay);
-
-				if (data) {
-					const score = {
-						score: Number(data[MetricType.UserDailySleepScore]),
-						goalMin: Number(data[MetricType.UserDailySleepScoreGoalMin]) ?? 0.8,
-						goalMax: Number(data[MetricType.UserDailySleepScoreGoalMax]) ?? 0.9,
-					};
-					return {
-						// Default value according to the specs.
-						...score,
-						controlState: getScoreControlStates({
-							thresholdLow: score.goalMin,
-							thresholdHigh: score.goalMax,
-							score: score.score,
-						}),
 					};
 				}
 			},
