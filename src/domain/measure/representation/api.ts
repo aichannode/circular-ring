@@ -139,6 +139,12 @@ export type Cardio7D = Range7<{
 export type TemperatureVariation7D = Range7<{
 	average: number;
 }>;
+
+export type RestingHeartRate7D = Range7<{
+	average: number;
+	reference: number;
+}>;
+
 export type CalorieBurned7D = Range7<{
 	average: number;
 	baseline: number;

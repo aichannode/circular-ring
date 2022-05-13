@@ -31,6 +31,12 @@ export enum MetricType {
 	User2DaysSleepScore = "user.2days.sleep.score",
 
 	///////////////////
+	// 7 Days RHR
+	///////////////////
+	User7DaysAverageRHR = "user.7days.rhr",
+	User7DaysReferenceRHR = "user.reference.rhr",
+
+	///////////////////
 	// 7 Days sleep
 	///////////////////
 	User7DaysAwakeStageDuration = "user.7days.awake.stage.duration",

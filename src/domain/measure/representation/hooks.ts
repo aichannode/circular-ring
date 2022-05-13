@@ -34,6 +34,7 @@ import {
 	DailySpo2,
 	DataControlState,
 	HRS7D,
+	RestingHeartRate7D,
 	Scores7D,
 	Sleep7D,
 	SleepAll,
@@ -780,6 +781,51 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					},
 					controlState,
 				};
+			},
+			useLast7DaysRHR(localISODay: ISODay): RestingHeartRate7D | undefined {
+				// Compute the 7 previous date from the given date
+				const last7Days = getLast7Days(localISODay);
+				useEffect(
+					action(function () {
+						// Get the last 7 daily energy scores
+						last7Days.forEach((d) =>
+							actions.setDailyRestingHeartRate(d, shouldByPassCache(model.dailyRestingHeartRate, d))
+						);
+						// and the average for the last 7 days
+						actions.setLast7DRestingHeartRate(
+							localISODay,
+							shouldByPassCache(model.last7DRestingHeartRate, localISODay)
+						);
+					}),
+					[localISODay]
+				);
+
+				const isLoaded = last7Days.every((date) => model.dailyRestingHeartRate.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last7Days.map((date) => ({
+					value: model.dailyRestingHeartRate.get(date),
+					date,
+				})) as RestingHeartRate7D["series"];
+
+				// Spec 00026: IS_READY if has some historical data
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+
+				const constants = model.last7DRestingHeartRate.get(localISODay);
+
+				if (constants) {
+					return {
+						series,
+						constant: {
+							average: Number(constants[MetricType.User7DaysAverageRHR]) ?? 0,
+							reference: Number(constants[MetricType.User7DaysReferenceRHR]) ?? 0,
+						},
+						controlState,
+					};
+				}
 			},
 			/**
 			 * @implements spec 00037

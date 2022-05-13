@@ -52,6 +52,7 @@ import {
 	StepsConstantMetrics,
 	StepsTaken,
 	TemperatureVariationConstantMetrics,
+	THRH7DConstantMetrics,
 	WalkingEquivalency,
 } from "../representation/lib/type";
 
@@ -326,6 +327,20 @@ export type Mutations =
 			payload: {
 				localISODay: ISODay;
 				score: number | null;
+			};
+	  }
+	| {
+			type: "setDailyRestingHeartRate";
+			payload: {
+				localISODay: ISODay;
+				data: number | null;
+			};
+	  }
+	| {
+			type: "setLast7DRestingHeartRate";
+			payload: {
+				localISODay: ISODay;
+				constant: Metrics<THRH7DConstantMetrics>;
 			};
 	  };
 

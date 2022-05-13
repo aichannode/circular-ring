@@ -35,6 +35,7 @@ import { DailyMetric } from "./dailyMetric";
 import { EnergyScoreGraph } from "./energyScoreGraph";
 import { HeartRateGraph } from "./heartRateGraph";
 import { dailyActivitiesUIConfig, getActivityGaugesConfig } from "./measureDisplayInfos";
+import { RestingHeartRate7DGraph } from "./restingHeartRate7DGraph";
 import { StepsGraph } from "./StepsGraph";
 
 function getIcon(path: string) {
@@ -237,6 +238,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							dailyTrimOptions={dailyTrimOptions}
 						/>
 					)}
+					{activeItem === 6 && <RestingHeartRate7DGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
 				</ElementStack>
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
@@ -298,6 +300,16 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 									activeItem === 5
 										? require(`@assets/images/heartCircle.png`)
 										: require(`@assets/images/heartCircleTransparent.png`)
+								}
+							/>
+						</ImageContainer>
+
+						<ImageContainer onPress={() => setActiveItem(6)}>
+							<GraphSwitcherButton
+								source={
+									activeItem === 6
+										? require(`@assets/images/restingHeartRate.png`)
+										: require(`@assets/images/restingHeartRateTransparent.png`)
 								}
 							/>
 						</ImageContainer>

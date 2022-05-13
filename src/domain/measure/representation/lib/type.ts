@@ -13,6 +13,9 @@ export type StageInfos<T extends SleepStage | ActivityStage> = {
  * Metrics grouped by usage for the representation
  */
 
+export const HRH7DConstantMetrics = [MetricType.User7DaysAverageRHR, MetricType.User7DaysReferenceRHR] as const;
+export type THRH7DConstantMetrics = typeof HRH7DConstantMetrics[number];
+
 // XXX: 05/04/2022 - Server does not send metrics
 export const sleep7DConstantMetrics = [
 	MetricType.User7DaysAwakeStageDuration,

@@ -376,6 +376,37 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
+		async setDailyRestingHeartRate(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailyRHR], localISODay, useForceRefresh);
+			present([
+				{
+					type: "setDailyRestingHeartRate",
+					payload: {
+						localISODay,
+						data: data[MetricType.UserDailyRHR] ? Number(data[MetricType.UserDailyRHR]) : null,
+					},
+				},
+			]);
+		},
+		async setLast7DRestingHeartRate(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures(
+				[MetricType.User7DaysAverageRHR, MetricType.User7DaysReferenceRHR],
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setLast7DRestingHeartRate",
+					payload: {
+						localISODay,
+						constant: {
+							[MetricType.User7DaysAverageRHR]: data[MetricType.User7DaysAverageRHR],
+							[MetricType.User7DaysReferenceRHR]: data[MetricType.User7DaysReferenceRHR],
+						},
+					},
+				},
+			]);
+		},
 		async setDailyEnergyScore(localISODay: ISODay, useForceRefresh?: boolean) {
 			const data = await measureApi.fetchLastDailyMeasures(
 				[MetricType.UserDailyEnergyScore],
