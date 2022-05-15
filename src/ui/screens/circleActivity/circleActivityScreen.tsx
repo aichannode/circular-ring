@@ -242,7 +242,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 				</ElementStack>
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
-					<Row style={{ marginBottom: 30, justifyContent: "center" }}>
+					<Row style={{ justifyContent: "center" }}>
 						<ImageContainer onPress={() => setActiveItem(0)}>
 							<GraphSwitcherButton
 								style={{ marginLeft: 0 }}
@@ -293,7 +293,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 							/>
 						</ImageContainer>
 					</Row>
-					<Row style={{ marginBottom: 30, justifyContent: "center" }}>
+					<Row style={{ justifyContent: "center" }}>
 						<ImageContainer onPress={() => setActiveItem(5)}>
 							<GraphSwitcherButton
 								source={

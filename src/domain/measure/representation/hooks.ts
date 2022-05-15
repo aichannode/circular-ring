@@ -132,19 +132,19 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						return {
 							awake:
 								localMetrics && localMetrics[MetricType.UserDailyAwakeStageDuration] !== null
-									? moment.duration(localMetrics[MetricType.UserDailyAwakeStageDuration]).asHours()
+									? getOrElse<number>(localMetrics, MetricType.UserDailyAwakeStageDuration, 0) / 60
 									: 0,
 							light:
 								localMetrics && localMetrics[MetricType.UserDailyLightStageDuration] !== null
-									? moment.duration(localMetrics[MetricType.UserDailyLightStageDuration]).asHours()
+									? getOrElse<number>(localMetrics, MetricType.UserDailyLightStageDuration, 0) / 60
 									: 0,
 							deep:
 								localMetrics && localMetrics[MetricType.UserDailyDeepStageDuration] !== null
-									? moment.duration(localMetrics[MetricType.UserDailyDeepStageDuration]).asHours()
+									? getOrElse<number>(localMetrics, MetricType.UserDailyDeepStageDuration, 0) / 60
 									: 0,
 							REM:
 								localMetrics && localMetrics[MetricType.UserDailyREMStageDuration] !== null
-									? moment.duration(localMetrics[MetricType.UserDailyREMStageDuration]).asHours()
+									? getOrElse<number>(localMetrics, MetricType.UserDailyREMStageDuration, 0) / 60
 									: 0,
 							date,
 						};
@@ -163,7 +163,6 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 			): SleepAll | undefined {
 				// Compute the all previous months from the given date
 				const months = useMemo(() => getMonthsBetween(beginISOMonth, endISOMonth), [beginISOMonth, endISOMonth]);
-
 				useEffect(
 					action(function () {
 						// Get the last 7 daily sleep stages metrics
@@ -202,6 +201,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 					const sleepStages = months.map((date) => {
 						const localMetrics = model.monthlySleepStageMetrics.get(date);
+						console.log(localMetrics);
 						return {
 							awake:
 								localMetrics && localMetrics[MetricType.UserMonthlyAwakeStageDuration] !== null

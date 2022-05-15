@@ -73,7 +73,10 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 
 	const [yMin, yMax] =
 		parsedLines.length > 0
-			? [Math.min(...parsedLines.map((line) => line.y)), Math.max(...parsedLines.map((line) => line.y))]
+			? [
+					Math.min(...parsedLines.filter((line) => line.y != 0).map((line) => line.y)),
+					Math.max(...parsedLines.map((line) => line.y)),
+			  ]
 			: [0, 0];
 
 	const [yMinIndex, yMaxIndex] = [

@@ -103,8 +103,9 @@ export function BarChart({
 	const yAxis = {
 		left: {
 			enabled: true,
-			axisMinimum: isDefined(yMin) ? yMin - (yMin + 1) : undefined,
-			axisMaximum: isDefined(yMax) ? yMax + 1 : undefined,
+			// add 10% from app spec
+			axisMinimum: isDefined(yMin) ? yMin - 0.1 : undefined,
+			axisMaximum: isDefined(yMax) ? yMax + 0.1 : undefined,
 			textColor: processColor(yColor),
 			gridLineWidth: 0.5,
 			drawLabels: true,

@@ -25,10 +25,8 @@ export function ActivityIntensityGraph({ selectedDay, mode = createActiveMode(),
 
 	return (
 		<View>
-			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("activity.intensity")}
-			</TitleText>
-			<View style={{ marginVertical: 10 }}>
+			<TitleText style={{ textAlign: "center", textTransform: "uppercase" }}>{format("activity.intensity")}</TitleText>
+			<View style={{ marginBottom: 25, marginTop: 20 }}>
 				<TimeFrameSwitcher
 					setGraphPeriod={setGraphPeriod}
 					graphPeriod={graphPeriod}
