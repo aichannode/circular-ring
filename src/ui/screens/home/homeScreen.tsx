@@ -31,7 +31,6 @@ export const HomeScreen: React.FC = () => {
 	const [hideQuickaccess, setHideQuickaccess] = useState(true);
 	const syncState = useSyncState();
 	const previousScrollViewY = useRef(0);
-
 	const setupState = useSetupState();
 
 	useEffect(() => {
@@ -45,10 +44,6 @@ export const HomeScreen: React.FC = () => {
 	}, []);
 
 	const forceRefresh = useCallback(async () => {
-		if (appStateService.isInSleepMode.get()) return;
-		if (syncState !== SyncState.NONE) {
-			return;
-		}
 		await ringManagementService.syncData();
 		await feedService.fetchAll();
 	}, [syncState]);

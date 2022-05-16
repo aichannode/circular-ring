@@ -1,8 +1,9 @@
 import { getLogger } from "@core/logger/logger";
 import { AppStateService } from "@domain/appState/appStateService";
-import { BleDeviceService } from "@domain/device/bleDeviceService";
+import { DeviceConnectionState } from "@domain/device/bleDeviceService";
 import { Channel } from "@domain/device/channels";
 import { observable } from "micro-observables";
+import { BleDeviceService } from "./../device/bleDeviceService";
 import { NamedUserRing } from "./ring";
 import { RingApi } from "./ringApi";
 import { ringDataEOF } from "./ringData";
@@ -21,12 +22,10 @@ export enum SyncState {
 export class RingManagementService {
 	private logger = getLogger("💍 RingService");
 
-	// _userRings = observable<NamedUserRing[]>([]);
 	private _currentRingSyncState = observable<SyncState>(SyncState.NONE);
 	private _FBCQuantity = observable(0);
 
 	readonly FBCQuantity = this._FBCQuantity.readOnly();
-	// userRings = this._userRings;
 	currentRingSyncState = this._currentRingSyncState.readOnly();
 	constructor(
 		private readonly deviceService: BleDeviceService,
@@ -36,7 +35,12 @@ export class RingManagementService {
 	) {}
 
 	async init() {
-		if (!this.appStateService.isInSleepMode) this.syncData();
+		this.deviceService.monitoring.subscribe((monitoring) => {
+			// on ring connection without Timeout The ring get DDOS
+			if (monitoring) setTimeout(() => this.syncData(), 500);
+		});
+		// Sync ring data each 10 min
+		setInterval(() => this.syncData(), 10 * 60 * 1000);
 	}
 
 	async registerConnectedRing() {
@@ -103,8 +107,17 @@ export class RingManagementService {
 	}
 
 	async syncData() {
+		this.logger.info("Sync Start");
 		const ring = this.appStateService.userRings.get().find((ring) => ring.connected);
-		if (!ring) {
+		if (this._currentRingSyncState.get() !== SyncState.NONE) {
+			this.logger.info("Sync cancelled: Already Syncing");
+			return;
+		}
+		if (this.appStateService.isInSleepMode.get()) {
+			this.logger.info("Sync cancelled: SleepMode");
+			return;
+		}
+		if (!ring || this.deviceService.connectionState.get() !== DeviceConnectionState.CONNECTED) {
 			this.logger.info("Sync cancelled: No ring");
 			return;
 		}
