@@ -24,6 +24,7 @@ import { AlarmCard } from "./alarmCard";
 import { AlarmWeekOverview } from "./alarmWeekOverview";
 
 export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen() {
+	const [isLoading, setLoading] = useState(false);
 	const navigation = useRoutesNavigation();
 	const { loading, alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
@@ -43,7 +44,7 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 		allowCalibration: false,
 	});
 
-	useDailySleepStages({ localISODay: currentISODay, setData });
+	useDailySleepStages({ localISODay: currentISODay, setData, setLoading });
 
 	useEffect(() => {
 		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
@@ -70,7 +71,7 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 						<Cross onPress={() => setDisplayGraph(false)}>
 							<Image source={require("@assets/images/close.png")} />
 						</Cross>
-						<MiniHypnogram data={dailySleep.stages} />
+						<MiniHypnogram isLoading={isLoading} data={dailySleep.stages} />
 					</GraphWrapper>
 				)}
 				<InfoListHeader>{format("alarm.score.programmed")}</InfoListHeader>

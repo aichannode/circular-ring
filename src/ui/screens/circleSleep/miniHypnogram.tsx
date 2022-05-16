@@ -1,5 +1,6 @@
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { SleepStage } from "@domain/measure/type";
+import { Spinner } from "@ui/components/spinner";
 import { StepChart } from "@ui/components/stepChart/StepChart";
 import { Tag } from "@ui/components/tag";
 import { useI18n } from "@ui/i18n";
@@ -21,12 +22,13 @@ export type Steps = Array<{
 type Props = {
 	data: HypnogramData;
 	hasNotEnoughData?: boolean;
+	isLoading?: boolean;
 };
 
 const defaultYAxis = [SleepStage.DEEP, SleepStage.LIGHT, SleepStage.REM, SleepStage.AWAKE];
 const defaultXAxis = [moment().hour(0).valueOf(), moment().hour(8).valueOf()];
 
-export function MiniHypnogram({ data, hasNotEnoughData }: Props) {
+export function MiniHypnogram({ data, hasNotEnoughData, isLoading }: Props) {
 	const stepsData = toStepsData(data);
 	console.log("stepsData", stepsData);
 	const { format } = useI18n();
@@ -61,29 +63,33 @@ export function MiniHypnogram({ data, hasNotEnoughData }: Props) {
 
 	return (
 		<Gradient start={{ x: 1, y: 0 }} end={{ x: 1, y: 1 }} colors={[...colors.gradient.blue].reverse()}>
-			<StepChart
-				data={stepsData?.splice(stepsData.length - 20, stepsData.length)}
-				yAxisWidth={0}
-				yColor={yColor}
-				yLabelFormat={(tick) => ""}
-				xLabelFormat={(tick) => ""}
-				xAxisContentInset={15}
-				defaultYAxis={defaultYAxis}
-				defaultXAxis={defaultXAxis}
-				tooltipYOffset={-30}
-				tooltipSize={{ width: 40, height: 30 }}
-				chartHeight={200}
-				// TODO: this is C/P from Hypnogram chart, refactor needed
-				// hasNotEnoughData={hasNotEnoughData}
-				renderTooltip={(step) => (
-					<>
-						<Tag containerStyle={{ backgroundColor: colors.blue, marginBottom: 4 }}>
-							{moment(step.x).format("HH:mm")}
-						</Tag>
-						<Tag containerStyle={{ backgroundColor: colors.blue }}>{yLabelFormat(step.y)}</Tag>
-					</>
-				)}
-			/>
+			{isLoading ? (
+				<Spinner size={24} />
+			) : (
+				<StepChart
+					data={stepsData?.splice(stepsData.length - 20, stepsData.length)}
+					yAxisWidth={0}
+					yColor={yColor}
+					yLabelFormat={(tick) => ""}
+					xLabelFormat={(tick) => ""}
+					xAxisContentInset={15}
+					defaultYAxis={defaultYAxis}
+					defaultXAxis={defaultXAxis}
+					tooltipYOffset={-30}
+					tooltipSize={{ width: 40, height: 30 }}
+					chartHeight={200}
+					// TODO: this is C/P from Hypnogram chart, refactor needed
+					// hasNotEnoughData={hasNotEnoughData}
+					renderTooltip={(step) => (
+						<>
+							<Tag containerStyle={{ backgroundColor: colors.blue, marginBottom: 4 }}>
+								{moment(step.x).format("HH:mm")}
+							</Tag>
+							<Tag containerStyle={{ backgroundColor: colors.blue }}>{yLabelFormat(step.y)}</Tag>
+						</>
+					)}
+				/>
+			)}
 		</Gradient>
 	);
 }

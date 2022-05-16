@@ -4,6 +4,7 @@ import { SleepStage } from "@domain/measure/type";
 import { createActiveMode, updateMode } from "@ui/business";
 import { DailyPieChart } from "@ui/components/measure/dailyPieChart";
 import { DailyPieChartLabel } from "@ui/components/measure/dailyPieChartLabel";
+import { Spinner } from "@ui/components/spinner";
 import { colors } from "@ui/styles/colors";
 import { Mode } from "@ui/type";
 import moment from "moment";
@@ -17,6 +18,7 @@ type Props = {
 	napTimings?: Array<[string, string]>;
 	stages: Array<StageInfos<SleepStage>>;
 	mode?: Mode;
+	isLoading?: boolean;
 };
 
 function getPhaseLevel(phase = 4) {
@@ -28,6 +30,7 @@ export function SleepDurationPieChart({
 	duration,
 	napTimings = [],
 	mode = createActiveMode(),
+	isLoading = false,
 }: Props) {
 	// Draw the core sleep
 	const stages = [
@@ -72,44 +75,48 @@ export function SleepDurationPieChart({
 
 	return (
 		<Container>
-			<DailyPieChart
-				stages={stages}
-				totalDuration={duration}
-				title="sleep.duration.total"
-				chartSize={200}
-				phaseColors={[colors.lightBlue, colors.darkBlue]}
-				phaseWidths={[5, 7]}
-				getPhaseLevel={getPhaseLevel}
-				mode={updatedMode}
-				noDataPhaseColor={colors.lightBlue}
-			>
-				{coreSleepTiming && (
-					<DailyPieChartLabel
-						chartSize={200}
-						labels={[
-							{
-								text: "sleep.duration.label.start_sleep" as WordingKey,
-								date: coreSleepTiming[0],
-							},
-							{
-								text: "sleep.duration.label.wake_up" as WordingKey,
-								date: coreSleepTiming[1],
-							},
-						].concat(
-							napTimings.flatMap((nap) => [
+			{isLoading ? (
+				<Spinner size={24} />
+			) : (
+				<DailyPieChart
+					stages={stages}
+					totalDuration={duration}
+					title="sleep.duration.total"
+					chartSize={200}
+					phaseColors={[colors.lightBlue, colors.darkBlue]}
+					phaseWidths={[5, 7]}
+					getPhaseLevel={getPhaseLevel}
+					mode={updatedMode}
+					noDataPhaseColor={colors.lightBlue}
+				>
+					{coreSleepTiming && (
+						<DailyPieChartLabel
+							chartSize={200}
+							labels={[
 								{
-									text: "sleep.duration.label.nap_start" as WordingKey,
-									date: nap[0],
+									text: "sleep.duration.label.start_sleep" as WordingKey,
+									date: coreSleepTiming[0],
 								},
 								{
-									text: "sleep.duration.label.nap_end" as WordingKey,
-									date: nap[1],
+									text: "sleep.duration.label.wake_up" as WordingKey,
+									date: coreSleepTiming[1],
 								},
-							])
-						)}
-					/>
-				)}
-			</DailyPieChart>
+							].concat(
+								napTimings.flatMap((nap) => [
+									{
+										text: "sleep.duration.label.nap_start" as WordingKey,
+										date: nap[0],
+									},
+									{
+										text: "sleep.duration.label.nap_end" as WordingKey,
+										date: nap[1],
+									},
+								])
+							)}
+						/>
+					)}
+				</DailyPieChart>
+			)}
 		</Container>
 	);
 }

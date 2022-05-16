@@ -40,6 +40,7 @@ import { Spo2Graph } from "./spo2Graph";
 import { TemperatureVariation7DGraph } from "./temperatureVariation7DGraph";
 
 export const CircleSleepScreen = observer(function CircleSleepScreen() {
+	const [loading, setLoading] = useState<boolean>(false);
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	const { useDailySleepScoreContributors, useDailySleepQualityScore, useDailySleepStages, useHasCompleteCoreSleep } =
@@ -58,7 +59,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	// XXX: https://circularing.atlassian.net/browse/CIR-93
 	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
 
-	useDailySleepStages({ setData: setDailyData, localISODay: selectedDay });
+	useDailySleepStages({ setData: setDailyData, localISODay: selectedDay, setLoading });
 
 	// XXX: https://circularing.atlassian.net/browse/CIR-790
 	const [] = dailySleep?.coreSleepTiming ?? [];
@@ -97,6 +98,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 					napTimings={dailySleep.napTimings}
 					duration={dailySleep.totalMinutesSleepDuration ?? 0}
 					mode={screenMode}
+					isLoading={loading}
 				/>
 			) : (
 				<Spinner />
@@ -300,6 +302,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 						onDaySelected={async (day) => {
 							await calendarBottomSheet.current?.asyncClose();
 							setSelectedDay(day);
+							setLoading(true);
 						}}
 					/>
 				</View>

@@ -248,19 +248,21 @@ export function setAfterHeavyComputation<M, T>(
 	setData: (data: T) => void,
 	heavyComputation: (metrics: M) => T,
 	heavyComputationHandlerRef: React.MutableRefObject<HeavyComputationHandler | undefined>,
-	metrics: M
+	metrics: M,
+	setLoading: (loading: boolean) => void
 ) {
 	let start = 0;
 	heavyComputationHandlerRef.current?.cancel();
 	heavyComputationHandlerRef.current = InteractionManager.runAfterInteractions(() => {
+		setLoading(true);
 		start = new Date().getTime();
 		__DEV__ && console.log("[MEASURE: Representation] Start of daily data computation.");
 		setData(heavyComputation(metrics));
 	});
-	heavyComputationHandlerRef.current.then(
-		() =>
-			__DEV__ && console.log("[MEASURE: Representation] End of daily data computation.", new Date().getTime() - start)
-	);
+	heavyComputationHandlerRef.current.then(() => {
+		__DEV__ && console.log("[MEASURE: Representation] End of daily data computation.", new Date().getTime() - start);
+		setLoading(false);
+	});
 }
 
 export function useDailyHeavyComputationData<M, T>(
@@ -271,7 +273,8 @@ export function useDailyHeavyComputationData<M, T>(
 	},
 	setData: (data: T) => void,
 	heavyComputation: (metrics: M) => T,
-	fetchData: (localISODay: string) => void
+	fetchData: (localISODay: string) => void,
+	setLoading: (loading: boolean) => void
 ) {
 	const heavyComputationHandlerRef = useRef<HeavyComputationHandler>();
 	useEffect(
@@ -280,7 +283,7 @@ export function useDailyHeavyComputationData<M, T>(
 			if (isLoaded) {
 				const metrics = modelField.get(localISODay);
 				if (metrics) {
-					setAfterHeavyComputation(setData, heavyComputation, heavyComputationHandlerRef, metrics);
+					setAfterHeavyComputation(setData, heavyComputation, heavyComputationHandlerRef, metrics, setLoading);
 				}
 			} else {
 				__DEV__ && console.log("[MEASURE: Action] FETCH daily measure");
@@ -292,7 +295,7 @@ export function useDailyHeavyComputationData<M, T>(
 					function (metrics) {
 						if (metrics) {
 							dispose();
-							setAfterHeavyComputation(setData, heavyComputation, heavyComputationHandlerRef, metrics);
+							setAfterHeavyComputation(setData, heavyComputation, heavyComputationHandlerRef, metrics, setLoading);
 						}
 					}
 				);

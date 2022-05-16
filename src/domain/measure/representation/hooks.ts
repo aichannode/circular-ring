@@ -381,9 +381,11 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 			useDailyActivityIntensity({
 				localISODay,
 				setData,
+				setLoading,
 			}: {
 				localISODay: ISODay;
 				setData: (data: DailyActivityIntensityData) => void;
+				setLoading: (loading: boolean) => void;
 			}) {
 				const modelField = model.dailyActivityIntensityMetrics;
 				const fetchData = () => {
@@ -398,7 +400,8 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					modelField,
 					setData,
 					createActivityPhasesGetter(localISODay),
-					fetchData
+					fetchData,
+					setLoading
 				);
 			},
 			useDailyActivities(localISODay: ISODay): Record<Activities, ActivityDetail> | undefined {
@@ -588,11 +591,26 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					};
 				}
 			},
-			useDailySleepStages({ localISODay, setData }: { localISODay: ISODay; setData: (data: DailySleepData) => void }) {
+			useDailySleepStages({
+				localISODay,
+				setData,
+				setLoading,
+			}: {
+				localISODay: ISODay;
+				setData: (data: DailySleepData) => void;
+				setLoading: (loading: boolean) => void;
+			}) {
 				const modelField = model.dailySleepMetrics;
 				const fetchData = () =>
 					actions.setDailySleepStagesMetrics(localISODay, shouldByPassCache(model.dailySleepMetrics, localISODay));
-				useDailyHeavyComputationData(localISODay, modelField, setData, createSleepStagesGetter(localISODay), fetchData);
+				useDailyHeavyComputationData(
+					localISODay,
+					modelField,
+					setData,
+					createSleepStagesGetter(localISODay),
+					fetchData,
+					setLoading
+				);
 			},
 			/**
 			 * Return sleep score contributors

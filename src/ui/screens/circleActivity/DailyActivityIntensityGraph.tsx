@@ -30,7 +30,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 	trimOptions,
 }: Props) {
 	const { format, formatHour } = useI18n();
-
+	const [loading, setLoading] = useState<boolean>(true);
 	const is24h = useIs24h();
 
 	const [loadedDay, setLoadedDay] = useState<ISODay | undefined>(undefined);
@@ -43,7 +43,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 			hooks: { useRangeTags },
 		},
 	} = useRepresentations();
-	useDailyActivityIntensity({ localISODay: selectedDay, setData });
+	useDailyActivityIntensity({ localISODay: selectedDay, setData, setLoading });
 	const prevDataActivityIntensity = useRef(dataActivityIntensity);
 
 	const graphData: Array<{
@@ -157,50 +157,56 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 	return (
 		<>
 			<Tags tags={isInDisabledMode(updatedMode) ? [] : tags} />
-			<View style={{ height: 200 }}>
-				{isInDisabledMode(updatedMode) ? (
-					<View style={{ flex: 1 }}>
-						<TextPlaceholder content={format("global.no_data_yet")} />
+			{loading ? (
+				<Spinner size={24} />
+			) : (
+				<>
+					<View style={{ height: 200 }}>
+						{isInDisabledMode(updatedMode) ? (
+							<View style={{ flex: 1 }}>
+								<TextPlaceholder content={format("global.no_data_yet")} />
+							</View>
+						) : (
+							<BarChart
+								style={{
+									flex: 1,
+									marginBottom: 27,
+								}}
+								data={data}
+								xAxis={xAxis}
+								yAxis={yAxis}
+								legend={{
+									formToTextSpace: 5,
+									enabled: false,
+									xEntrySpace: 50,
+								}}
+								marker={{
+									enabled: true,
+									markerColor: processColor(colors.orangeRed),
+									textColor: processColor("white"),
+									textSize: 14,
+								}}
+								zoom={{ scaleX: 1, scaleY: 1, xValue: Math.floor(parsedData.length / 2), yValue: 1 }}
+								pinchZoom={true}
+								scaleYEnabled={false}
+								doubleTapToZoomEnabled={false}
+								chartDescription={{ text: "" }}
+								visibleRange={{ x: { max: Math.min(parsedData.length, 100) } }}
+								drawValueAboveBar={false}
+								highlightFullBarEnabled={true}
+							/>
+						)}
 					</View>
-				) : (
-					<BarChart
-						style={{
-							flex: 1,
-							marginBottom: 27,
-						}}
-						data={data}
-						xAxis={xAxis}
-						yAxis={yAxis}
-						legend={{
-							formToTextSpace: 5,
-							enabled: false,
-							xEntrySpace: 50,
-						}}
-						marker={{
-							enabled: true,
-							markerColor: processColor(colors.orangeRed),
-							textColor: processColor("white"),
-							textSize: 14,
-						}}
-						zoom={{ scaleX: 1, scaleY: 1, xValue: Math.floor(parsedData.length / 2), yValue: 1 }}
-						pinchZoom={true}
-						scaleYEnabled={false}
-						doubleTapToZoomEnabled={false}
-						chartDescription={{ text: "" }}
-						visibleRange={{ x: { max: Math.min(parsedData.length, 100) } }}
-						drawValueAboveBar={false}
-						highlightFullBarEnabled={true}
-					/>
-				)}
-			</View>
-			<View style={{ marginTop: 30 }}>
-				<ActivityLegend
-					mode={updatedMode}
-					highDuration={dataActivityIntensity?.duration.highActivity}
-					mediumDuration={dataActivityIntensity?.duration.mediumActivity}
-					lowDuration={dataActivityIntensity?.duration.lowActivity}
-				/>
-			</View>
+					<View style={{ marginTop: 30 }}>
+						<ActivityLegend
+							mode={updatedMode}
+							highDuration={dataActivityIntensity?.duration.highActivity}
+							mediumDuration={dataActivityIntensity?.duration.mediumActivity}
+							lowDuration={dataActivityIntensity?.duration.lowActivity}
+						/>
+					</View>
+				</>
+			)}
 		</>
 	);
 });

@@ -58,6 +58,7 @@ function getIcon(path: string) {
 export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const { format } = useI18n();
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
+	const [isLoading, setLoading] = useState<boolean>(true);
 	const [activityIntensity, setData] = useState<DailyActivityIntensityData>({
 		stages: [],
 		controlState: DataControlState.NO_DATA,
@@ -89,9 +90,9 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const activityContributorGaugesConfig = getActivityGaugesConfig(format);
 
-	useDailyActivityIntensity({ localISODay: selectedDay, setData });
+	useDailyActivityIntensity({ localISODay: selectedDay, setData, setLoading });
 	// TODO: This is out of the ticket CIR-874, this should be replaced by an hook for extracting only coreSleepStart and coreSleepEnd.
-	useDailySleepStages({ localISODay: selectedDay, setData: setDailyData });
+	useDailySleepStages({ localISODay: selectedDay, setData: setDailyData, setLoading });
 
 	const hasCompleteCoreSleep = useHasCompleteCoreSleep(selectedDay);
 	const nbRemainingDays = useUserCalibrationRemainingDays();
@@ -136,6 +137,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 					/>
 				</View>
 				<InfoListHeader>{format("activity.duration.title")}</InfoListHeader>
+
 				<ActivityDurationPieChart
 					isToday={selectedDay === getCurrentLocalISODay()}
 					stages={activityIntensity.stages}
@@ -143,6 +145,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 					sportSessionDates={activityIntensity.sportSessionDates}
 					duration={activityIntensity.duration.total}
 					mode={screenModeWithoutDisabled}
+					isLoading={isLoading}
 				/>
 				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
 				<ElementStack gap={10}>
@@ -324,6 +327,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 						onDaySelected={async (day) => {
 							await calendarBottomSheet.current?.asyncClose();
 							setSelectedDay(day);
+							setLoading(true);
 						}}
 					/>
 				</View>
