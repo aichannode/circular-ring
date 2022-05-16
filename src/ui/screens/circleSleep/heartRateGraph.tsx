@@ -129,6 +129,8 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 						</>
 					)}
 					movingAverage={dailyHrTrend?.data}
+					shouldShowMarker={true}
+					highlightPerTapEnabled={true}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

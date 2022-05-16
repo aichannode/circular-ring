@@ -113,6 +113,7 @@ export function LineChart({
 	if (__DEV__) {
 		// XXX: pre-conditions:
 		if (maxDataLength === 0 && !isInDisabledMode(mode)) {
+			console.log(mode);
 			throw new Error(
 				`Only 'disabled' mode can render LineChart without data. Found '${mode.type}' mode without data.`
 			);
@@ -239,7 +240,7 @@ export function LineChart({
 					label: "",
 					config: {
 						drawValues: false,
-						lineWidth: shouldShowMarker ? 2 : 1,
+						lineWidth: shouldDrawCircles ? 2 : 1,
 						drawCircles: shouldDrawCircles,
 						circleColors: !!shouldShowMarker
 							? data.map(({ x }) => {
@@ -401,7 +402,7 @@ export function LineChart({
 							yAxis={yAxis}
 							autoScaleMinMaxEnabled={false}
 							marker={{
-								enabled: shouldShowLabel,
+								enabled: shouldShowLabel || shouldShowMarker,
 								textColor: processColor(colors.white),
 								markerColor: processColor(graphColor),
 							}}

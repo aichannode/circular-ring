@@ -107,7 +107,8 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
 					data={parsedLines}
-					shouldShowLabel={false}
+					shouldShowLabel={true}
+					shouldShowMarker={true}
 					shouldDrawCircles={false}
 					graphColor={colors.darkBlue}
 					valueFormatter="date"
@@ -118,6 +119,7 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 					yMaxIndex={yMaxIndex}
 					mode={updatedMode}
 					shouldUpdateYmin={false}
+					highlightPerTapEnabled={true}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

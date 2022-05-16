@@ -118,6 +118,8 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({
 					yMaxIndex={yMaxIndex}
 					mode={updatedMode}
 					movingAverage={dailyHrvTrend?.data}
+					shouldShowMarker={true}
+					highlightPerTapEnabled={true}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

@@ -110,6 +110,8 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 					yMaxIndex={yMaxIndex}
 					mode={updatedMode}
 					labelCount={5}
+					highlightPerTapEnabled={true}
+					shouldShowMarker={true}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

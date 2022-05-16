@@ -152,6 +152,8 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 					mode={updatedMode}
 					xAxisMin={xAxisMin}
 					xAxisMax={xAxisMax}
+					shouldShowMarker={true}
+					highlightPerTapEnabled={true}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
