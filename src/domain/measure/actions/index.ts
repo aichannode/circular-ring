@@ -81,6 +81,8 @@ import {
 	DailyHRVTimeSeriesMetrics,
 	DailyHRVTrendTimeSeriesMetrics,
 	dailyHRVTrendTimeSeriesMetrics,
+	DailyPhaseBeforeWakeUpMetrics,
+	dailyPhaseBeforeWakeUpMetrics,
 	dailySleepScoreMetrics,
 	dailySleepStageDuration,
 	DailySleepStageDuration,
@@ -467,6 +469,22 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					payload: {
 						localISODay,
 						score: data[MetricType.User7DaysSleepScore] as number,
+					},
+				},
+			]);
+		},
+		async setDailyPhaseBeforeWakeUp(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures<DailyPhaseBeforeWakeUpMetrics>(
+				dailyPhaseBeforeWakeUpMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailyPhaseBeforeWakeUp",
+					payload: {
+						localISODay,
+						data,
 					},
 				},
 			]);

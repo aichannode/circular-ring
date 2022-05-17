@@ -32,13 +32,17 @@ export interface Step {
 export type Steps = Step[];
 interface StepChartProps {
 	data: Steps;
+	labelColor?: string;
 	xAxisNbTicks?: number;
 	xLabelFormat?: { (x: number): string };
-	xAxisContentInset?: number;
+	xAxisPadding?: number;
+	leftPadding?: number;
+	rightPadding?: number;
 	defaultXAxis?: number[];
 	yColor?: { (y: number): string };
 	yLabelFormat?: { (y: number): string };
 	yAxisWidth?: number;
+	yAxisRight?: boolean;
 	defaultYAxis?: number[];
 	chartHeight?: number;
 	labelFontSize?: number;
@@ -46,19 +50,31 @@ interface StepChartProps {
 	tooltipYOffset?: number;
 	tooltipSize?: { width: number; height: number };
 	longPressDelay?: number;
+	hideXAxis?: boolean;
 	mode?: Mode;
+	renderRightChild?: (graphContentInset: {
+		top: number;
+		left: number;
+		right: number;
+		bottom: number;
+	}) => React.ReactElement;
 }
 
 const verticalContentInset = { top: 50, bottom: 20 };
 
 export function StepChart({
 	data,
+	labelColor = colors.darkGray,
 	yColor = () => colors.primary,
 	yLabelFormat = (y) => `${y}`,
+	yAxisRight = false,
 	yAxisWidth = 10,
 	xLabelFormat = (x) => `${x}`,
 	xAxisNbTicks = 5,
-	xAxisContentInset = 0,
+	xAxisPadding = 0,
+	leftPadding = xAxisPadding,
+	rightPadding = xAxisPadding,
+	hideXAxis = false,
 	defaultYAxis = [],
 	defaultXAxis = [],
 	chartHeight = 150,
@@ -67,6 +83,7 @@ export function StepChart({
 	tooltipSize = { width: 50, height: 30 },
 	longPressDelay = 400,
 	mode = createActiveMode(),
+	renderRightChild,
 	renderTooltip,
 }: StepChartProps) {
 	if (__DEV__) {
@@ -84,7 +101,7 @@ export function StepChart({
 	const xAxisValues = linspace(xMin, xMax, xAxisNbTicks);
 	const yAxisValues = [...new Set([...yValues, ...defaultYAxis])].sort((a, b) => a - b);
 
-	const xContentInset = { left: xAxisContentInset, right: xAxisContentInset };
+	const xContentInset = { left: leftPadding, right: rightPadding };
 	const yAxisContentInset = verticalContentInset.top;
 	const canShowAxes = isInActiveMode(mode) || isInCalibrationMode(mode) || defaultYAxis.length > 0;
 	const shouldDisplay = isInActiveMode(mode) || isInCalibrationMode(mode);
@@ -96,6 +113,7 @@ export function StepChart({
 	const [tooltipVisible, setTooltipVisible] = useState(false);
 	const [selected, setSelected] = useState<Step | null>(null);
 	const [position, setPosition] = useState<Position | null>(null);
+	const [rightChildLayout, setRightChildLayout] = useState<Rect>({ x: 0, y: 0, width: 0, height: 0 });
 
 	const { format } = useI18n();
 
@@ -184,12 +202,12 @@ export function StepChart({
 	const yAxis = (
 		<YAxis
 			data={yAxisValues}
-			style={{ width: yAxisWidth, marginRight: 10 }}
+			style={{ width: yAxisWidth, marginRight: 10, marginLeft: rightChildLayout.width }}
 			contentInset={verticalContentInset}
 			svg={{
-				fill: colors.darkGray,
-				textAnchor: "end",
-				x: "100%",
+				fill: labelColor,
+				textAnchor: yAxisRight ? "start" : "end",
+				x: yAxisRight ? "0px" : "100%",
 				fontSize: labelFontSize,
 			}}
 			numberOfTicks={yAxisValues.length}
@@ -203,7 +221,7 @@ export function StepChart({
 			contentInset={xContentInset}
 			xAccessor={({ item }) => item}
 			svg={{
-				fill: colors.darkGray,
+				fill: labelColor,
 				fontSize: labelFontSize,
 			}}
 			formatLabel={xLabelFormat}
@@ -211,10 +229,8 @@ export function StepChart({
 	);
 
 	const canDisplayTooltip = isInActiveMode(mode) || isInCalibrationMode(mode);
-	const tooltipMinX = xAxisContentInset;
-	const tooltipMaxX = graphRect.current
-		? graphRect.current.width + xAxisContentInset - tooltipSize.width
-		: Number.MAX_VALUE;
+	const tooltipMinX = leftPadding;
+	const tooltipMaxX = graphRect.current ? graphRect.current.width + leftPadding - tooltipSize.width : Number.MAX_VALUE;
 	const tooltipMinY = 0;
 	const tooltip = renderTooltip && tooltipVisible && position && selected && canDisplayTooltip && (
 		<View
@@ -236,7 +252,7 @@ export function StepChart({
 					Math.min(
 						tooltipMaxX,
 						position.x + // position relative to graph
-							xAxisContentInset - // offset to the left of the graph
+							leftPadding - // offset to the left of the graph
 							tooltipSize.width / 2 // horizontally center tooltip
 					)
 				),
@@ -270,7 +286,7 @@ export function StepChart({
 		<View
 			style={{
 				height: chartHeight,
-				flexDirection: "row",
+				flexDirection: yAxisRight ? "row-reverse" : "row",
 			}}
 		>
 			<View style={{ marginBottom: 0, flexDirection: "row" }}>{yValues.length > 0 && yAxis}</View>
@@ -287,9 +303,9 @@ export function StepChart({
 				onLayout={(event) => {
 					const { x, y, width, height } = event.nativeEvent.layout;
 					graphRect.current = {
-						x: x + xAxisContentInset, // offset to the left of the graph
+						x: x + leftPadding, // offset to the left of the graph
 						y: y + verticalContentInset.top, // offset to the top of the graph
-						width: width - xAxisContentInset * 2, // subtract the left and right content insets
+						width: width - (leftPadding + rightPadding), // subtract the left and right content insets
 						height: height - verticalContentInset.top - verticalContentInset.bottom, // subtract the top and bottom content insets
 					};
 				}}
@@ -302,8 +318,8 @@ export function StepChart({
 								flex: 1,
 							},
 							canShowAxes && {
-								marginLeft: xAxisContentInset,
-								marginRight: xAxisContentInset,
+								marginLeft: leftPadding,
+								marginRight: rightPadding,
 								transform: [{ translateY: verticalContentInset.top }],
 							},
 						]}
@@ -317,8 +333,8 @@ export function StepChart({
 							flex: 1,
 							height: chartHeight,
 							maxHeight: chartHeight,
-							marginLeft: xAxisContentInset,
-							marginRight: xAxisContentInset,
+							marginLeft: leftPadding,
+							marginRight: rightPadding,
 						}}
 						data={shouldDisplay ? data : []}
 						curve={shape.curveStep}
@@ -336,7 +352,7 @@ export function StepChart({
 					>
 						<Grid
 							svg={{
-								stroke: colors.darkGray,
+								stroke: labelColor,
 								strokeWidth: 0.5,
 							}}
 						/>
@@ -345,13 +361,28 @@ export function StepChart({
 				)}
 				{tooltip}
 				<View
+					onLayout={(e) => setRightChildLayout(e.nativeEvent.layout)}
+					style={[
+						{
+							position: "absolute",
+							right: xContentInset.right - rightChildLayout.width,
+							height: "100%",
+						},
+						!hideXAxis && {
+							bottom: verticalContentInset.bottom,
+						},
+					]}
+				>
+					{renderRightChild && renderRightChild({ ...verticalContentInset, ...xContentInset })}
+				</View>
+				<View
 					style={{
 						position: "absolute",
 						bottom: 0,
 						width: "100%",
 					}}
 				>
-					{xValues.length > 0 && xAxis}
+					{!hideXAxis && xValues.length > 0 && xAxis}
 				</View>
 			</View>
 		</View>

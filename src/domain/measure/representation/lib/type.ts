@@ -166,6 +166,9 @@ export const dailyWakeUpScoreMetrics = [
 ] as const;
 export type DailyWakeUpScoreMetrics = typeof dailyWakeUpScoreMetrics[number];
 
+export const dailyPhaseBeforeWakeUpMetrics = [MetricType.UserDailyPhaseBeforeWakeUp];
+export type DailyPhaseBeforeWakeUpMetrics = typeof dailyPhaseBeforeWakeUpMetrics[number];
+
 /**
  * Score contributors
  */

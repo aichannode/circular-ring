@@ -1145,6 +1145,30 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					};
 				}
 			},
+			useDailyPhaseBeforeWakeUp(localISODay: ISODay): number | undefined {
+				useEffect(
+					action(function () {
+						actions.setDailyPhaseBeforeWakeUp(
+							localISODay,
+							shouldByPassCache(model.dailyPhaseBeforeWakeUp, localISODay)
+						);
+					}),
+					[localISODay]
+				);
+
+				if (!model.dailyPhaseBeforeWakeUp.has(localISODay)) {
+					return;
+				}
+
+				const data = model.dailyPhaseBeforeWakeUp.get(localISODay);
+
+				if (data) {
+					const score = data[MetricType.UserDailyPhaseBeforeWakeUp]
+						? Number(data[MetricType.UserDailyPhaseBeforeWakeUp])
+						: undefined;
+					return score;
+				}
+			},
 			useDailyWakeUpScore(localISODay: ISODay) {
 				useEffect(
 					action(function () {
@@ -1153,7 +1177,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					[localISODay]
 				);
 
-				if (!model.dailySleepScore.has(localISODay)) {
+				if (!model.dailyWakeUpScore.has(localISODay)) {
 					return;
 				}
 

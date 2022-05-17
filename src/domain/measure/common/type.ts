@@ -40,6 +40,7 @@ import {
 	DailyHRVConstantMetrics,
 	DailyHRVTimeSeriesMetrics,
 	DailyHRVTrendTimeSeriesMetrics,
+	DailyPhaseBeforeWakeUpMetrics,
 	DailySleepScoreMetrics,
 	DailySleepStageDuration,
 	DailySpo2ConstantMetrics,
@@ -320,6 +321,13 @@ export type Mutations =
 			payload: {
 				localISODay: ISODay;
 				data: Metrics<DailyHRSConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setDailyPhaseBeforeWakeUp";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<DailyPhaseBeforeWakeUpMetrics>;
 			};
 	  }
 	| {

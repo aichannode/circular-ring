@@ -1,13 +1,15 @@
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { SleepStage } from "@domain/measure/type";
-import { Spinner } from "@ui/components/spinner";
+import { createActiveMode } from "@ui/business";
 import { StepChart } from "@ui/components/stepChart/StepChart";
 import { Tag } from "@ui/components/tag";
 import { useI18n } from "@ui/i18n";
 import { toStepsData } from "@ui/screens/circleSleep/business";
 import { colors } from "@ui/styles/colors";
+import { Mode } from "@ui/type";
 import moment from "moment";
 import React from "react";
+import { Text, View } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import styled from "styled-components/native";
 
@@ -21,17 +23,20 @@ export type Steps = Array<{
 
 type Props = {
 	data: HypnogramData;
-	hasNotEnoughData?: boolean;
-	isLoading?: boolean;
+	phaseBeforeWakeUp?: number;
+	mode?: Mode;
 };
 
 const defaultYAxis = [SleepStage.DEEP, SleepStage.LIGHT, SleepStage.REM, SleepStage.AWAKE];
 const defaultXAxis = [moment().hour(0).valueOf(), moment().hour(8).valueOf()];
 
-export function MiniHypnogram({ data, hasNotEnoughData, isLoading }: Props) {
+export function AlarmHypnogram({
+	data,
+	phaseBeforeWakeUp = data[data.length - 1].level,
+	mode = createActiveMode(),
+}: Props) {
 	const stepsData = toStepsData(data);
-	console.log("stepsData", stepsData);
-	const { format } = useI18n();
+	const { format, formatHour } = useI18n();
 
 	function yColor(y: number) {
 		switch (y) {
@@ -57,29 +62,29 @@ export function MiniHypnogram({ data, hasNotEnoughData, isLoading }: Props) {
 				return format("sleep.stage.REM");
 			default:
 			case SleepStage.AWAKE:
-				return " " + format("sleep.stage.awake");
+				return format("sleep.stage.awake");
 		}
 	}
 
 	return (
 		<Gradient start={{ x: 1, y: 0 }} end={{ x: 1, y: 1 }} colors={[...colors.gradient.blue].reverse()}>
-			{isLoading ? (
-				<Spinner size={24} />
-			) : (
+			<View style={{ marginRight: 100 }}>
 				<StepChart
-					data={stepsData?.splice(stepsData.length - 20, stepsData.length)}
-					yAxisWidth={0}
+					data={stepsData}
+					labelColor={colors.white}
+					yAxisWidth={31}
 					yColor={yColor}
-					yLabelFormat={(tick) => ""}
-					xLabelFormat={(tick) => ""}
-					xAxisContentInset={15}
+					yLabelFormat={yLabelFormat}
+					yAxisRight
+					xLabelFormat={(tick) => moment(tick).format("H A")}
+					rightPadding={15}
+					hideXAxis
 					defaultYAxis={defaultYAxis}
 					defaultXAxis={defaultXAxis}
 					tooltipYOffset={-30}
 					tooltipSize={{ width: 40, height: 30 }}
 					chartHeight={200}
-					// TODO: this is C/P from Hypnogram chart, refactor needed
-					// hasNotEnoughData={hasNotEnoughData}
+					mode={mode}
 					renderTooltip={(step) => (
 						<>
 							<Tag containerStyle={{ backgroundColor: colors.blue, marginBottom: 4 }}>
@@ -88,13 +93,53 @@ export function MiniHypnogram({ data, hasNotEnoughData, isLoading }: Props) {
 							<Tag containerStyle={{ backgroundColor: colors.blue }}>{yLabelFormat(step.y)}</Tag>
 						</>
 					)}
+					renderRightChild={(graphContentInset) => (
+						<View style={{ flexDirection: "column", flex: 1, alignItems: "center" }}>
+							<View
+								style={{
+									position: "absolute",
+									width: 50,
+									alignItems: "center",
+									top: 15,
+								}}
+							>
+								<Text style={{ color: colors.white, fontSize: 15 }}>
+									{formatHour(new Date(data[data.length - 1].end), true)}
+								</Text>
+							</View>
+							<View
+								style={{
+									flex: 1,
+									backgroundColor: colors.white,
+									width: 1,
+									marginTop: graphContentInset.top - 5,
+								}}
+							/>
+							<View
+								style={{
+									width: 5,
+									height: 5,
+									borderRadius: 5,
+									backgroundColor: colors.white,
+								}}
+							/>
+						</View>
+					)}
 				/>
-			)}
+			</View>
+			<Text style={{ marginHorizontal: 27, marginTop: 25, color: colors.white }}>
+				{phaseBeforeWakeUp === 4 && format("sleep.phase.description.awake")}
+				{phaseBeforeWakeUp === 3 && format("sleep.phase.description.REM")}
+				{phaseBeforeWakeUp === 2 && format("sleep.phase.description.light")}
+				{phaseBeforeWakeUp === 1 && format("sleep.phase.description.deep")}
+			</Text>
 		</Gradient>
 	);
 }
 
 const Gradient = styled(LinearGradient)`
 	margin: 20px;
+	padding-top: 25px;
+	padding-bottom: 25px;
 	border-radius: 10px;
 `;

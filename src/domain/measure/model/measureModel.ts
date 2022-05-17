@@ -42,6 +42,7 @@ import {
 	DailyHRVConstantMetrics,
 	DailyHRVTimeSeriesMetrics,
 	DailyHRVTrendTimeSeriesMetrics,
+	DailyPhaseBeforeWakeUpMetrics,
 	DailySleepScoreMetrics,
 	DailySleepStageDuration,
 	DailySpo2ConstantMetrics,
@@ -144,6 +145,7 @@ export class MeasureModel implements Model<Proposal> {
 	public dailyGlobalScore: Map<ISODay, number | null> = new Map();
 	public dailySleepScore: Map<ISODay, Metrics<DailySleepScoreMetrics>> = new Map();
 	public dailyWakeUpScore: Map<ISODay, Metrics<DailyWakeUpScoreMetrics>> = new Map();
+	public dailyPhaseBeforeWakeUp: Map<ISODay, Metrics<DailyPhaseBeforeWakeUpMetrics>> = new Map();
 
 	public lastAcceptedMutations: Proposal[] = [];
 
@@ -163,6 +165,8 @@ export class MeasureModel implements Model<Proposal> {
 			last7DActivityIntensityAverageMetrics: observable.shallow,
 			dailyHRSMetrics: observable.shallow,
 			dailyHRSContantMetrics: observable.shallow,
+			dailyPhaseBeforeWakeUp: observable.shallow,
+			dailyWakeUpScore: observable.shallow,
 			present: action,
 		});
 	}
@@ -310,6 +314,10 @@ export class MeasureModel implements Model<Proposal> {
 			} else if (mutation.type === "setDailyRestingHeartRate") {
 				const score = mutation.payload.data;
 				mutate.call(this, mutation, () => this.dailyRestingHeartRate.set(mutation.payload.localISODay, score));
+			} else if (mutation.type === "setDailyPhaseBeforeWakeUp") {
+				mutate.call(this, mutation, () =>
+					this.dailyPhaseBeforeWakeUp.set(mutation.payload.localISODay, mutation.payload.data)
+				);
 			}
 		});
 	};
