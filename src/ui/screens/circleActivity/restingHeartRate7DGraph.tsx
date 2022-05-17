@@ -69,6 +69,12 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 			color: colors.red,
 		});
 	}
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.reference !== 0) {
+		averages.push({
+			value: constant.reference,
+			color: colors.redOrange,
+		});
+	}
 	useEffect(() => {
 		if (isDefined(data)) {
 			setLoading(false);

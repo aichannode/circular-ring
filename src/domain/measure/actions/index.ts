@@ -112,6 +112,7 @@ import { MeasureApi } from "./lib/measureApi";
  */
 
 export function createActions(measureApi: MeasureApi, present: Present<Proposal>) {
+	const lifetimeDate = "2000-01-01";
 	return {
 		async pullLast7DSleepMetrics(localISODay: ISODay = getCurrentLocalISODay(), useForceRefresh?: boolean) {
 			const data = await measureApi.fetchLast7DaysMeasures<Sleep7DConstantMetrics>(
@@ -171,7 +172,13 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			Promise.all([
 				measureApi.fetchDailyMeasures<DailyHRTimeSeriesMetrics>(dailyHRTimeSeriesMetrics, localISODay, useForceRefresh),
 				measureApi.fetchLastDailyMeasures<DailyHRConstantMetrics>(dailyHRConstantMetrics, localISODay, useForceRefresh),
-			]).then(function ([timeSeries, constant]) {
+				measureApi.fetchLastDailyMeasures<MetricType.UserDailyAwakeHRReference>(
+					[MetricType.UserDailyAwakeHRReference],
+					lifetimeDate,
+					true
+				),
+			]).then(function ([timeSeries, constant, reference]) {
+				constant[MetricType.UserDailyAwakeHRReference] = reference[MetricType.UserDailyAwakeHRReference];
 				present([
 					{
 						type: "setDailyHRMetrics",
@@ -198,7 +205,13 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					localISODay,
 					useForceRefresh
 				),
-			]).then(function ([timeSeries, constant]) {
+				measureApi.fetchLastDailyMeasures<MetricType.UserDailySleepHR>(
+					[MetricType.UserDailySleepHR],
+					lifetimeDate,
+					true
+				),
+			]).then(function ([timeSeries, constant, reference]) {
+				constant[MetricType.UserDailySleepHR] = reference[MetricType.UserDailySleepHR];
 				present([
 					{
 						type: "setDailyHRNightMetrics",
@@ -245,7 +258,13 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					localISODay,
 					useForceRefresh
 				),
-			]).then(function ([timeSeries, constant]) {
+				measureApi.fetchLastDailyMeasures<MetricType.UserDailyAsleepSPO2Reference>(
+					[MetricType.UserDailyAsleepSPO2Reference],
+					lifetimeDate,
+					true
+				),
+			]).then(function ([timeSeries, constant, reference]) {
+				constant[MetricType.UserDailyAsleepSPO2Reference] = reference[MetricType.UserDailyAsleepSPO2Reference];
 				present([
 					{
 						type: "setDailySpo2Metrics",
@@ -292,7 +311,13 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			Promise.all([
 				measureApi.fetchDailyMeasures<DailyBRTimeSeriesMetrics>(dailyBRTimeSeriesMetrics, localISODay, useForceRefresh),
 				measureApi.fetchLastDailyMeasures<DailyBRConstantMetrics>(dailyBRConstantMetrics, localISODay, useForceRefresh),
-			]).then(function ([timeSeries, constant]) {
+				measureApi.fetchLastDailyMeasures<MetricType.UserDailyAsleepBRReference>(
+					[MetricType.UserDailyAsleepBRReference],
+					lifetimeDate,
+					true
+				),
+			]).then(function ([timeSeries, constant, reference]) {
+				constant[MetricType.UserDailyAsleepBRReference] = reference[MetricType.UserDailyAsleepBRReference];
 				present([
 					{
 						type: "setDailyBRMetrics",
@@ -391,23 +416,23 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async setLast7DRestingHeartRate(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures(
-				[MetricType.User7DaysAverageRHR, MetricType.User7DaysReferenceRHR],
-				localISODay,
-				useForceRefresh
-			);
-			present([
-				{
-					type: "setLast7DRestingHeartRate",
-					payload: {
-						localISODay,
-						constant: {
-							[MetricType.User7DaysAverageRHR]: data[MetricType.User7DaysAverageRHR],
-							[MetricType.User7DaysReferenceRHR]: data[MetricType.User7DaysReferenceRHR],
+			Promise.all([
+				measureApi.fetchLastDailyMeasures([MetricType.User7DaysAverageRHR], localISODay, useForceRefresh),
+				measureApi.fetchLastDailyMeasures([MetricType.User7DaysReferenceRHR], lifetimeDate, useForceRefresh),
+			]).then(function ([data, reference]) {
+				present([
+					{
+						type: "setLast7DRestingHeartRate",
+						payload: {
+							localISODay,
+							constant: {
+								[MetricType.User7DaysAverageRHR]: data[MetricType.User7DaysAverageRHR],
+								[MetricType.User7DaysReferenceRHR]: reference[MetricType.User7DaysReferenceRHR],
+							},
 						},
 					},
-				},
-			]);
+				]);
+			});
 		},
 		async setDailyEnergyScore(localISODay: ISODay, useForceRefresh?: boolean) {
 			const data = await measureApi.fetchLastDailyMeasures(
