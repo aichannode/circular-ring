@@ -77,15 +77,23 @@ export const DailyPieChart: React.FC<Props> = ({
 	// The maximum drawable angle of the pie (the current hour)
 	const endPieAngle = (didStartTheDayBefore ? 360 : 0) + angle(new Date(endTime));
 
-	const data = displayedStages.map((stage, index) => ({
-		key: index,
-		value: Date.parse(stage.end) - Date.parse(stage.start),
-		svg: {
-			fill:
-				isInActiveMode(mode) || isInCalibrationMode(mode) ? phaseColors[getPhaseLevel(stage.level)] : noDataPhaseColor,
-		},
-		arc: { innerRadius: getSliceInnerRadius(index), outerRadius: getSliceOutterRadius(index) },
-	}));
+	const data = displayedStages.map((stage, index) => {
+		const value = Date.parse(stage.end) - Date.parse(stage.start);
+		if (value < 0) {
+			console.error("Invalid stage duration", stage);
+		}
+		return {
+			key: index,
+			value: Math.max(0, value), // Don't draw negative values, PieChart doesn't support it
+			svg: {
+				fill:
+					isInActiveMode(mode) || isInCalibrationMode(mode)
+						? phaseColors[getPhaseLevel(stage.level)]
+						: noDataPhaseColor,
+			},
+			arc: { innerRadius: getSliceInnerRadius(index), outerRadius: getSliceOutterRadius(index) },
+		};
+	});
 
 	const { format, formatDuration } = useI18n();
 

@@ -10,7 +10,7 @@ import styled, { css } from "styled-components/native";
 
 type Props = {
 	labels: Array<{
-		date: string;
+		date: string | number;
 		text?: WordingKey;
 	}>;
 	/** Chart diameter */

@@ -17,16 +17,25 @@ import {
 } from "./type";
 
 /**
- * Return the phases of sleep for the given metrics
+ * Return the phases of activity for the given metrics
  */
 export const createActivityPhasesGetter =
 	(localISODay: string) =>
 	(data: RangeMetrics<DailyActivityIntensityMetrics, DailyActivityIntensityDuration>): DailyActivityIntensityData => {
-		const sportSessionDates: Array<[string | undefined, string | undefined]> = [];
+		const sportSessionDates: Array<[number | string, number | string]> = [];
 		const stages: Array<StageInfos<ActivityStage>> = data.timeSeries.reduce(function (result, block, i) {
 			const isSameDay = new Date(block.timestamp).getDate() === new Date(localISODay).getDate();
 			if (isSameDay && hasMetric(MetricType.UserDataActivityIntensity)(block)) {
 				const intensityValue = Number(block.metrics[MetricType.UserDataActivityIntensity]);
+
+				// Prevent stage to be added if the begin and end of the sport session are not defined. This seems to be an issue in backend implementations.
+				if (
+					intensityValue === ActivityStage.HIGH &&
+					(!hasMetric(MetricType.UserDailySportBegin)(block) || !hasMetric(MetricType.UserDailySportEnd)(block))
+				) {
+					return result;
+				}
+
 				// Prevent duplicated user.data.activity.intensity value
 				// The user.data.activity.intensity should pop once per value change
 				// TODO extract to front CIR-562
@@ -48,13 +57,32 @@ export const createActivityPhasesGetter =
 			const currentBlock = data.timeSeries[i];
 			const doesStartSession = hasMetric(MetricType.UserDailySportBegin)(currentBlock.metrics);
 			if (doesStartSession) {
-				const startTime = currentBlock.timestamp;
-				// Find end block
+				let startTime = getOrElse(
+					currentBlock.metrics,
+					MetricType.UserDailySportBegin,
+					currentBlock.timestamp
+				) as typeof sportSessionDates[number][0];
+				if (typeof startTime === "number") {
+					startTime = startTime * 1000; // Convert to milliseconds
+				}
+
 				const endIndex = data.timeSeries.slice(i).findIndex(hasMetric(MetricType.UserDailySportEnd));
-				const endTime = endIndex > -1 ? data.timeSeries[i + endIndex].timestamp : undefined;
+				if (endIndex === -1) {
+					continue; // If the session is not ended, just ignore it.
+				}
+
+				let endTime = getOrElse(
+					data.timeSeries[i + endIndex].metrics,
+					MetricType.UserDailySportEnd,
+					data.timeSeries[i + endIndex].timestamp
+				) as typeof sportSessionDates[number][1];
+				if (typeof endTime === "number") {
+					endTime = endTime * 1000; // Convert to milliseconds
+				}
+
+				i += endIndex; // Move the cursor forward to find the next session
+
 				sportSessionDates.push([startTime, endTime]);
-				// Move the cursor forward to find the next session
-				i += endIndex > -1 ? endIndex : 0;
 			}
 		}
 

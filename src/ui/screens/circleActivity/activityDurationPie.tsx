@@ -17,7 +17,7 @@ type Props = {
 	isToday: boolean;
 	duration: number;
 	controlState: DataControlState;
-	sportSessionDates: [string | undefined, string | undefined][];
+	sportSessionDates: [number | string, number | string][];
 	stages: Array<StageInfos<ActivityStage>>;
 	mode?: Mode;
 	isLoading?: boolean;
@@ -82,6 +82,7 @@ export function ActivityDurationPieChart({
 			}
 		}
 	});
+	// console.log(correctedStages);
 	return (
 		<Container>
 			{isLoading ? (

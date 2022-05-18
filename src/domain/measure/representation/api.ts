@@ -11,7 +11,7 @@ export type DailyActivityIntensityData = {
 		lowActivity: number;
 	};
 	controlState: DataControlState;
-	sportSessionDates: Array<[string | undefined, string | undefined]>;
+	sportSessionDates: Array<[number | string, number | string]>;
 };
 export type DailySleepData = {
 	stages: Array<StageInfos<SleepStage>>;
