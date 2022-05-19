@@ -1,5 +1,5 @@
 import { isDefined } from "@domain/common/business";
-import { Points } from "@domain/measure/representation/api";
+import { Point, Points } from "@domain/measure/representation/api";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, isInDisabledMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -109,7 +109,6 @@ export function LineChart({
 	const [minPosition, setMinPosition] = useState<Position | null>(null);
 
 	const maxDataLength = !isMultipleLines ? data.length : Math.max(...(daysItem ?? []).map(({ lines }) => lines.length));
-
 	if (__DEV__) {
 		// XXX: pre-conditions:
 		if (maxDataLength === 0 && !isInDisabledMode(mode)) {
@@ -127,16 +126,16 @@ export function LineChart({
 	const shouldDisplay = isInActiveMode(mode) || isInCalibrationMode(mode);
 	const { format } = useI18n();
 	const [selectedX, setSelectedX] = useState<number | undefined>(data[0] ? (onSelect ? data[0].x : -1) : undefined);
-	const axisMinimum = yMin ? (shouldUpdateYmin ? yMin - (yMin % 10) : yMin) : 0;
-
+	const linspace = yMin && yMax ? Math.round(((yMax - yMin) * 10) / 100) : 0;
+	const axisMinimum = yMin ? (shouldUpdateYmin ? yMin - linspace : yMin) : 0;
+	const axisMaximum = yMax ? (shouldUpdateYmin ? yMax + linspace : yMax) : 0;
 	const yAxisContentInset = verticalContentInset.top;
-
 	const tooltipMinX = xAxisContentInset;
 	const tooltipMaxX = graphRect.current
 		? graphRect.current.width + xAxisContentInset - tooltipSize.width
 		: Number.MAX_VALUE;
+	console.log(axisMinimum, axisMaximum, tooltipMinX, tooltipMaxX);
 	const tooltipMinY = 0;
-
 	const xAxis = {
 		valueFormatter: valueFormatter,
 		valueFormatterPattern: Array.isArray(valueFormatterPattern)
@@ -165,8 +164,8 @@ export function LineChart({
 
 	const yAxis = {
 		left: {
-			labelCount: 4,
-			axisMinimum: axisMinimum > 0 ? axisMinimum : 0,
+			axisMinimum: axisMinimum > 0 ? axisMinimum - (axisMinimum % 5) : 0,
+			axisMaximum: axisMaximum > 0 ? axisMaximum + (5 - (axisMaximum % 5)) : 0,
 			enabled: true,
 			textColor: processColor(yColor),
 			drawGridLines: true,
@@ -220,7 +219,7 @@ export function LineChart({
 				// remove `zero` points and create a new line each time a `zero` point is found.
 				.reduce(
 					(acc, point) => {
-						if (point.y === 0) {
+						if (point.y === -1) {
 							return [...acc, []];
 						}
 						return [...acc.slice(0, -1), [...acc[acc.length - 1], point]];
@@ -268,42 +267,62 @@ export function LineChart({
 	const multipleDataSets = {
 		dataSets:
 			isMultipleLines && daysItem
-				? daysItem.map(({ lines, color }) => {
-						return {
-							values: lines.map(({ x, y }, index) => {
-								let marker = "";
-								if (!!shouldShowMarker) {
-									marker = labelFormatter(x, y, index);
+				? daysItem
+						// remove `zero` points and create a new line each time a `zero` point is found.
+						.flatMap(({ lines, color }) => {
+							const segmentedLines = [] as Array<Point & { index: number }>[];
+							let hasPrevValue = false;
+							for (let index = 0; index < lines.length; ++index) {
+								const indexedLine = { ...lines[index], index };
+								if (indexedLine.y > 0) {
+									if (hasPrevValue) {
+										segmentedLines[segmentedLines.length - 1].push(indexedLine);
+									} else {
+										segmentedLines.push([indexedLine]);
+									}
+									hasPrevValue = true;
+								} else {
+									hasPrevValue = false;
 								}
-								return { x: index, y, marker, value: x };
-							}),
-							label: "",
-							config: {
-								drawValues: false,
-								lineWidth: 3,
-								drawCircleHole: false,
+							}
+							return segmentedLines.map((lines) => ({ lines, color }));
+						})
+						.map(({ lines, color }) => {
+							return {
+								values: lines.map(({ x, y, index }) => {
+									let marker = "";
+									if (!!shouldShowMarker) {
+										marker = labelFormatter(x, y, index);
+									}
+									return { x: index, y, marker, value: x };
+								}),
+								label: "",
+								config: {
+									drawValues: false,
+									lineWidth: 3,
+									drawCircleHole: false,
 
-								drawCircles: true,
-								circleRadius: 4,
-								circleColor: processColor(color),
-								circleHoleColor: processColor(color),
-								highlightColor: processColor("transparent"),
-								color: processColor(color),
-								axisLineColor: processColor("white"),
-								drawFilled: false,
-								valueTextSize: 0,
-								legend: false,
-								circleColors: !!shouldShowMarker
-									? lines.map(({ x, y }, i) => {
-											if (i == selectedX) {
-												return processColor("#333333");
-											}
-											return processColor(color);
-									  })
-									: [processColor(color)],
-							},
-						};
-				  })
+									drawCircles: true,
+									circleRadius: 4,
+									circleColor: processColor(color),
+									circleHoleColor: processColor(color),
+									highlightColor: processColor("transparent"),
+									color: processColor(color),
+									axisLineColor: processColor("white"),
+									drawFilled: false,
+									valueTextSize: 0,
+									legend: false,
+									circleColors: !!shouldShowMarker
+										? lines.map(({ index }) => {
+												if (index == selectedX) {
+													return processColor("#333333");
+												}
+												return processColor(color);
+										  })
+										: [processColor(color)],
+								},
+							};
+						})
 				: [],
 	};
 

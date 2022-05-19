@@ -79,19 +79,19 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 
 	const constant = data?.constant;
 	const averages: Averages = [];
-	if (isDefined(constant) && constant.totalAverage !== 0) {
+	if (isDefined(constant) && constant.totalAverage !== -1) {
 		averages.push({
 			value: constant.totalAverage,
 			color: colors.darkBlue,
 		});
 	}
-	if (isDefined(constant) && constant.realAverage !== 0) {
+	if (isDefined(constant) && constant.realAverage !== -1) {
 		averages.push({
 			value: constant.realAverage,
 			color: colors.redLight,
 		});
 	}
-	if (isDefined(constant) && constant.recommendation !== 0) {
+	if (isDefined(constant) && constant.recommendation !== -1) {
 		averages.push({
 			value: constant.recommendation,
 			color: colors.darkGreen,
@@ -192,7 +192,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 									),
 								},
 								value:
-									isDefined(constant) && constant.totalAverage != 0
+									isDefined(constant) && constant.totalAverage != -1
 										? formatDuration(moment.duration(constant.totalAverage, "h").as("s"))
 										: "-",
 							},
@@ -212,7 +212,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 									),
 								},
 								value:
-									isDefined(constant) && constant.realAverage != 0
+									isDefined(constant) && constant.realAverage != -1
 										? formatDuration(moment.duration(constant.realAverage, "h").as("s"))
 										: "-",
 							},
@@ -232,7 +232,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 									),
 								},
 								value:
-									isDefined(constant) && constant.recommendation != 0
+									isDefined(constant) && constant.recommendation != -1
 										? formatDuration(moment.duration(constant.recommendation, "h").as("s"))
 										: "-",
 							},

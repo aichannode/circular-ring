@@ -63,13 +63,13 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 
 	const constant = data?.constant;
 	const averages: Averages = [];
-	if (isDefined(constant) && constant.average !== 0) {
+	if (isDefined(constant) && constant.average !== -1) {
 		averages.push({
 			value: constant.average,
 			color: colors.red,
 		});
 	}
-	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.baseline !== 0) {
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.baseline !== -1) {
 		averages.push({
 			value: constant.baseline,
 			color: colors.redLight,
@@ -85,6 +85,14 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 		const date = moment(lines[x].x).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
+
+	const [yMin, yMax] =
+		lines.length > 0
+			? [
+					Math.min(...lines.filter((line) => line.y > 0).map((line) => line.y)),
+					Math.max(...lines.map((line) => line.y)),
+			  ]
+			: [0, 0];
 
 	return isLoading ? (
 		<Spinner size={24} />
@@ -134,6 +142,8 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 					graphColor={colors.red}
 					onSelect={(x) => toUpdateTag(x)}
 					mode={updatedMode}
+					yMin={0}
+					yMax={yMax + Math.round(((yMax - yMin) * 10) / 100)}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
@@ -154,7 +164,7 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 										</View>
 									),
 								},
-								value: isDefined(constant) && constant.average != 0 ? `${constant.average} kcal` : "-",
+								value: isDefined(constant) && constant.average != -1 ? `${constant.average} kcal` : "-",
 							},
 							{
 								label: format("cardio.baseline"),
@@ -173,7 +183,7 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 								},
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(constant) && constant.baseline != 0
+									: isDefined(constant) && constant.baseline != -1
 									? `${constant.baseline} kcal`
 									: "-",
 							},
@@ -184,7 +194,7 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 									node: <></>,
 								},
 
-								value: isDefined(constant) && constant.total != 0 ? `${constant.total} kcal` : "-",
+								value: isDefined(constant) && constant.total != -1 ? `${constant.total} kcal` : "-",
 							},
 						]}
 					/>

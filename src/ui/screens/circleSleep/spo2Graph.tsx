@@ -62,13 +62,13 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 
 	const averages: Averages = [];
 	if (isInActiveMode(updatedMode) && isDefined(constant)) {
-		if (constant.reference !== 0) {
+		if (constant.reference !== -1) {
 			averages.push({
 				value: constant.reference,
 				color: colors.redLight,
 			});
 		}
-		if (constant.average !== 0) {
+		if (constant.average !== -1) {
 			averages.push({
 				value: constant.average,
 				color: colors.darkBlue,
@@ -143,7 +143,7 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 								value:
 									parsedLines.length == 0
 										? format("global.no_data")
-										: typeof constant.average == "undefined" || constant.average === 0
+										: typeof constant.average == "undefined" || constant.average === -1
 										? "- %"
 										: `${constant.average} %`,
 							},
@@ -166,7 +166,7 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
 									: parsedLines.length == 0
 									? format("global.no_data")
-									: typeof constant.reference == "undefined" || constant.reference === 0
+									: typeof constant.reference == "undefined" || constant.reference === -1
 									? "- %"
 									: `${constant.reference} %`,
 							},

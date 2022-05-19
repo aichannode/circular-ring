@@ -59,7 +59,7 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 	const [yMin, yMax] =
 		lines.length > 0
 			? [
-					Math.min(...lines.filter((line) => line.y != 0).map((line) => line.y)),
+					Math.min(...lines.filter((line) => line.y > 0).map((line) => line.y)),
 					Math.max(...lines.map((line) => line.y)),
 			  ]
 			: [0, 0];
@@ -67,7 +67,7 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 	const averages: Averages = [];
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 
-	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.average !== 0) {
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.average !== -1) {
 		averages.push({
 			value: constant.average * 100,
 			color: colors.red,
@@ -161,7 +161,7 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 										</View>
 									),
 								},
-								value: isDefined(constant) && constant.average != 0 ? `${constant.average * 100} %` : "- %",
+								value: isDefined(constant) && constant.average != -1 ? `${constant.average * 100} %` : "- %",
 							},
 						]}
 					/>

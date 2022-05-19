@@ -59,7 +59,7 @@ export const SleepQualityScoreGraph: React.FC<Props> = observer(function EnergyS
 	const [yMin, yMax] =
 		lines.length > 0
 			? [
-					Math.min(...lines.filter((line) => line.y != 0).map((line) => line.y)),
+					Math.min(...lines.filter((line) => line.y > 0).map((line) => line.y)),
 					Math.max(...lines.map((line) => line.y)),
 			  ]
 			: [0, 0];
@@ -68,7 +68,7 @@ export const SleepQualityScoreGraph: React.FC<Props> = observer(function EnergyS
 	const averages: Averages = [];
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 
-	if (isDefined(constant) && constant.average !== 0) {
+	if (isDefined(constant) && constant.average !== -1) {
 		averages.push({
 			value: constant.average * 100,
 			color: colors.darkBlue,
@@ -162,7 +162,8 @@ export const SleepQualityScoreGraph: React.FC<Props> = observer(function EnergyS
 										</View>
 									),
 								},
-								value: isDefined(constant) && constant.average != 0 ? `${Math.round(constant.average * 100)} %` : "- %",
+								value:
+									isDefined(constant) && constant.average != -1 ? `${Math.round(constant.average * 100)} %` : "- %",
 							},
 						]}
 					/>

@@ -70,7 +70,22 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 		[[], [], []]
 	) || [[], [], []];
 	const xAxis = lines.map((item) => moment(item.date).format("dd")[0]);
-
+	const [yMin, yMax] = [
+		Math.min(
+			...[
+				Math.min(...highData.map((line) => line.y)),
+				Math.min(...mediumData.map((line) => line.y)),
+				Math.min(...lowData.map((line) => line.y)),
+			].map((el) => el)
+		),
+		Math.max(
+			...[
+				Math.max(...highData.map((line) => line.y)),
+				Math.max(...mediumData.map((line) => line.y)),
+				Math.max(...lowData.map((line) => line.y)),
+			].map((el) => el)
+		),
+	];
 	const updatedMode = updateMode(mode, lines.length === 0);
 	const isLoading = !isDefined(activity7D);
 
@@ -91,6 +106,8 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 					shouldDrawCircles={true}
 					valueFormatter={xAxis || []}
 					yValueFormatter={yValueFormatter}
+					yMin={yMin}
+					yMax={yMax}
 					mode={updatedMode}
 					daysItem={[
 						{ lines: highData, color: colors.business.activityStageHigh },

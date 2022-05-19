@@ -57,13 +57,18 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 		return day !== "Invalid date" ? day[0] : "";
 	});
 	const [yMin, yMax] =
-		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
+		lines.length > 0
+			? [
+					Math.min(...lines.filter((line) => line.y > 0).map((line) => line.y)),
+					Math.max(...lines.map((line) => line.y)),
+			  ]
+			: [0, 0];
 	const constant = data?.constant;
 	const averages: Averages = [];
 
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 
-	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.average !== 0) {
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.average !== -1) {
 		averages.push({
 			value: constant.average,
 			color: colors.red,
@@ -164,7 +169,7 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 								},
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(constant) && constant.average != 0
+									: isDefined(constant) && constant.average != -1
 									? `${constant?.average?.toFixed(2)} %`
 									: "- %",
 							},
@@ -185,7 +190,7 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 								},
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(constant) && constant.average != 0
+									: isDefined(constant) && constant.average != -1
 									? `${constant.reference.toFixed(2)} %`
 									: "- %",
 							},

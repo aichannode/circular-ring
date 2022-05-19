@@ -111,6 +111,10 @@ import { MeasureApi } from "./lib/measureApi";
  * All date are in locale timezone
  */
 
+/**
+ * null values converted to -1
+ */
+
 export function createActions(measureApi: MeasureApi, present: Present<Proposal>) {
 	const lifetimeDate = "2000-01-01";
 	return {
@@ -445,7 +449,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailyEnergyScore",
 					payload: {
 						localISODay,
-						score: data[MetricType.UserDailyEnergyScore] ? Number(data[MetricType.UserDailyEnergyScore]) : null,
+						score: data[MetricType.UserDailyEnergyScore] ? Number(data[MetricType.UserDailyEnergyScore]) : -1,
 					},
 				},
 			]);
@@ -477,7 +481,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailySleepScore",
 					payload: {
 						localISODay,
-						score: data[MetricType.UserDailySleepScore] ? Number(data[MetricType.UserDailySleepScore]) : null,
+						score: data[MetricType.UserDailySleepScore] ? Number(data[MetricType.UserDailySleepScore]) : -1,
 					},
 				},
 			]);
@@ -541,7 +545,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailyCardioPoints",
 					payload: {
 						localISODay,
-						cardio: data[MetricType.UserDailyCardioPoints] ? Number(data[MetricType.UserDailyCardioPoints]) : null,
+						cardio: data[MetricType.UserDailyCardioPoints] ? Number(data[MetricType.UserDailyCardioPoints]) : -1,
 					},
 				},
 			]);
@@ -557,7 +561,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailyCalorieBurned",
 					payload: {
 						localISODay,
-						calorie: data[MetricType.UserDailyCaloriesBurned] ? Number(data[MetricType.UserDailyCaloriesBurned]) : null,
+						calorie: data[MetricType.UserDailyCaloriesBurned] ? Number(data[MetricType.UserDailyCaloriesBurned]) : -1,
 					},
 				},
 			]);
@@ -589,9 +593,10 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailyTemperatureVariation",
 					payload: {
 						localISODay,
+						//for temprature, we have negatif values so here for null values we change it to -1000
 						temperature: data[MetricType.UserDailyTemperatureScore]
 							? Number(data[MetricType.UserDailyTemperatureScore])
-							: null,
+							: -1000,
 					},
 				},
 			]);
@@ -663,7 +668,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailyStepsMetrics",
 					payload: {
 						localISODay,
-						data: data[MetricType.UserDailySteps] ? Number(data[MetricType.UserDailySteps]) : null,
+						data: data[MetricType.UserDailySteps] ? Number(data[MetricType.UserDailySteps]) : -1,
 					},
 				},
 			]);
