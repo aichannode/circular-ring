@@ -44,7 +44,7 @@ android:build:demo:
 android:build:staging:
   extends: .build-android
   variables:
-    ENV: dev
+    ENV: staging
   rules:
     - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH =~ /^release\/.*$/'
   before_script:
