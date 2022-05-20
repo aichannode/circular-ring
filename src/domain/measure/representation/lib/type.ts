@@ -397,6 +397,9 @@ export const sleepStagesMetrics = [
 ] as const;
 export type SleepStagesMetrics = typeof sleepStagesMetrics[number];
 
+export const sleepStagesBeginEnd = [MetricType.UserNapSleepBegin, MetricType.UserNapSleepEnd] as const;
+export type SleepStagesBeginEnd = typeof sleepStagesBeginEnd[number];
+
 export const stepsConstantMetrics = [
 	MetricType.UserStepsAverage,
 	MetricType.UserStepsBaseline,

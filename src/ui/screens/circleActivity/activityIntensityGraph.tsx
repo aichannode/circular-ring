@@ -1,4 +1,5 @@
 import { ISODay } from "@domain/common/type";
+import { DailyActivityIntensityData } from "@domain/measure/representation/api";
 import { TimeFrame } from "@domain/measure/type";
 import { createActiveMode, TrimOptions } from "@ui/business";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
@@ -17,9 +18,15 @@ type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
 	dailyTrimOptions?: TrimOptions;
+	dataActivityIntensity: DailyActivityIntensityData | undefined;
 };
 
-export function ActivityIntensityGraph({ selectedDay, mode = createActiveMode(), dailyTrimOptions }: Props) {
+export function ActivityIntensityGraph({
+	selectedDay,
+	mode = createActiveMode(),
+	dailyTrimOptions,
+	dataActivityIntensity,
+}: Props) {
 	const { format } = useI18n();
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 
@@ -50,7 +57,12 @@ export function ActivityIntensityGraph({ selectedDay, mode = createActiveMode(),
 
 			<GraphContainer>
 				{graphPeriod === TimeFrame.TODAY && (
-					<DailyActivityIntensityGraph selectedDay={selectedDay} mode={mode} trimOptions={dailyTrimOptions} />
+					<DailyActivityIntensityGraph
+						dataActivityIntensity={dataActivityIntensity}
+						selectedDay={selectedDay}
+						mode={mode}
+						trimOptions={dailyTrimOptions}
+					/>
 				)}
 				{graphPeriod === TimeFrame.LAST_7_DAYS && <ActivityIntensity7DGraph selectedDay={selectedDay} mode={mode} />}
 				{graphPeriod === TimeFrame.ALL && <ActivityIntensityAllGraph selectedDay={selectedDay} mode={mode} />}

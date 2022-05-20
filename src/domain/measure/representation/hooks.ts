@@ -9,6 +9,7 @@ import {
 	toISOMonth,
 } from "@domain/common/business";
 import { ISODay, ISOMonth } from "@domain/common/type";
+import { hasMetric } from "@ui/utils/guard";
 import { action } from "mobx";
 import moment from "moment";
 import { useEffect, useMemo } from "react";
@@ -611,6 +612,28 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					fetchData,
 					setLoading
 				);
+			},
+			useCoreSleep(localISODay: ISODay) {
+				useEffect(
+					action(function () {
+						actions.setCoreSleep(localISODay, shouldByPassCache(model.dailySleepMetrics, localISODay));
+					}),
+					[localISODay]
+				);
+				if (!model.dailySleepMetrics.has(localISODay)) {
+					return undefined;
+				}
+				const data = model.dailySleepMetrics.get(localISODay);
+				const hasCoreSleep = data?.constant ? hasMetric(MetricType.UserCoreSleepBegin)(data.constant) : false;
+				const coreSleepTiming =
+					hasCoreSleep && data
+						? ([
+								new Date(getOrElse<number>(data.constant, MetricType.UserCoreSleepBegin, 0) * 1000).toISOString(),
+								new Date(getOrElse<number>(data.constant, MetricType.UserCoreSleepEnd, 0) * 1000).toISOString(),
+						  ] as [string, string])
+						: undefined;
+
+				return coreSleepTiming;
 			},
 			/**
 			 * Return sleep score contributors

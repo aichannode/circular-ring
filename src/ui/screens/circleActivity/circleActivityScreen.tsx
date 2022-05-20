@@ -7,7 +7,7 @@ import sport from "@assets/images/sport.png";
 import { useRepresentations } from "@core/representation";
 import { getCurrentLocalISODay } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { DailyActivityIntensityData, DailySleepData, DataControlState } from "@domain/measure/representation/api";
+import { DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
 import { activities, activityScoreContributors } from "@domain/measure/representation/lib/type";
 import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
 import { getInitMode, isInCalibrationMode, TrimOptions, updateMode } from "@ui/business";
@@ -70,7 +70,6 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 		},
 		sportSessionDates: [],
 	});
-	const [dailySleep, setDailyData] = useState<DailySleepData | undefined>();
 	const {
 		measure: {
 			hooks: {
@@ -79,7 +78,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 				useDailyEnergyScore,
 				useDailyActivityIntensity,
 				useHasCompleteCoreSleep,
-				useDailySleepStages,
+				useCoreSleep,
 			},
 		},
 	} = useRepresentations();
@@ -91,8 +90,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const activityContributorGaugesConfig = getActivityGaugesConfig(format);
 
 	useDailyActivityIntensity({ localISODay: selectedDay, setData, setLoading });
-	// TODO: This is out of the ticket CIR-874, this should be replaced by an hook for extracting only coreSleepStart and coreSleepEnd.
-	useDailySleepStages({ localISODay: selectedDay, setData: setDailyData, setLoading });
+	const coreSleepTiming = useCoreSleep(selectedDay);
 
 	const hasCompleteCoreSleep = useHasCompleteCoreSleep(selectedDay);
 	const nbRemainingDays = useUserCalibrationRemainingDays();
@@ -103,15 +101,12 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 
 	const [activeItem, setActiveItem] = useState<number>(0);
 
-	const [] = dailySleep?.coreSleepTiming ?? [];
 	// XXX: https://circularing.atlassian.net/browse/CIR-874
 	const dailyTrimOptions: TrimOptions = {
 		includes: [
 			[moment(selectedDay).startOf("day").valueOf(), moment(selectedDay).startOf("day").add(1, "day").valueOf()],
 		],
-		excludes: dailySleep?.coreSleepTiming
-			? [[moment(dailySleep.coreSleepTiming[0]).valueOf(), moment(dailySleep.coreSleepTiming[1]).valueOf()]]
-			: [],
+		excludes: coreSleepTiming ? [[moment(coreSleepTiming[0]).valueOf(), moment(coreSleepTiming[1]).valueOf()]] : [],
 	};
 
 	return (
@@ -218,6 +213,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 				<ElementStack gap={10} style={{ display: "flex" }}>
 					{activeItem === 0 && (
 						<ActivityIntensityGraph
+							dataActivityIntensity={activityIntensity}
 							selectedDay={selectedDay}
 							mode={screenModeWithoutDisabled}
 							dailyTrimOptions={dailyTrimOptions}
