@@ -3,6 +3,7 @@ import { AppStateService } from "@domain/appState/appStateService";
 import { DeviceConnectionState } from "@domain/device/bleDeviceService";
 import { Channel } from "@domain/device/channels";
 import { observable } from "micro-observables";
+import moment from "moment";
 import { BleDeviceService } from "./../device/bleDeviceService";
 import { NamedUserRing } from "./ring";
 import { RingApi } from "./ringApi";
@@ -24,9 +25,12 @@ export class RingManagementService {
 
 	private _currentRingSyncState = observable<SyncState>(SyncState.NONE);
 	private _FBCQuantity = observable(0);
+	private _syncStatus = observable<string[]>([]);
 
 	readonly FBCQuantity = this._FBCQuantity.readOnly();
 	currentRingSyncState = this._currentRingSyncState.readOnly();
+	readonly syncStatus = this._syncStatus.readOnly();
+
 	constructor(
 		private readonly deviceService: BleDeviceService,
 		private readonly ringDataStorage: RingDataStorage,
@@ -111,27 +115,42 @@ export class RingManagementService {
 		const ring = this.appStateService.userRings.get().find((ring) => ring.connected);
 		if (this._currentRingSyncState.get() !== SyncState.NONE) {
 			this.logger.info("Sync cancelled: Already Syncing");
+			this._syncStatus.set([
+				...this._syncStatus.get(),
+				`${moment().format("HH:mm:ss")} Sync cancelled: Already Syncing`,
+			]);
 			return;
 		}
 		if (this.appStateService.isInSleepMode.get()) {
 			this.logger.info("Sync cancelled: SleepMode");
+			this._syncStatus.set([...this._syncStatus.get(), `${moment().format("HH:mm:ss")} Sync cancelled: SleepMode`]);
 			return;
 		}
 		if (!ring || this.deviceService.connectionState.get() !== DeviceConnectionState.CONNECTED) {
 			this.logger.info("Sync cancelled: No ring");
+			this._syncStatus.set([...this._syncStatus.get(), `${moment().format("HH:mm:ss")} Sync cancelled: No ring`]);
 			return;
 		}
 		try {
 			this._currentRingSyncState.set(SyncState.PREPARING);
 			const waitingData = await this.ringDataStorage.load();
+			this._syncStatus.set([
+				...this._syncStatus.get(),
+				`${moment().format("HH:mm:ss")} Waiting data has to be sent, length:, ${waitingData?.length ?? 0}`,
+			]);
 			if (waitingData) {
 				this.logger.info("Waiting data has to be sent, length:", waitingData.length);
 			}
 			this.logger.info("Retrieving data...");
+			this._syncStatus.set([
+				...this._syncStatus.get(),
+				`${moment().format("HH:mm:ss")} Starting retrieving ring data... `,
+			]);
 			let dataQuantity = 0;
 			const responseDataQuantiy = await this.deviceService.getResponse(Channel.DATA_QUANTITY);
 			if (typeof responseDataQuantiy === "string") dataQuantity = parseInt(responseDataQuantiy);
 			this.logger.info("FBC Quantity", dataQuantity);
+			this._syncStatus.set([...this._syncStatus.get(), `${moment().format("HH:mm:ss")} FBC Quantity ${dataQuantity}`]);
 			this._FBCQuantity.set(dataQuantity);
 			this._currentRingSyncState.set(SyncState.SYNCING);
 			const allData = await new Promise<string>(async (resolve) => {
@@ -151,21 +170,41 @@ export class RingManagementService {
 			});
 			try {
 				// Api call
-				if (allData !== ringDataEOF) {
+				if (allData?.length) {
 					this.logger.info("Sending data to server...");
+					this._syncStatus.set([
+						...this._syncStatus.get(),
+						`${moment().format("HH:mm:ss")} Sending data to server... ${allData}`,
+					]);
 					await this.ringApi.sendData(ring, allData);
-					setTimeout(() => this._currentRingSyncState.set(SyncState.NONE), syncFinishedTimeout);
+					this._syncStatus.set([
+						...this._syncStatus.get(),
+						`${moment().format("HH:mm:ss")} Sending data to server: OK  , , closing this windows in 8sec`,
+					]);
+					await this.ringDataStorage.clear();
+					this._syncStatus.set([...this._syncStatus.get(), `${moment().format("HH:mm:ss")} Clearing phone memory`]);
 				}
-				await this.ringDataStorage.clear();
 				this._currentRingSyncState.set(allData !== ringDataEOF ? SyncState.SUCCESS : SyncState.NONE);
+				setTimeout(() => this._currentRingSyncState.set(SyncState.NONE), syncFinishedTimeout + 5000);
 				this._FBCQuantity.set(0);
 			} catch (e) {
 				this.logger.warn("An error occured during save. Storing data, length:", allData.length, "error:", e);
+				this._syncStatus.set([
+					...this._syncStatus.get(),
+					`${moment().format("HH:mm:ss")} An error occured sending data to server. Storing data, length:", ${
+						allData.length
+					}, "error:", ${e}`,
+				]);
 				this._FBCQuantity.set(0);
 				await this.ringDataStorage.save(allData);
+				this._syncStatus.set([...this._syncStatus.get(), `${moment().format("HH:mm:ss")} Data stored in phone memory`]);
 				throw e;
 			}
 		} catch (e) {
+			this._syncStatus.set([
+				...this._syncStatus.get(),
+				`${moment().format("HH:mm:ss")} Error sync ring data to device ${e}`,
+			]);
 			this.logger.warn("Error during sync:", e);
 			this._currentRingSyncState.set(SyncState.ERROR);
 			setTimeout(() => this._currentRingSyncState.set(SyncState.NONE), 1000);

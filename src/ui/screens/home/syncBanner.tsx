@@ -12,7 +12,6 @@ import React, { useEffect } from "react";
 import { Dimensions, StyleProp, View, ViewStyle } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withRepeat, withTiming } from "react-native-reanimated";
 import styled from "styled-components/native";
-
 interface SyncBannerProps {
 	style?: StyleProp<ViewStyle>;
 	onRetry: () => void;
