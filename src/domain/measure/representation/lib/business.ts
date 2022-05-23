@@ -56,7 +56,8 @@ export const createActivityPhasesGetter =
 		for (let i = 0; i < data.timeSeries.length; i++) {
 			const currentBlock = data.timeSeries[i];
 			const doesStartSession = hasMetric(MetricType.UserDailySportBegin)(currentBlock.metrics);
-			if (doesStartSession) {
+			const isSameDay = new Date(currentBlock.timestamp).getDate() === new Date(localISODay).getDate();
+			if (isSameDay && doesStartSession) {
 				let startTime = getOrElse(
 					currentBlock.metrics,
 					MetricType.UserDailySportBegin,
