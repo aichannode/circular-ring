@@ -1,8 +1,6 @@
 import { useServices } from "@core/services";
 import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringManagementService";
-import { PrimaryButton } from "@ui/components/buttons";
-import { Grow } from "@ui/components/layout";
 import { Spinner } from "@ui/components/spinner";
 import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
@@ -82,10 +80,6 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({ style, onRetry }) => {
 								<>
 									<Icon source={require("@assets/images/sync.png")} />
 									<SyncInfo>{format("home.sync.error")}</SyncInfo>
-									<Grow />
-									<PrimaryButton light onPress={onRetry}>
-										{format("home.sync.retry")}
-									</PrimaryButton>
 								</>
 							);
 						case SyncState.SUCCESS:
