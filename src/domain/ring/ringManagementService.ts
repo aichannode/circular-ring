@@ -112,6 +112,12 @@ export class RingManagementService {
 		}
 	}
 
+	async setTimezone() {
+		const ring = this.appStateService.userRings.get().find((ring) => ring.connected);
+		this.logger.info(`tutorial ring ${JSON.stringify(ring)}`);
+		if (ring) await this.ringApi.setTimezone(ring);
+	}
+
 	async syncData() {
 		this.logger.info("Sync Start");
 		const ring = this.appStateService.userRings.get().find((ring) => ring.connected);

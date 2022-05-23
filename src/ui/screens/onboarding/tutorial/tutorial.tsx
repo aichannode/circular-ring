@@ -21,7 +21,7 @@ import { recommendationData, recommendationDataFeed } from "./recomandation";
 export const Tutorial = () => {
 	const route = useAppRoute<Routes.OnboardingTutorial>();
 	const { firstName, lastName, country, birthDate, sex, weight, height, heightUnit, weightUnit } = route.params;
-	const { userService } = useServices();
+	const { userService, ringManagementService } = useServices();
 	const [step, setStep] = useState<number>(0);
 	const { navigate } = useRoutesNavigation();
 	const [isLoading, setLoading] = useState(false);
@@ -32,6 +32,7 @@ export const Tutorial = () => {
 		setLoading(true);
 		const _birthDate = dayjs(birthDate, "DD/MM/YYYY", true).toDate();
 		try {
+			await ringManagementService.setTimezone();
 			await userService.completeTutorial({ firstName, lastName, country, birthDate: _birthDate, sex, weight, height });
 			await userService.updateUserSettings({
 				dateFormat: DateFormat.USCS,

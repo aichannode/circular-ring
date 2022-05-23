@@ -53,6 +53,14 @@ export class RingApi {
 		return this.apiService.delete(`${ringApiBaseUrl}/${ringId}`);
 	}
 
+	async setTimezone(ring: UserRing) {
+		await this.apiService.post<{ url: string; fields: Record<string, any>; taskId: string }>(`${ringApiBaseUrl}/sync`, {
+			ringId: ring.id,
+			firmware: ring.firmware,
+			timezone: getTimeZone(),
+		});
+	}
+
 	async sendData(ring: UserRing, rawData: string) {
 		if (rawData === "") return;
 
