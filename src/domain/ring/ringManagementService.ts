@@ -43,8 +43,8 @@ export class RingManagementService {
 			// on ring connection without Timeout The ring get DDOS
 			if (monitoring) setTimeout(() => this.syncData(), 500);
 		});
-		// Sync ring data each 10 min
-		setInterval(() => this.syncData(), 10 * 60 * 1000);
+		// Sync ring data each 30 min
+		setInterval(() => this.syncData(), 30 * 60 * 1000);
 	}
 
 	async registerConnectedRing() {
