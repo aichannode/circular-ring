@@ -10,7 +10,7 @@ import { colors } from "@ui/styles/colors";
 import { useObservable } from "micro-observables";
 import React, { useEffect } from "react";
 import { Dimensions, StyleProp, View, ViewStyle } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withDelay, withRepeat, withTiming } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import styled from "styled-components/native";
 interface SyncBannerProps {
 	style?: StyleProp<ViewStyle>;
@@ -21,7 +21,8 @@ const { width } = Dimensions.get("screen");
 
 export const SyncBanner: React.FC<SyncBannerProps> = ({ style, onRetry }) => {
 	const { ringManagementService } = useServices();
-	const FBCQuantity = useObservable(ringManagementService.FBCQuantity);
+	const transmissionStatus = useObservable(ringManagementService.transmissionStatus);
+	const syncStatus = useObservable(ringManagementService.syncStatus);
 	const syncState = useSyncState();
 	const { format } = useI18n();
 	const progressWidth = useSharedValue(10);
@@ -34,17 +35,15 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({ style, onRetry }) => {
 	});
 
 	useEffect(() => {
+		let transmissionPerc = (transmissionStatus.packetTransmitted / transmissionStatus.totalPacket) * (width - 20);
+		if (transmissionStatus.packetTransmitted > transmissionStatus.totalPacket) transmissionPerc = width - 20;
+		console.log("transmissionPerc", transmissionStatus.totalPacket, transmissionStatus.packetTransmitted, width);
+		progressWidth.value = isNaN(transmissionPerc) ? 0 : transmissionPerc;
+	}, [transmissionStatus]);
+
+	useEffect(() => {
 		if (syncState === SyncState.SYNCING) {
 			progressWidth.value = 10;
-			progressWidth.value = withRepeat(
-				withDelay(
-					0,
-					withTiming((width - 20) * 0.9, {
-						duration: (FBCQuantity / 30) * 1000 + 5000,
-					})
-				),
-				1
-			);
 		}
 	}, [syncState]);
 
@@ -74,7 +73,13 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({ style, onRetry }) => {
 							return (
 								<>
 									<Spinner size={19} />
-									<SyncInfo>{format("home.sync.syncing")}</SyncInfo>
+									<SyncInfo>{format(syncStatus)}</SyncInfo>
+									{syncStatus === "home.sync.syncing" && (
+										<>
+											<Grow />
+											<SyncInfo>{`${transmissionStatus.packetTransmitted} / ${transmissionStatus.totalPacket}`}</SyncInfo>
+										</>
+									)}
 								</>
 							);
 						case SyncState.ERROR:
