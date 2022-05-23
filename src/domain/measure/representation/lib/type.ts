@@ -105,6 +105,12 @@ export type ActivityIntensityMonthlyMetrics = typeof activityIntensityMonthlyMet
 export const dailySpo2TimeSeriesMetrics = [MetricType.UserDailySPO2] as const;
 export type DailySpo2TimeSeriesMetrics = typeof dailySpo2TimeSeriesMetrics[number];
 
+export const spo230DConstantMetrics = [
+	MetricType.User30DaysAverageSpo2,
+	MetricType.UserDailyAsleepSPO2Reference,
+] as const;
+export type Spo230DConstantMetrics = typeof spo230DConstantMetrics[number];
+
 export const dailySpo2ConstantMetrics = [
 	MetricType.UserDailyAsleepSPO2,
 	MetricType.UserDailyAsleepSPO2Reference,

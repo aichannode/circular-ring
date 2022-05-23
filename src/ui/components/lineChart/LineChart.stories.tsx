@@ -183,7 +183,42 @@ const scoresLines: Points = scores.series.map((el) => {
 		y: el?.value ? el.value * 100 : 0,
 	};
 });
-
+const points: Points = [
+	{ x: 1650409200000, y: 95 },
+	{ x: 1650495600000, y: 92 },
+	{ x: 1650582000000, y: 91 },
+	{ x: 1650668400000, y: 92 },
+	{ x: 1650754800000, y: 93 },
+	{ x: 1650841200000, y: 94 },
+	{ x: 1650927600000, y: 95 },
+	{ x: 1651014000000, y: 98 },
+	{ x: 1651100400000, y: 98 },
+	{ x: 1651186800000, y: 96 },
+	{ x: 1651273200000, y: 95 },
+	{ x: 1651359600000, y: 91 },
+	{ x: 1651446000000, y: 95 },
+	{ x: 1651532400000, y: 91 },
+	{ x: 1651618800000, y: 92 },
+	{ x: 1651705200000, y: 93 },
+	{ x: 1651791600000, y: 96 },
+	{ x: 1651878000000, y: 94 },
+	{ x: 1651964400000, y: 95 },
+	{ x: 1652050800000, y: 90 },
+	{ x: 1652137200000, y: 96 },
+	{ x: 1652223600000, y: 98 },
+	{ x: 1652310000000, y: 94 },
+	{ x: 1652396400000, y: 95 },
+	{ x: 1652482800000, y: 97 },
+	{ x: 1652569200000, y: 98.78 },
+	{ x: 1652655600000, y: 97.34 },
+	{ x: 1652742000000, y: 97.34 },
+	{ x: 1652828400000, y: 97.88 },
+	{ x: 1652914800000, y: 96.8 },
+];
+const valueFormatter = points.map(({ x }) => {
+	const day = moment(x).format("dd");
+	return day !== "Invalid date" ? day[0] : "";
+});
 storiesOf("LineChart", module)
 	.addDecorator(withKnobs)
 	.add("default", () => (
@@ -225,6 +260,28 @@ storiesOf("LineChart", module)
 				highlightPerTapEnabled={true}
 				onSelect={(date) => console.log(date)}
 			/>
+		);
+	})
+	.add("30 days", () => {
+		return (
+			<GraphContainer style={{ height: 400 }}>
+				<LineChart
+					labelCount={20}
+					isMultipleLines={true}
+					xColor={colors.textPrimary}
+					yColor={colors.darkGray}
+					daysItem={[{ lines: points, color: colors.darkBlue }]}
+					shouldDrawCircles={true}
+					valueFormatter={valueFormatter}
+					yMin={Math.min(...points.filter((line) => line.y > 0).map((line) => line.y))}
+					yMax={Math.max(...points.map((line) => line.y))}
+					scaleXEnabled={true}
+					shouldShowMarker={true}
+					shouldShowLabel={true}
+					highlightPerTapEnabled={true}
+					onSelect={(date) => console.log(date)}
+				/>
+			</GraphContainer>
 		);
 	})
 	.add("Multiple Line with custom y values", () => {

@@ -285,6 +285,38 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				]);
 			});
 		},
+		async setMonthlySpo2Constants(localISODay: ISODay = getCurrentLocalISODay(), useForceRefresh = false) {
+			Promise.all([
+				measureApi.fetchLastDailyMeasures([MetricType.User30DaysAverageSpo2], localISODay, useForceRefresh),
+				measureApi.fetchLastDailyMeasures([MetricType.UserDailyAsleepSPO2Reference], lifetimeDate, useForceRefresh),
+			]).then(function ([average, reference]) {
+				present([
+					{
+						type: "setMonthlySpo2Constants",
+						payload: {
+							localISODay,
+							constant: {
+								[MetricType.User30DaysAverageSpo2]: average[MetricType.User30DaysAverageSpo2],
+								[MetricType.UserDailyAsleepSPO2Reference]: reference[MetricType.UserDailyAsleepSPO2Reference],
+							},
+						},
+					},
+				]);
+			});
+		},
+		async setDailySpo2(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailySPO2], localISODay, useForceRefresh);
+			present([
+				{
+					type: "setDailySpo2",
+					payload: {
+						localISODay,
+						data: data[MetricType.UserDailySPO2] ? Number(data[MetricType.UserDailySPO2]) : -1,
+					},
+				},
+			]);
+		},
+
 		async pullDailyHRVMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
 			Promise.all([
 				measureApi.fetchDailyMeasures<DailyHRVTimeSeriesMetrics>(
@@ -468,6 +500,18 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					payload: {
 						localISODay,
 						score: data[MetricType.User7DaysEnergyScore] as number,
+					},
+				},
+			]);
+		},
+		async setLast30DSpo2(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures([MetricType.User30DaysSpo2], localISODay, useForceRefresh);
+			present([
+				{
+					type: "setLast30DSpo2",
+					payload: {
+						localISODay,
+						score: data[MetricType.User30DaysSpo2] as number,
 					},
 				},
 			]);

@@ -52,6 +52,7 @@ import {
 	SleepAllConstantMetrics,
 	SleepMonthlyStageMetrics,
 	SleepStagesMetrics,
+	Spo230DConstantMetrics,
 	StepsConstantMetrics,
 	StepsTaken,
 	TemperatureVariationConstantMetrics,
@@ -115,6 +116,8 @@ export class MeasureModel implements Model<Proposal> {
 	public dailyEnergyScore: Map<ISODay, number | null> = new Map();
 	public dailyRestingHeartRate: Map<ISODay, number | null> = new Map();
 	public last7DEnergyScore: Map<ISODay, number | null> = new Map();
+	public last30DSpo2: Map<ISODay, Metrics<Spo230DConstantMetrics>> = new Map();
+	public dailySpo2: Map<ISODay, number | null> = new Map();
 	public dailySleepScoreQuality: Map<ISODay, number | null> = new Map();
 	public last7DSleepScore: Map<ISODay, number | null> = new Map();
 	public last7DRestingHeartRate: Map<ISODay, Metrics<THRH7DConstantMetrics>> = new Map();
@@ -318,6 +321,13 @@ export class MeasureModel implements Model<Proposal> {
 				mutate.call(this, mutation, () =>
 					this.dailyPhaseBeforeWakeUp.set(mutation.payload.localISODay, mutation.payload.data)
 				);
+			} else if (mutation.type === "setDailySpo2") {
+				const score = mutation.payload.data;
+				mutate.call(this, mutation, () => this.dailySpo2.set(mutation.payload.localISODay, score));
+			} else if (mutation.type === "setMonthlySpo2Constants") {
+				mutate.call(this, mutation, () => {
+					this.last30DSpo2.set(mutation.payload.localISODay, mutation.payload.constant);
+				});
 			}
 		});
 	};

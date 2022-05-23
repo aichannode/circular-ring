@@ -65,6 +65,12 @@ interface LineChartProps {
 	movingAverage?: Points;
 	xAxisMin?: number;
 	xAxisMax?: number;
+	zoom?: {
+		scaleX: number;
+		scaleY: number;
+		xValue: number;
+		yValue: number;
+	};
 }
 
 const verticalContentInset = { top: 40, bottom: 20 };
@@ -102,6 +108,7 @@ export function LineChart({
 	movingAverage,
 	xAxisMin,
 	xAxisMax,
+	zoom,
 }: LineChartProps) {
 	const [scaleX, setScaleX] = useState(1);
 	const graphRect = useRef<Rect>();
@@ -134,7 +141,7 @@ export function LineChart({
 	const tooltipMaxX = graphRect.current
 		? graphRect.current.width + xAxisContentInset - tooltipSize.width
 		: Number.MAX_VALUE;
-	console.log(axisMinimum, axisMaximum, tooltipMinX, tooltipMaxX);
+
 	const tooltipMinY = 0;
 	const xAxis = {
 		valueFormatter: valueFormatter,
@@ -438,6 +445,7 @@ export function LineChart({
 									e.nativeEvent && onSelect && onSelect(payload.data.x);
 								}
 							}}
+							zoom={zoom}
 						></LineComponent>
 					</View>
 					{shouldShowLabel && scaleX < 1.06 && (

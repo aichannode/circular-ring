@@ -7,7 +7,6 @@ import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
 import { Tag } from "@ui/components/tag";
-import { TitleText } from "@ui/components/text";
 import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -23,7 +22,7 @@ type Props = {
 	dailyTrimOptions?: TrimOptions;
 };
 
-export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
+export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 	selectedDay,
 	mode = createActiveMode(),
 	dailyTrimOptions,
@@ -86,10 +85,6 @@ export const Spo2Graph: React.FC<Props> = observer(function Spo2Graph({
 		<Spinner size={24} />
 	) : (
 		<View>
-			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("lowSpo2.SpO2")}
-			</TitleText>
-
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
 				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (

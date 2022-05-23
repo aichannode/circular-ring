@@ -1,6 +1,7 @@
 import { ApiService } from "@core/api/apiService";
 import {
 	getCurrentLocalISODay,
+	getLast30Days,
 	getLast7Days,
 	getMonthsBetween,
 	isDefined,
@@ -39,6 +40,7 @@ import {
 	Scores7D,
 	Sleep7D,
 	SleepAll,
+	Spo230Days,
 	Steps7D,
 	TemperatureVariation7D,
 } from "./api";
@@ -823,6 +825,44 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					controlState,
 				};
 			},
+			useLast30DaysSpo2(localISODay: ISODay): Spo230Days | undefined {
+				// Compute the 30 previous date from the given date
+
+				const last30Days = getLast30Days(localISODay);
+
+				useEffect(
+					action(function () {
+						actions.setMonthlySpo2Constants();
+						last30Days.forEach((d) => actions.setDailySpo2(d, shouldByPassCache(model.dailySpo2, d)));
+					}),
+					[localISODay]
+				);
+
+				const Spo230daysConstants = model.last30DSpo2.get(localISODay);
+				const isLoaded =
+					model.last30DSpo2.has(localISODay) &&
+					last30Days.every((date) => model.dailySpo2.has(date)) &&
+					Spo230daysConstants;
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last30Days.map((date) => {
+					return { value: model.dailySpo2.get(date), date: date };
+				}) as unknown as Spo230Days["series"];
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+
+				return {
+					series,
+					constant: {
+						average: Spo230daysConstants ? Number(Spo230daysConstants[MetricType.User30DaysAverageSpo2]) : -1,
+						reference: Spo230daysConstants ? Number(Spo230daysConstants[MetricType.UserDailyAsleepSPO2Reference]) : -1,
+					},
+					controlState,
+				};
+			},
+
 			useLast7DaysRHR(localISODay: ISODay): RestingHeartRate7D | undefined {
 				// Compute the 7 previous date from the given date
 				const last7Days = getLast7Days(localISODay);

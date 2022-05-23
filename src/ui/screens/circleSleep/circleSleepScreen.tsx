@@ -36,9 +36,8 @@ import { Sleep7DChart } from "./Sleep7DChart";
 import { SleepAllChart } from "./SleepAllChart";
 import { SleepDurationPieChart } from "./sleepDurationPie";
 import { SleepQualityScoreGraph } from "./sleepQualityScoreGraph";
-import { Spo2Graph } from "./spo2Graph";
+import { Spo2Graph } from "./spo2Graph/Spo2Graph";
 import { TemperatureVariation7DGraph } from "./temperatureVariation7DGraph";
-
 export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());

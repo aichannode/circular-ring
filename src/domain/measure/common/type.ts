@@ -51,6 +51,7 @@ import {
 	SleepMonthlyStageMetrics,
 	SleepStagesBeginEnd,
 	SleepStagesMetrics,
+	Spo230DConstantMetrics,
 	StepsConstantMetrics,
 	StepsTaken,
 	TemperatureVariationConstantMetrics,
@@ -318,6 +319,13 @@ export type Mutations =
 			};
 	  }
 	| {
+			type: "setLast30DSpo2";
+			payload: {
+				localISODay: ISODay;
+				score: number | null;
+			};
+	  }
+	| {
 			type: "setDailyHRSMetrics";
 			payload: {
 				localISODay: ISODay;
@@ -358,6 +366,19 @@ export type Mutations =
 				localISODay: ISODay;
 				constant: Metrics<THRH7DConstantMetrics>;
 			};
+	  }
+	| {
+			type: "setMonthlySpo2Constants";
+			payload: {
+				localISODay: ISOMonth;
+				constant: Metrics<Spo230DConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setDailySpo2";
+			payload: {
+				localISODay: ISODay;
+				data: number | null;
+			};
 	  };
-
 export type Proposal = Mutations[];
