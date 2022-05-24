@@ -42,7 +42,7 @@ const defaultNotificationsSettings = {
 };
 
 const defaultSettings = {
-	dateFormat: DateFormat.USCS,
+	dateFormat: DateFormat.SI,
 	heightFormat: HeightUnit.cm,
 	weightFormat: WeightUnit.kg,
 	hourFormat: HourFormat.TWELVE,
