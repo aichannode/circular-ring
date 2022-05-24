@@ -1278,7 +1278,8 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				if (!model.dailyGlobalScore.has(localISODay)) {
 					return undefined;
 				}
-				return Number(model.dailyGlobalScore.get(localISODay));
+				const dailyGlobalScore = model.dailyGlobalScore.get(localISODay);
+				return typeof dailyGlobalScore === "number" ? dailyGlobalScore : undefined;
 			},
 		},
 	};
