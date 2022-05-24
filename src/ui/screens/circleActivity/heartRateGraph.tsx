@@ -86,6 +86,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 	const tags = useDailyTags(selectedDay);
 	const updatedMode = updateMode(mode, parsedLines.length === 0);
 	const averages: Averages = [];
+	console.log({ lines });
 	if (isInActiveMode(updatedMode) && constant.reference !== -1) {
 		averages.push({
 			value: constant.reference,
