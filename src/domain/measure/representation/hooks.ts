@@ -345,7 +345,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 			useDailyHRNight(localISODay: ISODay): DailyHRNight | undefined {
 				useEffect(
 					action(function () {
-						actions.pullDailyHRNightMetrics(localISODay, shouldByPassCache(model.dailySpo2Metrics, localISODay));
+						actions.pullDailyHRNightMetrics(localISODay, shouldByPassCache(model.dailyHRNightMetrics, localISODay));
 					}),
 					[localISODay]
 				);
@@ -1068,8 +1068,8 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					const data = model.dailyHRSMetrics.get(date) || ({} as Metrics<DailyHRSMetrics>);
 					return {
 						value: [
-							Number(data[MetricType.UserDailyTotalSleepDuration]) || 0,
-							Number(data[MetricType.UserDailyRealSleepDuration]) || 0,
+							Number(data[MetricType.UserDailyTotalSleepDuration]) || -1,
+							Number(data[MetricType.UserDailyRealSleepDuration]) || -1,
 						],
 						date,
 					};
@@ -1126,7 +1126,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				useEffect(
 					action(function () {
 						// Get the last 7 daily energy scores
-						last7Days.forEach((d) => actions.pullDailySteps(d, shouldByPassCache(model.dailyCardioPoints, d)));
+						last7Days.forEach((d) => actions.pullDailySteps(d, shouldByPassCache(model.dailyStepsMetrics, d)));
 						// and the average for the last 7 days
 						actions.pullLast7DSteps(localISODay, shouldByPassCache(model.last7DStepsConstants, localISODay));
 					}),

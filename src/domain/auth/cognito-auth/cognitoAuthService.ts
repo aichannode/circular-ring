@@ -225,11 +225,6 @@ export class CognitoAuthService<
 
 	async getToken(): Promise<string | undefined> {
 		const token = this._accessToken.get();
-		if (token)
-			this.logger.debug(
-				(token.getExpiration() * SEC_TO_MILLISEC - Date.now()) / SEC_TO_MILLISEC,
-				" seconds remaining of token validity"
-			);
 		if (token && token.getExpiration() * SEC_TO_MILLISEC < Date.now()) {
 			await this.refreshToken();
 		}

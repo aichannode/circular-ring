@@ -115,6 +115,7 @@ export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 					mode={updatedMode}
 					shouldUpdateYmin={false}
 					highlightPerTapEnabled={true}
+					isDaily
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

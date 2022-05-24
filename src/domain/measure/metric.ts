@@ -107,7 +107,7 @@ export enum MetricType {
 
 	User7DaysTotalSleepDuration = "user.7days.total.sleep.duration",
 	User7DaysRealSleepDuration = "user.7days.real.sleep.duration",
-	UserIdealSleepDuration = "user.ideal.sleep.duration",
+	UserIdealSleepDuration = "user.daily.ideal.sleep.duration",
 
 	UserDailyRHR = "user.daily.rhr",
 	UserDailyScoreRHR = "user.daily.score.rhr",
@@ -210,7 +210,7 @@ export enum MetricType {
 	UserDailySteps = "user.daily.steps",
 	UserDailyStepsGoalMin = "user.daily.steps.goal.min",
 	UserDailyStepsGoalMax = "user.daily.steps.goal.max",
-	UserStepsAverage = "user.7days.everage.steps",
+	UserStepsAverage = "user.7days.average.steps",
 	UserStepsBaseline = "user.baseline.steps",
 	UserStepsTotal = "user.7days.total.steps",
 
@@ -252,6 +252,7 @@ export enum MetricType {
 	///////////////////
 	// HR night
 	///////////////////
+	UserHRNight = "user.daily.asleep.hr",
 	UserDailySleepHR = "user.reference.asleep.hr",
 	UserDailySleepHRMax = "user.daily.asleep.hr.max",
 	UserDailySleepHRMin = "user.daily.asleep.hr.min",

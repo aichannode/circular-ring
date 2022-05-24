@@ -59,7 +59,6 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 				.filter((line) => hasAttributesDefined(line, ["high", "low", "medium"]))
 				.reverse() as Required<ActivityData>[])
 		: [];
-
 	const [highData, mediumData, lowData] = lines.reduce<[Data[], Data[], Data[]]>(
 		([highData, mediumData, lowData], item, index) => [
 			// XXX: Graph unit is 30min so, as data are in minutes, we need to divide them by 30.
@@ -120,7 +119,8 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 							.map((val) => val * 30)
 							.sort((a, b) => b - a)
 							.map((val) => formatDuration(val * 60));
-						return `${moment(activity7D?.activityMetrics[index].date).format("ddd DD")}\n${values.join("\n")}`;
+
+						return `${moment(lines[index].date).format("ddd DD")}\n${values.join("\n")}`;
 					}}
 					highlightPerTapEnabled
 					scaleXEnabled={false}

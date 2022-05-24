@@ -71,6 +71,7 @@ interface LineChartProps {
 		xValue: number;
 		yValue: number;
 	};
+	isDaily?: boolean;
 }
 
 const verticalContentInset = { top: 40, bottom: 20 };
@@ -94,7 +95,7 @@ export function LineChart({
 	yMaxIndex,
 	labelCount,
 	shouldShowMarker = false,
-	labelFormatter = (x, y) => `${moment(x).format("Y-MM-DD")}\n${y}`,
+	labelFormatter = (x, y) => (isDaily ? `${moment(x).format("hh:mm")}\n${y}` : `${moment(x).format("Y-MM-DD")}\n${y}`),
 	highlightPerTapEnabled = false,
 	scaleXEnabled = true,
 	mode = createActiveMode(),
@@ -109,6 +110,7 @@ export function LineChart({
 	xAxisMin,
 	xAxisMax,
 	zoom,
+	isDaily = false,
 }: LineChartProps) {
 	const [scaleX, setScaleX] = useState(1);
 	const graphRect = useRef<Rect>();
@@ -171,8 +173,8 @@ export function LineChart({
 
 	const yAxis = {
 		left: {
-			axisMinimum: axisMinimum > 0 ? axisMinimum - (axisMinimum % 5) : 0,
-			axisMaximum: axisMaximum > 0 ? axisMaximum + (5 - (axisMaximum % 5)) : 0,
+			axisMinimum: Math.floor(axisMinimum),
+			axisMaximum: Math.ceil(axisMaximum),
 			enabled: true,
 			textColor: processColor(yColor),
 			drawGridLines: true,
@@ -281,7 +283,7 @@ export function LineChart({
 							let hasPrevValue = false;
 							for (let index = 0; index < lines.length; ++index) {
 								const indexedLine = { ...lines[index], index };
-								if (indexedLine.y > 0) {
+								if (indexedLine.y >= 0) {
 									if (hasPrevValue) {
 										segmentedLines[segmentedLines.length - 1].push(indexedLine);
 									} else {
@@ -386,12 +388,15 @@ export function LineChart({
 							};
 							const yScale = scale
 								.scaleLinear()
-								.domain([
-									isDefined(yMax) ? yMax - (yMax % 10) + 10 : 0,
-									isDefined(yMin) ? yMin - ((yMin % 10) + 10) : 0,
-								])
+								.domain([axisMaximum, axisMinimum])
 								.range([graphRect.current.height, 0]);
-							const xScale = scale.scaleLinear().domain([xMax, xMin]).range([graphRect.current.width, 0]);
+							const xScale = scale
+								.scaleLinear()
+								.domain([
+									xAxisMax ?? (Number.isFinite(xMax) ? xMax : 0),
+									xAxisMin ?? (Number.isFinite(xMin) ? xMin : 0),
+								])
+								.range([graphRect.current.width, 0]);
 
 							//find the x relative to yMax
 							const yValues = data.length ? data.map((point) => point.y) : [];
@@ -407,7 +412,6 @@ export function LineChart({
 							//find the x relative to yMin
 							const nearestMinIdxs = getNearestDataIndexes(isDefined(yMin) ? yMin : 0, yValues);
 							const xLineMin = data.length ? data[nearestMinIdxs[0]] : null;
-
 							if (xLineMin) {
 								setMinPosition({
 									x: xScale(xLineMin.x),

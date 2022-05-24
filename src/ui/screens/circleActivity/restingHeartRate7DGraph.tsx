@@ -170,8 +170,8 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
 									: isDefined(constant) && constant.average != -1
-									? `${constant?.average?.toFixed(2)} %`
-									: "- %",
+									? `${constant?.average?.toFixed(2)} bpm`
+									: "- bpm",
 							},
 							{
 								label: format("activity.resting_heart_rate.reference"),
@@ -191,8 +191,8 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
 									: isDefined(constant) && constant.average != -1
-									? `${constant.reference.toFixed(2)} %`
-									: "- %",
+									? `${constant.reference.toFixed(2)} bpm`
+									: "- bpm",
 							},
 						]}
 					/>

@@ -39,8 +39,8 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
-
 	const data = useLast7DaysHRS(selectedDay);
+
 	const series = data?.series.reverse();
 	const lines = series
 		? series.flatMap((item, index) => {
@@ -81,19 +81,19 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 	const averages: Averages = [];
 	if (isDefined(constant) && constant.totalAverage !== -1) {
 		averages.push({
-			value: constant.totalAverage,
+			value: constant.totalAverage / 60,
 			color: colors.darkBlue,
 		});
 	}
 	if (isDefined(constant) && constant.realAverage !== -1) {
 		averages.push({
-			value: constant.realAverage,
+			value: constant.realAverage / 60,
 			color: colors.redLight,
 		});
 	}
 	if (isDefined(constant) && constant.recommendation !== -1) {
 		averages.push({
-			value: constant.recommendation,
+			value: constant.recommendation / 60,
 			color: colors.darkGreen,
 		});
 	}
@@ -192,9 +192,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 									),
 								},
 								value:
-									isDefined(constant) && constant.totalAverage != -1
-										? formatDuration(moment.duration(constant.totalAverage, "h").as("s"))
-										: "-",
+									isDefined(constant) && constant.totalAverage != -1 ? formatDuration(constant.totalAverage * 60) : "-",
 							},
 							{
 								label: format("hrs.realAverage"),
@@ -212,9 +210,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 									),
 								},
 								value:
-									isDefined(constant) && constant.realAverage != -1
-										? formatDuration(moment.duration(constant.realAverage, "h").as("s"))
-										: "-",
+									isDefined(constant) && constant.realAverage != -1 ? formatDuration(constant.realAverage * 60) : "-",
 							},
 							{
 								label: format("hrs.recommendation"),
@@ -233,7 +229,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 								},
 								value:
 									isDefined(constant) && constant.recommendation != -1
-										? formatDuration(moment.duration(constant.recommendation, "h").as("s"))
+										? formatDuration(constant.recommendation * 60)
 										: "-",
 							},
 						]}

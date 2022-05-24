@@ -285,8 +285,8 @@ export function getOrElse<T extends number | string>(data: Metrics<any>, key: Me
 export function parseDailyHRNight(
 	dailyHRNight:
 		| RangeMetrics<
-				MetricType.UserHR,
-				| MetricType.UserHR
+				MetricType.UserHRNight,
+				| MetricType.UserHRNight
 				| MetricType.UserDailySleepHR
 				| MetricType.UserDailySleepHRMin
 				| MetricType.UserDailySleepHRMax
@@ -295,10 +295,10 @@ export function parseDailyHRNight(
 	dailySleepMetrics: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration> | undefined
 ): DailyHRNight | undefined {
 	if (!isDefined(dailyHRNight)) return undefined;
-	const lines = getTimeseries(dailyHRNight.timeSeries, MetricType.UserHR);
+	const lines = getTimeseries(dailyHRNight.timeSeries, MetricType.UserHRNight);
 	const data: DailyHRNight = {
 		constant: {
-			hr: getOrElse<number>(dailyHRNight.constant, MetricType.UserHR, 0),
+			hr: getOrElse<number>(dailyHRNight.constant, MetricType.UserHRNight, 0),
 			hrMin: getOrElse<number>(dailyHRNight.constant, MetricType.UserDailySleepHRMin, -1),
 			hrMax: getOrElse<number>(dailyHRNight.constant, MetricType.UserDailySleepHRMax, -1),
 			reference: getOrElse<number>(dailyHRNight.constant, MetricType.UserDailySleepHR, -1),

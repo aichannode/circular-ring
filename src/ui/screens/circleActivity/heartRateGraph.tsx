@@ -154,6 +154,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 					xAxisMax={xAxisMax}
 					shouldShowMarker={true}
 					highlightPerTapEnabled={true}
+					isDaily
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
@@ -196,7 +197,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
 									: typeof constant.reference == "undefined" || constant.reference === -1
 									? "- bpm"
-									: `${constant.reference} bpm`,
+									: `${Math.round(constant.reference)} bpm`,
 							},
 							{
 								label: format("hr.hrMax"),

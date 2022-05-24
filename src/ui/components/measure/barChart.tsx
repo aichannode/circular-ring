@@ -58,7 +58,7 @@ export function BarChart({
 						if (shouldShowMarker && y != -1000) {
 							marker = `${moment(x).format("Y-MM-DD")}\n${mapMarker({ x, y, ...args }, _index)}`;
 						}
-						return { x: mapXAxis({ x, y, ...args }, _index), y: y == -1 ? 0 : y, marker };
+						return { x: mapXAxis({ x, y, ...args }, _index), y: y == -1000 ? 0 : y, marker };
 					}),
 				label: "",
 				config: {
@@ -102,8 +102,8 @@ export function BarChart({
 	const yAxis = {
 		left: {
 			enabled: true,
-			axisMinimum: yMin,
-			axisMaximum: yMax,
+			axisMinimum: yMin ? Math.floor(yMin) : undefined,
+			axisMaximum: yMax ? Math.ceil(yMax) : undefined,
 			textColor: processColor(yColor),
 			gridLineWidth: 0.5,
 			drawLabels: true,
