@@ -48,10 +48,10 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 	const valueFormatter = lines.map(({ date }) => moment(date).format("dd")[0]);
 	const [awakeData, deepData, REMData, lightData] = lines.reduce<[Points, Points, Points, Points]>(
 		([awakeData, deepData, REMData, lightData], { awake, deep, REM, light }, index) => [
-			[...awakeData, { x: index, y: awake }],
-			[...deepData, { x: index, y: deep }],
-			[...REMData, { x: index, y: REM }],
-			[...lightData, { x: index, y: light }],
+			[...awakeData, { x: index, y: (awake * 60) / 30 }],
+			[...deepData, { x: index, y: (deep * 60) / 30 }],
+			[...REMData, { x: index, y: (REM * 60) / 30 }],
+			[...lightData, { x: index, y: (light * 60) / 30 }],
 		],
 		[[], [], [], []]
 	) || [[], [], [], []];
@@ -116,13 +116,13 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 					graphColor={colors.darkBlue}
 					labelFormatter={(x, y, index) => {
 						const values = [
-							`${formatDuration(lightData[index].y * 3600)}`,
-							`${formatDuration(REMData[index].y * 3600)}`,
-							`${formatDuration(deepData[index].y * 3600)}`,
-							`${formatDuration(awakeData[index].y * 3600)}`,
+							`${formatDuration(lines[index].light * 3600)}`,
+							`${formatDuration(lines[index].REM * 3600)}`,
+							`${formatDuration(lines[index].deep * 3600)}`,
+							`${formatDuration(lines[index].awake * 3600)}`,
 						];
 						///TODO à voir dans le daily pour le formatage
-						return `${moment(days7DSleep?.sleepStages[index].date).format("ddd DD")}\n${values.join("\n")}`;
+						return `${moment(lines[index].date).format("ddd DD")}\n${values.join("\n")}`;
 					}}
 					yValueFormatter={yValueFormatter}
 				/>

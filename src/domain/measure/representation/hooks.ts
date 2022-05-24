@@ -9,6 +9,7 @@ import {
 	toISOMonth,
 } from "@domain/common/business";
 import { ISODay, ISOMonth } from "@domain/common/type";
+import { hasMetric } from "@ui/utils/guard";
 import { action } from "mobx";
 import moment from "moment";
 import { useEffect, useMemo } from "react";
@@ -342,7 +343,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 			useDailyHRNight(localISODay: ISODay): DailyHRNight | undefined {
 				useEffect(
 					action(function () {
-						actions.pullDailyHRNightMetrics(localISODay, shouldByPassCache(model.dailySpo2Metrics, localISODay));
+						actions.pullDailyHRNightMetrics(localISODay, shouldByPassCache(model.dailyHRNightMetrics, localISODay));
 					}),
 					[localISODay]
 				);
@@ -611,6 +612,28 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					fetchData,
 					setLoading
 				);
+			},
+			useCoreSleep(localISODay: ISODay) {
+				useEffect(
+					action(function () {
+						actions.setCoreSleep(localISODay, shouldByPassCache(model.dailySleepMetrics, localISODay));
+					}),
+					[localISODay]
+				);
+				if (!model.dailySleepMetrics.has(localISODay)) {
+					return undefined;
+				}
+				const data = model.dailySleepMetrics.get(localISODay);
+				const hasCoreSleep = data?.constant ? hasMetric(MetricType.UserCoreSleepBegin)(data.constant) : false;
+				const coreSleepTiming =
+					hasCoreSleep && data
+						? ([
+								new Date(getOrElse<number>(data.constant, MetricType.UserCoreSleepBegin, 0) * 1000).toISOString(),
+								new Date(getOrElse<number>(data.constant, MetricType.UserCoreSleepEnd, 0) * 1000).toISOString(),
+						  ] as [string, string])
+						: undefined;
+
+				return coreSleepTiming;
 			},
 			/**
 			 * Return sleep score contributors
@@ -1005,8 +1028,8 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					const data = model.dailyHRSMetrics.get(date) || ({} as Metrics<DailyHRSMetrics>);
 					return {
 						value: [
-							Number(data[MetricType.UserDailyTotalSleepDuration]) || 0,
-							Number(data[MetricType.UserDailyRealSleepDuration]) || 0,
+							Number(data[MetricType.UserDailyTotalSleepDuration]) || -1,
+							Number(data[MetricType.UserDailyRealSleepDuration]) || -1,
 						],
 						date,
 					};
@@ -1063,7 +1086,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				useEffect(
 					action(function () {
 						// Get the last 7 daily energy scores
-						last7Days.forEach((d) => actions.pullDailySteps(d, shouldByPassCache(model.dailyCardioPoints, d)));
+						last7Days.forEach((d) => actions.pullDailySteps(d, shouldByPassCache(model.dailyStepsMetrics, d)));
 						// and the average for the last 7 days
 						actions.pullLast7DSteps(localISODay, shouldByPassCache(model.last7DStepsConstants, localISODay));
 					}),

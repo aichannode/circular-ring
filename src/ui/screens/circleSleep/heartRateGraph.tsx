@@ -42,6 +42,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 	} = useRepresentations();
 
 	const dailyHRNight = useDailyHRNight(selectedDay);
+
 	const dailyHrTrend = useDailyHRTrend(selectedDay);
 	const [lines, constant] = [
 		dailyHRNight ? dailyHRNight.data : [],
@@ -49,7 +50,6 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 	];
 
 	const parsedData = dailyTrimOptions ? trimData(lines, (line) => line.x, dailyTrimOptions) : lines;
-
 	const [yMin, yMax] =
 		parsedData.length > 0
 			? [Math.min(...parsedData.map((line) => line.y)), Math.max(...parsedData.map((line) => line.y))]
@@ -131,6 +131,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 					movingAverage={dailyHrTrend?.data}
 					shouldShowMarker={true}
 					highlightPerTapEnabled={true}
+					isDaily
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
@@ -173,7 +174,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
 									: typeof constant.reference == "undefined" || constant.reference === -1
 									? "- bpm"
-									: `${constant.reference} bpm`,
+									: `${Math.round(constant.reference)} bpm`,
 							},
 							{
 								label: format("hr.hrMax"),

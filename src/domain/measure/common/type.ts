@@ -49,6 +49,7 @@ import {
 	Sleep7DConstantMetrics,
 	SleepAllConstantMetrics,
 	SleepMonthlyStageMetrics,
+	SleepStagesBeginEnd,
 	SleepStagesMetrics,
 	StepsConstantMetrics,
 	StepsTaken,
@@ -265,6 +266,13 @@ export type Mutations =
 			payload: {
 				localISODay: ISODay;
 				range: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>;
+			};
+	  }
+	| {
+			type: "setCoreSleep";
+			payload: {
+				localISODay: ISODay;
+				range: RangeMetrics<SleepStagesBeginEnd, DailySleepStageDuration>;
 			};
 	  }
 	| {

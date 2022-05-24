@@ -120,8 +120,8 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 					graphColor={colors.business.sleepPrimary}
 					onSelect={(x) => toUpdateTag(x)}
 					mode={updatedMode}
-					yMin={yMin < 0 ? yMin - 0.1 : yMin}
-					yMax={yMax + 0.1}
+					yMin={yMin > -1 ? -1 : yMin}
+					yMax={yMax > 1 ? yMax : 1}
 					mapMarker={({ y }) => `${y > 0 ? "+" + y : y}`}
 				/>
 				<View style={{ marginTop: 20 }}>

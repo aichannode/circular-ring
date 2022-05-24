@@ -112,6 +112,7 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 					labelCount={5}
 					highlightPerTapEnabled={true}
 					shouldShowMarker={true}
+					isDaily
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

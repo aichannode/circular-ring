@@ -7,7 +7,7 @@ import sport from "@assets/images/sport.png";
 import { useRepresentations } from "@core/representation";
 import { getCurrentLocalISODay } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { DailyActivityIntensityData, DailySleepData, DataControlState } from "@domain/measure/representation/api";
+import { DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
 import { activities, activityScoreContributors } from "@domain/measure/representation/lib/type";
 import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
 import { getInitMode, isInCalibrationMode, TrimOptions, updateMode } from "@ui/business";
@@ -16,6 +16,7 @@ import { CircleCalendarButton } from "@ui/components/calendar/circleCalendarButt
 import { InfoListHeader } from "@ui/components/infoList";
 import { Row, Stack } from "@ui/components/layout";
 import { GaugeDescription } from "@ui/components/measure/gaugeDescription";
+import { ScrollScreen } from "@ui/components/scrollScreen";
 import { Spinner } from "@ui/components/spinner";
 import { CalendarView } from "@ui/containers/calendarView";
 import { ScoreGauge } from "@ui/containers/scoreGauge";
@@ -25,7 +26,7 @@ import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useRef, useState } from "react";
-import { Image, LayoutAnimation, ScrollView, View } from "react-native";
+import { Image, LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
@@ -70,7 +71,6 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 		},
 		sportSessionDates: [],
 	});
-	const [dailySleep, setDailyData] = useState<DailySleepData | undefined>();
 	const {
 		measure: {
 			hooks: {
@@ -79,7 +79,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 				useDailyEnergyScore,
 				useDailyActivityIntensity,
 				useHasCompleteCoreSleep,
-				useDailySleepStages,
+				useCoreSleep,
 			},
 		},
 	} = useRepresentations();
@@ -91,8 +91,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const activityContributorGaugesConfig = getActivityGaugesConfig(format);
 
 	useDailyActivityIntensity({ localISODay: selectedDay, setData, setLoading });
-	// TODO: This is out of the ticket CIR-874, this should be replaced by an hook for extracting only coreSleepStart and coreSleepEnd.
-	useDailySleepStages({ localISODay: selectedDay, setData: setDailyData, setLoading });
+	const coreSleepTiming = useCoreSleep(selectedDay);
 
 	const hasCompleteCoreSleep = useHasCompleteCoreSleep(selectedDay);
 	const nbRemainingDays = useUserCalibrationRemainingDays();
@@ -103,146 +102,142 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 
 	const [activeItem, setActiveItem] = useState<number>(0);
 
-	const [] = dailySleep?.coreSleepTiming ?? [];
 	// XXX: https://circularing.atlassian.net/browse/CIR-874
 	const dailyTrimOptions: TrimOptions = {
 		includes: [
 			[moment(selectedDay).startOf("day").valueOf(), moment(selectedDay).startOf("day").add(1, "day").valueOf()],
 		],
-		excludes: dailySleep?.coreSleepTiming
-			? [[moment(dailySleep.coreSleepTiming[0]).valueOf(), moment(dailySleep.coreSleepTiming[1]).valueOf()]]
-			: [],
+		excludes: coreSleepTiming ? [[moment(coreSleepTiming[0]).valueOf(), moment(coreSleepTiming[1]).valueOf()]] : [],
 	};
 
 	return (
 		<Container>
-			<ScrollView>
-				<View>
-					<ScoreSection
-						style={{ marginTop: 20 }}
-						color={colors.orangeRed}
-						score={energyScore?.score}
-						quality={energyScore?.controlState}
-						label={format("activity.energy_score")}
-						mode={screenMode}
-					/>
-					<CircleCalendarButton
-						currentDay={selectedDay}
-						onPress={() => calendarBottomSheet.current?.present()}
-						style={{
-							position: "absolute",
-							top: 25,
-							right: 25,
-						}}
-					/>
-				</View>
-				<InfoListHeader>{format("activity.duration.title")}</InfoListHeader>
-
-				<ActivityDurationPieChart
-					isToday={selectedDay === getCurrentLocalISODay()}
-					stages={activityIntensity.stages}
-					controlState={activityIntensity.controlState}
-					sportSessionDates={activityIntensity.sportSessionDates}
-					duration={activityIntensity.duration.total}
-					mode={screenModeWithoutDisabled}
-					isLoading={isLoading}
+			<View>
+				<ScoreSection
+					style={{ marginTop: 20 }}
+					color={colors.orangeRed}
+					score={energyScore?.score}
+					quality={energyScore?.controlState}
+					label={format("activity.energy_score")}
+					mode={screenMode}
 				/>
-				<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
-				<ElementStack gap={10}>
-					{dailyActivitiesData ? (
-						activities.map((metric) => {
-							const dataInfos = dailyActivitiesUIConfig[metric];
-							const transform = dataInfos.renderValue;
-							const data = dailyActivitiesData[metric];
+				<CircleCalendarButton
+					currentDay={selectedDay}
+					onPress={() => calendarBottomSheet.current?.present()}
+					style={{
+						position: "absolute",
+						top: 25,
+						right: 25,
+					}}
+				/>
+			</View>
+			<InfoListHeader>{format("activity.duration.title")}</InfoListHeader>
 
-							return (
-								<DailyMetric
+			<ActivityDurationPieChart
+				isToday={selectedDay === getCurrentLocalISODay()}
+				stages={activityIntensity.stages}
+				controlState={activityIntensity.controlState}
+				sportSessionDates={activityIntensity.sportSessionDates}
+				duration={activityIntensity.duration.total}
+				mode={screenModeWithoutDisabled}
+				isLoading={isLoading}
+			/>
+			<InfoListHeader>{format("activity.score.daily_metrics")}</InfoListHeader>
+			<ElementStack gap={10}>
+				{dailyActivitiesData ? (
+					activities.map((metric) => {
+						const dataInfos = dailyActivitiesUIConfig[metric];
+						const transform = dataInfos.renderValue;
+						const data = dailyActivitiesData[metric];
+
+						return (
+							<DailyMetric
+								key={metric}
+								icon={getIcon(dataInfos.icon)}
+								label={format(dataInfos.labelKey)}
+								value={(transform ? transform(data?.value) : data?.value)?.toFixed(dataInfos.decimalNb)}
+								score={data?.score}
+								controlState={data?.controlState}
+								mode={screenModeWithoutDisabled}
+							/>
+						);
+					})
+				) : (
+					<Spinner size={24} />
+				)}
+			</ElementStack>
+			<InfoListHeader>{format("activity.score.details")}</InfoListHeader>
+			<ElementStack gap={10}>
+				{energyScoreDetails ? (
+					(activityScoreContributors
+						.map((metric, index) => {
+							const uiConfig = activityContributorGaugesConfig[metric];
+							const percent = energyScoreDetails?.[metric].percent;
+							return [
+								<ScoreGauge
 									key={metric}
-									icon={getIcon(dataInfos.icon)}
-									label={format(dataInfos.labelKey)}
-									value={(transform ? transform(data?.value) : data?.value)?.toFixed(dataInfos.decimalNb)}
-									score={data?.score}
-									controlState={data?.controlState}
-									mode={screenModeWithoutDisabled}
-								/>
-							);
-						})
-					) : (
-						<Spinner size={24} />
-					)}
-				</ElementStack>
-				<InfoListHeader>{format("activity.score.details")}</InfoListHeader>
-				<ElementStack gap={10}>
-					{energyScoreDetails ? (
-						(activityScoreContributors
-							.map((metric, index) => {
-								const uiConfig = activityContributorGaugesConfig[metric];
-								const percent = energyScoreDetails?.[metric].percent;
-								return [
-									<ScoreGauge
-										key={metric}
-										value={uiConfig.renderValue({
-											...energyScoreDetails[metric],
-										})}
-										percent={percent}
+									value={uiConfig.renderValue({
+										...energyScoreDetails[metric],
+									})}
+									percent={percent}
+									label={format(uiConfig.titleKey)}
+									quality={energyScoreDetails[metric].controlState}
+									onPress={() => {
+										LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+										setFocusedGauge((current) => (current === index ? null : index));
+									}}
+									mode={uiConfig.computeMode(screenMode)}
+									forceDisplayValue={uiConfig.shouldForceDisplayValue}
+								/>,
+								focusedGauge === index && (
+									<GaugeDescription
+										key={metric + "description"}
 										label={format(uiConfig.titleKey)}
-										quality={energyScoreDetails[metric].controlState}
-										onPress={() => {
+										description={format(uiConfig.descriptionKey)}
+										colorType="Activity"
+										onClose={() => {
 											LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-											setFocusedGauge((current) => (current === index ? null : index));
+											setFocusedGauge(null);
 										}}
-										mode={uiConfig.computeMode(screenMode)}
-										forceDisplayValue={uiConfig.shouldForceDisplayValue}
-									/>,
-									focusedGauge === index && (
-										<GaugeDescription
-											key={metric + "description"}
-											label={format(uiConfig.titleKey)}
-											description={format(uiConfig.descriptionKey)}
-											colorType="Activity"
-											onClose={() => {
-												LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-												setFocusedGauge(null);
-											}}
-										/>
-									),
-								];
-							})
-							.flatMap((x) => x)
-							.filter(Boolean) as JSX.Element[])
-					) : (
-						<Spinner size={24} />
-					)}
-				</ElementStack>
+									/>
+								),
+							];
+						})
+						.flatMap((x) => x)
+						.filter(Boolean) as JSX.Element[])
+				) : (
+					<Spinner size={24} />
+				)}
+			</ElementStack>
 
-				<ElementStack gap={10} style={{ display: "flex" }}>
-					{activeItem === 0 && (
-						<ActivityIntensityGraph
-							selectedDay={selectedDay}
-							mode={screenModeWithoutDisabled}
-							dailyTrimOptions={dailyTrimOptions}
-						/>
-					)}
-					{activeItem === 1 && <StepsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-					{activeItem === 2 && <CaloriesBurnedGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-					{activeItem === 3 && <CardioPointsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-					{activeItem === 4 && (
-						<EnergyScoreGraph
-							selectedDay={selectedDay}
-							// XXX: Energy score should not be displayed in calibration mode.
-							// https://circularing.atlassian.net/browse/CIR-904
-							mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenModeWithoutDisabled))}
-						/>
-					)}
-					{activeItem === 5 && (
-						<HeartRateGraph
-							selectedDay={selectedDay}
-							mode={screenModeWithoutDisabled}
-							dailyTrimOptions={dailyTrimOptions}
-						/>
-					)}
-					{activeItem === 6 && <RestingHeartRate7DGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-				</ElementStack>
+			<ElementStack gap={10} style={{ display: "flex" }}>
+				{activeItem === 0 && (
+					<ActivityIntensityGraph
+						dataActivityIntensity={activityIntensity}
+						selectedDay={selectedDay}
+						mode={screenModeWithoutDisabled}
+						dailyTrimOptions={dailyTrimOptions}
+					/>
+				)}
+				{activeItem === 1 && <StepsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+				{activeItem === 2 && <CaloriesBurnedGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+				{activeItem === 3 && <CardioPointsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+				{activeItem === 4 && (
+					<EnergyScoreGraph
+						selectedDay={selectedDay}
+						// XXX: Energy score should not be displayed in calibration mode.
+						// https://circularing.atlassian.net/browse/CIR-904
+						mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenModeWithoutDisabled))}
+					/>
+				)}
+				{activeItem === 5 && (
+					<HeartRateGraph
+						selectedDay={selectedDay}
+						mode={screenModeWithoutDisabled}
+						dailyTrimOptions={dailyTrimOptions}
+					/>
+				)}
+				{activeItem === 6 && <RestingHeartRate7DGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
 					<Row style={{ justifyContent: "center" }}>
@@ -285,7 +280,8 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 								}
 							/>
 						</ImageContainer>
-
+					</Row>
+					<Row style={{ justifyContent: "center" }}>
 						<ImageContainer onPress={() => setActiveItem(4)}>
 							<GraphSwitcherButton
 								source={
@@ -295,8 +291,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 								}
 							/>
 						</ImageContainer>
-					</Row>
-					<Row style={{ justifyContent: "center" }}>
+
 						<ImageContainer onPress={() => setActiveItem(5)}>
 							<GraphSwitcherButton
 								source={
@@ -318,7 +313,8 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 						</ImageContainer>
 					</Row>
 				</ElementStack>
-			</ScrollView>
+			</ElementStack>
+
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
 				<View style={{ padding: 20 }}>
 					<CalendarView
@@ -336,8 +332,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	);
 });
 
-const Container = styled.View`
-	flex: 1;
+const Container = styled(ScrollScreen)`
 	background-color: ${colors.white};
 `;
 

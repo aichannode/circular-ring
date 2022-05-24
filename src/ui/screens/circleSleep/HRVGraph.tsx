@@ -120,6 +120,7 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({
 					movingAverage={dailyHrvTrend?.data}
 					shouldShowMarker={true}
 					highlightPerTapEnabled={true}
+					isDaily
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

@@ -97,6 +97,8 @@ import {
 	SleepAllConstantMetrics,
 	SleepMonthlyStageMetrics,
 	sleepMonthlyStageMetrics,
+	SleepStagesBeginEnd,
+	sleepStagesBeginEnd,
 	SleepStagesMetrics,
 	sleepStagesMetrics,
 	stepsConstantMetrics,
@@ -890,6 +892,36 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				present([
 					{
 						type: "setDailySleepMetrics",
+						payload: {
+							localISODay,
+							range: {
+								timeSeries: timeline,
+								constant: duration,
+							},
+						},
+					},
+				]);
+			});
+		},
+		async setCoreSleep(localISODay: ISODay, useForceRefresh?: boolean) {
+			Promise.all([
+				measureApi.fetchMeasures<SleepStagesBeginEnd>(
+					sleepStagesBeginEnd,
+					// Grab data from the noon before the day to make sure to get the ensleepment.
+					// TODO: implement day/night worker
+					moment(localISODay).startOf("day").subtract(12, "hours").toISOString(),
+					moment(localISODay).endOf("day").toISOString(),
+					useForceRefresh
+				),
+				measureApi.fetchLastDailyMeasures<DailySleepStageDuration>(
+					dailySleepStageDuration,
+					localISODay,
+					useForceRefresh
+				),
+			]).then(function ([timeline, duration]) {
+				present([
+					{
+						type: "setCoreSleep",
 						payload: {
 							localISODay,
 							range: {
