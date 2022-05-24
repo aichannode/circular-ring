@@ -1,6 +1,7 @@
 import { useServices } from "@core/services";
 import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringManagementService";
+import { Grow } from "@ui/components/layout";
 import { Spinner } from "@ui/components/spinner";
 import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
