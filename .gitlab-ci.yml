@@ -32,7 +32,7 @@ android:build:dev:
   variables:
     ENV: dev
   only:
-    - master
+    - dev
 
 android:build:demo:
   extends: .build-android
