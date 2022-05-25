@@ -1,18 +1,19 @@
 import { useRepresentations } from "@core/representation";
+import { CalendarTag } from "@domain/calendar/calendar";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { Points, SleepStageData } from "@domain/measure/representation/api";
-import { createActiveMode, isInDisabledMode, updateMode } from "@ui/business";
+import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { Spinner } from "@ui/components/spinner";
-import { Tags } from "@ui/components/Tags";
+import { Tag } from "@ui/components/tag";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Mode } from "@ui/type";
 import { hasAttributesDefined } from "@ui/utils/filter";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import React from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 import { SleepLegend } from "./SleepLegend";
 
@@ -34,11 +35,8 @@ const yValueFormatter = [
 export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode = createActiveMode() }: Props) {
 	const { formatDuration } = useI18n();
 	const { use7DaysSleep } = useRepresentations().measure.hooks;
-	const { useRangeTags } = useRepresentations().calendar.hooks;
-	const tags = useRangeTags(
-		moment(selectedDay).subtract(7, "days").toISOString() as ISODay,
-		moment(selectedDay).endOf("day").toISOString() as ISODay
-	);
+	const { useDailyTags } = useRepresentations().calendar.hooks;
+	const [tags, setTags] = useState<CalendarTag[]>([]);
 	const days7DSleep = use7DaysSleep(selectedDay);
 	const lines = days7DSleep
 		? ([...days7DSleep.sleepStages]
@@ -77,10 +75,20 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 	const updatedMode = updateMode(mode, lines.length === 0);
 	const sleepConstant = days7DSleep?.constant;
 	const isLoaded = isDefined(days7DSleep);
-
+	const toUpdateTag = (x: number) => {
+		const date = moment(lines[x].date).format("Y-MM-DD") as ISODay;
+		setTags(useDailyTags(date));
+	};
 	return isLoaded ? (
 		<>
-			<Tags tags={isInDisabledMode(updatedMode) ? [] : tags} />
+			<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
+					tags.map(({ name, id }) => (
+						<View key={id} style={{ marginLeft: 8 }}>
+							<Tag>{name}</Tag>
+						</View>
+					))}
+			</View>
 			<View style={{ height: 200 }}>
 				<LineChart
 					daysItem={[
@@ -125,6 +133,7 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 						return `${moment(lines[index].date).format("ddd DD")}\n${values.join("\n")}`;
 					}}
 					yValueFormatter={yValueFormatter}
+					onSelect={(x) => toUpdateTag(x)}
 				/>
 			</View>
 			<View style={{ marginTop: 30 }}>

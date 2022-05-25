@@ -129,7 +129,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 					isMultipleLines
 				/>
 			</View>
-			<View style={{ marginTop: 30 }}>
+			<View style={{ marginTop: 20 }}>
 				<ActivityLegend {...activity7D?.constant} mode={updatedMode} />
 			</View>
 		</>

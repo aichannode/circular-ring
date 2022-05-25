@@ -137,19 +137,19 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 							awake:
 								localMetrics && localMetrics[MetricType.UserDailyAwakeStageDuration] !== null
 									? getOrElse<number>(localMetrics, MetricType.UserDailyAwakeStageDuration, 0) / 60
-									: 0,
+									: -1,
 							light:
 								localMetrics && localMetrics[MetricType.UserDailyLightStageDuration] !== null
 									? getOrElse<number>(localMetrics, MetricType.UserDailyLightStageDuration, 0) / 60
-									: 0,
+									: -1,
 							deep:
 								localMetrics && localMetrics[MetricType.UserDailyDeepStageDuration] !== null
 									? getOrElse<number>(localMetrics, MetricType.UserDailyDeepStageDuration, 0) / 60
-									: 0,
+									: -1,
 							REM:
 								localMetrics && localMetrics[MetricType.UserDailyREMStageDuration] !== null
 									? getOrElse<number>(localMetrics, MetricType.UserDailyREMStageDuration, 0) / 60
-									: 0,
+									: -1,
 							date,
 						};
 					}) as unknown as Sleep7D["sleepStages"];

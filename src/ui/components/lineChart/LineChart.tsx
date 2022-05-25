@@ -95,7 +95,8 @@ export function LineChart({
 	yMaxIndex,
 	labelCount,
 	shouldShowMarker = false,
-	labelFormatter = (x, y) => (isDaily ? `${moment(x).format("hh:mm")}\n${y}` : `${moment(x).format("Y-MM-DD")}\n${y}`),
+	labelFormatter = (x, y) =>
+		isDaily ? `${moment(x).format("hh:mm")}\n${Math.round(y)}` : `${moment(x).format("Y-MM-DD")}\n${Math.round(y)}`,
 	highlightPerTapEnabled = false,
 	scaleXEnabled = true,
 	mode = createActiveMode(),
