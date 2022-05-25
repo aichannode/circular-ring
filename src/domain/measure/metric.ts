@@ -256,6 +256,10 @@ export enum MetricType {
 	UserDailySleepHR = "user.reference.asleep.hr",
 	UserDailySleepHRMax = "user.daily.asleep.hr.max",
 	UserDailySleepHRMin = "user.daily.asleep.hr.min",
+
+	UserMonthlyHrAverage = "user.30days.asleep.hr",
+	UserMonthlyHrMax = "user.30days.asleep.hr.max",
+	UserMonthlyHrMin = "user.30days.asleep.hr.min",
 	// temperature variation
 	///////////////////
 	UserDailyTemperature = "user.daily.asleep.temperature",

@@ -48,6 +48,7 @@ import {
 	DailySpo2ConstantMetrics,
 	DailySpo2TimeSeriesMetrics,
 	DailyWakeUpScoreMetrics,
+	Hr30DConstantMetrics as HrNight30DConstantMetrics,
 	Sleep7DConstantMetrics,
 	SleepAllConstantMetrics,
 	SleepMonthlyStageMetrics,
@@ -117,7 +118,9 @@ export class MeasureModel implements Model<Proposal> {
 	public dailyRestingHeartRate: Map<ISODay, number | null> = new Map();
 	public last7DEnergyScore: Map<ISODay, number | null> = new Map();
 	public last30DSpo2: Map<ISODay, Metrics<Spo230DConstantMetrics>> = new Map();
+	public last30DHrNight: Map<ISODay, Metrics<HrNight30DConstantMetrics>> = new Map();
 	public dailySpo2: Map<ISODay, number | null> = new Map();
+	public dailyHrNight: Map<ISODay, number | null> = new Map();
 	public dailySleepScoreQuality: Map<ISODay, number | null> = new Map();
 	public last7DSleepScore: Map<ISODay, number | null> = new Map();
 	public last7DRestingHeartRate: Map<ISODay, Metrics<THRH7DConstantMetrics>> = new Map();
@@ -327,6 +330,13 @@ export class MeasureModel implements Model<Proposal> {
 			} else if (mutation.type === "setMonthlySpo2Constants") {
 				mutate.call(this, mutation, () => {
 					this.last30DSpo2.set(mutation.payload.localISODay, mutation.payload.constant);
+				});
+			} else if (mutation.type === "setDailyHrNight") {
+				const score = mutation.payload.data;
+				mutate.call(this, mutation, () => this.dailyHrNight.set(mutation.payload.localISODay, score));
+			} else if (mutation.type === "setMonthlyHrNightConstants") {
+				mutate.call(this, mutation, () => {
+					this.last30DHrNight.set(mutation.payload.localISODay, mutation.payload.constant);
 				});
 			}
 		});

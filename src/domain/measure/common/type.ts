@@ -46,6 +46,7 @@ import {
 	DailySpo2ConstantMetrics,
 	DailySpo2TimeSeriesMetrics,
 	DailyWakeUpScoreMetrics,
+	Hr30DConstantMetrics,
 	Sleep7DConstantMetrics,
 	SleepAllConstantMetrics,
 	SleepMonthlyStageMetrics,
@@ -375,10 +376,25 @@ export type Mutations =
 			};
 	  }
 	| {
+			type: "setMonthlyHrNightConstants";
+			payload: {
+				localISODay: ISOMonth;
+				constant: Metrics<Hr30DConstantMetrics>;
+			};
+	  }
+	| {
 			type: "setDailySpo2";
 			payload: {
 				localISODay: ISODay;
 				data: number | null;
 			};
+	  }
+	| {
+			type: "setDailyHrNight";
+			payload: {
+				localISODay: ISODay;
+				data: number | null;
+			};
 	  };
+
 export type Proposal = Mutations[];

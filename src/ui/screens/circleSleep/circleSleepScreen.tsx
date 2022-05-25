@@ -28,7 +28,7 @@ import { Image, LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
 import { BreathingRateGraph } from "./breathingRateGraph";
 import { DailySleepChart } from "./DailySleepChart";
-import { HeartRateGraph } from "./heartRateGraph";
+import { HeartRateGraph } from "./heartRateGraph/heartRateGraph";
 import { HRSGraph } from "./HRSGraph";
 import { HRVGraph } from "./HRVGraph";
 import { getSleepGaugesConfig } from "./measureDisplayInfos";
@@ -57,7 +57,6 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const nbRemainingDays = useUserCalibrationRemainingDays();
 	// XXX: https://circularing.atlassian.net/browse/CIR-93
 	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
-
 	useDailySleepStages({ setData: setDailyData, localISODay: selectedDay, setLoading });
 
 	// XXX: https://circularing.atlassian.net/browse/CIR-790

@@ -111,6 +111,14 @@ export const spo230DConstantMetrics = [
 ] as const;
 export type Spo230DConstantMetrics = typeof spo230DConstantMetrics[number];
 
+export const hr30DConstantMetrics = [
+	MetricType.UserMonthlyHrAverage,
+	MetricType.UserMonthlyHrMin,
+	MetricType.UserMonthlyHrMax,
+	MetricType.UserDailySleepHR,
+] as const;
+export type Hr30DConstantMetrics = typeof hr30DConstantMetrics[number];
+
 export const dailySpo2ConstantMetrics = [
 	MetricType.UserDailyAsleepSPO2,
 	MetricType.UserDailyAsleepSPO2Reference,

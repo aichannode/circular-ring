@@ -35,6 +35,7 @@ import {
 	DailySleepData,
 	DailySpo2,
 	DataControlState,
+	HrNight30Days,
 	HRS7D,
 	RestingHeartRate7D,
 	Scores7D,
@@ -204,7 +205,6 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 					const sleepStages = months.map((date) => {
 						const localMetrics = model.monthlySleepStageMetrics.get(date);
-						console.log(localMetrics);
 						return {
 							awake:
 								localMetrics && localMetrics[MetricType.UserMonthlyAwakeStageDuration] !== null
@@ -832,17 +832,14 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 				useEffect(
 					action(function () {
-						actions.setMonthlySpo2Constants();
+						actions.setMonthlySpo2Constants(localISODay);
 						last30Days.forEach((d) => actions.setDailySpo2(d, shouldByPassCache(model.dailySpo2, d)));
 					}),
 					[localISODay]
 				);
 
 				const Spo230daysConstants = model.last30DSpo2.get(localISODay);
-				const isLoaded =
-					model.last30DSpo2.has(localISODay) &&
-					last30Days.every((date) => model.dailySpo2.has(date)) &&
-					Spo230daysConstants;
+				const isLoaded = model.last30DSpo2.has(localISODay) && last30Days.every((date) => model.dailySpo2.has(date));
 
 				if (!isLoaded) {
 					return undefined;
@@ -862,7 +859,43 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					controlState,
 				};
 			},
+			useLast30DaysHrNight(localISODay: ISODay): HrNight30Days | undefined {
+				// Compute the 30 previous date from the given date
 
+				const last30Days = getLast30Days(localISODay);
+
+				useEffect(
+					action(function () {
+						actions.setMonthlyHrNightConstants(localISODay);
+						last30Days.forEach((d) => actions.setDailyHrNight(d, shouldByPassCache(model.dailyHrNight, d)));
+					}),
+					[localISODay]
+				);
+
+				const HrNight30daysConstants = model.last30DHrNight.get(localISODay);
+				const isLoaded =
+					model.last30DHrNight.has(localISODay) && last30Days.every((date) => model.dailyHrNight.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last30Days.map((date) => {
+					return { value: model.dailyHrNight.get(date), date: date };
+				}) as unknown as HrNight30Days["series"];
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+
+				return {
+					series,
+					constant: {
+						average: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserMonthlyHrAverage]) : -1,
+						reference: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserMonthlyHrMin]) : -1,
+						min: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserMonthlyHrMax]) : -1,
+						max: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserDailySleepHR]) : -1,
+					},
+					controlState,
+				};
+			},
 			useLast7DaysRHR(localISODay: ISODay): RestingHeartRate7D | undefined {
 				// Compute the 7 previous date from the given date
 				const last7Days = getLast7Days(localISODay);

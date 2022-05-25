@@ -285,7 +285,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				]);
 			});
 		},
-		async setMonthlySpo2Constants(localISODay: ISODay = getCurrentLocalISODay(), useForceRefresh = false) {
+		async setMonthlySpo2Constants(localISODay: ISODay, useForceRefresh = false) {
 			Promise.all([
 				measureApi.fetchLastDailyMeasures([MetricType.User30DaysAverageSpo2], localISODay, useForceRefresh),
 				measureApi.fetchLastDailyMeasures([MetricType.UserDailyAsleepSPO2Reference], lifetimeDate, useForceRefresh),
@@ -304,6 +304,31 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				]);
 			});
 		},
+		async setMonthlyHrNightConstants(localISODay: ISODay, useForceRefresh = false) {
+			Promise.all([
+				measureApi.fetchLastDailyMeasures(
+					[MetricType.UserMonthlyHrAverage, MetricType.UserMonthlyHrMin, MetricType.UserMonthlyHrMax],
+					localISODay,
+					useForceRefresh
+				),
+				measureApi.fetchLastDailyMeasures([MetricType.UserDailySleepHR], lifetimeDate, useForceRefresh),
+			]).then(function ([constant, reference]) {
+				present([
+					{
+						type: "setMonthlyHrNightConstants",
+						payload: {
+							localISODay,
+							constant: {
+								[MetricType.UserMonthlyHrAverage]: constant[MetricType.UserMonthlyHrAverage],
+								[MetricType.UserMonthlyHrMin]: constant[MetricType.UserMonthlyHrMin],
+								[MetricType.UserMonthlyHrMax]: constant[MetricType.UserMonthlyHrMax],
+								[MetricType.UserDailySleepHR]: reference[MetricType.UserDailySleepHR],
+							},
+						},
+					},
+				]);
+			});
+		},
 		async setDailySpo2(localISODay: ISODay, useForceRefresh?: boolean) {
 			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailySPO2], localISODay, useForceRefresh);
 			present([
@@ -312,6 +337,19 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					payload: {
 						localISODay,
 						data: data[MetricType.UserDailySPO2] ? Number(data[MetricType.UserDailySPO2]) : -1,
+					},
+				},
+			]);
+		},
+
+		async setDailyHrNight(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserHR], localISODay, useForceRefresh);
+			present([
+				{
+					type: "setDailyHrNight",
+					payload: {
+						localISODay,
+						data: data[MetricType.UserHR] ? Number(data[MetricType.UserHR]) : -1,
 					},
 				},
 			]);
