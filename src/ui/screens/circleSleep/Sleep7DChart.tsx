@@ -6,6 +6,7 @@ import { createActiveMode, isInDisabledMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { Spinner } from "@ui/components/spinner";
 import { Tags } from "@ui/components/Tags";
+import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Mode } from "@ui/type";
 import { hasAttributesDefined } from "@ui/utils/filter";
@@ -20,9 +21,18 @@ interface Props {
 	mode?: Mode;
 }
 
+const yValueFormatter = [
+	"",
+	"30min",
+	...Array(16)
+		.fill(0)
+		.map((_, i) => `${1 + Math.floor(i / 2)}h  ${i % 2 !== 0 ? "30" : ""}`),
+];
+
 // XXX: From @farook implementation (sleepStage7Days.tsx)
 // TODO: Add add on press, add yValueFormatter
 export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode = createActiveMode() }: Props) {
+	const { formatDuration } = useI18n();
 	const { use7DaysSleep } = useRepresentations().measure.hooks;
 	const { useRangeTags } = useRepresentations().calendar.hooks;
 	const tags = useRangeTags(
@@ -36,16 +46,33 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 				.filter((line) => hasAttributesDefined(line, ["REM", "awake", "deep", "light"])) as SleepStageData[])
 		: [];
 	const valueFormatter = lines.map(({ date }) => moment(date).format("dd")[0]);
-
 	const [awakeData, deepData, REMData, lightData] = lines.reduce<[Points, Points, Points, Points]>(
 		([awakeData, deepData, REMData, lightData], { awake, deep, REM, light }, index) => [
-			[...awakeData, { x: index, y: awake }],
-			[...deepData, { x: index, y: deep }],
-			[...REMData, { x: index, y: REM }],
-			[...lightData, { x: index, y: light }],
+			[...awakeData, { x: index, y: (awake * 60) / 30 }],
+			[...deepData, { x: index, y: (deep * 60) / 30 }],
+			[...REMData, { x: index, y: (REM * 60) / 30 }],
+			[...lightData, { x: index, y: (light * 60) / 30 }],
 		],
 		[[], [], [], []]
 	) || [[], [], [], []];
+	const [yMin, yMax] = [
+		Math.min(
+			...[
+				Math.min(...awakeData.map((line) => line.y)),
+				Math.min(...deepData.map((line) => line.y)),
+				Math.min(...REMData.map((line) => line.y)),
+				Math.min(...lightData.map((line) => line.y)),
+			].map((el) => el)
+		),
+		Math.max(
+			...[
+				Math.max(...awakeData.map((line) => line.y)),
+				Math.max(...deepData.map((line) => line.y)),
+				Math.max(...REMData.map((line) => line.y)),
+				Math.max(...lightData.map((line) => line.y)),
+			].map((el) => el)
+		),
+	];
 
 	const updatedMode = updateMode(mode, lines.length === 0);
 	const sleepConstant = days7DSleep?.constant;
@@ -80,6 +107,24 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 					shouldDrawCircles={true}
 					valueFormatter={valueFormatter}
 					mode={updatedMode}
+					scaleXEnabled={false}
+					yMin={yMin}
+					yMax={yMax}
+					highlightPerTapEnabled
+					shouldShowMarker
+					shouldShowLabel
+					graphColor={colors.darkBlue}
+					labelFormatter={(x, y, index) => {
+						const values = [
+							`${formatDuration(lines[index].light * 3600)}`,
+							`${formatDuration(lines[index].REM * 3600)}`,
+							`${formatDuration(lines[index].deep * 3600)}`,
+							`${formatDuration(lines[index].awake * 3600)}`,
+						];
+						///TODO à voir dans le daily pour le formatage
+						return `${moment(lines[index].date).format("ddd DD")}\n${values.join("\n")}`;
+					}}
+					yValueFormatter={yValueFormatter}
 				/>
 			</View>
 			<View style={{ marginTop: 30 }}>

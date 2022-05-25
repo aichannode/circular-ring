@@ -1,5 +1,4 @@
-import { isDefined } from "@domain/common/business";
-import { Points } from "@domain/measure/representation/api";
+import { Point, Points } from "@domain/measure/representation/api";
 import { createActiveMode, isInDisabledMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -24,6 +23,10 @@ interface BarChartProps {
 	yMin?: number;
 	yMax?: number;
 	shouldAddOperator?: boolean;
+	mapXAxis?: (element: Point, index: number) => number;
+	mapBarColor?: (element: Point, index: number) => string;
+	mapMarker?: (element: Point, index: number) => string;
+	horizontalPadding?: number;
 }
 
 export function BarChart({
@@ -32,36 +35,35 @@ export function BarChart({
 	xColor = colors.textPrimary,
 	yColor = colors.darkGray,
 	shouldShowMarker = false,
+	mapXAxis = (_, index) => index,
+	mapMarker = (el) => `${el.y}`,
+	mapBarColor = () => graphColor,
 	valueFormatter,
 	data,
 	onSelect,
 	averages,
 	yMin,
 	yMax,
-	shouldAddOperator = false,
+	horizontalPadding = 0.1,
 }: BarChartProps) {
 	const [selectedX, setSelectedX] = useState<number | undefined>(-1);
-
 	const dataSets = {
 		dataSets: [
 			{
 				values: data
-					?.map((el, index) => ({ ...el, index }))
-					.map(({ x, y, index }) => {
+
+					?.map((el, index) => ({ ...el, _index: index }))
+					.map(({ x, y, _index, ...args }) => {
 						let marker = "";
-						if (!!shouldShowMarker && y != 0) {
-							if (shouldAddOperator) {
-								marker = `${moment(x).format("Y-MM-DD")}\n${y > 0 ? "+" : ""}${y}`;
-							} else {
-								marker = `${moment(x).format("Y-MM-DD")}\n${y}`;
-							}
+						if (shouldShowMarker && y != -1000) {
+							marker = `${moment(x).format("Y-MM-DD")}\n${mapMarker({ x, y, ...args }, _index)}`;
 						}
-						return { x: index, y, marker };
+						return { x: mapXAxis({ x, y, ...args }, _index), y: y == -1000 ? 0 : y, marker };
 					}),
 				label: "",
 				config: {
-					colors: data.map((el) => {
-						return el.x == selectedX ? processColor("#333333") : processColor(graphColor);
+					colors: data.map((el, index) => {
+						return el.x == selectedX ? processColor("#333333") : processColor(mapBarColor(el, index));
 					}),
 					axisLineColor: processColor("white"),
 					highlightEnabled: true,
@@ -93,13 +95,15 @@ export function BarChart({
 		textColor: processColor(xColor),
 		granularityEnabled: true,
 		axisLineColor: processColor("white"),
+		axisMinimum: -horizontalPadding,
+		axisMaximum: Math.max(...data.map((el, index) => mapXAxis(el, index))) + horizontalPadding,
 	};
 
 	const yAxis = {
 		left: {
 			enabled: true,
-			axisMinimum: isDefined(yMin) ? yMin - (yMin + 1) : undefined,
-			axisMaximum: isDefined(yMax) ? yMax + 1 : undefined,
+			axisMinimum: yMin ? Math.floor(yMin) : undefined,
+			axisMaximum: yMax ? Math.ceil(yMax) : undefined,
 			textColor: processColor(yColor),
 			gridLineWidth: 0.5,
 			drawLabels: true,

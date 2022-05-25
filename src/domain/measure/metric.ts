@@ -31,6 +31,12 @@ export enum MetricType {
 	User2DaysSleepScore = "user.2days.sleep.score",
 
 	///////////////////
+	// 7 Days RHR
+	///////////////////
+	User7DaysAverageRHR = "user.7days.rhr",
+	User7DaysReferenceRHR = "user.reference.rhr",
+
+	///////////////////
 	// 7 Days sleep
 	///////////////////
 	User7DaysAwakeStageDuration = "user.7days.awake.stage.duration",
@@ -73,6 +79,8 @@ export enum MetricType {
 	UserDailyWakeUpScoreGoalMin = "user.daily.wake.up.score.goal.min",
 	UserDailyWakeUpScoreGoalMax = "user.daily.wake.up.score.goal.max",
 
+	UserDailyPhaseBeforeWakeUp = "user.daily.phase.before.wake.up",
+
 	UserDailyAsleepBR = "user.daily.asleep.br",
 	UserDailyAsleepBRReference = "user.reference.asleep.br",
 	UserDailyScoreBR = "user.daily.score.br",
@@ -95,6 +103,10 @@ export enum MetricType {
 	UserHRVTrend = "user.asleep.hrv.trend",
 	UserHRTrend = "user.asleep.hr.trend",
 
+	User7DaysTotalSleepDuration = "user.7days.total.sleep.duration",
+	User7DaysRealSleepDuration = "user.7days.real.sleep.duration",
+	UserIdealSleepDuration = "user.daily.ideal.sleep.duration",
+
 	UserDailyRHR = "user.daily.rhr",
 	UserDailyScoreRHR = "user.daily.score.rhr",
 	UserDailyScoreRHRGoalMin = "user.daily.score.rhr.goal.min",
@@ -112,9 +124,9 @@ export enum MetricType {
 	UserDailySleepBalanceGoalMin = "user.daily.sleep.balance.goal.min",
 	UserDailySleepBalanceGoalMax = "user.daily.sleep.balance.goal.max",
 
-	UserDailyActivityVolume = "user.daily.activity.volume",
-	UserDailyActivityVolumeGoalMin = "user.daily.activity.volume.goal.max",
-	UserDailyActivityVolumeGoalMax = "user.daily.activity.volume.goal.min",
+	UserDailyActivityVolume = "user.daily.score.activity.volume",
+	UserDailyActivityVolumeGoalMin = "user.daily.score.activity.volume.goal.max",
+	UserDailyActivityVolumeGoalMax = "user.daily.score.activity.volume.goal.min",
 
 	UserDailyAwakeStageDuration = "user.daily.awake.stage.duration",
 	UserDailyPercAwakeStage = "user.daily.percawake.stage",
@@ -196,7 +208,7 @@ export enum MetricType {
 	UserDailySteps = "user.daily.steps",
 	UserDailyStepsGoalMin = "user.daily.steps.goal.min",
 	UserDailyStepsGoalMax = "user.daily.steps.goal.max",
-	UserStepsAverage = "user.7days.everage.steps",
+	UserStepsAverage = "user.7days.average.steps",
 	UserStepsBaseline = "user.baseline.steps",
 	UserStepsTotal = "user.7days.total.steps",
 
@@ -238,6 +250,7 @@ export enum MetricType {
 	///////////////////
 	// HR night
 	///////////////////
+	UserHRNight = "user.daily.asleep.hr",
 	UserDailySleepHR = "user.reference.asleep.hr",
 	UserDailySleepHRMax = "user.daily.asleep.hr.max",
 	UserDailySleepHRMin = "user.daily.asleep.hr.min",

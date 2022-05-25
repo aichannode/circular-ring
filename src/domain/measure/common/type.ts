@@ -33,11 +33,14 @@ import {
 	DailyHRConstantMetrics,
 	DailyHRNightConstantMetrics,
 	DailyHRNightTimeSeriesMetrics,
+	DailyHRSConstantMetrics,
+	DailyHRSMetrics,
 	DailyHRTimeSeriesMetrics,
 	DailyHRTrendTimeSeriesMetrics,
 	DailyHRVConstantMetrics,
 	DailyHRVTimeSeriesMetrics,
 	DailyHRVTrendTimeSeriesMetrics,
+	DailyPhaseBeforeWakeUpMetrics,
 	DailySleepScoreMetrics,
 	DailySleepStageDuration,
 	DailySpo2ConstantMetrics,
@@ -46,10 +49,12 @@ import {
 	Sleep7DConstantMetrics,
 	SleepAllConstantMetrics,
 	SleepMonthlyStageMetrics,
+	SleepStagesBeginEnd,
 	SleepStagesMetrics,
 	StepsConstantMetrics,
 	StepsTaken,
 	TemperatureVariationConstantMetrics,
+	THRH7DConstantMetrics,
 	WalkingEquivalency,
 } from "../representation/lib/type";
 
@@ -264,6 +269,13 @@ export type Mutations =
 			};
 	  }
 	| {
+			type: "setCoreSleep";
+			payload: {
+				localISODay: ISODay;
+				range: RangeMetrics<SleepStagesBeginEnd, DailySleepStageDuration>;
+			};
+	  }
+	| {
 			type: "setGlobalScore";
 			payload: {
 				localISODay: ISODay;
@@ -306,10 +318,45 @@ export type Mutations =
 			};
 	  }
 	| {
+			type: "setDailyHRSMetrics";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<DailyHRSMetrics>;
+			};
+	  }
+	| {
+			type: "setDailyHRSConstantMetrics";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<DailyHRSConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setDailyPhaseBeforeWakeUp";
+			payload: {
+				localISODay: ISODay;
+				data: Metrics<DailyPhaseBeforeWakeUpMetrics>;
+			};
+	  }
+	| {
 			type: "setLast7DSleepScore";
 			payload: {
 				localISODay: ISODay;
 				score: number | null;
+			};
+	  }
+	| {
+			type: "setDailyRestingHeartRate";
+			payload: {
+				localISODay: ISODay;
+				data: number | null;
+			};
+	  }
+	| {
+			type: "setLast7DRestingHeartRate";
+			payload: {
+				localISODay: ISODay;
+				constant: Metrics<THRH7DConstantMetrics>;
 			};
 	  };
 

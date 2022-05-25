@@ -13,6 +13,9 @@ export type StageInfos<T extends SleepStage | ActivityStage> = {
  * Metrics grouped by usage for the representation
  */
 
+export const HRH7DConstantMetrics = [MetricType.User7DaysAverageRHR, MetricType.User7DaysReferenceRHR] as const;
+export type THRH7DConstantMetrics = typeof HRH7DConstantMetrics[number];
+
 // XXX: 05/04/2022 - Server does not send metrics
 export const sleep7DConstantMetrics = [
 	MetricType.User7DaysAwakeStageDuration,
@@ -58,7 +61,7 @@ export const dailyHRTimeSeriesMetrics = [MetricType.UserHR] as const;
 export type DailyHRTimeSeriesMetrics = typeof dailyHRTimeSeriesMetrics[number];
 
 export const dailyHRNightConstantMetrics = [
-	MetricType.UserHR,
+	MetricType.UserHRNight,
 	MetricType.UserDailySleepHR,
 	MetricType.UserDailySleepHRMin,
 	MetricType.UserDailySleepHRMax,
@@ -115,6 +118,19 @@ export const dailyHRTrendTimeSeriesMetrics = [MetricType.UserHRTrend] as const;
 export type DailyHRTrendTimeSeriesMetrics = typeof dailyHRTrendTimeSeriesMetrics[number];
 
 /**
+ * HRS
+ */
+export const dailyHRSMetrics = [MetricType.UserDailyRealSleepDuration, MetricType.UserDailyTotalSleepDuration] as const;
+export type DailyHRSMetrics = typeof dailyHRSMetrics[number];
+
+export const dailyHRSConstantMetrics = [
+	MetricType.User7DaysTotalSleepDuration,
+	MetricType.User7DaysRealSleepDuration,
+	MetricType.UserIdealSleepDuration,
+] as const;
+export type DailyHRSConstantMetrics = typeof dailyHRSConstantMetrics[number];
+
+/**
  * HRV
  */
 
@@ -149,6 +165,9 @@ export const dailyWakeUpScoreMetrics = [
 	MetricType.UserDailyWakeUpScoreGoalMax,
 ] as const;
 export type DailyWakeUpScoreMetrics = typeof dailyWakeUpScoreMetrics[number];
+
+export const dailyPhaseBeforeWakeUpMetrics = [MetricType.UserDailyPhaseBeforeWakeUp];
+export type DailyPhaseBeforeWakeUpMetrics = typeof dailyPhaseBeforeWakeUpMetrics[number];
 
 /**
  * Score contributors
@@ -377,6 +396,9 @@ export const sleepStagesMetrics = [
 	MetricType.UserNapSleepEnd,
 ] as const;
 export type SleepStagesMetrics = typeof sleepStagesMetrics[number];
+
+export const sleepStagesBeginEnd = [MetricType.UserNapSleepBegin, MetricType.UserNapSleepEnd] as const;
+export type SleepStagesBeginEnd = typeof sleepStagesBeginEnd[number];
 
 export const stepsConstantMetrics = [
 	MetricType.UserStepsAverage,

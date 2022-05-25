@@ -83,12 +83,11 @@ export class UserService {
 		this._userAdvancedInfo.set(await this.userStorage.loadUserAdvancedInfo());
 		const authenticatedEmail = this.authService.userEmail.get();
 		if (!!authenticatedEmail) {
-			try {
-				await this.retrieveUser();
-			} catch (error) {
-				this.logger.warn("Authenticated but user does not exist on server");
-			}
 			this._authenticatedUserEmail.set(authenticatedEmail);
+			// Async refresh user informations
+			this.retrieveUser().catch(() => {
+				this.logger.warn("Authenticated but user does not exist on server");
+			});
 		}
 	}
 

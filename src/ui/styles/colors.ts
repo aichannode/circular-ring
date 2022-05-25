@@ -18,6 +18,7 @@ const palette = {
 	midGray: "#e3e3e3",
 	lightgray: "#eeeeee",
 	green: "#2bd866",
+	darkGreen: "#1BAB69",
 	orange: "#ff9334",
 	red: "#e00a0a",
 	redLight: "#ff3d00cc",

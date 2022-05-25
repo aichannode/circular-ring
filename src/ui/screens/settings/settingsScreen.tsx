@@ -96,11 +96,11 @@ export const SettingsScreen: React.FC = () => {
 				action={() => navigate(Routes.WebView, { uri: format("url.privacy"), label: format("settings.privacy") })}
 			/>
 			<InfoListItem name={format("settings.app_version")} value={"alpha1.0"} />
-			<InfoListHeader>{format("settings.help")}</InfoListHeader>
+			<InfoListHeader>{format("settings.support")}</InfoListHeader>
 			<InfoListItem
-				name={format("settings.faq")}
+				name={format("settings.help")}
 				hasDisclosure
-				action={() => navigate(Routes.WebView, { uri: format("url.faq"), label: format("settings.faq") })}
+				action={() => navigate(Routes.WebView, { uri: format("url.help"), label: format("settings.help") })}
 			/>
 			{/* <InfoListItem name={format("settings.support")} />*/}
 			<CircularBottomSheet ref={dateFormatBottomSheet} snapPoints={[480]}>

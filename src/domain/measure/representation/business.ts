@@ -20,6 +20,11 @@ import {
 import { ActivityIntensityAllAverageMetrics, DailySleepStageDuration, SleepStagesMetrics } from "./lib/type";
 
 /**
+ * null values converted to -1
+ * @implements https://circularing.atlassian.net/browse/CIR-712
+ */
+
+/**
  * Return either we can display the data of this day or not
  * @implements spec [00000](https://docs.google.com/document/d/16SRBS_XPqDhePKuCi6rQm399n72H_82GTPAiay6AQlQ/edit?disco=AAAAWIm9aec)
  */
@@ -80,16 +85,16 @@ export function parseDailyHR(
 	const lines = getTimeseries(dailyHR.timeSeries, MetricType.UserHR);
 	const dailyHr: DailyHr = {
 		constant: {
-			hr: getOrElse<number>(dailyHR.constant, MetricType.UserDailyAwakeHRAverage, 0),
-			hrMin: getOrElse<number>(dailyHR.constant, MetricType.UserDailyAwakeHRMin, 0),
-			hrMax: getOrElse<number>(dailyHR.constant, MetricType.UserDailyAwakeHRMax, 0),
-			reference: getOrElse<number>(dailyHR.constant, MetricType.UserDailyAwakeHRReference, 0),
+			hr: getOrElse<number>(dailyHR.constant, MetricType.UserDailyAwakeHRAverage, -1),
+			hrMin: getOrElse<number>(dailyHR.constant, MetricType.UserDailyAwakeHRMin, -1),
+			hrMax: getOrElse<number>(dailyHR.constant, MetricType.UserDailyAwakeHRMax, -1),
+			reference: getOrElse<number>(dailyHR.constant, MetricType.UserDailyAwakeHRReference, -1),
 		},
 		data: lines,
 		controlState: getControlState(
 			lines,
-			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepBegin, 0) : 0,
-			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepEnd, 0) : 0
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepBegin, -1) : 0,
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepEnd, -1) : 0
 		),
 	};
 
@@ -106,14 +111,14 @@ export function parseDailySpo2(
 	const lines = getTimeseries(dailySpo2.timeSeries, MetricType.UserDailySPO2);
 	const dailySpo2Data: DailySpo2 = {
 		constant: {
-			average: getOrElse<number>(dailySpo2.constant, MetricType.UserDailyAsleepSPO2, 0),
-			reference: getOrElse<number>(dailySpo2.constant, MetricType.UserDailyAsleepSPO2Reference, 0),
+			average: getOrElse<number>(dailySpo2.constant, MetricType.UserDailyAsleepSPO2, -1),
+			reference: getOrElse<number>(dailySpo2.constant, MetricType.UserDailyAsleepSPO2Reference, -1),
 		},
 		data: lines,
 		controlState: getControlState(
 			lines,
-			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepBegin, 0) : 0,
-			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepEnd, 0) : 0
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepBegin, -1) : 0,
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepEnd, -1) : 0
 		),
 	};
 
@@ -129,14 +134,14 @@ export function parseDailyBR(
 	const lines = getTimeseries(dailyBR.timeSeries, MetricType.UserBR);
 	const data: DailyBr = {
 		constant: {
-			average: getOrElse<number>(dailyBR.constant, MetricType.UserDailyAsleepBR, 0),
-			reference: getOrElse<number>(dailyBR.constant, MetricType.UserDailyAsleepBRReference, 0),
+			average: getOrElse<number>(dailyBR.constant, MetricType.UserDailyAsleepBR, -1),
+			reference: getOrElse<number>(dailyBR.constant, MetricType.UserDailyAsleepBRReference, -1),
 		},
 		data: lines,
 		controlState: getControlState(
 			lines,
-			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepBegin, 0) : 0,
-			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepEnd, 0) : 0
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepBegin, -1) : 0,
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepEnd, -1) : 0
 		),
 	};
 	return data;
@@ -151,14 +156,14 @@ export function parseDailyHRV(
 	const lines = getTimeseries(dailyHRV.timeSeries, MetricType.UserHRV);
 	const dailyHrv: DailyHrv = {
 		constant: {
-			average: getOrElse<number>(dailyHRV.constant, MetricType.UserDailyAsleepHRV, 0),
-			reference: getOrElse<number>(dailyHRV.constant, MetricType.UserDailyReferenceHRV, 0),
+			average: getOrElse<number>(dailyHRV.constant, MetricType.UserDailyAsleepHRV, -1),
+			reference: getOrElse<number>(dailyHRV.constant, MetricType.UserDailyReferenceHRV, -1),
 		},
 		data: lines,
 		controlState: getControlState(
 			lines,
-			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepBegin, 0) : 0,
-			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepEnd, 0) : 0
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepBegin, -1) : 0,
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepEnd, -1) : 0
 		),
 	};
 
@@ -173,7 +178,7 @@ export function parseDailyHRVTrend(
 		data: dailyHRVTrend.timeSeries.map((timeSerie) => {
 			return {
 				x: Date.parse(timeSerie.timestamp),
-				y: getOrElse<number>(timeSerie.metrics, MetricType.UserHRVTrend, 0),
+				y: getOrElse<number>(timeSerie.metrics, MetricType.UserHRVTrend, -1),
 			};
 		}),
 	};
@@ -188,7 +193,7 @@ export function parseDailyHRTrend(
 		data: dailyHRTrend.timeSeries.map((timeSerie) => {
 			return {
 				x: Date.parse(timeSerie.timestamp),
-				y: getOrElse<number>(timeSerie.metrics, MetricType.UserHRTrend, 0),
+				y: getOrElse<number>(timeSerie.metrics, MetricType.UserHRTrend, -1),
 			};
 		}),
 	};
@@ -211,9 +216,9 @@ export function parseAllActivity(
 	}
 
 	const constant: ActivityAll["constant"] = {
-		highDuration: getOrElse<number>(lastActivity, MetricType.UserMonthlyAverageHighIntensityDuration, 0),
-		mediumDuration: getOrElse<number>(lastActivity, MetricType.UserMonthlyAverageMediumIntensityDuration, 0),
-		lowDuration: getOrElse<number>(lastActivity, MetricType.UserMonthlyAverageLowIntensityDuration, 0),
+		highDuration: getOrElse<number>(lastActivity, MetricType.UserMonthlyAverageHighIntensityDuration, -1),
+		mediumDuration: getOrElse<number>(lastActivity, MetricType.UserMonthlyAverageMediumIntensityDuration, -1),
+		lowDuration: getOrElse<number>(lastActivity, MetricType.UserMonthlyAverageLowIntensityDuration, -1),
 	};
 	const activityMetrics: ActivityAll["activityMetrics"] = allActivity
 		.map((item) => {
@@ -281,7 +286,7 @@ export function parseDailyHRNight(
 	dailyHRNight:
 		| RangeMetrics<
 				MetricType.UserHR,
-				| MetricType.UserHR
+				| MetricType.UserHRNight
 				| MetricType.UserDailySleepHR
 				| MetricType.UserDailySleepHRMin
 				| MetricType.UserDailySleepHRMax
@@ -293,16 +298,16 @@ export function parseDailyHRNight(
 	const lines = getTimeseries(dailyHRNight.timeSeries, MetricType.UserHR);
 	const data: DailyHRNight = {
 		constant: {
-			hr: getOrElse<number>(dailyHRNight.constant, MetricType.UserHR, 0),
-			hrMin: getOrElse<number>(dailyHRNight.constant, MetricType.UserDailySleepHRMin, 0),
-			hrMax: getOrElse<number>(dailyHRNight.constant, MetricType.UserDailySleepHRMax, 0),
-			reference: getOrElse<number>(dailyHRNight.constant, MetricType.UserDailySleepHR, 0),
+			hr: getOrElse<number>(dailyHRNight.constant, MetricType.UserHRNight, 0),
+			hrMin: getOrElse<number>(dailyHRNight.constant, MetricType.UserDailySleepHRMin, -1),
+			hrMax: getOrElse<number>(dailyHRNight.constant, MetricType.UserDailySleepHRMax, -1),
+			reference: getOrElse<number>(dailyHRNight.constant, MetricType.UserDailySleepHR, -1),
 		},
 		data: lines,
 		controlState: getControlState(
 			lines,
-			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepBegin, 0) : 0,
-			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepEnd, 0) : 0
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepBegin, -1) : 0,
+			dailySleepMetrics ? getOrElse<number>(dailySleepMetrics.constant, MetricType.UserCoreSleepEnd, -1) : 0
 		),
 	};
 
@@ -313,7 +318,7 @@ export function getTimeseries(timeSeries: ReadonlyArray<DatedMetrics<any>>, key:
 	const lines = timeSeries.map((timeSerie) => {
 		return {
 			x: Date.parse(timeSerie.timestamp),
-			y: getOrElse<number>(timeSerie.metrics, key, 0),
+			y: getOrElse<number>(timeSerie.metrics, key, -1),
 		};
 	});
 	return lines;

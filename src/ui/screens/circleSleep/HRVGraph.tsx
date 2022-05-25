@@ -62,13 +62,13 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({
 	const averages: Averages = [];
 	const updatedMode = updateMode(mode, dailyHrv?.controlState !== DataControlState.READY);
 	if (isInActiveMode(updatedMode) && isDefined(constant)) {
-		if (constant.reference !== 0) {
+		if (constant.reference !== -1) {
 			averages.push({
 				value: constant.reference,
 				color: colors.redLight,
 			});
 		}
-		if (constant.average !== 0) {
+		if (constant.average !== -1) {
 			averages.push({
 				value: constant.average,
 				color: colors.darkBlue,
@@ -118,6 +118,9 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({
 					yMaxIndex={yMaxIndex}
 					mode={updatedMode}
 					movingAverage={dailyHrvTrend?.data}
+					shouldShowMarker={true}
+					highlightPerTapEnabled={true}
+					isDaily
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

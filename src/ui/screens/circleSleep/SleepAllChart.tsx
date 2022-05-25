@@ -29,7 +29,6 @@ export const SleepAllChart = observer(function SleepAllChart({ selectedDay, mode
 	const { useRangeTags } = useRepresentations().calendar.hooks;
 	const tags = useRangeTags(beginDay, moment(selectedDay).endOf("day").toISOString() as ISODay);
 	const daysAllSleep = useAllMonthsSleep(toISOMonth(beginDay), toISOMonth(selectedDay));
-
 	const lines = daysAllSleep
 		? ([...daysAllSleep.sleepStages]
 				.reverse()

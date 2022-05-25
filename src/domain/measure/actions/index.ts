@@ -67,6 +67,10 @@ import {
 	DailyHRNightConstantMetrics,
 	dailyHRNightTimeSeriesMetrics,
 	DailyHRNightTimeSeriesMetrics,
+	DailyHRSConstantMetrics,
+	dailyHRSConstantMetrics,
+	DailyHRSMetrics,
+	dailyHRSMetrics,
 	dailyHRTimeSeriesMetrics,
 	DailyHRTimeSeriesMetrics,
 	DailyHRTrendTimeSeriesMetrics,
@@ -77,6 +81,8 @@ import {
 	DailyHRVTimeSeriesMetrics,
 	DailyHRVTrendTimeSeriesMetrics,
 	dailyHRVTrendTimeSeriesMetrics,
+	DailyPhaseBeforeWakeUpMetrics,
+	dailyPhaseBeforeWakeUpMetrics,
 	dailySleepScoreMetrics,
 	dailySleepStageDuration,
 	DailySleepStageDuration,
@@ -91,6 +97,8 @@ import {
 	SleepAllConstantMetrics,
 	SleepMonthlyStageMetrics,
 	sleepMonthlyStageMetrics,
+	SleepStagesBeginEnd,
+	sleepStagesBeginEnd,
 	SleepStagesMetrics,
 	sleepStagesMetrics,
 	stepsConstantMetrics,
@@ -105,7 +113,12 @@ import { MeasureApi } from "./lib/measureApi";
  * All date are in locale timezone
  */
 
+/**
+ * null values converted to -1
+ */
+
 export function createActions(measureApi: MeasureApi, present: Present<Proposal>) {
+	const lifetimeDate = "2000-01-01";
 	return {
 		async pullLast7DSleepMetrics(localISODay: ISODay = getCurrentLocalISODay(), useForceRefresh?: boolean) {
 			const data = await measureApi.fetchLast7DaysMeasures<Sleep7DConstantMetrics>(
@@ -165,7 +178,13 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			Promise.all([
 				measureApi.fetchDailyMeasures<DailyHRTimeSeriesMetrics>(dailyHRTimeSeriesMetrics, localISODay, useForceRefresh),
 				measureApi.fetchLastDailyMeasures<DailyHRConstantMetrics>(dailyHRConstantMetrics, localISODay, useForceRefresh),
-			]).then(function ([timeSeries, constant]) {
+				measureApi.fetchLastDailyMeasures<MetricType.UserDailyAwakeHRReference>(
+					[MetricType.UserDailyAwakeHRReference],
+					lifetimeDate,
+					true
+				),
+			]).then(function ([timeSeries, constant, reference]) {
+				constant[MetricType.UserDailyAwakeHRReference] = reference[MetricType.UserDailyAwakeHRReference];
 				present([
 					{
 						type: "setDailyHRMetrics",
@@ -192,7 +211,13 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					localISODay,
 					useForceRefresh
 				),
-			]).then(function ([timeSeries, constant]) {
+				measureApi.fetchLastDailyMeasures<MetricType.UserDailySleepHR>(
+					[MetricType.UserDailySleepHR],
+					lifetimeDate,
+					true
+				),
+			]).then(function ([timeSeries, constant, reference]) {
+				constant[MetricType.UserDailySleepHR] = reference[MetricType.UserDailySleepHR];
 				present([
 					{
 						type: "setDailyHRNightMetrics",
@@ -239,7 +264,13 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					localISODay,
 					useForceRefresh
 				),
-			]).then(function ([timeSeries, constant]) {
+				measureApi.fetchLastDailyMeasures<MetricType.UserDailyAsleepSPO2Reference>(
+					[MetricType.UserDailyAsleepSPO2Reference],
+					lifetimeDate,
+					true
+				),
+			]).then(function ([timeSeries, constant, reference]) {
+				constant[MetricType.UserDailyAsleepSPO2Reference] = reference[MetricType.UserDailyAsleepSPO2Reference];
 				present([
 					{
 						type: "setDailySpo2Metrics",
@@ -286,7 +317,13 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			Promise.all([
 				measureApi.fetchDailyMeasures<DailyBRTimeSeriesMetrics>(dailyBRTimeSeriesMetrics, localISODay, useForceRefresh),
 				measureApi.fetchLastDailyMeasures<DailyBRConstantMetrics>(dailyBRConstantMetrics, localISODay, useForceRefresh),
-			]).then(function ([timeSeries, constant]) {
+				measureApi.fetchLastDailyMeasures<MetricType.UserDailyAsleepBRReference>(
+					[MetricType.UserDailyAsleepBRReference],
+					lifetimeDate,
+					true
+				),
+			]).then(function ([timeSeries, constant, reference]) {
+				constant[MetricType.UserDailyAsleepBRReference] = reference[MetricType.UserDailyAsleepBRReference];
 				present([
 					{
 						type: "setDailyBRMetrics",
@@ -372,6 +409,37 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
+		async setDailyRestingHeartRate(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailyRHR], localISODay, useForceRefresh);
+			present([
+				{
+					type: "setDailyRestingHeartRate",
+					payload: {
+						localISODay,
+						data: data[MetricType.UserDailyRHR] ? Number(data[MetricType.UserDailyRHR]) : null,
+					},
+				},
+			]);
+		},
+		async setLast7DRestingHeartRate(localISODay: ISODay, useForceRefresh?: boolean) {
+			Promise.all([
+				measureApi.fetchLastDailyMeasures([MetricType.User7DaysAverageRHR], localISODay, useForceRefresh),
+				measureApi.fetchLastDailyMeasures([MetricType.User7DaysReferenceRHR], lifetimeDate, useForceRefresh),
+			]).then(function ([data, reference]) {
+				present([
+					{
+						type: "setLast7DRestingHeartRate",
+						payload: {
+							localISODay,
+							constant: {
+								[MetricType.User7DaysAverageRHR]: data[MetricType.User7DaysAverageRHR],
+								[MetricType.User7DaysReferenceRHR]: reference[MetricType.User7DaysReferenceRHR],
+							},
+						},
+					},
+				]);
+			});
+		},
 		async setDailyEnergyScore(localISODay: ISODay, useForceRefresh?: boolean) {
 			const data = await measureApi.fetchLastDailyMeasures(
 				[MetricType.UserDailyEnergyScore],
@@ -383,7 +451,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailyEnergyScore",
 					payload: {
 						localISODay,
-						score: data[MetricType.UserDailyEnergyScore] ? Number(data[MetricType.UserDailyEnergyScore]) : null,
+						score: data[MetricType.UserDailyEnergyScore] ? Number(data[MetricType.UserDailyEnergyScore]) : -1,
 					},
 				},
 			]);
@@ -415,7 +483,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailySleepScore",
 					payload: {
 						localISODay,
-						score: data[MetricType.UserDailySleepScore] ? Number(data[MetricType.UserDailySleepScore]) : null,
+						score: data[MetricType.UserDailySleepScore] ? Number(data[MetricType.UserDailySleepScore]) : -1,
 					},
 				},
 			]);
@@ -432,6 +500,22 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					payload: {
 						localISODay,
 						score: data[MetricType.User7DaysSleepScore] as number,
+					},
+				},
+			]);
+		},
+		async setDailyPhaseBeforeWakeUp(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures<DailyPhaseBeforeWakeUpMetrics>(
+				dailyPhaseBeforeWakeUpMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailyPhaseBeforeWakeUp",
+					payload: {
+						localISODay,
+						data,
 					},
 				},
 			]);
@@ -463,7 +547,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailyCardioPoints",
 					payload: {
 						localISODay,
-						cardio: data[MetricType.UserDailyCardioPoints] ? Number(data[MetricType.UserDailyCardioPoints]) : null,
+						cardio: data[MetricType.UserDailyCardioPoints] ? Number(data[MetricType.UserDailyCardioPoints]) : -1,
 					},
 				},
 			]);
@@ -479,7 +563,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailyCalorieBurned",
 					payload: {
 						localISODay,
-						calorie: data[MetricType.UserDailyCaloriesBurned] ? Number(data[MetricType.UserDailyCaloriesBurned]) : null,
+						calorie: data[MetricType.UserDailyCaloriesBurned] ? Number(data[MetricType.UserDailyCaloriesBurned]) : -1,
 					},
 				},
 			]);
@@ -511,9 +595,10 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailyTemperatureVariation",
 					payload: {
 						localISODay,
+						//for temprature, we have negatif values so here for null values we change it to -1000
 						temperature: data[MetricType.UserDailyTemperatureScore]
 							? Number(data[MetricType.UserDailyTemperatureScore])
-							: null,
+							: -1000,
 					},
 				},
 			]);
@@ -585,7 +670,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailyStepsMetrics",
 					payload: {
 						localISODay,
-						data: data[MetricType.UserDailySteps] ? Number(data[MetricType.UserDailySteps]) : null,
+						data: data[MetricType.UserDailySteps] ? Number(data[MetricType.UserDailySteps]) : -1,
 					},
 				},
 			]);
@@ -599,6 +684,38 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			present([
 				{
 					type: "setLast7DStepsConstants",
+					payload: {
+						localISODay,
+						data,
+					},
+				},
+			]);
+		},
+		async pullDailyHRSMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures<DailyHRSMetrics>(
+				dailyHRSMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailyHRSMetrics",
+					payload: {
+						localISODay,
+						data,
+					},
+				},
+			]);
+		},
+		async pullDailyHRSConstantMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures<DailyHRSConstantMetrics>(
+				dailyHRSConstantMetrics,
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailyHRSConstantMetrics",
 					payload: {
 						localISODay,
 						data,
@@ -775,6 +892,36 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				present([
 					{
 						type: "setDailySleepMetrics",
+						payload: {
+							localISODay,
+							range: {
+								timeSeries: timeline,
+								constant: duration,
+							},
+						},
+					},
+				]);
+			});
+		},
+		async setCoreSleep(localISODay: ISODay, useForceRefresh?: boolean) {
+			Promise.all([
+				measureApi.fetchMeasures<SleepStagesBeginEnd>(
+					sleepStagesBeginEnd,
+					// Grab data from the noon before the day to make sure to get the ensleepment.
+					// TODO: implement day/night worker
+					moment(localISODay).startOf("day").subtract(12, "hours").toISOString(),
+					moment(localISODay).endOf("day").toISOString(),
+					useForceRefresh
+				),
+				measureApi.fetchLastDailyMeasures<DailySleepStageDuration>(
+					dailySleepStageDuration,
+					localISODay,
+					useForceRefresh
+				),
+			]).then(function ([timeline, duration]) {
+				present([
+					{
+						type: "setCoreSleep",
 						payload: {
 							localISODay,
 							range: {

@@ -25,7 +25,7 @@ type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
 };
-export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGraph({
+export const RestingHeartRate7DGraph: React.FC<Props> = observer(function RestingHeartRateGraph({
 	selectedDay,
 	mode = createActiveMode(),
 }: Props) {
@@ -35,19 +35,19 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 	const [tags, setTags] = useState<CalendarTag[]>([]);
 	const {
 		measure: {
-			hooks: { useLast7DaysEnergyScore },
+			hooks: { useLast7DaysRHR },
 		},
 		calendar: {
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
-	const data = useLast7DaysEnergyScore(selectedDay);
+	const data = useLast7DaysRHR(selectedDay);
 	const lines: Points = data
 		? data.series
 				.map((el) => {
 					return {
 						x: el ? moment(el.date).valueOf() : 0,
-						y: el?.value ? el.value * 100 : 0,
+						y: el?.value ? el.value : 0,
 					};
 				})
 				.reverse()
@@ -65,15 +65,21 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 			: [0, 0];
 	const constant = data?.constant;
 	const averages: Averages = [];
+
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 
 	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.average !== -1) {
 		averages.push({
-			value: constant.average * 100,
+			value: constant.average,
 			color: colors.red,
 		});
 	}
-
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.reference !== 0) {
+		averages.push({
+			value: constant.reference,
+			color: colors.redOrange,
+		});
+	}
 	useEffect(() => {
 		if (isDefined(data)) {
 			setLoading(false);
@@ -90,7 +96,7 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 	) : !!lines.length ? (
 		<View>
 			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("activity.energy_score")}
+				{format("activity.resting_heart_rate")}
 			</TitleText>
 			<View style={{ display: "none" }}>
 				<TimeFrameSwitcher
@@ -161,7 +167,32 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 										</View>
 									),
 								},
-								value: isDefined(constant) && constant.average != -1 ? `${constant.average * 100} %` : "- %",
+								value: isInCalibrationMode(updatedMode)
+									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+									: isDefined(constant) && constant.average != -1
+									? `${constant?.average?.toFixed(2)} bpm`
+									: "- bpm",
+							},
+							{
+								label: format("activity.resting_heart_rate.reference"),
+								element: {
+									key: "activity.resting_heart_rate.reference",
+									node: (
+										<View
+											style={{
+												width: 40,
+												marginTop: 5,
+											}}
+										>
+											<DashedLine dashGap={5} dashLength={10} dashColor={colors.orange} />
+										</View>
+									),
+								},
+								value: isInCalibrationMode(updatedMode)
+									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+									: isDefined(constant) && constant.average != -1
+									? `${constant.reference.toFixed(2)} bpm`
+									: "- bpm",
 							},
 						]}
 					/>

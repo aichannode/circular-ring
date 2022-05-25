@@ -6,6 +6,7 @@ import { createActiveMode, isInDisabledMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { Spinner } from "@ui/components/spinner";
 import { Tags } from "@ui/components/Tags";
+import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Mode } from "@ui/type";
 import { hasAttributesDefined } from "@ui/utils/filter";
@@ -20,7 +21,7 @@ const yValueFormatter = [
 	"30min",
 	...Array(16)
 		.fill(0)
-		.map((_, i) => `${1 + Math.floor(i / 2)}h${i % 2 !== 0 ? "30" : ""}`),
+		.map((_, i) => `${1 + Math.floor(i / 2)}h  ${i % 2 !== 0 ? "30" : ""}`),
 ];
 
 interface Data {
@@ -37,6 +38,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 	selectedDay,
 	mode = createActiveMode(),
 }: Props) {
+	const { formatDuration } = useI18n();
 	const {
 		measure: {
 			hooks: { use7DaysActivity },
@@ -57,7 +59,6 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 				.filter((line) => hasAttributesDefined(line, ["high", "low", "medium"]))
 				.reverse() as Required<ActivityData>[])
 		: [];
-
 	const [highData, mediumData, lowData] = lines.reduce<[Data[], Data[], Data[]]>(
 		([highData, mediumData, lowData], item, index) => [
 			// XXX: Graph unit is 30min so, as data are in minutes, we need to divide them by 30.
@@ -68,7 +69,22 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 		[[], [], []]
 	) || [[], [], []];
 	const xAxis = lines.map((item) => moment(item.date).format("dd")[0]);
-
+	const [yMin, yMax] = [
+		Math.min(
+			...[
+				Math.min(...highData.map((line) => line.y)),
+				Math.min(...mediumData.map((line) => line.y)),
+				Math.min(...lowData.map((line) => line.y)),
+			].map((el) => el)
+		),
+		Math.max(
+			...[
+				Math.max(...highData.map((line) => line.y)),
+				Math.max(...mediumData.map((line) => line.y)),
+				Math.max(...lowData.map((line) => line.y)),
+			].map((el) => el)
+		),
+	];
 	const updatedMode = updateMode(mode, lines.length === 0);
 	const isLoading = !isDefined(activity7D);
 
@@ -89,6 +105,8 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 					shouldDrawCircles={true}
 					valueFormatter={xAxis || []}
 					yValueFormatter={yValueFormatter}
+					yMin={yMin}
+					yMax={yMax}
 					mode={updatedMode}
 					daysItem={[
 						{ lines: highData, color: colors.business.activityStageHigh },
@@ -100,8 +118,9 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 							// XXX: As graph data are expressed in 30minutes, we need to multiply them by 30 to get them in minutes.
 							.map((val) => val * 30)
 							.sort((a, b) => b - a)
-							.map((val) => moment.utc(moment.duration(val, "minutes").as("ms")).format("HH:mm"));
-						return `${moment(activity7D?.activityMetrics[index].date).format("ddd DD")}\n${values.join("\n")}`;
+							.map((val) => formatDuration(val * 60));
+
+						return `${moment(lines[index].date).format("ddd DD")}\n${values.join("\n")}`;
 					}}
 					highlightPerTapEnabled
 					scaleXEnabled={false}

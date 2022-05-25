@@ -19,17 +19,20 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef, useState } from "react";
 import { Image, Pressable, ScrollView } from "react-native";
 import styled from "styled-components/native";
-import { MiniHypnogram } from "../circleSleep/miniHypnogram";
 import { AlarmCard } from "./alarmCard";
+import { AlarmHypnogram } from "./AlarmHypnogram";
 import { AlarmWeekOverview } from "./alarmWeekOverview";
 
 export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen() {
+	const [isLoading, setLoading] = useState(false);
 	const navigation = useRoutesNavigation();
 	const { loading, alarms, loadAlarms } = useAlarms();
 	const { format } = useI18n();
 	const warningBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const currentISODay = getCurrentLocalISODay();
-	const wakeUpScore = useRepresentations().measure.hooks.useDailyWakeUpScore(currentISODay);
+	const { useDailyWakeUpScore, useDailyPhaseBeforeWakeUp } = useRepresentations().measure.hooks;
+	const wakeUpScore = useDailyWakeUpScore(currentISODay);
+	const phaseBeforeWakeUp = useDailyPhaseBeforeWakeUp(currentISODay);
 	const autoConnectState = useAutoConnectState();
 	const { useHasCompleteCoreSleep } = useRepresentations().measure.hooks;
 	const [displayGraph, setDisplayGraph] = useState(false);
@@ -43,7 +46,7 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 		allowCalibration: false,
 	});
 
-	useDailySleepStages({ localISODay: currentISODay, setData });
+	useDailySleepStages({ localISODay: currentISODay, setData, setLoading });
 
 	useEffect(() => {
 		if (autoConnectState === DeviceAutoConnectState.CONNECTED) {
@@ -67,10 +70,11 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 				/>
 				{displayGraph && dailySleep && (
 					<GraphWrapper>
-						<Cross onPress={() => setDisplayGraph(false)}>
-							<Image source={require("@assets/images/close.png")} />
-						</Cross>
-						<MiniHypnogram data={dailySleep.stages} />
+						{isLoading ? (
+							<Spinner size={24} />
+						) : (
+							<AlarmHypnogram data={dailySleep.stages} phaseBeforeWakeUp={phaseBeforeWakeUp} />
+						)}
 					</GraphWrapper>
 				)}
 				<InfoListHeader>{format("alarm.score.programmed")}</InfoListHeader>
@@ -115,12 +119,6 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 });
 
 const GraphWrapper = styled.View``;
-const Cross = styled.TouchableOpacity`
-	position: absolute;
-	z-index: 100;
-	top: 40px;
-	right: 40px;
-`;
 
 const Container = styled.View`
 	flex: 1;

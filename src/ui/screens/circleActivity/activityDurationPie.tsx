@@ -5,6 +5,7 @@ import { ActivityStage } from "@domain/measure/type";
 import { createActiveMode, updateMode } from "@ui/business";
 import { DailyPieChart } from "@ui/components/measure/dailyPieChart";
 import { DailyPieChartLabel } from "@ui/components/measure/dailyPieChartLabel";
+import { Spinner } from "@ui/components/spinner";
 import { colors } from "@ui/styles/colors";
 import { Mode } from "@ui/type";
 import produce from "immer";
@@ -16,9 +17,10 @@ type Props = {
 	isToday: boolean;
 	duration: number;
 	controlState: DataControlState;
-	sportSessionDates: [string | undefined, string | undefined][];
+	sportSessionDates: [number | string, number | string][];
 	stages: Array<StageInfos<ActivityStage>>;
 	mode?: Mode;
+	isLoading?: boolean;
 };
 
 function getPhaseLevel(phase = 1) {
@@ -37,6 +39,7 @@ export function ActivityDurationPieChart({
 	sportSessionDates,
 	isToday,
 	mode = createActiveMode(),
+	isLoading = false,
 }: Props) {
 	const updatedMode = updateMode(
 		mode,
@@ -79,44 +82,49 @@ export function ActivityDurationPieChart({
 			}
 		}
 	});
+	// console.log(correctedStages);
 	return (
 		<Container>
-			<DailyPieChart
-				stages={correctedStages}
-				totalDuration={duration}
-				title="activity.active.minutes"
-				chartSize={200}
-				phaseColors={[
-					colors.business.activityDurationNone,
-					colors.business.activityDurationShort,
-					colors.business.activityDurationShort,
-					colors.business.activityDurationSession,
-				]}
-				phaseWidths={[5, 7, 7, 7]}
-				getPhaseLevel={getPhaseLevel}
-				mode={updatedMode}
-				noDataPhaseColor={colors.business.activityDurationNone}
-			>
-				<DailyPieChartLabel
+			{isLoading ? (
+				<Spinner size={24} />
+			) : (
+				<DailyPieChart
+					stages={correctedStages}
+					totalDuration={duration}
+					title="activity.active.minutes"
 					chartSize={200}
-					labels={sportSessionDates.flatMap((session) =>
-						[
-							session[0]
-								? {
-										text: "activity.duration.label.sport_start" as const,
-										date: session[0],
-								  }
-								: undefined,
-							session[1]
-								? {
-										text: "activity.duration.label.sport_end" as const,
-										date: session[1],
-								  }
-								: undefined,
-						].filter(isDefined)
-					)}
-				/>
-			</DailyPieChart>
+					phaseColors={[
+						colors.business.activityDurationNone,
+						colors.business.activityDurationShort,
+						colors.business.activityDurationShort,
+						colors.business.activityDurationSession,
+					]}
+					phaseWidths={[5, 7, 7, 7]}
+					getPhaseLevel={getPhaseLevel}
+					mode={updatedMode}
+					noDataPhaseColor={colors.business.activityDurationNone}
+				>
+					<DailyPieChartLabel
+						chartSize={200}
+						labels={sportSessionDates.flatMap((session) =>
+							[
+								session[0]
+									? {
+											text: "activity.duration.label.sport_start" as const,
+											date: session[0],
+									  }
+									: undefined,
+								session[1]
+									? {
+											text: "activity.duration.label.sport_end" as const,
+											date: session[1],
+									  }
+									: undefined,
+							].filter(isDefined)
+						)}
+					/>
+				</DailyPieChart>
+			)}
 		</Container>
 	);
 }

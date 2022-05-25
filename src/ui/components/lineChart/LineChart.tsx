@@ -65,6 +65,7 @@ interface LineChartProps {
 	movingAverage?: Points;
 	xAxisMin?: number;
 	xAxisMax?: number;
+	isDaily?: boolean;
 }
 
 const verticalContentInset = { top: 40, bottom: 20 };
@@ -88,7 +89,7 @@ export function LineChart({
 	yMaxIndex,
 	labelCount,
 	shouldShowMarker = false,
-	labelFormatter = (x, y) => `${moment(x).format("Y-MM-DD")}\n${y}`,
+	labelFormatter = (x, y) => (isDaily ? `${moment(x).format("hh:mm")}\n${y}` : `${moment(x).format("Y-MM-DD")}\n${y}`),
 	highlightPerTapEnabled = false,
 	scaleXEnabled = true,
 	mode = createActiveMode(),
@@ -102,6 +103,7 @@ export function LineChart({
 	movingAverage,
 	xAxisMin,
 	xAxisMax,
+	isDaily = false,
 }: LineChartProps) {
 	const [scaleX, setScaleX] = useState(1);
 	const graphRect = useRef<Rect>();
@@ -109,10 +111,10 @@ export function LineChart({
 	const [minPosition, setMinPosition] = useState<Position | null>(null);
 
 	const maxDataLength = !isMultipleLines ? data.length : Math.max(...(daysItem ?? []).map(({ lines }) => lines.length));
-
 	if (__DEV__) {
 		// XXX: pre-conditions:
 		if (maxDataLength === 0 && !isInDisabledMode(mode)) {
+			console.log(mode);
 			throw new Error(
 				`Only 'disabled' mode can render LineChart without data. Found '${mode.type}' mode without data.`
 			);
@@ -126,16 +128,16 @@ export function LineChart({
 	const shouldDisplay = isInActiveMode(mode) || isInCalibrationMode(mode);
 	const { format } = useI18n();
 	const [selectedX, setSelectedX] = useState<number | undefined>(data[0] ? (onSelect ? data[0].x : -1) : undefined);
-	const axisMinimum = yMin ? (shouldUpdateYmin ? yMin - ((yMin % 10) + 10) : yMin) : 0;
-
+	const linspace = yMin && yMax ? Math.round(((yMax - yMin) * 10) / 100) : 0;
+	const axisMinimum = yMin ? (shouldUpdateYmin ? yMin - linspace : yMin) : 0;
+	const axisMaximum = yMax ? (shouldUpdateYmin ? yMax + linspace : yMax) : 0;
 	const yAxisContentInset = verticalContentInset.top;
-
 	const tooltipMinX = xAxisContentInset;
 	const tooltipMaxX = graphRect.current
 		? graphRect.current.width + xAxisContentInset - tooltipSize.width
 		: Number.MAX_VALUE;
-	const tooltipMinY = 0;
 
+	const tooltipMinY = 0;
 	const xAxis = {
 		valueFormatter: valueFormatter,
 		valueFormatterPattern: Array.isArray(valueFormatterPattern)
@@ -164,8 +166,8 @@ export function LineChart({
 
 	const yAxis = {
 		left: {
-			labelCount: 4,
-			axisMinimum: axisMinimum > 0 ? axisMinimum : 0,
+			axisMinimum: Math.floor(axisMinimum),
+			axisMaximum: Math.ceil(axisMaximum),
 			enabled: true,
 			textColor: processColor(yColor),
 			drawGridLines: true,
@@ -219,7 +221,7 @@ export function LineChart({
 				// remove `zero` points and create a new line each time a `zero` point is found.
 				.reduce(
 					(acc, point) => {
-						if (point.y === 0) {
+						if (point.y === -1) {
 							return [...acc, []];
 						}
 						return [...acc.slice(0, -1), [...acc[acc.length - 1], point]];
@@ -239,7 +241,7 @@ export function LineChart({
 					label: "",
 					config: {
 						drawValues: false,
-						lineWidth: shouldShowMarker ? 2 : 1,
+						lineWidth: shouldDrawCircles ? 2 : 1,
 						drawCircles: shouldDrawCircles,
 						circleColors: !!shouldShowMarker
 							? data.map(({ x }) => {
@@ -274,7 +276,7 @@ export function LineChart({
 							let hasPrevValue = false;
 							for (let index = 0; index < lines.length; ++index) {
 								const indexedLine = { ...lines[index], index };
-								if (indexedLine.y !== 0) {
+								if (indexedLine.y >= 0) {
 									if (hasPrevValue) {
 										segmentedLines[segmentedLines.length - 1].push(indexedLine);
 									} else {
@@ -379,18 +381,20 @@ export function LineChart({
 							};
 							const yScale = scale
 								.scaleLinear()
-								.domain([
-									isDefined(yMax) ? yMax - (yMax % 10) + 10 : 0,
-									isDefined(yMin) ? yMin - ((yMin % 10) + 10) : 0,
-								])
+								.domain([axisMaximum, axisMinimum])
 								.range([graphRect.current.height, 0]);
-							const xScale = scale.scaleLinear().domain([xMax, xMin]).range([graphRect.current.width, 0]);
+							const xScale = scale
+								.scaleLinear()
+								.domain([
+									xAxisMax ?? (Number.isFinite(xMax) ? xMax : 0),
+									xAxisMin ?? (Number.isFinite(xMin) ? xMin : 0),
+								])
+								.range([graphRect.current.width, 0]);
 
 							//find the x relative to yMax
 							const yValues = data.length ? data.map((point) => point.y) : [];
 							const nearestMaxIdxs = getNearestDataIndexes(isDefined(yMax) ? yMax : 0, yValues);
 							const xLineMax = data.length ? data[nearestMaxIdxs[0]] : null;
-
 							if (xLineMax) {
 								setMaxPosition({
 									x: xScale(xLineMax.x),
@@ -421,7 +425,7 @@ export function LineChart({
 							yAxis={yAxis}
 							autoScaleMinMaxEnabled={false}
 							marker={{
-								enabled: shouldShowLabel,
+								enabled: shouldShowLabel || shouldShowMarker,
 								textColor: processColor(colors.white),
 								markerColor: processColor(graphColor),
 							}}

@@ -77,7 +77,12 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 		setTags(useDailyTags(date));
 	};
 	const [yMin, yMax] =
-		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
+		lines.length > 0
+			? [
+					Math.min(...lines.filter((line) => line.y > -1000).map((line) => line.y)),
+					Math.max(...lines.map((line) => line.y)),
+			  ]
+			: [0, 0];
 
 	const toGetAverageValue = (value: number | undefined): string => {
 		if (!isDefined(value)) return "-";
@@ -115,9 +120,9 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 					graphColor={colors.business.sleepPrimary}
 					onSelect={(x) => toUpdateTag(x)}
 					mode={updatedMode}
-					yMin={yMin}
-					yMax={yMax}
-					shouldAddOperator={true}
+					yMin={yMin > -1 ? -1 : yMin}
+					yMax={yMax > 1 ? yMax : 1}
+					mapMarker={({ y }) => `${y > 0 ? "+" + y : y}`}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

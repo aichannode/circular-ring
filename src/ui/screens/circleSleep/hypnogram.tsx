@@ -60,7 +60,7 @@ export function Hypnogram({ data, mode = createActiveMode() }: Props) {
 			yColor={yColor}
 			yLabelFormat={yLabelFormat}
 			xLabelFormat={(tick) => moment(tick).format("H A")}
-			xAxisContentInset={15}
+			xAxisPadding={15}
 			defaultYAxis={defaultYAxis}
 			defaultXAxis={defaultXAxis}
 			tooltipYOffset={-30}

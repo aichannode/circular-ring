@@ -8,8 +8,8 @@ import { useI18n } from "@ui/i18n";
 import { colors, ScoreQualityColors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { Mode } from "@ui/type";
-import React from "react";
-import { StyleProp, View, ViewStyle } from "react-native";
+import React, { useRef } from "react";
+import { Animated, Easing, Image, LayoutAnimation, StyleProp, View, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
 interface ScoreSectionProps {
@@ -32,13 +32,34 @@ export const ScoreSection: React.FC<ScoreSectionProps> = ({
 	mode = createActiveMode(),
 }) => {
 	const updatedMode = updateMode(mode, !isDefined(score) || isNaN(score) || !isDefined(quality));
+	const canPress = (isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && !!setState;
+
+	const rotationValue = useRef(new Animated.Value(0)).current;
+	const rotation = rotationValue.interpolate({ inputRange: [0, 1], outputRange: ["90deg", "-90deg"] });
 
 	const { format, formatScoreQuality } = useI18n();
 
 	return (
 		<ResponsiveCenterView style={style} maxWidth={175} align="stretch" horizontalPadding={0}>
 			<SecondaryText>{label}</SecondaryText>
-			<Touchable activeOpacity={setState ? 0.2 : 1} onPress={() => (setState ? setState((state) => !state) : null)}>
+			<Touchable
+				activeOpacity={canPress ? 0.2 : 1}
+				disabled={!canPress}
+				onPress={() => {
+					if (canPress) {
+						setState((state) => {
+							Animated.timing(rotationValue, {
+								toValue: state ? 0 : 1,
+								duration: 300,
+								easing: Easing.inOut(Easing.ease),
+								useNativeDriver: true,
+							}).start();
+							LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+							return !state;
+						});
+					}
+				}}
+			>
 				<ScoreWrapper align="center" gap={12}>
 					<ScoreView value={score} color={color} textColor={colors.textPrimary} mode={updatedMode} />
 					<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
@@ -55,6 +76,11 @@ export const ScoreSection: React.FC<ScoreSectionProps> = ({
 							<TitleText style={{ color }}> {format("global.not_enough_data")}</TitleText>
 						)}
 					</View>
+					{canPress && (
+						<Animated.View style={{ transform: [{ rotate: rotation }] }}>
+							<Image source={require("@assets/images/topArrowGrey.png")} />
+						</Animated.View>
+					)}
 				</ScoreWrapper>
 			</Touchable>
 		</ResponsiveCenterView>
@@ -64,7 +90,8 @@ export const ScoreSection: React.FC<ScoreSectionProps> = ({
 const Touchable = styled.TouchableOpacity`
 	${roundedWhiteCardStyle};
 	margin-top: 15px;
-	padding-vertical: 30px;
+	padding-top: 30px;
+	padding-bottom: ${({ disabled }) => (disabled ? 30 : 15)}px;
 `;
 
 const ScoreWrapper = styled(Stack)`

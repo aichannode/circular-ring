@@ -138,7 +138,7 @@ storiesOf("StepChart", module)
 		);
 	})
 	.add("no overlap x label", () => {
-		return <StepChart data={defaultData} xAxisContentInset={5} />;
+		return <StepChart data={defaultData} xAxisPadding={5} />;
 	})
 	.add("custom color", () => {
 		return <StepChart data={defaultData} yColor={yColor} />;
@@ -147,7 +147,7 @@ storiesOf("StepChart", module)
 		return <StepChart data={defaultData} yLabelFormat={(y) => `${y} px`} yAxisWidth={20} />;
 	})
 	.add("custom x label format", () => {
-		return <StepChart data={defaultData} xLabelFormat={(x) => `${x} H`} xAxisContentInset={12} />;
+		return <StepChart data={defaultData} xLabelFormat={(x) => `${x} H`} xAxisPadding={12} />;
 	})
 	.add("custom number of ticks", () => {
 		return <StepChart data={defaultData} xAxisNbTicks={3} />;
@@ -160,7 +160,7 @@ storiesOf("StepChart", module)
 				yColor={yColor}
 				yLabelFormat={yLabelFormat}
 				xLabelFormat={xLabelFormat}
-				xAxisContentInset={15}
+				xAxisPadding={15}
 				tooltipYOffset={-30}
 				tooltipSize={{ width: 40, height: 30 }}
 				renderTooltip={(step) => (
@@ -185,7 +185,7 @@ storiesOf("StepChart", module)
 				yColor={yColor}
 				yLabelFormat={yLabelFormat}
 				xLabelFormat={xLabelFormat}
-				xAxisContentInset={15}
+				xAxisPadding={15}
 				tooltipYOffset={-30}
 				tooltipSize={{ width: 40, height: 30 }}
 				renderTooltip={(step) => (

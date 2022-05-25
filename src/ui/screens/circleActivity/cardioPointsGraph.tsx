@@ -63,13 +63,13 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 
 	const constant = data?.constant;
 	const averages: Averages = [];
-	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.average !== 0) {
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.average !== -1) {
 		averages.push({
 			value: constant.average,
 			color: colors.red,
 		});
 	}
-	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.baseline !== 0) {
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.baseline !== -1) {
 		averages.push({
 			value: constant.baseline,
 			color: colors.redLight,
@@ -154,7 +154,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 										</View>
 									),
 								},
-								value: isDefined(constant) && constant.average != 0 ? `${constant.average}` : "-",
+								value: isDefined(constant) && constant.average != -1 ? `${constant.average}` : "-",
 							},
 							{
 								label: format("cardio.baseline"),
@@ -173,7 +173,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 								},
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(constant) && constant.baseline != 0
+									: isDefined(constant) && constant.baseline != -1
 									? `${constant.baseline}`
 									: "-",
 							},
@@ -184,7 +184,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 									node: <></>,
 								},
 
-								value: isDefined(constant) && constant.total != 0 ? `${constant.total}` : "-",
+								value: isDefined(constant) && constant.total != -1 ? `${constant.total}` : "-",
 							},
 						]}
 					/>

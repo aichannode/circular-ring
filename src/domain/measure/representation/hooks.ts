@@ -9,12 +9,13 @@ import {
 	toISOMonth,
 } from "@domain/common/business";
 import { ISODay, ISOMonth } from "@domain/common/type";
+import { hasMetric } from "@ui/utils/guard";
 import { action } from "mobx";
 import moment from "moment";
 import { useEffect, useMemo } from "react";
 import { createActions } from "../actions";
 import { MeasureApi } from "../actions/lib/measureApi";
-import { MetricType } from "../metric";
+import { Metrics, MetricType } from "../metric";
 import { MeasureModel } from "../model/measureModel";
 import {
 	Activity7D,
@@ -33,6 +34,8 @@ import {
 	DailySleepData,
 	DailySpo2,
 	DataControlState,
+	HRS7D,
+	RestingHeartRate7D,
 	Scores7D,
 	Sleep7D,
 	SleepAll,
@@ -56,7 +59,7 @@ import {
 	toOptional,
 } from "./business";
 import { createActivityPhasesGetter, createSleepStagesGetter, useDailyHeavyComputationData } from "./lib/business";
-import { Activities, ActivityScoreContributors, SleepScoreContributors } from "./lib/type";
+import { Activities, ActivityScoreContributors, DailyHRSMetrics, SleepScoreContributors } from "./lib/type";
 
 export function createRepresentation(apiService: ApiService, model: MeasureModel) {
 	const actions = createActions(new MeasureApi(apiService), model.present);
@@ -130,19 +133,19 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						return {
 							awake:
 								localMetrics && localMetrics[MetricType.UserDailyAwakeStageDuration] !== null
-									? moment.duration(localMetrics[MetricType.UserDailyAwakeStageDuration]).asHours()
+									? getOrElse<number>(localMetrics, MetricType.UserDailyAwakeStageDuration, 0) / 60
 									: 0,
 							light:
 								localMetrics && localMetrics[MetricType.UserDailyLightStageDuration] !== null
-									? moment.duration(localMetrics[MetricType.UserDailyLightStageDuration]).asHours()
+									? getOrElse<number>(localMetrics, MetricType.UserDailyLightStageDuration, 0) / 60
 									: 0,
 							deep:
 								localMetrics && localMetrics[MetricType.UserDailyDeepStageDuration] !== null
-									? moment.duration(localMetrics[MetricType.UserDailyDeepStageDuration]).asHours()
+									? getOrElse<number>(localMetrics, MetricType.UserDailyDeepStageDuration, 0) / 60
 									: 0,
 							REM:
 								localMetrics && localMetrics[MetricType.UserDailyREMStageDuration] !== null
-									? moment.duration(localMetrics[MetricType.UserDailyREMStageDuration]).asHours()
+									? getOrElse<number>(localMetrics, MetricType.UserDailyREMStageDuration, 0) / 60
 									: 0,
 							date,
 						};
@@ -161,7 +164,6 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 			): SleepAll | undefined {
 				// Compute the all previous months from the given date
 				const months = useMemo(() => getMonthsBetween(beginISOMonth, endISOMonth), [beginISOMonth, endISOMonth]);
-
 				useEffect(
 					action(function () {
 						// Get the last 7 daily sleep stages metrics
@@ -200,6 +202,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 					const sleepStages = months.map((date) => {
 						const localMetrics = model.monthlySleepStageMetrics.get(date);
+						console.log(localMetrics);
 						return {
 							awake:
 								localMetrics && localMetrics[MetricType.UserMonthlyAwakeStageDuration] !== null
@@ -340,7 +343,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 			useDailyHRNight(localISODay: ISODay): DailyHRNight | undefined {
 				useEffect(
 					action(function () {
-						actions.pullDailyHRNightMetrics(localISODay, shouldByPassCache(model.dailySpo2Metrics, localISODay));
+						actions.pullDailyHRNightMetrics(localISODay, shouldByPassCache(model.dailyHRNightMetrics, localISODay));
 					}),
 					[localISODay]
 				);
@@ -379,9 +382,11 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 			useDailyActivityIntensity({
 				localISODay,
 				setData,
+				setLoading,
 			}: {
 				localISODay: ISODay;
 				setData: (data: DailyActivityIntensityData) => void;
+				setLoading: (loading: boolean) => void;
 			}) {
 				const modelField = model.dailyActivityIntensityMetrics;
 				const fetchData = () => {
@@ -396,7 +401,8 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					modelField,
 					setData,
 					createActivityPhasesGetter(localISODay),
-					fetchData
+					fetchData,
+					setLoading
 				);
 			},
 			useDailyActivities(localISODay: ISODay): Record<Activities, ActivityDetail> | undefined {
@@ -586,11 +592,48 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					};
 				}
 			},
-			useDailySleepStages({ localISODay, setData }: { localISODay: ISODay; setData: (data: DailySleepData) => void }) {
+			useDailySleepStages({
+				localISODay,
+				setData,
+				setLoading,
+			}: {
+				localISODay: ISODay;
+				setData: (data: DailySleepData) => void;
+				setLoading: (loading: boolean) => void;
+			}) {
 				const modelField = model.dailySleepMetrics;
 				const fetchData = () =>
 					actions.setDailySleepStagesMetrics(localISODay, shouldByPassCache(model.dailySleepMetrics, localISODay));
-				useDailyHeavyComputationData(localISODay, modelField, setData, createSleepStagesGetter(localISODay), fetchData);
+				useDailyHeavyComputationData(
+					localISODay,
+					modelField,
+					setData,
+					createSleepStagesGetter(localISODay),
+					fetchData,
+					setLoading
+				);
+			},
+			useCoreSleep(localISODay: ISODay) {
+				useEffect(
+					action(function () {
+						actions.setCoreSleep(localISODay, shouldByPassCache(model.dailySleepMetrics, localISODay));
+					}),
+					[localISODay]
+				);
+				if (!model.dailySleepMetrics.has(localISODay)) {
+					return undefined;
+				}
+				const data = model.dailySleepMetrics.get(localISODay);
+				const hasCoreSleep = data?.constant ? hasMetric(MetricType.UserCoreSleepBegin)(data.constant) : false;
+				const coreSleepTiming =
+					hasCoreSleep && data
+						? ([
+								new Date(getOrElse<number>(data.constant, MetricType.UserCoreSleepBegin, 0) * 1000).toISOString(),
+								new Date(getOrElse<number>(data.constant, MetricType.UserCoreSleepEnd, 0) * 1000).toISOString(),
+						  ] as [string, string])
+						: undefined;
+
+				return coreSleepTiming;
 			},
 			/**
 			 * Return sleep score contributors
@@ -780,6 +823,51 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					controlState,
 				};
 			},
+			useLast7DaysRHR(localISODay: ISODay): RestingHeartRate7D | undefined {
+				// Compute the 7 previous date from the given date
+				const last7Days = getLast7Days(localISODay);
+				useEffect(
+					action(function () {
+						// Get the last 7 daily energy scores
+						last7Days.forEach((d) =>
+							actions.setDailyRestingHeartRate(d, shouldByPassCache(model.dailyRestingHeartRate, d))
+						);
+						// and the average for the last 7 days
+						actions.setLast7DRestingHeartRate(
+							localISODay,
+							shouldByPassCache(model.last7DRestingHeartRate, localISODay)
+						);
+					}),
+					[localISODay]
+				);
+
+				const isLoaded = last7Days.every((date) => model.dailyRestingHeartRate.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last7Days.map((date) => ({
+					value: model.dailyRestingHeartRate.get(date),
+					date,
+				})) as RestingHeartRate7D["series"];
+
+				// Spec 00026: IS_READY if has some historical data
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+
+				const constants = model.last7DRestingHeartRate.get(localISODay);
+
+				if (constants) {
+					return {
+						series,
+						constant: {
+							average: Number(constants[MetricType.User7DaysAverageRHR]) ?? 0,
+							reference: Number(constants[MetricType.User7DaysReferenceRHR]) ?? 0,
+						},
+						controlState,
+					};
+				}
+			},
 			/**
 			 * @implements spec 00037
 			 */
@@ -909,6 +997,88 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					};
 				}
 			},
+			useLast7DaysHRS(localISODay: ISODay): HRS7D | undefined {
+				// Compute the 7 previous date from the given date
+				const last7Days = getLast7Days(localISODay);
+
+				useEffect(
+					action(function () {
+						// Get the last 7 daily energy scores
+						last7Days.forEach((d) => actions.pullDailyHRSMetrics(d, shouldByPassCache(model.dailyHRSMetrics, d)));
+						// and the average for the last 7 days
+						actions.pullDailyHRSConstantMetrics(
+							localISODay,
+							shouldByPassCache(model.dailyHRSContantMetrics, localISODay)
+						);
+					}),
+					[localISODay]
+				);
+				const isLoaded = last7Days.some((date) => model.dailyHRSMetrics.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				// Spec 00026: IS_READY if has some historical data
+				const controlState = last7Days.some((date) => isDefined(model.dailyHRSMetrics.get(date)))
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
+
+				const series = last7Days.map((date) => {
+					const data = model.dailyHRSMetrics.get(date) || ({} as Metrics<DailyHRSMetrics>);
+					return {
+						value: [
+							Number(data[MetricType.UserDailyTotalSleepDuration]) || -1,
+							Number(data[MetricType.UserDailyRealSleepDuration]) || -1,
+						],
+						date,
+					};
+				}) as HRS7D["series"];
+
+				const constants = model.dailyHRSContantMetrics.get(localISODay);
+
+				if (constants) {
+					return {
+						series,
+						constant: {
+							totalAverage: Number(constants[MetricType.User7DaysTotalSleepDuration]),
+							realAverage: Number(constants[MetricType.User7DaysRealSleepDuration]),
+							recommendation: Number(constants[MetricType.UserIdealSleepDuration]),
+						},
+						controlState,
+					};
+				}
+			},
+			useDailySleepQualityScore(localISODay: ISODay) {
+				useEffect(
+					action(function () {
+						actions.setDailySleepScore(localISODay, shouldByPassCache(model.dailySleepScore, localISODay));
+					}),
+					[localISODay]
+				);
+				if (!model.dailySleepScore.has(localISODay)) {
+					return;
+				}
+
+				const data = model.dailySleepScore.get(localISODay);
+
+				if (data) {
+					const score = {
+						score: Number(data[MetricType.UserDailySleepScore]),
+						goalMin: Number(data[MetricType.UserDailySleepScoreGoalMin]) ?? 0.8,
+						goalMax: Number(data[MetricType.UserDailySleepScoreGoalMax]) ?? 0.9,
+					};
+					return {
+						// Default value according to the specs.
+						...score,
+						controlState: getScoreControlStates({
+							thresholdLow: score.goalMin,
+							thresholdHigh: score.goalMax,
+							score: score.score,
+						}),
+					};
+				}
+			},
 			useLast7DaysSteps(localISODay: ISODay): Steps7D | undefined {
 				// Compute the 7 previous date from the given date
 				const last7Days = getLast7Days(localISODay);
@@ -916,7 +1086,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				useEffect(
 					action(function () {
 						// Get the last 7 daily energy scores
-						last7Days.forEach((d) => actions.pullDailySteps(d, shouldByPassCache(model.dailyCardioPoints, d)));
+						last7Days.forEach((d) => actions.pullDailySteps(d, shouldByPassCache(model.dailyStepsMetrics, d)));
 						// and the average for the last 7 days
 						actions.pullLast7DSteps(localISODay, shouldByPassCache(model.last7DStepsConstants, localISODay));
 					}),
@@ -998,35 +1168,28 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					};
 				}
 			},
-
-			useDailySleepQualityScore(localISODay: ISODay) {
+			useDailyPhaseBeforeWakeUp(localISODay: ISODay): number | undefined {
 				useEffect(
 					action(function () {
-						actions.setDailySleepScore(localISODay, shouldByPassCache(model.dailySleepScore, localISODay));
+						actions.setDailyPhaseBeforeWakeUp(
+							localISODay,
+							shouldByPassCache(model.dailyPhaseBeforeWakeUp, localISODay)
+						);
 					}),
 					[localISODay]
 				);
-				if (!model.dailySleepScore.has(localISODay)) {
+
+				if (!model.dailyPhaseBeforeWakeUp.has(localISODay)) {
 					return;
 				}
 
-				const data = model.dailySleepScore.get(localISODay);
+				const data = model.dailyPhaseBeforeWakeUp.get(localISODay);
 
 				if (data) {
-					const score = {
-						score: Number(data[MetricType.UserDailySleepScore]),
-						goalMin: Number(data[MetricType.UserDailySleepScoreGoalMin]) ?? 0.8,
-						goalMax: Number(data[MetricType.UserDailySleepScoreGoalMax]) ?? 0.9,
-					};
-					return {
-						// Default value according to the specs.
-						...score,
-						controlState: getScoreControlStates({
-							thresholdLow: score.goalMin,
-							thresholdHigh: score.goalMax,
-							score: score.score,
-						}),
-					};
+					const score = data[MetricType.UserDailyPhaseBeforeWakeUp]
+						? Number(data[MetricType.UserDailyPhaseBeforeWakeUp])
+						: undefined;
+					return score;
 				}
 			},
 			useDailyWakeUpScore(localISODay: ISODay) {
@@ -1037,7 +1200,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					[localISODay]
 				);
 
-				if (!model.dailySleepScore.has(localISODay)) {
+				if (!model.dailyWakeUpScore.has(localISODay)) {
 					return;
 				}
 

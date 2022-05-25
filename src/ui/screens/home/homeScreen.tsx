@@ -1,3 +1,4 @@
+import { DEFAULT_LOG_DIR } from "@betomorrow/logging-native";
 import { useServices } from "@core/services";
 import { useFetchCircles } from "@domain/circles/hooks";
 import { DeviceSetupState } from "@domain/device/bleDeviceService";
@@ -20,7 +21,9 @@ import { QuickAccess } from "@ui/screens/home/quickAccess/quickAccess";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, Platform, RefreshControl, View } from "react-native";
+import { Alert, Animated, Platform, RefreshControl, View } from "react-native";
+import fs from "react-native-fs";
+import Mailer, { Attachment } from "react-native-mail";
 import styled from "styled-components/native";
 import { SyncBanner } from "./syncBanner";
 
@@ -31,7 +34,6 @@ export const HomeScreen: React.FC = () => {
 	const [hideQuickaccess, setHideQuickaccess] = useState(true);
 	const syncState = useSyncState();
 	const previousScrollViewY = useRef(0);
-
 	const setupState = useSetupState();
 
 	useEffect(() => {
@@ -44,11 +46,39 @@ export const HomeScreen: React.FC = () => {
 		}
 	}, []);
 
+	const sendLogsByEmail = async () => {
+		console.log("DEFAULT_LOG_DIR", DEFAULT_LOG_DIR);
+		const reader = await fs.readDir(DEFAULT_LOG_DIR);
+		const attachements: Attachment[] = reader.map((file) => ({
+			file,
+			path: file.path,
+			type: "text",
+			name: file.name,
+		}));
+		Mailer.mail(
+			{
+				subject: "Logs",
+				recipients: ["estebanleclet@gmail.com"],
+				body: `<b>${moment().format("YYYY dd hh:mm:ss")}</b>`,
+				isHTML: true,
+				attachments: attachements,
+				ccRecipients: ["estebanleclet+circular@gmail.com"],
+			},
+			(error, event) => {
+				Alert.alert(
+					error ?? "",
+					event,
+					[
+						{ text: "Ok", onPress: () => console.log("OK: Email Error Response") },
+						{ text: "Cancel", onPress: () => console.log("CANCEL: Email Error Response") },
+					],
+					{ cancelable: true }
+				);
+			}
+		);
+	};
+
 	const forceRefresh = useCallback(async () => {
-		if (appStateService.isInSleepMode.get()) return;
-		if (syncState !== SyncState.NONE) {
-			return;
-		}
 		await ringManagementService.syncData();
 		await feedService.fetchAll();
 	}, [syncState]);
@@ -63,10 +93,10 @@ export const HomeScreen: React.FC = () => {
 	data.push(
 		<View style={{ paddingHorizontal: 6 }}>
 			<IfAdmin>
-				<PrimaryButton style={{ marginVertical: 8 }} onPress={feedService._DEBUG_resetFeed}>
-					RESET FEED
+				<PrimaryButton style={{ marginVertical: 8 }} onPress={() => sendLogsByEmail()}>
+					SEND LOGS BY EMAIL
 				</PrimaryButton>
-				<PrimaryButton style={{ marginVertical: 8 }} onPress={() => bleDeviceService.write("RWF1S60")}>
+				<PrimaryButton style={{ marginVertical: 8 }} onPress={() => bleDeviceService.write("RWF1S15")}>
 					GENERATE RING DATA
 				</PrimaryButton>
 				<PrimaryButton onPress={feedService._DEBUG_resetAnswers}>RESET ANSWERS</PrimaryButton>

@@ -67,7 +67,7 @@ test("Specs: 00002. DailyHR hooks", () => {
 			{ y: 60, x: Date.parse("2022-03-10T14:22:00Z") },
 			{ y: 70, x: Date.parse("2022-03-10T14:24:00Z") },
 		],
-		constant: { hr: 69.34, hrMax: 112, hrMin: 30, reference: 0 },
+		constant: { hr: 69.34, hrMax: 112, hrMin: 30, reference: -1 },
 		controlState: DataControlState.NO_DATA,
 	};
 
