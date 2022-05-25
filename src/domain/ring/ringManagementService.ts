@@ -155,12 +155,15 @@ export class RingManagementService {
 				let data = waitingData ?? "";
 				try {
 					const unsubscribe = await this.deviceService.listen(Channel.DATA, Channel.DATA, async (value) => {
-						this.logger.debug("FBC value", value);
 						if (value === ringDataEOF) {
 							await this.ringDataStorage.save(data);
 							unsubscribe();
 							resolve(data);
 						} else {
+							this._transmissionStatus.update((lastValues) => ({
+								packetTransmitted: lastValues.packetTransmitted + 1,
+								totalPacket: dataQuantity,
+							}));
 							data += value + "\n";
 							this._currentRingSyncState.set(SyncState.SYNCING);
 						}
