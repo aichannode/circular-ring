@@ -1,5 +1,4 @@
 // Because importing storybook after some of the bellow imports will cause a runtime error (in release version), we need to import storybook before any of the bellow imports.
-import { useLogger } from "@core/logger/hooks/useLogger";
 import { useSentry } from "@core/logger/hooks/useSentry";
 import { RepresentationsProvider } from "@core/representation";
 import { initializeServices, ServicesProvider } from "@core/services";
@@ -56,7 +55,6 @@ export const App = () => {
 	const [isStoryBookDisplayed, toggleStoryBook] = useState(false);
 
 	useSentry();
-	const logger = useLogger("App.tsx");
 
 	useEffect(() => {
 		initializeServices().then(() => {
@@ -94,7 +92,9 @@ export const App = () => {
 				locale={locale}
 				messages={translations[locale]}
 				onError={(err) => {
-					logger.error(err);
+					// XXX: Do not log unmeaningful errors. (https://circularing.atlassian.net/jira/software/projects/CIR/boards/1?selectedIssue=CIR-961)
+					// logger.error(err);
+					__DEV__ && console.warn(err);
 				}}
 			>
 				<StorybookUIRoot />
@@ -106,7 +106,9 @@ export const App = () => {
 				locale={locale}
 				messages={translations[locale]}
 				onError={(err) => {
-					logger.error(err);
+					// XXX: Do not log unmeaningful errors. (https://circularing.atlassian.net/jira/software/projects/CIR/boards/1?selectedIssue=CIR-961)
+					// logger.error(err);
+					__DEV__ && console.warn(err);
 				}}
 			>
 				<GestureHandlerRootView style={{ flex: 1 }}>

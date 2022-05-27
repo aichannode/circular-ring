@@ -32,7 +32,6 @@ export function useI18n(options?: FormatterOptions) {
 				try {
 					return intl.formatMessage({ id: key }, { ...values, ...createXmlFormatters(options) }) as string;
 				} catch (e) {
-					//TODO send to sentry
 					if (key === undefined) {
 						console.warn("[INTL] missing mandatory i18n key.");
 						return "";
