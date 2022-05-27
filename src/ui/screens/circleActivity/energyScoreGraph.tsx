@@ -29,7 +29,7 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 	selectedDay,
 	mode = createActiveMode(),
 }: Props) {
-	const { format } = useI18n();
+	const { format, formatDate } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	const [tags, setTags] = useState<CalendarTag[]>([]);
@@ -141,6 +141,9 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 					onSelect={(x) => toUpdateTag(x)}
 					isMultipleLines={true}
 					mode={updatedMode}
+					labelFormatter={(x, y) => {
+						return `${formatDate(new Date(x))}\n${y}`;
+					}}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

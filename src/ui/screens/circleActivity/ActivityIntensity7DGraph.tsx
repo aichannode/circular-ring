@@ -38,7 +38,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 	selectedDay,
 	mode = createActiveMode(),
 }: Props) {
-	const { formatDuration } = useI18n();
+	const { formatDuration, formatDate } = useI18n();
 	const {
 		measure: {
 			hooks: { use7DaysActivity },
@@ -120,7 +120,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 							.sort((a, b) => b - a)
 							.map((val) => formatDuration(val * 60));
 
-						return `${moment(lines[index].date).format("ddd DD")}\n${values.join("\n")}`;
+						return `${formatDate(new Date(lines[index].date))}\n${values.join("\n")}`;
 					}}
 					highlightPerTapEnabled
 					scaleXEnabled={false}

@@ -28,7 +28,7 @@ export const Spo2Graph30days: React.FC<Props> = observer(function Spo2Graph({
 	mode = createActiveMode(),
 	dailyTrimOptions,
 }: Props) {
-	const { format } = useI18n();
+	const { format, formatDate } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 
 	const {
@@ -70,13 +70,13 @@ export const Spo2Graph30days: React.FC<Props> = observer(function Spo2Graph({
 	if (isInActiveMode(updatedMode) && isDefined(constant)) {
 		if (constant.reference !== -1) {
 			averages.push({
-				value: constant.reference,
+				value: Math.round(constant.reference),
 				color: colors.redLight,
 			});
 		}
 		if (constant.average !== -1) {
 			averages.push({
-				value: constant.average,
+				value: Math.round(constant.average),
 				color: colors.darkBlue,
 			});
 		}
@@ -120,6 +120,9 @@ export const Spo2Graph30days: React.FC<Props> = observer(function Spo2Graph({
 					shouldUpdateYmin={false}
 					highlightPerTapEnabled={true}
 					isMultipleLines={true}
+					labelFormatter={(x, y) => {
+						return `${formatDate(new Date(x))}`;
+					}}
 					zoom={
 						lines?.length > 0
 							? {
@@ -155,7 +158,7 @@ export const Spo2Graph30days: React.FC<Props> = observer(function Spo2Graph({
 										? format("global.no_data")
 										: typeof constant.average == "undefined" || constant.average === -1
 										? "- %"
-										: `${constant.average} %`,
+										: `${Math.round(constant.average)} %`,
 							},
 							{
 								label: format("hr.reference"),
@@ -178,7 +181,7 @@ export const Spo2Graph30days: React.FC<Props> = observer(function Spo2Graph({
 									? format("global.no_data")
 									: typeof constant.reference == "undefined" || constant.reference === -1
 									? "- %"
-									: `${constant.reference} %`,
+									: `${Math.round(constant.reference)} %`,
 							},
 						]}
 					/>

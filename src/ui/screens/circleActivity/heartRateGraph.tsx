@@ -2,6 +2,7 @@ import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { Point } from "@domain/measure/representation/api";
+import { useIs24h } from "@domain/user/hooks/useUser";
 import {
 	createActiveMode,
 	isInActiveMode,
@@ -38,7 +39,8 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 	mode = createActiveMode(),
 	dailyTrimOptions,
 }: Props) {
-	const { format } = useI18n();
+	const { format, formatHour } = useI18n();
+	const is24h = useIs24h();
 	const [isLoading, setLoading] = useState(true);
 
 	const {
@@ -154,7 +156,9 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 					xAxisMax={xAxisMax}
 					shouldShowMarker={true}
 					highlightPerTapEnabled={true}
-					isDaily
+					labelFormatter={(x, y) => {
+						return `${formatHour(new Date(x), is24h)}\n${Math.round(y)}`;
+					}}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

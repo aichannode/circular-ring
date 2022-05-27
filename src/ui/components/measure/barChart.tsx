@@ -3,7 +3,6 @@ import { createActiveMode, isInDisabledMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode, SelectEventPayload } from "@ui/type";
-import moment from "moment";
 import React, { useState } from "react";
 import { Platform, processColor } from "react-native";
 import { BarChart as BarChartWrapper } from "react-native-charts-wrapper";
@@ -56,7 +55,7 @@ export function BarChart({
 					.map(({ x, y, _index, ...args }) => {
 						let marker = "";
 						if (shouldShowMarker && y != -1000) {
-							marker = `${moment(x).format("Y-MM-DD")}\n${mapMarker({ x, y, ...args }, _index)}`;
+							marker = `${mapMarker({ x, y, ...args }, _index)}`;
 						}
 						return { x: mapXAxis({ x, y, ...args }, _index), y: y == -1000 ? 0 : y, marker };
 					}),

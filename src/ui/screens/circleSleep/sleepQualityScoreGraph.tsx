@@ -29,7 +29,7 @@ export const SleepQualityScoreGraph: React.FC<Props> = observer(function EnergyS
 	selectedDay,
 	mode = createActiveMode(),
 }: Props) {
-	const { format } = useI18n();
+	const { format, formatDate } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	const [tags, setTags] = useState<CalendarTag[]>([]);
@@ -142,6 +142,9 @@ export const SleepQualityScoreGraph: React.FC<Props> = observer(function EnergyS
 					onSelect={(x) => toUpdateTag(x)}
 					isMultipleLines={true}
 					mode={updatedMode}
+					labelFormatter={(x, y) => {
+						return `${formatDate(new Date(x))}`;
+					}}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

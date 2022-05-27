@@ -198,8 +198,7 @@ export function useI18n(options?: FormatterOptions) {
 		formatNoteIntervalLinker: () => {
 			return `${intl.formatMessage({ id: "global.date_interval_linker" })}`;
 		},
-		formatHour: (date: Date, is24h: boolean) =>
-			is24h ? dayjs(date).format("HH : mm") : dayjs(date).format("hh : mm A"),
+		formatHour: (date: Date, is24h: boolean) => (is24h ? dayjs(date).format("HH:mm") : dayjs(date).format("hh:mm A")),
 		formatDate: (date: Date | undefined) => {
 			if (date) {
 				const isUSCS = useIsUSCS();

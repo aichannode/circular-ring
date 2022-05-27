@@ -486,7 +486,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					type: "setDailyRestingHeartRate",
 					payload: {
 						localISODay,
-						data: data[MetricType.UserDailyRHR] ? Number(data[MetricType.UserDailyRHR]) : null,
+						data: data[MetricType.UserDailyRHR] ? Number(data[MetricType.UserDailyRHR]) : -1,
 					},
 				},
 			]);

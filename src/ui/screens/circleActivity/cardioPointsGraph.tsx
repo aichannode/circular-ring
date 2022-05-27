@@ -29,7 +29,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 	selectedDay,
 	mode = createActiveMode(),
 }: Props) {
-	const { format } = useI18n();
+	const { format, formatDate } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	const [tags, setTags] = useState<CalendarTag[]>([]);
@@ -133,6 +133,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 					valueFormatter={valueFormatter}
 					graphColor={colors.red}
 					onSelect={(x) => toUpdateTag(x)}
+					mapMarker={(el) => `${formatDate(new Date(el.x))}\n${el.y}`}
 					mode={updatedMode}
 				/>
 				<View style={{ marginTop: 20 }}>

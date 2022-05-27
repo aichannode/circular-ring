@@ -2,6 +2,7 @@ import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState } from "@domain/measure/representation/api";
+import { useIs24h } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, trimData, TrimOptions, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
@@ -28,9 +29,9 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({
 	mode = createActiveMode(),
 	dailyTrimOptions,
 }: Props) {
-	const { format } = useI18n();
+	const { format, formatHour } = useI18n();
 	const [isLoading, setLoading] = useState(true);
-
+	const is24h = useIs24h();
 	const {
 		measure: {
 			hooks: { useDailyHRV, useDailyHRVTrend },
@@ -120,7 +121,9 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({
 					movingAverage={dailyHrvTrend?.data}
 					shouldShowMarker={true}
 					highlightPerTapEnabled={true}
-					isDaily
+					labelFormatter={(x, y) => {
+						return `${formatHour(new Date(x), is24h)}\n${Math.round(y)}`;
+					}}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

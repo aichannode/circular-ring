@@ -275,15 +275,15 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 							high:
 								localMetrics && localMetrics[MetricType.UserDailyHighActivityIntensityDuration] !== null
 									? localMetrics[MetricType.UserDailyHighActivityIntensityDuration]
-									: null,
+									: -1,
 							medium:
 								localMetrics && localMetrics[MetricType.UserDailyMediumActivityIntensityDuration] !== null
 									? localMetrics[MetricType.UserDailyMediumActivityIntensityDuration]
-									: null,
+									: -1,
 							low:
 								localMetrics && localMetrics[MetricType.UserDailyLowActivityIntensityDuration] !== null
 									? localMetrics[MetricType.UserDailyLowActivityIntensityDuration]
-									: null,
+									: -1,
 							date,
 						};
 					}) as unknown as Activity7D["activityMetrics"];

@@ -29,7 +29,7 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 	selectedDay,
 	mode = createActiveMode(),
 }: Props) {
-	const { format } = useI18n();
+	const { format, formatDate } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	const [tags, setTags] = useState<CalendarTag[]>([]);
@@ -142,6 +142,7 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 					graphColor={colors.red}
 					onSelect={(x) => toUpdateTag(x)}
 					mode={updatedMode}
+					mapMarker={(el) => `${formatDate(new Date(el.x))}\n${el.y}`}
 					yMin={0}
 					yMax={yMax + Math.round(((yMax - yMin) * 10) / 100)}
 				/>

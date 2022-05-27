@@ -33,7 +33,7 @@ const yValueFormatter = [
 // XXX: From @farook implementation (sleepStage7Days.tsx)
 // TODO: Add add on press, add yValueFormatter
 export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode = createActiveMode() }: Props) {
-	const { formatDuration } = useI18n();
+	const { formatDuration, formatDate } = useI18n();
 	const { use7DaysSleep } = useRepresentations().measure.hooks;
 	const { useDailyTags } = useRepresentations().calendar.hooks;
 	const [tags, setTags] = useState<CalendarTag[]>([]);
@@ -130,7 +130,7 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 							`${formatDuration(lines[index].awake * 3600)}`,
 						];
 						///TODO à voir dans le daily pour le formatage
-						return `${moment(lines[index].date).format("ddd DD")}\n${values.join("\n")}`;
+						return `${formatDate(new Date(lines[index].date))}\n${values.join("\n")}`;
 					}}
 					yValueFormatter={yValueFormatter}
 					onSelect={(x) => toUpdateTag(x)}

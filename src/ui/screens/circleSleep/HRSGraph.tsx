@@ -27,7 +27,7 @@ type Props = {
 	mode?: Mode;
 };
 export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDay, mode = createActiveMode() }: Props) {
-	const { format, formatDuration } = useI18n();
+	const { format, formatDuration, formatDate } = useI18n();
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	const [tags, setTags] = useState<CalendarTag[]>([]);
 
@@ -149,7 +149,11 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 					shouldShowMarker={true}
 					mapXAxis={(el) => (el as typeof lines[number]).mappedX}
 					mapBarColor={(el) => (el as typeof lines[number]).color}
-					mapMarker={(el) => formatDuration(moment.duration((el as typeof lines[number]).y, "hours").as("seconds"))}
+					mapMarker={(el) =>
+						`${formatDate(new Date(el.x))}\n${formatDuration(
+							moment.duration((el as typeof lines[number]).y, "hours").as("seconds")
+						)}`
+					}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
 					data={lines}

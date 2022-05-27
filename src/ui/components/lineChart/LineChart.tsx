@@ -72,6 +72,7 @@ interface LineChartProps {
 		yValue: number;
 	};
 	isDaily?: boolean;
+	is24h?: boolean;
 }
 
 const verticalContentInset = { top: 40, bottom: 20 };
@@ -112,6 +113,7 @@ export function LineChart({
 	xAxisMax,
 	zoom,
 	isDaily = false,
+	is24h = false,
 }: LineChartProps) {
 	const [scaleX, setScaleX] = useState(1);
 	const graphRect = useRef<Rect>();
