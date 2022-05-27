@@ -1,26 +1,25 @@
+import { getFeedEntityDate } from "@domain/feed/business";
 import {
-	FeedEntityStyle,
 	Activity,
 	FeedEntityComponentType,
-	UserInputComponentConfigurationDto,
+	FeedEntityStyle,
 	FeedRecommendation,
+	ParagraphComponentConfigurationDto,
+	UserInputComponentConfigurationDto,
 } from "@domain/feed/type";
+import { useUserSettings } from "@domain/user/hooks/useUser";
+import MaskedView from "@react-native-masked-view/masked-view";
 import { Row, row, Stack } from "@ui/components/layout";
 import { MetaDataText, SubTitleText, TitleText } from "@ui/components/text";
+import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import React from "react";
-import { ColorValue, Image, StyleProp, TextProps, View, ViewStyle } from "react-native";
-import styled from "styled-components/native";
-import { Paragraph } from "../components/Paragraph";
-import { ParagraphComponentConfigurationDto } from "@domain/feed/type";
-import { useUserSettings } from "@domain/user/hooks/useUser";
-import { getFeedEntityDate } from "@domain/feed/business";
-import { useI18n } from "@ui/i18n";
-import { UserInput } from "../components/UserInput";
+import { ColorValue, Image, StyleProp, Text, TextProps, View, ViewStyle } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
+import styled from "styled-components/native";
 import { getGradient } from "../business";
-import { Text } from "react-native";
-import MaskedView from "@react-native-masked-view/masked-view";
+import { Paragraph } from "../components/Paragraph";
+import { UserInput } from "../components/UserInput";
 
 type Props = {
 	recommendation: FeedRecommendation;
@@ -128,7 +127,14 @@ export const Recommendation: React.FC<Props> = ({ recommendation }) => {
 					</View>
 				</Stack>
 			</Container>
-			{userInput && <UserInput feedEntryId={recommendation.id} compId={userInput.id} palette={recommendation.style} {...userInput} />}
+			{userInput && (
+				<UserInput
+					feedEntryId={recommendation.id}
+					compId={userInput.id}
+					palette={recommendation.style}
+					{...userInput}
+				/>
+			)}
 		</>
 	);
 };

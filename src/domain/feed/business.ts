@@ -10,6 +10,7 @@ import {
 	FeedEntityType,
 	FeedNotification,
 	FeedRecommendation,
+	InputType,
 	UserInputComponentConfigurationDto,
 	UserInputStates,
 } from "./type";
@@ -66,7 +67,9 @@ export function reconciliate(
 							!serverDate;
 						if (serverIsOlder) {
 							userInput.configuration.inputConfig.answeredAt = clientState.answeredAt;
-							userInput.configuration.inputConfig.selectedOptions = clientState.answer;
+							if (userInput.configuration.inputType === InputType.SELECT) {
+								userInput.configuration.inputConfig.selectedOptions = clientState.answer;
+							}
 						}
 					}
 				}

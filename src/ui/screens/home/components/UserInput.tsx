@@ -1,23 +1,27 @@
-import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
+import ringGradient from "@assets/images/ringGradient.png";
+import chevronTop from "@assets/images/topArrowBlack.png";
+import { useServices } from "@core/services";
 import {
+	Activity,
+	DatePickerInputTypeConfig,
 	FeedEntityStyle,
 	InputType,
 	SelectInputTypeConfig,
-	UserInputConfiguration,
+	SliderInputTypeConfig,
 	UserInputComponentConfigurationDto,
-	Activity,
+	UserInputConfiguration,
 } from "@domain/feed/type";
-import ringGradient from "@assets/images/ringGradient.png";
-import chevronTop from "@assets/images/topArrowBlack.png";
-import { Image, LayoutChangeEvent, Pressable, View, ViewStyle } from "react-native";
-import { PrimaryText, Strong } from "@ui/components/text";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { SelectableButton } from "@ui/components/selectableButton";
+import { SliderBetweenTwoValues } from "@ui/components/sliderBetweenTwoValues";
+import { PrimaryText, Strong } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
+import React, { PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
+import { Image, LayoutChangeEvent, Pressable, View, ViewStyle } from "react-native";
 import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
-import { useServices } from "@core/services";
 import { getGradient } from "../business";
-import { PrimaryButton } from "@ui/components/buttons";
 
 type Props = UserInputComponentConfigurationDto & {
 	palette: Activity["style"];
@@ -50,11 +54,15 @@ function Header({ title, isAnswered, isClosed }: UserInputConfiguration & { isCl
 	);
 }
 
-type SelectProps = SelectInputTypeConfig["inputConfig"] & {
+interface BaseProps {
 	palette: FeedEntityStyle;
-	canSave: boolean;
 	onLayout: (e: LayoutChangeEvent) => void;
-};
+}
+
+type SelectProps = SelectInputTypeConfig["inputConfig"] &
+	BaseProps & {
+		canSave: boolean;
+	};
 
 function Select({
 	label,
@@ -67,7 +75,7 @@ function Select({
 	canSave,
 	onLayout,
 	feedEntryId,
-}: SelectProps & { compId: number, feedEntryId: number }) {
+}: SelectProps & { compId: number; feedEntryId: number }) {
 	const { format } = useI18n();
 	const [selectedIds, setSelectedIds] = useState<number[]>(selectedOptions ?? []);
 	const isRadio = minCount === 1 && maxCount === 1;
@@ -140,6 +148,65 @@ function Select({
 	);
 }
 
+type DatePickerProps = DatePickerInputTypeConfig["inputConfig"] & BaseProps;
+
+function DatePicker({ value: initialDate, onLayout }: DatePickerProps) {
+	const { format } = useI18n();
+	const [value, setValue] = useState(initialDate);
+	const cancel = useCallback(() => {
+		setValue(initialDate);
+	}, []);
+	const save = useCallback(() => {
+		// TODO: remove console.log and use the service
+		console.log("save");
+	}, []);
+
+	return (
+		<View onLayout={onLayout}>
+			<DateTimePicker
+				value={value}
+				mode="date"
+				display="spinner"
+				textColor={colors.textPrimary}
+				onChange={(event: Event, selectedTime: Date | undefined) => (selectedTime ? setValue(selectedTime) : null)}
+			/>
+			<View
+				style={{
+					borderTopColor: colors.midGray,
+					borderTopWidth: 1,
+					flexDirection: "row",
+					justifyContent: "space-between",
+					paddingVertical: 20,
+					paddingHorizontal: 85,
+				}}
+			>
+				<SecondaryButton onPress={cancel}>{format("global.cancel")}</SecondaryButton>
+				<SecondaryButton onPress={save}>{format("ok")}</SecondaryButton>
+			</View>
+		</View>
+	);
+}
+
+type SliderProps = SliderInputTypeConfig["inputConfig"] & BaseProps;
+
+function Slider({ unit, min, max, value: initialValue }: SliderProps) {
+	const { format } = useI18n();
+	const [value, setValue] = useState(initialValue);
+
+	return (
+		<SliderBetweenTwoValues
+			title={format(unit)}
+			start={min}
+			stop={max}
+			defaultValue={initialValue}
+			value={value}
+			setValue={(args) => setValue(Array.isArray(args) ? args[0] : args)}
+			minimumTrackTintColor={colors.purple}
+			hideResetButton
+		/>
+	);
+}
+
 function Foldable({
 	isClosed,
 	isAnimatedOnMount,
@@ -206,6 +273,29 @@ function animate(
 }
 
 export function UserInput({ feedEntryId, compId, configuration, palette }: Props) {
+	// TODO: remove this only for testing
+	// configuration = {
+	// 	inputConfig: {
+	// 		value: new Date(),
+	// 		answeredAt: null,
+	// 	},
+	// 	inputType: InputType.DATE_PICKER,
+	// 	title: "calibration.recommandation.4.date_picker.title",
+	// 	style: UserInputStyle.DEFAULT,
+	// };
+	// configuration = {
+	// 	inputConfig: {
+	// 		max: 12,
+	// 		min: 1,
+	// 		unit: "calibration.recommandation.4.slider.unit",
+	// 		value: 6,
+	// 		answeredAt: null,
+	// 	},
+	// 	inputType: InputType.SLIDER,
+	// 	title: "calibration.recommandation.4.slider.title",
+	// 	style: UserInputStyle.DEFAULT,
+	// };
+
 	const { inputType, inputConfig } = configuration;
 	const [isClosed, setIsClosed] = useState(!!inputConfig.answeredAt);
 	const paperHeightRef = useSharedValue(0);
@@ -235,6 +325,20 @@ export function UserInput({ feedEntryId, compId, configuration, palette }: Props
 						canSave={!inputConfig.answeredAt}
 						feedEntryId={feedEntryId}
 						compId={compId}
+						onLayout={(e) => (paperHeightRef.value = e.nativeEvent.layout.height)}
+						palette={palette as FeedEntityStyle}
+						{...inputConfig}
+					/>
+				)}
+				{inputType === InputType.SLIDER && (
+					<Slider
+						onLayout={(e) => (paperHeightRef.value = e.nativeEvent.layout.height)}
+						palette={palette as FeedEntityStyle}
+						{...inputConfig}
+					/>
+				)}
+				{inputType === InputType.DATE_PICKER && (
+					<DatePicker
 						onLayout={(e) => (paperHeightRef.value = e.nativeEvent.layout.height)}
 						palette={palette as FeedEntityStyle}
 						{...inputConfig}
