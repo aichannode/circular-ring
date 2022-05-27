@@ -23,27 +23,27 @@ type Props = {
 	dailyTrimOptions?: TrimOptions;
 };
 
-export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
+export const HrVGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 	selectedDay,
 	mode = createActiveMode(),
 	dailyTrimOptions,
 }: Props) {
-	const { format } = useI18n();
+	const { format, formatDate } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 	const [tags, setTags] = useState<CalendarTag[]>([]);
 	const {
 		measure: {
-			hooks: { useLast30DaysHrNight },
+			hooks: { useLast30DaysHRV },
 		},
 		calendar: {
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
 
-	const dailyHRNight = useLast30DaysHrNight(selectedDay);
+	const HRV30d = useLast30DaysHRV(selectedDay);
 	const [lines, constant] = [
-		dailyHRNight
-			? dailyHRNight.series
+		HRV30d
+			? HRV30d.series
 					.map((el) => {
 						return {
 							x: el ? moment(el.date).valueOf() : 0,
@@ -52,9 +52,9 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 					})
 					.reverse()
 			: [],
-		dailyHRNight ? dailyHRNight.constant : { max: -1, min: -1, average: -1, reference: -1 },
+		HRV30d ? HRV30d.constant : { average: -1, reference: -1 },
 	];
-	const updatedMode = updateMode(mode, dailyHRNight?.controlState !== DataControlState.READY);
+	const updatedMode = updateMode(mode, HRV30d?.controlState !== DataControlState.READY);
 
 	const [yMin, yMax] =
 		lines.length > 0
@@ -89,7 +89,7 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 		if (isDefined(lines)) {
 			setLoading(false);
 		}
-	}, [dailyHRNight]);
+	}, [HRV30d]);
 
 	return isLoading ? (
 		<Spinner size={24} />
@@ -123,6 +123,9 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 					shouldUpdateYmin={false}
 					highlightPerTapEnabled={true}
 					isMultipleLines={true}
+					labelFormatter={(x, y) => {
+						return `${formatDate(new Date(x))}`;
+					}}
 					zoom={
 						lines?.length > 0
 							? {
@@ -180,23 +183,6 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 									: typeof constant.reference == "undefined" || constant.reference === -1
 									? "- bpm"
 									: `${constant.reference} bpm`,
-							},
-							{
-								label: format("hr.hrMax"),
-								element: {
-									key: "hr.hrMax",
-									node: <></>,
-								},
-								value: typeof constant.max == "undefined" || constant.max === -1 ? "- bpm" : `${constant.max} bpm`,
-							},
-							{
-								label: format("hr.hrMin"),
-								element: {
-									key: "hr.hrMin",
-									node: <></>,
-								},
-
-								value: typeof constant.min == "undefined" || constant.max === -1 ? "- bpm" : `${constant.min} bpm`,
 							},
 						]}
 					/>

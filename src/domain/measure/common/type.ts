@@ -47,6 +47,7 @@ import {
 	DailySpo2TimeSeriesMetrics,
 	DailyWakeUpScoreMetrics,
 	Hr30DConstantMetrics,
+	HRV30DConstantMetrics,
 	Sleep7DConstantMetrics,
 	SleepAllConstantMetrics,
 	SleepMonthlyStageMetrics,
@@ -383,17 +384,31 @@ export type Mutations =
 			};
 	  }
 	| {
+			type: "setMonthlyHRVConstants";
+			payload: {
+				localISODay: ISOMonth;
+				constant: Metrics<HRV30DConstantMetrics>;
+			};
+	  }
+	| {
 			type: "setDailySpo2";
 			payload: {
 				localISODay: ISODay;
-				data: number | null;
+				data: number;
 			};
 	  }
 	| {
 			type: "setDailyHrNight";
 			payload: {
 				localISODay: ISODay;
-				data: number | null;
+				data: number;
+			};
+	  }
+	| {
+			type: "setDailyHRV";
+			payload: {
+				localISODay: ISODay;
+				data: number;
 			};
 	  };
 

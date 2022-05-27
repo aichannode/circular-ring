@@ -139,9 +139,9 @@ export const Spo2Graph30days: React.FC<Props> = observer(function Spo2Graph({
 						mode={updatedMode}
 						rows={[
 							{
-								label: format("hr.average"),
+								label: format("30day.average"),
 								element: {
-									key: "hr.average",
+									key: "30day.average",
 									node: (
 										<View
 											style={{

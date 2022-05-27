@@ -37,6 +37,7 @@ import {
 	DataControlState,
 	HrNight30Days,
 	HRS7D,
+	HRV30Days,
 	RestingHeartRate7D,
 	Scores7D,
 	Sleep7D,
@@ -892,6 +893,39 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						reference: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserMonthlyHrMin]) : -1,
 						min: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserMonthlyHrMax]) : -1,
 						max: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserDailySleepHR]) : -1,
+					},
+					controlState,
+				};
+			},
+			useLast30DaysHRV(localISODay: ISODay): HRV30Days | undefined {
+				// Compute the 30 previous date from the given date
+				const last30Days = getLast30Days(localISODay);
+
+				useEffect(
+					action(function () {
+						actions.setMonthlyHRVConstants(localISODay);
+						last30Days.forEach((d) => actions.setDailyHRV(d, shouldByPassCache(model.dailyHRV, d)));
+					}),
+					[localISODay]
+				);
+
+				const HRVt30daysConstants = model.last30DHRV.get(localISODay);
+				const isLoaded = model.last30DHRV.has(localISODay) && last30Days.every((date) => model.dailyHRV.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last30Days.map((date) => {
+					return { value: model.dailyHRV.get(date), date: date };
+				}) as unknown as HrNight30Days["series"];
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+
+				return {
+					series,
+					constant: {
+						average: HRVt30daysConstants ? Number(HRVt30daysConstants[MetricType.UserMonthlyHRVAverage]) : -1,
+						reference: HRVt30daysConstants ? Number(HRVt30daysConstants[MetricType.UserDailyReferenceHRV]) : -1,
 					},
 					controlState,
 				};

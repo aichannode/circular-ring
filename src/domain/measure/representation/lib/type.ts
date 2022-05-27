@@ -151,6 +151,9 @@ export type DailyHRSConstantMetrics = typeof dailyHRSConstantMetrics[number];
 export const dailyHRVConstantMetrics = [MetricType.UserDailyAsleepHRV, MetricType.UserDailyReferenceHRV] as const;
 export type DailyHRVConstantMetrics = typeof dailyHRVConstantMetrics[number];
 
+export const hrv30DConstantMetrics = [MetricType.UserMonthlyHRVAverage, MetricType.UserDailyReferenceHRV] as const;
+export type HRV30DConstantMetrics = typeof hrv30DConstantMetrics[number];
+
 export const dailyHRVTimeSeriesMetrics = [MetricType.UserHRV] as const;
 export type DailyHRVTimeSeriesMetrics = typeof dailyHRVTimeSeriesMetrics[number];
 

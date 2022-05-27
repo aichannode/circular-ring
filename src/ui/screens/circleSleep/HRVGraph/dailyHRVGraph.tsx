@@ -8,7 +8,6 @@ import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
 import { Tag } from "@ui/components/tag";
-import { TitleText } from "@ui/components/text";
 import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -24,7 +23,7 @@ type Props = {
 	dailyTrimOptions?: TrimOptions;
 };
 
-export const HRVGraph: React.FC<Props> = observer(function HRVGraph({
+export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 	selectedDay,
 	mode = createActiveMode(),
 	dailyTrimOptions,
@@ -87,10 +86,6 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({
 		<Spinner size={24} />
 	) : (
 		<View>
-			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("score.details.hrv.label")}
-			</TitleText>
-
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
 				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (

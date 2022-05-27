@@ -30,7 +30,7 @@ import { BreathingRateGraph } from "./breathingRateGraph";
 import { DailySleepChart } from "./DailySleepChart";
 import { HeartRateGraph } from "./heartRateGraph/heartRateGraph";
 import { HRSGraph } from "./HRSGraph";
-import { HRVGraph } from "./HRVGraph";
+import { HRVGraph } from "./HRVGraph/HRVGraph";
 import { getSleepGaugesConfig } from "./measureDisplayInfos";
 import { Sleep7DChart } from "./Sleep7DChart";
 import { SleepAllChart } from "./SleepAllChart";

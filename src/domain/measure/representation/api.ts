@@ -143,6 +143,11 @@ export type HrNight30Days = Range30<{
 	max: number;
 }>;
 
+export type HRV30Days = Range30<{
+	average: number;
+	reference: number;
+}>;
+
 export type Scores7D = Range7<{
 	average: number;
 }>;
