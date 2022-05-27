@@ -32,13 +32,13 @@ export const Tutorial = () => {
 		setLoading(true);
 		const _birthDate = dayjs(birthDate, "DD/MM/YYYY", true).toDate();
 		try {
-			await ringManagementService.setTimezone();
 			await userService.completeTutorial({ firstName, lastName, country, birthDate: _birthDate, sex, weight, height });
 			await userService.updateUserSettings({
 				dateFormat: DateFormat.USCS,
 				heightFormat: heightUnit,
 				weightFormat: weightUnit,
 			});
+			await ringManagementService.setTimezone();
 			setLoading(false);
 		} catch (error) {
 			setLoading(false);
