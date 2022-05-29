@@ -42,7 +42,12 @@ export const DailyPieChartLabel: React.FC<Props> = ({ chartSize, labels }) => {
 								r={135}
 								angleDeg={angle(moment(date)) - RIGHT_ANGLE}
 							>
-								<View>
+								<View
+									style={
+										angle(moment(date)) - RIGHT_ANGLE < 0 &&
+										angle(moment(date)) - RIGHT_ANGLE > -75 && { marginLeft: 25 }
+									}
+								>
 									<Label style={{ fontWeight: "500" }}>{text && format(text)}</Label>
 									<Label>{formatHour(new Date(date), is24h)}</Label>
 								</View>

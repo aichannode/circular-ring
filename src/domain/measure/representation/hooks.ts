@@ -1172,8 +1172,8 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				if (data) {
 					const score = {
 						score: Number(data[MetricType.UserDailySleepScore]),
-						goalMin: Number(data[MetricType.UserDailySleepScoreGoalMin]) ?? 0.8,
-						goalMax: Number(data[MetricType.UserDailySleepScoreGoalMax]) ?? 0.9,
+						goalMin: getOrElse(data, MetricType.UserDailySleepScoreGoalMin, 0.8),
+						goalMax: getOrElse(data, MetricType.UserDailySleepScoreGoalMax, 0.9),
 					};
 					return {
 						// Default value according to the specs.

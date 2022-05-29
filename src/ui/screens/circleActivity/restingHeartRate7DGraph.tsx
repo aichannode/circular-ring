@@ -173,7 +173,7 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
 									: isDefined(constant) && constant.average != -1
-									? `${constant?.average?.toFixed(2)} bpm`
+									? `${Math.round(constant?.average)} bpm`
 									: "- bpm",
 							},
 							{
@@ -187,14 +187,14 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 												marginTop: 5,
 											}}
 										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.orange} />
+											<DashedLine dashGap={5} dashLength={10} dashColor={colors.redOrange} />
 										</View>
 									),
 								},
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
 									: isDefined(constant) && constant.average != -1
-									? `${constant.reference.toFixed(2)} bpm`
+									? `${Math.round(constant.reference)} bpm`
 									: "- bpm",
 							},
 						]}

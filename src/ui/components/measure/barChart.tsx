@@ -8,7 +8,6 @@ import { Platform, processColor } from "react-native";
 import { BarChart as BarChartWrapper } from "react-native-charts-wrapper";
 import styled from "styled-components/native";
 import { TextPlaceholder } from "../placeholder/TextPlaceholder";
-
 interface BarChartProps {
 	graphColor?: string;
 	xColor: string;
@@ -54,8 +53,12 @@ export function BarChart({
 					?.map((el, index) => ({ ...el, _index: index }))
 					.map(({ x, y, _index, ...args }) => {
 						let marker = "";
-						if (shouldShowMarker && y != -1000) {
-							marker = `${mapMarker({ x, y, ...args }, _index)}`;
+						if (shouldShowMarker) {
+							if (y == -1000) {
+								marker = `${mapMarker({ x, y: 0, ...args }, _index)}`;
+							} else {
+								marker = `${mapMarker({ x, y, ...args }, _index)}}`;
+							}
 						}
 						return { x: mapXAxis({ x, y, ...args }, _index), y: y == -1000 ? 0 : y, marker };
 					}),

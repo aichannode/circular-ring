@@ -28,7 +28,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 	selectedDay,
 	mode = createActiveMode(),
 }: Props) {
-	const { format } = useI18n();
+	const { format, formatDate } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 	const [tags, setTags] = useState<CalendarTag[]>([]);
 
@@ -122,7 +122,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 					mode={updatedMode}
 					yMin={yMin > -1 ? -1 : yMin}
 					yMax={yMax > 1 ? yMax : 1}
-					mapMarker={({ y }) => `${y > 0 ? "+" + y : y}`}
+					mapMarker={(el) => `${formatDate(new Date(el.x))}\n${el.y > 0 ? "+" + el.y : el.y}`}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
