@@ -25,6 +25,7 @@ interface BarChartProps {
 	mapBarColor?: (element: Point, index: number) => string;
 	mapMarker?: (element: Point, index: number) => string;
 	horizontalPadding?: number;
+	labelCount?: number;
 }
 
 export function BarChart({
@@ -43,6 +44,7 @@ export function BarChart({
 	yMin,
 	yMax,
 	horizontalPadding = 0.1,
+	labelCount,
 }: BarChartProps) {
 	const [selectedX, setSelectedX] = useState<number | undefined>(-1);
 	const dataSets = {
@@ -90,6 +92,7 @@ export function BarChart({
 		enabled: true,
 		granularity: 1,
 		drawLabels: true,
+		labelCount: labelCount,
 		drawGridLines: false,
 		textSize: 10,
 		yOffset: 10,

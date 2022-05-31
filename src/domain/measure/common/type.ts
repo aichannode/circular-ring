@@ -385,6 +385,13 @@ export type Mutations =
 			};
 	  }
 	| {
+			type: "setMonthlyTemperatureVariationConstants";
+			payload: {
+				localISODay: ISOMonth;
+				constant: Metrics<MetricType.UserMonthlyTemperatureAverage>;
+			};
+	  }
+	| {
 			type: "setMonthlyHRVConstants";
 			payload: {
 				localISODay: ISOMonth;

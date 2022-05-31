@@ -153,6 +153,9 @@ export type Hr30Days = Range30<{
 	min: number;
 	max: number;
 }>;
+export type TemperatureVariation30Days = Range30<{
+	average: number;
+}>;
 
 export type Scores7D = Range7<{
 	average: number;

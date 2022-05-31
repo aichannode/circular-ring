@@ -8,7 +8,6 @@ import { BarChart } from "@ui/components/measure/barChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
 import { Tag } from "@ui/components/tag";
-import { TitleText } from "@ui/components/text";
 import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -24,7 +23,7 @@ type Props = {
 	mode?: Mode;
 };
 
-export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Spo2Graph({
+export const TemperatureVariation30DGraph: React.FC<Props> = observer(function Spo2Graph({
 	selectedDay,
 	mode = createActiveMode(),
 }: Props) {
@@ -34,14 +33,14 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 
 	const {
 		measure: {
-			hooks: { useLast7DaysTemperatureVariation },
+			hooks: { useLast30DaysTemperatureVariation },
 		},
 		calendar: {
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
 
-	const data = useLast7DaysTemperatureVariation(selectedDay);
+	const data = useLast30DaysTemperatureVariation(selectedDay);
 	const lines: Points = data
 		? data.series
 				.map((el) => {
@@ -95,10 +94,6 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 		<Spinner size={24} />
 	) : (
 		<View>
-			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("score.details.temperature.label")}
-			</TitleText>
-
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
 				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
@@ -111,6 +106,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 					</View>
 				)}
 				<BarChart
+					labelCount={20}
 					averages={averages}
 					shouldShowMarker={true}
 					xColor={colors.textPrimary}

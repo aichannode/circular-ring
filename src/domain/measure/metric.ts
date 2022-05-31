@@ -269,4 +269,5 @@ export enum MetricType {
 	UserDailyTemperature = "user.daily.asleep.temperature",
 	UserDailyTemperatureScore = "user.daily.sleep.var.temperature",
 	UserDailyVarTemperature = "user.7days.sleep.var.temperature",
+	UserMonthlyTemperatureAverage = "user.30days.sleep.var.temperature",
 }

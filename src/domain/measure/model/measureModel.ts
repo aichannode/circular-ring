@@ -121,6 +121,7 @@ export class MeasureModel implements Model<Proposal> {
 	public last7DEnergyScore: Map<ISODay, number | null> = new Map();
 	public last30DSpo2: Map<ISODay, Metrics<Spo230DConstantMetrics>> = new Map();
 	public last30DHrNight: Map<ISODay, Metrics<HrNight30DConstantMetrics>> = new Map();
+	public last30DTemperatureVariation: Map<ISODay, Metrics<MetricType.UserMonthlyTemperatureAverage>> = new Map();
 	public last30DHRV: Map<ISODay, Metrics<HRV30DConstantMetrics>> = new Map();
 	public dailyHrNight: Map<ISODay, number | null> = new Map();
 	public dailyHRV: Map<ISODay, number | null> = new Map();
@@ -357,6 +358,10 @@ export class MeasureModel implements Model<Proposal> {
 			} else if (mutation.type === "setMonthlyHrConstants") {
 				mutate.call(this, mutation, () => {
 					this.last30DHr.set(mutation.payload.localISODay, mutation.payload.constant);
+				});
+			} else if (mutation.type === "setMonthlyTemperatureVariationConstants") {
+				mutate.call(this, mutation, () => {
+					this.last30DTemperatureVariation.set(mutation.payload.localISODay, mutation.payload.constant);
 				});
 			}
 		});

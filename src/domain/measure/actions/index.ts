@@ -329,6 +329,23 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				]);
 			});
 		},
+		async setMonthlyTemperatureVariationConstants(localISODay: ISODay, useForceRefresh = false) {
+			Promise.all([
+				measureApi.fetchLastDailyMeasures([MetricType.UserMonthlyTemperatureAverage], localISODay, useForceRefresh),
+			]).then(function ([constant]) {
+				present([
+					{
+						type: "setMonthlyTemperatureVariationConstants",
+						payload: {
+							localISODay,
+							constant: {
+								[MetricType.UserMonthlyTemperatureAverage]: constant[MetricType.UserMonthlyTemperatureAverage],
+							},
+						},
+					},
+				]);
+			});
+		},
 		async setMonthlyHRVConstants(localISODay: ISODay, useForceRefresh = false) {
 			Promise.all([
 				measureApi.fetchLastDailyMeasures([MetricType.UserMonthlyHRVAverage], localISODay, useForceRefresh),

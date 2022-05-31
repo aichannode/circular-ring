@@ -45,6 +45,7 @@ import {
 	SleepAll,
 	Spo230Days,
 	Steps7D,
+	TemperatureVariation30Days,
 	TemperatureVariation7D,
 } from "./api";
 import {
@@ -1140,6 +1141,45 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						controlState,
 					};
 				}
+			},
+			useLast30DaysTemperatureVariation(localISODay: ISODay): TemperatureVariation30Days | undefined {
+				// Compute the 30 previous date from the given date
+
+				const last30Days = getLast30Days(localISODay);
+
+				useEffect(
+					action(function () {
+						actions.setMonthlyTemperatureVariationConstants(localISODay);
+						last30Days.forEach((d) =>
+							actions.pullDailyTemperatureVariation(d, shouldByPassCache(model.dailyTemperatureVariation, d))
+						);
+					}),
+					[localISODay]
+				);
+
+				const temperature30daysConstants = model.last30DTemperatureVariation.get(localISODay);
+				const isLoaded =
+					model.last30DTemperatureVariation.has(localISODay) &&
+					last30Days.every((date) => model.dailyTemperatureVariation.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last30Days.map((date) => {
+					return { value: model.dailyTemperatureVariation.get(date), date: date };
+				}) as unknown as TemperatureVariation30Days["series"];
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+
+				return {
+					series,
+					constant: {
+						average: temperature30daysConstants
+							? Number(temperature30daysConstants[MetricType.UserMonthlyTemperatureAverage])
+							: -1,
+					},
+					controlState,
+				};
 			},
 			useLast7DaysHRS(localISODay: ISODay): HRS7D | undefined {
 				// Compute the 7 previous date from the given date

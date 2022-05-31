@@ -37,7 +37,7 @@ import { SleepAllChart } from "./SleepAllChart";
 import { SleepDurationPieChart } from "./sleepDurationPie";
 import { SleepQualityScoreGraph } from "./sleepQualityScoreGraph";
 import { Spo2Graph } from "./spo2Graph/Spo2Graph";
-import { TemperatureVariation7DGraph } from "./temperatureVariation7DGraph";
+import { TemperatureVariationGraph } from "./temperatureVariationGraph/temperatureVariationGraph";
 export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
@@ -203,7 +203,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 				{activeItem === 4 && (
 					<BreathingRateGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
 				)}
-				{activeItem === 5 && <TemperatureVariation7DGraph selectedDay={selectedDay} mode={screenMode} />}
+				{activeItem === 5 && <TemperatureVariationGraph selectedDay={selectedDay} mode={screenMode} />}
 
 				{activeItem === 6 && (
 					<Spo2Graph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
