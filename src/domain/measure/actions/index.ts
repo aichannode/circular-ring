@@ -304,6 +304,25 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				]);
 			});
 		},
+		async setMonthlyBRConstants(localISODay: ISODay, useForceRefresh = false) {
+			Promise.all([
+				measureApi.fetchLastDailyMeasures([MetricType.UserBRMonthlyAverage], localISODay, useForceRefresh),
+				measureApi.fetchLastDailyMeasures([MetricType.UserDailyAsleepBRReference], lifetimeDate, useForceRefresh),
+			]).then(function ([average, reference]) {
+				present([
+					{
+						type: "setMonthlyBRConstants",
+						payload: {
+							localISODay,
+							constant: {
+								[MetricType.UserBRMonthlyAverage]: average[MetricType.UserBRMonthlyAverage],
+								[MetricType.UserDailyAsleepBRReference]: reference[MetricType.UserDailyAsleepBRReference],
+							},
+						},
+					},
+				]);
+			});
+		},
 		async setMonthlyHrNightConstants(localISODay: ISODay, useForceRefresh = false) {
 			Promise.all([
 				measureApi.fetchLastDailyMeasures(
@@ -399,6 +418,22 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					payload: {
 						localISODay,
 						data: data[MetricType.UserDailySPO2] ? Number(data[MetricType.UserDailySPO2]) : -1,
+					},
+				},
+			]);
+		},
+		async setDailyBR(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures(
+				[MetricType.UserDailyAsleepBR],
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailyBR",
+					payload: {
+						localISODay,
+						data: data[MetricType.UserDailyAsleepBR] ? Number(data[MetricType.UserDailyAsleepBR]) : -1,
 					},
 				},
 			]);

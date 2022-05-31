@@ -136,6 +136,10 @@ export type Spo230Days = Range30<{
 	average: number;
 	reference: number;
 }>;
+export type BR30Days = Range30<{
+	average: number;
+	reference: number;
+}>;
 export type HrNight30Days = Range30<{
 	average: number;
 	reference: number;

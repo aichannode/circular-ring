@@ -22,6 +22,7 @@ import {
 	Activity7D,
 	ActivityAll,
 	ActivityDetail,
+	BR30Days,
 	CalorieBurned7D,
 	Cardio7D,
 	Contributor,
@@ -858,6 +859,40 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					constant: {
 						average: Spo230daysConstants ? Number(Spo230daysConstants[MetricType.User30DaysAverageSpo2]) : -1,
 						reference: Spo230daysConstants ? Number(Spo230daysConstants[MetricType.UserDailyAsleepSPO2Reference]) : -1,
+					},
+					controlState,
+				};
+			},
+			useLast30DaysBR(localISODay: ISODay): BR30Days | undefined {
+				// Compute the 30 previous date from the given date
+
+				const last30Days = getLast30Days(localISODay);
+
+				useEffect(
+					action(function () {
+						actions.setMonthlyBRConstants(localISODay);
+						last30Days.forEach((d) => actions.setDailyBR(d, shouldByPassCache(model.dailyBR, d)));
+					}),
+					[localISODay]
+				);
+
+				const BR30daysConstants = model.last30DBR.get(localISODay);
+				const isLoaded = model.last30DBR.has(localISODay) && last30Days.every((date) => model.dailyBR.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last30Days.map((date) => {
+					return { value: model.dailyBR.get(date), date: date };
+				}) as unknown as BR30Days["series"];
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+
+				return {
+					series,
+					constant: {
+						average: BR30daysConstants ? Number(BR30daysConstants[MetricType.UserBRMonthlyAverage]) : -1,
+						reference: BR30daysConstants ? Number(BR30daysConstants[MetricType.UserDailyAsleepBRReference]) : -1,
 					},
 					controlState,
 				};

@@ -26,7 +26,7 @@ import moment from "moment";
 import React, { useRef, useState } from "react";
 import { Image, LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
-import { BreathingRateGraph } from "./breathingRateGraph";
+import { BRGraph } from "./breathingRateGraph/BRGraph";
 import { DailySleepChart } from "./DailySleepChart";
 import { HeartRateGraph } from "./heartRateGraph/heartRateGraph";
 import { HRSGraph } from "./HRSGraph";
@@ -201,7 +201,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 					<HRVGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
 				)}
 				{activeItem === 4 && (
-					<BreathingRateGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
+					<BRGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
 				)}
 				{activeItem === 5 && <TemperatureVariationGraph selectedDay={selectedDay} mode={screenMode} />}
 

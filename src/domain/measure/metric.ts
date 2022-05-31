@@ -252,6 +252,7 @@ export enum MetricType {
 	// BR
 	///////////////////
 	UserBR = "user.br",
+	UserBRMonthlyAverage = "user.30days.asleep.br",
 
 	///////////////////
 	// HR night

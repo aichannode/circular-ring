@@ -4,6 +4,7 @@ import {
 	ActivityIntensity7DAverageMetrics,
 	ActivityIntensityAllAverageMetrics,
 	ActivityIntensityMonthlyMetrics,
+	BR30DConstantMetrics,
 	CalorieBurnedConstantMetrics,
 	CaloriesBurned,
 	CardioPoints,
@@ -378,6 +379,13 @@ export type Mutations =
 			};
 	  }
 	| {
+			type: "setMonthlyBRConstants";
+			payload: {
+				localISODay: ISOMonth;
+				constant: Metrics<BR30DConstantMetrics>;
+			};
+	  }
+	| {
 			type: "setMonthlyHrNightConstants";
 			payload: {
 				localISODay: ISOMonth;
@@ -407,6 +415,13 @@ export type Mutations =
 	  }
 	| {
 			type: "setDailySpo2";
+			payload: {
+				localISODay: ISODay;
+				data: number;
+			};
+	  }
+	| {
+			type: "setDailyBR";
 			payload: {
 				localISODay: ISODay;
 				data: number;

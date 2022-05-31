@@ -2,87 +2,94 @@ import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState } from "@domain/measure/representation/api";
-import { useIs24h } from "@domain/user/hooks/useUser";
-import { createActiveMode, isInActiveMode, isInCalibrationMode, trimData, TrimOptions, updateMode } from "@ui/business";
+import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
 import { Tag } from "@ui/components/tag";
-import { TitleText } from "@ui/components/text";
 import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import DashedLine from "react-native-dashed-line";
+
 type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
-	dailyTrimOptions?: TrimOptions;
 };
 
-export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRateGraph({
+export const BRGraph30days: React.FC<Props> = observer(function BRGraph30days({
 	selectedDay,
 	mode = createActiveMode(),
-	dailyTrimOptions,
 }: Props) {
-	const { format, formatHour } = useI18n();
+	const { format, formatDate } = useI18n();
 	const [isLoading, setLoading] = useState(true);
-	const is24h = useIs24h();
+
 	const {
 		measure: {
-			hooks: { useDailyBR },
+			hooks: { useLast30DaysBR },
 		},
 		calendar: {
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
 
-	const dailyBr = useDailyBR(selectedDay);
-	const [data, constant] = [dailyBr ? dailyBr.data : [], dailyBr ? dailyBr.constant : { average: 0, reference: 0 }];
-
-	const parsedData = dailyTrimOptions ? trimData(data, (line) => line.x, dailyTrimOptions) : data;
-
-	const updatedMode = updateMode(mode, dailyBr?.controlState !== DataControlState.READY);
-	const [yMin, yMax] =
-		parsedData.length > 0
-			? [Math.min(...parsedData.map((line) => line.y)), Math.max(...parsedData.map((line) => line.y))]
-			: [0, 0];
-
-	const [yMinIndex, yMaxIndex] = [
-		parsedData.findIndex((line) => line.y == yMin),
-		parsedData.findIndex((line) => line.y == yMax),
+	const dailyBR = useLast30DaysBR(selectedDay);
+	const [lines, constant] = [
+		dailyBR
+			? dailyBR.series
+					.map((el) => {
+						return {
+							x: el ? moment(el.date).valueOf() : 0,
+							y: el?.value ? el.value : 0,
+						};
+					})
+					.reverse()
+			: [],
+		dailyBR ? dailyBR.constant : { average: 0, reference: 0 },
 	];
+
+	const updatedMode = updateMode(mode, dailyBR?.controlState !== DataControlState.READY);
+
+	const [yMin, yMax] =
+		lines.length > 0
+			? [
+					Math.min(...lines.filter((line) => line.y > 0).map((line) => line.y)),
+					Math.max(...lines.map((line) => line.y)),
+			  ]
+			: [0, 0];
 	const tags = useDailyTags(selectedDay);
+
 	const averages: Averages = [];
-	if (isInCalibrationMode(updatedMode) && constant.reference !== -1) {
-		averages.push({
-			value: constant.reference,
-			color: colors.redLight,
-		});
+	if (isInActiveMode(updatedMode) && isDefined(constant)) {
+		if (constant.reference !== -1) {
+			averages.push({
+				value: Math.round(constant.reference),
+				color: colors.redLight,
+			});
+		}
+		if (constant.average !== -1) {
+			averages.push({
+				value: Math.round(constant.average),
+				color: colors.darkBlue,
+			});
+		}
 	}
-	if (isInActiveMode(updatedMode) && constant.average !== -1) {
-		averages.push({
-			value: constant.average,
-			color: colors.darkBlue,
-		});
-	}
+
 	useEffect(() => {
-		if (isDefined(data)) {
+		if (isDefined(lines)) {
 			setLoading(false);
 		}
-	}, [data]);
+	}, [lines]);
 
 	return isLoading ? (
 		<Spinner size={24} />
 	) : (
 		<View>
-			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("score.details.breathing.label")}
-			</TitleText>
-
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
 				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
@@ -94,37 +101,45 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 						))}
 					</View>
 				)}
-
 				<LineChart
+					labelCount={20}
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
-					data={parsedData}
-					shouldShowLabel={false}
+					daysItem={[{ lines: lines, color: colors.darkBlue }]}
+					shouldShowLabel={true}
+					shouldShowMarker={true}
 					shouldDrawCircles={false}
 					graphColor={colors.darkBlue}
-					valueFormatter="date"
-					valueFormatterPattern={["h a", "h:mm a"]}
+					valueFormatter={lines.map((item) => moment(item.x).format("dd")[0])}
 					yMin={yMin}
 					yMax={yMax}
-					yMinIndex={yMinIndex}
-					yMaxIndex={yMaxIndex}
 					mode={updatedMode}
-					labelCount={5}
+					shouldUpdateYmin={false}
 					highlightPerTapEnabled={true}
-					shouldShowMarker={true}
+					isMultipleLines={true}
 					labelFormatter={(x, y) => {
-						return `${formatHour(new Date(x), is24h)}\n${Math.round(y)}`;
+						return `${formatDate(new Date(x))}\n${Math.round(y)}`;
 					}}
+					zoom={
+						lines?.length > 0
+							? {
+									scaleX: 2,
+									scaleY: 1,
+									xValue: lines[lines.length - 1].x,
+									yValue: 1,
+							  }
+							: undefined
+					}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
 						mode={updatedMode}
 						rows={[
 							{
-								label: format("hr.average"),
+								label: format("30day.average"),
 								element: {
-									key: "hr.average",
+									key: "30day.average",
 									node: (
 										<View
 											style={{
@@ -137,11 +152,11 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 									),
 								},
 								value:
-									parsedData.length == 0
+									lines.length == 0
 										? format("global.no_data")
-										: typeof constant.average == "undefined" || constant.average == 0
-										? "- rpm"
-										: `${constant.average.toFixed(1)} rpm`,
+										: typeof constant.average == "undefined" || constant.average === -1
+										? "- %"
+										: `${Math.round(constant.average)} %`,
 							},
 							{
 								label: format("hr.reference"),
@@ -160,11 +175,11 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 								},
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: parsedData.length == 0
+									: lines.length == 0
 									? format("global.no_data")
-									: typeof constant.reference == "undefined" || constant.reference == 0
-									? "- rpm"
-									: `${constant.reference.toFixed(1)} rpm`,
+									: typeof constant.reference == "undefined" || constant.reference === -1
+									? "- %"
+									: `${Math.round(constant.reference)} %`,
 							},
 						]}
 					/>
