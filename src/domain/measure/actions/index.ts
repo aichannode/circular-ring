@@ -348,6 +348,32 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				]);
 			});
 		},
+		async setMonthlyHrConstants(localISODay: ISODay, useForceRefresh = false) {
+			Promise.all([
+				measureApi.fetchLastDailyMeasures(
+					[MetricType.UserAwakeMonthlyHR, MetricType.UserAwakeMonthlyHRMin, MetricType.UserAwakeMonthlyHRMax],
+					localISODay,
+					useForceRefresh
+				),
+				measureApi.fetchLastDailyMeasures([MetricType.UserDailyAwakeHRReference], lifetimeDate, useForceRefresh),
+			]).then(function ([constant, reference]) {
+				present([
+					{
+						type: "setMonthlyHrConstants",
+						payload: {
+							localISODay,
+							constant: {
+								[MetricType.UserAwakeMonthlyHR]: constant[MetricType.UserAwakeMonthlyHR],
+								[MetricType.UserDailyAwakeHRReference]: reference[MetricType.UserDailyAwakeHRReference],
+								[MetricType.UserAwakeMonthlyHRMin]: constant[MetricType.UserAwakeMonthlyHRMin],
+								[MetricType.UserAwakeMonthlyHRMax]: constant[MetricType.UserAwakeMonthlyHRMax],
+							},
+						},
+					},
+				]);
+			});
+		},
+
 		async setDailySpo2(localISODay: ISODay, useForceRefresh?: boolean) {
 			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailySPO2], localISODay, useForceRefresh);
 			present([
@@ -361,6 +387,22 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 
+		async setDailyHr(localISODay: ISODay, useForceRefresh?: boolean) {
+			const data = await measureApi.fetchLastDailyMeasures(
+				[MetricType.UserDailyAwakeHRAverage],
+				localISODay,
+				useForceRefresh
+			);
+			present([
+				{
+					type: "setDailyHr",
+					payload: {
+						localISODay,
+						data: data[MetricType.UserDailyAwakeHRAverage] ? Number(data[MetricType.UserDailyAwakeHRAverage]) : -1,
+					},
+				},
+			]);
+		},
 		async setDailyHrNight(localISODay: ISODay, useForceRefresh?: boolean) {
 			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserHR], localISODay, useForceRefresh);
 			present([

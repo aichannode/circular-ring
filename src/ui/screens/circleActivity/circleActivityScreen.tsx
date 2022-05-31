@@ -34,11 +34,10 @@ import { CaloriesBurnedGraph } from "./caloriesBurnedGraph";
 import { CardioPointsGraph } from "./cardioPointsGraph";
 import { DailyMetric } from "./dailyMetric";
 import { EnergyScoreGraph } from "./energyScoreGraph";
-import { HeartRateGraph } from "./heartRateGraph";
+import { HRGraph } from "./HRGraph/HRGraph";
 import { dailyActivitiesUIConfig, getActivityGaugesConfig } from "./measureDisplayInfos";
 import { RestingHeartRate7DGraph } from "./restingHeartRate7DGraph";
 import { StepsGraph } from "./StepsGraph";
-
 function getIcon(path: string) {
 	switch (path) {
 		case "@assets/images/shoes.png":
@@ -230,13 +229,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 						mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenModeWithoutDisabled))}
 					/>
 				)}
-				{activeItem === 5 && (
-					<HeartRateGraph
-						selectedDay={selectedDay}
-						mode={screenModeWithoutDisabled}
-						dailyTrimOptions={dailyTrimOptions}
-					/>
-				)}
+				{activeItem === 5 && <HRGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
 				{activeItem === 6 && <RestingHeartRate7DGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>

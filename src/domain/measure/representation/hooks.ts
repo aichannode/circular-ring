@@ -35,6 +35,7 @@ import {
 	DailySleepData,
 	DailySpo2,
 	DataControlState,
+	Hr30Days,
 	HrNight30Days,
 	HRS7D,
 	HRV30Days,
@@ -890,9 +891,45 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					series,
 					constant: {
 						average: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserMonthlyHrAverage]) : -1,
-						reference: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserMonthlyHrMin]) : -1,
-						min: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserMonthlyHrMax]) : -1,
-						max: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserDailySleepHR]) : -1,
+						reference: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserDailySleepHR]) : -1,
+						min: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserMonthlyHrMin]) : -1,
+						max: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserMonthlyHrMax]) : -1,
+					},
+					controlState,
+				};
+			},
+			useLast30DaysHr(localISODay: ISODay): Hr30Days | undefined {
+				// Compute the 30 previous date from the given date
+
+				const last30Days = getLast30Days(localISODay);
+
+				useEffect(
+					action(function () {
+						actions.setMonthlyHrConstants(localISODay);
+						last30Days.forEach((d) => actions.setDailyHr(d, shouldByPassCache(model.dailyHr, d)));
+					}),
+					[localISODay]
+				);
+
+				const Hr30daysConstants = model.last30DHr.get(localISODay);
+				const isLoaded = model.last30DHr.has(localISODay) && last30Days.every((date) => model.dailyHr.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last30Days.map((date) => {
+					return { value: model.dailyHr.get(date), date: date };
+				}) as unknown as HrNight30Days["series"];
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+
+				return {
+					series,
+					constant: {
+						average: Hr30daysConstants ? Number(Hr30daysConstants[MetricType.UserAwakeMonthlyHR]) : -1,
+						reference: Hr30daysConstants ? Number(Hr30daysConstants[MetricType.UserDailyAwakeHRReference]) : -1,
+						min: Hr30daysConstants ? Number(Hr30daysConstants[MetricType.UserAwakeMonthlyHRMin]) : -1,
+						max: Hr30daysConstants ? Number(Hr30daysConstants[MetricType.UserAwakeMonthlyHRMax]) : -1,
 					},
 					controlState,
 				};

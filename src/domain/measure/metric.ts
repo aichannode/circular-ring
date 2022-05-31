@@ -244,6 +244,9 @@ export enum MetricType {
 	UserDailyAwakeHRMin = "user.daily.awake.hr.min",
 	UserDailyAwakeHRAverage = "user.daily.awake.hr",
 	UserDailyAwakeHRReference = "user.reference.awake.hr",
+	UserAwakeMonthlyHR = "user.30days.awake.hr",
+	UserAwakeMonthlyHRMax = "user.30days.awake.hr.max",
+	UserAwakeMonthlyHRMin = "user.30days.awake.hr.min",
 
 	///////////////////
 	// BR

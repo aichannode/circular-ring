@@ -147,6 +147,12 @@ export type HRV30Days = Range30<{
 	average: number;
 	reference: number;
 }>;
+export type Hr30Days = Range30<{
+	average: number;
+	reference: number;
+	min: number;
+	max: number;
+}>;
 
 export type Scores7D = Range7<{
 	average: number;
