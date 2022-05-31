@@ -105,6 +105,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 		const date = moment(item?.date).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
+	const yMin = lines.length > 0 ? Math.min(...lines.filter((line) => line.y > 0).map((line) => line.y)) : 0;
 
 	return isLoading ? (
 		<Spinner size={24} />
@@ -161,6 +162,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 					graphColor={colors.darkBlue}
 					onSelect={(x) => toUpdateTag(x)}
 					mode={updatedMode}
+					yMin={yMin}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<Row justify="space-between" style={{ marginBottom: 7 }}>

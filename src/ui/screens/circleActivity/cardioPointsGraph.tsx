@@ -85,6 +85,13 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 		const date = moment(lines[x].x).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
+	const [yMin, yMax] =
+		lines.length > 0
+			? [
+					Math.min(...lines.filter((line) => line.y > 0).map((line) => line.y)),
+					Math.max(...lines.map((line) => line.y)),
+			  ]
+			: [0, 0];
 
 	return isLoading ? (
 		<Spinner size={24} />
@@ -135,6 +142,8 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 					onSelect={(x) => toUpdateTag(x)}
 					mapMarker={(el) => `${formatDate(new Date(el.x))}\n${el.y}`}
 					mode={updatedMode}
+					yMin={yMin}
+					yMax={yMax}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

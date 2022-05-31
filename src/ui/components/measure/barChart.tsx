@@ -57,7 +57,7 @@ export function BarChart({
 							if (y == -1000) {
 								marker = `${mapMarker({ x, y: 0, ...args }, _index)}`;
 							} else {
-								marker = `${mapMarker({ x, y, ...args }, _index)}}`;
+								marker = `${mapMarker({ x, y, ...args }, _index)}`;
 							}
 						}
 						return { x: mapXAxis({ x, y, ...args }, _index), y: y == -1000 ? 0 : y, marker };
