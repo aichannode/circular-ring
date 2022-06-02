@@ -1,3 +1,4 @@
+import { isDefined } from "@domain/common/business";
 import { Point, Points } from "@domain/measure/representation/api";
 import { createActiveMode, isInDisabledMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
@@ -26,6 +27,7 @@ interface BarChartProps {
 	mapMarker?: (element: Point, index: number) => string;
 	horizontalPadding?: number;
 	labelCount?: number;
+	isTemperature?: boolean;
 }
 
 export function BarChart({
@@ -45,6 +47,7 @@ export function BarChart({
 	yMax,
 	horizontalPadding = 0.1,
 	labelCount,
+	isTemperature = false,
 }: BarChartProps) {
 	const [selectedX, setSelectedX] = useState<number | undefined>(-1);
 	const dataSets = {
@@ -55,14 +58,13 @@ export function BarChart({
 					?.map((el, index) => ({ ...el, _index: index }))
 					.map(({ x, y, _index, ...args }) => {
 						let marker = "";
-						if (shouldShowMarker) {
-							if (y == -1000) {
-								marker = `${mapMarker({ x, y: 0, ...args }, _index)}`;
-							} else {
-								marker = `${mapMarker({ x, y, ...args }, _index)}`;
-							}
+						let _y = y;
+						if (shouldShowMarker && ((isTemperature && y == -1000) || (!isTemperature && y == -1))) {
+							_y = 0;
 						}
-						return { x: mapXAxis({ x, y, ...args }, _index), y: y == -1000 ? 0 : y, marker };
+
+						marker = `${mapMarker({ x, y: _y, ...args }, _index)}`;
+						return { x: mapXAxis({ x, y: _y, ...args }, _index), y: _y, marker };
 					}),
 				label: "",
 				config: {
@@ -107,8 +109,8 @@ export function BarChart({
 	const yAxis = {
 		left: {
 			enabled: true,
-			axisMinimum: yMin ? Math.floor(yMin) : undefined,
-			axisMaximum: yMax ? Math.ceil(yMax) : undefined,
+			axisMinimum: isDefined(yMin) ? Math.floor(yMin) : undefined,
+			axisMaximum: isDefined(yMax) ? Math.ceil(yMax) : undefined,
 			textColor: processColor(yColor),
 			gridLineWidth: 0.5,
 			drawLabels: true,

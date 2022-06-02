@@ -72,7 +72,6 @@ interface LineChartProps {
 		yValue: number;
 	};
 	isDaily?: boolean;
-	is24h?: boolean;
 }
 
 const verticalContentInset = { top: 40, bottom: 20 };
@@ -113,8 +112,8 @@ export function LineChart({
 	xAxisMax,
 	zoom,
 	isDaily = false,
-	is24h = false,
 }: LineChartProps) {
+	const { format } = useI18n();
 	const [scaleX, setScaleX] = useState(1);
 	const graphRect = useRef<Rect>();
 	const [maxPosition, setMaxPosition] = useState<Position | null>(null);
@@ -130,15 +129,12 @@ export function LineChart({
 			);
 		}
 	}
-
 	const [xMin, xMax] = !isMultipleLines
 		? [Math.min(...data.map((point) => point.x)), Math.max(...data.map((point) => point.x))]
 		: [0, maxDataLength - 1];
-
 	const shouldDisplay = isInActiveMode(mode) || isInCalibrationMode(mode);
-	const { format } = useI18n();
-	const [selectedX, setSelectedX] = useState<number | undefined>(data[0] ? (onSelect ? data[0].x : -1) : undefined);
-	const linspace = yMin && yMax ? Math.round(((yMax - yMin) * 10) / 100) : 0;
+	const linspace = yMin && yMax ? (Math.round(yMax - yMin) * 10) / 100 : 0;
+	const [selectedX, setSelectedX] = useState<number | undefined>(data[0] ? (onSelect ? data[0].x : -1) : -1);
 	const axisMinimum = yMin ? (shouldUpdateYmin ? yMin - linspace : yMin) : 0;
 	const axisMaximum = yMax ? (shouldUpdateYmin ? yMax + linspace : yMax) : 0;
 	const yAxisContentInset = verticalContentInset.top;
@@ -155,7 +151,6 @@ export function LineChart({
 				? valueFormatterPattern?.[0]
 				: valueFormatterPattern?.[1]
 			: valueFormatterPattern,
-
 		position: "BOTTOM" as const,
 		centerAxisLabels: !isMultipleLines,
 		drawAxisLine: false,
@@ -176,8 +171,8 @@ export function LineChart({
 
 	const yAxis = {
 		left: {
-			axisMinimum: Math.floor(axisMinimum),
-			axisMaximum: Math.ceil(axisMaximum),
+			axisMinimum: axisMinimum,
+			axisMaximum: axisMaximum,
 			enabled: true,
 			textColor: processColor(yColor),
 			drawGridLines: true,

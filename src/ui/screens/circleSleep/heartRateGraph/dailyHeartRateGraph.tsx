@@ -11,6 +11,7 @@ import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -29,7 +30,7 @@ export const DailyHeartRateGraph: React.FC<Props> = observer(function HeartRateG
 	mode = createActiveMode(),
 	dailyTrimOptions,
 }: Props) {
-	const { format, formatHour } = useI18n();
+	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 	const is24h = useIs24h();
 	const {
@@ -128,7 +129,9 @@ export const DailyHeartRateGraph: React.FC<Props> = observer(function HeartRateG
 					shouldShowMarker={true}
 					highlightPerTapEnabled={true}
 					labelFormatter={(x, y) => {
-						return `${formatHour(new Date(x), is24h)}\n${Math.round(y)}`;
+						return `${is24h ? dayjs(new Date(x)).format("HH:mm") : dayjs(new Date(x)).format("hh:mm A")}\n${Math.round(
+							y
+						)}`;
 					}}
 				/>
 				<View style={{ marginTop: 20 }}>

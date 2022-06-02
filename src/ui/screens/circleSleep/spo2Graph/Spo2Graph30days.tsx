@@ -2,6 +2,7 @@ import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState } from "@domain/measure/representation/api";
+import { useIsUSCS } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, TrimOptions, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
@@ -11,6 +12,7 @@ import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -28,9 +30,9 @@ export const Spo2Graph30days: React.FC<Props> = observer(function Spo2Graph({
 	mode = createActiveMode(),
 	dailyTrimOptions,
 }: Props) {
-	const { format, formatDate } = useI18n();
+	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
-
+	const isUSCS = useIsUSCS();
 	const {
 		measure: {
 			hooks: { useLast30DaysSpo2 },
@@ -121,7 +123,9 @@ export const Spo2Graph30days: React.FC<Props> = observer(function Spo2Graph({
 					highlightPerTapEnabled={true}
 					isMultipleLines={true}
 					labelFormatter={(x, y) => {
-						return `${formatDate(new Date(x))}\n${Math.round(y)}`;
+						return isUSCS
+							? `${dayjs.utc(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
+							: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${Math.round(y)}`;
 					}}
 					zoom={
 						lines?.length > 0

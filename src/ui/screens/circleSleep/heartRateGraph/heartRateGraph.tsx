@@ -51,9 +51,7 @@ export function HeartRateGraph({ selectedDay, mode = createActiveMode(), dailyTr
 			{graphPeriod === TimeFrame.TODAY && (
 				<DailyHeartRateGraph selectedDay={selectedDay} mode={mode} dailyTrimOptions={dailyTrimOptions} />
 			)}
-			{graphPeriod === TimeFrame.LAST_30_DAYS && (
-				<HrGraph30days selectedDay={selectedDay} mode={mode} dailyTrimOptions={dailyTrimOptions} />
-			)}
+			{graphPeriod === TimeFrame.LAST_30_DAYS && <HrGraph30days selectedDay={selectedDay} mode={mode} />}
 		</View>
 	);
 }

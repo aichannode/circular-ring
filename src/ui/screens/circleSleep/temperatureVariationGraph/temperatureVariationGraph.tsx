@@ -33,8 +33,8 @@ export function TemperatureVariationGraph({ selectedDay, mode = createActiveMode
 					color={colors.business.sleepPrimary}
 					frames={[
 						{
-							label: "graph.time_frame.today",
-							duration: TimeFrame.TODAY,
+							label: "graph.time_frame.7days",
+							duration: TimeFrame.LAST_7_DAYS,
 						},
 						{
 							label: "graph.time_frame.30days",
@@ -48,7 +48,7 @@ export function TemperatureVariationGraph({ selectedDay, mode = createActiveMode
 				/>
 			</View>
 
-			{graphPeriod === TimeFrame.TODAY && <TemperatureVariation7DGraph selectedDay={selectedDay} mode={mode} />}
+			{graphPeriod === TimeFrame.LAST_7_DAYS && <TemperatureVariation7DGraph selectedDay={selectedDay} mode={mode} />}
 			{graphPeriod === TimeFrame.LAST_30_DAYS && <TemperatureVariation30DGraph selectedDay={selectedDay} mode={mode} />}
 		</View>
 	);

@@ -42,7 +42,6 @@ function toColumns(rows: Props["rows"]): {
 export function GraphLegend({ rows, mode = createActiveMode() }: Props) {
 	const data = toColumns(rows);
 	const { format } = useI18n();
-
 	return (
 		<View style={{ flexDirection: "row" }}>
 			<Column>

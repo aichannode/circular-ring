@@ -88,8 +88,8 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const activityContributorGaugesConfig = getActivityGaugesConfig(format);
-
 	useDailyActivityIntensity({ localISODay: selectedDay, setData, setLoading });
+
 	const coreSleepTiming = useCoreSleep(selectedDay);
 
 	const hasCompleteCoreSleep = useHasCompleteCoreSleep(selectedDay);
@@ -335,7 +335,9 @@ const ElementStack = styled(Stack)`
 `;
 
 const GraphSwitcherButton = styled(Image)`
-	margin-left: 15px;
+	margin-left: 7px;
+	margin-right: 7px;
+	margin-bottom: 4px;
 	width: 40px;
 	height: 40px;
 	align-items: center;

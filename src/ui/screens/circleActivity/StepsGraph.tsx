@@ -4,6 +4,7 @@ import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState, Points } from "@domain/measure/representation/api";
 import { TimeFrame } from "@domain/measure/type";
+import { useIsUSCS } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { BarChart } from "@ui/components/measure/barChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
@@ -15,6 +16,7 @@ import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -29,7 +31,7 @@ export const StepsGraph: React.FC<Props> = observer(function StepsGraph({
 	selectedDay,
 	mode = createActiveMode(),
 }: Props) {
-	const { format, formatDate } = useI18n();
+	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	const [tags, setTags] = useState<CalendarTag[]>([]);
@@ -42,7 +44,7 @@ export const StepsGraph: React.FC<Props> = observer(function StepsGraph({
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
-
+	const isUSCS = useIsUSCS();
 	const data = useLast7DaysSteps(selectedDay);
 	const lines: Points = data
 		? data.series
@@ -133,7 +135,11 @@ export const StepsGraph: React.FC<Props> = observer(function StepsGraph({
 					valueFormatter={valueFormatter}
 					graphColor={colors.red}
 					onSelect={(x) => toUpdateTag(x)}
-					mapMarker={(el) => `${formatDate(new Date(el.x))}\n${el.y}`}
+					mapMarker={(el) =>
+						`${isUSCS ? dayjs.utc(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.y)).format("DD/MM/YYYY")}\n${
+							el.y
+						}`
+					}
 					mode={updatedMode}
 				/>
 				<View style={{ marginTop: 20 }}>

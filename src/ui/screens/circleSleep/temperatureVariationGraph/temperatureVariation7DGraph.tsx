@@ -3,6 +3,7 @@ import { CalendarTag } from "@domain/calendar/calendar";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState, Points } from "@domain/measure/representation/api";
+import { useIsUSCS } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { BarChart } from "@ui/components/measure/barChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
@@ -12,6 +13,7 @@ import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -27,10 +29,10 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 	selectedDay,
 	mode = createActiveMode(),
 }: Props) {
-	const { format, formatDate } = useI18n();
+	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 	const [tags, setTags] = useState<CalendarTag[]>([]);
-
+	const isUSCS = useIsUSCS();
 	const {
 		measure: {
 			hooks: { useLast7DaysTemperatureVariation },
@@ -117,7 +119,12 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 					mode={updatedMode}
 					yMin={yMin > -1 ? -1 : yMin}
 					yMax={yMax > 1 ? yMax : 1}
-					mapMarker={(el) => `${formatDate(new Date(el.x))}\n${el.y > 0 ? "+" + el.y : el.y}`}
+					mapMarker={(el) =>
+						`${isUSCS ? dayjs.utc(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
+							el.y > 0 ? "+" + el.y : el.y
+						}`
+					}
+					isTemperature={true}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

@@ -3,6 +3,7 @@ import { CalendarTag } from "@domain/calendar/calendar";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { Points, SleepStageData } from "@domain/measure/representation/api";
+import { useIsUSCS } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { Spinner } from "@ui/components/spinner";
@@ -11,6 +12,7 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Mode } from "@ui/type";
 import { hasAttributesDefined } from "@ui/utils/filter";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useState } from "react";
@@ -33,7 +35,8 @@ const yValueFormatter = [
 // XXX: From @farook implementation (sleepStage7Days.tsx)
 // TODO: Add add on press, add yValueFormatter
 export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode = createActiveMode() }: Props) {
-	const { formatDuration, formatDate } = useI18n();
+	const { formatDuration } = useI18n();
+	const isUSCS = useIsUSCS();
 	const { use7DaysSleep } = useRepresentations().measure.hooks;
 	const { useDailyTags } = useRepresentations().calendar.hooks;
 	const [tags, setTags] = useState<CalendarTag[]>([]);
@@ -130,7 +133,9 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 							`${formatDuration(lines[index].awake * 3600)}`,
 						];
 						///TODO à voir dans le daily pour le formatage
-						return `${formatDate(new Date(lines[index].date))}\n${values.join("\n")}`;
+						return isUSCS
+							? `${dayjs.utc(new Date(lines[index].date)).format("MM/DD/YYYY")}\n${values.join("\n")}`
+							: `${dayjs(new Date(lines[index].date)).format("DD/MM/YYYY")}\n${values.join("\n")}`;
 					}}
 					yValueFormatter={yValueFormatter}
 					onSelect={(x) => toUpdateTag(x)}
