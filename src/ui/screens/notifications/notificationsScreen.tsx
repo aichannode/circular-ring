@@ -10,7 +10,7 @@ import styled from "styled-components/native";
 export const NotificationsScreen: React.FC = () => {
 	const { format } = useI18n();
 	const { navigate } = useRoutesNavigation();
-	const options = ["On", "Off"];
+	const options = [format("global.onShift"), format("global.offShift")];
 	const { userService } = useServices();
 	const notificationsSettings = useObservable(userService.userNotificationsSettings);
 

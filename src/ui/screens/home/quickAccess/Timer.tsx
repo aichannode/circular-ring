@@ -10,6 +10,7 @@ import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import WheelPicker2 from "react-native-wheely";
 import styled from "styled-components/native";
 import { Tile } from "../components/Tile";
+import { useI18n } from "@ui/i18n";
 
 interface TimerBottomSheetProps {
 	onClose: () => void;
@@ -27,6 +28,7 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 	const twelve = useMemo(() => Array.from({ length: 12 }, (_, i) => ("0" + i).slice(-2)), []);
 
 	const { timerService } = useServices();
+	const { format } = useI18n();
 
 	if (showCountdown || timerService.timer.get().remainingSecondes) {
 		return (
@@ -50,7 +52,7 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 							timerService.stop();
 						}}
 					>
-						Cancel
+						{format("global.cancel")}
 					</SecondaryButton>
 					<PrimaryButton
 						onPress={() => {
@@ -59,7 +61,7 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 							else timerService.play(timerService.timer.get().remainingSecondes);
 						}}
 					>
-						{isPlaying ? "Pause" : "Play"}
+						{format(isPlaying ? "quickaccess.timer.pause" : "quickaccess.timer.play")}
 					</PrimaryButton>
 				</View>
 			</View>
@@ -123,7 +125,7 @@ const WheelPicker = ({ onClose }: { onClose: () => void }) => {
 				}}
 				style={{ marginTop: 55, width: 90, alignSelf: "center" }}
 			>
-				Start
+				{format("quickaccess.timer.start")}
 			</PrimaryButton>
 		</View>
 	);
@@ -154,6 +156,7 @@ const countdown = (remainingTime: number) => {
 export const TimerTile = () => {
 	const TimerBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const [timer, setTimer] = useState<null | number>(null);
+	const { format } = useI18n();
 
 	const { timerService } = useServices();
 	useEffect(() => {
@@ -168,8 +171,8 @@ export const TimerTile = () => {
 	return (
 		<>
 			<Tile onPress={() => TimerBottomSheetRef.current?.present()}>
-				<Bold>Timer</Bold>
-				<Light>{timer ? countdown(timer) : "off"}</Light>
+				<Bold>{format("quickaccess.timertitle")}</Bold>
+				<Light>{timer ? countdown(timer) : format("global.off")}</Light>
 			</Tile>
 			<CircularBottomSheet snapPoints={[480]} ref={TimerBottomSheetRef} allowSwipeDownToClose={false}>
 				<TimerBottomSheet onClose={() => TimerBottomSheetRef.current?.close()} />

@@ -13,13 +13,23 @@ import { ParagraphComponentConfigurationDto } from "@domain/feed/type";
 import { useI18n } from "@ui/i18n";
 import { useServices } from "@core/services";
 import { openURL } from "@ui/utils/urlUtils";
+import { WordingKey } from "src/wordings";
 
 interface Props {
 	notification: FeedNotification;
 	style?: StyleProp<ViewStyle>;
 }
 
-function getActionHandler(notif: FeedNotification, navigate: Navigate) {
+interface ActionHandler {
+	notif: FeedNotification;
+	navigate: Navigate;
+	format: (
+		arg0: WordingKey,
+		values?: Record<string, string | number | boolean | Date | null | undefined> | undefined
+	) => string;
+}
+
+function getActionHandler({ notif, navigate, format }: ActionHandler) {
 	return () => {
 		const action = notif.actions[0];
 		if (action) {
@@ -31,7 +41,7 @@ function getActionHandler(notif: FeedNotification, navigate: Navigate) {
 					navigate(Routes.Activity); // TODO Handle routing with backend when we got specs
 					break;
 				default:
-					throw Error("Unhandled client action");
+					throw Error(format("notification.errorUnhandled"));
 			}
 		}
 	};
@@ -44,7 +54,7 @@ export const Notification: React.FC<Props> = ({ notification, style }) => {
 	const { format } = useI18n();
 
 	return (
-		<Pressable onPress={getActionHandler(notification, navigate)} style={style}>
+		<Pressable onPress={getActionHandler({ notif: notification, navigate: navigate, format: format })} style={style}>
 			<Container>
 				<View style={{ marginRight: 27 }}>
 					{notification.icon.type === IconType.URL ? <Image source={{ uri: notification.icon.type }} /> : null}

@@ -24,7 +24,7 @@ export const HighHrScreen: React.FC = () => {
 		<Container>
 			<InfoListItem
 				name={format("highHr.highHRalert")}
-				switchOptions={["On", "Off"]}
+				switchOptions={[format("global.onShift"), format("global.offShift")]}
 				switchValue={notificationsSettings.highHRAlert}
 				onSwitchSelect={(val) => userService.updateUserNotificationsSettings({ highHRAlert: val })}
 				lightTheme

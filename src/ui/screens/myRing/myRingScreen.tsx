@@ -54,9 +54,7 @@ export const MyRingScreen: React.FC = () => {
 					})
 				);
 			} catch (err) {
-				Alert.alert("Error", "An error occured while trying to change ring name (no ring connected)", [
-					{ text: "OK", onPress: () => console.log("OK Pressed") },
-				]);
+				Alert.alert("Error", format("ring.battery.error"), [{ text: "OK", onPress: () => console.log("OK Pressed") }]);
 			}
 		}
 	};

@@ -22,7 +22,7 @@ interface RingCardProps {
 
 export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked }) => {
 	const { format } = useI18n();
-	const options = ["Turn on", "Turn off"];
+	const options = [format("ring.turnOn"), format("ring.turnOff")];
 	const [currentOption, setCurrentOption] = useState(ring.connected ? options[0] : options[1]);
 	const { bleDeviceService } = useServices();
 

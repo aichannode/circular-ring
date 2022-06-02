@@ -14,6 +14,7 @@ import { TimerTile } from "./Timer";
 export const SleepTile = () => {
 	const { appStateService } = useServices();
 	const sleepMode = useObservable(appStateService.isInSleepMode);
+	const { format } = useI18n();
 
 	const sleepTextColor = sleepMode ? colors.white : colors.black;
 	const sleepBackGound = sleepMode ? colors.sleepBlue : colors.white;
@@ -25,17 +26,19 @@ export const SleepTile = () => {
 				appStateService.updateSleepMode(!sleepMode);
 			}}
 		>
-			<Bold style={{ color: sleepTextColor }}>Sleep mode</Bold>
-			<Light>{sleepMode ? "on" : "off"}</Light>
+			<Bold style={{ color: sleepTextColor }}>{format("quickaccess.sleeptitle")}</Bold>
+			<Light>{format(sleepMode ? "global.on" : "global.off")}</Light>
 		</Tile>
 	);
 };
 
 export const CalendarTile = () => {
 	const navigation = useRoutesNavigation();
+	const { format } = useI18n();
+
 	return (
 		<Tile onPress={() => navigation.navigate(Routes.Calendar)}>
-			<Bold>Calendar</Bold>
+			<Bold>{format("quickaccess.calendartitle")}</Bold>
 		</Tile>
 	);
 };

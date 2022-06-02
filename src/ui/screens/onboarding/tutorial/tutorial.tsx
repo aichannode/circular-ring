@@ -17,6 +17,7 @@ import { FakeRecommendation } from "./FakeRecommendation";
 import { FourDot } from "./fourDot";
 import { Mask } from "./mask";
 import { recommendationData, recommendationDataFeed } from "./recomandation";
+import { useI18n } from "@ui/i18n";
 
 export const Tutorial = () => {
 	const route = useAppRoute<Routes.OnboardingTutorial>();
@@ -25,6 +26,7 @@ export const Tutorial = () => {
 	const [step, setStep] = useState<number>(0);
 	const { navigate } = useRoutesNavigation();
 	const [isLoading, setLoading] = useState(false);
+	const { format } = useI18n();
 
 	useFetchCircles();
 
@@ -96,7 +98,7 @@ export const Tutorial = () => {
 								});
 							}}
 						>
-							<NavText>Back</NavText>
+							<NavText>{format("global.back")}</NavText>
 						</NavButton>
 					) : (
 						<NavButton
@@ -104,7 +106,7 @@ export const Tutorial = () => {
 								completeTutorial();
 							}}
 						>
-							<NavText>Skip</NavText>
+							<NavText>{format("global.skip")}</NavText>
 						</NavButton>
 					)}
 					<FourDot step={step} />
@@ -113,7 +115,7 @@ export const Tutorial = () => {
 							step < 3 ? setStep((step) => step + 1) : completeTutorial();
 						}}
 					>
-						<NavText>Next</NavText>
+						<NavText>{format("global.next")}</NavText>
 					</NavButton>
 				</Navigation>
 			)}
