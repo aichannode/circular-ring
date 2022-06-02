@@ -39,6 +39,10 @@ export class RingApi {
 		addResponseInterceptor(this.instance, logResponseInterceptor(this.logger));
 	}
 
+	async reset() {
+		this._firmwareVersion.set(undefined);
+	}
+
 	async getRings(): Promise<UserRing[]> {
 		const result = await this.apiService.get<UserRing[]>(`${ringApiBaseUrl}`);
 		return result.data;

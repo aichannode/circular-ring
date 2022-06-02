@@ -1,5 +1,6 @@
 import { DEFAULT_LOG_DIR } from "@betomorrow/logging-native";
-import { useServices } from "@core/services";
+import { useRepresentations } from "@core/representation";
+import { apiService, useServices } from "@core/services";
 import { useFetchCircles } from "@domain/circles/hooks";
 import { DeviceSetupState } from "@domain/device/bleDeviceService";
 import { useSetupState } from "@domain/device/hooks";
@@ -35,6 +36,15 @@ export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
 	const previousScrollViewY = useRef(0);
 	const setupState = useSetupState();
+	const {
+		measure: {
+			hooks: { useResetMeasureModel },
+		},
+		calendar: {
+			hooks: { useResetCalendarModel },
+		},
+	} = useRepresentations();
+	useFetchCircles();
 
 	useEffect(() => {
 		if (setupState === DeviceSetupState.DISABLED) {
@@ -78,6 +88,12 @@ export const HomeScreen: React.FC = () => {
 		);
 	};
 
+	const resetCache = () => {
+		apiService.reset();
+		useResetMeasureModel();
+		useResetCalendarModel();
+	};
+
 	const forceRefresh = useCallback(async () => {
 		await ringManagementService.syncData();
 		await feedService.fetchAll();
@@ -100,6 +116,7 @@ export const HomeScreen: React.FC = () => {
 					GENERATE RING DATA
 				</PrimaryButton>
 				<PrimaryButton onPress={feedService._DEBUG_resetAnswers}>RESET ANSWERS</PrimaryButton>
+				<PrimaryButton onPress={() => resetCache()}>CLEAR MEASURE AND CACHE</PrimaryButton>
 			</IfAdmin>
 			{notifications[0] && (
 				<Fade isVisible isAnimatedOnMount>
@@ -127,7 +144,6 @@ export const HomeScreen: React.FC = () => {
 		);
 	});
 	data.push(<SpinnerContainer>{loading && <Spinner size={20}></Spinner>}</SpinnerContainer>);
-	useFetchCircles();
 
 	const quickAccessAnim = useRef(new Animated.Value(0)).current;
 	useEffect(() => {

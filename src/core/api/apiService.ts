@@ -24,6 +24,7 @@ interface IStore<K, V> {
 }
 
 class CacheManager implements IStore<string, string> {
+	private logger: Logger = getLogger("Cache Manager");
 	private store: Map<string, CacheOptions & { createdAt: number; value: string }> = new Map();
 	set(key: string, value: string, options?: CacheOptions) {
 		this.store.set(key, { value, createdAt: Date.now(), ttl: options?.ttl });
@@ -52,6 +53,11 @@ class CacheManager implements IStore<string, string> {
 	}
 	delete(key: string) {
 		this.store.delete(key);
+	}
+	reset() {
+		this.logger.info("Cache size BEFORE clear", this.store.size);
+		this.store.clear();
+		this.logger.info("Cache size AFTER clear", this.store.size);
 	}
 }
 
@@ -102,6 +108,10 @@ export class ApiService {
 		} else {
 			this.logger.warn("Trying to initialize service twice");
 		}
+	}
+
+	reset() {
+		this.cacheManager.reset();
 	}
 
 	get<T = unknown, R = AxiosResponse<T>>(

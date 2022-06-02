@@ -1,3 +1,4 @@
+import { useRepresentations } from "@core/representation";
 import { useServices } from "@core/services";
 import { PrimaryButton, TertiaryButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
@@ -12,10 +13,20 @@ interface LogoutBottomSheetProps {
 }
 
 export const LogoutBottomSheet: React.FC<LogoutBottomSheetProps> = ({ onClose }) => {
+	const {
+		measure: {
+			hooks: { useResetMeasureModel },
+		},
+		calendar: {
+			hooks: { useResetCalendarModel },
+		},
+	} = useRepresentations();
 	const { userService } = useServices();
 	const { format } = useI18n();
 
 	const logout = useCallback(async () => {
+		useResetMeasureModel();
+		useResetCalendarModel();
 		onClose();
 		await userService.logout();
 	}, []);

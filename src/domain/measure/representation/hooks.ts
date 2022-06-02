@@ -94,6 +94,15 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 	return {
 		actions,
 		hooks: {
+			useResetMeasureModel() {
+				Object.keys(model).forEach((key) => {
+					if (key !== "lastAcceptedMutations" && typeof model[key as keyof typeof model] === "object") {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						//@ts-ignore
+						model[key as keyof typeof model] = new Map();
+					}
+				});
+			},
 			use7DaysSleep(localISODay: ISODay): Sleep7D | undefined {
 				// Compute the 7 previous date from the given date
 				const last7Days = getLast7Days(localISODay);

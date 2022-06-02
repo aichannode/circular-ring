@@ -118,3 +118,16 @@ export async function initializeServices() {
 			.filter(Boolean)
 	);
 }
+
+export async function resetServices() {
+	return Promise.all(
+		Object.values(services)
+			.filter((service) => service !== cognitoAuthService)
+			.map((service) => {
+				if ("reset" in service) {
+					return service.reset();
+				}
+			})
+			.filter(Boolean)
+	);
+}

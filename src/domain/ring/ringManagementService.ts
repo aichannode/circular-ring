@@ -40,6 +40,13 @@ export class RingManagementService {
 		private readonly appStateService: AppStateService
 	) {}
 
+	async reset() {
+		this._currentRingSyncState.set(SyncState.NONE);
+		this._FBCQuantity.set(0);
+		this._syncStatus.set("home.sync.syncing");
+		this._transmissionStatus.set({ packetTransmitted: 0, totalPacket: 0 });
+	}
+
 	async init() {
 		this.deviceService.monitoring.subscribe((monitoring) => {
 			// on ring connection without Timeout The ring get DDOS

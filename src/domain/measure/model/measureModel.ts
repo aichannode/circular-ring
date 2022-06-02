@@ -186,6 +186,7 @@ export class MeasureModel implements Model<Proposal> {
 			present: action,
 		});
 	}
+
 	public present = (proposal: Proposal) => {
 		(this.lastAcceptedMutations as IObservableArray).clear();
 		proposal.forEach((mutation) => {

@@ -122,7 +122,7 @@ export class BleDeviceService {
 	scannedDevices = this._scannedDevices.select((devicesMap) => [...devicesMap.values()]);
 
 	readonly connectedDevice = this._connectedDevice.readOnly();
-	readonly setupState: Observable<DeviceSetupState>;
+	setupState: Observable<DeviceSetupState>;
 	readonly autoConnectState: Observable<DeviceAutoConnectState>;
 	favoriteDevice = this._favoriteDevice;
 	favoriteDeviceSNU = this._favoriteDeviceSNU;
@@ -212,6 +212,15 @@ export class BleDeviceService {
 	}
 
 	async reset() {
+		this.disconnect({ dissociate: false });
+		this._scannedDevices.set(new Map<string, Device>());
+		this._connectedDevice.set(null);
+		this._connectionState.set(DeviceConnectionState.DISCONNECTED);
+		this._scanning.set(false);
+		this._lookingForDevice.set(false);
+		this._monitoring.set(false);
+		this._userDevices.set(null);
+		this._currentRingBattery.set(null);
 		this._favoriteDevice.set(null);
 		this._favoriteDeviceSNU.set(null);
 		this.favoriteDeviceStorage.clear();

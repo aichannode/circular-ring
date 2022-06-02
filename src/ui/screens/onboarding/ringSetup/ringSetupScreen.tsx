@@ -1,3 +1,4 @@
+import { useLogger } from "@core/logger/hooks/useLogger";
 import { useServices } from "@core/services";
 import { DeviceSetupState } from "@domain/device/bleDeviceService";
 import { useScannedDevices, useSetupState } from "@domain/device/hooks";
@@ -39,6 +40,7 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	const { setWait } = props.route.params;
 	const { navigate } = useRoutesNavigation();
 	const pairingFailedBottomSheet = useRef<CircularBottomSheetHandle>(null);
+	const logger = useLogger("RingSetupScreen");
 
 	const setupState = useSetupState();
 	const devices = useScannedDevices();
@@ -48,6 +50,7 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 	}, []);
 
 	useEffect(() => {
+		logger.info("setupState", setupState);
 		if (setupState === DeviceSetupState.READY_TO_SCAN) {
 			bleDeviceService.startScan();
 		}

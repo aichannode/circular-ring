@@ -1,4 +1,5 @@
 import { getLogger } from "@core/logger/logger";
+import { apiService, resetServices } from "@core/services";
 import { round2Digits, toServerDate } from "@core/utils";
 import { AppStateService } from "@domain/appState/appStateService";
 import { AuthService } from "@domain/auth/authService";
@@ -146,10 +147,12 @@ export class UserService {
 	async logout() {
 		// const appDataIds = await Storage.getAllKeys();
 		// Storage.multiRemove(appDataIds);
-		this.bleDeviceService.disconnect({ dissociate: false });
-		this.bleDeviceService.reset();
-		this.reset();
-		this.appStateService.reset();
+
+		await apiService.reset();
+		await this.bleDeviceService.reset();
+		await this.reset();
+		await this.appStateService.reset();
+		await resetServices();
 		await this.authService.logout();
 	}
 

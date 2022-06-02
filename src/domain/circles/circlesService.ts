@@ -1,23 +1,25 @@
-import { CircleEntityIcon } from "@domain/circles/type";
-import { AppStateService } from "./../appState/appStateService";
-import { CirclesApi } from "@domain/circles/circlesApi";
-
+import circleActivity from "@assets/images/circleActivity.png";
 import circleAdd from "@assets/images/circleAdd.png";
 import circleAlarm from "@assets/images/circleAlarm.png";
+import circleLive from "@assets/images/circleLive.png";
+import circleActivitySleepMode from "@assets/images/circlesActivitySleepMode.png";
 import circleSleep from "@assets/images/circleSleep.png";
 import circleSleepSleepMode from "@assets/images/circlesSleepAnalysisSleepMode.png";
-import circleActivity from "@assets/images/circleActivity.png";
-import circleActivitySleepMode from "@assets/images/circlesActivitySleepMode.png";
-import circleLive from "@assets/images/circleLive.png";
 import circleLiveSleepMode from "@assets/images/sleepModeLive.png";
+import { getLogger } from "@core/logger/logger";
+import { CirclesApi } from "@domain/circles/circlesApi";
+import { CircleEntityIcon } from "@domain/circles/type";
+import { AppStateService } from "./../appState/appStateService";
 
 export class CirclesService {
+	private logger = getLogger("cirles Services");
 	constructor(private readonly circlesApi: CirclesApi, private readonly appStateService: AppStateService) {}
 
 	async init() {}
 
 	async fetchUserCircles() {
 		const userCircles = await this.circlesApi.getUserCircles();
+		this.logger.info("fetchUserCircles userCircles: ", userCircles);
 		const defaultCircles = await this.circlesApi.getAllCircles();
 		this.appStateService.defaultCircles.set(defaultCircles);
 		this.appStateService.userCircles.set(userCircles);

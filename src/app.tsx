@@ -25,11 +25,12 @@ import { translations } from "./wordings";
 
 // Setup Mobx for RN
 configure({
-	enforceActions: "always",
+	// enforceActions: "always",
 	computedRequiresReaction: true,
 	reactionRequiresObservable: true,
 	observableRequiresReaction: true,
 	useProxies: "never",
+	enforceActions: "never",
 });
 
 LogBox.ignoreAllLogs(true);
