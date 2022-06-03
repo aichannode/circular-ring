@@ -59,7 +59,7 @@ android:build:prod:
 
 .build-android:
   stage: android
-  image: betomorrow/ci-android:29_v1
+  image: betomorrow/ci-android:30_v16
   environment:
     name: ${ENV}
   tags:
