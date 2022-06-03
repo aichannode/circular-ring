@@ -41,13 +41,15 @@ export const ChronotypeCard = () => {
 		<Card>
 			<TitleContainer>
 				<Title>{format("profile_advanced_info.chrono_type.title")}</Title>
-				<Pressable
-					onPress={() => {
-						chronoTypeInfoRef.current?.present();
-					}}
-				>
-					<Image source={require("@assets/images/info.png")} />
-				</Pressable>
+				{advancedInfo?.chronoType && (
+					<Pressable
+						onPress={() => {
+							chronoTypeInfoRef.current?.present();
+						}}
+					>
+						<Image source={require("@assets/images/info.png")} />
+					</Pressable>
+				)}
 			</TitleContainer>
 			{advancedInfo?.chronoType ? <Icon source={iconSource()} /> : null}
 			<Grow />
