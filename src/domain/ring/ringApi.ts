@@ -65,7 +65,12 @@ export class RingApi {
 		});
 	}
 
-	async sendData(ring: UserRing, rawData: string) {
+	async sendData(
+		ring: UserRing,
+		rawData: string,
+		uploadDoneListener?: () => void,
+		progressListener?: (event: ProgressEvent) => void
+	) {
 		if (rawData === "") return;
 
 		await RNFS.writeFile(tempSyncDataFile, rawData, "utf8");
@@ -93,7 +98,10 @@ export class RingApi {
 				name: "sync.txt",
 			});
 
-			await this.instance.post(data.url, formData);
+			await this.instance.post(data.url, formData, {
+				onUploadProgress: progressListener,
+			});
+			uploadDoneListener?.();
 
 			let gotExceptionOnly = false;
 			let task;
@@ -123,7 +131,6 @@ export class RingApi {
 			if (!task || task.status !== "ENDED") {
 				throw Error("Sync Task execution error");
 			}
-			// TODO Might add something on the UI depending on the task adv ?
 		} finally {
 			await RNFS.unlink(tempSyncDataFile);
 		}

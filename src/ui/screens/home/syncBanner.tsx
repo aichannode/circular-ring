@@ -22,8 +22,9 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({ style, onRetry }) => {
 	const { ringManagementService } = useServices();
 	const transmissionStatus = useObservable(ringManagementService.transmissionStatus);
 	const syncStatus = useObservable(ringManagementService.syncStatus);
+	const errorMessage = useObservable(ringManagementService.errorMessage);
 	const syncState = useSyncState();
-	const { format } = useI18n();
+	const { format, formatNumber } = useI18n();
 	const progressWidth = useSharedValue(10);
 	const progressStyle = useAnimatedStyle(() => {
 		return {
@@ -73,10 +74,12 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({ style, onRetry }) => {
 								<>
 									<Spinner size={19} />
 									<SyncInfo>{format(syncStatus)}</SyncInfo>
-									{syncStatus === "home.sync.syncing" && (
+									{(syncStatus === "home.sync.fetching" || syncStatus === "home.sync.uploading") && (
 										<>
 											<Grow />
-											<SyncInfo>{`${transmissionStatus.packetTransmitted} / ${transmissionStatus.totalPacket}`}</SyncInfo>
+											<SyncInfo>{`${formatNumber(
+												(transmissionStatus.packetTransmitted / transmissionStatus.totalPacket) * 100
+											)}%`}</SyncInfo>
 										</>
 									)}
 								</>
@@ -85,14 +88,18 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({ style, onRetry }) => {
 							return (
 								<>
 									<Icon source={require("@assets/images/sync.png")} />
-									<SyncInfo>{format("home.sync.error")}</SyncInfo>
+									<SyncInfo>
+										{format("home.sync.error", {
+											error: format(errorMessage),
+										})}
+									</SyncInfo>
 								</>
 							);
 						case SyncState.SUCCESS:
 							return (
 								<>
 									<Icon source={require("@assets/images/check.png")} />
-									<SyncInfo>{format("home.sync.success")}</SyncInfo>
+									<SyncInfo>{format("home.sync.done")}</SyncInfo>
 								</>
 							);
 					}

@@ -25,11 +25,13 @@ export class RingManagementService {
 
 	private _currentRingSyncState = observable<SyncState>(SyncState.NONE);
 	private _FBCQuantity = observable(0);
-	private _syncStatus = observable<WordingKey>("home.sync.syncing");
+	private _syncStatus = observable<WordingKey>("home.sync.fetching");
+	private _errorMessage = observable<WordingKey>("home.sync.error.unknown");
 	private _transmissionStatus = observable({ packetTransmitted: 0, totalPacket: 0 });
 
 	readonly FBCQuantity = this._FBCQuantity.readOnly();
 	currentRingSyncState = this._currentRingSyncState.readOnly();
+	errorMessage = this._errorMessage.readOnly();
 	readonly syncStatus = this._syncStatus.readOnly();
 	readonly transmissionStatus = this._transmissionStatus.readOnly();
 
@@ -43,7 +45,7 @@ export class RingManagementService {
 	async reset() {
 		this._currentRingSyncState.set(SyncState.NONE);
 		this._FBCQuantity.set(0);
-		this._syncStatus.set("home.sync.syncing");
+		this._syncStatus.set("home.sync.fetching");
 		this._transmissionStatus.set({ packetTransmitted: 0, totalPacket: 0 });
 	}
 
@@ -163,6 +165,10 @@ export class RingManagementService {
 				try {
 					const unsubscribe = await this.deviceService.listen(Channel.DATA, Channel.DATA, async (value) => {
 						if (value === ringDataEOF) {
+							// FIXME This forces the ring to send an EOF to save the data.
+							//  This means that it might be the reason for https://circularing.atlassian.net/jira/software/projects/CIR/boards/1?selectedIssue=CIR-945
+							//  because if the ring stops sending data (bluetooth close ?) it will not save the data
+							//  probably needs rework
 							await this.ringDataStorage.save(data);
 							unsubscribe();
 							resolve(data);
@@ -182,8 +188,18 @@ export class RingManagementService {
 			try {
 				// Api call
 				if (allData?.length) {
+					this._syncStatus.set("home.sync.uploading");
 					this.logger.info("Sending data to server...");
-					await this.ringApi.sendData(ring, allData);
+					await this.ringApi.sendData(
+						ring,
+						allData,
+						() => {
+							this._syncStatus.set("home.sync.processing");
+						},
+						(event) => {
+							this._transmissionStatus.set({ packetTransmitted: event.loaded, totalPacket: event.total });
+						}
+					);
 					this.logger.info("Sending data to server: OK");
 					await this.ringDataStorage.clear();
 					this.logger.info("Clearing phone memory");
@@ -201,11 +217,12 @@ export class RingManagementService {
 		} catch (e) {
 			this.logger.warn("Error during sync:", e);
 			this._currentRingSyncState.set(SyncState.ERROR);
+			this._errorMessage.set("home.sync.error.unknown");
 			setTimeout(() => this._currentRingSyncState.set(SyncState.NONE), 1000);
 			this._FBCQuantity.set(0);
 			throw e;
 		}
-		this._syncStatus.set("home.sync.syncing");
+		this._syncStatus.set("home.sync.fetching");
 	}
 
 	async submitFirmwareVersion() {

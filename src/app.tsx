@@ -95,7 +95,7 @@ export const App = () => {
 				onError={(err) => {
 					// XXX: Do not log unmeaningful errors. (https://circularing.atlassian.net/jira/software/projects/CIR/boards/1?selectedIssue=CIR-961)
 					// logger.error(err);
-					__DEV__ && console.warn(err);
+					//__DEV__ && console.warn(err);
 				}}
 			>
 				<StorybookUIRoot />
@@ -109,7 +109,7 @@ export const App = () => {
 				onError={(err) => {
 					// XXX: Do not log unmeaningful errors. (https://circularing.atlassian.net/jira/software/projects/CIR/boards/1?selectedIssue=CIR-961)
 					// logger.error(err);
-					__DEV__ && console.warn(err);
+					//					__DEV__ && console.warn(err);
 				}}
 			>
 				<GestureHandlerRootView style={{ flex: 1 }}>
