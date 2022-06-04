@@ -83,6 +83,7 @@ export const ProfileInformationScreen = () => {
 				action={() => navigate(Routes.ProfileAdvancedInformation)}
 			/>
 			<InfoListItem
+				style={{ marginTop: 20 }}
 				name={format("profile_info.delete")}
 				emphasize={true}
 				action={() => deleteAccountBottomSheetRef.current?.present()}

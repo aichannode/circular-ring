@@ -7,7 +7,6 @@ import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
-import { useObservable } from "micro-observables";
 import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components/native";
 import { version } from "../../../../package.json";
@@ -15,8 +14,6 @@ import { DateFormatBottomSheet } from "./dateFormatBottomSheet";
 
 export const SettingsScreen: React.FC = () => {
 	const { format } = useI18n();
-	const { cognitoAuthService } = useServices();
-	const authUser = useObservable(cognitoAuthService.user);
 	const userSettings = useUserSettings();
 	const { userService } = useServices();
 	const { navigate } = useRoutesNavigation();
@@ -82,9 +79,6 @@ export const SettingsScreen: React.FC = () => {
 				onSwitchSelect={setTemperatureFormat}
 			/>
 			{/* <InfoListItem name={format("settings.dark_mode")} /> */}
-			<InfoListHeader>{format("settings.security")}</InfoListHeader>
-			<InfoListItem name={format("settings.logged_in")} value={authUser?.getIdToken().decodePayload().email ?? ""} />
-			{/* <InfoListItem name={format("settings.2fa")} /> */}
 			<InfoListHeader>{format("settings.other")}</InfoListHeader>
 			{/* <InfoListItem name={format("settings.clear_history")} /> */}
 			<InfoListItem
