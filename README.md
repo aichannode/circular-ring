@@ -8,7 +8,7 @@ This repository use the git flow standard and requires the installation of a git
 
 ## Node version manager
 
-This repository is dependent of NodeJS 12. You could use [NVM](https://github.com/nvm-sh/nvm) or [N](https://www.npmjs.com/package/n) to set node version.
+This repository is dependent of NodeJS 16. You could use [NVM](https://github.com/nvm-sh/nvm) or [N](https://www.npmjs.com/package/n) to set node version.
 
 ## Commitizen
 
@@ -29,3 +29,9 @@ Then, make it executable
 ```bash
 $ chmod 775 .git/hooks/prepare-commit-msg
 ```
+
+## Running
+
+### iOS
+
+To run the app, choose Circular-Dev in Xcode.
