@@ -63,21 +63,22 @@ export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 	const tags = useDailyTags(selectedDay);
 
 	const averages: Averages = [];
-	if (isInActiveMode(updatedMode) && isDefined(constant)) {
-		if (constant.reference !== -1) {
-			averages.push({
-				value: constant.reference,
-				color: colors.redLight,
-			});
-		}
-		if (constant.average !== -1) {
-			averages.push({
-				value: constant.average,
-				color: colors.darkBlue,
-			});
-		}
+	if (
+		(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
+		isDefined(constant) &&
+		constant.average !== -1
+	) {
+		averages.push({
+			value: constant.average,
+			color: colors.darkBlue,
+		});
 	}
-
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.reference !== -1) {
+		averages.push({
+			value: constant.reference,
+			color: colors.redLight,
+		});
+	}
 	useEffect(() => {
 		if (isDefined(lines)) {
 			setLoading(false);

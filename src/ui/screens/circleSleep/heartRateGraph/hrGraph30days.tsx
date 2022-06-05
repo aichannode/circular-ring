@@ -56,7 +56,6 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 		dailyHRNight ? dailyHRNight.constant : { max: -1, min: -1, average: -1, reference: -1 },
 	];
 	const updatedMode = updateMode(mode, dailyHRNight?.controlState !== DataControlState.READY);
-
 	const [yMin, yMax] =
 		lines.length > 0
 			? [
@@ -64,21 +63,21 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 					Math.max(...lines.map((line) => line.y)),
 			  ]
 			: [0, 0];
-	const averages: Averages = [];
-	if (isInActiveMode(updatedMode)) {
-		if (constant.reference !== -1) {
-			averages.push({
-				value: constant.reference,
-				color: colors.redLight,
-			});
-		}
-		if (constant.average !== -1) {
-			averages.push({
-				value: constant.average,
+	console.log({ yMin, yMax });
 
-				color: colors.darkBlue,
-			});
-		}
+	const averages: Averages = [];
+	if (isInActiveMode(updatedMode) && constant.reference !== -1) {
+		averages.push({
+			value: constant.reference,
+			color: colors.redLight,
+		});
+	}
+	if ((isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && constant.average !== -1) {
+		averages.push({
+			value: constant.average,
+
+			color: colors.darkBlue,
+		});
 	}
 
 	const toUpdateTag = (x: number) => {
@@ -108,7 +107,6 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 					</View>
 				)}
 				<LineChart
-					labelCount={30}
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
@@ -118,27 +116,16 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 					shouldDrawCircles={false}
 					graphColor={colors.darkBlue}
 					valueFormatter={lines.map((item) => moment(item.x).format("dd")[0])}
-					yMin={yMin}
-					yMax={yMax}
+					yMin={Math.floor(yMin)}
+					yMax={Math.ceil(yMax)}
 					mode={updatedMode}
-					shouldUpdateYmin={false}
 					highlightPerTapEnabled={true}
 					isMultipleLines={true}
 					labelFormatter={(x, y) => {
 						return isUSCS
-							? `${dayjs.utc(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
+							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
 							: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${Math.round(y)}`;
 					}}
-					zoom={
-						lines?.length > 0
-							? {
-									scaleX: 2,
-									scaleY: 1,
-									xValue: lines[lines.length - 1].x,
-									yValue: 1,
-							  }
-							: undefined
-					}
 					onSelect={(x) => toUpdateTag(x)}
 				/>
 				<View style={{ marginTop: 20 }}>

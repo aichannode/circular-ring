@@ -94,7 +94,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 			color: colors.red,
 		});
 	}
-	if (isInActiveMode(updatedMode) && constant.hr !== -1) {
+	if ((isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && constant.hr !== -1) {
 		averages.push({
 			value: constant.hr,
 			color: colors.redLight,

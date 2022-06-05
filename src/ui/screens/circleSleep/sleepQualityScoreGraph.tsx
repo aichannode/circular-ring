@@ -147,7 +147,7 @@ export const SleepQualityScoreGraph: React.FC<Props> = observer(function EnergyS
 					mode={updatedMode}
 					labelFormatter={(x, y) => {
 						return isUSCS
-							? `${dayjs.utc(new Date(x)).format("MM/DD/YYYY")}\n${y}`
+							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${y}`
 							: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${y}`;
 					}}
 				/>

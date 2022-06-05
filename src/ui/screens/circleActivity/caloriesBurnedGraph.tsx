@@ -146,7 +146,7 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 					onSelect={(x) => toUpdateTag(x)}
 					mode={updatedMode}
 					mapMarker={(el) =>
-						`${isUSCS ? dayjs.utc(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.y)).format("DD/MM/YYYY")}\n${
+						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.y)).format("DD/MM/YYYY")}\n${
 							el.y
 						}`
 					}

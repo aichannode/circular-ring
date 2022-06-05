@@ -134,7 +134,7 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 						];
 						///TODO à voir dans le daily pour le formatage
 						return isUSCS
-							? `${dayjs.utc(new Date(lines[index].date)).format("MM/DD/YYYY")}\n${values.join("\n")}`
+							? `${dayjs(new Date(lines[index].date)).format("MM/DD/YYYY")}\n${values.join("\n")}`
 							: `${dayjs(new Date(lines[index].date)).format("DD/MM/YYYY")}\n${values.join("\n")}`;
 					}}
 					yValueFormatter={yValueFormatter}

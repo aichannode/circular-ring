@@ -72,6 +72,7 @@ interface LineChartProps {
 		yValue: number;
 	};
 	isDaily?: boolean;
+	minimumYValueAllowed?: number;
 }
 
 const verticalContentInset = { top: 40, bottom: 20 };
@@ -112,6 +113,7 @@ export function LineChart({
 	xAxisMax,
 	zoom,
 	isDaily = false,
+	minimumYValueAllowed,
 }: LineChartProps) {
 	const { format } = useI18n();
 	const [scaleX, setScaleX] = useState(1);
@@ -133,10 +135,11 @@ export function LineChart({
 		? [Math.min(...data.map((point) => point.x)), Math.max(...data.map((point) => point.x))]
 		: [0, maxDataLength - 1];
 	const shouldDisplay = isInActiveMode(mode) || isInCalibrationMode(mode);
-	const linspace = yMin && yMax ? (Math.round(yMax - yMin) * 10) / 100 : 0;
+	const linspace = isDefined(yMin) && isDefined(yMax) ? ((yMax - yMin) * 10) / 100 : 0;
 	const [selectedX, setSelectedX] = useState<number | undefined>(data[0] ? (onSelect ? data[0].x : -1) : -1);
-	const axisMinimum = yMin ? (shouldUpdateYmin ? yMin - linspace : yMin) : 0;
-	const axisMaximum = yMax ? (shouldUpdateYmin ? yMax + linspace : yMax) : 0;
+	const axisMinimum = isDefined(yMin) ? (shouldUpdateYmin ? yMin - linspace : yMin) : 0;
+	const axisMaximum = isDefined(yMax) ? (shouldUpdateYmin ? yMax + linspace : yMax) : 0;
+	console.log({ axisMaximum, axisMinimum, yMin, yMax });
 	const yAxisContentInset = verticalContentInset.top;
 	const tooltipMinX = xAxisContentInset;
 	const tooltipMaxX = graphRect.current
@@ -157,7 +160,7 @@ export function LineChart({
 		enabled: true,
 		granularity: 1,
 		drawLabels: true,
-		drawGridLines: false,
+		drawGridLines: true,
 		textSize: 10,
 		yOffset: 30,
 		labelCount: labelCount,
@@ -171,8 +174,8 @@ export function LineChart({
 
 	const yAxis = {
 		left: {
-			axisMinimum: axisMinimum,
-			axisMaximum: axisMaximum,
+			axisMinimum: isDefined(minimumYValueAllowed) ? minimumYValueAllowed : axisMinimum,
+			axisMaximum: Math.ceil(axisMaximum),
 			enabled: true,
 			textColor: processColor(yColor),
 			drawGridLines: true,

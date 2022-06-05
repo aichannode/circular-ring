@@ -50,6 +50,10 @@ export function BarChart({
 	isTemperature = false,
 }: BarChartProps) {
 	const [selectedX, setSelectedX] = useState<number | undefined>(-1);
+	const linspace = isDefined(yMin) && isDefined(yMax) ? ((yMax - yMin) * 10) / 100 : 0;
+	const axisMinimum = isDefined(yMin) ? yMin - linspace : 0;
+	const axisMaximum = isDefined(yMax) ? yMax + linspace : 0;
+	console.log({ axisMaximum });
 	const dataSets = {
 		dataSets: [
 			{
@@ -59,7 +63,7 @@ export function BarChart({
 					.map(({ x, y, _index, ...args }) => {
 						let marker = "";
 						let _y = y;
-						if (shouldShowMarker && ((isTemperature && y == -1000) || (!isTemperature && y == -1))) {
+						if (shouldShowMarker && ((isTemperature && y == -1000) || (!isTemperature && y < 0))) {
 							_y = 0;
 						}
 
@@ -109,8 +113,8 @@ export function BarChart({
 	const yAxis = {
 		left: {
 			enabled: true,
-			axisMinimum: isDefined(yMin) ? Math.floor(yMin) : undefined,
-			axisMaximum: isDefined(yMax) ? Math.ceil(yMax) : undefined,
+			axisMinimum: axisMinimum,
+			axisMaximum: axisMaximum,
 			textColor: processColor(yColor),
 			gridLineWidth: 0.5,
 			drawLabels: true,

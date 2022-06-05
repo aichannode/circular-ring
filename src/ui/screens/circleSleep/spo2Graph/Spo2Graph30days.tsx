@@ -69,19 +69,21 @@ export const Spo2Graph30days: React.FC<Props> = observer(function Spo2Graph({
 	const tags = useDailyTags(selectedDay);
 
 	const averages: Averages = [];
-	if (isInActiveMode(updatedMode) && isDefined(constant)) {
-		if (constant.reference !== -1) {
-			averages.push({
-				value: Math.round(constant.reference),
-				color: colors.redLight,
-			});
-		}
-		if (constant.average !== -1) {
-			averages.push({
-				value: Math.round(constant.average),
-				color: colors.darkBlue,
-			});
-		}
+	if (
+		(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
+		isDefined(constant) &&
+		constant.average !== -1
+	) {
+		averages.push({
+			value: constant.average,
+			color: colors.darkBlue,
+		});
+	}
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.reference !== -1) {
+		averages.push({
+			value: constant.reference,
+			color: colors.redLight,
+		});
 	}
 
 	useEffect(() => {
@@ -116,15 +118,15 @@ export const Spo2Graph30days: React.FC<Props> = observer(function Spo2Graph({
 					shouldDrawCircles={false}
 					graphColor={colors.darkBlue}
 					valueFormatter={lines.map((item) => moment(item.x).format("dd")[0])}
-					yMin={yMin}
-					yMax={yMax}
+					yMin={Math.floor(yMin)}
+					yMax={Math.ceil(yMax)}
 					mode={updatedMode}
 					shouldUpdateYmin={false}
 					highlightPerTapEnabled={true}
 					isMultipleLines={true}
 					labelFormatter={(x, y) => {
 						return isUSCS
-							? `${dayjs.utc(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
+							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
 							: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${Math.round(y)}`;
 					}}
 					zoom={

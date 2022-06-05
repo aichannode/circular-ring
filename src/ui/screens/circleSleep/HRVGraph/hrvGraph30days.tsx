@@ -67,20 +67,24 @@ export const HrVGraph30days: React.FC<Props> = observer(function HeartRateGraph(
 			  ]
 			: [0, 0];
 	const averages: Averages = [];
-	if (isInActiveMode(updatedMode)) {
-		if (constant.reference !== -1) {
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.reference !== -1) {
+		{
 			averages.push({
 				value: constant.reference,
 				color: colors.redLight,
 			});
 		}
-		if (constant.average !== -1) {
-			averages.push({
-				value: constant.average,
+	}
 
-				color: colors.darkBlue,
-			});
-		}
+	if (
+		(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
+		isDefined(constant) &&
+		constant.average !== -1
+	) {
+		averages.push({
+			value: constant.average,
+			color: colors.darkBlue,
+		});
 	}
 
 	const toUpdateTag = (x: number) => {
@@ -110,7 +114,6 @@ export const HrVGraph30days: React.FC<Props> = observer(function HeartRateGraph(
 					</View>
 				)}
 				<LineChart
-					labelCount={20}
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
@@ -120,15 +123,15 @@ export const HrVGraph30days: React.FC<Props> = observer(function HeartRateGraph(
 					shouldDrawCircles={false}
 					graphColor={colors.darkBlue}
 					valueFormatter={lines.map((item) => moment(item.x).format("dd")[0])}
-					yMin={yMin}
-					yMax={yMax}
+					yMin={Math.floor(yMin)}
+					yMax={Math.ceil(yMax)}
 					mode={updatedMode}
 					shouldUpdateYmin={false}
 					highlightPerTapEnabled={true}
 					isMultipleLines={true}
 					labelFormatter={(x, y) => {
 						return isUSCS
-							? `${dayjs.utc(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
+							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
 							: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${Math.round(y)}`;
 					}}
 					zoom={

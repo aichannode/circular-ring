@@ -842,7 +842,6 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				// Compute the 30 previous date from the given date
 
 				const last30Days = getLast30Days(localISODay);
-
 				useEffect(
 					action(function () {
 						actions.setMonthlySpo2Constants(localISODay);
@@ -1133,9 +1132,15 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					return {
 						series,
 						constant: {
-							average: Number(constants[MetricType.UserCardioPointAverage]),
-							baseline: Number(constants[MetricType.UserCardioPointBaseline]),
-							total: Number(constants[MetricType.UserCardioPointTotal]),
+							average: constants[MetricType.UserCardioPointAverage]
+								? Number(constants[MetricType.UserCardioPointAverage])
+								: -1,
+							baseline: constants[MetricType.UserCardioPointBaseline]
+								? Number(constants[MetricType.UserCardioPointBaseline])
+								: -1,
+							total: constants[MetricType.UserCardioPointTotal]
+								? Number(constants[MetricType.UserCardioPointTotal])
+								: -1,
 						},
 						controlState,
 					};
@@ -1342,9 +1347,9 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					return {
 						series,
 						constant: {
-							average: Number(constants[MetricType.UserStepsAverage]),
-							baseline: Number(constants[MetricType.UserStepsBaseline]),
-							total: Number(constants[MetricType.UserStepsTotal]),
+							average: constants[MetricType.UserStepsAverage] ? Number(constants[MetricType.UserStepsAverage]) : -1,
+							baseline: constants[MetricType.UserStepsBaseline] ? Number(constants[MetricType.UserStepsBaseline]) : -1,
+							total: constants[MetricType.UserStepsTotal] ? Number(constants[MetricType.UserStepsTotal]) : -1,
 						},
 						controlState,
 					};
@@ -1388,9 +1393,15 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					return {
 						series,
 						constant: {
-							average: Number(constants[MetricType.UserCalorieBurnedAverage]),
-							baseline: Number(constants[MetricType.UserCalorieBurnedBaseline]),
-							total: Number(constants[MetricType.UserCalorieBurnedTotal]),
+							average: constants[MetricType.UserCalorieBurnedAverage]
+								? Number(constants[MetricType.UserCalorieBurnedAverage])
+								: -1,
+							baseline: constants[MetricType.UserCalorieBurnedBaseline]
+								? Number(constants[MetricType.UserCalorieBurnedBaseline])
+								: -1,
+							total: constants[MetricType.UserCalorieBurnedTotal]
+								? Number(constants[MetricType.UserCalorieBurnedTotal])
+								: -1,
 						},
 						controlState,
 					};

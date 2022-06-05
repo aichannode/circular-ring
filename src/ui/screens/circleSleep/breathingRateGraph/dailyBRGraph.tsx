@@ -57,13 +57,13 @@ export const DailyBreathingRateGraph: React.FC<Props> = observer(function DailyB
 	];
 	const tags = useDailyTags(selectedDay);
 	const averages: Averages = [];
-	if (isInCalibrationMode(updatedMode) && constant.reference !== -1) {
+	if (isInActiveMode(updatedMode) && constant.reference !== -1) {
 		averages.push({
 			value: constant.reference,
 			color: colors.redLight,
 		});
 	}
-	if (isInActiveMode(updatedMode) && constant.average !== -1) {
+	if ((isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && constant.average !== -1) {
 		averages.push({
 			value: constant.average,
 			color: colors.darkBlue,

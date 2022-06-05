@@ -61,22 +61,20 @@ export const DailyHeartRateGraph: React.FC<Props> = observer(function HeartRateG
 		parsedData.findIndex((line) => line.y == yMax),
 	];
 	const tags = useDailyTags(selectedDay);
-	const updatedMode = updateMode(mode, parsedData.length === -1);
+	const updatedMode = updateMode(mode, parsedData.length === 0);
 	const averages: Averages = [];
-	if (isInActiveMode(updatedMode)) {
-		if (constant.reference !== -1) {
-			averages.push({
-				value: constant.reference,
-				color: colors.redLight,
-			});
-		}
-		if (constant.hr !== -1) {
-			averages.push({
-				value: constant.hr,
+	if (isInActiveMode(updatedMode) && constant.reference !== -1) {
+		averages.push({
+			value: constant.reference,
+			color: colors.redLight,
+		});
+	}
+	if ((isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && constant.hr !== -1) {
+		averages.push({
+			value: constant.hr,
 
-				color: colors.darkBlue,
-			});
-		}
+			color: colors.darkBlue,
+		});
 	}
 
 	useEffect(() => {

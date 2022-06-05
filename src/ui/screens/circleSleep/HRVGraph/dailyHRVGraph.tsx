@@ -62,19 +62,24 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 	const tags = useDailyTags(selectedDay);
 	const averages: Averages = [];
 	const updatedMode = updateMode(mode, dailyHrv?.controlState !== DataControlState.READY);
-	if (isInActiveMode(updatedMode) && isDefined(constant)) {
-		if (constant.reference !== -1) {
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.reference !== -1) {
+		{
 			averages.push({
 				value: constant.reference,
 				color: colors.redLight,
 			});
 		}
-		if (constant.average !== -1) {
-			averages.push({
-				value: constant.average,
-				color: colors.darkBlue,
-			});
-		}
+	}
+
+	if (
+		(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
+		isDefined(constant) &&
+		constant.average !== -1
+	) {
+		averages.push({
+			value: constant.average,
+			color: colors.darkBlue,
+		});
 	}
 
 	useEffect(() => {
@@ -108,7 +113,7 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 					shouldDrawCircles={false}
 					graphColor={colors.darkBlue}
 					valueFormatter="date"
-					valueFormatterPattern={["h a", "h:mm a"]}
+					valueFormatterPattern={[is24h ? "h" : "h a", "h:mm a"]}
 					yMin={yMin}
 					yMax={yMax}
 					yMinIndex={yMinIndex}

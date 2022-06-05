@@ -56,6 +56,8 @@ export const StepsGraph: React.FC<Props> = observer(function StepsGraph({
 				})
 				.reverse()
 		: [];
+	const yMax = lines.length > 0 ? Math.max(...lines.filter((line) => line.y > 0).map((line) => line.y)) : 0;
+
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 
 	const valueFormatter = lines.map(({ x }) => {
@@ -136,11 +138,13 @@ export const StepsGraph: React.FC<Props> = observer(function StepsGraph({
 					graphColor={colors.red}
 					onSelect={(x) => toUpdateTag(x)}
 					mapMarker={(el) =>
-						`${isUSCS ? dayjs.utc(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.y)).format("DD/MM/YYYY")}\n${
+						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.y)).format("DD/MM/YYYY")}\n${
 							el.y
 						}`
 					}
 					mode={updatedMode}
+					yMin={0}
+					yMax={yMax}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

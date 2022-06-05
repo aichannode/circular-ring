@@ -70,20 +70,17 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 			  ]
 			: [0, 0];
 	const averages: Averages = [];
-	if (isInActiveMode(updatedMode)) {
-		if (constant.reference !== -1) {
-			averages.push({
-				value: constant.reference,
-				color: colors.redLight,
-			});
-		}
-		if (constant.average !== -1) {
-			averages.push({
-				value: constant.average,
-
-				color: colors.red,
-			});
-		}
+	if (isInActiveMode(updatedMode) && constant.reference !== -1) {
+		averages.push({
+			value: constant.reference,
+			color: colors.red,
+		});
+	}
+	if ((isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && constant.average !== -1) {
+		averages.push({
+			value: constant.average,
+			color: colors.redLight,
+		});
 	}
 
 	const toUpdateTag = (x: number) => {
@@ -113,7 +110,6 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 					</View>
 				)}
 				<LineChart
-					labelCount={20}
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
@@ -151,7 +147,7 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 					onSelect={(x) => toUpdateTag(x)}
 					labelFormatter={(x, y) => {
 						return isUSCS
-							? `${dayjs.utc(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
+							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
 							: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${Math.round(y)}`;
 					}}
 				/>

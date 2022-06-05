@@ -1,4 +1,4 @@
-import { hasNullMember, isDefined, isToday, toLocale } from "@domain/common/business";
+import { hasNullMember, isDefined, isToday } from "@domain/common/business";
 import { ISOMonth } from "@domain/common/type";
 import { hasAttributesDefined } from "@ui/utils/filter";
 import moment from "moment";
@@ -317,7 +317,7 @@ export function parseDailyHRNight(
 export function getTimeseries(timeSeries: ReadonlyArray<DatedMetrics<any>>, key: MetricType): Points {
 	const lines = timeSeries.map((timeSerie) => {
 		return {
-			x: moment(toLocale(timeSerie.timestamp)).valueOf(),
+			x: moment(timeSerie.timestamp).valueOf(),
 			y: getOrElse<number>(timeSerie.metrics, key, -1),
 		};
 	});

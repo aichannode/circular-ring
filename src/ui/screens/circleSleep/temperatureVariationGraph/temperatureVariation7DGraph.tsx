@@ -120,7 +120,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 					yMin={yMin > -1 ? -1 : yMin}
 					yMax={yMax > 1 ? yMax : 1}
 					mapMarker={(el) =>
-						`${isUSCS ? dayjs.utc(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
+						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
 							el.y > 0 ? "+" + el.y : el.y
 						}`
 					}

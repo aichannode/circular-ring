@@ -46,6 +46,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 	} = useRepresentations();
 
 	const data = useLast7DaysCardioPoints(selectedDay);
+	console.log({ selectedDay });
 	const lines: Points = data
 		? data.series
 				.map((el) => {
@@ -65,7 +66,11 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 
 	const constant = data?.constant;
 	const averages: Averages = [];
-	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.average !== -1) {
+	if (
+		(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
+		isDefined(constant) &&
+		constant.average !== -1
+	) {
 		averages.push({
 			value: constant.average,
 			color: colors.red,
@@ -87,7 +92,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 		const date = moment(lines[x].x).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
-	const yMax = lines.length > 0 ? Math.min(...lines.filter((line) => line.y > 0).map((line) => line.y)) : 0;
+	const yMax = lines.length > 0 ? Math.max(...lines.filter((line) => line.y > 0).map((line) => line.y)) : 0;
 
 	return isLoading ? (
 		<Spinner size={24} />
@@ -137,7 +142,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 					graphColor={colors.red}
 					onSelect={(x) => toUpdateTag(x)}
 					mapMarker={(el) =>
-						`${isUSCS ? dayjs.utc(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.y)).format("DD/MM/YYYY")}\n${
+						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.y)).format("DD/MM/YYYY")}\n${
 							el.y
 						}`
 					}

@@ -16,6 +16,7 @@ export enum ActivityStage {
 
 export enum TimeFrame {
 	// Relative time
+	ONE_DAY = "ONE_TODAY",
 	TODAY = "TODAY",
 	LAST_7_DAYS = "LAST_7_DAYS",
 	LAST_30_DAYS = "LAST_30_DAYS",

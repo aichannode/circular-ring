@@ -19,7 +19,7 @@ type Props = {
 
 export function TemperatureVariationGraph({ selectedDay, mode = createActiveMode(), dailyTrimOptions }: Props) {
 	const { format } = useI18n();
-	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
+	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.LAST_7_DAYS);
 
 	return (
 		<View>

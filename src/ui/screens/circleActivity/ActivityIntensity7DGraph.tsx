@@ -108,6 +108,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 					shouldDrawCircles={true}
 					valueFormatter={xAxis || []}
 					yValueFormatter={yValueFormatter}
+					minimumYValueAllowed={0}
 					yMin={yMin}
 					yMax={yMax}
 					mode={updatedMode}
@@ -124,7 +125,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 							.map((val) => formatDuration(val * 60));
 
 						return isUSCS
-							? `${dayjs.utc(new Date(lines[index].date)).format("MM/DD/YYYY")}\n${values.join("\n")}`
+							? `${dayjs(new Date(lines[index].date)).format("MM/DD/YYYY")}\n${values.join("\n")}`
 							: `${dayjs(new Date(lines[index].date)).format("DD/MM/YYYY")}\n${values.join("\n")}`;
 					}}
 					highlightPerTapEnabled

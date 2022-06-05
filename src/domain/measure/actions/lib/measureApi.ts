@@ -91,6 +91,14 @@ export class MeasureApi {
 		return await this.getLastMeasures(measures, toUTCTimeSegment(isoDay, TimeFrame.DAY), useForceRefresh);
 	}
 
+	public async fetchOneDayMeasures<T extends MetricType>(
+		measures: ReadonlyArray<T>,
+		isoDay: ISODay,
+		useForceRefresh?: boolean
+	): Promise<Metrics<T>> {
+		return await this.getLastMeasures(measures, toUTCTimeSegment(isoDay, TimeFrame.ONE_DAY), useForceRefresh);
+	}
+
 	public async fetchDailyMeasures<T extends MetricType>(
 		measures: ReadonlyArray<T>,
 		isoDay: ISODay,

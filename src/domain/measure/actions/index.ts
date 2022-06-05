@@ -411,7 +411,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		},
 
 		async setDailySpo2(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailySPO2], localISODay, useForceRefresh);
+			const data = await measureApi.fetchOneDayMeasures([MetricType.UserDailySPO2], localISODay, useForceRefresh);
 			present([
 				{
 					type: "setDailySpo2",
@@ -423,11 +423,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async setDailyBR(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures(
-				[MetricType.UserDailyAsleepBR],
-				localISODay,
-				useForceRefresh
-			);
+			const data = await measureApi.fetchOneDayMeasures([MetricType.UserDailyAsleepBR], localISODay, useForceRefresh);
 			present([
 				{
 					type: "setDailyBR",
@@ -440,7 +436,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		},
 
 		async setDailyHr(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures(
+			const data = await measureApi.fetchOneDayMeasures(
 				[MetricType.UserDailyAwakeHRAverage],
 				localISODay,
 				useForceRefresh
@@ -456,24 +452,20 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async setDailyHrNight(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserHR], localISODay, useForceRefresh);
+			const data = await measureApi.fetchOneDayMeasures([MetricType.UserHRNight], localISODay, useForceRefresh);
 			present([
 				{
 					type: "setDailyHrNight",
 					payload: {
 						localISODay,
-						data: data[MetricType.UserHR] ? Number(data[MetricType.UserHR]) : -1,
+						data: data[MetricType.UserHRNight] ? Number(data[MetricType.UserHRNight]) : -1,
 					},
 				},
 			]);
 		},
 
 		async setDailyHRV(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures(
-				[MetricType.UserDailyAsleepHRV],
-				localISODay,
-				useForceRefresh
-			);
+			const data = await measureApi.fetchOneDayMeasures([MetricType.UserDailyAsleepHRV], localISODay, useForceRefresh);
 			present([
 				{
 					type: "setDailyHRV",
@@ -610,7 +602,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async setDailyRestingHeartRate(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailyRHR], localISODay, useForceRefresh);
+			const data = await measureApi.fetchOneDayMeasures([MetricType.UserDailyRHR], localISODay, useForceRefresh);
 			present([
 				{
 					type: "setDailyRestingHeartRate",
@@ -641,7 +633,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			});
 		},
 		async setDailyEnergyScore(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures(
+			const data = await measureApi.fetchOneDayMeasures(
 				[MetricType.UserDailyEnergyScore],
 				localISODay,
 				useForceRefresh
@@ -685,11 +677,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async setDailySleepQualityScore(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures(
-				[MetricType.UserDailySleepScore],
-				localISODay,
-				useForceRefresh
-			);
+			const data = await measureApi.fetchOneDayMeasures([MetricType.UserDailySleepScore], localISODay, useForceRefresh);
 			present([
 				{
 					type: "setDailySleepScore",
@@ -749,7 +737,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async pullDailyCardioPoints(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures(
+			const data = await measureApi.fetchOneDayMeasures(
 				[MetricType.UserDailyCardioPoints],
 				localISODay,
 				useForceRefresh
@@ -765,7 +753,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async pullDailyCalorieBurned(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures(
+			const data = await measureApi.fetchOneDayMeasures(
 				[MetricType.UserDailyCaloriesBurned],
 				localISODay,
 				useForceRefresh
@@ -797,7 +785,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async pullDailyTemperatureVariation(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures(
+			const data = await measureApi.fetchOneDayMeasures(
 				[MetricType.UserDailyTemperatureScore],
 				localISODay,
 				useForceRefresh
@@ -876,7 +864,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			});
 		},
 		async pullDailySteps(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailySteps], localISODay, useForceRefresh);
+			const data = await measureApi.fetchOneDayMeasures([MetricType.UserDailySteps], localISODay, useForceRefresh);
 			present([
 				{
 					type: "setDailyStepsMetrics",
@@ -904,11 +892,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async pullDailyHRSMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures<DailyHRSMetrics>(
-				dailyHRSMetrics,
-				localISODay,
-				useForceRefresh
-			);
+			const data = await measureApi.fetchOneDayMeasures<DailyHRSMetrics>(dailyHRSMetrics, localISODay, useForceRefresh);
 			present([
 				{
 					type: "setDailyHRSMetrics",

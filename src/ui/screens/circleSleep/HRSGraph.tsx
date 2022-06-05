@@ -108,6 +108,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 		const date = moment(item?.date).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
+	const yMax = lines.length > 0 ? Math.max(...lines.filter((line) => line.y > 0).map((line) => line.y)) : 0;
 
 	return isLoading ? (
 		<Spinner size={24} />
@@ -154,7 +155,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 					mapBarColor={(el) => (el as typeof lines[number]).color}
 					mapMarker={(el) =>
 						`${
-							isUSCS ? dayjs.utc(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")
+							isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")
 						}\n${formatDuration(moment.duration((el as typeof lines[number]).y, "hours").as("seconds"))}`
 					}
 					xColor={colors.textPrimary}
@@ -165,6 +166,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 					onSelect={(x) => toUpdateTag(x)}
 					mode={updatedMode}
 					yMin={0}
+					yMax={yMax}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<Row justify="space-between" style={{ marginBottom: 7 }}>

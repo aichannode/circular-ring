@@ -71,7 +71,11 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 
-	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.average !== -1) {
+	if (
+		(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
+		isDefined(constant) &&
+		constant.average !== -1
+	) {
 		averages.push({
 			value: constant.average,
 			color: colors.red,
@@ -152,7 +156,7 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 					mode={updatedMode}
 					labelFormatter={(x, y) => {
 						return isUSCS
-							? `${dayjs.utc(new Date(x)).format("MM/DD/YYYY")}\n${Math.floor(y)}`
+							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.floor(y)}`
 							: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${Math.floor(y)}`;
 					}}
 				/>
@@ -175,11 +179,10 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 										</View>
 									),
 								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(constant) && constant.average != -1
-									? `${Math.round(constant?.average)} bpm`
-									: "- bpm",
+								value:
+									isInCalibrationMode(updatedMode) && isDefined(constant) && constant.average != -1
+										? `${Math.round(constant?.average)} bpm`
+										: "- bpm",
 							},
 							{
 								label: format("activity.resting_heart_rate.reference"),
