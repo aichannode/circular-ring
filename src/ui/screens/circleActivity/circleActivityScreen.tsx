@@ -7,8 +7,8 @@ import sport from "@assets/images/sport.png";
 import { useRepresentations } from "@core/representation";
 import { getCurrentLocalISODay } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
-import { activities, activityScoreContributors } from "@domain/measure/representation/lib/type";
+import { ActivityDetail, DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
+import { Activities, activities, activityScoreContributors } from "@domain/measure/representation/lib/type";
 import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
 import { getInitMode, isInCalibrationMode, TrimOptions, updateMode } from "@ui/business";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
@@ -38,6 +38,9 @@ import { HRGraph } from "./HRGraph/HRGraph";
 import { dailyActivitiesUIConfig, getActivityGaugesConfig } from "./measureDisplayInfos";
 import { RestingHeartRate7DGraph } from "./restingHeartRate7DGraph";
 import { StepsGraph } from "./StepsGraph";
+import { services } from "@core/services";
+import { Goals } from "@domain/user/goals.model";
+import { getActivityControlState } from "@domain/measure/representation/business";
 function getIcon(path: string) {
 	switch (path) {
 		case "@assets/images/shoes.png":
@@ -56,20 +59,6 @@ function getIcon(path: string) {
 }
 
 export const CircleActivityScreen = observer(function CircleActivityScreen() {
-	const { format } = useI18n();
-	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
-	const [isLoading, setLoading] = useState<boolean>(true);
-	const [activityIntensity, setData] = useState<DailyActivityIntensityData>({
-		stages: [],
-		controlState: DataControlState.NO_DATA,
-		duration: {
-			total: 0,
-			highActivity: 0,
-			mediumActivity: 0,
-			lowActivity: 0,
-		},
-		sportSessionDates: [],
-	});
 	const {
 		measure: {
 			hooks: {
@@ -82,8 +71,40 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 			},
 		},
 	} = useRepresentations();
+	const { format } = useI18n();
+	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
+	const [dailyActivitiesData, setDailyActivity] = useState<Record<Activities, ActivityDetail> | undefined>(undefined);
+	const [isLoading, setLoading] = useState<boolean>(true);
+	const [activityIntensity, setData] = useState<DailyActivityIntensityData>({
+		stages: [],
+		controlState: DataControlState.NO_DATA,
+		duration: {
+			total: 0,
+			highActivity: 0,
+			mediumActivity: 0,
+			lowActivity: 0,
+		},
+		sportSessionDates: [],
+	});
 	const energyScoreDetails = useDailyEnergyScoreDetails(selectedDay);
-	const dailyActivitiesData = useDailyActivities(selectedDay);
+	const dailyData = useDailyActivities(selectedDay);
+	if (dailyData && !dailyActivitiesData) {
+		// FIXME This is a stupid fix due to a bad usage of the SAM design pattern.
+		services.userService.getGoals().then(({ goals }) => {
+			Object.entries(dailyData).forEach(([key, value]) => {
+				if (!!goals[`${key}.goal.min` as Goals]) {
+					(value as any).controlState = getActivityControlState({
+						...(value as any),
+						thresholdLow: goals[`${key}.goal.min` as Goals],
+						thresholdHigh: goals[`${key}.goal.max` as Goals],
+					});
+				}
+			});
+			console.log("DAILY ACTIVITY", dailyData);
+			setDailyActivity(dailyData);
+		});
+	}
+
 	const energyScore = useDailyEnergyScore(selectedDay);
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
@@ -315,8 +336,9 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 						selectedLocalIsoDay={selectedDay}
 						onDaySelected={async (day) => {
 							await calendarBottomSheet.current?.asyncClose();
-							setSelectedDay(day);
 							setLoading(true);
+							setDailyActivity(undefined);
+							setSelectedDay(day);
 						}}
 					/>
 				</View>

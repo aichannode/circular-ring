@@ -187,6 +187,7 @@ export class MeasureModel implements Model<Proposal> {
 		});
 	}
 
+	// FIXME The fuck is that ? Why it has 30 000 if/elseif, there should be a way to rethink that, it is a pain to maintain
 	public present = (proposal: Proposal) => {
 		(this.lastAcceptedMutations as IObservableArray).clear();
 		proposal.forEach((mutation) => {

@@ -374,4 +374,8 @@ export class UserService {
 			throw err;
 		}
 	}
+
+	async getGoals() {
+		return this.userApi.getGoals();
+	}
 }

@@ -437,16 +437,16 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						[MetricType.UserDailySteps]: {
 							value: toOptional<number>(data, MetricType.UserDailySteps),
 							controlState: getActivityControlState({
-								thresholdLow: Number(data[MetricType.UserDailyStepsGoalMin]),
-								thresholdHigh: Number(data[MetricType.UserDailyStepsGoalMax]),
+								thresholdLow: 0,
+								thresholdHigh: 0,
 								value: getOrElse(data, MetricType.UserDailySteps, 0),
 							}),
 						},
 						[MetricType.UserDailyWalkingEquivalency]: {
 							value: toOptional<number>(data, MetricType.UserDailyWalkingEquivalency),
 							controlState: getActivityControlState({
-								thresholdLow: Number(data[MetricType.UserDailyWalkingEquivalencyGoalMin]),
-								thresholdHigh: Number(data[MetricType.UserDailyWalkingEquivalencyGoalMax]),
+								thresholdLow: 0,
+								thresholdHigh: 0,
 								value: getOrElse(data, MetricType.UserDailyWalkingEquivalency, 0),
 							}),
 						},
@@ -454,16 +454,16 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 							value: toOptional<number>(data, MetricType.UserDailyCaloriesBurned),
 							score: Number(data[MetricType.UserDailySteps]),
 							controlState: getActivityControlState({
-								thresholdLow: Number(data[MetricType.UserDailyStepsGoalMin]),
-								thresholdHigh: Number(data[MetricType.UserDailyStepsGoalMax]),
+								thresholdLow: 0,
+								thresholdHigh: 0,
 								value: getOrElse(data, MetricType.UserDailyCaloriesBurned, 0),
 							}),
 						},
 						[MetricType.UserDailyCardioPoints]: {
 							value: toOptional<number>(data, MetricType.UserDailyCardioPoints),
 							controlState: getActivityControlState({
-								thresholdLow: Number(data[MetricType.UserDailyCardioPointsGoalMin]),
-								thresholdHigh: Number(data[MetricType.UserDailyCardioPointsGoalMax]),
+								thresholdLow: 0,
+								thresholdHigh: 0,
 								value: getOrElse(data, MetricType.UserDailyCardioPoints, 0),
 							}),
 						},

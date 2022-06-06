@@ -117,6 +117,15 @@ import { MeasureApi } from "./lib/measureApi";
  * null values converted to -1
  */
 
+// FIXME Sorry to say that, but this is fucked. Pulling each metric ALONE when you have the possibility, in the API
+//  to batch them, and so loose not only API calls and time, but money...
+//  this needs a refactor.
+//  In my understanding, someone tried to implement the SAM (https://sam.js.org/) design pattern.
+//  This is not the good way to implement it. The SAM pattern is just a way to manage data flow, NOT to provide
+//  ways of retrieval of the data. It is similar to the Observer pattern (cf. https://rxjs.dev/guide/observer).
+//  The pattern that you were looking for is either a Repository (cf. https://medium.com/@pererikbergman/repository-design-pattern-e28c0f3e4a30) or
+//  a DTO (cf. https://www.baeldung.com/java-dto-pattern), which can use SAM to manage their data flow.
+//  I'm sorry, but this is just a big mess and will need to get away one day or another.
 export function createActions(measureApi: MeasureApi, present: Present<Proposal>) {
 	const lifetimeDate = "2000-01-01";
 	return {

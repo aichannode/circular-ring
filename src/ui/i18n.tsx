@@ -33,10 +33,10 @@ export function useI18n(options?: FormatterOptions) {
 					return intl.formatMessage({ id: key }, { ...values, ...createXmlFormatters(options) }) as string;
 				} catch (e) {
 					if (key === undefined) {
-						console.warn("[INTL] missing mandatory i18n key.");
+						//						console.warn("[INTL] missing mandatory i18n key.");
 						return "";
 					} else {
-						console.warn("[INTL] unknown key", key);
+						//						console.warn("[INTL] unknown key", key);
 						return "";
 					}
 				}
