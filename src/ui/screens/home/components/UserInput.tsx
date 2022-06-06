@@ -92,10 +92,11 @@ function Select({
 					paddingHorizontal: 21,
 				}}
 			>
-				<PrimaryText style={{ fontWeight: "500", fontSize: 13 }}>{format(label)}</PrimaryText>
+				{label && <PrimaryText style={{ fontWeight: "500", fontSize: 13 }}>{format(label)}</PrimaryText>}
 				<View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", paddingBottom: 8 }}>
 					{options.map((option, key) => {
 						const isSelected = selectedIds.includes(option.id);
+						if (option.label === null || option.label === undefined) return;
 						return (
 							<SelectableButton
 								style={{ marginRight: 8, marginTop: 8 }}
@@ -223,7 +224,7 @@ function Foldable({
 	const nextAnimationDirection = useSharedValue<"closing" | "opening">(
 		isAnimatedOnMount ? (isClosed ? "closing" : "opening") : isClosed ? "opening" : "closing"
 	);
-	const [isVisible, setIsVisible] = useState(isAnimatedOnMount ? (isClosed ? true : false) : isClosed ? false : true);
+	const [isVisible, setIsVisible] = useState(isAnimatedOnMount ? !!isClosed : !isClosed);
 	const animatedValue = useSharedValue(isAnimatedOnMount ? (isClosed ? 0 : -1) : isClosed ? -1 : 0);
 	const animatedStyle = useAnimatedStyle(() => {
 		return {
@@ -309,6 +310,7 @@ export function UserInput({ feedEntryId, compId, configuration, palette }: Props
 	 * but the internal agency will remain. Making the paper sliding under the header. You are welcome.
 	 */
 
+	console.log("User Input", inputType, inputConfig);
 	return (
 		<View style={{ marginHorizontal: 5, overflow: "hidden", display: "flex", flexDirection: "column-reverse" }}>
 			<Foldable
