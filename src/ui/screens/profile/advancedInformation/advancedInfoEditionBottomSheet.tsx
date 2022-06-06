@@ -7,6 +7,7 @@ import {
 	SleepingPills,
 	WorkTime,
 } from "@domain/user/advancedInfo";
+import { Language } from "@domain/user/user";
 import { PrimaryButton } from "@ui/components/buttons";
 import { ResponsiveCenterView } from "@ui/components/layout";
 import { Spinner } from "@ui/components/spinner";
@@ -27,7 +28,8 @@ export type EditionInfoType =
 	| SleepingPills
 	| DietarySupplements
 	| FertilityState
-	| PillPackFormat;
+	| PillPackFormat
+	| Language;
 
 export interface AdvancedInfoEditionConfig<T extends EditionInfoType> {
 	title: string;

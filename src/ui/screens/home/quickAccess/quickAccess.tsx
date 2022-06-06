@@ -84,11 +84,11 @@ export const QuickAccess: React.FC = () => {
 
 	return (
 		<Container gap={15}>
-			{active?.map((name) => {
-				if (name.id === "sleep") return <SleepTile />;
-				if (name.id === "alarm") return <AlarmTile />;
-				if (name.id === "timer") return <TimerTile />;
-				if (name.id === "calendar") return <CalendarTile />;
+			{active?.map((name, idx) => {
+				if (name.id === "sleep") return <SleepTile key={idx} />;
+				if (name.id === "alarm") return <AlarmTile key={idx} />;
+				if (name.id === "timer") return <TimerTile key={idx} />;
+				if (name.id === "calendar") return <CalendarTile key={idx} />;
 			})}
 		</Container>
 	);

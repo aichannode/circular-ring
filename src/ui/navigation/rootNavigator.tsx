@@ -24,17 +24,23 @@ import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmat
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
 import { WebViewScreen } from "@ui/screens/webViewScreen";
 import { useObservable } from "micro-observables";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { LocaleType } from "../../wordings";
 
 const SetupStack = createNativeStackNavigator();
 const OnboardingStack = createNativeStackNavigator();
 const HomeDrawer = createDrawerNavigator();
 
-export const RootNavigator: React.FC = () => {
+export interface RootNavigatorProps {
+	onChangeLanguage: (arg0: LocaleType) => void;
+}
+
+export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }) => {
 	const [wait, setWait] = useState(false);
 	const isAuthenticated = !!useAuthenticatedUserEmail();
 	const { appStateService, ringApi, bleDeviceService } = useServices();
-	const hasUser = !!useUser();
+	const user = useUser();
+	const hasUser = !!user;
 	const deviceStored = useDeviceStored(); // useObservable(useServices().bleDeviceService.favoriteDevice);
 	const userRings = useObservable(appStateService.userRings);
 	const currentRing: UserRing = userRings.filter((ring) => ring.connected)[0];
@@ -45,6 +51,10 @@ export const RootNavigator: React.FC = () => {
 	const {
 		cognitoAuthService: { payload },
 	} = useServices();
+
+	useEffect(() => {
+		if (user && user.language) onChangeLanguage(user.language);
+	}, [user]);
 
 	const isOnboardingDone = isAuthenticated && hasUser;
 	if (!isAuthenticated) {

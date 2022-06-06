@@ -21,7 +21,8 @@ import "react-native-get-random-values";
 import * as RNLocalize from "react-native-localize";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import SplashScreen from "react-native-splash-screen";
-import { translations } from "./wordings";
+import { LocaleType, translations } from "./wordings";
+import { Language } from "@domain/user/user";
 
 // Setup Mobx for RN
 configure({
@@ -51,7 +52,8 @@ const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: "
 
 // @refresh reset
 export const App = () => {
-	const locale = getPreferredLangageCode(Object.keys(translations)) as "en"; // For some reason it can't be done in the main script
+	// For some reason it can't be done in the main script
+	const [locale, setLocale] = useState<LocaleType>(getPreferredLangageCode(Object.keys(translations)));
 	const [initialized, setInitialized] = useState(false);
 	const [isStoryBookDisplayed, toggleStoryBook] = useState(false);
 
@@ -85,7 +87,11 @@ export const App = () => {
 			};
 		}
 		LocaleConfig.defaultLocale = locale;
-	}, []);
+	}, [locale]);
+
+	const onChangeLanguage = (newLocale: LocaleType) => {
+		setLocale(newLocale);
+	};
 
 	if (isStoryBookDisplayed) {
 		return (
@@ -105,6 +111,7 @@ export const App = () => {
 		return initialized ? (
 			<IntlProvider
 				locale={locale}
+				defaultLocale={Language.EN}
 				messages={translations[locale]}
 				onError={(err) => {
 					// XXX: Do not log unmeaningful errors. (https://circularing.atlassian.net/jira/software/projects/CIR/boards/1?selectedIssue=CIR-961)
@@ -119,7 +126,7 @@ export const App = () => {
 							<RepresentationsProvider>
 								<NavigationContainer theme={theme}>
 									<BottomSheetModalProvider>
-										<RootNavigator />
+										<RootNavigator onChangeLanguage={onChangeLanguage} />
 									</BottomSheetModalProvider>
 								</NavigationContainer>
 							</RepresentationsProvider>
@@ -131,10 +138,10 @@ export const App = () => {
 	}
 };
 
-const defaultLanguageCode = "en";
+const defaultLanguageCode = Language.EN;
 
-function getPreferredLangageCode(candidates: string[]): string {
+function getPreferredLangageCode(candidates: string[]): LocaleType {
 	const result = RNLocalize.findBestAvailableLanguage(candidates) || { languageTag: defaultLanguageCode };
 
-	return result.languageTag;
+	return result.languageTag as LocaleType;
 }

@@ -10,6 +10,7 @@ import {
 	SleepingPills,
 	WorkTime,
 } from "@domain/user/advancedInfo";
+
 import { WordingKey } from "../../../../wordings";
 
 export function advanceInfoI18nKey<T>(keys: Map<T, WordingKey>, infoKey: T | undefined): WordingKey {
