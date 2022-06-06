@@ -85,7 +85,7 @@ export class ApiService {
 						resolve(result);
 					})
 					.catch((reason) => {
-						console.error(reason);
+						console.warn(reason);
 						this.cacheManager.delete(cachedId);
 						reject(reason);
 					})
