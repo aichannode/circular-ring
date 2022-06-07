@@ -6,13 +6,13 @@ import { useObservable } from "micro-observables";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
-import { CircleEntity } from "../../../domain/circles/type";
+import { CircleEntity } from "@domain/circles/type";
 import { mergeDefaultAndUserCirle } from "../business";
 
 function createViews(myArray: CircleEntity[]) {
 	const { circlesService } = useServices();
 	const { format } = useI18n();
-	return myArray.map((circle, i) => {
+	return myArray.map((circle) => {
 		const titleString = format(circle.name);
 		const title = titleString.replace(/(\r\n|\n|\r)/gm, " ");
 		return (
@@ -45,7 +45,8 @@ export const CircleAddScreen: React.FC = () => {
 		useObservable(appStateService.userCircles),
 		useObservable(appStateService.defaultCircles)
 	);
-	console.log("useObservable(appStateService.userCircles)", useObservable(appStateService.userCircles));
+	const { format } = useI18n();
+
 	const circlesVibration = circles.filter((circle) => circle.category === "cicle.category.vibration");
 	const circlesWellness = circles.filter((circle) => circle.category === "cicle.category.wellness");
 	const boxViewsWellness = createViews(circlesWellness);
@@ -53,18 +54,18 @@ export const CircleAddScreen: React.FC = () => {
 	return (
 		<Container>
 			<View style={{ borderBottomWidth: 0.25, borderColor: colors.gray }}>
-				<PageTile>Add, delete or discover new circles</PageTile>
+				<PageTile>{format("circle.title")}</PageTile>
 			</View>
-			<TypeTile>Vibration</TypeTile>
+			<TypeTile>{format("cicle.category.vibration")}</TypeTile>
 			{boxViewsVibration}
-			<TypeTile>Wellness</TypeTile>
+			<TypeTile>{format("cicle.category.wellness")}</TypeTile>
 			{boxViewsWellness}
 		</Container>
 	);
 };
 
 const Container = styled(ScrollScreen)`
-	padding-top: 0px;
+	padding-top: 0;
 	width: 100%;
 `;
 

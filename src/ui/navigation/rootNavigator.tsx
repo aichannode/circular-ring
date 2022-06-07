@@ -25,7 +25,8 @@ import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
 import { WebViewScreen } from "@ui/screens/webViewScreen";
 import { useObservable } from "micro-observables";
 import React, { useEffect, useState } from "react";
-import { LocaleType } from "../../wordings";
+import { LocaleType, translations } from "../../wordings";
+import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
 
 const SetupStack = createNativeStackNavigator();
 const OnboardingStack = createNativeStackNavigator();
@@ -53,7 +54,11 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 	} = useServices();
 
 	useEffect(() => {
-		if (user && user.language) onChangeLanguage(user.language);
+		if (user?.language) {
+			onChangeLanguage(user.language);
+			return;
+		}
+		if (user) onChangeLanguage(getPreferredLangageCode(Object.keys(translations)));
 	}, [user]);
 
 	const isOnboardingDone = isAuthenticated && hasUser;

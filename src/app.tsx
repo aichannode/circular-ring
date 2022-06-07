@@ -18,11 +18,18 @@ import { LocaleConfig } from "react-native-calendars";
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-get-random-values";
-import * as RNLocalize from "react-native-localize";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import SplashScreen from "react-native-splash-screen";
 import { LocaleType, translations } from "./wordings";
 import { Language } from "@domain/user/user";
+import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
+import moment from "moment";
+
+import "moment/locale/de";
+import "moment/locale/es";
+import "moment/locale/fr";
+import "moment/locale/it";
+import "moment/locale/nl";
 
 // Setup Mobx for RN
 configure({
@@ -87,6 +94,7 @@ export const App = () => {
 			};
 		}
 		LocaleConfig.defaultLocale = locale;
+		moment.locale(locale);
 	}, [locale]);
 
 	const onChangeLanguage = (newLocale: LocaleType) => {
@@ -98,7 +106,7 @@ export const App = () => {
 			<IntlProvider
 				locale={locale}
 				messages={translations[locale]}
-				onError={(err) => {
+				onError={() => {
 					// XXX: Do not log unmeaningful errors. (https://circularing.atlassian.net/jira/software/projects/CIR/boards/1?selectedIssue=CIR-961)
 					// logger.error(err);
 					//__DEV__ && console.warn(err);
@@ -113,7 +121,7 @@ export const App = () => {
 				locale={locale}
 				defaultLocale={Language.EN}
 				messages={translations[locale]}
-				onError={(err) => {
+				onError={() => {
 					// XXX: Do not log unmeaningful errors. (https://circularing.atlassian.net/jira/software/projects/CIR/boards/1?selectedIssue=CIR-961)
 					// logger.error(err);
 					//					__DEV__ && console.warn(err);
@@ -137,11 +145,3 @@ export const App = () => {
 		) : null;
 	}
 };
-
-const defaultLanguageCode = Language.EN;
-
-function getPreferredLangageCode(candidates: string[]): LocaleType {
-	const result = RNLocalize.findBestAvailableLanguage(candidates) || { languageTag: defaultLanguageCode };
-
-	return result.languageTag as LocaleType;
-}

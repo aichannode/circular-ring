@@ -149,10 +149,10 @@ export const QuickAccess: React.FC = () => {
 							{(dragged !== -1 && dragged != i && dragged != i + 1) || disabledDragged !== -1 ? ( // SECOND REICEVIER
 								<DraxView
 									style={receiver === i + 1 ? styles.receiverfocus : styles.receiver}
-									onReceiveDragEnter={({ dragged: { payload } }) => {
+									onReceiveDragEnter={() => {
 										setReceiver(i + 1);
 									}}
-									onReceiveDragExit={({ dragged: { payload } }) => {
+									onReceiveDragExit={() => {
 										setReceiver(-1);
 									}}
 									onReceiveDragDrop={({ dragged: { payload } }) => {
@@ -196,10 +196,10 @@ export const QuickAccess: React.FC = () => {
 								(dragged !== -1 && i == 0 ? (
 									<DraxView
 										style={disabledReceiver === i ? styles.receiverfocus : styles.receiver}
-										onReceiveDragEnter={({ dragged: { payload } }) => {
+										onReceiveDragEnter={() => {
 											setDisabledReceiver(i);
 										}}
-										onReceiveDragExit={({ dragged: { payload } }) => {
+										onReceiveDragExit={() => {
 											setDisabledReceiver(-1);
 											setReceiver(-1);
 										}}
@@ -260,10 +260,10 @@ export const QuickAccess: React.FC = () => {
 							{(disabledDragged !== -1 && disabledDragged != i && disabledDragged != i + 1) || dragged != -1 ? (
 								<DraxView
 									style={disabledReceiver === i + 1 ? styles.receiverfocus : styles.receiver}
-									onReceiveDragEnter={({ dragged: { payload } }) => {
+									onReceiveDragEnter={() => {
 										setDisabledReceiver(i + 1);
 									}}
-									onReceiveDragExit={({ dragged: { payload } }) => {
+									onReceiveDragExit={() => {
 										setDisabledReceiver(-1);
 										setReceiver(-1);
 									}}
@@ -348,7 +348,7 @@ const DisabledTitle = styled.Text`
 	font-size: 18px;
 	color: black;
 	font-weight: 500;
-	margin-vertical: 4;
+	margin-vertical: 4px;
 `;
 
 const TileDesc = styled.Text`
@@ -361,18 +361,18 @@ const DisabledTileDesc = styled.Text`
 
 const DisabledRightContainer = styled.View`
 	flex: 1;
-	border-left-width: 1;
+	border-left-width: 1px;
 	border-left-color: ${colors.gray};
 	margin-vertical: 8;
-	padding-left: 10;
+	padding-left: 10px;
 `;
 
 const RightContainer = styled.View`
 	flex: 1;
-	border-left-width: 1;
+	border-left-width: 1px;
 	border-left-color: white;
-	margin-vertical: 8;
-	padding-left: 10;
+	margin-vertical: 8px;
+	padding-left: 10px;
 `;
 
 const InnerContainer = styled.View`
@@ -382,32 +382,31 @@ const InnerContainer = styled.View`
 
 const Draggable = styled.Image`
 	height: 40px;
-	margin-vertical: 22;
+	margin-vertical: 22px;
+	align-self: center;
 `;
 
 const Label = styled.Text`
 	font-size: 18px;
-	margin-vertical: 14;
+	margin-vertical: 14px;
 `;
 
 const Description = styled.Text`
 	font-size: 18px;
 	color: ${colors.textSecondary};
 	font-weight: 500;
-	padding-bottom: 20;
-	padding-top: 10;
-	border-bottom-width: 0.5;
+	padding-bottom: 20px;
+	padding-top: 10px;
+	border-bottom-width: 0.5px;
 	border-bottom-color: ${colors.gray};
 `;
 
 const QuickAccessContainer = styled(LinearGradient)`
-	height: 84px;
 	width: 100%;
 	border-radius: 8px;
 `;
 
 const DisabledQuickAccessContainer = styled(View)`
-	height: 84px;
 	width: 100%;
 	border-radius: 8px;
 	overflow: hidden;
