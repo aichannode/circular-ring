@@ -101,7 +101,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 				const parentKey = dailyMetricControlStateParent[key] ?? key;
 				if (parentKey !== key || !!goals[`${parentKey}.goal.min` as Goals]) {
 					(value as any).controlState = getActivityControlState({
-						value: parentKey === key ? value.value ?? 0 : (dailyData as any)[key as MetricType].value,
+						value: parentKey === key ? value.value ?? 0 : (dailyData as any)[parentKey as MetricType].value,
 						thresholdLow: goals[`${parentKey}.goal.min` as Goals],
 						thresholdHigh: goals[`${parentKey}.goal.max` as Goals],
 					});
