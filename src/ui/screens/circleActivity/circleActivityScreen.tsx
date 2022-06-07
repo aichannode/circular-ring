@@ -343,8 +343,8 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 						onDaySelected={async (day) => {
 							await calendarBottomSheet.current?.asyncClose();
 							setLoading(true);
-							setDailyActivity(undefined);
 							setSelectedDay(day);
+							setDailyActivity(undefined);
 						}}
 					/>
 				</View>
