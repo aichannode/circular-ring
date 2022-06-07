@@ -310,7 +310,6 @@ export function UserInput({ feedEntryId, compId, configuration, palette }: Props
 	 * but the internal agency will remain. Making the paper sliding under the header. You are welcome.
 	 */
 
-	console.log("User Input", inputType, inputConfig);
 	return (
 		<View style={{ marginHorizontal: 5, overflow: "hidden", display: "flex", flexDirection: "column-reverse" }}>
 			<Foldable
