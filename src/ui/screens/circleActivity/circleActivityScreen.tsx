@@ -41,6 +41,7 @@ import { StepsGraph } from "./StepsGraph";
 import { services } from "@core/services";
 import { Goals } from "@domain/user/goals.model";
 import { getActivityControlState } from "@domain/measure/representation/business";
+import { MetricType } from "@domain/measure/metric";
 function getIcon(path: string) {
 	switch (path) {
 		case "@assets/images/shoes.png":
@@ -57,6 +58,11 @@ function getIcon(path: string) {
 			return heart;
 	}
 }
+
+const dailyMetricControlStateParent: Record<string, MetricType> = {
+	[MetricType.UserDailyWalkingEquivalency]: MetricType.UserDailySteps,
+	[MetricType.UserDailyCaloriesBurned]: MetricType.UserDailySteps,
+};
 
 export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const {
@@ -92,15 +98,15 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 		// FIXME This is a stupid fix due to a bad usage of the SAM design pattern.
 		services.userService.getGoals().then(({ goals }) => {
 			Object.entries(dailyData).forEach(([key, value]) => {
-				if (!!goals[`${key}.goal.min` as Goals]) {
+				const parentKey = dailyMetricControlStateParent[key] ?? key;
+				if (parentKey !== key || !!goals[`${parentKey}.goal.min` as Goals]) {
 					(value as any).controlState = getActivityControlState({
-						...(value as any),
-						thresholdLow: goals[`${key}.goal.min` as Goals],
-						thresholdHigh: goals[`${key}.goal.max` as Goals],
+						value: parentKey === key ? value.value ?? 0 : (dailyData as any)[key as MetricType].value,
+						thresholdLow: goals[`${parentKey}.goal.min` as Goals],
+						thresholdHigh: goals[`${parentKey}.goal.max` as Goals],
 					});
 				}
 			});
-			console.log("DAILY ACTIVITY", dailyData);
 			setDailyActivity(dailyData);
 		});
 	}

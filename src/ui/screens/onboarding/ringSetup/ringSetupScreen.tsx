@@ -13,7 +13,6 @@ import { IfAdmin } from "@ui/containers/IfAdmin";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { SetUpFailed } from "@ui/screens/onboarding/ringSetup/setUpFailed";
-import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -137,13 +136,9 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 								</CloseContainer>
 
 								<ResponsiveCenterView>
-									<Instructions hidden={isConnecting}>
-										<Image source={require("@assets/images/clock.png")} />
-										<InstructionsText>{format("setup.scan.enabled.title")}</InstructionsText>
-									</Instructions>
 									<Stack align="center">
 										<Image source={require("@assets/images/ringShadow.png")} style={{ position: "absolute" }} />
-										<InstructionsArrow source={require("@assets/images/arrowDown.png")} hidden={isConnecting} />
+										<RingSeparator />
 										<Image source={require("@assets/images/ringBig.png")} />
 										<Message>
 											{isConnecting ? format("setup.connection.pending") : format("setup.scan.enabled.message")}
@@ -258,24 +253,11 @@ const DeviceWrapper = styled.Pressable`
 	margin-bottom: 10px;
 `;
 
-const Instructions = styled.View<{ hidden?: boolean }>`
-	${({ hidden }) => hidden && "opacity: 0"};
-	flex-direction: row;
-	align-items: center;
-	margin-bottom: 10px;
-`;
-
-const InstructionsText = styled(SecondaryText)`
-	margin-left: 5px;
-	font-weight: 500;
-	color: ${colors.primary};
-`;
-
 const DeviceName = styled(PrimaryText)`
 	font-weight: 500;
 	margin-left: 15px;
 `;
 
-const InstructionsArrow = styled.Image<{ hidden?: boolean }>`
-	${({ hidden }) => hidden && "opacity: 0"};
+const RingSeparator = styled.View`
+	margin-top: 40px;
 `;

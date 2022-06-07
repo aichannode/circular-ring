@@ -26,13 +26,9 @@ export const SetUpFailed = ({
 			</ErrorContainer>
 			<Container>
 				<ResponsiveCenterView>
-					<Instructions hidden={isConnecting}>
-						<Image source={require("@assets/images/clock.png")} />
-						<InstructionsText>{format("setup.scan.enabled.title")}</InstructionsText>
-					</Instructions>
 					<Stack align="center">
 						<Image source={require("@assets/images/ringShadow.png")} style={{ position: "absolute" }} />
-						<InstructionsArrow source={require("@assets/images/arrowDown.png")} hidden={isConnecting} />
+						<RingSeparator />
 						<Image source={require("@assets/images/ringBig.png")} />
 						<Message>{format("setup.connection.failed.message")}</Message>
 					</Stack>
@@ -67,25 +63,12 @@ const ErrorText = styled.Text<{ fullScreen: boolean }>`
 	padding-top: ${(props) => (props.fullScreen ? "48px" : "5px")};
 `;
 
-const Instructions = styled.View<{ hidden?: boolean }>`
-	${({ hidden }) => hidden && "opacity: 0"};
-	flex-direction: row;
-	align-items: center;
-	margin-bottom: 10px;
-`;
-
-const InstructionsText = styled(SecondaryText)`
-	margin-left: 5px;
-	font-weight: 500;
-	color: ${colors.primary};
-`;
-
 const Message = styled(SecondaryText)`
 	margin-top: 80px;
 	margin-bottom: 40px;
 	text-align: center;
 `;
 
-const InstructionsArrow = styled.Image<{ hidden?: boolean }>`
-	${({ hidden }) => hidden && "opacity: 0"};
+const RingSeparator = styled.View`
+	margin-top: 40px;
 `;

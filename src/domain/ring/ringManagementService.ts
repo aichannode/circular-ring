@@ -215,7 +215,7 @@ export class RingManagementService {
 				throw e;
 			}
 		} catch (e) {
-			this.logger.warn("Error during sync:", e);
+			this.logger.error("Error during sync:", e);
 			this._currentRingSyncState.set(SyncState.ERROR);
 			this._errorMessage.set("home.sync.error.unknown");
 			setTimeout(() => this._currentRingSyncState.set(SyncState.NONE), 1000);
