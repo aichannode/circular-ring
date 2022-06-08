@@ -141,7 +141,7 @@ export const ProfileInformationScreen = () => {
 					}}
 				/>
 			</CircularBottomSheet>
-			<CircularBottomSheet snapPoints={[480]} ref={editionBottomSheetRef}>
+			<CircularBottomSheet snapPoints={[550]} ref={editionBottomSheetRef}>
 				<AdvancedInfoEditionBottomSheet
 					config={{
 						title: format("profile_info.language"),
