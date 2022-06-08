@@ -1,6 +1,6 @@
 import { ISODay } from "@domain/common/type";
 import { TimeFrame } from "@domain/measure/type";
-import { createActiveMode } from "@ui/business";
+import { createActiveMode, TrimOptions } from "@ui/business";
 import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { TitleText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
@@ -14,9 +14,10 @@ import { HrGraph30days } from "./hrGraph30days";
 type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
+	dailyTrimOptions?: TrimOptions;
 };
 
-export function HRGraph({ selectedDay, mode = createActiveMode() }: Props) {
+export function HRGraph({ selectedDay, mode = createActiveMode(), dailyTrimOptions }: Props) {
 	const { format } = useI18n();
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 
@@ -48,7 +49,9 @@ export function HRGraph({ selectedDay, mode = createActiveMode() }: Props) {
 				/>
 			</View>
 
-			{graphPeriod === TimeFrame.TODAY && <DailyHRGraph selectedDay={selectedDay} mode={mode} />}
+			{graphPeriod === TimeFrame.TODAY && (
+				<DailyHRGraph selectedDay={selectedDay} mode={mode} dailyTrimOptions={dailyTrimOptions} />
+			)}
 			{graphPeriod === TimeFrame.LAST_30_DAYS && <HrGraph30days selectedDay={selectedDay} mode={mode} />}
 		</View>
 	);

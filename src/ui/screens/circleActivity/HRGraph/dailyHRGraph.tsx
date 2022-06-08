@@ -60,7 +60,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 
 	const getTimestampFromValue = (line: Point) => line.x / 1000;
 	const parsedLines = dailyTrimOptions
-		? trimData(lines, getTimestampFromValue, { includes: dailyTrimOptions.includes }).map((line) => ({
+		? trimData(lines, getTimestampFromValue, { includes: [] }).map((line) => ({
 				...line,
 				y: isInSomeIntervals(getTimestampFromValue(line), dailyTrimOptions.excludes ?? []) ? 0 : line.y,
 		  }))
@@ -70,7 +70,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 	let xAxisMin, xAxisMax;
 	if (isDefined(dailyTrimOptions) && isDefined(dailyTrimOptions.includes)) {
 		xAxisMin = Math.min(...dailyTrimOptions.includes.map(([start, end]) => start));
-		xAxisMax = Math.min(...dailyTrimOptions.includes.map(([start, end]) => end));
+		xAxisMax = Math.max(...dailyTrimOptions.includes.map(([start, end]) => end));
 	}
 
 	const [yMin, yMax] =
@@ -129,7 +129,9 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 					shouldShowLabel={true}
 					shouldDrawCircles={false}
 					graphColor={colors.red}
-					valueFormatter="date"
+					valueFormatter={parsedLines.map(({ x, y }) => {
+						return `${is24h ? dayjs(new Date(x)).format("DD-MM HH:mm") : dayjs(new Date(x)).format("hh:mm A")}`;
+					})}
 					valueFormatterPattern={["H'h'", "HH'h':mm"]}
 					yMin={yMin}
 					yMax={yMax}
@@ -150,9 +152,9 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 					shouldShowMarker={true}
 					highlightPerTapEnabled={true}
 					labelFormatter={(x, y) => {
-						return `${is24h ? dayjs(new Date(x)).format("HH:mm") : dayjs(new Date(x)).format("hh:mm A")}\n${Math.round(
-							y
-						)}`;
+						return `${
+							is24h ? dayjs(new Date(x)).format("DD-MM HH:mm") : dayjs(new Date(x)).format("hh:mm A")
+						}\n${Math.round(y)}`;
 					}}
 				/>
 				<View style={{ marginTop: 20 }}>

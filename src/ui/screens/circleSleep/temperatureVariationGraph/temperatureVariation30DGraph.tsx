@@ -118,8 +118,8 @@ export const TemperatureVariation30DGraph: React.FC<Props> = observer(function S
 					graphColor={colors.business.sleepPrimary}
 					onSelect={(x) => toUpdateTag(x)}
 					mode={updatedMode}
-					yMin={yMin > -1 ? -1 : yMin}
-					yMax={yMax > 1 ? yMax : 1}
+					yMin={yMin}
+					yMax={yMax}
 					mapMarker={(el) =>
 						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
 							el.y > 0 ? "+" + el.y : el.y

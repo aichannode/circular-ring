@@ -185,7 +185,12 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		},
 		async setDailyHRMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
 			Promise.all([
-				measureApi.fetchDailyMeasures<DailyHRTimeSeriesMetrics>(dailyHRTimeSeriesMetrics, localISODay, useForceRefresh),
+				measureApi.fetchMeasures<DailyHRTimeSeriesMetrics>(
+					dailyHRTimeSeriesMetrics,
+					moment(localISODay).startOf("day").subtract(1, "hours").toISOString(),
+					moment(localISODay).endOf("day").toISOString(),
+					useForceRefresh
+				),
 				measureApi.fetchLastDailyMeasures<DailyHRConstantMetrics>(dailyHRConstantMetrics, localISODay, useForceRefresh),
 				measureApi.fetchLastDailyMeasures<MetricType.UserDailyAwakeHRReference>(
 					[MetricType.UserDailyAwakeHRReference],
@@ -210,9 +215,10 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		},
 		async pullDailyHRNightMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
 			Promise.all([
-				measureApi.fetchDailyMeasures<DailyHRNightTimeSeriesMetrics>(
+				measureApi.fetchMeasures<DailyHRNightTimeSeriesMetrics>(
 					dailyHRNightTimeSeriesMetrics,
-					localISODay,
+					moment(localISODay).startOf("day").subtract(1, "hours").toISOString(),
+					moment(localISODay).endOf("day").toISOString(),
 					useForceRefresh
 				),
 				measureApi.fetchLastDailyMeasures<DailyHRNightConstantMetrics>(
@@ -263,9 +269,10 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		},
 		async pullDailySpo2Metrics(localISODay: ISODay, useForceRefresh?: boolean) {
 			Promise.all([
-				measureApi.fetchDailyMeasures<DailySpo2TimeSeriesMetrics>(
+				measureApi.fetchMeasures<DailySpo2TimeSeriesMetrics>(
 					dailySpo2TimeSeriesMetrics,
-					localISODay,
+					moment(localISODay).startOf("day").subtract(1, "hours").toISOString(),
+					moment(localISODay).endOf("day").toISOString(),
 					useForceRefresh
 				),
 				measureApi.fetchLastDailyMeasures<DailySpo2ConstantMetrics>(
@@ -488,9 +495,10 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 
 		async pullDailyHRVMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
 			Promise.all([
-				measureApi.fetchDailyMeasures<DailyHRVTimeSeriesMetrics>(
+				measureApi.fetchMeasures<DailyHRVTimeSeriesMetrics>(
 					dailyHRVTimeSeriesMetrics,
-					localISODay,
+					moment(localISODay).startOf("day").subtract(1, "hours").toISOString(),
+					moment(localISODay).endOf("day").toISOString(),
 					useForceRefresh
 				),
 				measureApi.fetchLastDailyMeasures<DailyHRVConstantMetrics>(
@@ -516,7 +524,12 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		},
 		async pullDailyBRMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
 			Promise.all([
-				measureApi.fetchDailyMeasures<DailyBRTimeSeriesMetrics>(dailyBRTimeSeriesMetrics, localISODay, useForceRefresh),
+				measureApi.fetchMeasures<DailyBRTimeSeriesMetrics>(
+					dailyBRTimeSeriesMetrics,
+					moment(localISODay).startOf("day").subtract(1, "hours").toISOString(),
+					moment(localISODay).endOf("day").toISOString(),
+					useForceRefresh
+				),
 				measureApi.fetchLastDailyMeasures<DailyBRConstantMetrics>(dailyBRConstantMetrics, localISODay, useForceRefresh),
 				measureApi.fetchLastDailyMeasures<MetricType.UserDailyAsleepBRReference>(
 					[MetricType.UserDailyAsleepBRReference],

@@ -60,6 +60,11 @@ export const DailyHeartRateGraph: React.FC<Props> = observer(function HeartRateG
 		parsedData.findIndex((line) => line.y == yMin),
 		parsedData.findIndex((line) => line.y == yMax),
 	];
+	let xAxisMin, xAxisMax;
+	if (isDefined(dailyTrimOptions) && isDefined(dailyTrimOptions.includes)) {
+		xAxisMin = Math.min(...dailyTrimOptions.includes.map(([start, end]) => start));
+		xAxisMax = Math.min(...dailyTrimOptions.includes.map(([start, end]) => end));
+	}
 	const tags = useDailyTags(selectedDay);
 	const updatedMode = updateMode(mode, parsedData.length === 0);
 	const averages: Averages = [];
@@ -72,7 +77,6 @@ export const DailyHeartRateGraph: React.FC<Props> = observer(function HeartRateG
 	if ((isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && constant.hr !== -1) {
 		averages.push({
 			value: constant.hr,
-
 			color: colors.darkBlue,
 		});
 	}
@@ -99,7 +103,8 @@ export const DailyHeartRateGraph: React.FC<Props> = observer(function HeartRateG
 					</View>
 				)}
 				<LineChart
-					labelCount={5}
+					labelCount={6}
+					yLabelCount={4}
 					averages={averages}
 					xColor={colors.textPrimary}
 					shouldShowLabel={true}
@@ -108,7 +113,7 @@ export const DailyHeartRateGraph: React.FC<Props> = observer(function HeartRateG
 					shouldDrawCircles={false}
 					graphColor={colors.darkBlue}
 					valueFormatter="date"
-					valueFormatterPattern={[is24h ? "h" : "h a", "h:mm a"]}
+					valueFormatterPattern={[is24h ? "H'h'" : "h a", is24h ? "H:mm" : "h:mm a"]}
 					yMin={yMin}
 					yMax={yMax}
 					yMinIndex={yMinIndex}
@@ -118,6 +123,8 @@ export const DailyHeartRateGraph: React.FC<Props> = observer(function HeartRateG
 					tooltipYMin={15}
 					tooltipYMax={-30}
 					tooltipSize={tooltipSize}
+					xAxisMin={xAxisMin}
+					xAxisMax={xAxisMax}
 					renderTooltip={(value) => (
 						<>
 							<Tag containerStyle={{ backgroundColor: colors.sleepTag, marginBottom: 4 }}>{`${value}`}</Tag>
@@ -127,9 +134,7 @@ export const DailyHeartRateGraph: React.FC<Props> = observer(function HeartRateG
 					shouldShowMarker={true}
 					highlightPerTapEnabled={true}
 					labelFormatter={(x, y) => {
-						return `${is24h ? dayjs(new Date(x)).format("HH:mm") : dayjs(new Date(x)).format("hh:mm A")}\n${Math.round(
-							y
-						)}`;
+						return `${is24h ? dayjs(x).format("HH:mm") : dayjs(x).format("hh:mm A")}\n${Math.round(y)}`;
 					}}
 				/>
 				<View style={{ marginTop: 20 }}>

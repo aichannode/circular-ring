@@ -66,7 +66,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 			? [[moment(dailySleep.coreSleepTiming[0]).valueOf(), moment(dailySleep.coreSleepTiming[1]).valueOf()]]
 			: [],
 	};
-	console.log("dailyTrimOptions", dailySleep?.coreSleepTiming);
+
 	return (
 		<Container>
 			<View>

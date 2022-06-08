@@ -58,7 +58,6 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 				.reverse()
 		: [];
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
-
 	const valueFormatter = lines.map(({ x }) => {
 		const day = moment(x).format("dd");
 		return day !== "Invalid date" ? day[0] : "";
@@ -146,7 +145,7 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 					onSelect={(x) => toUpdateTag(x)}
 					mode={updatedMode}
 					mapMarker={(el) =>
-						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.y)).format("DD/MM/YYYY")}\n${
+						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
 							el.y
 						}`
 					}

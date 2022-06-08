@@ -829,7 +829,9 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				})) as Scores7D["series"];
 
 				// Spec 00026: IS_READY if has some historical data
-				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+				const controlState = last7Days.some((date) => isDefined(model.dailyEnergyScore.get(date)))
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
 				return {
 					series,
 					constant: {
@@ -875,7 +877,6 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				// Compute the 30 previous date from the given date
 
 				const last30Days = getLast30Days(localISODay);
-
 				useEffect(
 					action(function () {
 						actions.setMonthlyBRConstants(localISODay);
@@ -1274,9 +1275,15 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					return {
 						series,
 						constant: {
-							totalAverage: Number(constants[MetricType.User7DaysTotalSleepDuration]),
-							realAverage: Number(constants[MetricType.User7DaysRealSleepDuration]),
-							recommendation: Number(constants[MetricType.UserIdealSleepDuration]),
+							totalAverage: constants[MetricType.User7DaysTotalSleepDuration]
+								? Number(constants[MetricType.User7DaysTotalSleepDuration])
+								: -1,
+							realAverage: constants[MetricType.User7DaysRealSleepDuration]
+								? Number(constants[MetricType.User7DaysRealSleepDuration])
+								: -1,
+							recommendation: constants[MetricType.UserIdealSleepDuration]
+								? Number(constants[MetricType.UserIdealSleepDuration])
+								: -1,
 						},
 						controlState,
 					};

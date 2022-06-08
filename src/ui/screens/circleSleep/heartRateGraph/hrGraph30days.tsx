@@ -63,7 +63,6 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 					Math.max(...lines.map((line) => line.y)),
 			  ]
 			: [0, 0];
-	console.log({ yMin, yMax });
 
 	const averages: Averages = [];
 	if (isInActiveMode(updatedMode) && constant.reference !== -1) {
@@ -121,6 +120,7 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 					mode={updatedMode}
 					highlightPerTapEnabled={true}
 					isMultipleLines={true}
+					yLabelCount={5}
 					labelFormatter={(x, y) => {
 						return isUSCS
 							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`

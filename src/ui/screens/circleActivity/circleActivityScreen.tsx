@@ -5,10 +5,14 @@ import lungs from "@assets/images/lungs.png";
 import shoes from "@assets/images/shoes.png";
 import sport from "@assets/images/sport.png";
 import { useRepresentations } from "@core/representation";
+import { services } from "@core/services";
 import { getCurrentLocalISODay } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
+import { MetricType } from "@domain/measure/metric";
 import { ActivityDetail, DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
+import { getActivityControlState } from "@domain/measure/representation/business";
 import { Activities, activities, activityScoreContributors } from "@domain/measure/representation/lib/type";
+import { Goals } from "@domain/user/goals.model";
 import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
 import { getInitMode, isInCalibrationMode, TrimOptions, updateMode } from "@ui/business";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
@@ -38,10 +42,6 @@ import { HRGraph } from "./HRGraph/HRGraph";
 import { dailyActivitiesUIConfig, getActivityGaugesConfig } from "./measureDisplayInfos";
 import { RestingHeartRate7DGraph } from "./restingHeartRate7DGraph";
 import { StepsGraph } from "./StepsGraph";
-import { services } from "@core/services";
-import { Goals } from "@domain/user/goals.model";
-import { getActivityControlState } from "@domain/measure/representation/business";
-import { MetricType } from "@domain/measure/metric";
 function getIcon(path: string) {
 	switch (path) {
 		case "@assets/images/shoes.png":
@@ -135,7 +135,6 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 		],
 		excludes: coreSleepTiming ? [[moment(coreSleepTiming[0]).valueOf(), moment(coreSleepTiming[1]).valueOf()]] : [],
 	};
-
 	return (
 		<Container>
 			<View>
@@ -256,7 +255,9 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 						mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenModeWithoutDisabled))}
 					/>
 				)}
-				{activeItem === 5 && <HRGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+				{activeItem === 5 && (
+					<HRGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} dailyTrimOptions={dailyTrimOptions} />
+				)}
 				{activeItem === 6 && <RestingHeartRate7DGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>

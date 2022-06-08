@@ -129,6 +129,7 @@ export const HrVGraph30days: React.FC<Props> = observer(function HeartRateGraph(
 					shouldUpdateYmin={false}
 					highlightPerTapEnabled={true}
 					isMultipleLines={true}
+					yLabelCount={5}
 					labelFormatter={(x, y) => {
 						return isUSCS
 							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
@@ -137,7 +138,7 @@ export const HrVGraph30days: React.FC<Props> = observer(function HeartRateGraph(
 					zoom={
 						lines?.length > 0
 							? {
-									scaleX: 2,
+									scaleX: 1,
 									scaleY: 1,
 									xValue: lines[lines.length - 1].x,
 									yValue: 1,

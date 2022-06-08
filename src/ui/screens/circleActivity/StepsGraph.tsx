@@ -138,7 +138,7 @@ export const StepsGraph: React.FC<Props> = observer(function StepsGraph({
 					graphColor={colors.red}
 					onSelect={(x) => toUpdateTag(x)}
 					mapMarker={(el) =>
-						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.y)).format("DD/MM/YYYY")}\n${
+						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
 							el.y
 						}`
 					}

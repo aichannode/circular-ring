@@ -53,12 +53,11 @@ export function BarChart({
 	const linspace = isDefined(yMin) && isDefined(yMax) ? ((yMax - yMin) * 10) / 100 : 0;
 	const axisMinimum = isDefined(yMin) ? yMin - linspace : 0;
 	const axisMaximum = isDefined(yMax) ? yMax + linspace : 0;
-	console.log({ axisMaximum });
+
 	const dataSets = {
 		dataSets: [
 			{
 				values: data
-
 					?.map((el, index) => ({ ...el, _index: index }))
 					.map(({ x, y, _index, ...args }) => {
 						let marker = "";
@@ -68,7 +67,7 @@ export function BarChart({
 						}
 
 						marker = `${mapMarker({ x, y: _y, ...args }, _index)}`;
-						return { x: mapXAxis({ x, y: _y, ...args }, _index), y: _y, marker };
+						return { x: mapXAxis({ x, y: _y, ...args }, _index), y: isTemperature && _y == 0 ? 0.005 : _y, marker };
 					}),
 				label: "",
 				config: {
@@ -115,6 +114,8 @@ export function BarChart({
 			enabled: true,
 			axisMinimum: axisMinimum,
 			axisMaximum: axisMaximum,
+			labelCount: isTemperature ? 3 : undefined,
+			labelCountForce: isTemperature,
 			textColor: processColor(yColor),
 			gridLineWidth: 0.5,
 			drawLabels: true,

@@ -51,6 +51,7 @@ interface LineChartProps {
 	yMinIndex?: number;
 	yMaxIndex?: number;
 	labelCount?: number;
+	yLabelCount?: number;
 	mode?: Mode;
 	shouldShowMarker?: boolean;
 	highlightPerTapEnabled?: boolean;
@@ -95,6 +96,7 @@ export function LineChart({
 	yMinIndex,
 	yMaxIndex,
 	labelCount,
+	yLabelCount,
 	shouldShowMarker = false,
 	labelFormatter = (x, y) =>
 		isDaily ? `${moment(x).format("hh:mm")}\n${Math.round(y)}` : `${moment(x).format("Y-MM-DD")}\n${Math.round(y)}`,
@@ -139,7 +141,6 @@ export function LineChart({
 	const [selectedX, setSelectedX] = useState<number | undefined>(data[0] ? (onSelect ? data[0].x : -1) : -1);
 	const axisMinimum = isDefined(yMin) ? (shouldUpdateYmin ? yMin - linspace : yMin) : 0;
 	const axisMaximum = isDefined(yMax) ? (shouldUpdateYmin ? yMax + linspace : yMax) : 0;
-	console.log({ axisMaximum, axisMinimum, yMin, yMax });
 	const yAxisContentInset = verticalContentInset.top;
 	const tooltipMinX = xAxisContentInset;
 	const tooltipMaxX = graphRect.current
@@ -156,11 +157,11 @@ export function LineChart({
 			: valueFormatterPattern,
 		position: "BOTTOM" as const,
 		centerAxisLabels: !isMultipleLines,
-		drawAxisLine: false,
+		drawAxisLine: true,
 		enabled: true,
 		granularity: 1,
 		drawLabels: true,
-		drawGridLines: true,
+		drawGridLines: false,
 		textSize: 10,
 		yOffset: 30,
 		labelCount: labelCount,
@@ -177,6 +178,8 @@ export function LineChart({
 			axisMinimum: isDefined(minimumYValueAllowed) ? minimumYValueAllowed : axisMinimum,
 			axisMaximum: Math.ceil(axisMaximum),
 			enabled: true,
+			labelCount: yLabelCount,
+			labelCountForce: yLabelCount ? true : false,
 			textColor: processColor(yColor),
 			drawGridLines: true,
 			gridLineWidth: 0.5,

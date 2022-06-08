@@ -54,7 +54,6 @@ export const BRGraph30days: React.FC<Props> = observer(function BRGraph30days({
 			: [],
 		dailyBR ? dailyBR.constant : { average: 0, reference: 0 },
 	];
-
 	const updatedMode = updateMode(mode, dailyBR?.controlState !== DataControlState.READY);
 
 	const [yMin, yMax] =
@@ -125,7 +124,7 @@ export const BRGraph30days: React.FC<Props> = observer(function BRGraph30days({
 					zoom={
 						lines?.length > 0
 							? {
-									scaleX: 2,
+									scaleX: 1,
 									scaleY: 1,
 									xValue: lines[lines.length - 1].x,
 									yValue: 1,

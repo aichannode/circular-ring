@@ -132,7 +132,7 @@ export const Spo2Graph30days: React.FC<Props> = observer(function Spo2Graph({
 					zoom={
 						lines?.length > 0
 							? {
-									scaleX: 2,
+									scaleX: 1,
 									scaleY: 1,
 									xValue: lines[lines.length - 1].x,
 									yValue: 1,

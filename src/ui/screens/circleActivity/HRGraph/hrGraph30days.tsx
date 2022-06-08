@@ -73,13 +73,13 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 	if (isInActiveMode(updatedMode) && constant.reference !== -1) {
 		averages.push({
 			value: constant.reference,
-			color: colors.red,
+			color: colors.redLight,
 		});
 	}
 	if ((isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && constant.average !== -1) {
 		averages.push({
 			value: constant.average,
-			color: colors.redLight,
+			color: colors.red,
 		});
 	}
 
@@ -137,7 +137,7 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 					zoom={
 						lines?.length > 0
 							? {
-									scaleX: 2,
+									scaleX: 1,
 									scaleY: 1,
 									xValue: lines[lines.length - 1].x,
 									yValue: 1,

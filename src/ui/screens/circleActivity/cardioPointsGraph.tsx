@@ -46,7 +46,6 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 	} = useRepresentations();
 
 	const data = useLast7DaysCardioPoints(selectedDay);
-	console.log({ selectedDay });
 	const lines: Points = data
 		? data.series
 				.map((el) => {
@@ -57,6 +56,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 				})
 				.reverse()
 		: [];
+
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 
 	const valueFormatter = lines.map(({ x }) => {
@@ -142,7 +142,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 					graphColor={colors.red}
 					onSelect={(x) => toUpdateTag(x)}
 					mapMarker={(el) =>
-						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.y)).format("DD/MM/YYYY")}\n${
+						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
 							el.y
 						}`
 					}

@@ -47,9 +47,11 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 		dailyHrv ? dailyHrv.data : [],
 		dailyHrv ? dailyHrv.constant : { average: 0, reference: 0 },
 	];
-
 	const parsedData = dailyTrimOptions ? trimData(lines, (line) => line.x, dailyTrimOptions) : lines;
 
+	parsedData.sort(function (a, b) {
+		return a.x - b.x;
+	});
 	const [yMin, yMax] =
 		parsedData.length > 0
 			? [Math.min(...parsedData.map((line) => line.y)), Math.max(...parsedData.map((line) => line.y))]

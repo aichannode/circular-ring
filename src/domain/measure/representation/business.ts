@@ -317,7 +317,7 @@ export function parseDailyHRNight(
 export function getTimeseries(timeSeries: ReadonlyArray<DatedMetrics<any>>, key: MetricType): Points {
 	const lines = timeSeries.map((timeSerie) => {
 		return {
-			x: moment(timeSerie.timestamp).valueOf(),
+			x: Date.parse(timeSerie.timestamp),
 			y: getOrElse<number>(timeSerie.metrics, key, -1),
 		};
 	});
