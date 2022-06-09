@@ -59,6 +59,7 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 			return;
 		}
 		if (user) onChangeLanguage(getPreferredLangageCode(Object.keys(translations)));
+		return () => setByPass(false);
 	}, [user]);
 
 	const isOnboardingDone = isAuthenticated && hasUser;
