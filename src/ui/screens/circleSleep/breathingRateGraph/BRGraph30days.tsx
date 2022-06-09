@@ -101,21 +101,23 @@ export const BRGraph30days: React.FC<Props> = observer(function BRGraph30days({
 					</View>
 				)}
 				<LineChart
+					labelCount={30}
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
-					daysItem={[{ lines: lines, color: colors.darkBlue }]}
+					data={lines}
 					shouldShowLabel={true}
 					shouldShowMarker={true}
-					shouldDrawCircles={false}
+					shouldDrawCircles={true}
 					graphColor={colors.darkBlue}
-					valueFormatter={lines.map((item) => moment(item.x).format("dd")[0])}
+					valueFormatterPattern="EEEEE"
+					valueFormatter="date"
 					yMin={Math.floor(yMin)}
 					yMax={Math.ceil(yMax)}
 					mode={updatedMode}
 					shouldUpdateYmin={false}
 					highlightPerTapEnabled={true}
-					isMultipleLines={true}
+					isMultipleLines={false}
 					labelFormatter={(x, y) => {
 						return isUSCS
 							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`

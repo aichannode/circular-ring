@@ -58,7 +58,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 		dailyHr ? dailyHr.constant : { hr: 0, hrMax: 0, hrMin: 0, reference: 0 },
 	];
 
-	const getTimestampFromValue = (line: Point) => line.x / 1000;
+	const getTimestampFromValue = (line: Point) => line.x;
 	const parsedLines = dailyTrimOptions
 		? trimData(lines, getTimestampFromValue, { includes: [] }).map((line) => ({
 				...line,
@@ -70,7 +70,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 	let xAxisMin, xAxisMax;
 	if (isDefined(dailyTrimOptions) && isDefined(dailyTrimOptions.includes)) {
 		xAxisMin = Math.min(...dailyTrimOptions.includes.map(([start, end]) => start));
-		xAxisMax = Math.max(...dailyTrimOptions.includes.map(([start, end]) => end));
+		//xAxisMax = Math.max(...dailyTrimOptions.includes.map(([start, end]) => end));
 	}
 
 	const [yMin, yMax] =
@@ -122,6 +122,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 					</View>
 				)}
 				<LineChart
+					labelCount={6}
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
@@ -129,9 +130,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 					shouldShowLabel={true}
 					shouldDrawCircles={false}
 					graphColor={colors.red}
-					valueFormatter={parsedLines.map(({ x, y }) => {
-						return `${is24h ? dayjs(new Date(x)).format("DD-MM HH:mm") : dayjs(new Date(x)).format("hh:mm A")}`;
-					})}
+					valueFormatter={"date"}
 					valueFormatterPattern={["H'h'", "HH'h':mm"]}
 					yMin={yMin}
 					yMax={yMax}
@@ -152,9 +151,9 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 					shouldShowMarker={true}
 					highlightPerTapEnabled={true}
 					labelFormatter={(x, y) => {
-						return `${
-							is24h ? dayjs(new Date(x)).format("DD-MM HH:mm") : dayjs(new Date(x)).format("hh:mm A")
-						}\n${Math.round(y)}`;
+						return `${is24h ? dayjs(new Date(x)).format("HH:mm") : dayjs(new Date(x)).format("hh:mm A")}\n${Math.round(
+							y
+						)}`;
 					}}
 				/>
 				<View style={{ marginTop: 20 }}>

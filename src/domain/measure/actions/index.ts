@@ -1000,7 +1000,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async setDailyActivitiesMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures<AcitivityMetrics>(
+			const data = await measureApi.fetchOneDayMeasures<AcitivityMetrics>(
 				activityMetrics,
 				localISODay,
 				useForceRefresh
@@ -1016,7 +1016,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async setDailyEnergyScoreContributorsMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures<
+			const data = await measureApi.fetchOneDayMeasures<
 				| ContributorBodyRecovery
 				| ContributorWakeUpScore
 				| ContributorBRScore
@@ -1054,7 +1054,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async setDailySleepScoreContributorsMetrics(isoDay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures<
+			const data = await measureApi.fetchOneDayMeasures<
 				| ContributorAwakeDuration
 				| ContributorRealSleepDuration
 				| ContributorDailyTranquility
@@ -1097,15 +1097,11 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					sleepStagesMetrics,
 					// Grab data from the noon before the day to make sure to get the ensleepment.
 					// TODO: implement day/night worker
-					moment(localISODay).startOf("day").subtract(12, "hours").toISOString(),
+					moment(localISODay).startOf("day").subtract(1, "hours").toISOString(),
 					moment(localISODay).endOf("day").toISOString(),
 					useForceRefresh
 				),
-				measureApi.fetchLastDailyMeasures<DailySleepStageDuration>(
-					dailySleepStageDuration,
-					localISODay,
-					useForceRefresh
-				),
+				measureApi.fetchOneDayMeasures<DailySleepStageDuration>(dailySleepStageDuration, localISODay, useForceRefresh),
 			]).then(function ([timeline, duration]) {
 				present([
 					{

@@ -56,7 +56,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 	const valueFormatter = lines.map(({ x }) => {
 		const day = moment(x).format("dd");
-		return day !== "Invalid date" ? day[0] : "";
+		return day !== "Invalid date" ? day[0].toUpperCase() : "";
 	});
 	const constant = data?.constant;
 	const averages: Averages = [];

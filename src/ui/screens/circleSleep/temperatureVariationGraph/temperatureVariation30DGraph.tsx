@@ -56,7 +56,7 @@ export const TemperatureVariation30DGraph: React.FC<Props> = observer(function S
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 	const valueFormatter = lines.map(({ x }) => {
 		const day = moment(x).format("dd");
-		return day !== "Invalid date" ? day[0] : "";
+		return day !== "Invalid date" ? day[0].toUpperCase() : "";
 	});
 	const constant = data?.constant;
 	const averages: Averages = [];
@@ -108,7 +108,7 @@ export const TemperatureVariation30DGraph: React.FC<Props> = observer(function S
 					</View>
 				)}
 				<BarChart
-					labelCount={20}
+					labelCount={30}
 					averages={averages}
 					shouldShowMarker={true}
 					xColor={colors.textPrimary}

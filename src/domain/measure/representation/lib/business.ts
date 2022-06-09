@@ -217,7 +217,9 @@ export const createSleepStagesGetter =
 			  ] as [string, string])
 			: undefined;
 
-		const totalMinutesSleepDuration = Number(data.constant[MetricType.UserDailyTotalSleepDuration]);
+		const totalMinutesSleepDuration = data.constant[MetricType.UserDailyTotalSleepDuration]
+			? Number(data.constant[MetricType.UserDailyTotalSleepDuration])
+			: -1;
 		const napTimings: Array<[string, string]> = getNaps(data);
 
 		return {

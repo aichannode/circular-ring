@@ -94,7 +94,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 					stages={dailySleep.stages}
 					coreSleepTiming={dailySleep.coreSleepTiming}
 					napTimings={dailySleep.napTimings}
-					duration={dailySleep.totalMinutesSleepDuration ?? 0}
+					duration={dailySleep.totalMinutesSleepDuration ?? -1}
 					mode={screenMode}
 					isLoading={loading}
 				/>

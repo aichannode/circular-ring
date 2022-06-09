@@ -156,10 +156,10 @@ export function LineChart({
 				: valueFormatterPattern?.[1]
 			: valueFormatterPattern,
 		position: "BOTTOM" as const,
-		centerAxisLabels: !isMultipleLines,
+		centerAxisLabels: false,
 		drawAxisLine: true,
 		enabled: true,
-		granularity: 1,
+		granularity: 1000,
 		drawLabels: true,
 		drawGridLines: false,
 		textSize: 10,
@@ -252,10 +252,13 @@ export function LineChart({
 					label: "",
 					config: {
 						drawValues: false,
-						lineWidth: shouldDrawCircles ? 2 : 1,
+						lineWidth: shouldDrawCircles ? 3 : 1,
 						drawCircles: shouldDrawCircles,
+						circleColor: processColor(graphColor),
+						circleHoleColor: processColor(graphColor),
+						highlightColor: processColor("transparent"),
 						circleColors: !!shouldShowMarker
-							? data.map(({ x }) => {
+							? data.map(({ x, y }) => {
 									if (x == selectedX) {
 										return processColor("#333333");
 									}
@@ -263,7 +266,6 @@ export function LineChart({
 							  })
 							: [processColor(graphColor)],
 						drawCircleHole: false,
-						highlightColor: processColor("transparent"),
 						color: processColor(graphColor),
 						axisLineColor: processColor("white"),
 						highlightEnabled: true,
@@ -271,7 +273,7 @@ export function LineChart({
 						valueTextSize: 0,
 						legend: false,
 						circleRadius: 4,
-						mode: "HORIZONTAL_BEZIER" as const,
+						mode: !shouldDrawCircles ? ("HORIZONTAL_BEZIER" as const) : undefined,
 					},
 				})),
 		],
@@ -307,7 +309,7 @@ export function LineChart({
 									if (!!shouldShowMarker) {
 										marker = labelFormatter(x, y, index);
 									}
-									return { x: index, y, marker, value: x };
+									return { x, y, marker, value: x };
 								}),
 								label: "",
 								config: {

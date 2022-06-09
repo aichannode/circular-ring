@@ -92,7 +92,6 @@ export const DailyPieChart: React.FC<Props> = ({
 	});
 
 	const { format, formatDuration } = useI18n();
-
 	return (
 		<View style={{ width: chartSize, height: chartSize, justifyContent: "center" }}>
 			<PieChart
@@ -111,9 +110,11 @@ export const DailyPieChart: React.FC<Props> = ({
 						<SliceDurationLabel>{format(title)}</SliceDurationLabel>
 						{/* @TODO  format is24h below*/}
 						<SliceDurationValue>
-							{isInActiveMode(mode) || isInCalibrationMode(mode)
-								? formatDuration(totalDuration * 60)
-								: format("global.no_data")}
+							{totalDuration !== -1 && (isInActiveMode(mode) || isInCalibrationMode(mode)) ? (
+								formatDuration(totalDuration * 60)
+							) : (
+								<SliceDurationLabel>{format("global.no_data")}</SliceDurationLabel>
+							)}
 						</SliceDurationValue>
 					</TotalDurationWrapper>
 					<Image source={require("@assets/images/morning.png")} />

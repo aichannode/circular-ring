@@ -70,9 +70,7 @@ export function SleepDurationPieChart({
 			: moment(coreSleepTiming?.[1]).endOf("day").toISOString(),
 		level: 4,
 	});
-
 	const updatedMode = updateMode(mode, stages.length === 0 || isNaN(duration));
-
 	return (
 		<Container>
 			{isLoading ? (

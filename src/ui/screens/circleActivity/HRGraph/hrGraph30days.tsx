@@ -84,7 +84,7 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 	}
 
 	const toUpdateTag = (x: number) => {
-		const date = moment(lines[x].x).format("Y-MM-DD") as ISODay;
+		const date = moment(new Date(x)).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
 
@@ -110,24 +110,27 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 					</View>
 				)}
 				<LineChart
+					labelCount={30}
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
-					daysItem={[{ lines: lines, color: colors.red }]}
+					data={lines}
 					shouldShowLabel={true}
 					shouldShowMarker={true}
-					shouldDrawCircles={false}
+					shouldDrawCircles={true}
 					graphColor={colors.red}
-					valueFormatter={lines.map((item) => moment(item.x).format("dd")[0])}
-					yMin={yMin - 10}
-					yMax={yMax + 10}
+					valueFormatterPattern="EEEEE"
+					valueFormatter="date"
+					yMin={yMin}
+					yMax={yMax}
 					mode={updatedMode}
 					shouldUpdateYmin={false}
 					highlightPerTapEnabled={true}
-					isMultipleLines={true}
+					isMultipleLines={false}
 					xAxisContentInset={15}
 					tooltipYMin={15}
 					tooltipYMax={-30}
+					yLabelCount={5}
 					tooltipSize={tooltipSize}
 					renderTooltip={(value) => (
 						<>
