@@ -1,3 +1,11 @@
+## [1.0.1](https://gitlab.com/circularing/mobile/app/compare/v1.0.0...v1.0.1) (2022-06-09)
+
+
+### Bug Fixes
+
+* Clear bypass state when logging out ([41cf5ac](https://gitlab.com/circularing/mobile/app/commit/41cf5ac964ffb2b63d4c6a3152fd7e3b55e64fda))
+* language update ([7990ca8](https://gitlab.com/circularing/mobile/app/commit/7990ca8e6f13a4c2b16aed56a329d37f08d23f62))
+
 # 1.0.0 (2022-06-09)
 
 
