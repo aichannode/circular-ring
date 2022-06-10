@@ -1,3 +1,10 @@
+## [1.0.3](https://gitlab.com/circularing/mobile/app/compare/v1.0.2...v1.0.3) (2022-06-10)
+
+
+### Bug Fixes
+
+* fixed app crash during tutorial ([bdd209e](https://gitlab.com/circularing/mobile/app/commit/bdd209ed0756d72e672220cebcc8fd9f14035f44))
+
 ## [1.0.2](https://gitlab.com/circularing/mobile/app/compare/v1.0.1...v1.0.2) (2022-06-09)
 
 
