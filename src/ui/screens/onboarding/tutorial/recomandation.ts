@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { FeedEntityComponentType, FeedRecommendation, IconType, InputType, UserInputStyle } from "@domain/feed/type";
+import {
+	FeedEntityComponentType,
+	FeedRecommendation,
+	IconType,
+	InputType,
+	SelectInputTypeConfig,
+	UserInputStyle,
+} from "@domain/feed/type";
 
 export const recommendationData: FeedRecommendation = {
 	type: "SLEEP",
@@ -23,8 +30,6 @@ export const recommendationData: FeedRecommendation = {
 				inputType: InputType.SELECT,
 				title: "home.banner.common.select",
 				inputConfig: {
-					//@ts-ignore
-					label: "",
 					minCount: 1,
 					maxCount: 1,
 					options: [
@@ -50,7 +55,7 @@ export const recommendationData: FeedRecommendation = {
 					selectedOptions: [45],
 					answeredAt: null,
 				},
-			},
+			} as SelectInputTypeConfig,
 			//@ts-ignore
 			BannerTemplateComponent: {
 				bannerTemplat: 86,

@@ -88,7 +88,7 @@ type InputTypeConfig<T extends InputType, C> = {
 export type SelectInputTypeConfig = InputTypeConfig<
 	InputType.SELECT,
 	{
-		label: WordingKey;
+		label?: WordingKey;
 		minCount: number;
 		maxCount: number;
 		options: OptionDto[];

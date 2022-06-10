@@ -1,18 +1,18 @@
 import {
-	FeedEntityStyle,
 	Activity,
 	FeedEntityComponentType,
-	UserInputComponentConfigurationDto,
+	FeedEntityStyle,
 	FeedRecommendation,
+	ParagraphComponentConfigurationDto,
+	UserInputConfiguration,
 } from "@domain/feed/type";
 import { Row, row, Stack } from "@ui/components/layout";
 import { MetaDataText, SubTitleText, TitleText } from "@ui/components/text";
 import { colors } from "@ui/styles/colors";
 import React from "react";
-import { ColorValue, Image, StyleProp, TextProps, View, ViewStyle } from "react-native";
+import { ColorValue, Image, StyleProp, Text, TextProps, View, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 import { Paragraph } from "@ui/screens/home/components/Paragraph";
-import { ParagraphComponentConfigurationDto } from "@domain/feed/type";
 import { useUserSettings } from "@domain/user/hooks/useUser";
 import { getFeedEntityDate } from "@domain/feed/business";
 import { useI18n } from "@ui/i18n";
@@ -20,7 +20,6 @@ import { UserInput } from "@ui/screens/home/components/UserInput";
 import LinearGradient from "react-native-linear-gradient";
 import { getGradient } from "@ui/screens/home/business";
 import { Mask } from "./mask";
-import { Text } from "react-native";
 import MaskedView from "@react-native-masked-view/masked-view";
 
 type Props = {
@@ -62,12 +61,12 @@ export const FakeRecommendation: React.FC<Props> = ({ recommendation, maskRecomm
 	const userSettings = useUserSettings();
 	const todayIso = new Date().toISOString();
 	const { format } = useI18n();
-	const userInput = recommendation.components.find(({ type }) => type === FeedEntityComponentType.USER_INPUT) as
-		| UserInputComponentConfigurationDto
-		| undefined;
+	const userInput = recommendation.components.find(({ type }) => type === FeedEntityComponentType.USER_INPUT);
 	const paragraphs = recommendation.components.filter(({ type }) => type === FeedEntityComponentType.PARAGRAPH) as
 		| ParagraphComponentConfigurationDto[];
 	const maybeGradientBorder = getGradient(recommendation.style as FeedEntityStyle);
+
+	console.log("UserInput", userInput);
 
 	return (
 		<>
@@ -129,7 +128,14 @@ export const FakeRecommendation: React.FC<Props> = ({ recommendation, maskRecomm
 			</Mask>
 			{userInput && !maskUserInput && (
 				<Mask masked={maskUserInput}>
-					<UserInput feedEntryId={recommendation.id} compId={userInput.id} palette={recommendation.style} {...userInput} />
+					<UserInput
+						feedEntryId={recommendation.id}
+						compId={userInput.id}
+						palette={recommendation.style}
+						configuration={userInput.configuration as UserInputConfiguration}
+						id={userInput.id}
+						type={FeedEntityComponentType.USER_INPUT}
+					/>
 				</Mask>
 			)}
 		</>
@@ -142,7 +148,7 @@ const Container = styled.View<{ style: Activity["style"] }>`
 	border-left-width: 10px;
 	background-color: white;
 	/* border-radius: 2px; */
-	${(props) => `border-left-color: ${getColorFromBannerStyle(props.style) as string}`};
+	${(props) => `border-left-color: ${getColorFromBannerStyle(props.style) as string}`}
 `;
 
 const Separator = styled.View`
