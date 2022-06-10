@@ -55,7 +55,7 @@ android:build:prod:
   variables:
     ENV: prod
   only:
-    - prod
+    - master
 
 .build-android:
   stage: android
