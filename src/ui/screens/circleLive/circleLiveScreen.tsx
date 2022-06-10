@@ -57,16 +57,16 @@ export const CircleLiveScreen: React.FC = () => {
 		<Container contentContainerStyle={{ paddingVertical: 30 }}>
 			<ResponsiveCenterView maxWidth={380} align="stretch">
 				<Stack gap={16}>
-					<Row gap={100}>
+					<TitleContainer>
 						<TitleText>{format("live.heart_rate.label")}</TitleText>
-						<Row gap={5} align="center">
+						<View style={{ flexDirection: "row", alignItems: "center" }}>
 							<TertiaryText>
 								{format("live.accuracy.label")}
 								{dataQuality ? <QualityValue> {formatSignalQuality(dataQuality)}</QualityValue> : null}
 							</TertiaryText>
 							{dataQuality ? <ColoredDot color={SignalQualityColors[dataQuality]} /> : null}
-						</Row>
-					</Row>
+						</View>
+					</TitleContainer>
 					<Row gap={20} style={{ height: 155 }} align="center">
 						<Stack gap={10} style={{ flex: 1 }}>
 							<InfoCard>
@@ -164,6 +164,12 @@ const Container = styled(ScrollScreen)`
 	justify-content: flex-start;
 `;
 
+const TitleContainer = styled.View`
+	flex: 1;
+	flex-direction: row;
+	justify-content: space-between;
+`;
+
 const InfoCard = styled.View`
 	${roundedWhiteCardStyle};
 	justify-content: space-between;
@@ -194,6 +200,7 @@ const GaugeValue = styled.View<{ intensity: Intensity; rate: number }>`
 `;
 
 const ColoredDot = styled.View<{ color: string }>`
+	margin-left: 5px;
 	flex-grow: 0;
 	flex-shrink: 0;
 	width: 10px;

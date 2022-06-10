@@ -14,19 +14,25 @@ import { SecondaryText, TitleText } from "../text";
 interface GlobalScoreCardProps {
 	score?: number;
 	style?: StyleProp<ViewStyle>;
+	scoreQuality?: ScoreQuality;
 	mode?: Mode;
 }
-export const GlobalScoreCard: React.FC<GlobalScoreCardProps> = ({ score, style, mode = createActiveMode() }) => {
+export const GlobalScoreCard: React.FC<GlobalScoreCardProps> = ({
+	score,
+	scoreQuality,
+	style,
+	mode = createActiveMode(),
+}) => {
 	const { format, formatScoreQuality } = useI18n();
-
-	const scoreQuality = isInActiveMode(mode) && ScoreQuality.GOOD; // TODO: This is not dynamic and wasn't before I've added `!hasNotEnoughData`, so keep this in mind. @lucasmrdt
 
 	return (
 		<Container gap={16} align="center" justify="center" style={style}>
 			<ScoreView value={score} color={colors.primary} mode={mode} />
 			<View>
 				<SecondaryText>{format("profile.global_score.label")}</SecondaryText>
-				{scoreQuality && <TitleText style={{ color: colors.primary }}>{formatScoreQuality(scoreQuality)}</TitleText>}
+				{isInActiveMode(mode) && scoreQuality && (
+					<TitleText style={{ color: colors.primary }}>{formatScoreQuality(scoreQuality)}</TitleText>
+				)}
 			</View>
 		</Container>
 	);

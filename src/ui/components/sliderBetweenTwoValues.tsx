@@ -10,7 +10,10 @@ interface SliderProps {
 	stop: number;
 	value: number | number[];
 	defaultValue: number;
+	minimumTrackTintColor?: string;
+	maximumTrackTintColor?: string;
 	setValue: (arg0: number | number[]) => void;
+	hideResetButton?: boolean;
 }
 
 export const SliderBetweenTwoValues: React.FC<SliderProps> = ({
@@ -20,6 +23,9 @@ export const SliderBetweenTwoValues: React.FC<SliderProps> = ({
 	value,
 	setValue,
 	defaultValue,
+	minimumTrackTintColor = colors.redOrange,
+	maximumTrackTintColor = colors.lightgray,
+	hideResetButton,
 }) => {
 	const { format } = useI18n();
 	return (
@@ -33,13 +39,13 @@ export const SliderBetweenTwoValues: React.FC<SliderProps> = ({
 				<Slider
 					step={1}
 					containerStyle={{ flex: 1 }}
-					minimumTrackTintColor={colors.redOrange}
-					maximumTrackTintColor={colors.lightgray}
+					minimumTrackTintColor={minimumTrackTintColor}
+					maximumTrackTintColor={maximumTrackTintColor}
 					maximumValue={stop}
 					minimumValue={start}
 					thumbStyle={{
 						borderWidth: 1,
-						borderColor: colors.lightgray,
+						borderColor: maximumTrackTintColor,
 						shadowColor: "#000",
 						shadowOffset: {
 							width: 0,
@@ -60,9 +66,11 @@ export const SliderBetweenTwoValues: React.FC<SliderProps> = ({
 				</PinBar>
 			</FlexView>
 			<CurrentValue>{value}</CurrentValue>
-			<ResetTouchable onPress={() => setValue(defaultValue)}>
-				<Reset>{format("highHr.resetToDefault")}</Reset>
-			</ResetTouchable>
+			{!hideResetButton && (
+				<ResetTouchable onPress={() => setValue(defaultValue)}>
+					<Reset>{format("highHr.resetToDefault")}</Reset>
+				</ResetTouchable>
+			)}
 		</Container>
 	);
 };

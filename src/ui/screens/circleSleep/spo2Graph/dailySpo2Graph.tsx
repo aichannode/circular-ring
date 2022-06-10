@@ -1,16 +1,18 @@
 import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
+import { DataControlState } from "@domain/measure/representation/api";
+import { useIs24h } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, trimData, TrimOptions, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
 import { Tag } from "@ui/components/tag";
-import { TitleText } from "@ui/components/text";
 import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -22,79 +24,74 @@ type Props = {
 	dailyTrimOptions?: TrimOptions;
 };
 
-const tooltipSize = { width: 40, height: 20 };
-
-export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph({
+export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 	selectedDay,
 	mode = createActiveMode(),
 	dailyTrimOptions,
 }: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
+	const is24h = useIs24h();
 
 	const {
 		measure: {
-			hooks: { useDailyHRNight, useDailyHRTrend },
+			hooks: { useDailySpo2 },
 		},
 		calendar: {
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
 
-	const dailyHRNight = useDailyHRNight(selectedDay);
-
-	const dailyHrTrend = useDailyHRTrend(selectedDay);
+	const dailySpo2 = useDailySpo2(selectedDay);
 	const [lines, constant] = [
-		dailyHRNight ? dailyHRNight.data : [],
-		dailyHRNight ? dailyHRNight.constant : { hr: 0, hrMax: 0, hrMin: 0, reference: 0 },
+		dailySpo2 ? dailySpo2.data : [],
+		dailySpo2 ? dailySpo2.constant : { average: 0, reference: 0 },
 	];
 
-	const parsedData = dailyTrimOptions ? trimData(lines, (line) => line.x, dailyTrimOptions) : lines;
-	const [yMin, yMax] =
-		parsedData.length > 0
-			? [Math.min(...parsedData.map((line) => line.y)), Math.max(...parsedData.map((line) => line.y))]
-			: [0, 0];
+	const parsedLines = dailyTrimOptions ? trimData(lines, (line) => line.x, dailyTrimOptions) : lines;
 
+	const updatedMode = updateMode(mode, dailySpo2?.controlState !== DataControlState.READY);
+
+	const [yMin, yMax] =
+		parsedLines.length > 0
+			? [Math.min(...parsedLines.map((line) => line.y)), Math.max(...parsedLines.map((line) => line.y))]
+			: [0, 0];
 	const [yMinIndex, yMaxIndex] = [
-		parsedData.findIndex((line) => line.y == yMin),
-		parsedData.findIndex((line) => line.y == yMax),
+		parsedLines.findIndex((line) => line.y == yMin),
+		parsedLines.findIndex((line) => line.y == yMax),
 	];
 	const tags = useDailyTags(selectedDay);
-	const updatedMode = updateMode(mode, parsedData.length === -1);
+
 	const averages: Averages = [];
-	if (isInActiveMode(updatedMode)) {
-		if (constant.reference !== -1) {
-			averages.push({
-				value: constant.reference,
-				color: colors.redLight,
-			});
-		}
-		if (constant.hr !== -1) {
-			averages.push({
-				value: constant.hr,
-
-				color: colors.darkBlue,
-			});
-		}
+	if (
+		(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
+		isDefined(constant) &&
+		constant.average !== -1
+	) {
+		averages.push({
+			value: constant.average,
+			color: colors.darkBlue,
+		});
 	}
-
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.reference !== -1) {
+		averages.push({
+			value: constant.reference,
+			color: colors.redLight,
+		});
+	}
 	useEffect(() => {
-		if (isDefined(dailyHRNight)) {
+		if (isDefined(lines)) {
 			setLoading(false);
 		}
-	}, [dailyHRNight]);
+	}, [lines]);
 
 	return isLoading ? (
 		<Spinner size={24} />
 	) : (
 		<View>
-			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("live.heart_rate.label")}
-			</TitleText>
-
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
-				{(isInActiveMode(mode) || isInCalibrationMode(mode)) && (
+				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
 					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
 						{tags.map(({ name, id }) => (
 							<View key={id} style={{ marginLeft: 8 }}>
@@ -107,9 +104,10 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 					labelCount={5}
 					averages={averages}
 					xColor={colors.textPrimary}
-					shouldShowLabel={true}
 					yColor={colors.darkGray}
-					data={parsedData}
+					data={parsedLines}
+					shouldShowLabel={true}
+					shouldShowMarker={true}
 					shouldDrawCircles={false}
 					graphColor={colors.darkBlue}
 					valueFormatter="date"
@@ -119,19 +117,13 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 					yMinIndex={yMinIndex}
 					yMaxIndex={yMaxIndex}
 					mode={updatedMode}
-					xAxisContentInset={15}
-					tooltipYMin={15}
-					tooltipYMax={-30}
-					tooltipSize={tooltipSize}
-					renderTooltip={(value) => (
-						<>
-							<Tag containerStyle={{ backgroundColor: colors.sleepTag, marginBottom: 4 }}>{`${value}`}</Tag>
-						</>
-					)}
-					movingAverage={dailyHrTrend?.data}
-					shouldShowMarker={true}
+					shouldUpdateYmin={false}
 					highlightPerTapEnabled={true}
-					isDaily
+					labelFormatter={(x, y) => {
+						return `${is24h ? dayjs(new Date(x)).format("HH:mm") : dayjs(new Date(x)).format("hh:mm A")}\n${Math.round(
+							y
+						)}`;
+					}}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
@@ -152,8 +144,12 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 										</View>
 									),
 								},
-
-								value: typeof constant.hr == "undefined" || constant.hr === -1 ? "- bpm" : `${constant.hr} bpm`,
+								value:
+									parsedLines.length == 0
+										? format("global.no_data")
+										: typeof constant.average == "undefined" || constant.average === -1
+										? "- %"
+										: `${constant.average} %`,
 							},
 							{
 								label: format("hr.reference"),
@@ -172,28 +168,11 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 								},
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+									: parsedLines.length == 0
+									? format("global.no_data")
 									: typeof constant.reference == "undefined" || constant.reference === -1
-									? "- bpm"
-									: `${Math.round(constant.reference)} bpm`,
-							},
-							{
-								label: format("hr.hrMax"),
-								element: {
-									key: "hr.hrMax",
-									node: <></>,
-								},
-								value:
-									typeof constant.hrMax == "undefined" || constant.hrMax === -1 ? "- bpm" : `${constant.hrMax} bpm`,
-							},
-							{
-								label: format("hr.hrMin"),
-								element: {
-									key: "hr.hrMin",
-									node: <></>,
-								},
-
-								value:
-									typeof constant.hrMin == "undefined" || constant.hrMin === -1 ? "- bpm" : `${constant.hrMin} bpm`,
+									? "- %"
+									: `${constant.reference} %`,
 							},
 						]}
 					/>

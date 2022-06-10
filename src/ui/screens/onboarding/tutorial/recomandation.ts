@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { FeedRecommendation } from "@domain/feed/type";
-import { IconType, InputType, UserInputStyle, FeedEntityComponentType } from "@domain/feed/type";
+import {
+	FeedEntityComponentType,
+	FeedRecommendation,
+	IconType,
+	InputType,
+	SelectInputTypeConfig,
+	UserInputStyle,
+} from "@domain/feed/type";
 
 export const recommendationData: FeedRecommendation = {
 	type: "SLEEP",
@@ -20,11 +26,10 @@ export const recommendationData: FeedRecommendation = {
 			type: FeedEntityComponentType.USER_INPUT,
 			configuration: {
 				style: UserInputStyle.DEFAULT,
+				// @ts-ignore I don't understand why ts complains about this
 				inputType: InputType.SELECT,
 				title: "home.banner.common.select",
 				inputConfig: {
-					//@ts-ignore
-					label: "",
 					minCount: 1,
 					maxCount: 1,
 					options: [
@@ -50,7 +55,7 @@ export const recommendationData: FeedRecommendation = {
 					selectedOptions: [45],
 					answeredAt: null,
 				},
-			},
+			} as SelectInputTypeConfig,
 			//@ts-ignore
 			BannerTemplateComponent: {
 				bannerTemplat: 86,
@@ -148,9 +153,9 @@ export const recommendationData: FeedRecommendation = {
 		{
 			id: 98,
 			type: FeedEntityComponentType.PARAGRAPH,
+			//@ts-ignore
 			configuration: {
 				style: UserInputStyle.DEFAULT,
-				//@ts-ignore
 
 				translationKey: "tutorial.examplerecommendation",
 			},
@@ -185,9 +190,9 @@ export const recommendationDataFeed: FeedRecommendation = {
 		{
 			id: 97,
 			type: FeedEntityComponentType.PARAGRAPH,
+			//@ts-ignore
 			configuration: {
 				style: UserInputStyle.DEFAULT,
-				//@ts-ignore
 
 				translationKey: "tutorial.backgroundrecommendation",
 			},

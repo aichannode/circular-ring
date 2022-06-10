@@ -4,6 +4,7 @@ import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState, Points } from "@domain/measure/representation/api";
 import { TimeFrame } from "@domain/measure/type";
+import { useIsUSCS } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { BarChart } from "@ui/components/measure/barChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
@@ -15,6 +16,7 @@ import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -33,6 +35,7 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 	const [isLoading, setLoading] = useState(true);
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	const [tags, setTags] = useState<CalendarTag[]>([]);
+	const isUSCS = useIsUSCS();
 
 	const {
 		measure: {
@@ -55,7 +58,6 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 				.reverse()
 		: [];
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
-
 	const valueFormatter = lines.map(({ x }) => {
 		const day = moment(x).format("dd");
 		return day !== "Invalid date" ? day[0] : "";
@@ -142,6 +144,11 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 					graphColor={colors.red}
 					onSelect={(x) => toUpdateTag(x)}
 					mode={updatedMode}
+					mapMarker={(el) =>
+						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
+							el.y
+						}`
+					}
 					yMin={0}
 					yMax={yMax + Math.round(((yMax - yMin) * 10) / 100)}
 				/>

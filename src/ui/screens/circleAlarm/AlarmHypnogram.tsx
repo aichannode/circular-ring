@@ -23,6 +23,7 @@ export type Steps = Array<{
 
 type Props = {
 	data: HypnogramData;
+	endSleep?: string | number;
 	phaseBeforeWakeUp?: number;
 	mode?: Mode;
 };
@@ -32,7 +33,8 @@ const defaultXAxis = [moment().hour(0).valueOf(), moment().hour(8).valueOf()];
 
 export function AlarmHypnogram({
 	data,
-	phaseBeforeWakeUp = data[data.length - 1].level,
+	phaseBeforeWakeUp = data[data.length - 1]?.level,
+	endSleep = data[data.length - 1]?.end,
 	mode = createActiveMode(),
 }: Props) {
 	const stepsData = toStepsData(data);
@@ -103,9 +105,7 @@ export function AlarmHypnogram({
 									top: 15,
 								}}
 							>
-								<Text style={{ color: colors.white, fontSize: 15 }}>
-									{formatHour(new Date(data[data.length - 1].end), true)}
-								</Text>
+								<Text style={{ color: colors.white, fontSize: 15 }}>{formatHour(moment(endSleep).toDate(), true)}</Text>
 							</View>
 							<View
 								style={{

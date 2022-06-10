@@ -4,6 +4,7 @@ import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState } from "@domain/measure/representation/api";
 import { TimeFrame } from "@domain/measure/type";
+import { useIsUSCS } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { Row } from "@ui/components/layout";
 import { BarChart } from "@ui/components/measure/barChart";
@@ -16,6 +17,7 @@ import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useState } from "react";
@@ -29,6 +31,7 @@ type Props = {
 export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDay, mode = createActiveMode() }: Props) {
 	const { format, formatDuration } = useI18n();
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
+	const isUSCS = useIsUSCS();
 	const [tags, setTags] = useState<CalendarTag[]>([]);
 
 	const {
@@ -105,6 +108,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 		const date = moment(item?.date).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
+	const yMax = lines.length > 0 ? Math.max(...lines.filter((line) => line.y > 0).map((line) => line.y)) : 0;
 
 	return isLoading ? (
 		<Spinner size={24} />
@@ -149,7 +153,11 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 					shouldShowMarker={true}
 					mapXAxis={(el) => (el as typeof lines[number]).mappedX}
 					mapBarColor={(el) => (el as typeof lines[number]).color}
-					mapMarker={(el) => formatDuration(moment.duration((el as typeof lines[number]).y, "hours").as("seconds"))}
+					mapMarker={(el) =>
+						`${
+							isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")
+						}\n${formatDuration(moment.duration((el as typeof lines[number]).y, "hours").as("seconds"))}`
+					}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
 					data={lines}
@@ -157,6 +165,8 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 					graphColor={colors.darkBlue}
 					onSelect={(x) => toUpdateTag(x)}
 					mode={updatedMode}
+					yMin={0}
+					yMax={yMax}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<Row justify="space-between" style={{ marginBottom: 7 }}>

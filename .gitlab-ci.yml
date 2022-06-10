@@ -32,7 +32,7 @@ android:build:dev:
   variables:
     ENV: dev
   only:
-    - master
+    - develop
 
 android:build:demo:
   extends: .build-android
@@ -55,11 +55,11 @@ android:build:prod:
   variables:
     ENV: prod
   only:
-    - prod
+    - master
 
 .build-android:
   stage: android
-  image: betomorrow/ci-android:29_v1
+  image: betomorrow/ci-android:30_v16
   environment:
     name: ${ENV}
   tags:
@@ -71,6 +71,7 @@ android:build:prod:
     - mkdir artifacts
   script:
     - npm ci --progress=false
+    - npm run semver
     - npx jetifier
     - bash ./scripts/copy-env.sh ${ENV}
     - cd android

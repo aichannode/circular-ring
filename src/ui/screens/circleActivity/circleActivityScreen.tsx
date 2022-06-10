@@ -5,10 +5,14 @@ import lungs from "@assets/images/lungs.png";
 import shoes from "@assets/images/shoes.png";
 import sport from "@assets/images/sport.png";
 import { useRepresentations } from "@core/representation";
+import { services } from "@core/services";
 import { getCurrentLocalISODay } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
-import { activities, activityScoreContributors } from "@domain/measure/representation/lib/type";
+import { MetricType } from "@domain/measure/metric";
+import { ActivityDetail, DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
+import { getActivityControlState } from "@domain/measure/representation/business";
+import { Activities, activities, activityScoreContributors } from "@domain/measure/representation/lib/type";
+import { Goals } from "@domain/user/goals.model";
 import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
 import { getInitMode, isInCalibrationMode, TrimOptions, updateMode } from "@ui/business";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
@@ -34,11 +38,10 @@ import { CaloriesBurnedGraph } from "./caloriesBurnedGraph";
 import { CardioPointsGraph } from "./cardioPointsGraph";
 import { DailyMetric } from "./dailyMetric";
 import { EnergyScoreGraph } from "./energyScoreGraph";
-import { HeartRateGraph } from "./heartRateGraph";
+import { HRGraph } from "./HRGraph/HRGraph";
 import { dailyActivitiesUIConfig, getActivityGaugesConfig } from "./measureDisplayInfos";
 import { RestingHeartRate7DGraph } from "./restingHeartRate7DGraph";
 import { StepsGraph } from "./StepsGraph";
-
 function getIcon(path: string) {
 	switch (path) {
 		case "@assets/images/shoes.png":
@@ -56,21 +59,12 @@ function getIcon(path: string) {
 	}
 }
 
+const dailyMetricControlStateParent: Record<string, MetricType> = {
+	[MetricType.UserDailyWalkingEquivalency]: MetricType.UserDailySteps,
+	[MetricType.UserDailyCaloriesBurned]: MetricType.UserDailySteps,
+};
+
 export const CircleActivityScreen = observer(function CircleActivityScreen() {
-	const { format } = useI18n();
-	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
-	const [isLoading, setLoading] = useState<boolean>(true);
-	const [activityIntensity, setData] = useState<DailyActivityIntensityData>({
-		stages: [],
-		controlState: DataControlState.NO_DATA,
-		duration: {
-			total: 0,
-			highActivity: 0,
-			mediumActivity: 0,
-			lowActivity: 0,
-		},
-		sportSessionDates: [],
-	});
 	const {
 		measure: {
 			hooks: {
@@ -83,14 +77,46 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 			},
 		},
 	} = useRepresentations();
+	const { format } = useI18n();
+	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
+	const [dailyActivitiesData, setDailyActivity] = useState<Record<Activities, ActivityDetail> | undefined>(undefined);
+	const [isLoading, setLoading] = useState<boolean>(true);
+	const [activityIntensity, setData] = useState<DailyActivityIntensityData>({
+		stages: [],
+		controlState: DataControlState.NO_DATA,
+		duration: {
+			total: 0,
+			highActivity: 0,
+			mediumActivity: 0,
+			lowActivity: 0,
+		},
+		sportSessionDates: [],
+	});
 	const energyScoreDetails = useDailyEnergyScoreDetails(selectedDay);
-	const dailyActivitiesData = useDailyActivities(selectedDay);
+	const dailyData = useDailyActivities(selectedDay);
+	if (dailyData && !dailyActivitiesData) {
+		// FIXME This is a stupid fix due to a bad usage of the SAM design pattern.
+		services.userService.getGoals().then(({ goals }) => {
+			Object.entries(dailyData).forEach(([key, value]) => {
+				const parentKey = dailyMetricControlStateParent[key] ?? key;
+				if (parentKey !== key || !!goals[`${parentKey}.goal.min` as Goals]) {
+					(value as any).controlState = getActivityControlState({
+						value: parentKey === key ? value.value ?? 0 : (dailyData as any)[parentKey as MetricType].value,
+						thresholdLow: goals[`${parentKey}.goal.min` as Goals],
+						thresholdHigh: goals[`${parentKey}.goal.max` as Goals],
+					});
+				}
+			});
+			setDailyActivity(dailyData);
+		});
+	}
+
 	const energyScore = useDailyEnergyScore(selectedDay);
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const activityContributorGaugesConfig = getActivityGaugesConfig(format);
-
 	useDailyActivityIntensity({ localISODay: selectedDay, setData, setLoading });
+
 	const coreSleepTiming = useCoreSleep(selectedDay);
 
 	const hasCompleteCoreSleep = useHasCompleteCoreSleep(selectedDay);
@@ -109,7 +135,6 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 		],
 		excludes: coreSleepTiming ? [[moment(coreSleepTiming[0]).valueOf(), moment(coreSleepTiming[1]).valueOf()]] : [],
 	};
-
 	return (
 		<Container>
 			<View>
@@ -231,11 +256,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 					/>
 				)}
 				{activeItem === 5 && (
-					<HeartRateGraph
-						selectedDay={selectedDay}
-						mode={screenModeWithoutDisabled}
-						dailyTrimOptions={dailyTrimOptions}
-					/>
+					<HRGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} dailyTrimOptions={dailyTrimOptions} />
 				)}
 				{activeItem === 6 && <RestingHeartRate7DGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
 
@@ -322,8 +343,9 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 						selectedLocalIsoDay={selectedDay}
 						onDaySelected={async (day) => {
 							await calendarBottomSheet.current?.asyncClose();
-							setSelectedDay(day);
 							setLoading(true);
+							setSelectedDay(day);
+							setDailyActivity(undefined);
 						}}
 					/>
 				</View>
@@ -342,7 +364,9 @@ const ElementStack = styled(Stack)`
 `;
 
 const GraphSwitcherButton = styled(Image)`
-	margin-left: 15px;
+	margin-left: 7px;
+	margin-right: 7px;
+	margin-bottom: 4px;
 	width: 40px;
 	height: 40px;
 	align-items: center;

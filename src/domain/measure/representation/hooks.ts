@@ -1,6 +1,7 @@
 import { ApiService } from "@core/api/apiService";
 import {
 	getCurrentLocalISODay,
+	getLast30Days,
 	getLast7Days,
 	getMonthsBetween,
 	isDefined,
@@ -21,6 +22,7 @@ import {
 	Activity7D,
 	ActivityAll,
 	ActivityDetail,
+	BR30Days,
 	CalorieBurned7D,
 	Cardio7D,
 	Contributor,
@@ -34,12 +36,17 @@ import {
 	DailySleepData,
 	DailySpo2,
 	DataControlState,
+	Hr30Days,
+	HrNight30Days,
 	HRS7D,
+	HRV30Days,
 	RestingHeartRate7D,
 	Scores7D,
 	Sleep7D,
 	SleepAll,
+	Spo230Days,
 	Steps7D,
+	TemperatureVariation30Days,
 	TemperatureVariation7D,
 } from "./api";
 import {
@@ -87,6 +94,15 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 	return {
 		actions,
 		hooks: {
+			useResetMeasureModel() {
+				Object.keys(model).forEach((key) => {
+					if (key !== "lastAcceptedMutations" && typeof model[key as keyof typeof model] === "object") {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						//@ts-ignore
+						model[key as keyof typeof model] = new Map();
+					}
+				});
+			},
 			use7DaysSleep(localISODay: ISODay): Sleep7D | undefined {
 				// Compute the 7 previous date from the given date
 				const last7Days = getLast7Days(localISODay);
@@ -134,19 +150,19 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 							awake:
 								localMetrics && localMetrics[MetricType.UserDailyAwakeStageDuration] !== null
 									? getOrElse<number>(localMetrics, MetricType.UserDailyAwakeStageDuration, 0) / 60
-									: 0,
+									: -1,
 							light:
 								localMetrics && localMetrics[MetricType.UserDailyLightStageDuration] !== null
 									? getOrElse<number>(localMetrics, MetricType.UserDailyLightStageDuration, 0) / 60
-									: 0,
+									: -1,
 							deep:
 								localMetrics && localMetrics[MetricType.UserDailyDeepStageDuration] !== null
 									? getOrElse<number>(localMetrics, MetricType.UserDailyDeepStageDuration, 0) / 60
-									: 0,
+									: -1,
 							REM:
 								localMetrics && localMetrics[MetricType.UserDailyREMStageDuration] !== null
 									? getOrElse<number>(localMetrics, MetricType.UserDailyREMStageDuration, 0) / 60
-									: 0,
+									: -1,
 							date,
 						};
 					}) as unknown as Sleep7D["sleepStages"];
@@ -202,7 +218,6 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 					const sleepStages = months.map((date) => {
 						const localMetrics = model.monthlySleepStageMetrics.get(date);
-						console.log(localMetrics);
 						return {
 							awake:
 								localMetrics && localMetrics[MetricType.UserMonthlyAwakeStageDuration] !== null
@@ -273,15 +288,15 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 							high:
 								localMetrics && localMetrics[MetricType.UserDailyHighActivityIntensityDuration] !== null
 									? localMetrics[MetricType.UserDailyHighActivityIntensityDuration]
-									: null,
+									: -1,
 							medium:
 								localMetrics && localMetrics[MetricType.UserDailyMediumActivityIntensityDuration] !== null
 									? localMetrics[MetricType.UserDailyMediumActivityIntensityDuration]
-									: null,
+									: -1,
 							low:
 								localMetrics && localMetrics[MetricType.UserDailyLowActivityIntensityDuration] !== null
 									? localMetrics[MetricType.UserDailyLowActivityIntensityDuration]
-									: null,
+									: -1,
 							date,
 						};
 					}) as unknown as Activity7D["activityMetrics"];
@@ -422,16 +437,16 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						[MetricType.UserDailySteps]: {
 							value: toOptional<number>(data, MetricType.UserDailySteps),
 							controlState: getActivityControlState({
-								thresholdLow: Number(data[MetricType.UserDailyStepsGoalMin]),
-								thresholdHigh: Number(data[MetricType.UserDailyStepsGoalMax]),
+								thresholdLow: 0,
+								thresholdHigh: 0,
 								value: getOrElse(data, MetricType.UserDailySteps, 0),
 							}),
 						},
 						[MetricType.UserDailyWalkingEquivalency]: {
 							value: toOptional<number>(data, MetricType.UserDailyWalkingEquivalency),
 							controlState: getActivityControlState({
-								thresholdLow: Number(data[MetricType.UserDailyWalkingEquivalencyGoalMin]),
-								thresholdHigh: Number(data[MetricType.UserDailyWalkingEquivalencyGoalMax]),
+								thresholdLow: 0,
+								thresholdHigh: 0,
 								value: getOrElse(data, MetricType.UserDailyWalkingEquivalency, 0),
 							}),
 						},
@@ -439,16 +454,16 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 							value: toOptional<number>(data, MetricType.UserDailyCaloriesBurned),
 							score: Number(data[MetricType.UserDailySteps]),
 							controlState: getActivityControlState({
-								thresholdLow: Number(data[MetricType.UserDailyStepsGoalMin]),
-								thresholdHigh: Number(data[MetricType.UserDailyStepsGoalMax]),
+								thresholdLow: 0,
+								thresholdHigh: 0,
 								value: getOrElse(data, MetricType.UserDailyCaloriesBurned, 0),
 							}),
 						},
 						[MetricType.UserDailyCardioPoints]: {
 							value: toOptional<number>(data, MetricType.UserDailyCardioPoints),
 							controlState: getActivityControlState({
-								thresholdLow: Number(data[MetricType.UserDailyCardioPointsGoalMin]),
-								thresholdHigh: Number(data[MetricType.UserDailyCardioPointsGoalMax]),
+								thresholdLow: 0,
+								thresholdHigh: 0,
 								value: getOrElse(data, MetricType.UserDailyCardioPoints, 0),
 							}),
 						},
@@ -814,11 +829,185 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				})) as Scores7D["series"];
 
 				// Spec 00026: IS_READY if has some historical data
-				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+				const controlState = last7Days.some((date) => isDefined(model.dailyEnergyScore.get(date)))
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
 				return {
 					series,
 					constant: {
 						average: model.last7DEnergyScore.get(localISODay) ?? 0,
+					},
+					controlState,
+				};
+			},
+			useLast30DaysSpo2(localISODay: ISODay): Spo230Days | undefined {
+				// Compute the 30 previous date from the given date
+
+				const last30Days = getLast30Days(localISODay);
+				useEffect(
+					action(function () {
+						actions.setMonthlySpo2Constants(localISODay);
+						last30Days.forEach((d) => actions.setDailySpo2(d, shouldByPassCache(model.dailySpo2, d)));
+					}),
+					[localISODay]
+				);
+
+				const Spo230daysConstants = model.last30DSpo2.get(localISODay);
+				const isLoaded = model.last30DSpo2.has(localISODay) && last30Days.every((date) => model.dailySpo2.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last30Days.map((date) => {
+					return { value: model.dailySpo2.get(date), date: date };
+				}) as unknown as Spo230Days["series"];
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+
+				return {
+					series,
+					constant: {
+						average: Spo230daysConstants ? Number(Spo230daysConstants[MetricType.User30DaysAverageSpo2]) : -1,
+						reference: Spo230daysConstants ? Number(Spo230daysConstants[MetricType.UserDailyAsleepSPO2Reference]) : -1,
+					},
+					controlState,
+				};
+			},
+			useLast30DaysBR(localISODay: ISODay): BR30Days | undefined {
+				// Compute the 30 previous date from the given date
+
+				const last30Days = getLast30Days(localISODay);
+				useEffect(
+					action(function () {
+						actions.setMonthlyBRConstants(localISODay);
+						last30Days.forEach((d) => actions.setDailyBR(d, shouldByPassCache(model.dailyBR, d)));
+					}),
+					[localISODay]
+				);
+
+				const BR30daysConstants = model.last30DBR.get(localISODay);
+				const isLoaded = model.last30DBR.has(localISODay) && last30Days.every((date) => model.dailyBR.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last30Days.map((date) => {
+					return { value: model.dailyBR.get(date), date: date };
+				}) as unknown as BR30Days["series"];
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+
+				return {
+					series,
+					constant: {
+						average: BR30daysConstants ? Number(BR30daysConstants[MetricType.UserBRMonthlyAverage]) : -1,
+						reference: BR30daysConstants ? Number(BR30daysConstants[MetricType.UserDailyAsleepBRReference]) : -1,
+					},
+					controlState,
+				};
+			},
+			useLast30DaysHrNight(localISODay: ISODay): HrNight30Days | undefined {
+				// Compute the 30 previous date from the given date
+
+				const last30Days = getLast30Days(localISODay);
+
+				useEffect(
+					action(function () {
+						actions.setMonthlyHrNightConstants(localISODay);
+						last30Days.forEach((d) => actions.setDailyHrNight(d, shouldByPassCache(model.dailyHrNight, d)));
+					}),
+					[localISODay]
+				);
+
+				const HrNight30daysConstants = model.last30DHrNight.get(localISODay);
+				const isLoaded =
+					model.last30DHrNight.has(localISODay) && last30Days.every((date) => model.dailyHrNight.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last30Days.map((date) => {
+					return { value: model.dailyHrNight.get(date), date: date };
+				}) as unknown as HrNight30Days["series"];
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+
+				return {
+					series,
+					constant: {
+						average: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserMonthlyHrAverage]) : -1,
+						reference: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserDailySleepHR]) : -1,
+						min: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserMonthlyHrMin]) : -1,
+						max: HrNight30daysConstants ? Number(HrNight30daysConstants[MetricType.UserMonthlyHrMax]) : -1,
+					},
+					controlState,
+				};
+			},
+			useLast30DaysHr(localISODay: ISODay): Hr30Days | undefined {
+				// Compute the 30 previous date from the given date
+
+				const last30Days = getLast30Days(localISODay);
+
+				useEffect(
+					action(function () {
+						actions.setMonthlyHrConstants(localISODay);
+						last30Days.forEach((d) => actions.setDailyHr(d, shouldByPassCache(model.dailyHr, d)));
+					}),
+					[localISODay]
+				);
+
+				const Hr30daysConstants = model.last30DHr.get(localISODay);
+				const isLoaded = model.last30DHr.has(localISODay) && last30Days.every((date) => model.dailyHr.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last30Days.map((date) => {
+					return { value: model.dailyHr.get(date), date: date };
+				}) as unknown as HrNight30Days["series"];
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+
+				return {
+					series,
+					constant: {
+						average: Hr30daysConstants ? Number(Hr30daysConstants[MetricType.UserAwakeMonthlyHR]) : -1,
+						reference: Hr30daysConstants ? Number(Hr30daysConstants[MetricType.UserDailyAwakeHRReference]) : -1,
+						min: Hr30daysConstants ? Number(Hr30daysConstants[MetricType.UserAwakeMonthlyHRMin]) : -1,
+						max: Hr30daysConstants ? Number(Hr30daysConstants[MetricType.UserAwakeMonthlyHRMax]) : -1,
+					},
+					controlState,
+				};
+			},
+			useLast30DaysHRV(localISODay: ISODay): HRV30Days | undefined {
+				// Compute the 30 previous date from the given date
+				const last30Days = getLast30Days(localISODay);
+
+				useEffect(
+					action(function () {
+						actions.setMonthlyHRVConstants(localISODay);
+						last30Days.forEach((d) => actions.setDailyHRV(d, shouldByPassCache(model.dailyHRV, d)));
+					}),
+					[localISODay]
+				);
+
+				const HRVt30daysConstants = model.last30DHRV.get(localISODay);
+				const isLoaded = model.last30DHRV.has(localISODay) && last30Days.every((date) => model.dailyHRV.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last30Days.map((date) => {
+					return { value: model.dailyHRV.get(date), date: date };
+				}) as unknown as HrNight30Days["series"];
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+
+				return {
+					series,
+					constant: {
+						average: HRVt30daysConstants ? Number(HRVt30daysConstants[MetricType.UserMonthlyHRVAverage]) : -1,
+						reference: HRVt30daysConstants ? Number(HRVt30daysConstants[MetricType.UserDailyReferenceHRV]) : -1,
 					},
 					controlState,
 				};
@@ -944,9 +1133,15 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					return {
 						series,
 						constant: {
-							average: Number(constants[MetricType.UserCardioPointAverage]),
-							baseline: Number(constants[MetricType.UserCardioPointBaseline]),
-							total: Number(constants[MetricType.UserCardioPointTotal]),
+							average: constants[MetricType.UserCardioPointAverage]
+								? Number(constants[MetricType.UserCardioPointAverage])
+								: -1,
+							baseline: constants[MetricType.UserCardioPointBaseline]
+								? Number(constants[MetricType.UserCardioPointBaseline])
+								: -1,
+							total: constants[MetricType.UserCardioPointTotal]
+								? Number(constants[MetricType.UserCardioPointTotal])
+								: -1,
 						},
 						controlState,
 					};
@@ -997,6 +1192,45 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					};
 				}
 			},
+			useLast30DaysTemperatureVariation(localISODay: ISODay): TemperatureVariation30Days | undefined {
+				// Compute the 30 previous date from the given date
+
+				const last30Days = getLast30Days(localISODay);
+
+				useEffect(
+					action(function () {
+						actions.setMonthlyTemperatureVariationConstants(localISODay);
+						last30Days.forEach((d) =>
+							actions.pullDailyTemperatureVariation(d, shouldByPassCache(model.dailyTemperatureVariation, d))
+						);
+					}),
+					[localISODay]
+				);
+
+				const temperature30daysConstants = model.last30DTemperatureVariation.get(localISODay);
+				const isLoaded =
+					model.last30DTemperatureVariation.has(localISODay) &&
+					last30Days.every((date) => model.dailyTemperatureVariation.has(date));
+
+				if (!isLoaded) {
+					return undefined;
+				}
+
+				const series = last30Days.map((date) => {
+					return { value: model.dailyTemperatureVariation.get(date), date: date };
+				}) as unknown as TemperatureVariation30Days["series"];
+				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+
+				return {
+					series,
+					constant: {
+						average: temperature30daysConstants
+							? Number(temperature30daysConstants[MetricType.UserMonthlyTemperatureAverage])
+							: -1,
+					},
+					controlState,
+				};
+			},
 			useLast7DaysHRS(localISODay: ISODay): HRS7D | undefined {
 				// Compute the 7 previous date from the given date
 				const last7Days = getLast7Days(localISODay);
@@ -1041,9 +1275,15 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					return {
 						series,
 						constant: {
-							totalAverage: Number(constants[MetricType.User7DaysTotalSleepDuration]),
-							realAverage: Number(constants[MetricType.User7DaysRealSleepDuration]),
-							recommendation: Number(constants[MetricType.UserIdealSleepDuration]),
+							totalAverage: constants[MetricType.User7DaysTotalSleepDuration]
+								? Number(constants[MetricType.User7DaysTotalSleepDuration])
+								: -1,
+							realAverage: constants[MetricType.User7DaysRealSleepDuration]
+								? Number(constants[MetricType.User7DaysRealSleepDuration])
+								: -1,
+							recommendation: constants[MetricType.UserIdealSleepDuration]
+								? Number(constants[MetricType.UserIdealSleepDuration])
+								: -1,
 						},
 						controlState,
 					};
@@ -1065,8 +1305,8 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				if (data) {
 					const score = {
 						score: Number(data[MetricType.UserDailySleepScore]),
-						goalMin: Number(data[MetricType.UserDailySleepScoreGoalMin]) ?? 0.8,
-						goalMax: Number(data[MetricType.UserDailySleepScoreGoalMax]) ?? 0.9,
+						goalMin: getOrElse(data, MetricType.UserDailySleepScoreGoalMin, 0.8),
+						goalMax: getOrElse(data, MetricType.UserDailySleepScoreGoalMax, 0.9),
 					};
 					return {
 						// Default value according to the specs.
@@ -1114,9 +1354,9 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					return {
 						series,
 						constant: {
-							average: Number(constants[MetricType.UserStepsAverage]),
-							baseline: Number(constants[MetricType.UserStepsBaseline]),
-							total: Number(constants[MetricType.UserStepsTotal]),
+							average: constants[MetricType.UserStepsAverage] ? Number(constants[MetricType.UserStepsAverage]) : -1,
+							baseline: constants[MetricType.UserStepsBaseline] ? Number(constants[MetricType.UserStepsBaseline]) : -1,
+							total: constants[MetricType.UserStepsTotal] ? Number(constants[MetricType.UserStepsTotal]) : -1,
 						},
 						controlState,
 					};
@@ -1160,9 +1400,15 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					return {
 						series,
 						constant: {
-							average: Number(constants[MetricType.UserCalorieBurnedAverage]),
-							baseline: Number(constants[MetricType.UserCalorieBurnedBaseline]),
-							total: Number(constants[MetricType.UserCalorieBurnedTotal]),
+							average: constants[MetricType.UserCalorieBurnedAverage]
+								? Number(constants[MetricType.UserCalorieBurnedAverage])
+								: -1,
+							baseline: constants[MetricType.UserCalorieBurnedBaseline]
+								? Number(constants[MetricType.UserCalorieBurnedBaseline])
+								: -1,
+							total: constants[MetricType.UserCalorieBurnedTotal]
+								? Number(constants[MetricType.UserCalorieBurnedTotal])
+								: -1,
 						},
 						controlState,
 					};
@@ -1238,7 +1484,8 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				if (!model.dailyGlobalScore.has(localISODay)) {
 					return undefined;
 				}
-				return Number(model.dailyGlobalScore.get(localISODay));
+				const dailyGlobalScore = model.dailyGlobalScore.get(localISODay);
+				return typeof dailyGlobalScore === "number" ? dailyGlobalScore : undefined;
 			},
 		},
 	};

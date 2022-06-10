@@ -93,6 +93,8 @@ export enum MetricType {
 	UserDailyScoreSPO2 = "user.daily.score.spo2",
 	UserDailyScoreSPO2GoalMin = "user.daily.score.spo2.goal.min",
 	UserDailyScoreSPO2GoalMax = "user.daily.score.spo2.goal.max",
+	User30DaysSpo2 = "user.30days.asleep.spo2",
+	User30DaysAverageSpo2 = "user.30days.asleep.spo2",
 
 	UserDailyAsleepHRV = "user.daily.asleep.hrv",
 	UserDailyReferenceHRV = "user.reference.sleep.hrv",
@@ -100,6 +102,7 @@ export enum MetricType {
 	UserDailyScoreHRVGoalMin = "user.daily.score.hrv.goal.min",
 	UserDailyScoreHRVGoalMax = "user.daily.score.hrv.goal.max",
 	UserHRV = "user.hrv",
+	UserMonthlyHRVAverage = "user.30days.asleep.hrv",
 	UserHRVTrend = "user.asleep.hrv.trend",
 	UserHRTrend = "user.asleep.hr.trend",
 
@@ -241,11 +244,15 @@ export enum MetricType {
 	UserDailyAwakeHRMin = "user.daily.awake.hr.min",
 	UserDailyAwakeHRAverage = "user.daily.awake.hr",
 	UserDailyAwakeHRReference = "user.reference.awake.hr",
+	UserAwakeMonthlyHR = "user.30days.awake.hr",
+	UserAwakeMonthlyHRMax = "user.30days.awake.hr.max",
+	UserAwakeMonthlyHRMin = "user.30days.awake.hr.min",
 
 	///////////////////
 	// BR
 	///////////////////
 	UserBR = "user.br",
+	UserBRMonthlyAverage = "user.30days.asleep.br",
 
 	///////////////////
 	// HR night
@@ -254,9 +261,14 @@ export enum MetricType {
 	UserDailySleepHR = "user.reference.asleep.hr",
 	UserDailySleepHRMax = "user.daily.asleep.hr.max",
 	UserDailySleepHRMin = "user.daily.asleep.hr.min",
+
+	UserMonthlyHrAverage = "user.30days.asleep.hr",
+	UserMonthlyHrMax = "user.30days.asleep.hr.max",
+	UserMonthlyHrMin = "user.30days.asleep.hr.min",
 	// temperature variation
 	///////////////////
 	UserDailyTemperature = "user.daily.asleep.temperature",
 	UserDailyTemperatureScore = "user.daily.sleep.var.temperature",
 	UserDailyVarTemperature = "user.7days.sleep.var.temperature",
+	UserMonthlyTemperatureAverage = "user.30days.sleep.var.temperature",
 }

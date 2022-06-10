@@ -68,6 +68,17 @@ export class FeedService {
 		});
 	}
 
+	async reset() {
+		this.serverNotifications.set([]);
+		this.localyClosedNotificationsIds.set([]);
+		this.serverRecommandations.set([]);
+		this.localyAnsweredQuestions.set([]);
+		this.lastFetchedAt = {
+			notifications: NaN,
+			recommandations: NaN,
+		};
+	}
+
 	/**
 	 * Load current client storage value
 	 * of the notification and recommandations
@@ -171,7 +182,7 @@ export class FeedService {
 		// TODO turn into reaction to the above update
 		// side effect (fire and forget)
 		this.feedApi
-			.answerQuestion([{feedEntryId, selectedOptionIds: answer}])
+			.answerQuestion([{ feedEntryId, selectedOptionIds: answer }])
 			// now, refetch the notifications to sync with the server
 			.then(() => this.fetchRecommendations(this.appStateService.recommendationsCount.get()));
 	}

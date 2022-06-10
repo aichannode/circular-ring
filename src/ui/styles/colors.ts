@@ -17,6 +17,7 @@ const palette = {
 	extraLightGray: "#65788426",
 	midGray: "#e3e3e3",
 	lightgray: "#eeeeee",
+	purple: "rgb(172, 124, 213)",
 	green: "#2bd866",
 	darkGreen: "#1BAB69",
 	orange: "#ff9334",

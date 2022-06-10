@@ -28,6 +28,12 @@ export function createRepresentation(apiService: ApiService, model: CalendarMode
 		hooks: {
 			useCalendar,
 
+			useResetCalendarModel() {
+				model.UTCMonthNotes = [];
+				model.categoryTags = new Map();
+				model.tagCategories = [];
+				model.errors = new Map();
+			},
 			useTags() {
 				return model.categoryTags;
 			},

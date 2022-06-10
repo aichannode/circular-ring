@@ -114,7 +114,7 @@ export const ActivityIntensityAllGraph: React.FC<Props> = observer(function Acti
 					isMultipleLines
 				/>
 			</View>
-			<View style={{ marginTop: 30 }}>
+			<View style={{ marginTop: 20 }}>
 				<ActivityLegend {...allActivity?.constant} mode={updatedMode} />
 			</View>
 		</>

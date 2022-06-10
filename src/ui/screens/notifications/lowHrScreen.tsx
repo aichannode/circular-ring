@@ -25,7 +25,7 @@ export const LowHrScreen: React.FC = () => {
 		<Container>
 			<InfoListItem
 				name={format("lowHr.lowHRalert")}
-				switchOptions={["On", "Off"]}
+				switchOptions={[format("global.onShift"), format("global.offShift")]}
 				switchValue={notificationsSettings.lowHRAlert}
 				onSwitchSelect={(val) => userService.updateUserNotificationsSettings({ lowHRAlert: val })}
 				lightTheme

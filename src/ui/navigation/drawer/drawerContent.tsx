@@ -24,9 +24,17 @@ export const DrawerContent = () => {
 			</Pressable>
 			<ScrollView>
 				<Separator />
+				<DrawerEntry route={Routes.WebView} routeOptions={{ uri: format("url.store") }}>
+					{format("drawer.store")}
+				</DrawerEntry>
+				<Separator />
 				<DrawerEntry route={Routes.QuickAccess}>{format("drawer.quickaccess")}</DrawerEntry>
 				<Separator />
 				<DrawerEntry route={Routes.Profile}>{format("drawer.profile")}</DrawerEntry>
+				<Separator />
+				<DrawerEntry route={Routes.WebView} routeOptions={{ uri: format("url.learn") }}>
+					{format("drawer.learn")}
+				</DrawerEntry>
 				<Separator />
 				<DrawerEntry route={Routes.Leaderboard}>{format("drawer.leaderboard")}</DrawerEntry>
 				<Separator />

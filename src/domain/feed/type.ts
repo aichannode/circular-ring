@@ -61,6 +61,8 @@ export type ParagraphComponentConfigurationDto = {
 
 export enum InputType {
 	SELECT = "SELECT",
+	SLIDER = "SLIDER",
+	DATE_PICKER = "DATE_PICKER",
 }
 
 type OptionDto = {
@@ -86,7 +88,7 @@ type InputTypeConfig<T extends InputType, C> = {
 export type SelectInputTypeConfig = InputTypeConfig<
 	InputType.SELECT,
 	{
-		label: WordingKey;
+		label?: WordingKey;
 		minCount: number;
 		maxCount: number;
 		options: OptionDto[];
@@ -94,7 +96,24 @@ export type SelectInputTypeConfig = InputTypeConfig<
 	}
 >;
 
-export type UserInputConfiguration = SelectInputTypeConfig;
+export type SliderInputTypeConfig = InputTypeConfig<
+	InputType.SLIDER,
+	{
+		unit: WordingKey;
+		min: number;
+		max: number;
+		value: number;
+	}
+>;
+
+export type DatePickerInputTypeConfig = InputTypeConfig<
+	InputType.DATE_PICKER,
+	{
+		value: Date;
+	}
+>;
+
+export type UserInputConfiguration = SelectInputTypeConfig | SliderInputTypeConfig | DatePickerInputTypeConfig;
 
 export type UserInputComponentConfigurationDto = {
 	id: number;

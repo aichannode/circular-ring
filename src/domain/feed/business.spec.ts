@@ -8,7 +8,7 @@ import {
 	FeedRecommendation,
 	IconType,
 	InputType,
-	UserInputConfiguration,
+	SelectInputTypeConfig,
 	UserInputStates,
 	UserInputStyle,
 } from "./type";
@@ -205,14 +205,14 @@ it("should merge the most recent state in server recommendations", function () {
 
 	const reconciliated: FeedRecommendation[] = JSON.parse(JSON.stringify(serverRecommandations));
 	// The server has no answer for this question but the client has. Take client state.
-	(reconciliated[0].components[0].configuration as UserInputConfiguration).inputConfig.answeredAt = today;
-	(reconciliated[0].components[0].configuration as UserInputConfiguration).inputConfig.selectedOptions = [0];
+	(reconciliated[0].components[0].configuration as SelectInputTypeConfig).inputConfig.answeredAt = today;
+	(reconciliated[0].components[0].configuration as SelectInputTypeConfig).inputConfig.selectedOptions = [0];
 	// The server has an older answer for this question than the client. Take client state.
-	(reconciliated[1].components[0].configuration as UserInputConfiguration).inputConfig.answeredAt = today;
-	(reconciliated[1].components[0].configuration as UserInputConfiguration).inputConfig.selectedOptions = [0];
+	(reconciliated[1].components[0].configuration as SelectInputTypeConfig).inputConfig.answeredAt = today;
+	(reconciliated[1].components[0].configuration as SelectInputTypeConfig).inputConfig.selectedOptions = [0];
 	// The server has a more recent answer for this question than the client. Take server state.
-	(reconciliated[2].components[0].configuration as UserInputConfiguration).inputConfig.answeredAt = today;
-	(reconciliated[2].components[0].configuration as UserInputConfiguration).inputConfig.selectedOptions = [0, 2];
+	(reconciliated[2].components[0].configuration as SelectInputTypeConfig).inputConfig.answeredAt = today;
+	(reconciliated[2].components[0].configuration as SelectInputTypeConfig).inputConfig.selectedOptions = [0, 2];
 	// The client has a no cache for this answer. Take server state.
 	reconciliated[3] = serverRecommandations[3];
 

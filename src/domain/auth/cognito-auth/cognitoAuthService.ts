@@ -32,6 +32,7 @@ export class CognitoAuthService<
 	payload = this._accessToken.readOnly().select<P | undefined>((token) => token?.decodePayload() as P);
 	authToken = this._accessToken.readOnly().select((token) => token?.getJwtToken());
 	userEmail = this._cognitoUser.readOnly().select((user) => user?.getUsername());
+	user = this._cognitoUser.readOnly().select((user) => user?.getSignInUserSession());
 
 	constructor() {
 		const poolData = {

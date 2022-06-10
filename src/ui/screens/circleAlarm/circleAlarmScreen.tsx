@@ -73,7 +73,11 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 						{isLoading ? (
 							<Spinner size={24} />
 						) : (
-							<AlarmHypnogram data={dailySleep.stages} phaseBeforeWakeUp={phaseBeforeWakeUp} />
+							<AlarmHypnogram
+								data={dailySleep.stages}
+								endSleep={dailySleep.coreSleepTiming?.[1]}
+								phaseBeforeWakeUp={phaseBeforeWakeUp}
+							/>
 						)}
 					</GraphWrapper>
 				)}

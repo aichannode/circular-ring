@@ -4,6 +4,7 @@ import {
 	ActivityIntensity7DAverageMetrics,
 	ActivityIntensityAllAverageMetrics,
 	ActivityIntensityMonthlyMetrics,
+	BR30DConstantMetrics,
 	CalorieBurnedConstantMetrics,
 	CaloriesBurned,
 	CardioPoints,
@@ -46,11 +47,15 @@ import {
 	DailySpo2ConstantMetrics,
 	DailySpo2TimeSeriesMetrics,
 	DailyWakeUpScoreMetrics,
+	Hr30DConstantMetrics,
+	HrAwake30DConstantMetrics,
+	HRV30DConstantMetrics,
 	Sleep7DConstantMetrics,
 	SleepAllConstantMetrics,
 	SleepMonthlyStageMetrics,
 	SleepStagesBeginEnd,
 	SleepStagesMetrics,
+	Spo230DConstantMetrics,
 	StepsConstantMetrics,
 	StepsTaken,
 	TemperatureVariationConstantMetrics,
@@ -318,6 +323,13 @@ export type Mutations =
 			};
 	  }
 	| {
+			type: "setLast30DSpo2";
+			payload: {
+				localISODay: ISODay;
+				score: number | null;
+			};
+	  }
+	| {
 			type: "setDailyHRSMetrics";
 			payload: {
 				localISODay: ISODay;
@@ -357,6 +369,83 @@ export type Mutations =
 			payload: {
 				localISODay: ISODay;
 				constant: Metrics<THRH7DConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setMonthlySpo2Constants";
+			payload: {
+				localISODay: ISOMonth;
+				constant: Metrics<Spo230DConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setMonthlyBRConstants";
+			payload: {
+				localISODay: ISOMonth;
+				constant: Metrics<BR30DConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setMonthlyHrNightConstants";
+			payload: {
+				localISODay: ISOMonth;
+				constant: Metrics<Hr30DConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setMonthlyTemperatureVariationConstants";
+			payload: {
+				localISODay: ISOMonth;
+				constant: Metrics<MetricType.UserMonthlyTemperatureAverage>;
+			};
+	  }
+	| {
+			type: "setMonthlyHRVConstants";
+			payload: {
+				localISODay: ISOMonth;
+				constant: Metrics<HRV30DConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setMonthlyHrConstants";
+			payload: {
+				localISODay: ISOMonth;
+				constant: Metrics<HrAwake30DConstantMetrics>;
+			};
+	  }
+	| {
+			type: "setDailySpo2";
+			payload: {
+				localISODay: ISODay;
+				data: number;
+			};
+	  }
+	| {
+			type: "setDailyBR";
+			payload: {
+				localISODay: ISODay;
+				data: number;
+			};
+	  }
+	| {
+			type: "setDailyHrNight";
+			payload: {
+				localISODay: ISODay;
+				data: number;
+			};
+	  }
+	| {
+			type: "setDailyHRV";
+			payload: {
+				localISODay: ISODay;
+				data: number;
+			};
+	  }
+	| {
+			type: "setDailyHr";
+			payload: {
+				localISODay: ISODay;
+				data: number | null;
 			};
 	  };
 

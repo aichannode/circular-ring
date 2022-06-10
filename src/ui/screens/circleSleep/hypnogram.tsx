@@ -1,5 +1,6 @@
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { SleepStage } from "@domain/measure/type";
+import { useIs24h } from "@domain/user/hooks/useUser";
 import { createActiveMode } from "@ui/business";
 import { StepChart } from "@ui/components/stepChart/StepChart";
 import { Tag } from "@ui/components/tag";
@@ -23,8 +24,8 @@ const defaultXAxis = [moment().hour(0).valueOf(), moment().hour(8).valueOf()];
 
 export function Hypnogram({ data, mode = createActiveMode() }: Props) {
 	const stepsData = toStepsData(data);
-	const { format } = useI18n();
-
+	const { format, formatHour } = useI18n();
+	const is24h = useIs24h();
 	function yColor(y: number) {
 		switch (y) {
 			case SleepStage.DEEP:
@@ -59,17 +60,19 @@ export function Hypnogram({ data, mode = createActiveMode() }: Props) {
 			yAxisWidth={31}
 			yColor={yColor}
 			yLabelFormat={yLabelFormat}
-			xLabelFormat={(tick) => moment(tick).format("H A")}
+			xLabelFormat={(tick) => formatHour(new Date(tick), is24h)}
 			xAxisPadding={15}
 			defaultYAxis={defaultYAxis}
 			defaultXAxis={defaultXAxis}
 			tooltipYOffset={-30}
-			tooltipSize={{ width: 40, height: 30 }}
+			tooltipSize={{ width: 60, height: 30 }}
 			chartHeight={200}
 			mode={mode}
 			renderTooltip={(step) => (
 				<>
-					<Tag containerStyle={{ backgroundColor: colors.blue, marginBottom: 4 }}>{moment(step.x).format("HH:mm")}</Tag>
+					<Tag containerStyle={{ backgroundColor: colors.blue, marginBottom: 4 }}>
+						{formatHour(new Date(step.x), is24h)}
+					</Tag>
 					<Tag containerStyle={{ backgroundColor: colors.blue }}>{yLabelFormat(step.y)}</Tag>
 				</>
 			)}

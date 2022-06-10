@@ -7,15 +7,18 @@ import styled from "styled-components/native";
 
 interface DrawerEntryProps {
 	route: Routes;
+	routeOptions?: {
+		uri: string;
+	};
 }
 
-export const DrawerEntry: React.FC<DrawerEntryProps> = ({ route, children }) => {
+export const DrawerEntry: React.FC<DrawerEntryProps> = ({ route, routeOptions, children }) => {
 	const navigation = useNavigation();
 	const { navigate } = useRoutesNavigation();
 
 	const goToRoute = useCallback(() => {
 		navigation.dispatch(DrawerActions.toggleDrawer);
-		navigate(route);
+		navigate(route, routeOptions);
 	}, [route]);
 
 	return (

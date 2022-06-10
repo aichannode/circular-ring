@@ -1,15 +1,14 @@
+import { isDefined } from "@domain/common/business";
 import { Point, Points } from "@domain/measure/representation/api";
 import { createActiveMode, isInDisabledMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode, SelectEventPayload } from "@ui/type";
-import moment from "moment";
 import React, { useState } from "react";
 import { Platform, processColor } from "react-native";
 import { BarChart as BarChartWrapper } from "react-native-charts-wrapper";
 import styled from "styled-components/native";
 import { TextPlaceholder } from "../placeholder/TextPlaceholder";
-
 interface BarChartProps {
 	graphColor?: string;
 	xColor: string;
@@ -27,6 +26,8 @@ interface BarChartProps {
 	mapBarColor?: (element: Point, index: number) => string;
 	mapMarker?: (element: Point, index: number) => string;
 	horizontalPadding?: number;
+	labelCount?: number;
+	isTemperature?: boolean;
 }
 
 export function BarChart({
@@ -45,20 +46,28 @@ export function BarChart({
 	yMin,
 	yMax,
 	horizontalPadding = 0.1,
+	labelCount,
+	isTemperature = false,
 }: BarChartProps) {
 	const [selectedX, setSelectedX] = useState<number | undefined>(-1);
+	const linspace = isDefined(yMin) && isDefined(yMax) ? ((yMax - yMin) * 10) / 100 : 0;
+	const axisMinimum = isDefined(yMin) ? yMin - linspace : 0;
+	const axisMaximum = isDefined(yMax) ? yMax + linspace : 0;
+
 	const dataSets = {
 		dataSets: [
 			{
 				values: data
-
 					?.map((el, index) => ({ ...el, _index: index }))
 					.map(({ x, y, _index, ...args }) => {
 						let marker = "";
-						if (shouldShowMarker && y != -1000) {
-							marker = `${moment(x).format("Y-MM-DD")}\n${mapMarker({ x, y, ...args }, _index)}`;
+						let _y = y;
+						if (shouldShowMarker && ((isTemperature && y == -1000) || (!isTemperature && y < 0))) {
+							_y = 0;
 						}
-						return { x: mapXAxis({ x, y, ...args }, _index), y: y == -1000 ? 0 : y, marker };
+
+						marker = `${mapMarker({ x, y: _y, ...args }, _index)}`;
+						return { x: mapXAxis({ x, y: _y, ...args }, _index), y: isTemperature && _y == 0 ? 0.005 : _y, marker };
 					}),
 				label: "",
 				config: {
@@ -88,6 +97,7 @@ export function BarChart({
 		enabled: true,
 		granularity: 1,
 		drawLabels: true,
+		labelCount: labelCount,
 		drawGridLines: false,
 		textSize: 10,
 		yOffset: 10,
@@ -102,8 +112,10 @@ export function BarChart({
 	const yAxis = {
 		left: {
 			enabled: true,
-			axisMinimum: yMin ? Math.floor(yMin) : undefined,
-			axisMaximum: yMax ? Math.ceil(yMax) : undefined,
+			axisMinimum: axisMinimum,
+			axisMaximum: axisMaximum,
+			labelCount: isTemperature ? 3 : undefined,
+			labelCountForce: isTemperature,
 			textColor: processColor(yColor),
 			gridLineWidth: 0.5,
 			drawLabels: true,

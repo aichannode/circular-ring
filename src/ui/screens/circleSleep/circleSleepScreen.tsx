@@ -26,19 +26,18 @@ import moment from "moment";
 import React, { useRef, useState } from "react";
 import { Image, LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
-import { BreathingRateGraph } from "./breathingRateGraph";
+import { BRGraph } from "./breathingRateGraph/BRGraph";
 import { DailySleepChart } from "./DailySleepChart";
-import { HeartRateGraph } from "./heartRateGraph";
+import { HeartRateGraph } from "./heartRateGraph/heartRateGraph";
 import { HRSGraph } from "./HRSGraph";
-import { HRVGraph } from "./HRVGraph";
+import { HRVGraph } from "./HRVGraph/HRVGraph";
 import { getSleepGaugesConfig } from "./measureDisplayInfos";
 import { Sleep7DChart } from "./Sleep7DChart";
 import { SleepAllChart } from "./SleepAllChart";
 import { SleepDurationPieChart } from "./sleepDurationPie";
 import { SleepQualityScoreGraph } from "./sleepQualityScoreGraph";
-import { Spo2Graph } from "./spo2Graph";
-import { TemperatureVariation7DGraph } from "./temperatureVariation7DGraph";
-
+import { Spo2Graph } from "./spo2Graph/Spo2Graph";
+import { TemperatureVariationGraph } from "./temperatureVariationGraph/temperatureVariationGraph";
 export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
@@ -58,7 +57,6 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const nbRemainingDays = useUserCalibrationRemainingDays();
 	// XXX: https://circularing.atlassian.net/browse/CIR-93
 	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
-
 	useDailySleepStages({ setData: setDailyData, localISODay: selectedDay, setLoading });
 
 	// XXX: https://circularing.atlassian.net/browse/CIR-790
@@ -96,7 +94,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 					stages={dailySleep.stages}
 					coreSleepTiming={dailySleep.coreSleepTiming}
 					napTimings={dailySleep.napTimings}
-					duration={dailySleep.totalMinutesSleepDuration ?? 0}
+					duration={dailySleep.totalMinutesSleepDuration ?? -1}
 					mode={screenMode}
 					isLoading={loading}
 				/>
@@ -203,9 +201,9 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 					<HRVGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
 				)}
 				{activeItem === 4 && (
-					<BreathingRateGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
+					<BRGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
 				)}
-				{activeItem === 5 && <TemperatureVariation7DGraph selectedDay={selectedDay} mode={screenMode} />}
+				{activeItem === 5 && <TemperatureVariationGraph selectedDay={selectedDay} mode={screenMode} />}
 
 				{activeItem === 6 && (
 					<Spo2Graph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />

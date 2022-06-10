@@ -105,6 +105,31 @@ export type ActivityIntensityMonthlyMetrics = typeof activityIntensityMonthlyMet
 export const dailySpo2TimeSeriesMetrics = [MetricType.UserDailySPO2] as const;
 export type DailySpo2TimeSeriesMetrics = typeof dailySpo2TimeSeriesMetrics[number];
 
+export const spo230DConstantMetrics = [
+	MetricType.User30DaysAverageSpo2,
+	MetricType.UserDailyAsleepSPO2Reference,
+] as const;
+export type Spo230DConstantMetrics = typeof spo230DConstantMetrics[number];
+
+export const br30DConstantMetrics = [MetricType.UserDailyAsleepBRReference, MetricType.UserBRMonthlyAverage] as const;
+export type BR30DConstantMetrics = typeof br30DConstantMetrics[number];
+
+export const hr30DConstantMetrics = [
+	MetricType.UserMonthlyHrAverage,
+	MetricType.UserMonthlyHrMin,
+	MetricType.UserMonthlyHrMax,
+	MetricType.UserDailySleepHR,
+] as const;
+export type Hr30DConstantMetrics = typeof hr30DConstantMetrics[number];
+
+export const hrAwake30DConstantMetrics = [
+	MetricType.UserAwakeMonthlyHR,
+	MetricType.UserDailyAwakeHRReference,
+	MetricType.UserAwakeMonthlyHRMin,
+	MetricType.UserAwakeMonthlyHRMax,
+] as const;
+export type HrAwake30DConstantMetrics = typeof hrAwake30DConstantMetrics[number];
+
 export const dailySpo2ConstantMetrics = [
 	MetricType.UserDailyAsleepSPO2,
 	MetricType.UserDailyAsleepSPO2Reference,
@@ -136,6 +161,9 @@ export type DailyHRSConstantMetrics = typeof dailyHRSConstantMetrics[number];
 
 export const dailyHRVConstantMetrics = [MetricType.UserDailyAsleepHRV, MetricType.UserDailyReferenceHRV] as const;
 export type DailyHRVConstantMetrics = typeof dailyHRVConstantMetrics[number];
+
+export const hrv30DConstantMetrics = [MetricType.UserMonthlyHRVAverage, MetricType.UserDailyReferenceHRV] as const;
+export type HRV30DConstantMetrics = typeof hrv30DConstantMetrics[number];
 
 export const dailyHRVTimeSeriesMetrics = [MetricType.UserHRV] as const;
 export type DailyHRVTimeSeriesMetrics = typeof dailyHRVTimeSeriesMetrics[number];

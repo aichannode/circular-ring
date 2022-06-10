@@ -12,7 +12,7 @@ import { colors } from "@ui/styles/colors";
 import { Mode } from "@ui/type";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Platform, processColor, View } from "react-native";
 import { BarChart } from "react-native-charts-wrapper";
 import { ActivityLegend } from "./ActivityLegend";
@@ -33,8 +33,6 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 }: Props) {
 	const { format, formatHour } = useI18n();
 	const is24h = useIs24h();
-
-	const [loadedDay, setLoadedDay] = useState<ISODay | undefined>(undefined);
 	const {
 		calendar: {
 			hooks: { useRangeTags },
@@ -101,7 +99,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 
 	const xAxis = {
 		position: "BOTTOM" as const,
-		valueFormatter: parsedData?.map(({ isoTime }) => {
+		valueFormatter: parsedData?.map(({ isoTime, value }) => {
 			const date = new Date(isoTime);
 			return `${formatHour(date, is24h)}`;
 		}),
@@ -123,6 +121,8 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 			granularity: 1,
 			drawGridLines: false,
 			drawAxisLine: false,
+			axisMaximum: 4,
+			axisMinimum: 0,
 		},
 		right: { enabled: false }, // used to delete the right axis
 	};
@@ -131,12 +131,11 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 		// XXX: Zoom and data cannot be updated simultaneously in a BarChart. This may cause the application to crash. As data are updated after a refresh status, the previous behavior should not occur. This approach ensures that the graph is only displayed when the data have been fetched.
 		// https://circularing.atlassian.net/browse/CIR-893
 		if (prevDataActivityIntensity.current !== dataActivityIntensity) {
-			setLoadedDay(selectedDay);
 			prevDataActivityIntensity.current = dataActivityIntensity;
 		}
 	}, [dataActivityIntensity, selectedDay]);
 
-	const isLoading = !isDefined(dataActivityIntensity) || loadedDay !== selectedDay;
+	const isLoading = !isDefined(dataActivityIntensity);
 	const updatedMode = updateMode(
 		mode,
 		dataActivityIntensity?.controlState !== DataControlState.READY || parsedData.length === 0
@@ -191,7 +190,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 						/>
 					)}
 				</View>
-				<View style={{ marginTop: 30 }}>
+				<View style={{ marginTop: 20 }}>
 					<ActivityLegend
 						mode={updatedMode}
 						highDuration={dataActivityIntensity?.duration.highActivity}

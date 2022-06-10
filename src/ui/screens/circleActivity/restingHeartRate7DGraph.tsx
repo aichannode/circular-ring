@@ -4,6 +4,7 @@ import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState, Points } from "@domain/measure/representation/api";
 import { TimeFrame } from "@domain/measure/type";
+import { useIsUSCS } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
@@ -15,6 +16,7 @@ import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -32,6 +34,7 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
+	const isUSCS = useIsUSCS();
 	const [tags, setTags] = useState<CalendarTag[]>([]);
 	const {
 		measure: {
@@ -68,7 +71,11 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 
-	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.average !== -1) {
+	if (
+		(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
+		isDefined(constant) &&
+		constant.average !== -1
+	) {
 		averages.push({
 			value: constant.average,
 			color: colors.red,
@@ -131,8 +138,8 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 					</View>
 				)}
 				<LineChart
-					yMin={yMin}
-					yMax={yMax}
+					yMin={Math.round(yMin)}
+					yMax={Math.round(yMax)}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
 					daysItem={[{ lines: lines, color: colors.red }]}
@@ -147,6 +154,11 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 					onSelect={(x) => toUpdateTag(x)}
 					isMultipleLines={true}
 					mode={updatedMode}
+					labelFormatter={(x, y) => {
+						return isUSCS
+							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.floor(y)}`
+							: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${Math.floor(y)}`;
+					}}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
@@ -167,11 +179,10 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 										</View>
 									),
 								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(constant) && constant.average != -1
-									? `${constant?.average?.toFixed(2)} bpm`
-									: "- bpm",
+								value:
+									isInCalibrationMode(updatedMode) && isDefined(constant) && constant.average != -1
+										? `${Math.round(constant?.average)} bpm`
+										: "- bpm",
 							},
 							{
 								label: format("activity.resting_heart_rate.reference"),
@@ -184,14 +195,14 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 												marginTop: 5,
 											}}
 										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.orange} />
+											<DashedLine dashGap={5} dashLength={10} dashColor={colors.redOrange} />
 										</View>
 									),
 								},
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
 									: isDefined(constant) && constant.average != -1
-									? `${constant.reference.toFixed(2)} bpm`
+									? `${Math.round(constant.reference)} bpm`
 									: "- bpm",
 							},
 						]}

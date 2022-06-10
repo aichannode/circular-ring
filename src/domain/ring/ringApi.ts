@@ -39,6 +39,10 @@ export class RingApi {
 		addResponseInterceptor(this.instance, logResponseInterceptor(this.logger));
 	}
 
+	async reset() {
+		this._firmwareVersion.set(undefined);
+	}
+
 	async getRings(): Promise<UserRing[]> {
 		const result = await this.apiService.get<UserRing[]>(`${ringApiBaseUrl}`);
 		return result.data;
@@ -53,7 +57,20 @@ export class RingApi {
 		return this.apiService.delete(`${ringApiBaseUrl}/${ringId}`);
 	}
 
-	async sendData(ring: UserRing, rawData: string) {
+	async setTimezone(ring: UserRing) {
+		await this.apiService.post<{ url: string; fields: Record<string, any>; taskId: string }>(`${ringApiBaseUrl}/sync`, {
+			ringId: ring.id,
+			firmware: ring.firmware,
+			timezone: getTimeZone(),
+		});
+	}
+
+	async sendData(
+		ring: UserRing,
+		rawData: string,
+		uploadDoneListener?: () => void,
+		progressListener?: (event: ProgressEvent) => void
+	) {
 		if (rawData === "") return;
 
 		await RNFS.writeFile(tempSyncDataFile, rawData, "utf8");
@@ -81,7 +98,10 @@ export class RingApi {
 				name: "sync.txt",
 			});
 
-			await this.instance.post(data.url, formData);
+			await this.instance.post(data.url, formData, {
+				onUploadProgress: progressListener,
+			});
+			uploadDoneListener?.();
 
 			let gotExceptionOnly = false;
 			let task;
@@ -111,7 +131,6 @@ export class RingApi {
 			if (!task || task.status !== "ENDED") {
 				throw Error("Sync Task execution error");
 			}
-			// TODO Might add something on the UI depending on the task adv ?
 		} finally {
 			await RNFS.unlink(tempSyncDataFile);
 		}

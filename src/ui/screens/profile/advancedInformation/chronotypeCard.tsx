@@ -6,12 +6,16 @@ import { advanceInfoI18nKey, chronoTypeKeys } from "@ui/screens/profile/advanced
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
-import React from "react";
+import React, { useRef } from "react";
 import styled from "styled-components/native";
+import { Image, Pressable, useWindowDimensions } from "react-native";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
+import { ChronoTypeInfoInfoBottomSheet } from "@ui/screens/profile/advancedInformation/chronoTypeInfoBottomSheet";
 
 export const ChronotypeCard = () => {
 	const { format } = useI18n();
 	const advancedInfo = useUserAdvancedInfo();
+	const { height } = useWindowDimensions();
 
 	const iconSource = () => {
 		switch (advancedInfo?.chronoType ?? ChronoType.MORNING) {
@@ -31,13 +35,32 @@ export const ChronotypeCard = () => {
 		? format(advanceInfoI18nKey(chronoTypeKeys, advancedInfo.chronoType))
 		: format("global.not_enough_data");
 
+	const chronoTypeInfoRef = useRef<CircularBottomSheetHandle>(null);
+
 	return (
 		<Card>
-			<Title>{format("profile_advanced_info.chrono_type.title")}</Title>
+			<TitleContainer>
+				<Title>{format("profile_advanced_info.chrono_type.title")}</Title>
+				{advancedInfo?.chronoType && (
+					<Pressable
+						onPress={() => {
+							chronoTypeInfoRef.current?.present();
+						}}
+					>
+						<Image source={require("@assets/images/info.png")} />
+					</Pressable>
+				)}
+			</TitleContainer>
 			{advancedInfo?.chronoType ? <Icon source={iconSource()} /> : null}
 			<Grow />
 			<Value>{displayedTypeName}</Value>
 			<Grow />
+			<CircularBottomSheet snapPoints={[height * 0.8]} ref={chronoTypeInfoRef}>
+				<ChronoTypeInfoInfoBottomSheet
+					chronoType={advancedInfo?.chronoType as ChronoType}
+					onClose={() => chronoTypeInfoRef.current?.close()}
+				/>
+			</CircularBottomSheet>
 		</Card>
 	);
 };
@@ -49,9 +72,15 @@ const Card = styled.View`
 	align-items: center;
 `;
 
+const TitleContainer = styled.View`
+	flex: 1;
+	width: 100%;
+	flex-direction: row;
+	justify-content: space-between;
+`;
+
 const Title = styled.Text`
 	${textStyles.tertiary};
-	align-self: flex-start;
 `;
 
 const Icon = styled.Image`

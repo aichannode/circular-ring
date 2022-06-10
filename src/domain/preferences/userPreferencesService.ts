@@ -12,6 +12,10 @@ export class UserPreferencesService {
 		this.preferences.set(preferences);
 	}
 
+	async reset() {
+		this.preferences.set(null);
+	}
+
 	skipLiveTutorial() {
 		this.preferences.update((current) => ({ ...current, skipLiveTutorial: true }));
 		this.preferencesStorage.save({ skipLiveTutorial: true });

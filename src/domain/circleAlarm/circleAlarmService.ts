@@ -29,6 +29,11 @@ export class CircleAlarmService {
 		this.loadQuickAccessAlarmFromStorage();
 	}
 
+	async reset() {
+		this._ringAlarms.set([]);
+		this.quickAccessRingAlarmId.set(null);
+	}
+
 	saveQuickAccessAlarm(quickAccessAlarmId: number) {
 		this.quickAccessRingAlarmId.set(quickAccessAlarmId);
 		Storage.save(quickAccessAlarmStorageKey, quickAccessAlarmId);

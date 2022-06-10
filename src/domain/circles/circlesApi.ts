@@ -1,16 +1,16 @@
-import { CircleEntity } from "@domain/circles/type";
 import { ApiService } from "@core/api/apiService";
+import { CircleEntity } from "@domain/circles/type";
 
 export class CirclesApi {
 	constructor(private readonly apiService: ApiService) {}
 
 	async getAllCircles() {
-		const allCirlces = await this.apiService.get<CircleEntity[]>("/circle/all");
+		const allCirlces = await this.apiService.get<CircleEntity[]>("/circle/all", { useForceRefresh: true });
 		return allCirlces.data;
 	}
 
 	async getUserCircles() {
-		const userCircles = await this.apiService.get<CircleEntity[]>("/circle");
+		const userCircles = await this.apiService.get<CircleEntity[]>("/circle", { useForceRefresh: true });
 		return userCircles.data;
 	}
 

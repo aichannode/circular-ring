@@ -2,17 +2,19 @@ import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState } from "@domain/measure/representation/api";
-import { createActiveMode, isInActiveMode, isInCalibrationMode, trimData, TrimOptions, updateMode } from "@ui/business";
+import { useIsUSCS } from "@domain/user/hooks/useUser";
+import { createActiveMode, isInActiveMode, isInCalibrationMode, TrimOptions, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
 import { Tag } from "@ui/components/tag";
-import { TitleText } from "@ui/components/text";
 import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import DashedLine from "react-native-dashed-line";
@@ -23,73 +25,77 @@ type Props = {
 	dailyTrimOptions?: TrimOptions;
 };
 
-export const HRVGraph: React.FC<Props> = observer(function HRVGraph({
+export const Spo2Graph30days: React.FC<Props> = observer(function Spo2Graph({
 	selectedDay,
 	mode = createActiveMode(),
 	dailyTrimOptions,
 }: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
-
+	const isUSCS = useIsUSCS();
 	const {
 		measure: {
-			hooks: { useDailyHRV, useDailyHRVTrend },
+			hooks: { useLast30DaysSpo2 },
 		},
 		calendar: {
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
 
-	const dailyHrv = useDailyHRV(selectedDay);
-	const dailyHrvTrend = useDailyHRVTrend(selectedDay);
+	const dailySpo2 = useLast30DaysSpo2(selectedDay);
 	const [lines, constant] = [
-		dailyHrv ? dailyHrv.data : [],
-		dailyHrv ? dailyHrv.constant : { average: 0, reference: 0 },
+		dailySpo2
+			? dailySpo2.series
+					.map((el) => {
+						return {
+							x: el ? moment(el.date).valueOf() : 0,
+							y: el?.value ? el.value : 0,
+						};
+					})
+					.reverse()
+			: [],
+		dailySpo2 ? dailySpo2.constant : { average: 0, reference: 0 },
 	];
 
-	const parsedData = dailyTrimOptions ? trimData(lines, (line) => line.x, dailyTrimOptions) : lines;
+	const updatedMode = updateMode(mode, dailySpo2?.controlState !== DataControlState.READY);
 
 	const [yMin, yMax] =
-		parsedData.length > 0
-			? [Math.min(...parsedData.map((line) => line.y)), Math.max(...parsedData.map((line) => line.y))]
+		lines.length > 0
+			? [
+					Math.min(...lines.filter((line) => line.y > 0).map((line) => line.y)),
+					Math.max(...lines.map((line) => line.y)),
+			  ]
 			: [0, 0];
-
-	const [yMinIndex, yMaxIndex] = [
-		parsedData.findIndex((line) => line.y == yMin),
-		parsedData.findIndex((line) => line.y == yMax),
-	];
 	const tags = useDailyTags(selectedDay);
+
 	const averages: Averages = [];
-	const updatedMode = updateMode(mode, dailyHrv?.controlState !== DataControlState.READY);
-	if (isInActiveMode(updatedMode) && isDefined(constant)) {
-		if (constant.reference !== -1) {
-			averages.push({
-				value: constant.reference,
-				color: colors.redLight,
-			});
-		}
-		if (constant.average !== -1) {
-			averages.push({
-				value: constant.average,
-				color: colors.darkBlue,
-			});
-		}
+	if (
+		(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
+		isDefined(constant) &&
+		constant.average !== -1
+	) {
+		averages.push({
+			value: constant.average,
+			color: colors.darkBlue,
+		});
+	}
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.reference !== -1) {
+		averages.push({
+			value: constant.reference,
+			color: colors.redLight,
+		});
 	}
 
 	useEffect(() => {
-		if (isDefined(dailyHrv)) {
+		if (isDefined(lines)) {
 			setLoading(false);
 		}
-	}, [dailyHrv]);
+	}, [lines]);
 
 	return isLoading ? (
 		<Spinner size={24} />
 	) : (
 		<View>
-			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("score.details.hrv.label")}
-			</TitleText>
-
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
 				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
@@ -102,34 +108,47 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({
 					</View>
 				)}
 				<LineChart
-					labelCount={5}
+					labelCount={30}
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
-					data={parsedData}
-					shouldShowLabel={false}
-					shouldDrawCircles={false}
-					graphColor={colors.darkBlue}
-					valueFormatter="date"
-					valueFormatterPattern={["h a", "h:mm a"]}
-					yMin={yMin}
-					yMax={yMax}
-					yMinIndex={yMinIndex}
-					yMaxIndex={yMaxIndex}
-					mode={updatedMode}
-					movingAverage={dailyHrvTrend?.data}
+					data={lines}
+					shouldShowLabel={true}
 					shouldShowMarker={true}
+					shouldDrawCircles={true}
+					graphColor={colors.darkBlue}
+					valueFormatterPattern="EEEEE"
+					valueFormatter="date"
+					yMin={Math.floor(yMin)}
+					yMax={Math.ceil(yMax)}
+					mode={updatedMode}
+					shouldUpdateYmin={false}
 					highlightPerTapEnabled={true}
-					isDaily
+					isMultipleLines={false}
+					labelFormatter={(x, y) => {
+						return isUSCS
+							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
+							: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${Math.round(y)}`;
+					}}
+					zoom={
+						lines?.length > 0
+							? {
+									scaleX: 1,
+									scaleY: 1,
+									xValue: lines[lines.length - 1].x,
+									yValue: 1,
+							  }
+							: undefined
+					}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
 						mode={updatedMode}
 						rows={[
 							{
-								label: format("hr.average"),
+								label: format("30day.average"),
 								element: {
-									key: "hr.average",
+									key: "30day.average",
 									node: (
 										<View
 											style={{
@@ -142,11 +161,11 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({
 									),
 								},
 								value:
-									parsedData.length == 0
+									lines.length == 0
 										? format("global.no_data")
-										: typeof constant.average == "undefined" || constant.average === 0
-										? "- ms"
-										: `${constant.average} ms`,
+										: typeof constant.average == "undefined" || constant.average === -1
+										? "- %"
+										: `${Math.round(constant.average)} %`,
 							},
 							{
 								label: format("hr.reference"),
@@ -165,11 +184,11 @@ export const HRVGraph: React.FC<Props> = observer(function HRVGraph({
 								},
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: parsedData.length == 0
+									: lines.length == 0
 									? format("global.no_data")
-									: typeof constant.reference == "undefined" || constant.reference === 0
-									? "- ms"
-									: `${constant.reference} ms`,
+									: typeof constant.reference == "undefined" || constant.reference === -1
+									? "- %"
+									: `${Math.round(constant.reference)} %`,
 							},
 						]}
 					/>

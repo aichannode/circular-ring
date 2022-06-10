@@ -9,6 +9,7 @@ import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { useUnmount } from "@ui/utils/lifecycleHooks";
 import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components/native";
+import { version } from "../../../../package.json";
 import { DateFormatBottomSheet } from "./dateFormatBottomSheet";
 
 export const SettingsScreen: React.FC = () => {
@@ -78,9 +79,6 @@ export const SettingsScreen: React.FC = () => {
 				onSwitchSelect={setTemperatureFormat}
 			/>
 			{/* <InfoListItem name={format("settings.dark_mode")} /> */}
-			{/* <InfoListHeader>{format("settings.security")}</InfoListHeader> */}
-			{/* <InfoListItem name={format("settings.logged_in")} /> */}
-			{/* <InfoListItem name={format("settings.2fa")} /> */}
 			<InfoListHeader>{format("settings.other")}</InfoListHeader>
 			{/* <InfoListItem name={format("settings.clear_history")} /> */}
 			<InfoListItem
@@ -95,7 +93,7 @@ export const SettingsScreen: React.FC = () => {
 				hasDisclosure
 				action={() => navigate(Routes.WebView, { uri: format("url.privacy"), label: format("settings.privacy") })}
 			/>
-			<InfoListItem name={format("settings.app_version")} value={"alpha1.0"} />
+			<InfoListItem name={format("settings.app_version")} value={version} />
 			<InfoListHeader>{format("settings.support")}</InfoListHeader>
 			<InfoListItem
 				name={format("settings.help")}

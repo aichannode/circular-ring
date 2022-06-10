@@ -51,6 +51,7 @@ interface LineChartProps {
 	yMinIndex?: number;
 	yMaxIndex?: number;
 	labelCount?: number;
+	yLabelCount?: number;
 	mode?: Mode;
 	shouldShowMarker?: boolean;
 	highlightPerTapEnabled?: boolean;
@@ -65,7 +66,14 @@ interface LineChartProps {
 	movingAverage?: Points;
 	xAxisMin?: number;
 	xAxisMax?: number;
+	zoom?: {
+		scaleX: number;
+		scaleY: number;
+		xValue: number;
+		yValue: number;
+	};
 	isDaily?: boolean;
+	minimumYValueAllowed?: number;
 }
 
 const verticalContentInset = { top: 40, bottom: 20 };
@@ -88,8 +96,10 @@ export function LineChart({
 	yMinIndex,
 	yMaxIndex,
 	labelCount,
+	yLabelCount,
 	shouldShowMarker = false,
-	labelFormatter = (x, y) => (isDaily ? `${moment(x).format("hh:mm")}\n${y}` : `${moment(x).format("Y-MM-DD")}\n${y}`),
+	labelFormatter = (x, y) =>
+		isDaily ? `${moment(x).format("hh:mm")}\n${Math.round(y)}` : `${moment(x).format("Y-MM-DD")}\n${Math.round(y)}`,
 	highlightPerTapEnabled = false,
 	scaleXEnabled = true,
 	mode = createActiveMode(),
@@ -103,8 +113,11 @@ export function LineChart({
 	movingAverage,
 	xAxisMin,
 	xAxisMax,
+	zoom,
 	isDaily = false,
+	minimumYValueAllowed,
 }: LineChartProps) {
+	const { format } = useI18n();
 	const [scaleX, setScaleX] = useState(1);
 	const graphRect = useRef<Rect>();
 	const [maxPosition, setMaxPosition] = useState<Position | null>(null);
@@ -120,17 +133,14 @@ export function LineChart({
 			);
 		}
 	}
-
 	const [xMin, xMax] = !isMultipleLines
 		? [Math.min(...data.map((point) => point.x)), Math.max(...data.map((point) => point.x))]
 		: [0, maxDataLength - 1];
-
 	const shouldDisplay = isInActiveMode(mode) || isInCalibrationMode(mode);
-	const { format } = useI18n();
-	const [selectedX, setSelectedX] = useState<number | undefined>(data[0] ? (onSelect ? data[0].x : -1) : undefined);
-	const linspace = yMin && yMax ? Math.round(((yMax - yMin) * 10) / 100) : 0;
-	const axisMinimum = yMin ? (shouldUpdateYmin ? yMin - linspace : yMin) : 0;
-	const axisMaximum = yMax ? (shouldUpdateYmin ? yMax + linspace : yMax) : 0;
+	const linspace = isDefined(yMin) && isDefined(yMax) ? ((yMax - yMin) * 10) / 100 : 0;
+	const [selectedX, setSelectedX] = useState<number | undefined>(data[0] ? (onSelect ? data[0].x : -1) : -1);
+	const axisMinimum = isDefined(yMin) ? (shouldUpdateYmin ? yMin - linspace : yMin) : 0;
+	const axisMaximum = isDefined(yMax) ? (shouldUpdateYmin ? yMax + linspace : yMax) : 0;
 	const yAxisContentInset = verticalContentInset.top;
 	const tooltipMinX = xAxisContentInset;
 	const tooltipMaxX = graphRect.current
@@ -145,12 +155,11 @@ export function LineChart({
 				? valueFormatterPattern?.[0]
 				: valueFormatterPattern?.[1]
 			: valueFormatterPattern,
-
 		position: "BOTTOM" as const,
-		centerAxisLabels: !isMultipleLines,
-		drawAxisLine: false,
+		centerAxisLabels: false,
+		drawAxisLine: true,
 		enabled: true,
-		granularity: 1,
+		granularity: 1000,
 		drawLabels: true,
 		drawGridLines: false,
 		textSize: 10,
@@ -166,9 +175,11 @@ export function LineChart({
 
 	const yAxis = {
 		left: {
-			axisMinimum: Math.floor(axisMinimum),
+			axisMinimum: isDefined(minimumYValueAllowed) ? minimumYValueAllowed : axisMinimum,
 			axisMaximum: Math.ceil(axisMaximum),
 			enabled: true,
+			labelCount: yLabelCount,
+			labelCountForce: yLabelCount ? true : false,
 			textColor: processColor(yColor),
 			drawGridLines: true,
 			gridLineWidth: 0.5,
@@ -241,10 +252,13 @@ export function LineChart({
 					label: "",
 					config: {
 						drawValues: false,
-						lineWidth: shouldDrawCircles ? 2 : 1,
+						lineWidth: shouldDrawCircles ? 3 : 1,
 						drawCircles: shouldDrawCircles,
+						circleColor: processColor(graphColor),
+						circleHoleColor: processColor(graphColor),
+						highlightColor: processColor("transparent"),
 						circleColors: !!shouldShowMarker
-							? data.map(({ x }) => {
+							? data.map(({ x, y }) => {
 									if (x == selectedX) {
 										return processColor("#333333");
 									}
@@ -252,7 +266,6 @@ export function LineChart({
 							  })
 							: [processColor(graphColor)],
 						drawCircleHole: false,
-						highlightColor: processColor("transparent"),
 						color: processColor(graphColor),
 						axisLineColor: processColor("white"),
 						highlightEnabled: true,
@@ -260,7 +273,7 @@ export function LineChart({
 						valueTextSize: 0,
 						legend: false,
 						circleRadius: 4,
-						mode: "HORIZONTAL_BEZIER" as const,
+						mode: !shouldDrawCircles ? ("HORIZONTAL_BEZIER" as const) : undefined,
 					},
 				})),
 		],
@@ -296,7 +309,7 @@ export function LineChart({
 									if (!!shouldShowMarker) {
 										marker = labelFormatter(x, y, index);
 									}
-									return { x: index, y, marker, value: x };
+									return { x, y, marker, value: x };
 								}),
 								label: "",
 								config: {
@@ -442,6 +455,7 @@ export function LineChart({
 									e.nativeEvent && onSelect && onSelect(payload.data.x);
 								}
 							}}
+							zoom={zoom}
 						></LineComponent>
 					</View>
 					{shouldShowLabel && scaleX < 1.06 && (

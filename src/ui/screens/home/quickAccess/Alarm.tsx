@@ -28,8 +28,10 @@ const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = () => {
 	const quickAccessAlarm = alarms.find((el) => el.id === quickAccessAlarmId);
 	const [alarm, setAlarm] = useState(quickAccessAlarm?.isActivated);
 	const [date, setDate] = useState(new Date());
-	const [snooze, setSnooze] = useState(quickAccessAlarm?.snooze ? true : false);
-	const [smart, setSmart] = useState(quickAccessAlarm?.smart ? true : false);
+	const [snooze, setSnooze] = useState(!!quickAccessAlarm?.snooze);
+	const [smart, setSmart] = useState(!!quickAccessAlarm?.smart);
+
+	const { format } = useI18n();
 
 	const weekdays: Weekdays[] = [
 		Weekdays.MONDAY,
@@ -66,7 +68,7 @@ const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = () => {
 	return (
 		<SheetContainer>
 			<TextAndSwitchContainer>
-				<Label>Alarm</Label>
+				<Label>{format("alarm.label.default")}</Label>
 				<SwitchButton
 					style={{ transform: Platform.OS === "android" ? [{ scale: 1.5 }] : undefined }}
 					ios_backgroundColor={colors.gray}
@@ -90,7 +92,7 @@ const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = () => {
 			/>
 			<Divider />
 			<TextAndSwitchContainer>
-				<Label>Smart Alarm</Label>
+				<Label>{format("alarm.new.smart_alarm.title")}</Label>
 				<SwitchButton
 					style={{ transform: Platform.OS === "android" ? [{ scale: 1.5 }] : undefined }}
 					ios_backgroundColor={colors.gray}
@@ -104,7 +106,7 @@ const AlarmBottomSheet: React.FC<AlarmBottomSheetProps> = () => {
 				/>
 			</TextAndSwitchContainer>
 			<TextAndSwitchContainer>
-				<Label>Snooze</Label>
+				<Label>{format("alarm.new.snooze.title")}</Label>
 				<SwitchButton
 					style={{ transform: Platform.OS === "android" ? [{ scale: 1.5 }] : undefined }}
 					ios_backgroundColor={colors.gray}

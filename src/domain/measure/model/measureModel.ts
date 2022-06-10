@@ -6,6 +6,7 @@ import { Metrics, MetricType, RangeMetrics } from "../metric";
 import {
 	ActivityIntensity7DAverageMetrics,
 	ActivityIntensityAllAverageMetrics,
+	BR30DConstantMetrics,
 	CalorieBurnedConstantMetrics,
 	CaloriesBurned,
 	CardioPoints,
@@ -48,10 +49,14 @@ import {
 	DailySpo2ConstantMetrics,
 	DailySpo2TimeSeriesMetrics,
 	DailyWakeUpScoreMetrics,
+	Hr30DConstantMetrics as HrNight30DConstantMetrics,
+	HrAwake30DConstantMetrics,
+	HRV30DConstantMetrics,
 	Sleep7DConstantMetrics,
 	SleepAllConstantMetrics,
 	SleepMonthlyStageMetrics,
 	SleepStagesMetrics,
+	Spo230DConstantMetrics,
 	StepsConstantMetrics,
 	StepsTaken,
 	TemperatureVariationConstantMetrics,
@@ -115,6 +120,17 @@ export class MeasureModel implements Model<Proposal> {
 	public dailyEnergyScore: Map<ISODay, number | null> = new Map();
 	public dailyRestingHeartRate: Map<ISODay, number | null> = new Map();
 	public last7DEnergyScore: Map<ISODay, number | null> = new Map();
+	public last30DSpo2: Map<ISODay, Metrics<Spo230DConstantMetrics>> = new Map();
+	public last30DBR: Map<ISODay, Metrics<BR30DConstantMetrics>> = new Map();
+	public last30DHrNight: Map<ISODay, Metrics<HrNight30DConstantMetrics>> = new Map();
+	public last30DTemperatureVariation: Map<ISODay, Metrics<MetricType.UserMonthlyTemperatureAverage>> = new Map();
+	public last30DHRV: Map<ISODay, Metrics<HRV30DConstantMetrics>> = new Map();
+	public dailyBR: Map<ISODay, number | null> = new Map();
+	public dailyHrNight: Map<ISODay, number | null> = new Map();
+	public dailyHRV: Map<ISODay, number | null> = new Map();
+	public last30DHr: Map<ISODay, Metrics<HrAwake30DConstantMetrics>> = new Map();
+	public dailySpo2: Map<ISODay, number | null> = new Map();
+	public dailyHr: Map<ISODay, number | null> = new Map();
 	public dailySleepScoreQuality: Map<ISODay, number | null> = new Map();
 	public last7DSleepScore: Map<ISODay, number | null> = new Map();
 	public last7DRestingHeartRate: Map<ISODay, Metrics<THRH7DConstantMetrics>> = new Map();
@@ -170,6 +186,8 @@ export class MeasureModel implements Model<Proposal> {
 			present: action,
 		});
 	}
+
+	// FIXME The fuck is that ? Why it has 30 000 if/elseif, there should be a way to rethink that, it is a pain to maintain
 	public present = (proposal: Proposal) => {
 		(this.lastAcceptedMutations as IObservableArray).clear();
 		proposal.forEach((mutation) => {
@@ -318,6 +336,45 @@ export class MeasureModel implements Model<Proposal> {
 				mutate.call(this, mutation, () =>
 					this.dailyPhaseBeforeWakeUp.set(mutation.payload.localISODay, mutation.payload.data)
 				);
+			} else if (mutation.type === "setDailySpo2") {
+				const score = mutation.payload.data;
+				mutate.call(this, mutation, () => this.dailySpo2.set(mutation.payload.localISODay, score));
+			} else if (mutation.type === "setMonthlySpo2Constants") {
+				mutate.call(this, mutation, () => {
+					this.last30DSpo2.set(mutation.payload.localISODay, mutation.payload.constant);
+				});
+			} else if (mutation.type === "setDailyBR") {
+				const score = mutation.payload.data;
+				mutate.call(this, mutation, () => this.dailyBR.set(mutation.payload.localISODay, score));
+			} else if (mutation.type === "setMonthlyBRConstants") {
+				mutate.call(this, mutation, () => {
+					this.last30DBR.set(mutation.payload.localISODay, mutation.payload.constant);
+				});
+			} else if (mutation.type === "setDailyHrNight") {
+				const score = mutation.payload.data;
+				mutate.call(this, mutation, () => this.dailyHrNight.set(mutation.payload.localISODay, score));
+			} else if (mutation.type === "setMonthlyHrNightConstants") {
+				mutate.call(this, mutation, () => {
+					this.last30DHrNight.set(mutation.payload.localISODay, mutation.payload.constant);
+				});
+			} else if (mutation.type === "setDailyHRV") {
+				const score = mutation.payload.data;
+				mutate.call(this, mutation, () => this.dailyHRV.set(mutation.payload.localISODay, score));
+			} else if (mutation.type === "setMonthlyHRVConstants") {
+				mutate.call(this, mutation, () => {
+					this.last30DHRV.set(mutation.payload.localISODay, mutation.payload.constant);
+				});
+			} else if (mutation.type === "setDailyHr") {
+				const score = mutation.payload.data;
+				mutate.call(this, mutation, () => this.dailyHr.set(mutation.payload.localISODay, score));
+			} else if (mutation.type === "setMonthlyHrConstants") {
+				mutate.call(this, mutation, () => {
+					this.last30DHr.set(mutation.payload.localISODay, mutation.payload.constant);
+				});
+			} else if (mutation.type === "setMonthlyTemperatureVariationConstants") {
+				mutate.call(this, mutation, () => {
+					this.last30DTemperatureVariation.set(mutation.payload.localISODay, mutation.payload.constant);
+				});
 			}
 		});
 	};

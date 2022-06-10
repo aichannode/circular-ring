@@ -32,12 +32,11 @@ export function useI18n(options?: FormatterOptions) {
 				try {
 					return intl.formatMessage({ id: key }, { ...values, ...createXmlFormatters(options) }) as string;
 				} catch (e) {
-					//TODO send to sentry
 					if (key === undefined) {
-						console.warn("[INTL] missing mandatory i18n key.");
+						//						console.warn("[INTL] missing mandatory i18n key.");
 						return "";
 					} else {
-						console.warn("[INTL] unknown key", key);
+						//						console.warn("[INTL] unknown key", key);
 						return "";
 					}
 				}
@@ -198,8 +197,7 @@ export function useI18n(options?: FormatterOptions) {
 		formatNoteIntervalLinker: () => {
 			return `${intl.formatMessage({ id: "global.date_interval_linker" })}`;
 		},
-		formatHour: (date: Date, is24h: boolean) =>
-			is24h ? dayjs(date).format("HH : mm") : dayjs(date).format("hh : mm A"),
+		formatHour: (date: Date, is24h: boolean) => (is24h ? dayjs(date).format("HH:mm") : dayjs(date).format("hh:mm A")),
 		formatDate: (date: Date | undefined) => {
 			if (date) {
 				const isUSCS = useIsUSCS();
@@ -209,5 +207,9 @@ export function useI18n(options?: FormatterOptions) {
 		},
 		formatTemperature: (temperature: number, isCelsius: boolean) =>
 			`${temperature > 0 ? "+" : ""}${isCelsius ? temperature + " °C" : (temperature * 9) / 5 + 32 + " °F"}`,
+		formatNumber: (number: number, maxDigits = 2) =>
+			intl.formatNumber(number, {
+				maximumSignificantDigits: maxDigits,
+			}),
 	};
 }

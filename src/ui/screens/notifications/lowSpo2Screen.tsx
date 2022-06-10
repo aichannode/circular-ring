@@ -23,7 +23,7 @@ export const LowSpo2Screen: React.FC = () => {
 		<Container>
 			<InfoListItem
 				name={format("lowSpo2.alert")}
-				switchOptions={["On", "Off"]}
+				switchOptions={[format("global.onShift"), format("global.offShift")]}
 				switchValue={notificationsSettings.lowSPO2Alert}
 				onSwitchSelect={(val) => userService.updateUserNotificationsSettings({ lowSPO2Alert: val })}
 				lightTheme

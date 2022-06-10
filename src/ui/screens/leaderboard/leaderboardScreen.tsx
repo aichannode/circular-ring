@@ -5,6 +5,7 @@ import LinearGradient from "react-native-linear-gradient";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import emoji from "node-emoji";
+import { useI18n } from "@ui/i18n";
 
 interface I_Data {
 	rank: number;
@@ -338,6 +339,7 @@ const LeaderboardTile = ({
 
 export const LeaderboardScreen: React.FC = () => {
 	const scrollRef = createRef<ScrollView>();
+	const { format } = useI18n();
 
 	const ScrollToPosition = (position: number) => {
 		const y = position * 67;
@@ -352,8 +354,8 @@ export const LeaderboardScreen: React.FC = () => {
 		<>
 			<Container ref={scrollRef}>
 				<TitleContainer>
-					<Title>Leaderboard</Title>
-					<SubTitle>{moment().format("MMMM")} - updated daily</SubTitle>
+					<Title>{format("header.leaderboard")}</Title>
+					<SubTitle>{`${moment().format("MMMM")} - ${format("leaderboard.updatedDaily")}`}</SubTitle>
 				</TitleContainer>
 				<LeaderboardContainer>
 					{data.map((d, key) =>

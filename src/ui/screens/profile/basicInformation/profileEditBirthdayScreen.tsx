@@ -1,5 +1,5 @@
 import { useServices } from "@core/services";
-import { useUser, useUserSettings } from "@domain/user/hooks/useUser";
+import { useIsUSCS, useUser } from "@domain/user/hooks/useUser";
 import { useNavigation } from "@react-navigation/native";
 import { PrimaryButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView } from "@ui/components/layout";
@@ -14,13 +14,13 @@ import { TextInputMask } from "react-native-masked-text";
 import styled from "styled-components/native";
 
 export const ProfileEditBirthdayScreen = () => {
-	const { format } = useI18n();
+	const { format, formatDate } = useI18n();
+	const isUSCS = useIsUSCS();
 	const { userService } = useServices();
 	const user = useUser();
-	const userSettings = useUserSettings();
 	const navigation = useNavigation();
 
-	const [birthday, setBirthday] = useState(dayjs(user?.bornDate).format(userSettings?.dateFormat));
+	const [birthday, setBirthday] = useState(formatDate(user?.bornDate));
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isLoading, setLoading] = useState(false);
 
@@ -46,10 +46,10 @@ export const ProfileEditBirthdayScreen = () => {
 
 	const checkAndSaveBirthday = useCallback(async () => {
 		setErrorMessage("");
-		if (birthday.length === 0) {
+		if (birthday?.length === 0) {
 			setErrorMessage(format("onboarding.personal_info.error.born_date"));
 		} else {
-			const birthDate = dayjs(birthday, userSettings?.dateFormat, true);
+			const birthDate = dayjs(birthday, isUSCS ? "MM/DD/YYYY" : "DD/MM/YYYY", true).utc(true);
 			if (!birthDate.isValid() || birthDate.isAfter(dayjs())) {
 				setErrorMessage(format("onboarding.personal_info.error.born_date_invalid"));
 			} else {
@@ -69,9 +69,9 @@ export const ProfileEditBirthdayScreen = () => {
 						<TextInputMask
 							type={"datetime"}
 							options={{
-								format: userSettings?.dateFormat,
+								format: isUSCS ? "MM/DD/YYYY" : "DD/MM/YYYY",
 							}}
-							placeholder={format("onboarding.personal_info.born_placeholder")}
+							placeholder={isUSCS ? "MM/DD/YYYY" : "DD/MM/YYYY"}
 							value={birthday}
 							onChangeText={setBirthday}
 							style={{ padding: 0, width: "100%", color: colors.textPrimary }}

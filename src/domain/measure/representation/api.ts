@@ -125,6 +125,41 @@ export interface Range7<T, U = number> {
 	controlState: DataControlState;
 	constant: T;
 }
+export interface Range30<T, U = number> {
+	series: Tuple<Score<U> | undefined, 30>;
+
+	controlState: DataControlState;
+	constant: T;
+}
+
+export type Spo230Days = Range30<{
+	average: number;
+	reference: number;
+}>;
+export type BR30Days = Range30<{
+	average: number;
+	reference: number;
+}>;
+export type HrNight30Days = Range30<{
+	average: number;
+	reference: number;
+	min: number;
+	max: number;
+}>;
+
+export type HRV30Days = Range30<{
+	average: number;
+	reference: number;
+}>;
+export type Hr30Days = Range30<{
+	average: number;
+	reference: number;
+	min: number;
+	max: number;
+}>;
+export type TemperatureVariation30Days = Range30<{
+	average: number;
+}>;
 
 export type Scores7D = Range7<{
 	average: number;

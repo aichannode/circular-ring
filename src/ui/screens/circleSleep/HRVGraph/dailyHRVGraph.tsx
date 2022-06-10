@@ -2,49 +2,56 @@ import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState } from "@domain/measure/representation/api";
+import { useIs24h } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, trimData, TrimOptions, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
 import { Tag } from "@ui/components/tag";
-import { TitleText } from "@ui/components/text";
 import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import DashedLine from "react-native-dashed-line";
+
 type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
 	dailyTrimOptions?: TrimOptions;
 };
 
-export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRateGraph({
+export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 	selectedDay,
 	mode = createActiveMode(),
 	dailyTrimOptions,
 }: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
-
+	const is24h = useIs24h();
 	const {
 		measure: {
-			hooks: { useDailyBR },
+			hooks: { useDailyHRV, useDailyHRVTrend },
 		},
 		calendar: {
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
 
-	const dailyBr = useDailyBR(selectedDay);
-	const [data, constant] = [dailyBr ? dailyBr.data : [], dailyBr ? dailyBr.constant : { average: 0, reference: 0 }];
+	const dailyHrv = useDailyHRV(selectedDay);
+	const dailyHrvTrend = useDailyHRVTrend(selectedDay);
+	const [lines, constant] = [
+		dailyHrv ? dailyHrv.data : [],
+		dailyHrv ? dailyHrv.constant : { average: 0, reference: 0 },
+	];
+	const parsedData = dailyTrimOptions ? trimData(lines, (line) => line.x, dailyTrimOptions) : lines;
 
-	const parsedData = dailyTrimOptions ? trimData(data, (line) => line.x, dailyTrimOptions) : data;
-
-	const updatedMode = updateMode(mode, dailyBr?.controlState !== DataControlState.READY);
+	parsedData.sort(function (a, b) {
+		return a.x - b.x;
+	});
 	const [yMin, yMax] =
 		parsedData.length > 0
 			? [Math.min(...parsedData.map((line) => line.y)), Math.max(...parsedData.map((line) => line.y))]
@@ -56,32 +63,37 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 	];
 	const tags = useDailyTags(selectedDay);
 	const averages: Averages = [];
-	if (isInCalibrationMode(updatedMode) && constant.reference !== -1) {
-		averages.push({
-			value: constant.reference,
-			color: colors.redLight,
-		});
+	const updatedMode = updateMode(mode, dailyHrv?.controlState !== DataControlState.READY);
+	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.reference !== -1) {
+		{
+			averages.push({
+				value: constant.reference,
+				color: colors.redLight,
+			});
+		}
 	}
-	if (isInActiveMode(updatedMode) && constant.average !== -1) {
+
+	if (
+		(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
+		isDefined(constant) &&
+		constant.average !== -1
+	) {
 		averages.push({
 			value: constant.average,
 			color: colors.darkBlue,
 		});
 	}
+
 	useEffect(() => {
-		if (isDefined(data)) {
+		if (isDefined(dailyHrv)) {
 			setLoading(false);
 		}
-	}, [data]);
+	}, [dailyHrv]);
 
 	return isLoading ? (
 		<Spinner size={24} />
 	) : (
 		<View>
-			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("score.details.breathing.label")}
-			</TitleText>
-
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
 				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
@@ -93,8 +105,8 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 						))}
 					</View>
 				)}
-
 				<LineChart
+					labelCount={5}
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
@@ -103,16 +115,20 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 					shouldDrawCircles={false}
 					graphColor={colors.darkBlue}
 					valueFormatter="date"
-					valueFormatterPattern={["h a", "h:mm a"]}
+					valueFormatterPattern={[is24h ? "h" : "h a", is24h ? "h:mm" : "h:mm a"]}
 					yMin={yMin}
 					yMax={yMax}
 					yMinIndex={yMinIndex}
 					yMaxIndex={yMaxIndex}
 					mode={updatedMode}
-					labelCount={5}
-					highlightPerTapEnabled={true}
+					movingAverage={dailyHrvTrend?.data}
 					shouldShowMarker={true}
-					isDaily
+					highlightPerTapEnabled={true}
+					labelFormatter={(x, y) => {
+						return `${is24h ? dayjs(new Date(x)).format("HH:mm") : dayjs(new Date(x)).format("hh:mm A")}\n${Math.round(
+							y
+						)}`;
+					}}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
@@ -136,9 +152,9 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 								value:
 									parsedData.length == 0
 										? format("global.no_data")
-										: typeof constant.average == "undefined" || constant.average == 0
-										? "- rpm"
-										: `${constant.average.toFixed(1)} rpm`,
+										: typeof constant.average == "undefined" || constant.average === 0
+										? "- ms"
+										: `${constant.average} ms`,
 							},
 							{
 								label: format("hr.reference"),
@@ -159,9 +175,9 @@ export const BreathingRateGraph: React.FC<Props> = observer(function BreathingRa
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
 									: parsedData.length == 0
 									? format("global.no_data")
-									: typeof constant.reference == "undefined" || constant.reference == 0
-									? "- rpm"
-									: `${constant.reference.toFixed(1)} rpm`,
+									: typeof constant.reference == "undefined" || constant.reference === 0
+									? "- ms"
+									: `${constant.reference} ms`,
 							},
 						]}
 					/>

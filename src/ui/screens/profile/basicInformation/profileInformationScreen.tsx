@@ -2,7 +2,7 @@ import { useServices } from "@core/services";
 import { round2Digits } from "@core/utils";
 import { cmToFt, HeightUnit, kgToLbs, UNDEFINED_HEIGHT, UNDEFINED_WEIGHT, WeightUnit } from "@domain/units";
 import { useUser, useUserSettings } from "@domain/user/hooks/useUser";
-import { Sex } from "@domain/user/user";
+import { Language, languageKeys, Sex } from "@domain/user/user";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
@@ -13,6 +13,8 @@ import { DeleteAccountBottomSheet } from "@ui/screens/profile/basicInformation/d
 import { HeightBottomSheet } from "@ui/screens/profile/basicInformation/heightBottomSheet";
 import { WeightBottomSheet } from "@ui/screens/profile/basicInformation/weightBottomSheet";
 import React, { useRef, useState } from "react";
+import { AdvancedInfoEditionBottomSheet } from "@ui/screens/profile/advancedInformation/advancedInfoEditionBottomSheet";
+import { advanceInfoI18nKey } from "@ui/screens/profile/advancedInformation/profileAdvancedInfoI18n";
 
 export const ProfileInformationScreen = () => {
 	const { format, formatDate } = useI18n();
@@ -33,11 +35,11 @@ export const ProfileInformationScreen = () => {
 
 	const [newSex, setNewSex] = useState(user?.sex ?? Sex.Male);
 	const [isAccountDeleted, setAccountDeleted] = useState(false);
-
 	const heightBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const weightBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const confirmSexBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const deleteAccountBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
+	const editionBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 
 	return !user ? null : (
 		<ScrollScreen contentContainerStyle={{ paddingVertical: 0 }}>
@@ -82,7 +84,17 @@ export const ProfileInformationScreen = () => {
 				hasDisclosure={true}
 				action={() => navigate(Routes.ProfileAdvancedInformation)}
 			/>
+
+			<InfoListHeader>{format("profile_info.other")}</InfoListHeader>
+			<InfoListItem name={format("profile_info.country")} value={`${user.country}`} />
 			<InfoListItem
+				name={format("profile_info.language")}
+				hasDisclosure
+				value={user.language ? format(advanceInfoI18nKey(languageKeys, user.language)) : format("profile_info.english")}
+				action={() => editionBottomSheetRef.current?.present()}
+			/>
+			<InfoListItem
+				style={{ marginTop: 20 }}
 				name={format("profile_info.delete")}
 				emphasize={true}
 				action={() => deleteAccountBottomSheetRef.current?.present()}
@@ -118,6 +130,30 @@ export const ProfileInformationScreen = () => {
 					onClose={() => {
 						confirmSexBottomSheetRef.current?.close();
 					}}
+				/>
+			</CircularBottomSheet>
+
+			<CircularBottomSheet snapPoints={[480]} ref={confirmSexBottomSheetRef}>
+				<ConfirmSexBottomSheet
+					sex={newSex}
+					onClose={() => {
+						confirmSexBottomSheetRef.current?.close();
+					}}
+				/>
+			</CircularBottomSheet>
+			<CircularBottomSheet snapPoints={[550]} ref={editionBottomSheetRef}>
+				<AdvancedInfoEditionBottomSheet
+					config={{
+						title: format("profile_info.language"),
+						description: undefined,
+						options: [Language.EN, Language.FR, Language.ES, Language.DE, Language.IT, Language.NL],
+						translationSet: languageKeys,
+						saveProcess: async (option: Language) => {
+							await userService.updateUserInfo({ language: option });
+						},
+					}}
+					currentOption={user.language ?? Language.EN}
+					onClose={() => editionBottomSheetRef.current?.close()}
 				/>
 			</CircularBottomSheet>
 		</ScrollScreen>

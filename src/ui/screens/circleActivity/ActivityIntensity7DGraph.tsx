@@ -2,6 +2,7 @@ import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { ActivityData } from "@domain/measure/representation/api";
+import { useIsUSCS } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInDisabledMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { Spinner } from "@ui/components/spinner";
@@ -10,6 +11,7 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Mode } from "@ui/type";
 import { hasAttributesDefined } from "@ui/utils/filter";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React from "react";
@@ -39,6 +41,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 	mode = createActiveMode(),
 }: Props) {
 	const { formatDuration } = useI18n();
+	const isUSCS = useIsUSCS();
 	const {
 		measure: {
 			hooks: { use7DaysActivity },
@@ -105,6 +108,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 					shouldDrawCircles={true}
 					valueFormatter={xAxis || []}
 					yValueFormatter={yValueFormatter}
+					minimumYValueAllowed={0}
 					yMin={yMin}
 					yMax={yMax}
 					mode={updatedMode}
@@ -120,7 +124,9 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 							.sort((a, b) => b - a)
 							.map((val) => formatDuration(val * 60));
 
-						return `${moment(lines[index].date).format("ddd DD")}\n${values.join("\n")}`;
+						return isUSCS
+							? `${dayjs(new Date(lines[index].date)).format("MM/DD/YYYY")}\n${values.join("\n")}`
+							: `${dayjs(new Date(lines[index].date)).format("DD/MM/YYYY")}\n${values.join("\n")}`;
 					}}
 					highlightPerTapEnabled
 					scaleXEnabled={false}
@@ -129,7 +135,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 					isMultipleLines
 				/>
 			</View>
-			<View style={{ marginTop: 30 }}>
+			<View style={{ marginTop: 20 }}>
 				<ActivityLegend {...activity7D?.constant} mode={updatedMode} />
 			</View>
 		</>

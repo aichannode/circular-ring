@@ -16,12 +16,14 @@ import { LogoutBottomSheet } from "@ui/screens/profile/logoutBottomSheet";
 import { observer } from "mobx-react-lite";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components/native";
+import { useObservable } from "micro-observables";
 
 export const ProfileScreen = observer(function ProfileScreen() {
 	const { format } = useI18n();
 	const { navigate } = useRoutesNavigation();
 	const { cognitoAuthService } = useServices();
 
+	const authUser = useObservable(cognitoAuthService.user);
 	const {
 		measure: {
 			hooks: { useHasCompleteCoreSleep },
@@ -74,6 +76,10 @@ export const ProfileScreen = observer(function ProfileScreen() {
 				hasDisclosure
 				action={isConnectedByEmail ? goToProfileChangePassword : () => changePasswordBottomSheetRef.current?.present()}
 			/>
+
+			<InfoListHeader>{format("settings.security")}</InfoListHeader>
+			<InfoListItem name={format("settings.logged_in")} value={authUser?.getIdToken().decodePayload().email ?? ""} />
+			{/* <InfoListItem name={format("settings.2fa")} /> */}
 			<SeparatedItem
 				name={format("profile.logout")}
 				action={() => logoutBottomSheetRef.current?.present()}

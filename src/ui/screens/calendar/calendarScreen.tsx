@@ -1,6 +1,7 @@
 import { useRepresentations } from "@core/representation";
 import { getCurrentLocalISODay, isDefined, toISOMonth } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
+import { getScoreControlStates } from "@domain/measure/representation/business";
 import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
 import { getInitMode, updateMode } from "@ui/business";
 import { InfoListHeader } from "@ui/components/infoList";
@@ -32,14 +33,20 @@ export const CalendarScreen = observer(function CalendarScreen() {
 
 	const hasCompleteCoreSleep = useHasCompleteCoreSleep(selectedLocalIsoDay);
 	const nbRemainingDays = useUserCalibrationRemainingDays();
+	const dailyScore = useDailyGlobalScore(selectedLocalIsoDay);
+
 	// XXX: https://circularing.atlassian.net/browse/CIR-93
 	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
+
+	const scoreQuality = getScoreControlStates({
+		score: dailyScore || 0,
+		thresholdHigh: 0.9,
+		thresholdLow: 0.8,
+	});
 
 	useEffect(() => {
 		setEachDayOfMonthScore(toISOMonth(selectedLocalIsoDay));
 	}, [selectedLocalIsoDay]);
-
-	const dailyScore = useDailyGlobalScore(selectedLocalIsoDay);
 
 	return (
 		<Container>
@@ -47,12 +54,11 @@ export const CalendarScreen = observer(function CalendarScreen() {
 				<CalendarView selectedLocalIsoDay={selectedLocalIsoDay} onDaySelected={(day) => setSelectedDay(day)} />
 			</CalendarWrapper>
 			<ResponsiveCenterView>
-				{
-					<GlobalScoreCard
-						score={dailyScore}
-						mode={updateMode(screenMode, !isDefined(dailyScore) || isNaN(dailyScore))}
-					/>
-				}
+				<GlobalScoreCard
+					score={dailyScore}
+					scoreQuality={scoreQuality}
+					mode={updateMode(screenMode, !isDefined(dailyScore) || isNaN(dailyScore))}
+				/>
 			</ResponsiveCenterView>
 			<NoteHeader>
 				<InfoListHeader>{format("calendar.notes")}</InfoListHeader>

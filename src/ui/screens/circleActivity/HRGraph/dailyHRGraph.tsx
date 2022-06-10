@@ -2,6 +2,7 @@ import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { Point } from "@domain/measure/representation/api";
+import { useIs24h } from "@domain/user/hooks/useUser";
 import {
 	createActiveMode,
 	isInActiveMode,
@@ -15,11 +16,11 @@ import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
 import { Tag } from "@ui/components/tag";
-import { TitleText } from "@ui/components/text";
 import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -33,12 +34,13 @@ type Props = {
 
 const tooltipSize = { width: 40, height: 20 };
 
-export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph({
+export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 	selectedDay,
 	mode = createActiveMode(),
 	dailyTrimOptions,
 }: Props) {
 	const { format } = useI18n();
+	const is24h = useIs24h();
 	const [isLoading, setLoading] = useState(true);
 
 	const {
@@ -58,7 +60,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 
 	const getTimestampFromValue = (line: Point) => line.x;
 	const parsedLines = dailyTrimOptions
-		? trimData(lines, getTimestampFromValue, { includes: dailyTrimOptions.includes }).map((line) => ({
+		? trimData(lines, getTimestampFromValue, { includes: [] }).map((line) => ({
 				...line,
 				y: isInSomeIntervals(getTimestampFromValue(line), dailyTrimOptions.excludes ?? []) ? 0 : line.y,
 		  }))
@@ -68,7 +70,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 	let xAxisMin, xAxisMax;
 	if (isDefined(dailyTrimOptions) && isDefined(dailyTrimOptions.includes)) {
 		xAxisMin = Math.min(...dailyTrimOptions.includes.map(([start, end]) => start));
-		xAxisMax = Math.min(...dailyTrimOptions.includes.map(([start, end]) => end));
+		//xAxisMax = Math.max(...dailyTrimOptions.includes.map(([start, end]) => end));
 	}
 
 	const [yMin, yMax] =
@@ -93,10 +95,9 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 			color: colors.red,
 		});
 	}
-	if (isInActiveMode(updatedMode) && constant.hr !== -1) {
+	if ((isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && constant.hr !== -1) {
 		averages.push({
 			value: constant.hr,
-
 			color: colors.redLight,
 		});
 	}
@@ -111,11 +112,6 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 		<Spinner size={24} />
 	) : (
 		<View>
-			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("live.heart_rate.label")}
-			</TitleText>
-
-			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
 				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
 					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
@@ -127,7 +123,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 					</View>
 				)}
 				<LineChart
-					labelCount={5}
+					labelCount={6}
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
@@ -135,7 +131,7 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 					shouldShowLabel={true}
 					shouldDrawCircles={false}
 					graphColor={colors.red}
-					valueFormatter="date"
+					valueFormatter={"date"}
 					valueFormatterPattern={["H'h'", "HH'h':mm"]}
 					yMin={yMin}
 					yMax={yMax}
@@ -155,7 +151,11 @@ export const HeartRateGraph: React.FC<Props> = observer(function HeartRateGraph(
 					xAxisMax={xAxisMax}
 					shouldShowMarker={true}
 					highlightPerTapEnabled={true}
-					isDaily
+					labelFormatter={(x, y) => {
+						return `${is24h ? dayjs(new Date(x)).format("HH:mm") : dayjs(new Date(x)).format("hh:mm A")}\n${Math.round(
+							y
+						)}`;
+					}}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend

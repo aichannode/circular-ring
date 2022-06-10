@@ -14,7 +14,8 @@ export class AppStateService {
 	});
 	lastUsedTags = observable<CalendarTag[]>([]);
 	userRings = observable<NamedUserRing[]>([]);
-	recommendationsCount = observable<number>(3);
+	// inital feed elements loaded
+	recommendationsCount = observable<number>(10);
 	userCircles = observable<CircleEntity[]>([]);
 	defaultCircles = observable<CircleEntity[]>([]);
 

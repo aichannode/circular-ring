@@ -1,5 +1,4 @@
 // Because importing storybook after some of the bellow imports will cause a runtime error (in release version), we need to import storybook before any of the bellow imports.
-import { useLogger } from "@core/logger/hooks/useLogger";
 import { useSentry } from "@core/logger/hooks/useSentry";
 import { RepresentationsProvider } from "@core/representation";
 import { initializeServices, ServicesProvider } from "@core/services";
@@ -19,18 +18,27 @@ import { LocaleConfig } from "react-native-calendars";
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-get-random-values";
-import * as RNLocalize from "react-native-localize";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import SplashScreen from "react-native-splash-screen";
-import { translations } from "./wordings";
+import { LocaleType, translations } from "./wordings";
+import { Language } from "@domain/user/user";
+import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
+import moment from "moment";
+
+import "moment/locale/de";
+import "moment/locale/es";
+import "moment/locale/fr";
+import "moment/locale/it";
+import "moment/locale/nl";
 
 // Setup Mobx for RN
 configure({
-	enforceActions: "always",
+	// enforceActions: "always",
 	computedRequiresReaction: true,
 	reactionRequiresObservable: true,
 	observableRequiresReaction: true,
 	useProxies: "never",
+	enforceActions: "never",
 });
 
 LogBox.ignoreAllLogs(true);
@@ -51,12 +59,12 @@ const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: "
 
 // @refresh reset
 export const App = () => {
-	const locale = getPreferredLangageCode(Object.keys(translations)) as "en"; // For some reason it can't be done in the main script
+	// For some reason it can't be done in the main script
+	const [locale, setLocale] = useState<LocaleType>(getPreferredLangageCode(Object.keys(translations)));
 	const [initialized, setInitialized] = useState(false);
 	const [isStoryBookDisplayed, toggleStoryBook] = useState(false);
 
 	useSentry();
-	const logger = useLogger("App.tsx");
 
 	useEffect(() => {
 		initializeServices().then(() => {
@@ -86,15 +94,22 @@ export const App = () => {
 			};
 		}
 		LocaleConfig.defaultLocale = locale;
-	}, []);
+		moment.locale(locale);
+	}, [locale]);
+
+	const onChangeLanguage = (newLocale: LocaleType) => {
+		setLocale(newLocale);
+	};
 
 	if (isStoryBookDisplayed) {
 		return (
 			<IntlProvider
 				locale={locale}
 				messages={translations[locale]}
-				onError={(err) => {
-					logger.error(err);
+				onError={() => {
+					// XXX: Do not log unmeaningful errors. (https://circularing.atlassian.net/jira/software/projects/CIR/boards/1?selectedIssue=CIR-961)
+					// logger.error(err);
+					//__DEV__ && console.warn(err);
 				}}
 			>
 				<StorybookUIRoot />
@@ -104,9 +119,12 @@ export const App = () => {
 		return initialized ? (
 			<IntlProvider
 				locale={locale}
+				defaultLocale={Language.EN}
 				messages={translations[locale]}
-				onError={(err) => {
-					logger.error(err);
+				onError={() => {
+					// XXX: Do not log unmeaningful errors. (https://circularing.atlassian.net/jira/software/projects/CIR/boards/1?selectedIssue=CIR-961)
+					// logger.error(err);
+					//					__DEV__ && console.warn(err);
 				}}
 			>
 				<GestureHandlerRootView style={{ flex: 1 }}>
@@ -116,7 +134,7 @@ export const App = () => {
 							<RepresentationsProvider>
 								<NavigationContainer theme={theme}>
 									<BottomSheetModalProvider>
-										<RootNavigator />
+										<RootNavigator onChangeLanguage={onChangeLanguage} />
 									</BottomSheetModalProvider>
 								</NavigationContainer>
 							</RepresentationsProvider>
@@ -127,11 +145,3 @@ export const App = () => {
 		) : null;
 	}
 };
-
-const defaultLanguageCode = "en";
-
-function getPreferredLangageCode(candidates: string[]): string {
-	const result = RNLocalize.findBestAvailableLanguage(candidates) || { languageTag: defaultLanguageCode };
-
-	return result.languageTag;
-}

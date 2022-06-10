@@ -1,4 +1,5 @@
 import { getLogger } from "@core/logger/logger";
+import { apiService, resetServices } from "@core/services";
 import { round2Digits, toServerDate } from "@core/utils";
 import { AppStateService } from "@domain/appState/appStateService";
 import { AuthService } from "@domain/auth/authService";
@@ -17,7 +18,7 @@ import {
 	WorkTime,
 } from "@domain/user/advancedInfo";
 import { TutorialInfo } from "@domain/user/tutorialInfo";
-import { Sex, User } from "@domain/user/user";
+import { Language, Sex, User } from "@domain/user/user";
 import { UserApi } from "@domain/user/userApi";
 import { UserNotificationsSettings } from "@domain/user/userNotificationsSettings";
 import { UserSettings } from "@domain/user/userSettings";
@@ -42,7 +43,7 @@ const defaultNotificationsSettings = {
 };
 
 const defaultSettings = {
-	dateFormat: DateFormat.USCS,
+	dateFormat: DateFormat.SI,
 	heightFormat: HeightUnit.cm,
 	weightFormat: WeightUnit.kg,
 	hourFormat: HourFormat.TWELVE,
@@ -146,10 +147,12 @@ export class UserService {
 	async logout() {
 		// const appDataIds = await Storage.getAllKeys();
 		// Storage.multiRemove(appDataIds);
-		this.bleDeviceService.disconnect({ dissociate: false });
-		this.bleDeviceService.reset();
-		this.reset();
-		this.appStateService.reset();
+
+		await apiService.reset();
+		await this.bleDeviceService.reset();
+		await this.reset();
+		await this.appStateService.reset();
+		await resetServices();
 		await this.authService.logout();
 	}
 
@@ -191,7 +194,10 @@ export class UserService {
 	async retrieveUser() {
 		// get User
 		try {
+			// Fetch Language from Async Storage because this property isn't in the database
+
 			const user = await this.userApi.getUser();
+			user.language = (await this.userStorage.loadUser())?.language ?? user.language;
 			this._user.set(user);
 			await this.userStorage.saveUser(user);
 		} catch (error) {
@@ -267,7 +273,7 @@ export class UserService {
 			bornDate: toServerDate(tutorialInfo.birthDate),
 			phoneNumber: "+33666666666",
 			profilePictureUrl: null,
-			language: "en",
+			language: Language.EN,
 			scorePublic: true,
 			tutorialCompleted: true,
 			stride: 0,
@@ -282,6 +288,7 @@ export class UserService {
 		weight?: number;
 		sex?: Sex;
 		bornDate?: Date;
+		language?: Language;
 	}) {
 		const currentUser = this._user.get();
 		if (currentUser) {
@@ -295,7 +302,7 @@ export class UserService {
 				height: round2Digits(userInfo.height ?? currentUser.height),
 				sex: (userInfo.sex ?? currentUser.sex).toString(),
 				bornDate: toServerDate(userInfo.bornDate ?? currentUser.bornDate),
-				language: currentUser.language,
+				language: userInfo.language ?? currentUser.language,
 				scorePublic: currentUser.scorePublic,
 				stride: 0, //currentUser.stride, => Server patch
 				tutorialCompleted: currentUser.tutorialCompleted,
@@ -306,8 +313,9 @@ export class UserService {
 	private async updateUser(userPutDto: UserPutDto) {
 		try {
 			const user = await this.userApi.updateUser(userPutDto);
-			this._user.set(user);
+			user.language = userPutDto.language;
 			await this.userStorage.saveUser(user);
+			this._user.set(user);
 		} catch (error) {
 			this.logger.warn("Update user failed: " + JSON.stringify(error));
 			throw error;
@@ -365,5 +373,9 @@ export class UserService {
 		} catch (err) {
 			throw err;
 		}
+	}
+
+	async getGoals() {
+		return this.userApi.getGoals();
 	}
 }

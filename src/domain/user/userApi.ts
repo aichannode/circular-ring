@@ -7,6 +7,7 @@ import { UserSettings } from "@domain/user/userSettings";
 import axios, { AxiosInstance } from "axios";
 import { userSettingsFromDto } from "./business";
 import { UserDto, UserPutDto, UserSettingsDto } from "./type";
+import { DailyGoals } from "@domain/user/goals.model";
 
 export class UserApi {
 	private readonly instance: AxiosInstance;
@@ -21,6 +22,10 @@ export class UserApi {
 	async getUser(): Promise<User> {
 		const result = await this.apiService.get<UserDto>("/user", { useForceRefresh: true });
 		return UserApi.userFromDto(result.data);
+	}
+
+	async getGoals(): Promise<DailyGoals> {
+		return this.apiService.get<DailyGoals>("/user/goals").then(({ data }) => data);
 	}
 
 	async updateUser(userPutDto: UserPutDto): Promise<User> {

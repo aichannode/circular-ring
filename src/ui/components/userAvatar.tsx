@@ -44,14 +44,14 @@ export const UserAvatar = () => {
 				<AvatarBorder colors={colors.gradient.orange.slice(0)} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }}>
 					<AvatarBackground>
 						{user.profilePictureUrl ? (
-							<DefaultAvatar
+							<Avatar
 								resizeMode="cover"
 								source={{
 									uri: user.profilePictureUrl,
 								}}
 							/>
 						) : (
-							<DefaultAvatar source={require("@assets/images/man.png")} />
+							<DefaultAvatar resizeMode="contain" source={require("@assets/images/man.png")} />
 						)}
 					</AvatarBackground>
 				</AvatarBorder>
@@ -68,9 +68,14 @@ const UserInfo = styled.View`
 	align-items: center;
 `;
 
-const DefaultAvatar = styled.Image`
+const Avatar = styled.Image`
 	width: 119px;
 	height: 119px;
+`;
+
+const DefaultAvatar = styled.Image`
+	width: 100%;
+	height: 100%;
 `;
 
 const AvatarBorder = styled(LinearGradient)`
@@ -86,7 +91,7 @@ const PenImage = styled.Image``;
 
 const PenBorder = styled.View`
 	position: absolute;
-	right: 0px;
+	right: 0;
 	z-index: 20;
 	background-color: white;
 	overflow: hidden;
@@ -110,11 +115,10 @@ const PenBackground = styled.View`
 
 const AvatarBackground = styled.View`
 	overflow: hidden;
-	margin-bottom: 12px;
 	flex: 1;
 	border-radius: 56px;
 	background-color: ${colors.lightgray};
-	justify-content: flex-end;
+	justify-content: center;
 	align-items: center;
 	margin-bottom: 0;
 `;

@@ -164,7 +164,7 @@ export function getLast30Days(isoDay: ISODay): Tuple<ISODay, 30> {
 	return Array(30)
 		.fill(0)
 		.map((_, index) => {
-			return getUTCISODayFromUTCDate(moment(isoDay).subtract(index, "day").toISOString());
+			return moment(isoDay).subtract(index, "day").format("YYYY-MM-DD") as ISODay;
 		}) as unknown as Tuple<ISODay, 30>;
 }
 

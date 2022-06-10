@@ -11,6 +11,13 @@ export function toUTCTimeSegment(
 	timeFrame: TimeFrame
 ): { isoStart: string; isoEnd: string } {
 	switch (timeFrame) {
+		case TimeFrame.ONE_DAY:
+			assertISODay(localISODate);
+			return {
+				isoStart: moment(localISODate).startOf("day").toISOString(),
+				isoEnd: moment(localISODate).endOf("day").toISOString(),
+			};
+
 		case TimeFrame.TODAY:
 		case TimeFrame.DAY:
 			assertISODay(localISODate);

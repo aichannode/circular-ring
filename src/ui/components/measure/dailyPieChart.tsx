@@ -62,13 +62,11 @@ export const DailyPieChart: React.FC<Props> = ({
 	// Minus the chart radius with the bigger stroke to prevent cropped artefact
 	const chartRadius = chartSize / 2 - [...phaseWidths].sort().reverse()[0];
 
-	function getSliceInnerRadius(index: number) {
-		const phaseLevel = getPhaseLevel(displayedStages[index]?.level);
+	function getSliceInnerRadius(phaseLevel: number) {
 		return chartRadius - phaseWidths[phaseLevel] / 2;
 	}
 
-	function getSliceOutterRadius(index: number) {
-		const phaseLevel = getPhaseLevel(displayedStages[index]?.level);
+	function getSliceOutterRadius(phaseLevel: number) {
 		return chartRadius + phaseWidths[phaseLevel] / 2;
 	}
 
@@ -82,21 +80,18 @@ export const DailyPieChart: React.FC<Props> = ({
 		if (value < 0) {
 			console.error("Invalid stage duration", stage);
 		}
+		const phaseLevel = getPhaseLevel(stage.level);
 		return {
 			key: index,
 			value: Math.max(0, value), // Don't draw negative values, PieChart doesn't support it
 			svg: {
-				fill:
-					isInActiveMode(mode) || isInCalibrationMode(mode)
-						? phaseColors[getPhaseLevel(stage.level)]
-						: noDataPhaseColor,
+				fill: isInActiveMode(mode) || isInCalibrationMode(mode) ? phaseColors[phaseLevel] : noDataPhaseColor,
 			},
-			arc: { innerRadius: getSliceInnerRadius(index), outerRadius: getSliceOutterRadius(index) },
+			arc: { innerRadius: getSliceInnerRadius(phaseLevel), outerRadius: getSliceOutterRadius(phaseLevel) },
 		};
 	});
 
 	const { format, formatDuration } = useI18n();
-
 	return (
 		<View style={{ width: chartSize, height: chartSize, justifyContent: "center" }}>
 			<PieChart
@@ -115,9 +110,11 @@ export const DailyPieChart: React.FC<Props> = ({
 						<SliceDurationLabel>{format(title)}</SliceDurationLabel>
 						{/* @TODO  format is24h below*/}
 						<SliceDurationValue>
-							{isInActiveMode(mode) || isInCalibrationMode(mode)
-								? formatDuration(totalDuration * 60)
-								: format("global.no_data")}
+							{totalDuration !== -1 && (isInActiveMode(mode) || isInCalibrationMode(mode)) ? (
+								formatDuration(totalDuration * 60)
+							) : (
+								<SliceDurationLabel>{format("global.no_data")}</SliceDurationLabel>
+							)}
 						</SliceDurationValue>
 					</TotalDurationWrapper>
 					<Image source={require("@assets/images/morning.png")} />

@@ -66,7 +66,7 @@ export const ScoreView: React.FC<ScoreViewProps> = ({
 			>
 				<SineWave color={color} amplitude={scoreWaveAmplitude} />
 			</Animated.View>
-			<ScoreValue style={{ color: textColor ?? color }}>
+			<ScoreValue style={{ color: textColor ?? color, alignItems: "center", textAlign: "center" }}>
 				{isInActiveMode(mode) ? (
 					integer
 				) : isInCalibrationMode(mode) ? (

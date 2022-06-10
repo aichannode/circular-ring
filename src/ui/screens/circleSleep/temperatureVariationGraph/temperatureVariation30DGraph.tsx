@@ -3,16 +3,17 @@ import { CalendarTag } from "@domain/calendar/calendar";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState, Points } from "@domain/measure/representation/api";
+import { useIsUSCS } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { BarChart } from "@ui/components/measure/barChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
 import { Tag } from "@ui/components/tag";
-import { TitleText } from "@ui/components/text";
 import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -24,24 +25,24 @@ type Props = {
 	mode?: Mode;
 };
 
-export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Spo2Graph({
+export const TemperatureVariation30DGraph: React.FC<Props> = observer(function Spo2Graph({
 	selectedDay,
 	mode = createActiveMode(),
 }: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
 	const [tags, setTags] = useState<CalendarTag[]>([]);
-
+	const isUSCS = useIsUSCS();
 	const {
 		measure: {
-			hooks: { useLast7DaysTemperatureVariation },
+			hooks: { useLast30DaysTemperatureVariation },
 		},
 		calendar: {
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
 
-	const data = useLast7DaysTemperatureVariation(selectedDay);
+	const data = useLast30DaysTemperatureVariation(selectedDay);
 	const lines: Points = data
 		? data.series
 				.map((el) => {
@@ -55,7 +56,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 	const valueFormatter = lines.map(({ x }) => {
 		const day = moment(x).format("dd");
-		return day !== "Invalid date" ? day[0] : "";
+		return day !== "Invalid date" ? day[0].toUpperCase() : "";
 	});
 	const constant = data?.constant;
 	const averages: Averages = [];
@@ -95,10 +96,6 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 		<Spinner size={24} />
 	) : (
 		<View>
-			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("score.details.temperature.label")}
-			</TitleText>
-
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
 				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
@@ -111,6 +108,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 					</View>
 				)}
 				<BarChart
+					labelCount={30}
 					averages={averages}
 					shouldShowMarker={true}
 					xColor={colors.textPrimary}
@@ -120,9 +118,14 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 					graphColor={colors.business.sleepPrimary}
 					onSelect={(x) => toUpdateTag(x)}
 					mode={updatedMode}
-					yMin={yMin > -1 ? -1 : yMin}
-					yMax={yMax > 1 ? yMax : 1}
-					mapMarker={({ y }) => `${y > 0 ? "+" + y : y}`}
+					yMin={yMin}
+					yMax={yMax}
+					mapMarker={(el) =>
+						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
+							el.y > 0 ? "+" + el.y : el.y
+						}`
+					}
+					isTemperature={true}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
