@@ -168,7 +168,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
@@ -186,7 +186,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>

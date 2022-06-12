@@ -30,19 +30,19 @@ platform :ios do
 
   desc "Initial setup"
   lane :setup do
-    produce(app_name: 'App Dev', app_identifier: 'com.circular.circular.dev', skip_itc: true)
-    produce(app_name: 'App Demo', app_identifier: 'com.circular.circular.demo', skip_itc: true)
-    produce(app_name: 'App', app_identifier: 'com.circular.circular', skip_itc: true)
-    match(type: "development", app_identifier: "com.circular.circular.dev", force_for_new_devices: true)
-    match(type: "adhoc", app_identifier: "com.circular.circular.dev", force_for_new_devices: true)
-    match(type: "adhoc", app_identifier: "com.circular.circular.demo", force_for_new_devices: true)
-    match(type: "adhoc", app_identifier: "com.circular.circular", force_for_new_devices: true)
-    match(type: "appstore", app_identifier: "com.circular.circular")
+    produce(app_name: 'App Dev', app_identifier: 'xyz.circular.circular.dev', skip_itc: true)
+    produce(app_name: 'App Demo', app_identifier: 'xyz.circular.circular.demo', skip_itc: true)
+    produce(app_name: 'App', app_identifier: 'xyz.circular.circular', skip_itc: true)
+    match(type: "development", app_identifier: "xyz.circular.circular.dev", force_for_new_devices: true)
+    match(type: "adhoc", app_identifier: "xyz.circular.circular.dev", force_for_new_devices: true)
+    match(type: "adhoc", app_identifier: "xyz.circular.circular.demo", force_for_new_devices: true)
+    match(type: "adhoc", app_identifier: "xyz.circular.circular", force_for_new_devices: true)
+    match(type: "appstore", app_identifier: "xyz.circular.circular")
   end
 
   desc "Setup dev environment"
   lane :setup_dev do
-    match(type: "development", app_identifier: "com.circular.circular.dev", force_for_new_devices: true)
+    match(type: "development", app_identifier: "xyz.circular.circular.dev", force_for_new_devices: true)
   end
 
   desc "Build dev version"
@@ -50,7 +50,7 @@ platform :ios do
     init_appstore_api_session()
     increment_build_number(build_number: number_of_commits)
     update_registered_devices("Dev")
-    match(keychain_name: "#{KEYCHAIN_NAME}", keychain_password: "#{KEYCHAIN_PASSWORD}", type: "adhoc", app_identifier: "com.circular.circular.dev", force_for_new_devices: true)
+    match(keychain_name: "#{KEYCHAIN_NAME}", keychain_password: "#{KEYCHAIN_PASSWORD}", type: "adhoc", app_identifier: "xyz.circular.circular.dev", force_for_new_devices: true)
     build("Dev")
     appcenter("Dev", true)
   end
@@ -60,7 +60,7 @@ platform :ios do
     init_appstore_api_session()
     update_registered_devices("Demo")
     increment_build_number(build_number: number_of_commits)
-    match(keychain_name: "#{KEYCHAIN_NAME}", keychain_password: "#{KEYCHAIN_PASSWORD}", type: "adhoc", app_identifier: "com.circular.circular.demo", force_for_new_devices: true)
+    match(keychain_name: "#{KEYCHAIN_NAME}", keychain_password: "#{KEYCHAIN_PASSWORD}", type: "adhoc", app_identifier: "xyz.circular.circular.demo", force_for_new_devices: true)
     build("Demo")
     appcenter("Demo", true)
   end
@@ -69,7 +69,7 @@ platform :ios do
   lane :prod do
     init_appstore_api_session()
     increment_build_number(build_number: number_of_commits)
-    match(keychain_name: "#{KEYCHAIN_NAME}", keychain_password: "#{KEYCHAIN_PASSWORD}", type: "appstore", app_identifier: "com.circular.circular", readonly: true)
+    match(keychain_name: "#{KEYCHAIN_NAME}", keychain_password: "#{KEYCHAIN_PASSWORD}", type: "appstore", app_identifier: "xyz.circular.circular", readonly: true)
     build("Prod")
     testflight(changelog: "")
   end

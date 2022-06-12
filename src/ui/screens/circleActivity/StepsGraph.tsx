@@ -157,7 +157,7 @@ export const StepsGraph: React.FC<Props> = observer(function StepsGraph({
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
@@ -174,7 +174,7 @@ export const StepsGraph: React.FC<Props> = observer(function StepsGraph({
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>

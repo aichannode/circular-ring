@@ -1,4 +1,4 @@
-package com.circular.circular;
+package xyz.circular.circular;
 
 import com.facebook.react.ReactActivity;
 import android.os.Bundle;

@@ -594,7 +594,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular;
+				PRODUCT_BUNDLE_IDENTIFIER = xyz.circular.circular;
 				PRODUCT_NAME = Circular;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Circular-Prod-Bridging-Header.h";
@@ -625,7 +625,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular;
+				PRODUCT_BUNDLE_IDENTIFIER = xyz.circular.circular;
 				PRODUCT_NAME = Circular;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Circular-Prod-Bridging-Header.h";
@@ -774,7 +774,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = xyz.circular.circular.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Circular-Dev-Bridging-Header.h";
@@ -806,7 +806,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = xyz.circular.circular.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Circular-Dev-Bridging-Header.h";
@@ -836,9 +836,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular.demo;
+				PRODUCT_BUNDLE_IDENTIFIER = xyz.circular.circular.demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.circular.circular.demo";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc xyz.circular.circular.demo";
 				SWIFT_OBJC_BRIDGING_HEADER = "Circular-Demo-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -866,9 +866,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular.demo;
+				PRODUCT_BUNDLE_IDENTIFIER = xyz.circular.circular.demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.circular.circular.demo";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc xyz.circular.circular.demo";
 				SWIFT_OBJC_BRIDGING_HEADER = "Circular-Demo-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

@@ -1,5 +1,5 @@
-import styled from "styled-components/native";
 import { colors } from "@ui/styles/colors";
+import styled from "styled-components/native";
 
 export const GraphContainer = styled.View`
 	background-color: ${colors.white};
@@ -10,5 +10,5 @@ export const GraphContainer = styled.View`
 	shadow-radius: 10px;
 	elevation: 10;
 	overflow: hidden;
-	padding: 20px;
+	padding: 15px;
 `;

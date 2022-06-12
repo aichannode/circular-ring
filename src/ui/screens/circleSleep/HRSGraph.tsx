@@ -193,7 +193,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
@@ -211,7 +211,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
@@ -229,7 +229,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>

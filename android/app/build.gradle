@@ -127,12 +127,12 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        applicationId "com.circular.circular"
+        applicationId "xyz.circular.circular"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode project.hasProperty("versionCode") ? project.property("versionCode") as Integer : 1
         versionName project.hasProperty("versionName") ? project.property("versionName") as String : "0.0.0"
-        resValue "string", "build_config_package", "com.circular.circular"
+        resValue "string", "build_config_package", "xyz.circular.circular"
     }
     splits {
         abi {

@@ -15,9 +15,15 @@ type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
 	dailyTrimOptions?: TrimOptions;
+	screenModeWithoutDisabled?: Mode;
 };
 
-export function HRVGraph({ selectedDay, mode = createActiveMode(), dailyTrimOptions }: Props) {
+export function HRVGraph({
+	selectedDay,
+	mode = createActiveMode(),
+	screenModeWithoutDisabled,
+	dailyTrimOptions,
+}: Props) {
 	const { format } = useI18n();
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 
@@ -51,7 +57,11 @@ export function HRVGraph({ selectedDay, mode = createActiveMode(), dailyTrimOpti
 				<DailyHRVGraph selectedDay={selectedDay} mode={mode} dailyTrimOptions={dailyTrimOptions} />
 			)}
 			{graphPeriod === TimeFrame.LAST_30_DAYS && (
-				<HrVGraph30days selectedDay={selectedDay} mode={mode} dailyTrimOptions={dailyTrimOptions} />
+				<HrVGraph30days
+					selectedDay={selectedDay}
+					mode={screenModeWithoutDisabled}
+					dailyTrimOptions={dailyTrimOptions}
+				/>
 			)}
 		</View>
 	);

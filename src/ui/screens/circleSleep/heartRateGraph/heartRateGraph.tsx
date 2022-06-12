@@ -14,10 +14,16 @@ import { HrGraph30days } from "./hrGraph30days";
 type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
+	screenModeWithoutDisabled?: Mode;
 	dailyTrimOptions?: TrimOptions;
 };
 
-export function HeartRateGraph({ selectedDay, mode = createActiveMode(), dailyTrimOptions }: Props) {
+export function HeartRateGraph({
+	selectedDay,
+	mode = createActiveMode(),
+	screenModeWithoutDisabled,
+	dailyTrimOptions,
+}: Props) {
 	const { format } = useI18n();
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 
@@ -51,7 +57,9 @@ export function HeartRateGraph({ selectedDay, mode = createActiveMode(), dailyTr
 			{graphPeriod === TimeFrame.TODAY && (
 				<DailyHeartRateGraph selectedDay={selectedDay} mode={mode} dailyTrimOptions={dailyTrimOptions} />
 			)}
-			{graphPeriod === TimeFrame.LAST_30_DAYS && <HrGraph30days selectedDay={selectedDay} mode={mode} />}
+			{graphPeriod === TimeFrame.LAST_30_DAYS && (
+				<HrGraph30days selectedDay={selectedDay} mode={screenModeWithoutDisabled} />
+			)}
 		</View>
 	);
 }

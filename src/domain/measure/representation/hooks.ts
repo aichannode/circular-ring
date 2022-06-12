@@ -1050,8 +1050,12 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					return {
 						series,
 						constant: {
-							average: Number(constants[MetricType.User7DaysAverageRHR]) ?? 0,
-							reference: Number(constants[MetricType.User7DaysReferenceRHR]) ?? 0,
+							average: constants[MetricType.User7DaysAverageRHR]
+								? Number(constants[MetricType.User7DaysAverageRHR])
+								: -1,
+							reference: constants[MetricType.User7DaysReferenceRHR]
+								? Number(constants[MetricType.User7DaysReferenceRHR])
+								: -1,
 						},
 						controlState,
 					};

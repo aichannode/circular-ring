@@ -138,7 +138,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
