@@ -86,6 +86,11 @@ android:build:prod:
     # Build
     - bundle install
     - bundle exec fastlane ${ENV} buildName:$BUILD_NAME
+  artifacts:
+    paths:
+      - android/app/build/outputs
+      - app/build/outputs
+    when: always
 #   IOS
 
 # ios:build:dev:
