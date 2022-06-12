@@ -103,8 +103,8 @@ export const DailyHeartRateGraph: React.FC<Props> = observer(function HeartRateG
 					</View>
 				)}
 				<LineChart
-					labelCount={6}
-					yLabelCount={4}
+					labelCount={5}
+					yLabelCount={5}
 					averages={averages}
 					xColor={colors.textPrimary}
 					shouldShowLabel={true}
@@ -148,7 +148,7 @@ export const DailyHeartRateGraph: React.FC<Props> = observer(function HeartRateG
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
@@ -166,7 +166,7 @@ export const DailyHeartRateGraph: React.FC<Props> = observer(function HeartRateG
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>

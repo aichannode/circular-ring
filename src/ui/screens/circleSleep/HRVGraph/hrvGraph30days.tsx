@@ -114,6 +114,7 @@ export const HrVGraph30days: React.FC<Props> = observer(function HeartRateGraph(
 					</View>
 				)}
 				<LineChart
+					labelCount={30}
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
@@ -124,8 +125,8 @@ export const HrVGraph30days: React.FC<Props> = observer(function HeartRateGraph(
 					graphColor={colors.darkBlue}
 					valueFormatterPattern="EEEEE"
 					valueFormatter="date"
-					yMin={Math.floor(yMin)}
-					yMax={Math.ceil(yMax)}
+					yMin={yMin}
+					yMax={yMax}
 					mode={updatedMode}
 					shouldUpdateYmin={false}
 					highlightPerTapEnabled={true}
@@ -159,7 +160,7 @@ export const HrVGraph30days: React.FC<Props> = observer(function HeartRateGraph(
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
@@ -180,7 +181,7 @@ export const HrVGraph30days: React.FC<Props> = observer(function HeartRateGraph(
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>

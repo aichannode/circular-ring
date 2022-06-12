@@ -119,12 +119,13 @@ export const Spo2Graph30days: React.FC<Props> = observer(function Spo2Graph({
 					graphColor={colors.darkBlue}
 					valueFormatterPattern="EEEEE"
 					valueFormatter="date"
-					yMin={Math.floor(yMin)}
-					yMax={Math.ceil(yMax)}
+					yMin={yMin}
+					yMax={yMax}
 					mode={updatedMode}
 					shouldUpdateYmin={false}
 					highlightPerTapEnabled={true}
 					isMultipleLines={false}
+					yLabelCount={5}
 					labelFormatter={(x, y) => {
 						return isUSCS
 							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
@@ -152,7 +153,7 @@ export const Spo2Graph30days: React.FC<Props> = observer(function Spo2Graph({
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
@@ -174,7 +175,7 @@ export const Spo2Graph30days: React.FC<Props> = observer(function Spo2Graph({
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>

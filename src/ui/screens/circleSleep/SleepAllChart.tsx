@@ -29,12 +29,13 @@ export const SleepAllChart = observer(function SleepAllChart({ selectedDay, mode
 	const { useRangeTags } = useRepresentations().calendar.hooks;
 	const tags = useRangeTags(beginDay, moment(selectedDay).endOf("day").toISOString() as ISODay);
 	const daysAllSleep = useAllMonthsSleep(toISOMonth(beginDay), toISOMonth(selectedDay));
+
 	const lines = daysAllSleep
 		? ([...daysAllSleep.sleepStages]
 				.reverse()
 				.filter((line) => hasAttributesDefined(line, ["REM", "awake", "deep", "light"])) as SleepStageData[])
 		: [];
-	const valueFormatter = lines.map(({ date }) => moment(date).format("dd")[0]);
+	const valueFormatter = lines.map(({ date }) => moment(date).format("MMMM").substr(0, 3));
 
 	const [awakeData, deepData, REMData, lightData] = lines.reduce<[Points, Points, Points, Points]>(
 		([awakeData, deepData, REMData, lightData], { awake, deep, REM, light }, index) => [

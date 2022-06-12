@@ -102,6 +102,7 @@ export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 				)}
 				<LineChart
 					labelCount={5}
+					yLabelCount={5}
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
@@ -111,7 +112,7 @@ export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 					shouldDrawCircles={false}
 					graphColor={colors.darkBlue}
 					valueFormatter="date"
-					valueFormatterPattern={["h a", "h:mm a"]}
+					valueFormatterPattern={[is24h ? "h" : "h a", is24h ? "h:mm" : "h:mm a"]}
 					yMin={yMin}
 					yMax={yMax}
 					yMinIndex={yMinIndex}
@@ -136,7 +137,7 @@ export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
@@ -158,7 +159,7 @@ export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>

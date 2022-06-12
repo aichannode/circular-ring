@@ -7,7 +7,6 @@ import { Tag } from "@ui/components/tag";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Mode } from "@ui/type";
-import moment from "moment";
 import React from "react";
 import { toStepsData } from "./business";
 
@@ -18,9 +17,6 @@ type Props = {
 	data: HypnogramData;
 	mode?: Mode;
 };
-
-const defaultYAxis = [SleepStage.DEEP, SleepStage.LIGHT, SleepStage.REM, SleepStage.AWAKE];
-const defaultXAxis = [moment().hour(0).valueOf(), moment().hour(8).valueOf()];
 
 export function Hypnogram({ data, mode = createActiveMode() }: Props) {
 	const stepsData = toStepsData(data);
@@ -57,13 +53,11 @@ export function Hypnogram({ data, mode = createActiveMode() }: Props) {
 	return (
 		<StepChart
 			data={stepsData}
-			yAxisWidth={31}
+			yAxisWidth={45}
 			yColor={yColor}
 			yLabelFormat={yLabelFormat}
 			xLabelFormat={(tick) => formatHour(new Date(tick), is24h)}
 			xAxisPadding={15}
-			defaultYAxis={defaultYAxis}
-			defaultXAxis={defaultXAxis}
 			tooltipYOffset={-30}
 			tooltipSize={{ width: 60, height: 30 }}
 			chartHeight={200}

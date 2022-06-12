@@ -171,7 +171,7 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
@@ -191,7 +191,7 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
