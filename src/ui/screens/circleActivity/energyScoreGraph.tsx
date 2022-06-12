@@ -161,7 +161,7 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>

@@ -107,6 +107,7 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 				)}
 				<LineChart
 					labelCount={5}
+					yLabelCount={5}
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
@@ -141,7 +142,7 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
@@ -163,7 +164,7 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>

@@ -14,10 +14,16 @@ import { Spo2Graph30days } from "./Spo2Graph30days";
 type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
+	screenModeWithoutDisabled?: Mode;
 	dailyTrimOptions?: TrimOptions;
 };
 
-export function Spo2Graph({ selectedDay, mode = createActiveMode(), dailyTrimOptions }: Props) {
+export function Spo2Graph({
+	selectedDay,
+	mode = createActiveMode(),
+	dailyTrimOptions,
+	screenModeWithoutDisabled,
+}: Props) {
 	const { format } = useI18n();
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 
@@ -50,7 +56,11 @@ export function Spo2Graph({ selectedDay, mode = createActiveMode(), dailyTrimOpt
 				<DailySpo2Graph selectedDay={selectedDay} mode={mode} dailyTrimOptions={dailyTrimOptions} />
 			)}
 			{graphPeriod === TimeFrame.LAST_30_DAYS && (
-				<Spo2Graph30days selectedDay={selectedDay} mode={mode} dailyTrimOptions={dailyTrimOptions} />
+				<Spo2Graph30days
+					selectedDay={selectedDay}
+					mode={screenModeWithoutDisabled}
+					dailyTrimOptions={dailyTrimOptions}
+				/>
 			)}
 		</View>
 	);

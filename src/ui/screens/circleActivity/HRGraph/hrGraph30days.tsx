@@ -165,7 +165,7 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
@@ -186,7 +186,7 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>

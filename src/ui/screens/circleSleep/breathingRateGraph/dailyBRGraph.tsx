@@ -92,6 +92,7 @@ export const DailyBreathingRateGraph: React.FC<Props> = observer(function DailyB
 				)}
 
 				<LineChart
+					yLabelCount={5}
 					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
@@ -100,7 +101,7 @@ export const DailyBreathingRateGraph: React.FC<Props> = observer(function DailyB
 					shouldDrawCircles={false}
 					graphColor={colors.darkBlue}
 					valueFormatter="date"
-					valueFormatterPattern={["h a", "h:mm a"]}
+					valueFormatterPattern={[is24h ? "h" : "h a", is24h ? "h:mm" : "h:mm a"]}
 					yMin={yMin}
 					yMax={yMax}
 					yMinIndex={yMinIndex}
@@ -126,7 +127,7 @@ export const DailyBreathingRateGraph: React.FC<Props> = observer(function DailyB
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
@@ -148,7 +149,7 @@ export const DailyBreathingRateGraph: React.FC<Props> = observer(function DailyB
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>

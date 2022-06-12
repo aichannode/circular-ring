@@ -73,7 +73,7 @@ export const ScoreSection: React.FC<ScoreSectionProps> = ({
 								{format("calibration.placeholder", { days: updatedMode.nbRemainingDays })}
 							</TitleText>
 						) : (
-							<TitleText style={{ color }}> {format("global.not_enough_data")}</TitleText>
+							<TitleText style={{ color, textAlign: "center" }}> {format("global.not_enough_data")}</TitleText>
 						)}
 					</View>
 					{canPress && (

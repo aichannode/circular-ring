@@ -59,15 +59,11 @@ export function BarChart({
 			{
 				values: data
 					?.map((el, index) => ({ ...el, _index: index }))
+					.filter((el) => (isTemperature ? el.y != -1000 : el.y != -1))
 					.map(({ x, y, _index, ...args }) => {
 						let marker = "";
-						let _y = y;
-						if (shouldShowMarker && ((isTemperature && y == -1000) || (!isTemperature && y < 0))) {
-							_y = 0;
-						}
-
-						marker = `${mapMarker({ x, y: _y, ...args }, _index)}`;
-						return { x: mapXAxis({ x, y: _y, ...args }, _index), y: isTemperature && _y == 0 ? 0.005 : _y, marker };
+						marker = `${mapMarker({ x, y: y, ...args }, _index)}`;
+						return { x: mapXAxis({ x, y: y, ...args }, _index), y: isTemperature && y == 0 ? 0.005 : y, marker };
 					}),
 				label: "",
 				config: {

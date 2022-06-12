@@ -161,7 +161,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
@@ -178,7 +178,7 @@ export const CardioPointsGraph: React.FC<Props> = observer(function CardioPoints
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>

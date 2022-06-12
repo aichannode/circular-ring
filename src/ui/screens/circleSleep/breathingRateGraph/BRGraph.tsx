@@ -14,10 +14,16 @@ import { DailyBreathingRateGraph } from "./dailyBRGraph";
 type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
+	screenModeWithoutDisabled?: Mode;
 	dailyTrimOptions?: TrimOptions;
 };
 
-export function BRGraph({ selectedDay, mode = createActiveMode(), dailyTrimOptions }: Props) {
+export function BRGraph({
+	selectedDay,
+	mode = createActiveMode(),
+	screenModeWithoutDisabled,
+	dailyTrimOptions,
+}: Props) {
 	const { format } = useI18n();
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 
@@ -51,7 +57,9 @@ export function BRGraph({ selectedDay, mode = createActiveMode(), dailyTrimOptio
 			{graphPeriod === TimeFrame.TODAY && (
 				<DailyBreathingRateGraph selectedDay={selectedDay} mode={mode} dailyTrimOptions={dailyTrimOptions} />
 			)}
-			{graphPeriod === TimeFrame.LAST_30_DAYS && <BRGraph30days selectedDay={selectedDay} mode={mode} />}
+			{graphPeriod === TimeFrame.LAST_30_DAYS && (
+				<BRGraph30days selectedDay={selectedDay} mode={screenModeWithoutDisabled} />
+			)}
 		</View>
 	);
 }

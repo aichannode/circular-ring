@@ -57,6 +57,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const nbRemainingDays = useUserCalibrationRemainingDays();
 	// XXX: https://circularing.atlassian.net/browse/CIR-93
 	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
+	const screenModeWithoutDisabled = getInitMode(nbRemainingDays, hasCompleteCoreSleep, { allowDisabled: false });
 	useDailySleepStages({ setData: setDailyData, localISODay: selectedDay, setLoading });
 
 	// XXX: https://circularing.atlassian.net/browse/CIR-790
@@ -178,8 +179,12 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 								{graphPeriod === TimeFrame.TODAY && (
 									<DailySleepChart data={dailySleep} selectedDay={selectedDay} mode={screenMode} />
 								)}
-								{graphPeriod === TimeFrame.LAST_7_DAYS && <Sleep7DChart selectedDay={selectedDay} mode={screenMode} />}
-								{graphPeriod === TimeFrame.ALL && <SleepAllChart selectedDay={selectedDay} mode={screenMode} />}
+								{graphPeriod === TimeFrame.LAST_7_DAYS && (
+									<Sleep7DChart selectedDay={selectedDay} mode={screenModeWithoutDisabled} />
+								)}
+								{graphPeriod === TimeFrame.ALL && (
+									<SleepAllChart selectedDay={selectedDay} mode={screenModeWithoutDisabled} />
+								)}
 							</GraphContainer>
 						) : (
 							<Spinner />
@@ -191,24 +196,44 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 						selectedDay={selectedDay}
 						// XXX: Sleep quality score should not be displayed in calibration mode.
 						// https://circularing.atlassian.net/browse/CIR-904
-						mode={updateMode(screenMode, isInCalibrationMode(screenMode))}
+						mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenMode))}
 					/>
 				)}
 				{activeItem === 2 && (
-					<HeartRateGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
+					<HeartRateGraph
+						selectedDay={selectedDay}
+						mode={screenMode}
+						screenModeWithoutDisabled={screenModeWithoutDisabled}
+						dailyTrimOptions={dailyTrimOptions}
+					/>
 				)}
 				{activeItem === 3 && (
-					<HRVGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
+					<HRVGraph
+						selectedDay={selectedDay}
+						mode={screenMode}
+						screenModeWithoutDisabled={screenModeWithoutDisabled}
+						dailyTrimOptions={dailyTrimOptions}
+					/>
 				)}
 				{activeItem === 4 && (
-					<BRGraph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
+					<BRGraph
+						selectedDay={selectedDay}
+						mode={screenMode}
+						screenModeWithoutDisabled={screenModeWithoutDisabled}
+						dailyTrimOptions={dailyTrimOptions}
+					/>
 				)}
-				{activeItem === 5 && <TemperatureVariationGraph selectedDay={selectedDay} mode={screenMode} />}
+				{activeItem === 5 && <TemperatureVariationGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
 
 				{activeItem === 6 && (
-					<Spo2Graph selectedDay={selectedDay} mode={screenMode} dailyTrimOptions={dailyTrimOptions} />
+					<Spo2Graph
+						selectedDay={selectedDay}
+						mode={screenMode}
+						screenModeWithoutDisabled={screenModeWithoutDisabled}
+						dailyTrimOptions={dailyTrimOptions}
+					/>
 				)}
-				{activeItem === 7 && <HRSGraph selectedDay={selectedDay} mode={screenMode} />}
+				{activeItem === 7 && <HRSGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
 					<Row style={{ justifyContent: "center" }}>

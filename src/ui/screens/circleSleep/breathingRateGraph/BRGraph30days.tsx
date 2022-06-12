@@ -1,4 +1,5 @@
 import { useRepresentations } from "@core/representation";
+import { CalendarTag } from "@domain/calendar/calendar";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState } from "@domain/measure/representation/api";
@@ -39,7 +40,7 @@ export const BRGraph30days: React.FC<Props> = observer(function BRGraph30days({
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
-
+	const [tags, setTags] = useState<CalendarTag[]>([]);
 	const dailyBR = useLast30DaysBR(selectedDay);
 	const [lines, constant] = [
 		dailyBR
@@ -63,7 +64,6 @@ export const BRGraph30days: React.FC<Props> = observer(function BRGraph30days({
 					Math.max(...lines.map((line) => line.y)),
 			  ]
 			: [0, 0];
-	const tags = useDailyTags(selectedDay);
 
 	const averages: Averages = [];
 
@@ -84,6 +84,10 @@ export const BRGraph30days: React.FC<Props> = observer(function BRGraph30days({
 			setLoading(false);
 		}
 	}, [lines]);
+	const toUpdateTag = (x: number) => {
+		const date = moment(new Date(x)).format("Y-MM-DD") as ISODay;
+		setTags(useDailyTags(date));
+	};
 
 	return isLoading ? (
 		<Spinner size={24} />
@@ -112,12 +116,13 @@ export const BRGraph30days: React.FC<Props> = observer(function BRGraph30days({
 					graphColor={colors.darkBlue}
 					valueFormatterPattern="EEEEE"
 					valueFormatter="date"
-					yMin={Math.floor(yMin)}
-					yMax={Math.ceil(yMax)}
+					yMin={yMin}
+					yMax={yMax}
 					mode={updatedMode}
 					shouldUpdateYmin={false}
 					highlightPerTapEnabled={true}
 					isMultipleLines={false}
+					yLabelCount={5}
 					labelFormatter={(x, y) => {
 						return isUSCS
 							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
@@ -133,6 +138,7 @@ export const BRGraph30days: React.FC<Props> = observer(function BRGraph30days({
 							  }
 							: undefined
 					}
+					onSelect={(x) => toUpdateTag(x)}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
@@ -145,7 +151,7 @@ export const BRGraph30days: React.FC<Props> = observer(function BRGraph30days({
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
@@ -167,7 +173,7 @@ export const BRGraph30days: React.FC<Props> = observer(function BRGraph30days({
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
