@@ -354,7 +354,7 @@
 	"onboarding.personal_info.error.born_date": "La data di nascita è obbligatoria.",
 	"onboarding.personal_info.error.born_date_invalid": "La data di nascita non è valida.",
 	"onboarding.personal_info.error.default": "Si è verificato un errore. Riprova più tardi.",
-	"banner.calibration.title": "Periodo di calibrazione",
+	"banner.calibration.title": "Calibrazione",
 	"banner.calibration.message": "Per risultati ideali, indossa costantemente l'anello durante l'intero periodo di calibrazione di {days} giorni!",
 	"banner.disturbances.title": "Disturbi",
 	"calibration.recommandation.1": "Ciao, {username}, sono Kira. Vorrei darti il benvenuto nella tribù Circular! L'app Circular ti consentirà di ricevere consigli su misura e di tenere sotto controllo dettagliatamente i tuoi dati biometrici, di impostare sveglie, di modificare i tuoi avvisi e molto altro ancora!",
