@@ -151,7 +151,7 @@ export function LineChart({
 	const xAxis = {
 		valueFormatter: valueFormatter,
 		valueFormatterPattern: Array.isArray(valueFormatterPattern)
-			? scaleX < 6
+			? scaleX < 3
 				? valueFormatterPattern?.[0]
 				: valueFormatterPattern?.[1]
 			: valueFormatterPattern,

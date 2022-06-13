@@ -151,8 +151,8 @@ export const EnergyScoreGraph: React.FC<Props> = observer(function EnergyScoreGr
 								mode={updatedMode}
 								labelFormatter={(x, y) => {
 									return isUSCS
-										? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${y}`
-										: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${y}`;
+										? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
+										: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${Math.round(y)}`;
 								}}
 							/>
 							<View style={{ marginTop: 20 }}>

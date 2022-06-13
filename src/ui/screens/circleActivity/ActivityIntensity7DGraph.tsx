@@ -1,12 +1,13 @@
 import { useRepresentations } from "@core/representation";
+import { CalendarTag } from "@domain/calendar/calendar";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { ActivityData } from "@domain/measure/representation/api";
 import { useIsUSCS } from "@domain/user/hooks/useUser";
-import { createActiveMode, isInDisabledMode, updateMode } from "@ui/business";
+import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { Spinner } from "@ui/components/spinner";
-import { Tags } from "@ui/components/Tags";
+import { Tag } from "@ui/components/tag";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Mode } from "@ui/type";
@@ -14,7 +15,7 @@ import { hasAttributesDefined } from "@ui/utils/filter";
 import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import React from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 import { ActivityLegend } from "./ActivityLegend";
 
@@ -47,14 +48,11 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 			hooks: { use7DaysActivity },
 		},
 		calendar: {
-			hooks: { useRangeTags },
+			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
+	const [tags, setTags] = useState<CalendarTag[]>([]);
 
-	const tags = useRangeTags(
-		moment(selectedDay).subtract(7, "days").toISOString() as ISODay,
-		moment(selectedDay).endOf("day").toISOString() as ISODay
-	);
 	const activity7D = use7DaysActivity(selectedDay as ISODay);
 	const lines = activity7D
 		? ([...activity7D.activityMetrics]
@@ -89,10 +87,21 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 	];
 	const updatedMode = updateMode(mode, lines.length === 0);
 	const isLoading = !isDefined(activity7D);
-
+	const toUpdateTag = (x: number) => {
+		const date = moment(new Date(lines[x].date)).format("Y-MM-DD") as ISODay;
+		setTags(useDailyTags(date));
+	};
 	return (
 		<>
-			<Tags tags={isInDisabledMode(updatedMode) ? [] : tags} />
+			{(isInActiveMode(mode) || isInCalibrationMode(mode)) && (
+				<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+					{tags.map(({ name, id }) => (
+						<View key={id} style={{ marginLeft: 8 }}>
+							<Tag>{name}</Tag>
+						</View>
+					))}
+				</View>
+			)}
 			<View style={{ height: 200 }}>
 				{isLoading ? (
 					<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -130,6 +139,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 						shouldShowMarker
 						shouldShowLabel
 						isMultipleLines
+						onSelect={(x) => toUpdateTag(x)}
 					/>
 				)}
 			</View>
