@@ -1006,8 +1006,14 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				return {
 					series,
 					constant: {
-						average: HRVt30daysConstants ? Number(HRVt30daysConstants[MetricType.UserMonthlyHRVAverage]) : -1,
-						reference: HRVt30daysConstants ? Number(HRVt30daysConstants[MetricType.UserDailyReferenceHRV]) : -1,
+						average:
+							HRVt30daysConstants?.[MetricType.UserMonthlyHRVAverage] != null
+								? Number(HRVt30daysConstants[MetricType.UserMonthlyHRVAverage])
+								: -1,
+						reference:
+							HRVt30daysConstants?.[MetricType.UserDailyReferenceHRV] != null
+								? Number(HRVt30daysConstants[MetricType.UserDailyReferenceHRV])
+								: -1,
 					},
 					controlState,
 				};

@@ -75,6 +75,7 @@ export const HrVGraph30days: React.FC<Props> = observer(function HeartRateGraph(
 			});
 		}
 	}
+	console.log({ constant });
 
 	if (
 		(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
