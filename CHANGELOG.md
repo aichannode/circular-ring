@@ -4,6 +4,15 @@
 
 * **activity:** crash ([9e1bb8a](https://gitlab.com/circularing/mobile/app/commit/9e1bb8a7c71f4d7177d1aed4b33986ba150d2c5f))
 * graphs ([e7242f2](https://gitlab.com/circularing/mobile/app/commit/e7242f28b2305833c94580c2bd15a8f00ebf47a8))
+* re-order burger menu ([52d552a](https://gitlab.com/circularing/mobile/app/commit/52d552a4cffff05c42797b8c52aae13ffa1fb65f))
+* update language ([79c201d](https://gitlab.com/circularing/mobile/app/commit/79c201def62dddb404045db0b1b94dd9f78bc464))
+
+## [1.0.4](https://gitlab.com/circularing/mobile/app/compare/v1.0.3...v1.0.4) (2022-06-13)
+
+
+### Bug Fixes
+
+* graphs ([e7242f2](https://gitlab.com/circularing/mobile/app/commit/e7242f28b2305833c94580c2bd15a8f00ebf47a8))
 * update language ([79c201d](https://gitlab.com/circularing/mobile/app/commit/79c201def62dddb404045db0b1b94dd9f78bc464))
 
 ## [1.0.4](https://gitlab.com/circularing/mobile/app/compare/v1.0.3...v1.0.4) (2022-06-13)
