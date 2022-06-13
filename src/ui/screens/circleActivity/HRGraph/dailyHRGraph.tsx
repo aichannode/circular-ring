@@ -108,9 +108,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 		}
 	}, [dailyHr]);
 
-	return isLoading ? (
-		<Spinner size={24} />
-	) : (
+	return (
 		<View>
 			<GraphContainer style={{ height: 400 }}>
 				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
@@ -122,106 +120,120 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 						))}
 					</View>
 				)}
-				<LineChart
-					labelCount={6}
-					averages={averages}
-					xColor={colors.textPrimary}
-					yColor={colors.darkGray}
-					data={parsedLines}
-					shouldShowLabel={true}
-					shouldDrawCircles={false}
-					graphColor={colors.red}
-					valueFormatter={"date"}
-					valueFormatterPattern={["H'h'", "HH'h':mm"]}
-					yMin={yMin}
-					yMax={yMax}
-					yMinIndex={yMinIndex}
-					yMaxIndex={yMaxIndex}
-					xAxisContentInset={15}
-					tooltipYMin={15}
-					tooltipYMax={-30}
-					tooltipSize={tooltipSize}
-					renderTooltip={(value) => (
+				{isLoading ? (
+					<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+						<Spinner size={35} />
+					</View>
+				) : (
+					!!lines && (
 						<>
-							<Tag containerStyle={{ backgroundColor: colors.red, marginBottom: 4 }}>{`${value}`}</Tag>
+							<LineChart
+								labelCount={6}
+								averages={averages}
+								xColor={colors.textPrimary}
+								yColor={colors.darkGray}
+								data={parsedLines}
+								shouldShowLabel={true}
+								shouldDrawCircles={false}
+								graphColor={colors.red}
+								valueFormatter={"date"}
+								valueFormatterPattern={[is24h ? "h'h'" : "h a", is24h ? "h'h':mm" : "h:mm a"]}
+								yMin={yMin}
+								yMax={yMax}
+								yMinIndex={yMinIndex}
+								yMaxIndex={yMaxIndex}
+								xAxisContentInset={15}
+								tooltipYMin={15}
+								tooltipYMax={-30}
+								tooltipSize={tooltipSize}
+								renderTooltip={(value) => (
+									<>
+										<Tag containerStyle={{ backgroundColor: colors.red, marginBottom: 4 }}>{`${value}`}</Tag>
+									</>
+								)}
+								mode={updatedMode}
+								xAxisMin={xAxisMin}
+								xAxisMax={xAxisMax}
+								shouldShowMarker={true}
+								highlightPerTapEnabled={true}
+								labelFormatter={(x, y) => {
+									return `${
+										is24h ? dayjs(new Date(x)).format("HH:mm") : dayjs(new Date(x)).format("hh:mm A")
+									}\n${Math.round(y)}`;
+								}}
+							/>
+							<View style={{ marginTop: 20 }}>
+								<GraphLegend
+									mode={updatedMode}
+									rows={[
+										{
+											label: format("hr.average"),
+											element: {
+												key: "hr.average",
+												node: (
+													<View
+														style={{
+															width: 30,
+															marginTop: 5,
+														}}
+													>
+														<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
+													</View>
+												),
+											},
+
+											value: typeof constant.hr == "undefined" || constant.hr === -1 ? "- bpm" : `${constant.hr} bpm`,
+										},
+										{
+											label: format("hr.reference"),
+											element: {
+												key: "hr.reference",
+												node: (
+													<View
+														style={{
+															width: 30,
+															marginTop: 5,
+														}}
+													>
+														<DashedLine dashGap={5} dashLength={10} dashColor={colors.red} />
+													</View>
+												),
+											},
+											value: isInCalibrationMode(updatedMode)
+												? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+												: typeof constant.reference == "undefined" || constant.reference === -1
+												? "- bpm"
+												: `${Math.round(constant.reference)} bpm`,
+										},
+										{
+											label: format("hr.hrMax"),
+											element: {
+												key: "hr.hrMax",
+												node: <></>,
+											},
+											value:
+												typeof constant.hrMax == "undefined" || constant.hrMax === -1
+													? "- bpm"
+													: `${constant.hrMax} bpm`,
+										},
+										{
+											label: format("hr.hrMin"),
+											element: {
+												key: "hr.hrMin",
+												node: <></>,
+											},
+
+											value:
+												typeof constant.hrMin == "undefined" || constant.hrMin === -1
+													? "- bpm"
+													: `${constant.hrMin} bpm`,
+										},
+									]}
+								/>
+							</View>
 						</>
-					)}
-					mode={updatedMode}
-					xAxisMin={xAxisMin}
-					xAxisMax={xAxisMax}
-					shouldShowMarker={true}
-					highlightPerTapEnabled={true}
-					labelFormatter={(x, y) => {
-						return `${is24h ? dayjs(new Date(x)).format("HH:mm") : dayjs(new Date(x)).format("hh:mm A")}\n${Math.round(
-							y
-						)}`;
-					}}
-				/>
-				<View style={{ marginTop: 20 }}>
-					<GraphLegend
-						mode={updatedMode}
-						rows={[
-							{
-								label: format("hr.average"),
-								element: {
-									key: "hr.average",
-									node: (
-										<View
-											style={{
-												width: 30,
-												marginTop: 5,
-											}}
-										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
-										</View>
-									),
-								},
-
-								value: typeof constant.hr == "undefined" || constant.hr === -1 ? "- bpm" : `${constant.hr} bpm`,
-							},
-							{
-								label: format("hr.reference"),
-								element: {
-									key: "hr.reference",
-									node: (
-										<View
-											style={{
-												width: 30,
-												marginTop: 5,
-											}}
-										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.red} />
-										</View>
-									),
-								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: typeof constant.reference == "undefined" || constant.reference === -1
-									? "- bpm"
-									: `${Math.round(constant.reference)} bpm`,
-							},
-							{
-								label: format("hr.hrMax"),
-								element: {
-									key: "hr.hrMax",
-									node: <></>,
-								},
-								value:
-									typeof constant.hrMax == "undefined" || constant.hrMax === -1 ? "- bpm" : `${constant.hrMax} bpm`,
-							},
-							{
-								label: format("hr.hrMin"),
-								element: {
-									key: "hr.hrMin",
-									node: <></>,
-								},
-
-								value:
-									typeof constant.hrMin == "undefined" || constant.hrMin === -1 ? "- bpm" : `${constant.hrMin} bpm`,
-							},
-						]}
-					/>
-				</View>
+					)
+				)}
 			</GraphContainer>
 		</View>
 	);

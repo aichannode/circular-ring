@@ -53,7 +53,6 @@ export function BarChart({
 	const linspace = isDefined(yMin) && isDefined(yMax) ? ((yMax - yMin) * 10) / 100 : 0;
 	const axisMinimum = isDefined(yMin) ? yMin - linspace : 0;
 	const axisMaximum = isDefined(yMax) ? yMax + linspace : 0;
-
 	const dataSets = {
 		dataSets: [
 			{

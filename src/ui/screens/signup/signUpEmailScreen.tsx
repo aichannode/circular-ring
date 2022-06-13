@@ -135,7 +135,6 @@ export const SignUpEmailScreen = () => {
 							navigate(Routes.WebView, { uri: format("url.terms_and_conditions") });
 						}}
 					>
-						{" "}
 						{format("signup.terms.link")}
 					</TermsLink>
 				</TermsAndConditions>

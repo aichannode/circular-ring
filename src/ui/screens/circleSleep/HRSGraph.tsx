@@ -154,9 +154,9 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 					mapXAxis={(el) => (el as typeof lines[number]).mappedX}
 					mapBarColor={(el) => (el as typeof lines[number]).color}
 					mapMarker={(el) =>
-						`${
-							isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")
-						}\n${formatDuration(moment.duration((el as typeof lines[number]).y, "hours").as("seconds"))}`
+						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
+							el.y > 0 ? formatDuration(moment.duration((el as typeof lines[number]).y, "hours").as("seconds")) : 0
+						}`
 					}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}

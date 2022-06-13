@@ -85,9 +85,7 @@ export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 		}
 	}, [lines]);
 
-	return isLoading ? (
-		<Spinner size={24} />
-	) : (
+	return (
 		<View>
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
@@ -100,84 +98,92 @@ export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 						))}
 					</View>
 				)}
-				<LineChart
-					labelCount={5}
-					yLabelCount={5}
-					averages={averages}
-					xColor={colors.textPrimary}
-					yColor={colors.darkGray}
-					data={parsedLines}
-					shouldShowLabel={true}
-					shouldShowMarker={true}
-					shouldDrawCircles={false}
-					graphColor={colors.darkBlue}
-					valueFormatter="date"
-					valueFormatterPattern={[is24h ? "h" : "h a", is24h ? "h:mm" : "h:mm a"]}
-					yMin={yMin}
-					yMax={yMax}
-					yMinIndex={yMinIndex}
-					yMaxIndex={yMaxIndex}
-					mode={updatedMode}
-					shouldUpdateYmin={false}
-					highlightPerTapEnabled={true}
-					labelFormatter={(x, y) => {
-						return `${is24h ? dayjs(new Date(x)).format("HH:mm") : dayjs(new Date(x)).format("hh:mm A")}\n${Math.round(
-							y
-						)}`;
-					}}
-				/>
-				<View style={{ marginTop: 20 }}>
-					<GraphLegend
-						mode={updatedMode}
-						rows={[
-							{
-								label: format("hr.average"),
-								element: {
-									key: "hr.average",
-									node: (
-										<View
-											style={{
-												width: 30,
-												marginTop: 5,
-											}}
-										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.darkBlue} />
-										</View>
-									),
-								},
-								value:
-									parsedLines.length == 0
-										? format("global.no_data")
-										: typeof constant.average == "undefined" || constant.average === -1
-										? "- %"
-										: `${constant.average} %`,
-							},
-							{
-								label: format("hr.reference"),
-								element: {
-									key: "hr.reference",
-									node: (
-										<View
-											style={{
-												width: 30,
-												marginTop: 5,
-											}}
-										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
-										</View>
-									),
-								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: parsedLines.length == 0
-									? format("global.no_data")
-									: typeof constant.reference == "undefined" || constant.reference === -1
-									? "- %"
-									: `${constant.reference} %`,
-							},
-						]}
-					/>
-				</View>
+				{isLoading ? (
+					<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+						<Spinner size={35} />
+					</View>
+				) : (
+					<>
+						<LineChart
+							labelCount={5}
+							yLabelCount={5}
+							averages={averages}
+							xColor={colors.textPrimary}
+							yColor={colors.darkGray}
+							data={parsedLines}
+							shouldShowLabel={true}
+							shouldShowMarker={true}
+							shouldDrawCircles={false}
+							graphColor={colors.darkBlue}
+							valueFormatter="date"
+							valueFormatterPattern={[is24h ? "h'h'" : "h a", is24h ? "h'h':mm" : "h:mm a"]}
+							yMin={yMin}
+							yMax={yMax}
+							yMinIndex={yMinIndex}
+							yMaxIndex={yMaxIndex}
+							mode={updatedMode}
+							shouldUpdateYmin={false}
+							highlightPerTapEnabled={true}
+							labelFormatter={(x, y) => {
+								return `${
+									is24h ? dayjs(new Date(x)).format("HH:mm") : dayjs(new Date(x)).format("hh:mm A")
+								}\n${Math.round(y)}`;
+							}}
+						/>
+						<View style={{ marginTop: 20 }}>
+							<GraphLegend
+								mode={updatedMode}
+								rows={[
+									{
+										label: format("hr.average"),
+										element: {
+											key: "hr.average",
+											node: (
+												<View
+													style={{
+														width: 30,
+														marginTop: 5,
+													}}
+												>
+													<DashedLine dashGap={5} dashLength={10} dashColor={colors.darkBlue} />
+												</View>
+											),
+										},
+										value:
+											parsedLines.length == 0
+												? format("global.no_data")
+												: typeof constant.average == "undefined" || constant.average === -1
+												? "- %"
+												: `${constant.average} %`,
+									},
+									{
+										label: format("hr.reference"),
+										element: {
+											key: "hr.reference",
+											node: (
+												<View
+													style={{
+														width: 30,
+														marginTop: 5,
+													}}
+												>
+													<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
+												</View>
+											),
+										},
+										value: isInCalibrationMode(updatedMode)
+											? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+											: parsedLines.length == 0
+											? format("global.no_data")
+											: typeof constant.reference == "undefined" || constant.reference === -1
+											? "- %"
+											: `${constant.reference} %`,
+									},
+								]}
+							/>
+						</View>
+					</>
+				)}
 			</GraphContainer>
 		</View>
 	);

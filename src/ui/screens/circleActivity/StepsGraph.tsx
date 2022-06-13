@@ -61,7 +61,7 @@ export const StepsGraph: React.FC<Props> = observer(function StepsGraph({
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 
 	const valueFormatter = lines.map(({ x }) => {
-		const day = moment(x).format("dd");
+		const day = moment(x).format("dd").toUpperCase();
 		return day !== "Invalid date" ? day[0] : "";
 	});
 
@@ -90,9 +90,7 @@ export const StepsGraph: React.FC<Props> = observer(function StepsGraph({
 		setTags(useDailyTags(date));
 	};
 
-	return isLoading ? (
-		<Spinner size={24} />
-	) : !!lines ? (
+	return (
 		<View>
 			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
 				{format("steps.title")}
@@ -128,81 +126,89 @@ export const StepsGraph: React.FC<Props> = observer(function StepsGraph({
 							</View>
 						))}
 				</View>
-				<BarChart
-					averages={averages}
-					shouldShowMarker={true}
-					xColor={colors.textPrimary}
-					yColor={colors.darkGray}
-					data={lines}
-					valueFormatter={valueFormatter}
-					graphColor={colors.red}
-					onSelect={(x) => toUpdateTag(x)}
-					mapMarker={(el) =>
-						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
-							el.y
-						}`
-					}
-					mode={updatedMode}
-					yMin={0}
-					yMax={yMax}
-				/>
-				<View style={{ marginTop: 20 }}>
-					<GraphLegend
-						mode={updatedMode}
-						rows={[
-							{
-								label: format("activity.energy_score.7day"),
-								element: {
-									key: "activity.energy_score.7day",
-									node: (
-										<View
-											style={{
-												width: 30,
-												marginTop: 5,
-											}}
-										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.red} />
-										</View>
-									),
-								},
-								value: isDefined(constant) && constant.average != -1 ? `${constant.average}` : "-",
-							},
-							{
-								label: format("cardio.baseline"),
-								element: {
-									key: "cardio.baseline",
-									node: (
-										<View
-											style={{
-												width: 30,
-												marginTop: 5,
-											}}
-										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
-										</View>
-									),
-								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(constant) && constant.baseline != -1
-									? `${constant.baseline}`
-									: "-",
-							},
-							{
-								label: format("cardio.7day.total"),
-								element: {
-									key: "cardio.7day.total",
-									node: <></>,
-								},
+				{isLoading ? (
+					<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+						<Spinner size={35} />
+					</View>
+				) : (
+					!!lines && (
+						<>
+							<BarChart
+								averages={averages}
+								shouldShowMarker={true}
+								xColor={colors.textPrimary}
+								yColor={colors.darkGray}
+								data={lines}
+								valueFormatter={valueFormatter}
+								graphColor={colors.red}
+								onSelect={(x) => toUpdateTag(x)}
+								mapMarker={(el) =>
+									`${
+										isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")
+									}\n${el.y}`
+								}
+								mode={updatedMode}
+								yMin={0}
+								yMax={yMax}
+							/>
+							<View style={{ marginTop: 20 }}>
+								<GraphLegend
+									mode={updatedMode}
+									rows={[
+										{
+											label: format("activity.energy_score.7day"),
+											element: {
+												key: "activity.energy_score.7day",
+												node: (
+													<View
+														style={{
+															width: 30,
+															marginTop: 5,
+														}}
+													>
+														<DashedLine dashGap={5} dashLength={10} dashColor={colors.red} />
+													</View>
+												),
+											},
+											value: isDefined(constant) && constant.average != -1 ? `${constant.average}` : "-",
+										},
+										{
+											label: format("cardio.baseline"),
+											element: {
+												key: "cardio.baseline",
+												node: (
+													<View
+														style={{
+															width: 30,
+															marginTop: 5,
+														}}
+													>
+														<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
+													</View>
+												),
+											},
+											value: isInCalibrationMode(updatedMode)
+												? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+												: isDefined(constant) && constant.baseline != -1
+												? `${constant.baseline}`
+												: "-",
+										},
+										{
+											label: format("cardio.7day.total"),
+											element: {
+												key: "cardio.7day.total",
+												node: <></>,
+											},
 
-								value: isDefined(constant) && constant.total != -1 ? `${constant.total}` : "-",
-							},
-						]}
-					/>
-				</View>
+											value: isDefined(constant) && constant.total != -1 ? `${constant.total}` : "-",
+										},
+									]}
+								/>
+							</View>
+						</>
+					)
+				)}
 			</GraphContainer>
 		</View>
-	) : (
-		<></>
 	);
 });

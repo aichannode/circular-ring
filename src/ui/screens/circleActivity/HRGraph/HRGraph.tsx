@@ -24,7 +24,6 @@ export function HRGraph({ selectedDay, mode = createActiveMode(), dailyTrimOptio
 	return (
 		<View>
 			<TitleText style={{ textAlign: "center", textTransform: "uppercase" }}>
-				{" "}
 				{format("live.heart_rate.label")}
 			</TitleText>
 			<View style={{ marginBottom: 25, marginTop: 20 }}>

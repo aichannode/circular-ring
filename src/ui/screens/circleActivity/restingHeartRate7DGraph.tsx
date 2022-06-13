@@ -56,7 +56,7 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 				.reverse()
 		: [];
 	const valueFormatter = lines.map(({ x }) => {
-		const day = moment(x).format("dd");
+		const day = moment(x).format("dd").toUpperCase();
 		return day !== "Invalid date" ? day[0] : "";
 	});
 	const [yMin, yMax] =
@@ -98,9 +98,7 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 		setTags(useDailyTags(date));
 	};
 
-	return isLoading ? (
-		<Spinner size={24} />
-	) : !!lines.length ? (
+	return (
 		<View>
 			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
 				{format("activity.resting_heart_rate")}
@@ -137,80 +135,89 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 						))}
 					</View>
 				)}
-				<LineChart
-					yMin={Math.round(yMin)}
-					yMax={Math.round(yMax)}
-					xColor={colors.textPrimary}
-					yColor={colors.darkGray}
-					daysItem={[{ lines: lines, color: colors.red }]}
-					averages={averages}
-					shouldShowLabel={true}
-					shouldDrawCircles={true}
-					graphColor={colors.red}
-					valueFormatter={valueFormatter}
-					shouldShowMarker={true}
-					highlightPerTapEnabled={true}
-					scaleXEnabled={false}
-					onSelect={(x) => toUpdateTag(x)}
-					isMultipleLines={true}
-					mode={updatedMode}
-					labelFormatter={(x, y) => {
-						return isUSCS
-							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.floor(y)}`
-							: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${Math.floor(y)}`;
-					}}
-				/>
-				<View style={{ marginTop: 20 }}>
-					<GraphLegend
-						mode={updatedMode}
-						rows={[
-							{
-								label: format("activity.energy_score.7day"),
-								element: {
-									key: "activity.energy_score.7day",
-									node: (
-										<View
-											style={{
-												width: 30,
-												marginTop: 5,
-											}}
-										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.red} />
-										</View>
-									),
-								},
-								value:
-									isInCalibrationMode(updatedMode) && isDefined(constant) && constant.average != -1
-										? `${Math.round(constant?.average)} bpm`
-										: "- bpm",
-							},
-							{
-								label: format("activity.resting_heart_rate.reference"),
-								element: {
-									key: "activity.resting_heart_rate.reference",
-									node: (
-										<View
-											style={{
-												width: 30,
-												marginTop: 5,
-											}}
-										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.redOrange} />
-										</View>
-									),
-								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(constant) && constant.average != -1
-									? `${Math.round(constant.reference)} bpm`
-									: "- bpm",
-							},
-						]}
-					/>
-				</View>
+
+				{isLoading ? (
+					<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+						<Spinner size={35} />
+					</View>
+				) : (
+					!!lines.length && (
+						<>
+							<LineChart
+								yMin={Math.round(yMin)}
+								yMax={Math.round(yMax)}
+								xColor={colors.textPrimary}
+								yColor={colors.darkGray}
+								daysItem={[{ lines: lines, color: colors.red }]}
+								averages={averages}
+								shouldShowLabel={true}
+								shouldDrawCircles={true}
+								graphColor={colors.red}
+								valueFormatter={valueFormatter}
+								shouldShowMarker={true}
+								highlightPerTapEnabled={true}
+								scaleXEnabled={false}
+								onSelect={(x) => toUpdateTag(x)}
+								isMultipleLines={true}
+								mode={updatedMode}
+								labelFormatter={(x, y) => {
+									return isUSCS
+										? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.floor(y)}`
+										: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${Math.floor(y)}`;
+								}}
+							/>
+							<View style={{ marginTop: 20 }}>
+								<GraphLegend
+									mode={updatedMode}
+									rows={[
+										{
+											label: format("activity.energy_score.7day"),
+											element: {
+												key: "activity.energy_score.7day",
+												node: (
+													<View
+														style={{
+															width: 30,
+															marginTop: 5,
+														}}
+													>
+														<DashedLine dashGap={5} dashLength={10} dashColor={colors.red} />
+													</View>
+												),
+											},
+											value:
+												isDefined(constant) && constant.average != -1
+													? `${Math.round(constant?.average)} bpm`
+													: "- bpm",
+										},
+										{
+											label: format("activity.resting_heart_rate.reference"),
+											element: {
+												key: "activity.resting_heart_rate.reference",
+												node: (
+													<View
+														style={{
+															width: 30,
+															marginTop: 5,
+														}}
+													>
+														<DashedLine dashGap={5} dashLength={10} dashColor={colors.redOrange} />
+													</View>
+												),
+											},
+											value: isInCalibrationMode(updatedMode)
+												? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+												: isDefined(constant) && constant.average != -1
+												? `${Math.round(constant.reference)} bpm`
+												: "- bpm",
+										},
+									]}
+								/>
+							</View>
+						</>
+					)
+				)}
 			</GraphContainer>
 		</View>
-	) : (
-		<></>
 	);
 });

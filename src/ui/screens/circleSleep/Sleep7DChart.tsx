@@ -46,7 +46,7 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 				.reverse()
 				.filter((line) => hasAttributesDefined(line, ["REM", "awake", "deep", "light"])) as SleepStageData[])
 		: [];
-	const valueFormatter = lines.map(({ date }) => moment(date).format("dd")[0]);
+	const valueFormatter = lines.map(({ date }) => moment(date).format("dd")[0].toUpperCase());
 	const [awakeData, deepData, REMData, lightData] = lines.reduce<[Points, Points, Points, Points]>(
 		([awakeData, deepData, REMData, lightData], { awake, deep, REM, light }, index) => [
 			[...awakeData, { x: index, y: (awake * 60) / 30 }],
@@ -82,7 +82,7 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 		const date = moment(lines[x].date).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
-	return isLoaded ? (
+	return (
 		<>
 			<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
 				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
@@ -92,96 +92,101 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 						</View>
 					))}
 			</View>
-			<View style={{ height: 200 }}>
-				<LineChart
-					daysItem={[
-						{
-							lines: awakeData,
-							color: colors.business.sleepAwake,
-						},
-						{
-							lines: deepData,
-							color: colors.business.sleepDeep,
-						},
-						{
-							lines: REMData,
-							color: colors.business.sleepRem,
-						},
-						{
-							lines: lightData,
-							color: colors.business.sleepLight,
-						},
-					]}
-					isMultipleLines={true}
-					xColor={colors.textPrimary}
-					yColor={colors.darkGray}
-					shouldDrawCircles={true}
-					valueFormatter={valueFormatter}
-					mode={updatedMode}
-					scaleXEnabled={false}
-					yMin={yMin}
-					yMax={yMax}
-					highlightPerTapEnabled
-					shouldShowMarker
-					shouldShowLabel
-					graphColor={colors.darkBlue}
-					labelFormatter={(x, y, index) => {
-						const values = [
-							`${formatDuration(lines[index].light * 3600)}`,
-							`${formatDuration(lines[index].REM * 3600)}`,
-							`${formatDuration(lines[index].deep * 3600)}`,
-							`${formatDuration(lines[index].awake * 3600)}`,
-						];
-						///TODO à voir dans le daily pour le formatage
-						return isUSCS
-							? `${dayjs(new Date(lines[index].date)).format("MM/DD/YYYY")}\n${values.join("\n")}`
-							: `${dayjs(new Date(lines[index].date)).format("DD/MM/YYYY")}\n${values.join("\n")}`;
-					}}
-					yValueFormatter={yValueFormatter}
-					onSelect={(x) => toUpdateTag(x)}
-				/>
-			</View>
-			<View style={{ marginTop: 30 }}>
-				<SleepLegend
-					REMDuration={
-						sleepConstant && isDefined(sleepConstant.REMDuration) && isDefined(sleepConstant.REMPerc)
-							? {
-									duration: sleepConstant.REMDuration,
-									percent: sleepConstant.REMPerc,
-							  }
-							: undefined
-					}
-					awakeDuration={
-						sleepConstant && isDefined(sleepConstant.awakeDuration) && isDefined(sleepConstant.awakePerc)
-							? {
-									duration: sleepConstant.awakeDuration,
-									percent: sleepConstant.awakePerc,
-							  }
-							: undefined
-					}
-					lightDuration={
-						sleepConstant && isDefined(sleepConstant.lightDuration) && isDefined(sleepConstant.lightPerc)
-							? {
-									duration: sleepConstant.lightDuration,
-									percent: sleepConstant.lightPerc,
-							  }
-							: undefined
-					}
-					deepDuration={
-						sleepConstant && isDefined(sleepConstant.deepDuration) && isDefined(sleepConstant.deepPerc)
-							? {
-									duration: sleepConstant.deepDuration,
-									percent: sleepConstant.deepPerc,
-							  }
-							: undefined
-					}
-					mode={updatedMode}
-				/>
-			</View>
+
+			{!isLoaded ? (
+				<View style={{ height: 400, flex: 1, justifyContent: "center", alignItems: "center" }}>
+					<Spinner size={35} />
+				</View>
+			) : (
+				<>
+					<View style={{ height: 200 }}>
+						<LineChart
+							daysItem={[
+								{
+									lines: awakeData,
+									color: colors.business.sleepAwake,
+								},
+								{
+									lines: deepData,
+									color: colors.business.sleepDeep,
+								},
+								{
+									lines: REMData,
+									color: colors.business.sleepRem,
+								},
+								{
+									lines: lightData,
+									color: colors.business.sleepLight,
+								},
+							]}
+							isMultipleLines={true}
+							xColor={colors.textPrimary}
+							yColor={colors.darkGray}
+							shouldDrawCircles={true}
+							valueFormatter={valueFormatter}
+							mode={updatedMode}
+							scaleXEnabled={false}
+							yMin={yMin}
+							yMax={yMax}
+							highlightPerTapEnabled
+							shouldShowMarker
+							shouldShowLabel
+							graphColor={colors.darkBlue}
+							labelFormatter={(x, y, index) => {
+								const values = [
+									`${formatDuration(lines[index].light * 3600)}`,
+									`${formatDuration(lines[index].REM * 3600)}`,
+									`${formatDuration(lines[index].deep * 3600)}`,
+									`${formatDuration(lines[index].awake * 3600)}`,
+								];
+								///TODO à voir dans le daily pour le formatage
+								return isUSCS
+									? `${dayjs(new Date(lines[index].date)).format("MM/DD/YYYY")}\n${values.join("\n")}`
+									: `${dayjs(new Date(lines[index].date)).format("DD/MM/YYYY")}\n${values.join("\n")}`;
+							}}
+							yValueFormatter={yValueFormatter}
+							onSelect={(x) => toUpdateTag(x)}
+						/>
+					</View>
+					<View style={{ marginTop: 30 }}>
+						<SleepLegend
+							REMDuration={
+								sleepConstant && isDefined(sleepConstant.REMDuration) && isDefined(sleepConstant.REMPerc)
+									? {
+											duration: sleepConstant.REMDuration,
+											percent: sleepConstant.REMPerc,
+									  }
+									: undefined
+							}
+							awakeDuration={
+								sleepConstant && isDefined(sleepConstant.awakeDuration) && isDefined(sleepConstant.awakePerc)
+									? {
+											duration: sleepConstant.awakeDuration,
+											percent: sleepConstant.awakePerc,
+									  }
+									: undefined
+							}
+							lightDuration={
+								sleepConstant && isDefined(sleepConstant.lightDuration) && isDefined(sleepConstant.lightPerc)
+									? {
+											duration: sleepConstant.lightDuration,
+											percent: sleepConstant.lightPerc,
+									  }
+									: undefined
+							}
+							deepDuration={
+								sleepConstant && isDefined(sleepConstant.deepDuration) && isDefined(sleepConstant.deepPerc)
+									? {
+											duration: sleepConstant.deepDuration,
+											percent: sleepConstant.deepPerc,
+									  }
+									: undefined
+							}
+							mode={updatedMode}
+						/>
+					</View>
+				</>
+			)}
 		</>
-	) : (
-		<View style={{ flex: 1, justifyContent: "center", alignItems: "center", height: 200 }}>
-			<Spinner />
-		</View>
 	);
 });

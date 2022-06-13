@@ -216,7 +216,7 @@ const points: Points = [
 	{ x: 1652914800000, y: 96.8 },
 ];
 const valueFormatter = points.map(({ x }) => {
-	const day = moment(x).format("dd");
+	const day = moment(x).format("dd").toUpperCase();
 	return day !== "Invalid date" ? day[0] : "";
 });
 storiesOf("LineChart", module)

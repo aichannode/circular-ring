@@ -98,9 +98,7 @@ export const HrVGraph30days: React.FC<Props> = observer(function HeartRateGraph(
 		}
 	}, [HRV30d]);
 
-	return isLoading ? (
-		<Spinner size={24} />
-	) : (
+	return (
 		<View>
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
@@ -113,91 +111,99 @@ export const HrVGraph30days: React.FC<Props> = observer(function HeartRateGraph(
 						))}
 					</View>
 				)}
-				<LineChart
-					labelCount={30}
-					averages={averages}
-					xColor={colors.textPrimary}
-					yColor={colors.darkGray}
-					data={lines}
-					shouldShowLabel={true}
-					shouldShowMarker={true}
-					shouldDrawCircles={true}
-					graphColor={colors.darkBlue}
-					valueFormatterPattern="EEEEE"
-					valueFormatter="date"
-					yMin={yMin}
-					yMax={yMax}
-					mode={updatedMode}
-					shouldUpdateYmin={false}
-					highlightPerTapEnabled={true}
-					isMultipleLines={false}
-					yLabelCount={5}
-					labelFormatter={(x, y) => {
-						return isUSCS
-							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
-							: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${Math.round(y)}`;
-					}}
-					zoom={
-						lines?.length > 0
-							? {
-									scaleX: 1,
-									scaleY: 1,
-									xValue: lines[lines.length - 1].x,
-									yValue: 1,
-							  }
-							: undefined
-					}
-					onSelect={(x) => toUpdateTag(x)}
-				/>
-				<View style={{ marginTop: 20 }}>
-					<GraphLegend
-						mode={updatedMode}
-						rows={[
-							{
-								label: format("30day.average"),
-								element: {
-									key: "30day.average",
-									node: (
-										<View
-											style={{
-												width: 30,
-												marginTop: 5,
-											}}
-										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.darkBlue} />
-										</View>
-									),
-								},
+				{isLoading ? (
+					<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+						<Spinner size={35} />
+					</View>
+				) : (
+					<>
+						<LineChart
+							labelCount={30}
+							averages={averages}
+							xColor={colors.textPrimary}
+							yColor={colors.darkGray}
+							data={lines}
+							shouldShowLabel={true}
+							shouldShowMarker={true}
+							shouldDrawCircles={true}
+							graphColor={colors.darkBlue}
+							valueFormatterPattern="EEEEE"
+							valueFormatter="date"
+							yMin={yMin}
+							yMax={yMax}
+							mode={updatedMode}
+							shouldUpdateYmin={false}
+							highlightPerTapEnabled={true}
+							isMultipleLines={false}
+							yLabelCount={5}
+							labelFormatter={(x, y) => {
+								return isUSCS
+									? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
+									: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${Math.round(y)}`;
+							}}
+							zoom={
+								lines?.length > 0
+									? {
+											scaleX: 1,
+											scaleY: 1,
+											xValue: lines[lines.length - 1].x,
+											yValue: 1,
+									  }
+									: undefined
+							}
+							onSelect={(x) => toUpdateTag(x)}
+						/>
+						<View style={{ marginTop: 20 }}>
+							<GraphLegend
+								mode={updatedMode}
+								rows={[
+									{
+										label: format("30day.average"),
+										element: {
+											key: "30day.average",
+											node: (
+												<View
+													style={{
+														width: 30,
+														marginTop: 5,
+													}}
+												>
+													<DashedLine dashGap={5} dashLength={10} dashColor={colors.darkBlue} />
+												</View>
+											),
+										},
 
-								value:
-									typeof constant.average == "undefined" || constant.average === -1
-										? "- bpm"
-										: `${constant.average} bpm`,
-							},
-							{
-								label: format("hr.reference"),
-								element: {
-									key: "hr.reference",
-									node: (
-										<View
-											style={{
-												width: 30,
-												marginTop: 5,
-											}}
-										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
-										</View>
-									),
-								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: typeof constant.reference == "undefined" || constant.reference === -1
-									? "- bpm"
-									: `${constant.reference} bpm`,
-							},
-						]}
-					/>
-				</View>
+										value:
+											typeof constant.average == "undefined" || constant.average === -1
+												? "- bpm"
+												: `${constant.average} bpm`,
+									},
+									{
+										label: format("hr.reference"),
+										element: {
+											key: "hr.reference",
+											node: (
+												<View
+													style={{
+														width: 30,
+														marginTop: 5,
+													}}
+												>
+													<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
+												</View>
+											),
+										},
+										value: isInCalibrationMode(updatedMode)
+											? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+											: typeof constant.reference == "undefined" || constant.reference === -1
+											? "- bpm"
+											: `${constant.reference} bpm`,
+									},
+								]}
+							/>
+						</View>
+					</>
+				)}
 			</GraphContainer>
 		</View>
 	);

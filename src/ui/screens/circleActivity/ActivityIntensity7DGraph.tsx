@@ -56,7 +56,6 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 		moment(selectedDay).endOf("day").toISOString() as ISODay
 	);
 	const activity7D = use7DaysActivity(selectedDay as ISODay);
-
 	const lines = activity7D
 		? ([...activity7D.activityMetrics]
 				.filter((line) => hasAttributesDefined(line, ["high", "low", "medium"]))
@@ -71,7 +70,7 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 		],
 		[[], [], []]
 	) || [[], [], []];
-	const xAxis = lines.map((item) => moment(item.date).format("dd")[0]);
+	const xAxis = lines.map((item) => moment(item.date).format("dd")[0].toUpperCase());
 	const [yMin, yMax] = [
 		Math.min(
 			...[
@@ -91,49 +90,48 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 	const updatedMode = updateMode(mode, lines.length === 0);
 	const isLoading = !isDefined(activity7D);
 
-	if (isLoading) {
-		return (
-			<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-				<Spinner size={24} />
-			</View>
-		);
-	}
 	return (
 		<>
 			<Tags tags={isInDisabledMode(updatedMode) ? [] : tags} />
 			<View style={{ height: 200 }}>
-				<LineChart
-					xColor={colors.textPrimary}
-					yColor={colors.darkGray}
-					shouldDrawCircles={true}
-					valueFormatter={xAxis || []}
-					yValueFormatter={yValueFormatter}
-					minimumYValueAllowed={0}
-					yMin={yMin}
-					yMax={yMax}
-					mode={updatedMode}
-					daysItem={[
-						{ lines: highData, color: colors.business.activityStageHigh },
-						{ lines: mediumData, color: colors.business.activityStageMedium },
-						{ lines: lowData, color: colors.business.activityStageLow },
-					]}
-					labelFormatter={(x, y, index) => {
-						const values = [highData[index].y, mediumData[index].y, lowData[index].y]
-							// XXX: As graph data are expressed in 30minutes, we need to multiply them by 30 to get them in minutes.
-							.map((val) => val * 30)
-							.sort((a, b) => b - a)
-							.map((val) => formatDuration(val * 60));
+				{isLoading ? (
+					<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+						<Spinner size={35} />
+					</View>
+				) : (
+					<LineChart
+						xColor={colors.textPrimary}
+						yColor={colors.darkGray}
+						shouldDrawCircles={true}
+						valueFormatter={xAxis || []}
+						yValueFormatter={yValueFormatter}
+						minimumYValueAllowed={0}
+						yMin={yMin}
+						yMax={yMax}
+						mode={updatedMode}
+						daysItem={[
+							{ lines: highData, color: colors.business.activityStageHigh },
+							{ lines: mediumData, color: colors.business.activityStageMedium },
+							{ lines: lowData, color: colors.business.activityStageLow },
+						]}
+						labelFormatter={(x, y, index) => {
+							const values = [highData[index].y, mediumData[index].y, lowData[index].y]
+								// XXX: As graph data are expressed in 30minutes, we need to multiply them by 30 to get them in minutes.
+								.map((val) => val * 30)
+								.sort((a, b) => b - a)
+								.map((val) => formatDuration(val * 60));
 
-						return isUSCS
-							? `${dayjs(new Date(lines[index].date)).format("MM/DD/YYYY")}\n${values.join("\n")}`
-							: `${dayjs(new Date(lines[index].date)).format("DD/MM/YYYY")}\n${values.join("\n")}`;
-					}}
-					highlightPerTapEnabled
-					scaleXEnabled={false}
-					shouldShowMarker
-					shouldShowLabel
-					isMultipleLines
-				/>
+							return isUSCS
+								? `${dayjs(new Date(lines[index].date)).format("MM/DD/YYYY")}\n${values.join("\n")}`
+								: `${dayjs(new Date(lines[index].date)).format("DD/MM/YYYY")}\n${values.join("\n")}`;
+						}}
+						highlightPerTapEnabled
+						scaleXEnabled={false}
+						shouldShowMarker
+						shouldShowLabel
+						isMultipleLines
+					/>
+				)}
 			</View>
 			<View style={{ marginTop: 20 }}>
 				<ActivityLegend {...activity7D?.constant} mode={updatedMode} />

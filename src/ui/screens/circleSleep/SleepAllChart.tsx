@@ -51,78 +51,82 @@ export const SleepAllChart = observer(function SleepAllChart({ selectedDay, mode
 	const sleepConstant = daysAllSleep?.constant;
 	const isLoaded = isDefined(daysAllSleep);
 
-	return isLoaded ? (
+	return (
 		<>
 			<Tags tags={isInDisabledMode(updatedMode) ? [] : tags} />
-			<View style={{ height: 200 }}>
-				<LineChart
-					daysItem={[
-						{
-							lines: awakeData,
-							color: colors.business.sleepAwake,
-						},
-						{
-							lines: deepData,
-							color: colors.business.sleepDeep,
-						},
-						{
-							lines: REMData,
-							color: colors.business.sleepRem,
-						},
-						{
-							lines: lightData,
-							color: colors.business.sleepLight,
-						},
-					]}
-					isMultipleLines={true}
-					xColor={colors.textPrimary}
-					yColor={colors.darkGray}
-					shouldDrawCircles={true}
-					valueFormatter={valueFormatter}
-					mode={updatedMode}
-				/>
-			</View>
-			<View style={{ marginTop: 30 }}>
-				<SleepLegend
-					REMDuration={
-						sleepConstant && isDefined(sleepConstant.REMDuration) && isDefined(sleepConstant.REMPerc)
-							? {
-									duration: sleepConstant.REMDuration,
-									percent: sleepConstant.REMPerc,
-							  }
-							: undefined
-					}
-					awakeDuration={
-						sleepConstant && isDefined(sleepConstant.awakeDuration) && isDefined(sleepConstant.awakePerc)
-							? {
-									duration: sleepConstant.awakeDuration,
-									percent: sleepConstant.awakePerc,
-							  }
-							: undefined
-					}
-					lightDuration={
-						sleepConstant && isDefined(sleepConstant.lightDuration) && isDefined(sleepConstant.lightPerc)
-							? {
-									duration: sleepConstant.lightDuration,
-									percent: sleepConstant.lightPerc,
-							  }
-							: undefined
-					}
-					deepDuration={
-						sleepConstant && isDefined(sleepConstant.deepDuration) && isDefined(sleepConstant.deepPerc)
-							? {
-									duration: sleepConstant.deepDuration,
-									percent: sleepConstant.deepPerc,
-							  }
-							: undefined
-					}
-					mode={updatedMode}
-				/>
-			</View>
+			{!isLoaded ? (
+				<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+					<Spinner size={35} />
+				</View>
+			) : (
+				<>
+					<View style={{ height: 200 }}>
+						<LineChart
+							daysItem={[
+								{
+									lines: awakeData,
+									color: colors.business.sleepAwake,
+								},
+								{
+									lines: deepData,
+									color: colors.business.sleepDeep,
+								},
+								{
+									lines: REMData,
+									color: colors.business.sleepRem,
+								},
+								{
+									lines: lightData,
+									color: colors.business.sleepLight,
+								},
+							]}
+							isMultipleLines={true}
+							xColor={colors.textPrimary}
+							yColor={colors.darkGray}
+							shouldDrawCircles={true}
+							valueFormatter={valueFormatter}
+							mode={updatedMode}
+						/>
+					</View>
+					<View style={{ marginTop: 30 }}>
+						<SleepLegend
+							REMDuration={
+								sleepConstant && isDefined(sleepConstant.REMDuration) && isDefined(sleepConstant.REMPerc)
+									? {
+											duration: sleepConstant.REMDuration,
+											percent: sleepConstant.REMPerc,
+									  }
+									: undefined
+							}
+							awakeDuration={
+								sleepConstant && isDefined(sleepConstant.awakeDuration) && isDefined(sleepConstant.awakePerc)
+									? {
+											duration: sleepConstant.awakeDuration,
+											percent: sleepConstant.awakePerc,
+									  }
+									: undefined
+							}
+							lightDuration={
+								sleepConstant && isDefined(sleepConstant.lightDuration) && isDefined(sleepConstant.lightPerc)
+									? {
+											duration: sleepConstant.lightDuration,
+											percent: sleepConstant.lightPerc,
+									  }
+									: undefined
+							}
+							deepDuration={
+								sleepConstant && isDefined(sleepConstant.deepDuration) && isDefined(sleepConstant.deepPerc)
+									? {
+											duration: sleepConstant.deepDuration,
+											percent: sleepConstant.deepPerc,
+									  }
+									: undefined
+							}
+							mode={updatedMode}
+						/>
+					</View>
+				</>
+			)}
 		</>
-	) : (
-		<View style={{ flex: 1, justifyContent: "center", alignItems: "center", height: 200 }}>
-			<Spinner />
-		</View>
 	);
 });

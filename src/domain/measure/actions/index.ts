@@ -818,9 +818,10 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					payload: {
 						localISODay,
 						//for temprature, we have negatif values so here for null values we change it to -1000
-						temperature: data[MetricType.UserDailyTemperatureScore]
-							? Number(data[MetricType.UserDailyTemperatureScore])
-							: -1000,
+						temperature:
+							null != data[MetricType.UserDailyTemperatureScore]
+								? Number(data[MetricType.UserDailyTemperatureScore])
+								: -1000,
 					},
 				},
 			]);
@@ -860,12 +861,13 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 
 		async pullDailyActivityIntensityMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
 			Promise.all([
-				measureApi.fetchDailyMeasures<DailyActivityIntensityMetrics>(
+				measureApi.fetchMeasures<DailyActivityIntensityMetrics>(
 					dailyActivityIntensityMetrics,
-					localISODay,
+					moment(localISODay).startOf("day").subtract(1, "hours").toISOString(),
+					moment(localISODay).endOf("day").toISOString(),
 					useForceRefresh
 				),
-				measureApi.fetchLastDailyMeasures<DailyActivityIntensityDuration>(
+				measureApi.fetchOneDayMeasures<DailyActivityIntensityDuration>(
 					dailyActivityIntensityDuration,
 					localISODay,
 					useForceRefresh

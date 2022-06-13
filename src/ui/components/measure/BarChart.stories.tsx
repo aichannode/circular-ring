@@ -40,7 +40,7 @@ const averages: Averages = [
 ];
 
 const valueFormatter = data.map(({ x, y }) => {
-	const day = moment(x).format("dd");
+	const day = moment(x).format("dd").toUpperCase();
 	return day !== "Invalid date" ? day[0] : "";
 });
 

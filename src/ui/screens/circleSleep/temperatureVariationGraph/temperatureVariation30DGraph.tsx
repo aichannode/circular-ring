@@ -55,7 +55,7 @@ export const TemperatureVariation30DGraph: React.FC<Props> = observer(function S
 		: [];
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 	const valueFormatter = lines.map(({ x }) => {
-		const day = moment(x).format("dd");
+		const day = moment(x).format("dd").toUpperCase();
 		return day !== "Invalid date" ? day[0].toUpperCase() : "";
 	});
 	const constant = data?.constant;
@@ -92,9 +92,7 @@ export const TemperatureVariation30DGraph: React.FC<Props> = observer(function S
 		}
 		return `${value} °C`;
 	};
-	return isLoading ? (
-		<Spinner size={24} />
-	) : (
+	return (
 		<View>
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
@@ -107,50 +105,58 @@ export const TemperatureVariation30DGraph: React.FC<Props> = observer(function S
 						))}
 					</View>
 				)}
-				<BarChart
-					labelCount={30}
-					averages={averages}
-					shouldShowMarker={true}
-					xColor={colors.textPrimary}
-					yColor={colors.darkGray}
-					data={lines}
-					valueFormatter={valueFormatter}
-					graphColor={colors.business.sleepPrimary}
-					onSelect={(x) => toUpdateTag(x)}
-					mode={updatedMode}
-					yMin={yMin}
-					yMax={yMax}
-					mapMarker={(el) =>
-						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
-							el.y > 0 ? "+" + el.y : el.y
-						}`
-					}
-					isTemperature={true}
-				/>
-				<View style={{ marginTop: 20 }}>
-					<GraphLegend
-						mode={updatedMode}
-						rows={[
-							{
-								label: format("hr.average"),
-								element: {
-									key: "temperature.average",
-									node: (
-										<View
-											style={{
-												width: 30,
-												marginTop: 5,
-											}}
-										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.darkBlue} />
-										</View>
-									),
-								},
-								value: isDefined(constant?.average) ? toGetAverageValue(constant?.average) : "-",
-							},
-						]}
-					/>
-				</View>
+				{isLoading ? (
+					<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+						<Spinner size={35} />
+					</View>
+				) : (
+					<>
+						<BarChart
+							labelCount={30}
+							averages={averages}
+							shouldShowMarker={true}
+							xColor={colors.textPrimary}
+							yColor={colors.darkGray}
+							data={lines}
+							valueFormatter={valueFormatter}
+							graphColor={colors.business.sleepPrimary}
+							onSelect={(x) => toUpdateTag(x)}
+							mode={updatedMode}
+							yMin={yMin}
+							yMax={yMax}
+							mapMarker={(el) =>
+								`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
+									el.y > 0 ? "+" + el.y : el.y
+								}`
+							}
+							isTemperature={true}
+						/>
+						<View style={{ marginTop: 20 }}>
+							<GraphLegend
+								mode={updatedMode}
+								rows={[
+									{
+										label: format("hr.average"),
+										element: {
+											key: "temperature.average",
+											node: (
+												<View
+													style={{
+														width: 30,
+														marginTop: 5,
+													}}
+												>
+													<DashedLine dashGap={5} dashLength={10} dashColor={colors.darkBlue} />
+												</View>
+											),
+										},
+										value: isDefined(constant?.average) ? toGetAverageValue(constant?.average) : "-",
+									},
+								]}
+							/>
+						</View>
+					</>
+				)}
 			</GraphContainer>
 		</View>
 	);

@@ -73,46 +73,45 @@ export const ActivityIntensityAllGraph: React.FC<Props> = observer(function Acti
 	const updatedMode = updateMode(mode, allActivity?.controlState !== DataControlState.READY || lines.length === 0);
 	const isLoading = !isDefined(allActivity);
 
-	if (isLoading) {
-		return (
-			<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-				<Spinner size={24} />
-			</View>
-		);
-	}
 	return (
 		<>
 			<Tags tags={isInDisabledMode(updatedMode) ? [] : tags} />
 			<View style={{ height: 200 }}>
-				<LineChart
-					xColor={colors.textPrimary}
-					yColor={colors.darkGray}
-					shouldDrawCircles={true}
-					valueFormatter={xAxis || []}
-					yValueFormatter={yValueFormatter}
-					mode={updatedMode}
-					daysItem={[
-						{ lines: highData, color: colors.business.activityStageHigh },
-						{ lines: mediumData, color: colors.business.activityStageMedium },
-						{ lines: lowData, color: colors.business.activityStageLow },
-					]}
-					labelFormatter={(x, y, index) => {
-						const values = [highData[index].y, mediumData[index].y, lowData[index].y]
-							.map((val) => val / 2)
-							.sort((a, b) => b - a)
-							.map((val) => {
-								const hours = Math.floor(val).toString();
-								const min = Math.floor((val % 1) * 60).toString();
-								return `${hours.padStart(2, "0")}:${min.padStart(2, "0")}`;
-							});
-						return `${moment(allActivity?.activityMetrics[index].date).format("ddd DD")}\n${values.join("\n")}`;
-					}}
-					highlightPerTapEnabled
-					scaleXEnabled={false}
-					shouldShowMarker
-					shouldShowLabel
-					isMultipleLines
-				/>
+				{isLoading ? (
+					<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+						<Spinner size={35} />
+					</View>
+				) : (
+					<LineChart
+						xColor={colors.textPrimary}
+						yColor={colors.darkGray}
+						shouldDrawCircles={true}
+						valueFormatter={xAxis || []}
+						yValueFormatter={yValueFormatter}
+						mode={updatedMode}
+						daysItem={[
+							{ lines: highData, color: colors.business.activityStageHigh },
+							{ lines: mediumData, color: colors.business.activityStageMedium },
+							{ lines: lowData, color: colors.business.activityStageLow },
+						]}
+						labelFormatter={(x, y, index) => {
+							const values = [highData[index].y, mediumData[index].y, lowData[index].y]
+								.map((val) => val / 2)
+								.sort((a, b) => b - a)
+								.map((val) => {
+									const hours = Math.floor(val).toString();
+									const min = Math.floor((val % 1) * 60).toString();
+									return `${hours.padStart(2, "0")}:${min.padStart(2, "0")}`;
+								});
+							return `${moment(allActivity?.activityMetrics[index].date).format("ddd DD")}\n${values.join("\n")}`;
+						}}
+						highlightPerTapEnabled
+						scaleXEnabled={false}
+						shouldShowMarker
+						shouldShowLabel
+						isMultipleLines
+					/>
+				)}
 			</View>
 			<View style={{ marginTop: 20 }}>
 				<ActivityLegend {...allActivity?.constant} mode={updatedMode} />

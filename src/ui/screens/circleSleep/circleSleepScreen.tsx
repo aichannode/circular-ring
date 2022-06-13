@@ -223,7 +223,12 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 						dailyTrimOptions={dailyTrimOptions}
 					/>
 				)}
-				{activeItem === 5 && <TemperatureVariationGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+				{activeItem === 5 && (
+					<TemperatureVariationGraph
+						selectedDay={selectedDay}
+						mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenMode))}
+					/>
+				)}
 
 				{activeItem === 6 && (
 					<Spo2Graph

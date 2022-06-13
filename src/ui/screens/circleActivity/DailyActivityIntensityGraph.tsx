@@ -159,6 +159,10 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 						<View style={{ flex: 1 }}>
 							<TextPlaceholder content={format("global.no_data_yet")} />
 						</View>
+					) : isLoading ? (
+						<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+							<Spinner size={24} />
+						</View>
 					) : (
 						<BarChart
 							style={{

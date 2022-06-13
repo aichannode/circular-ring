@@ -59,7 +59,7 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 		: [];
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 	const valueFormatter = lines.map(({ x }) => {
-		const day = moment(x).format("dd");
+		const day = moment(x).format("dd").toUpperCase();
 		return day !== "Invalid date" ? day[0] : "";
 	});
 
@@ -96,9 +96,7 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 			  ]
 			: [0, 0];
 
-	return isLoading ? (
-		<Spinner size={24} />
-	) : !!lines ? (
+	return (
 		<View>
 			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
 				{format("calories.burned")}
@@ -134,81 +132,89 @@ export const CaloriesBurnedGraph: React.FC<Props> = observer(function CaloriesBu
 							</View>
 						))}
 				</View>
-				<BarChart
-					averages={averages}
-					shouldShowMarker={true}
-					xColor={colors.textPrimary}
-					yColor={colors.darkGray}
-					data={lines}
-					valueFormatter={valueFormatter}
-					graphColor={colors.red}
-					onSelect={(x) => toUpdateTag(x)}
-					mode={updatedMode}
-					mapMarker={(el) =>
-						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
-							el.y
-						}`
-					}
-					yMin={0}
-					yMax={yMax + Math.round(((yMax - yMin) * 10) / 100)}
-				/>
-				<View style={{ marginTop: 20 }}>
-					<GraphLegend
-						mode={updatedMode}
-						rows={[
-							{
-								label: format("activity.energy_score.7day"),
-								element: {
-									key: "activity.energy_score.7day",
-									node: (
-										<View
-											style={{
-												width: 30,
-												marginTop: 5,
-											}}
-										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.red} />
-										</View>
-									),
-								},
-								value: isDefined(constant) && constant.average != -1 ? `${constant.average} kcal` : "-",
-							},
-							{
-								label: format("cardio.baseline"),
-								element: {
-									key: "cardio.baseline",
-									node: (
-										<View
-											style={{
-												width: 30,
-												marginTop: 5,
-											}}
-										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
-										</View>
-									),
-								},
-								value: isInCalibrationMode(updatedMode)
-									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(constant) && constant.baseline != -1
-									? `${constant.baseline} kcal`
-									: "-",
-							},
-							{
-								label: format("cardio.7day.total"),
-								element: {
-									key: "cardio.7day.total",
-									node: <></>,
-								},
+				{isLoading ? (
+					<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+						<Spinner size={35} />
+					</View>
+				) : (
+					!!lines && (
+						<>
+							<BarChart
+								averages={averages}
+								shouldShowMarker={true}
+								xColor={colors.textPrimary}
+								yColor={colors.darkGray}
+								data={lines}
+								valueFormatter={valueFormatter}
+								graphColor={colors.red}
+								onSelect={(x) => toUpdateTag(x)}
+								mode={updatedMode}
+								mapMarker={(el) =>
+									`${
+										isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")
+									}\n${el.y}`
+								}
+								yMin={0}
+								yMax={yMax + Math.round(((yMax - yMin) * 10) / 100)}
+							/>
+							<View style={{ marginTop: 20 }}>
+								<GraphLegend
+									mode={updatedMode}
+									rows={[
+										{
+											label: format("activity.energy_score.7day"),
+											element: {
+												key: "activity.energy_score.7day",
+												node: (
+													<View
+														style={{
+															width: 30,
+															marginTop: 5,
+														}}
+													>
+														<DashedLine dashGap={5} dashLength={10} dashColor={colors.red} />
+													</View>
+												),
+											},
+											value: isDefined(constant) && constant.average != -1 ? `${constant.average} kcal` : "-",
+										},
+										{
+											label: format("cardio.baseline"),
+											element: {
+												key: "cardio.baseline",
+												node: (
+													<View
+														style={{
+															width: 30,
+															marginTop: 5,
+														}}
+													>
+														<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
+													</View>
+												),
+											},
+											value: isInCalibrationMode(updatedMode)
+												? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+												: isDefined(constant) && constant.baseline != -1
+												? `${constant.baseline} kcal`
+												: "-",
+										},
+										{
+											label: format("cardio.7day.total"),
+											element: {
+												key: "cardio.7day.total",
+												node: <></>,
+											},
 
-								value: isDefined(constant) && constant.total != -1 ? `${constant.total} kcal` : "-",
-							},
-						]}
-					/>
-				</View>
+											value: isDefined(constant) && constant.total != -1 ? `${constant.total} kcal` : "-",
+										},
+									]}
+								/>
+							</View>
+						</>
+					)
+				)}
 			</GraphContainer>
 		</View>
-	) : (
-		<></>
 	);
 });
