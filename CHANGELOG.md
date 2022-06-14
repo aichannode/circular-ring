@@ -1,3 +1,10 @@
+## [1.0.6](https://gitlab.com/circularing/mobile/app/compare/v1.0.5...v1.0.6) (2022-06-14)
+
+
+### Bug Fixes
+
+* logout bottomsheet ([b15fa23](https://gitlab.com/circularing/mobile/app/commit/b15fa239de9fcc8a1c7ad61c00bae99e31ec5ae8))
+
 ## [1.0.5](https://gitlab.com/circularing/mobile/app/compare/v1.0.4...v1.0.5) (2022-06-14)
 
 
