@@ -20,7 +20,6 @@ export const LoginScreen = () => {
 	const { navigate } = useRoutesNavigation();
 
 	const [email, setEmail] = useState("");
-
 	const [password, setPassword] = useState("");
 	const passwordFieldRef = useRef<TextInput | null>(null);
 

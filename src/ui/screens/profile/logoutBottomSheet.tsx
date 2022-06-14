@@ -27,8 +27,8 @@ export const LogoutBottomSheet: React.FC<LogoutBottomSheetProps> = ({ onClose })
 	const logout = useCallback(async () => {
 		useResetMeasureModel();
 		useResetCalendarModel();
-		onClose();
 		await userService.logout();
+		setTimeout(() => onClose(), 200);
 	}, []);
 
 	return (
