@@ -1,3 +1,14 @@
+## [1.0.5](https://gitlab.com/circularing/mobile/app/compare/v1.0.4...v1.0.5) (2022-06-14)
+
+
+### Bug Fixes
+
+* graphs ([d5edc79](https://gitlab.com/circularing/mobile/app/commit/d5edc79070d04c781e11452fa9c3140d1ea311c5))
+* re-order burger menu ([8e61ccf](https://gitlab.com/circularing/mobile/app/commit/8e61ccf956519b4f771fb5a0f3bcd4cbf7e69502))
+* removed version upgrade from master ([7bc49a2](https://gitlab.com/circularing/mobile/app/commit/7bc49a22fa9d536eb33a823aa6276eaadf2c61fa))
+* update language ([9249202](https://gitlab.com/circularing/mobile/app/commit/92492022f15af60b84376aea3e52050ce8a16532))
+* ux correction on add a circle screen ([389119d](https://gitlab.com/circularing/mobile/app/commit/389119d7976223575cc4b40edf4a671e8ee87c80))
+
 ## [1.0.4](https://gitlab.com/circularing/mobile/app/compare/v1.0.3...v1.0.4) (2022-06-14)
 
 
