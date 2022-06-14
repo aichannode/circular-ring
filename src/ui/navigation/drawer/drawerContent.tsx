@@ -23,7 +23,6 @@ export const DrawerContent = () => {
 				</CloseContainer>
 			</Pressable>
 			<ScrollView>
-				<Separator />
 				<DrawerEntry route={Routes.Profile}>{format("drawer.profile")}</DrawerEntry>
 				<Separator />
 				<DrawerEntry route={Routes.Calendar}>{format("drawer.calendar")}</DrawerEntry>
@@ -41,10 +40,9 @@ export const DrawerContent = () => {
 				<DrawerEntry route={Routes.WebView} routeOptions={{ uri: format("url.store") }}>
 					{format("drawer.store")}
 				</DrawerEntry>
-				<Separator />
 				<IfAdmin>
-					<DrawerEntry route={Routes.Storybook}>{format("drawer.storybook")}</DrawerEntry>
 					<Separator />
+					<DrawerEntry route={Routes.Storybook}>{format("drawer.storybook")}</DrawerEntry>
 				</IfAdmin>
 			</ScrollView>
 		</Container>
