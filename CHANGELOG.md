@@ -1,3 +1,10 @@
+## [1.0.8](https://gitlab.com/circularing/mobile/app/compare/v1.0.7...v1.0.8) (2022-06-14)
+
+
+### Bug Fixes
+
+* Order menu and remove separation ([5bedd79](https://gitlab.com/circularing/mobile/app/commit/5bedd79be4caa4ff6a26d47793e305023228798c))
+
 ## [1.0.7](https://gitlab.com/circularing/mobile/app/compare/v1.0.6...v1.0.7) (2022-06-14)
 
 
