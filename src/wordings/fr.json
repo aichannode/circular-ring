@@ -166,7 +166,7 @@
 	"activity.resting_heart_rate": "Fréquence cardiaque au repos",
 	"activity.resting_heart_rate.reference": "Référence",
 	"activity.energy_score": "Score d'énergie",
-	"activity.energy_score.7day": "Moyenne sur 7 jours",
+	"activity.energy_score.7day": "Moyenne 7 jours",
 	"activity.score.daily_metrics": "Mesures quotidiennes",
 	"activity.score.details": "Détails du score d'énergie",
 	"activity.intensity": "INTENSITÉ DE L'ACTIVITÉ",
@@ -652,8 +652,8 @@
 	"hr.hrMax": "FC Max",
 	"hr.hrMin": "FC Min",
 	"hrs.title": "HEURES DE REPOS",
-	"hrs.totalAverage": "Moyenne sur 7 jours (TS)",
-	"hrs.realAverage": "Moyenne sur 7 jours (RS)",
+	"hrs.totalAverage": "Moyenne 7 jours (TS)",
+	"hrs.realAverage": "Moyenne 7 jours (RS)",
 	"hrs.recommendation": "Recommandé (RS)",
 	"hrs.legend.total": "Sommeil total (TS) :",
 	"hrs.legend.real": "Sommeil réel (RS) :",
@@ -661,5 +661,5 @@
 	"steps.title": "Pas effectués",
 	"cardio.7day.total": "Total sur 7 jours",
 	"calories.burned": "calories brûlées",
-	"30day.average": "Moyenne sur 30 jourse"
+	"30day.average": "Moyenne 30 jours"
 }
