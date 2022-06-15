@@ -1,3 +1,10 @@
+## [1.0.9](https://gitlab.com/circularing/mobile/app/compare/v1.0.8...v1.0.9) (2022-06-15)
+
+
+### Bug Fixes
+
+* Documentation for ios build and TF and update xcworkspace ([ef924a4](https://gitlab.com/circularing/mobile/app/commit/ef924a44e82ba7979df8cea3526d54e8cec21f0c))
+
 ## [1.0.8](https://gitlab.com/circularing/mobile/app/compare/v1.0.7...v1.0.8) (2022-06-14)
 
 
