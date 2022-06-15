@@ -30,8 +30,23 @@ Then, make it executable
 $ chmod 775 .git/hooks/prepare-commit-msg
 ```
 
-## Running
+## Building/Testing
 
 ### iOS
 
-To run the app, choose Circular-Dev in Xcode.
+In Xcode, select the correct target, Circular-prod, Circular-dev or Circular-demo. This action will select the correct env.
+
+#### Test Flight
+
+To build (archive) a TF (Test Flight) you need an App Distribution Certificate, on [Apple Developer](https://developer.apple.com/account/resources/certificates/list) and a [profile](https://developer.apple.com/account/resources/profiles/list) that accept the certificate.
+
+In Xcode, select the project `Circular` -> Your target (Prod, Dev or Demo) -> `Signing & Capabilities` : Disable the `Automatically manage signing`.
+Select your Provisioning profile you've just created and your Signing certificate (App Distribution) associated.
+
+Now we will archive the projet :
+
+Select the project `Circular` -> Your target (Prod, Dev or Demo) -> `Any iOS Device (arm64)` (on top) -> `Product` (in the tab bar) -> `Archive`
+
+Press next until the end of the process which end with the upload.
+
+When uploaded, you will see your build appear on the [App Store Connect interface](https://appstoreconnect.apple.com/apps/1583942047/testflight/ios), don't forget to select your testers. If the testers are external, Apple will review the app.
