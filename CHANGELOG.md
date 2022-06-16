@@ -1,3 +1,10 @@
+## [1.0.14](https://gitlab.com/circularing/mobile/app/compare/v1.0.13...v1.0.14) (2022-06-16)
+
+
+### Bug Fixes
+
+* circle button border in MANAGE CIRCLE ([082d016](https://gitlab.com/circularing/mobile/app/commit/082d016bb27736ac151aed78ac497103bc850064))
+
 ## [1.0.13](https://gitlab.com/circularing/mobile/app/compare/v1.0.12...v1.0.13) (2022-06-16)
 
 
