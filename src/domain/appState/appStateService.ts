@@ -18,6 +18,7 @@ export class AppStateService {
 	recommendationsCount = observable<number>(10);
 	userCircles = observable<CircleEntity[]>([]);
 	defaultCircles = observable<CircleEntity[]>([]);
+	waitForRingRegistration = observable(false);
 
 	private get appState(): I_AppState {
 		return {
@@ -27,6 +28,7 @@ export class AppStateService {
 			userCircles: this.userCircles.get(),
 			defaultCircles: this.defaultCircles.get(),
 			userRings: this.userRings.get(),
+			waitForRingRegistration: this.waitForRingRegistration.get(),
 		};
 	}
 

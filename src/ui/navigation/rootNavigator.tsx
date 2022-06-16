@@ -1,4 +1,5 @@
 import { useServices } from "@core/services";
+import { useWaitForRingRegistration } from "@domain/appState/appStateHooks";
 import { UpdateState } from "@domain/device/bleDeviceService";
 import { useDeviceStored } from "@domain/device/hooks";
 import { UserRing } from "@domain/ring/ring";
@@ -23,10 +24,10 @@ import { Tutorial } from "@ui/screens/onboarding/tutorial/tutorial";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
 import { WebViewScreen } from "@ui/screens/webViewScreen";
+import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
 import { useObservable } from "micro-observables";
 import React, { useEffect, useState } from "react";
 import { LocaleType, translations } from "../../wordings";
-import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
 
 const SetupStack = createNativeStackNavigator();
 const OnboardingStack = createNativeStackNavigator();
@@ -37,7 +38,7 @@ export interface RootNavigatorProps {
 }
 
 export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }) => {
-	const [wait, setWait] = useState(false);
+	// const [wait, setWait] = useState(false);
 	const isAuthenticated = !!useAuthenticatedUserEmail();
 	const { appStateService, ringApi, bleDeviceService } = useServices();
 	const user = useUser();
@@ -49,6 +50,8 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 	const [useByPass, setByPass] = useState(false);
 	const [byPassForcedFirmwareUpdate, setByPassForcedFirmwareUpdate] = useState(false);
 	const updateState = useObservable(bleDeviceService.updateState);
+	const wait = useWaitForRingRegistration();
+	console.log("WAIT", wait);
 	const {
 		cognitoAuthService: { payload },
 	} = useServices();
@@ -83,18 +86,20 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 				{!hasUser && <OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />}
 				<OnboardingStack.Screen
 					name={Routes.Pairing}
-					initialParams={{ setWait, onByPass: () => setByPass(true) }}
+					initialParams={{ onByPass: () => setByPass(true) }}
 					component={RingSetupScreen}
 				/>
-				<OnboardingStack.Screen name={Routes.SetUpCompleted} initialParams={{ setWait }} component={SetUpCompleted} />
+				<OnboardingStack.Screen name={Routes.SetUpCompleted} component={SetUpCompleted} />
 			</OnboardingStack.Navigator>
 		);
 	}
 	if (
+		!wait &&
 		(updateState.status !== UpdateState.IDLE.status ||
 			(currentRing && lastFirmwareVersion !== currentRing.firmware && lastFirmwareVersion)) &&
 		!byPassForcedFirmwareUpdate
 	) {
+		console.log("RingFirmwareUpdate");
 		return (
 			<RingFirmwareUpdate
 				showCross={payload.get()?.["cognito:groups"]?.some((groupName) => groupName === "admin")}

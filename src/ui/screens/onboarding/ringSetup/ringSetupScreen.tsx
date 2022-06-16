@@ -23,7 +23,6 @@ import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
 interface IRingSetupScreen {
 	route: {
 		params: {
-			setWait: (arg0: boolean) => void;
 			/**
 			 * 	CIR-467: will by pass the ring setup for debuging puropose
 			 */
@@ -33,10 +32,8 @@ interface IRingSetupScreen {
 }
 
 export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
-	const { userService } = useServices();
+	const { userService, appStateService, bluetoothService, bleDeviceService, ringManagementService } = useServices();
 	const { format } = useI18n();
-	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
-	const { setWait } = props.route.params;
 	const { navigate } = useRoutesNavigation();
 	const pairingFailedBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const logger = useLogger("RingSetupScreen");
@@ -156,13 +153,16 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 												onPress={async () => {
 													bleDeviceService.stopScan();
 													setConnecting(true);
-													setWait(true);
+													appStateService.waitForRingRegistration.set(true);
 													try {
 														await bleDeviceService.connect(device);
 														await ringManagementService.registerConnectedRing();
 														setConnecting(false);
 														bleDeviceService.stopScan();
-														navigate(Routes.SetUpCompleted, { ringName: device.name, action: () => setWait(false) });
+														navigate(Routes.SetUpCompleted, {
+															ringName: device.name,
+															action: () => appStateService.waitForRingRegistration.set(false),
+														});
 													} catch (e) {
 														setConnecting(false);
 
@@ -173,7 +173,7 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 														} else {
 															setError(true);
 														}
-														setWait(false);
+														appStateService.waitForRingRegistration.set(false);
 													}
 												}}
 											>
