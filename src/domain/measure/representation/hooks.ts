@@ -103,6 +103,42 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					}
 				});
 			},
+			useMonthlyRHR(localISODay: ISODay = getCurrentLocalISODay()) {
+				const last30Days = getLast30Days(localISODay);
+
+				useEffect(
+					action(function () {
+						actions.setMonthlyRhrConstants();
+						last30Days.forEach((d) =>
+							actions.setDailyRestingHeartRate(d, shouldByPassCache(model.dailySleepMetrics, d))
+						);
+					}),
+					[localISODay]
+				);
+
+				const RHR30daysConstants = model.last30DRestingHeartRate.get(localISODay);
+				const isLoaded =
+					model.last30DRestingHeartRate.has(localISODay) &&
+					last30Days.every((date) => model.dailyRestingHeartRate.has(date)) &&
+					RHR30daysConstants;
+
+				if (!isLoaded) {
+					return { isLoading: true, RHR30daysMetrics: undefined, RHR30daysConstants: undefined };
+				}
+
+				const RHR30daysMetrics = last30Days.map((date) => {
+					return { value: model.dailyRestingHeartRate.get(date), date: date };
+				});
+
+				return {
+					isLoading: !isLoaded,
+					RHR30daysMetrics,
+					RHR30daysConstants: {
+						average: Number(RHR30daysConstants[MetricType.User30DaysAverageRHR]) ?? 0,
+						reference: Number(RHR30daysConstants[MetricType.UserReferenceRHR]) ?? 0,
+					},
+				};
+			},
 			use7DaysSleep(localISODay: ISODay): Sleep7D | undefined {
 				// Compute the 7 previous date from the given date
 				const last7Days = getLast7Days(localISODay);
@@ -1056,12 +1092,8 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					return {
 						series,
 						constant: {
-							average: constants[MetricType.User7DaysAverageRHR]
-								? Number(constants[MetricType.User7DaysAverageRHR])
-								: -1,
-							reference: constants[MetricType.User7DaysReferenceRHR]
-								? Number(constants[MetricType.User7DaysReferenceRHR])
-								: -1,
+							average: Number(constants[MetricType.User7DaysAverageRHR]) ?? 0,
+							reference: Number(constants[MetricType.UserReferenceRHR]) ?? 0,
 						},
 						controlState,
 					};

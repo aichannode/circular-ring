@@ -3,15 +3,12 @@ import { CalendarTag } from "@domain/calendar/calendar";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState, Points } from "@domain/measure/representation/api";
-import { TimeFrame } from "@domain/measure/type";
 import { useIsUSCS } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
-import { TimeFrameSwitcher } from "@ui/components/measure/timeFrameSwitcher";
 import { Spinner } from "@ui/components/spinner";
 import { Tag } from "@ui/components/tag";
-import { TitleText } from "@ui/components/text";
 import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -33,17 +30,17 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 }: Props) {
 	const { format } = useI18n();
 	const [isLoading, setLoading] = useState(true);
-	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
 	const isUSCS = useIsUSCS();
 	const [tags, setTags] = useState<CalendarTag[]>([]);
 	const {
 		measure: {
-			hooks: { useLast7DaysRHR },
+			hooks: { useLast7DaysRHR, useMonthlyRHR },
 		},
 		calendar: {
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
+	useMonthlyRHR();
 	const data = useLast7DaysRHR(selectedDay);
 	const lines: Points = data
 		? data.series
@@ -100,32 +97,7 @@ export const RestingHeartRate7DGraph: React.FC<Props> = observer(function Restin
 
 	return (
 		<View>
-			<TitleText style={{ marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-				{format("activity.resting_heart_rate")}
-			</TitleText>
-			<View style={{ display: "none" }}>
-				<TimeFrameSwitcher
-					setGraphPeriod={setGraphPeriod}
-					graphPeriod={graphPeriod}
-					color={colors.business.actuvityPrimary}
-					frames={[
-						{
-							label: "graph.time_frame.today",
-							duration: TimeFrame.TODAY,
-						},
-						{
-							label: "graph.time_frame.7days",
-							duration: TimeFrame.LAST_7_DAYS,
-						},
-						{
-							label: "graph.time_frame.all",
-							duration: TimeFrame.ALL,
-						},
-					]}
-				/>
-			</View>
-
-			<GraphContainer style={{ height: 400, marginTop: 20 }}>
+			<GraphContainer style={{ height: 400 }}>
 				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
 					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
 						{tags.map(({ name, id }) => (

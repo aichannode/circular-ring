@@ -145,6 +145,27 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
+
+		async setMonthlyRhrConstants(localISODay: ISODay = getCurrentLocalISODay(), useForceRefresh = false) {
+			Promise.all([
+				measureApi.fetchLastDailyMeasures([MetricType.User30DaysAverageRHR], localISODay, useForceRefresh),
+				measureApi.fetchLastDailyMeasures([MetricType.UserReferenceRHR], lifetimeDate, useForceRefresh),
+			]).then(function ([average, reference]) {
+				present([
+					{
+						type: "setMonthlyRhrConstants",
+						payload: {
+							localISODay,
+							constant: {
+								[MetricType.User30DaysAverageRHR]: average[MetricType.User30DaysAverageRHR],
+								[MetricType.UserReferenceRHR]: reference[MetricType.UserReferenceRHR],
+							},
+						},
+					},
+				]);
+			});
+		},
+
 		async pullMonthlySleepStageMetrics(
 			localISOMonth: ISOMonth = toISOMonth(getCurrentLocalISODay()),
 			useForceRefresh = false
@@ -624,7 +645,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async setDailyRestingHeartRate(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchOneDayMeasures([MetricType.UserDailyRHR], localISODay, useForceRefresh);
+			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailyRHR], localISODay, useForceRefresh);
 			present([
 				{
 					type: "setDailyRestingHeartRate",
@@ -638,7 +659,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		async setLast7DRestingHeartRate(localISODay: ISODay, useForceRefresh?: boolean) {
 			Promise.all([
 				measureApi.fetchLastDailyMeasures([MetricType.User7DaysAverageRHR], localISODay, useForceRefresh),
-				measureApi.fetchLastDailyMeasures([MetricType.User7DaysReferenceRHR], lifetimeDate, useForceRefresh),
+				measureApi.fetchLastDailyMeasures([MetricType.UserReferenceRHR], lifetimeDate, useForceRefresh),
 			]).then(function ([data, reference]) {
 				present([
 					{
@@ -647,7 +668,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 							localISODay,
 							constant: {
 								[MetricType.User7DaysAverageRHR]: data[MetricType.User7DaysAverageRHR],
-								[MetricType.User7DaysReferenceRHR]: reference[MetricType.User7DaysReferenceRHR],
+								[MetricType.UserReferenceRHR]: reference[MetricType.UserReferenceRHR],
 							},
 						},
 					},

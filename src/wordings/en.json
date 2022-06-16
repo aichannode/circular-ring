@@ -170,6 +170,7 @@
 	"activity.duration.title": "Activity duration",
 	"activity.resting_heart_rate": "Resting heart rate",
 	"activity.resting_heart_rate.reference": "Reference",
+	"activity.resting_heart_rate.30day": "30 day average",
 	"activity.energy_score": "Energy score",
 	"activity.energy_score.7day": "7 day average",
 	"activity.score.daily_metrics": "Daily metrics",

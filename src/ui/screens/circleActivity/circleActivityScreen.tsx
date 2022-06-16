@@ -32,15 +32,15 @@ import moment from "moment";
 import React, { useRef, useState } from "react";
 import { Image, LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
+import { HeartRateGraph } from "../circleSleep/heartRateGraph/heartRateGraph";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
 import { CaloriesBurnedGraph } from "./caloriesBurnedGraph";
 import { CardioPointsGraph } from "./cardioPointsGraph";
 import { DailyMetric } from "./dailyMetric";
 import { EnergyScoreGraph } from "./energyScoreGraph";
-import { HRGraph } from "./HRGraph/HRGraph";
 import { dailyActivitiesUIConfig, getActivityGaugesConfig } from "./measureDisplayInfos";
-import { RestingHeartRate7DGraph } from "./restingHeartRate7DGraph";
+import { RestingHeartRateGraphs } from "./restingHeartRateGraphs";
 import { StepsGraph } from "./StepsGraph";
 function getIcon(path: string) {
 	switch (path) {
@@ -135,6 +135,34 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 		],
 		excludes: coreSleepTiming ? [[moment(coreSleepTiming[0]).valueOf(), moment(coreSleepTiming[1]).valueOf()]] : [],
 	};
+
+	const graphs = [
+		<ActivityIntensityGraph
+			key={0}
+			selectedDay={selectedDay}
+			mode={screenModeWithoutDisabled}
+			dailyTrimOptions={dailyTrimOptions}
+			dataActivityIntensity={undefined}
+		/>,
+		<StepsGraph key={1} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,
+		<CaloriesBurnedGraph key={2} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,
+		<CardioPointsGraph key={3} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,
+		<EnergyScoreGraph
+			key={4}
+			selectedDay={selectedDay}
+			// XXX: Energy score should not be displayed in calibration mode.
+			// https://circularing.atlassian.net/browse/CIR-904
+			mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenModeWithoutDisabled))}
+		/>,
+		<HeartRateGraph
+			key={5}
+			selectedDay={selectedDay}
+			mode={screenModeWithoutDisabled}
+			dailyTrimOptions={dailyTrimOptions}
+		/>,
+		<RestingHeartRateGraphs key={6} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,
+	];
+
 	return (
 		<Container>
 			<View>
@@ -236,106 +264,83 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 			</ElementStack>
 
 			<ElementStack gap={10} style={{ display: "flex" }}>
-				{activeItem === 0 && (
-					<ActivityIntensityGraph
-						dataActivityIntensity={activityIntensity}
-						selectedDay={selectedDay}
-						mode={screenModeWithoutDisabled}
-						dailyTrimOptions={dailyTrimOptions}
-					/>
-				)}
-				{activeItem === 1 && <StepsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-				{activeItem === 2 && <CaloriesBurnedGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-				{activeItem === 3 && <CardioPointsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-				{activeItem === 4 && (
-					<EnergyScoreGraph
-						selectedDay={selectedDay}
-						// XXX: Energy score should not be displayed in calibration mode.
-						// https://circularing.atlassian.net/browse/CIR-904
-						mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenModeWithoutDisabled))}
-					/>
-				)}
-				{activeItem === 5 && (
-					<HRGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} dailyTrimOptions={dailyTrimOptions} />
-				)}
-				{activeItem === 6 && <RestingHeartRate7DGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-
-				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
-					<Row style={{ justifyContent: "center" }}>
-						<ImageContainer onPress={() => setActiveItem(0)}>
-							<GraphSwitcherButton
-								style={{ marginLeft: 0 }}
-								source={
-									activeItem === 0
-										? require(`@assets/images/circleActivity.png`)
-										: require(`@assets/images/circleActivityTransparent.png`)
-								}
-							/>
-						</ImageContainer>
-
-						<ImageContainer onPress={() => setActiveItem(1)}>
-							<GraphSwitcherButton
-								source={
-									activeItem === 1
-										? require(`@assets/images/numberOfSteps.png`)
-										: require(`@assets/images/numberOfStepsTransparent.png`)
-								}
-							/>
-						</ImageContainer>
-						<ImageContainer onPress={() => setActiveItem(2)}>
-							<GraphSwitcherButton
-								source={
-									activeItem === 2
-										? require(`@assets/images/caloriesBurned.png`)
-										: require(`@assets/images/caloriesBurnedTransparent.png`)
-								}
-							/>
-						</ImageContainer>
-
-						<ImageContainer onPress={() => setActiveItem(3)}>
-							<GraphSwitcherButton
-								source={
-									activeItem === 3
-										? require(`@assets/images/cardioPoints.png`)
-										: require(`@assets/images/cardioPointsTransparent.png`)
-								}
-							/>
-						</ImageContainer>
-					</Row>
-					<Row style={{ justifyContent: "center" }}>
-						<ImageContainer onPress={() => setActiveItem(4)}>
-							<GraphSwitcherButton
-								source={
-									activeItem === 4
-										? require(`@assets/images/energyScore.png`)
-										: require(`@assets/images/energyScoreTransparent.png`)
-								}
-							/>
-						</ImageContainer>
-
-						<ImageContainer onPress={() => setActiveItem(5)}>
-							<GraphSwitcherButton
-								source={
-									activeItem === 5
-										? require(`@assets/images/heartCircle.png`)
-										: require(`@assets/images/heartCircleTransparent.png`)
-								}
-							/>
-						</ImageContainer>
-
-						<ImageContainer onPress={() => setActiveItem(6)}>
-							<GraphSwitcherButton
-								source={
-									activeItem === 6
-										? require(`@assets/images/restingHeartRate.png`)
-										: require(`@assets/images/restingHeartRateTransparent.png`)
-								}
-							/>
-						</ImageContainer>
-					</Row>
-				</ElementStack>
+				{graphs[activeItem]}
 			</ElementStack>
 
+			<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
+				<Row style={{ justifyContent: "center" }}>
+					<ImageContainer onPress={() => setActiveItem(0)}>
+						<GraphSwitcherButton
+							style={{ marginLeft: 0 }}
+							source={
+								activeItem === 0
+									? require(`@assets/images/circleActivity.png`)
+									: require(`@assets/images/circleActivityTransparent.png`)
+							}
+						/>
+					</ImageContainer>
+
+					<ImageContainer onPress={() => setActiveItem(1)}>
+						<GraphSwitcherButton
+							source={
+								activeItem === 1
+									? require(`@assets/images/numberOfSteps.png`)
+									: require(`@assets/images/numberOfStepsTransparent.png`)
+							}
+						/>
+					</ImageContainer>
+					<ImageContainer onPress={() => setActiveItem(2)}>
+						<GraphSwitcherButton
+							source={
+								activeItem === 2
+									? require(`@assets/images/caloriesBurned.png`)
+									: require(`@assets/images/caloriesBurnedTransparent.png`)
+							}
+						/>
+					</ImageContainer>
+
+					<ImageContainer onPress={() => setActiveItem(3)}>
+						<GraphSwitcherButton
+							source={
+								activeItem === 3
+									? require(`@assets/images/cardioPoints.png`)
+									: require(`@assets/images/cardioPointsTransparent.png`)
+							}
+						/>
+					</ImageContainer>
+				</Row>
+				<Row style={{ justifyContent: "center" }}>
+					<ImageContainer onPress={() => setActiveItem(4)}>
+						<GraphSwitcherButton
+							source={
+								activeItem === 4
+									? require(`@assets/images/energyScore.png`)
+									: require(`@assets/images/energyScoreTransparent.png`)
+							}
+						/>
+					</ImageContainer>
+
+					<ImageContainer onPress={() => setActiveItem(5)}>
+						<GraphSwitcherButton
+							source={
+								activeItem === 5
+									? require(`@assets/images/heartCircle.png`)
+									: require(`@assets/images/heartCircleTransparent.png`)
+							}
+						/>
+					</ImageContainer>
+
+					<ImageContainer onPress={() => setActiveItem(6)}>
+						<GraphSwitcherButton
+							source={
+								activeItem === 6
+									? require(`@assets/images/restingHeartRate.png`)
+									: require(`@assets/images/restingHeartRateTransparent.png`)
+							}
+						/>
+					</ImageContainer>
+				</Row>
+			</ElementStack>
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
 				<View style={{ padding: 20 }}>
 					<CalendarView
