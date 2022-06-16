@@ -1,3 +1,10 @@
+## [1.0.11](https://gitlab.com/circularing/mobile/app/compare/v1.0.10...v1.0.11) (2022-06-16)
+
+
+### Bug Fixes
+
+* 30 days RHR Graph ([33b2739](https://gitlab.com/circularing/mobile/app/commit/33b273965281a7526f6aff84330a3ad1bf6b0016))
+
 ## [1.0.10](https://gitlab.com/circularing/mobile/app/compare/v1.0.9...v1.0.10) (2022-06-16)
 
 
