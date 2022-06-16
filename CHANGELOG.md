@@ -1,3 +1,10 @@
+## [1.0.13](https://gitlab.com/circularing/mobile/app/compare/v1.0.12...v1.0.13) (2022-06-16)
+
+
+### Bug Fixes
+
+* end onboarding before trying to update ring firmware ([512b506](https://gitlab.com/circularing/mobile/app/commit/512b506f17661fe66f5362ef8c1c346bccfc1f31))
+
 ## [1.0.12](https://gitlab.com/circularing/mobile/app/compare/v1.0.11...v1.0.12) (2022-06-16)
 
 
