@@ -57,7 +57,7 @@ export function Hypnogram({ data, mode = createActiveMode() }: Props) {
 			yColor={yColor}
 			yLabelFormat={yLabelFormat}
 			xLabelFormat={(tick) => formatHour(new Date(tick), is24h)}
-			xAxisPadding={15}
+			xAxisPadding={25}
 			tooltipYOffset={-30}
 			tooltipSize={{ width: 60, height: 30 }}
 			chartHeight={200}

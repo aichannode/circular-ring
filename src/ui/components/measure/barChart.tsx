@@ -28,6 +28,8 @@ interface BarChartProps {
 	horizontalPadding?: number;
 	labelCount?: number;
 	isTemperature?: boolean;
+	barWidth?: number;
+	labelCountForceX?: boolean;
 }
 
 export function BarChart({
@@ -48,6 +50,8 @@ export function BarChart({
 	horizontalPadding = 0.1,
 	labelCount,
 	isTemperature = false,
+	barWidth = 0.07,
+	labelCountForceX = true,
 }: BarChartProps) {
 	const [selectedX, setSelectedX] = useState<number | undefined>(-1);
 	const linspace = isDefined(yMin) && isDefined(yMax) ? ((yMax - yMin) * 10) / 100 : 0;
@@ -81,7 +85,7 @@ export function BarChart({
 		],
 
 		config: {
-			barWidth: 0.07,
+			barWidth: barWidth,
 		},
 	};
 
@@ -96,7 +100,7 @@ export function BarChart({
 		drawGridLines: false,
 		textSize: 10,
 		yOffset: 10,
-		labelCountForce: true,
+		labelCountForce: labelCountForceX,
 		textColor: processColor(xColor),
 		granularityEnabled: true,
 		axisLineColor: processColor("white"),

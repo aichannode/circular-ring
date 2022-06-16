@@ -124,12 +124,14 @@ export const TemperatureVariation30DGraph: React.FC<Props> = observer(function S
 							mode={updatedMode}
 							yMin={yMin}
 							yMax={yMax}
+							barWidth={0.4}
 							mapMarker={(el) =>
 								`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
 									el.y > 0 ? "+" + el.y : el.y
 								}`
 							}
 							isTemperature={true}
+							labelCountForceX={false}
 						/>
 						<View style={{ marginTop: 20 }}>
 							<GraphLegend

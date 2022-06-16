@@ -71,7 +71,7 @@ export function StepChart({
 	yAxisWidth = 10,
 	xLabelFormat = (x) => `${x}`,
 	xAxisNbTicks = 5,
-	xAxisPadding = 0,
+	xAxisPadding = 10,
 	leftPadding = xAxisPadding,
 	rightPadding = xAxisPadding,
 	hideXAxis = false,
@@ -272,8 +272,11 @@ export function StepChart({
 			yValues,
 			data,
 		};
-		resetTooltip();
 	}, [data, xMin, xMax, yMin, yMax, xValues, yValues]);
+
+	useEffect(() => {
+		resetTooltip();
+	}, [data]);
 
 	useUnmount(() => {
 		if (longPressTimeout.current) {

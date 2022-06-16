@@ -405,7 +405,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		async setMonthlyHRVConstants(localISODay: ISODay, useForceRefresh = false) {
 			Promise.all([
 				measureApi.fetchLastDailyMeasures([MetricType.UserMonthlyHRVAverage], localISODay, useForceRefresh),
-				measureApi.fetchLastDailyMeasures([MetricType.UserDailyReferenceHRV], lifetimeDate, useForceRefresh),
+				measureApi.fetchLastDailyMeasures([MetricType.UserDailyReferenceHRV], localISODay, useForceRefresh),
 			]).then(function ([constant, reference]) {
 				present([
 					{
