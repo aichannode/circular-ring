@@ -93,6 +93,17 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 			</OnboardingStack.Navigator>
 		);
 	}
+
+	if (!isOnboardingDone && !useByPass)
+		return (
+			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
+				<OnboardingStack.Screen name={Routes.OnboardingWearInfo} component={OnboardingWearInfoScreen} />
+				<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo1} component={OnboardingPersonalInfo1Screen} />
+				<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo2} component={OnboardingPersonalInfo2Screen} />
+				<OnboardingStack.Screen name={Routes.OnboardingTutorial} component={Tutorial} />
+			</OnboardingStack.Navigator>
+		);
+
 	if (
 		!wait &&
 		(updateState.status !== UpdateState.IDLE.status ||
@@ -108,19 +119,12 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 		);
 	}
 
-	return isOnboardingDone || useByPass ? (
+	return (
 		<HomeDrawer.Navigator
 			screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
 			drawerContent={() => <DrawerContent />}
 		>
 			<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} options={{ swipeEnabled: false }} />
 		</HomeDrawer.Navigator>
-	) : (
-		<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
-			<OnboardingStack.Screen name={Routes.OnboardingWearInfo} component={OnboardingWearInfoScreen} />
-			<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo1} component={OnboardingPersonalInfo1Screen} />
-			<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo2} component={OnboardingPersonalInfo2Screen} />
-			<OnboardingStack.Screen name={Routes.OnboardingTutorial} component={Tutorial} />
-		</OnboardingStack.Navigator>
 	);
 };
