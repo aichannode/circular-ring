@@ -1,3 +1,10 @@
+## [1.0.10](https://gitlab.com/circularing/mobile/app/compare/v1.0.9...v1.0.10) (2022-06-16)
+
+
+### Bug Fixes
+
+* Le bypass firmware update semble prendre le dessus sur le check de liaison à un compte ([c22dcf2](https://gitlab.com/circularing/mobile/app/commit/c22dcf2e73f3bdba08e04160014b926acf75744f))
+
 ## [1.0.9](https://gitlab.com/circularing/mobile/app/compare/v1.0.8...v1.0.9) (2022-06-15)
 
 
