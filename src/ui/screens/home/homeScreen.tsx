@@ -106,25 +106,26 @@ export const HomeScreen: React.FC = () => {
 
 	const data = [];
 	data.push(<SyncBanner onRetry={ringManagementService.syncData} />);
-	data.push(
-		<View style={{ paddingHorizontal: 6 }}>
-			<IfAdmin>
-				<PrimaryButton style={{ marginVertical: 8 }} onPress={() => sendLogsByEmail()}>
-					SEND LOGS BY EMAIL
-				</PrimaryButton>
-				<PrimaryButton style={{ marginVertical: 8 }} onPress={() => bleDeviceService.write("RWF1S15")}>
-					GENERATE RING DATA
-				</PrimaryButton>
-				<PrimaryButton onPress={feedService._DEBUG_resetAnswers}>RESET ANSWERS</PrimaryButton>
-				<PrimaryButton onPress={() => resetCache()}>CLEAR MEASURE AND CACHE</PrimaryButton>
-			</IfAdmin>
-			{notifications[0] && (
-				<Fade isVisible isAnimatedOnMount>
-					<Notification notification={notifications[0]} />
-				</Fade>
-			)}
-		</View>
-	);
+	if (__DEV__)
+		data.push(
+			<View style={{ paddingHorizontal: 6 }}>
+				<IfAdmin>
+					<PrimaryButton style={{ marginVertical: 8 }} onPress={() => sendLogsByEmail()}>
+						SEND LOGS BY EMAIL
+					</PrimaryButton>
+					<PrimaryButton style={{ marginVertical: 8 }} onPress={() => bleDeviceService.write("RWF1S15")}>
+						GENERATE RING DATA
+					</PrimaryButton>
+					<PrimaryButton onPress={feedService._DEBUG_resetAnswers}>RESET ANSWERS</PrimaryButton>
+					<PrimaryButton onPress={() => resetCache()}>CLEAR MEASURE AND CACHE</PrimaryButton>
+				</IfAdmin>
+				{notifications[0] && (
+					<Fade isVisible isAnimatedOnMount>
+						<Notification notification={notifications[0]} />
+					</Fade>
+				)}
+			</View>
+		);
 	Object.keys(recommendations).map((date, key) => {
 		const dateFormat = userSettings?.dateFormat === DateFormat.SI ? "DD/MM/YYYY" : "MM/DD/YYYY";
 		data.push(
