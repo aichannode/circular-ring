@@ -1,3 +1,10 @@
+# [1.1.0](https://gitlab.com/circularing/mobile/app/compare/v1.0.14...v1.1.0) (2022-06-20)
+
+
+### Features
+
+* add warning live ([4318c17](https://gitlab.com/circularing/mobile/app/commit/4318c17db8b74e60531b30a36332dd10d9654610))
+
 ## [1.0.14](https://gitlab.com/circularing/mobile/app/compare/v1.0.13...v1.0.14) (2022-06-16)
 
 
