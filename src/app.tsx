@@ -30,6 +30,8 @@ import "moment/locale/es";
 import "moment/locale/fr";
 import "moment/locale/it";
 import "moment/locale/nl";
+import CodePush from "react-native-code-push";
+import { options } from "@utils/codepush";
 
 // Setup Mobx for RN
 configure({
@@ -58,7 +60,7 @@ enableES5();
 const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: "white" } };
 
 // @refresh reset
-export const App = () => {
+const App = () => {
 	// For some reason it can't be done in the main script
 	const [locale, setLocale] = useState<LocaleType>(getPreferredLangageCode(Object.keys(translations)));
 	const [initialized, setInitialized] = useState(false);
@@ -145,3 +147,5 @@ export const App = () => {
 		) : null;
 	}
 };
+
+export default CodePush(options())(App);
