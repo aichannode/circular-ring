@@ -1,8 +1,10 @@
+import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { CheckBox } from "@ui/components/checkBox";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
+import { useObservable } from "micro-observables";
 import React, { useCallback, useEffect, useState } from "react";
 import { BackHandler, Image } from "react-native";
 import styled from "styled-components/native";
@@ -19,6 +21,10 @@ export const LiveTutorialBottomSheet: React.FC<LiveTutorialBottomSheetProps> = (
 	const { format } = useI18n();
 	const [step, setStep] = useState(TutorialStep.ONE);
 	const [tutorialHidden, setTutorialHidden] = useState(false);
+	const { appStateService } = useServices();
+	const showWarning = useObservable(appStateService.showLiveCircleWaringBottomSheet);
+	const [skipWarning, setSkipWarning] = useState(false);
+	const [hideTutorialWarning, setHideTutorialWarning] = useState(false);
 
 	const backToStepOne = useCallback(() => {
 		setStep(TutorialStep.ONE);
@@ -33,6 +39,31 @@ export const LiveTutorialBottomSheet: React.FC<LiveTutorialBottomSheetProps> = (
 			return () => BackHandler.removeEventListener("hardwareBackPress", backToStepOne);
 		}
 	}, [step]);
+
+	if (showWarning && !skipWarning)
+		return (
+			<Container>
+				<Stack gap={35} align="center" style={{ flex: 1, justifyContent: "space-evenly" }}>
+					<SecondaryText style={{ textAlign: "center" }}>{format("live.tutorial.not.medical.warning")}</SecondaryText>
+					<SecondaryText style={{ textAlign: "center" }}>{format("live.tutorial.not.medical.warning2")}</SecondaryText>
+				</Stack>
+				<Stack gap={60} align="center">
+					<CheckBox
+						value={hideTutorialWarning}
+						onChange={setHideTutorialWarning}
+						label="I understand, don’t show this message again"
+					/>
+					<PrimaryButton
+						onPress={() => {
+							setSkipWarning(true);
+							if (hideTutorialWarning) appStateService.showLiveCircleWaringBottomSheet.set(false);
+						}}
+					>
+						{format("continue")}
+					</PrimaryButton>
+				</Stack>
+			</Container>
+		);
 
 	return (
 		<Container>

@@ -23,4 +23,5 @@ export interface I_AppState {
 	userRings: NamedUserRing[];
 	userCircles: CircleEntity[];
 	waitForRingRegistration: boolean;
+	showLiveCircleWaringBottomSheet: boolean;
 }
