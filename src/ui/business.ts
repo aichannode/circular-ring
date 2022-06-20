@@ -36,7 +36,7 @@ export function getInitMode(
 	hasCompleteCoreSleep: boolean,
 	{ allowDisabled = true, allowCalibration = true }: { allowDisabled?: boolean; allowCalibration?: boolean } = {}
 ): Mode {
-	const isInCalibration = nbRemainingDays > 0;
+	const isInCalibration = nbRemainingDays > 11;
 	if (isInCalibration && allowCalibration) {
 		return createCalibrationMode(nbRemainingDays);
 	}

@@ -8,7 +8,7 @@ import { useNotifications, useRecommendations } from "@domain/feed/hooks";
 import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringManagementService";
 import { DateFormat } from "@domain/units";
-import { useUserSettings } from "@domain/user/hooks/useUser";
+import { useUserCalibrationRemainingDays, useUserSettings } from "@domain/user/hooks/useUser";
 import { PrimaryButton } from "@ui/components/buttons";
 import Fade from "@ui/components/fade";
 import { Spinner } from "@ui/components/spinner";
@@ -31,7 +31,8 @@ import { SyncBanner } from "./syncBanner";
 const BANNER_TO_LOAD_ON_END = 2;
 
 export const HomeScreen: React.FC = () => {
-	const { feedService, bluetoothService, bleDeviceService, appStateService, ringManagementService } = useServices();
+	const { userService, feedService, bluetoothService, bleDeviceService, appStateService, ringManagementService } =
+		useServices();
 	const [hideQuickaccess, setHideQuickaccess] = useState(true);
 	const syncState = useSyncState();
 	const previousScrollViewY = useRef(0);
@@ -103,29 +104,41 @@ export const HomeScreen: React.FC = () => {
 	const { format } = useI18n();
 	const notifications = useNotifications();
 	const { loading, result: recommendations } = useRecommendations();
+	const remainingDays = useUserCalibrationRemainingDays();
 
 	const data = [];
 	data.push(<SyncBanner onRetry={ringManagementService.syncData} />);
-	if (__DEV__)
-		data.push(
-			<View style={{ paddingHorizontal: 6 }}>
-				<IfAdmin>
-					<PrimaryButton style={{ marginVertical: 8 }} onPress={() => sendLogsByEmail()}>
-						SEND LOGS BY EMAIL
-					</PrimaryButton>
-					<PrimaryButton style={{ marginVertical: 8 }} onPress={() => bleDeviceService.write("RWF1S15")}>
-						GENERATE RING DATA
-					</PrimaryButton>
-					<PrimaryButton onPress={feedService._DEBUG_resetAnswers}>RESET ANSWERS</PrimaryButton>
-					<PrimaryButton onPress={() => resetCache()}>CLEAR MEASURE AND CACHE</PrimaryButton>
-				</IfAdmin>
-				{notifications[0] && (
-					<Fade isVisible isAnimatedOnMount>
-						<Notification notification={notifications[0]} />
-					</Fade>
-				)}
-			</View>
-		);
+	data.push(
+		<View style={{ paddingHorizontal: 6 }}>
+			<IfAdmin>
+				<PrimaryButton style={{ marginVertical: 8 }} onPress={() => sendLogsByEmail()}>
+					SEND LOGS BY EMAIL
+				</PrimaryButton>
+				<PrimaryButton style={{ marginVertical: 8 }} onPress={() => bleDeviceService.write("RWF1S15")}>
+					GENERATE RING DATA
+				</PrimaryButton>
+				<PrimaryButton onPress={feedService._DEBUG_resetAnswers}>RESET ANSWERS</PrimaryButton>
+				<PrimaryButton onPress={() => resetCache()}>CLEAR MEASURE AND CACHE</PrimaryButton>
+				<PrimaryButton
+					onPress={() => {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						//@ts-ignore
+						userService.user?.set?.({
+							...userService.user.get(),
+							calibrationRemainingDays: 12,
+						});
+					}}
+				>
+					ADD {remainingDays}
+				</PrimaryButton>
+			</IfAdmin>
+			{notifications[0] && (
+				<Fade isVisible isAnimatedOnMount>
+					<Notification notification={notifications[0]} />
+				</Fade>
+			)}
+		</View>
+	);
 	Object.keys(recommendations).map((date, key) => {
 		const dateFormat = userSettings?.dateFormat === DateFormat.SI ? "DD/MM/YYYY" : "MM/DD/YYYY";
 		data.push(

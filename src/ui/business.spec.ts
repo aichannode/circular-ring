@@ -40,8 +40,8 @@ test("update mode", function () {
 test("get init mode", function () {
 	expect(getInitMode(0, true)).toEqual(createActiveMode());
 	expect(getInitMode(0, false)).toEqual(createDisabledMode());
-	expect(getInitMode(3, true)).toEqual(createCalibrationMode(3));
-	expect(getInitMode(3, false)).toEqual(createCalibrationMode(3));
+	expect(getInitMode(12, true)).toEqual(createCalibrationMode(12));
+	expect(getInitMode(12, false)).toEqual(createCalibrationMode(12));
 });
 
 test("trimData", function () {
