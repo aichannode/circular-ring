@@ -140,7 +140,7 @@
 	"graph.time_frame.year": "Année",
 	"home.sync.syncing": "Récupération des données de la bague...",
 	"home.sync.send.to.server": "Envoi des données au serveur...",
-	"home.sync.error": "Echec de la synchronisation",
+	"home.sync.error": "Echec: {error}",
 	"home.sync.success": "Succès de la synchronisation",
 	"home.sync.retry": "Réessayer",
 	"home.circles.title": "Mes cercles",

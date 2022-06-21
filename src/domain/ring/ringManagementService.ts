@@ -20,6 +20,12 @@ export enum SyncState {
 	SUCCESS = "SUCCESS",
 }
 
+const syncErrors = new Set<string>([
+	"home.sync.error.fetching",
+	"home.sync.error.uploading",
+	"home.sync.error.processing",
+]);
+
 export class RingManagementService {
 	private logger = getLogger("💍 RingService");
 
@@ -52,8 +58,10 @@ export class RingManagementService {
 	async init() {
 		this.deviceService.monitoring.subscribe((monitoring) => {
 			// on ring connection without Timeout The ring get DDOS
-			if (monitoring) setTimeout(() => this.syncData(), 500);
-			else {
+			if (monitoring) {
+				this.logger.info("Device service monitoring restart sync");
+				setTimeout(() => this.syncData(), 500);
+			} else {
 				if (this._currentRingSyncState.get() === SyncState.SYNCING) {
 					this._currentRingSyncState.set(SyncState.ERROR);
 					setTimeout(() => this._currentRingSyncState.set(SyncState.NONE), syncFinishedTimeout);
@@ -71,8 +79,7 @@ export class RingManagementService {
 		this.logger.info(`🔧 registerConnectedRing Firmware Version: ${firmware}`);
 		if (id && firmware && deviceName) {
 			try {
-				const userRing = await this.ringApi.addRing({ id: id, firmware });
-				return userRing;
+				return await this.ringApi.addRing({ id: id, firmware });
 			} catch (e) {
 				await this.deviceService.disconnect({ dissociate: true });
 				throw e;
@@ -136,7 +143,7 @@ export class RingManagementService {
 	async syncData() {
 		this.logger.info("Sync Start");
 		const ring = this.appStateService.userRings.get().find((ring) => ring.connected);
-		if (this._currentRingSyncState.get() === SyncState.SYNCING) {
+		if (this._currentRingSyncState.get() !== SyncState.NONE) {
 			this.logger.info("Sync cancelled: Already Syncing");
 			return;
 		}
@@ -160,15 +167,17 @@ export class RingManagementService {
 			this.logger.info("FBC Quantity", dataQuantity);
 			this._FBCQuantity.set(dataQuantity);
 			this._currentRingSyncState.set(SyncState.SYNCING);
-			const allData = await new Promise<string>(async (resolve) => {
+			const allData = await new Promise<string>(async (resolve, error) => {
 				let data = waitingData ?? "";
 				try {
 					const unsubscribe = await this.deviceService.listen(Channel.DATA, Channel.DATA, async (value) => {
 						if (value === ringDataEOF) {
-							// FIXME This forces the ring to send an EOF to save the data.
-							//  This means that it might be the reason for https://circularing.atlassian.net/jira/software/projects/CIR/boards/1?selectedIssue=CIR-945
-							//  because if the ring stops sending data (bluetooth close ?) it will not save the data
-							//  probably needs rework
+							if (this._currentRingSyncState.get() !== SyncState.SYNCING) {
+								error(new Error("Bad state while fetching data."));
+								unsubscribe();
+								return;
+							}
+							this.logger.info("Saving FBCs in phone..., length: ", data.length);
 							await this.ringDataStorage.save(data);
 							unsubscribe();
 							resolve(data);
@@ -178,13 +187,21 @@ export class RingManagementService {
 								totalPacket: dataQuantity,
 							}));
 							data += value + "\n";
-							this._currentRingSyncState.set(SyncState.SYNCING);
+							if (this._currentRingSyncState.get() !== SyncState.SYNCING) {
+								error(new Error("Bad state while fetching data."));
+								unsubscribe();
+							}
 						}
 					});
 				} catch (err) {
-					this.logger.debug("error listenning", err);
+					this.logger.debug("error listening", err);
+					error(new Error("home.sync.error.sync"));
 				}
 			});
+			this._transmissionStatus.update((lastValues) => ({
+				packetTransmitted: 0,
+				totalPacket: 1,
+			}));
 			try {
 				// Api call
 				if (allData?.length) {
@@ -206,21 +223,20 @@ export class RingManagementService {
 				}
 				this._currentRingSyncState.set(allData !== ringDataEOF ? SyncState.SUCCESS : SyncState.NONE);
 				setTimeout(() => this._currentRingSyncState.set(SyncState.NONE), syncFinishedTimeout + 5000);
-				this._FBCQuantity.set(0);
 			} catch (e) {
-				this.logger.warn("An error occured during save. Storing data, length:", allData.length, "error:", e);
-				this._FBCQuantity.set(0);
-				await this.ringDataStorage.save(allData);
-				this.logger.warn("Data stored in phone memory");
-				throw e;
+				this.logger.warn("An error occurred during upload. Storing data, length:", allData.length, "error:", e);
+				throw new Error(
+					this._syncStatus.get() === "home.sync.processing" ? "home.sync.error.processing" : "home.sync.error.uploading"
+				);
 			}
-		} catch (e) {
+		} catch (e: any) {
 			this.logger.error("Error during sync:", e);
 			this._currentRingSyncState.set(SyncState.ERROR);
-			this._errorMessage.set("home.sync.error.unknown");
-			setTimeout(() => this._currentRingSyncState.set(SyncState.NONE), 1000);
-			this._FBCQuantity.set(0);
+			this._errorMessage.set(syncErrors.has(e?.message) ? e.message : "home.sync.error.unknown");
+			setTimeout(() => this._currentRingSyncState.set(SyncState.NONE), 10000);
 			throw e;
+		} finally {
+			this._FBCQuantity.set(0);
 		}
 		this._syncStatus.set("home.sync.fetching");
 	}

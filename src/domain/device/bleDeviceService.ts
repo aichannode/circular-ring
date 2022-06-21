@@ -639,6 +639,7 @@ export class BleDeviceService {
 		const subscription = device.monitorCharacteristicForService(NUServiceUUID, TXCharacteristicUUID, (err, charac) => {
 			if (err) {
 				this._monitoring.set(false);
+				this.onMessageReceived = new Signal();
 				this.logger.error("Error during monitoring", err);
 				subscription.remove();
 			} else {
