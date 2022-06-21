@@ -82,6 +82,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
 /**
@@ -186,6 +187,7 @@ android {
             manifestPlaceholders = [
                 appName: "Circular Dev",
             ]
+            resValue "string", "CodePushDeploymentKey", '"8GABzhWGNbmFmDXl5U2gmlBKADRmPxZ30TMqu"'
         }
         demo {
             dimension "environment"
@@ -195,6 +197,7 @@ android {
             manifestPlaceholders = [
                 appName: "Circular Demo",
             ]
+            resValue "string", "CodePushDeploymentKey", '"b_YSonY7DKWBEZJIX_8sKfQcLz4Y-ZZa0MmQI"'
         }
         staging {
             dimension "environment"
@@ -204,6 +207,7 @@ android {
             manifestPlaceholders = [
                 appName: "Circular Staging",
             ]
+            resValue "string", "CodePushDeploymentKey", '"03tMHY7M-PhS8Ib9A4eVhBLbMajPahuN14Mk4"'
         }
         prod {
             dimension "environment"
@@ -211,6 +215,7 @@ android {
             manifestPlaceholders = [
                 appName: "Circular",
             ]
+            resValue "string", "CodePushDeploymentKey", '"ZGqD0CutfkntN8CiPsJstDrcqYFFeaDDY3YN8"'
         }
     }
 
