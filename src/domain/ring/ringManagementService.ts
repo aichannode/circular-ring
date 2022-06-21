@@ -71,10 +71,10 @@ export class RingManagementService {
 		this.logger.info(`🔧 registerConnectedRing Firmware Version: ${firmware}`);
 		if (id && firmware && deviceName) {
 			try {
-				const userRing = await this.ringApi.addRing({ id, firmware });
+				const userRing = await this.ringApi.addRing({ id: id, firmware });
 				return userRing;
 			} catch (e) {
-				this.deviceService.disconnect({ dissociate: true });
+				await this.deviceService.disconnect({ dissociate: true });
 				throw e;
 			}
 		} else {

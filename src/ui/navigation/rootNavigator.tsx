@@ -38,20 +38,19 @@ export interface RootNavigatorProps {
 }
 
 export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }) => {
-	// const [wait, setWait] = useState(false);
 	const isAuthenticated = !!useAuthenticatedUserEmail();
 	const { appStateService, ringApi, bleDeviceService } = useServices();
 	const user = useUser();
 	const hasUser = !!user;
 	const deviceStored = useDeviceStored(); // useObservable(useServices().bleDeviceService.favoriteDevice);
 	const userRings = useObservable(appStateService.userRings);
+	const hasReachedHomeScreen = useObservable(appStateService.hasReachedHomeScreen);
 	const currentRing: UserRing = userRings.filter((ring) => ring.connected)[0];
 	const lastFirmwareVersion = useObservable(ringApi.firmwareVersion);
 	const [useByPass, setByPass] = useState(false);
 	const [byPassForcedFirmwareUpdate, setByPassForcedFirmwareUpdate] = useState(false);
 	const updateState = useObservable(bleDeviceService.updateState);
 	const wait = useWaitForRingRegistration();
-	console.log("WAIT", wait);
 	const {
 		cognitoAuthService: { payload },
 	} = useServices();
@@ -80,7 +79,7 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 		);
 	}
 
-	if (!useByPass && (wait || !deviceStored)) {
+	if (!useByPass && (wait || !deviceStored) && !hasReachedHomeScreen) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
 				{!hasUser && <OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />}
@@ -94,7 +93,7 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 		);
 	}
 
-	if (!isOnboardingDone && !useByPass)
+	if (!isOnboardingDone && !useByPass) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
 				<OnboardingStack.Screen name={Routes.OnboardingWearInfo} component={OnboardingWearInfoScreen} />
@@ -103,14 +102,12 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 				<OnboardingStack.Screen name={Routes.OnboardingTutorial} component={Tutorial} />
 			</OnboardingStack.Navigator>
 		);
+	}
 
-	if (
-		!wait &&
-		(updateState.status !== UpdateState.IDLE.status ||
-			(currentRing && lastFirmwareVersion !== currentRing.firmware && lastFirmwareVersion)) &&
-		!byPassForcedFirmwareUpdate
-	) {
-		console.log("RingFirmwareUpdate");
+	const firmwareIsNotTheLast = currentRing && lastFirmwareVersion !== currentRing.firmware && lastFirmwareVersion;
+	const isNotUpdating = updateState.status !== UpdateState.IDLE.status;
+
+	if (!wait && (isNotUpdating || firmwareIsNotTheLast) && !byPassForcedFirmwareUpdate) {
 		return (
 			<RingFirmwareUpdate
 				showCross={payload.get()?.["cognito:groups"]?.some((groupName) => groupName === "admin")}

@@ -20,6 +20,7 @@ export class AppStateService {
 	defaultCircles = observable<CircleEntity[]>([]);
 	waitForRingRegistration = observable(false);
 	showLiveCircleWaringBottomSheet = observable(true);
+	hasReachedHomeScreen = observable(false);
 
 	private get appState(): I_AppState {
 		return {

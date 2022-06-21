@@ -142,6 +142,7 @@ export class BleDeviceService {
 		private readonly appStateService: AppStateService
 	) {
 		this._favoriteDevice.subscribe((device) => {
+			this.logger.info("_favoriteDevice", device);
 			if (device) this.favoriteDeviceStorage.save(device);
 			return device;
 		});

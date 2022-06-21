@@ -55,6 +55,7 @@ export const HomeScreen: React.FC = () => {
 		if (setupState === DeviceSetupState.LOCATION_DISABLED && Platform.OS === "android") {
 			bleDeviceService.requestLocation();
 		}
+		appStateService.hasReachedHomeScreen.set(true);
 	}, []);
 
 	const sendLogsByEmail = async () => {
