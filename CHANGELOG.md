@@ -1,3 +1,10 @@
+## [1.1.2](https://gitlab.com/circularing/mobile/app/compare/v1.1.1...v1.1.2) (2022-06-21)
+
+
+### Bug Fixes
+
+* get the language of the phone instead of English hard coded ([2d3181e](https://gitlab.com/circularing/mobile/app/commit/2d3181ece825aea33468cd525a118e2c681ae500))
+
 ## [1.1.1](https://gitlab.com/circularing/mobile/app/compare/v1.1.0...v1.1.1) (2022-06-21)
 
 
