@@ -1,3 +1,10 @@
+# [1.2.0](https://gitlab.com/circularing/mobile/app/compare/v1.1.4...v1.2.0) (2022-06-21)
+
+
+### Features
+
+* added Codepush ([920cba6](https://gitlab.com/circularing/mobile/app/commit/920cba652ba63f1b543a93e3a44acab37d878dfa))
+
 ## [1.1.4](https://gitlab.com/circularing/mobile/app/compare/v1.1.3...v1.1.4) (2022-06-21)
 
 
