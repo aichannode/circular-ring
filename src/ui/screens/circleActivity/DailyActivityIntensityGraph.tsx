@@ -141,14 +141,6 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 		dataActivityIntensity?.controlState !== DataControlState.READY || parsedData.length === 0
 	);
 
-	if (isLoading) {
-		return (
-			<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-				<Spinner size={24} />
-			</View>
-		);
-	}
-
 	return (
 		<>
 			<Tags tags={isInDisabledMode(updatedMode) ? [] : tags} />

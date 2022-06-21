@@ -363,7 +363,7 @@
 	"onboarding.personal_info.error.born_date": "Birth date is required.",
 	"onboarding.personal_info.error.born_date_invalid": "Birth date is invalid.",
 	"onboarding.personal_info.error.default": "An error occurred.\nPlease try again later.",
-	"banner.calibration.title": "Calibration period",
+	"banner.calibration.title": "Calibration",
 	"banner.calibration.message": "Keep wearing your ring during the entirety of the {days} days calibration period for improved results!",
 	"banner.disturbances.title": "Disturbancess",
 	"calibration.recommandation.1": "Hi, {username}, this is Kira. I would like to welcome you to the Circular tribe! 👋\n\nYour Circular app will allow you to check your recommendations and detailed biometrics, set up an alarm clock, edit your alerts, and so much more!",

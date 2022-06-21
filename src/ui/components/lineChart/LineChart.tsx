@@ -159,7 +159,7 @@ export function LineChart({
 		centerAxisLabels: false,
 		drawAxisLine: true,
 		enabled: true,
-		granularity: 2,
+		granularity: 1,
 		drawLabels: true,
 		drawGridLines: false,
 		textSize: 10,
