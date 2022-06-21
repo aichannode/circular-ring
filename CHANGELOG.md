@@ -1,3 +1,10 @@
+## [1.1.1](https://gitlab.com/circularing/mobile/app/compare/v1.1.0...v1.1.1) (2022-06-21)
+
+
+### Bug Fixes
+
+* setup a new ring was failing if the api returned error 400 ([677bf69](https://gitlab.com/circularing/mobile/app/commit/677bf692e237ee3d1871f531e7ebb97b8de3cb69))
+
 # [1.1.0](https://gitlab.com/circularing/mobile/app/compare/v1.0.14...v1.1.0) (2022-06-20)
 
 
