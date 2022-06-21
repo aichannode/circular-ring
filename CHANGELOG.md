@@ -1,3 +1,10 @@
+## [1.1.3](https://gitlab.com/circularing/mobile/app/compare/v1.1.2...v1.1.3) (2022-06-21)
+
+
+### Bug Fixes
+
+* graph & recommandation ([0e1583a](https://gitlab.com/circularing/mobile/app/commit/0e1583a64e6bec23f757d34c940f3b92626c028b))
+
 ## [1.1.2](https://gitlab.com/circularing/mobile/app/compare/v1.1.1...v1.1.2) (2022-06-21)
 
 
