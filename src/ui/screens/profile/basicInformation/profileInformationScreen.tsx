@@ -15,6 +15,8 @@ import { WeightBottomSheet } from "@ui/screens/profile/basicInformation/weightBo
 import React, { useRef, useState } from "react";
 import { AdvancedInfoEditionBottomSheet } from "@ui/screens/profile/advancedInformation/advancedInfoEditionBottomSheet";
 import { advanceInfoI18nKey } from "@ui/screens/profile/advancedInformation/profileAdvancedInfoI18n";
+import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
+import { translations } from "../../../../wordings";
 
 export const ProfileInformationScreen = () => {
 	const { format, formatDate } = useI18n();
@@ -152,7 +154,7 @@ export const ProfileInformationScreen = () => {
 							await userService.updateUserInfo({ language: option });
 						},
 					}}
-					currentOption={user.language ?? Language.EN}
+					currentOption={user.language ?? getPreferredLangageCode(Object.keys(translations))}
 					onClose={() => editionBottomSheetRef.current?.close()}
 				/>
 			</CircularBottomSheet>
