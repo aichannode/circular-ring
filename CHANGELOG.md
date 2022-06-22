@@ -1,3 +1,15 @@
+# [1.2.0](https://gitlab.com/circularing/mobile/app/compare/v1.1.3...v1.2.0) (2022-06-22)
+
+
+### Bug Fixes
+
+* sync error now showing correctly, might fix data loss ([c69dc34](https://gitlab.com/circularing/mobile/app/commit/c69dc34fa5196c8725f94421d5fa745d90581b06))
+
+
+### Features
+
+* Transition and Fade on the recommendations ([ee37f05](https://gitlab.com/circularing/mobile/app/commit/ee37f059b4f97384bcbcca58b8443d299cdfe0b0))
+
 ## [1.1.4](https://gitlab.com/circularing/mobile/app/compare/v1.1.3...v1.1.4) (2022-06-22)
 
 
