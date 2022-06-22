@@ -9,6 +9,20 @@
 
 ### Features
 
+* Current Ring Firmware Banner in the Home, comment the Banner App version... ([dc15ef8](https://gitlab.com/circularing/mobile/app/commit/dc15ef865abb887aa8d701a281e7d8ae6bf40714))
+* Transition and Fade on the recommendations ([ee37f05](https://gitlab.com/circularing/mobile/app/commit/ee37f059b4f97384bcbcca58b8443d299cdfe0b0))
+
+# [1.2.0](https://gitlab.com/circularing/mobile/app/compare/v1.1.3...v1.2.0) (2022-06-22)
+
+
+### Bug Fixes
+
+* skip ring onboarding ([2bdb577](https://gitlab.com/circularing/mobile/app/commit/2bdb577af99054237cc092b1600a488f820b0fb0))
+* sync error now showing correctly, might fix data loss ([c69dc34](https://gitlab.com/circularing/mobile/app/commit/c69dc34fa5196c8725f94421d5fa745d90581b06))
+
+
+### Features
+
 * Transition and Fade on the recommendations ([ee37f05](https://gitlab.com/circularing/mobile/app/commit/ee37f059b4f97384bcbcca58b8443d299cdfe0b0))
 
 # [1.2.0](https://gitlab.com/circularing/mobile/app/compare/v1.1.3...v1.2.0) (2022-06-22)
