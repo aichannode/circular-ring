@@ -8,6 +8,7 @@ import styled from "styled-components/native";
 
 interface CircularButtonProps {
 	style?: StyleProp<ViewStyle>;
+	contentStyle?: StyleProp<ViewStyle>;
 	useOnBottomSheet?: boolean;
 	onPress: () => void;
 	light?: boolean;
@@ -17,6 +18,7 @@ interface CircularButtonProps {
 export const PrimaryButton: React.FC<CircularButtonProps> = ({
 	onPress,
 	style,
+	contentStyle,
 	useOnBottomSheet,
 	light,
 	disabled,
@@ -26,6 +28,7 @@ export const PrimaryButton: React.FC<CircularButtonProps> = ({
 
 	const content = (
 		<PrimaryContent
+			style={contentStyle}
 			light={light}
 			start={{ x: 0, y: 1 }}
 			end={{ x: 1, y: 0.5 }}
