@@ -1,3 +1,10 @@
+## [1.1.4](https://gitlab.com/circularing/mobile/app/compare/v1.1.3...v1.1.4) (2022-06-22)
+
+
+### Bug Fixes
+
+* sync error now showing correctly, might fix data loss ([c69dc34](https://gitlab.com/circularing/mobile/app/commit/c69dc34fa5196c8725f94421d5fa745d90581b06))
+
 ## [1.1.3](https://gitlab.com/circularing/mobile/app/compare/v1.1.2...v1.1.3) (2022-06-21)
 
 
