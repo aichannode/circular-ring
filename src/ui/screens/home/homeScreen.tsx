@@ -107,6 +107,18 @@ export const HomeScreen: React.FC = () => {
 	const { loading, result: recommendations } = useRecommendations();
 	const remainingDays = useUserCalibrationRemainingDays();
 
+	const recommendationsAnim = useRef(new Animated.Value(0)).current;
+	const animation = Animated.timing(recommendationsAnim, {
+		toValue: 200,
+		duration: 1500,
+		useNativeDriver: true,
+	});
+
+	useEffect(() => {
+		if (!loading) animation.start();
+		else animation.stop();
+	}, [recommendationsAnim]);
+
 	const data = [];
 	data.push(<SyncBanner onRetry={ringManagementService.syncData} />);
 	data.push(
@@ -140,22 +152,32 @@ export const HomeScreen: React.FC = () => {
 			)}
 		</View>
 	);
-	Object.keys(recommendations).map((date, key) => {
+	Object.keys(recommendations).map((date) => {
 		const dateFormat = userSettings?.dateFormat === DateFormat.SI ? "DD/MM/YYYY" : "MM/DD/YYYY";
 		data.push(
-			<View style={{ paddingHorizontal: 6 }} key={date}>
-				{date !== "today" && (
-					<View style={{ alignItems: "center", marginTop: 15 }}>
-						<Separator />
-						<MetaDataText style={{ paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray }}>
-							{date === "yesterday" ? format("global.yesterday").toUpperCase() : moment(date).format(dateFormat)}
-						</MetaDataText>
+			<Animated.View
+				style={{
+					top: -200,
+					flex: 1,
+					transform: [{ translateY: recommendationsAnim }],
+				}}
+			>
+				<Fade isVisible isAnimatedOnMount duration={1000}>
+					<View style={{ paddingHorizontal: 6 }} key={date}>
+						{date !== "today" && (
+							<View style={{ alignItems: "center", marginTop: 15 }}>
+								<Separator />
+								<MetaDataText style={{ paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray }}>
+									{date === "yesterday" ? format("global.yesterday").toUpperCase() : moment(date).format(dateFormat)}
+								</MetaDataText>
+							</View>
+						)}
+						{recommendations[date].map((banner) => {
+							return <Recommendation key={banner.id} recommendation={banner} style={{ margin: 10 }} />;
+						})}
 					</View>
-				)}
-				{recommendations[date].map((banner) => {
-					return <Recommendation key={banner.id} recommendation={banner} style={{ margin: 10 }} />;
-				})}
-			</View>
+				</Fade>
+			</Animated.View>
 		);
 	});
 	data.push(<SpinnerContainer>{loading && <Spinner size={20}></Spinner>}</SpinnerContainer>);
@@ -213,7 +235,7 @@ export const HomeScreen: React.FC = () => {
 					}
 					previousScrollViewY.current = positionY;
 				}}
-				onEndReached={(end) => {
+				onEndReached={() => {
 					if (!loading) appStateService.recommendationsCount.update((state) => state + BANNER_TO_LOAD_ON_END);
 				}}
 				refreshing={loading}
