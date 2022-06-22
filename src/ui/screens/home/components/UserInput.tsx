@@ -31,6 +31,7 @@ type Props = UserInputComponentConfigurationDto & {
 
 function Header({ title, isAnswered, isClosed }: UserInputConfiguration & { isClosed: boolean; isAnswered: boolean }) {
 	const { format } = useI18n();
+
 	return (
 		<View
 			style={{
@@ -46,9 +47,11 @@ function Header({ title, isAnswered, isClosed }: UserInputConfiguration & { isCl
 			}}
 		>
 			<Image style={{ marginRight: 20 }} source={ringGradient} />
-			<Strong style={{ flex: 1 }}>
-				<PrimaryText>{isAnswered ? format("home.kira.question.answered") : format(title)}</PrimaryText>
-			</Strong>
+			{(isAnswered || title) && (
+				<Strong style={{ flex: 1 }}>
+					<PrimaryText>{isAnswered ? format("home.kira.question.answered") : format(title)}</PrimaryText>
+				</Strong>
+			)}
 			<Image source={chevronTop} style={{ transform: [{ rotate: isClosed ? "180deg" : "0deg" }] }} />
 		</View>
 	);
