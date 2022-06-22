@@ -59,6 +59,7 @@ export class AppStateService {
 		this.userCircles.set([]);
 		this.defaultCircles.set([]);
 		this.showLiveCircleWaringBottomSheet.set(true);
+		this.hasReachedHomeScreen.set(false);
 	}
 
 	async init() {
