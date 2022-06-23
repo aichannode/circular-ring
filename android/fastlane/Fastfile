@@ -96,7 +96,7 @@ def changelog(flavor)
       app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
       owner_name: "#{APPCENTER_OWNER}")
     commits_count = number_of_commits - Integer(result["build_number"])
-    commits_count = commits_count >= 1 ? commits_count : 1
+    commits_count = commits_count >= 1 && commits_count < 20 ? commits_count : 1
   rescue
     commits_count = 1
   end
