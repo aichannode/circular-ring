@@ -87,7 +87,8 @@ def codepush(flavor)
     appcenter_codepush_release_react(
       app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
       owner_name: "#{APPCENTER_OWNER}",
-      deployment: "Production"
+      deployment: "Production",
+      target_version: load_json(json_path: "../package.json")["version"]
     )
   end
 end
