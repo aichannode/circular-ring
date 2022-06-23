@@ -7,6 +7,23 @@
 * a Activity graph as been accidentally replaced with a Sleep graph ([5e9c897](https://gitlab.com/circularing/mobile/app/commit/5e9c8976d3dfdea0f00c4ad0235d4178ce41170c))
 * force semantic release fix ([59c6f93](https://gitlab.com/circularing/mobile/app/commit/59c6f938e409cf2b0dced6d53c1b36e27448bc1f))
 * skip ring onboarding ([2bdb577](https://gitlab.com/circularing/mobile/app/commit/2bdb577af99054237cc092b1600a488f820b0fb0))
+* updated fastlane ([2d705fc](https://gitlab.com/circularing/mobile/app/commit/2d705fc6cafbf29d3e3d3ac46d4c3ff8ff300d4a))
+
+
+### Features
+
+* Current Ring Firmware Banner in the Home, comment the Banner App version... ([dc15ef8](https://gitlab.com/circularing/mobile/app/commit/dc15ef865abb887aa8d701a281e7d8ae6bf40714))
+* Transition and Fade on the recommendations ([ee37f05](https://gitlab.com/circularing/mobile/app/commit/ee37f059b4f97384bcbcca58b8443d299cdfe0b0))
+
+# [1.2.0](https://gitlab.com/circularing/mobile/app/compare/v1.1.4...v1.2.0) (2022-06-23)
+
+
+### Bug Fixes
+
+* 1.2.0-rc.1 [skip ci] ([1e12dfe](https://gitlab.com/circularing/mobile/app/commit/1e12dfe0152198d60f298a89ec1104371d19a2bf))
+* a Activity graph as been accidentally replaced with a Sleep graph ([5e9c897](https://gitlab.com/circularing/mobile/app/commit/5e9c8976d3dfdea0f00c4ad0235d4178ce41170c))
+* force semantic release fix ([59c6f93](https://gitlab.com/circularing/mobile/app/commit/59c6f938e409cf2b0dced6d53c1b36e27448bc1f))
+* skip ring onboarding ([2bdb577](https://gitlab.com/circularing/mobile/app/commit/2bdb577af99054237cc092b1600a488f820b0fb0))
 
 
 ### Features
