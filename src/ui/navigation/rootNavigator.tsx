@@ -28,6 +28,7 @@ import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
 import { useObservable } from "micro-observables";
 import React, { useEffect, useState } from "react";
 import { LocaleType, translations } from "../../wordings";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 
 const SetupStack = createNativeStackNavigator();
 const OnboardingStack = createNativeStackNavigator();
@@ -121,7 +122,16 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 			screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
 			drawerContent={() => <DrawerContent />}
 		>
-			<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} options={{ swipeEnabled: false }} />
+			<HomeDrawer.Screen
+				name={Routes.MainHome}
+				component={MainHomeNavigator}
+				options={({ route }) => {
+					const routeName = getFocusedRouteNameFromRoute(route);
+					return {
+						swipeEnabled: routeName === Routes.Home,
+					};
+				}}
+			/>
 		</HomeDrawer.Navigator>
 	);
 };
