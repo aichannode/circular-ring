@@ -32,13 +32,13 @@ import moment from "moment";
 import React, { useRef, useState } from "react";
 import { Image, LayoutAnimation, View } from "react-native";
 import styled from "styled-components/native";
-import { HeartRateGraph } from "../circleSleep/heartRateGraph/heartRateGraph";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
 import { CaloriesBurnedGraph } from "./caloriesBurnedGraph";
 import { CardioPointsGraph } from "./cardioPointsGraph";
 import { DailyMetric } from "./dailyMetric";
 import { EnergyScoreGraph } from "./energyScoreGraph";
+import { HRGraph } from "./HRGraph/HRGraph";
 import { dailyActivitiesUIConfig, getActivityGaugesConfig } from "./measureDisplayInfos";
 import { RestingHeartRateGraphs } from "./restingHeartRateGraphs";
 import { StepsGraph } from "./StepsGraph";
@@ -154,12 +154,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 			// https://circularing.atlassian.net/browse/CIR-904
 			mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenModeWithoutDisabled))}
 		/>,
-		<HeartRateGraph
-			key={5}
-			selectedDay={selectedDay}
-			mode={screenModeWithoutDisabled}
-			dailyTrimOptions={dailyTrimOptions}
-		/>,
+		<HRGraph key={5} selectedDay={selectedDay} mode={screenModeWithoutDisabled} dailyTrimOptions={dailyTrimOptions} />,
 		<RestingHeartRateGraphs key={6} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,
 	];
 
