@@ -83,11 +83,13 @@ def appcenter(flavor, apkName, notify)
 end
 
 def codepush(flavor)
-  appcenter_codepush_release_react(
-    app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
-    owner_name: "#{APPCENTER_OWNER}",
-    deployment: "Production"
-  )
+  Dir.chdir("..") do
+    appcenter_codepush_release_react(
+      app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
+      owner_name: "#{APPCENTER_OWNER}",
+      deployment: "Production"
+    )
+  end
 end
 
 def changelog(flavor)
