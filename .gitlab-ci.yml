@@ -70,6 +70,7 @@ android:build:prod:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - mkdir artifacts
   script:
+    - npm install -g appcenter-cli
     - npm ci --progress=false
     - npm run semver
     - npx jetifier
