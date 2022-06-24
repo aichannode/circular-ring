@@ -30,7 +30,7 @@ import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useRef, useState } from "react";
-import { Image, LayoutAnimation, View } from "react-native";
+import { Image, LayoutAnimation, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
@@ -221,6 +221,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 						.map((metric, index) => {
 							const uiConfig = activityContributorGaugesConfig[metric];
 							const percent = energyScoreDetails?.[metric].percent;
+							if (Platform.OS === "ios" && uiConfig.titleKey === "score.details.spo2.label") return null;
 							return [
 								<ScoreGauge
 									key={metric}
