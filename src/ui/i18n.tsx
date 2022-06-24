@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
 import { ColorValue } from "react-native";
-import { WordingKey } from "../wordings";
+import { WordingKey, translations } from "../wordings";
 import { Bold, Colored, Strong } from "./components/text";
 
 export type FormatterOptions = Partial<{
@@ -30,7 +30,11 @@ export function useI18n(options?: FormatterOptions) {
 		format: useCallback(
 			(key: WordingKey, values?: Record<string, string | number | boolean | Date | null | undefined> | undefined) => {
 				try {
-					return intl.formatMessage({ id: key }, { ...values, ...createXmlFormatters(options) }) as string;
+					return intl.formatMessage(
+						{ id: key, defaultMessage: translations.en[key] }, // Default message permits to fallback to English if
+						// there is missing translations
+						{ ...values, ...createXmlFormatters(options) }
+					) as string;
 				} catch (e) {
 					if (key === undefined) {
 						//						console.warn("[INTL] missing mandatory i18n key.");
