@@ -92,7 +92,11 @@ export const ProfileInformationScreen = () => {
 			<InfoListItem
 				name={format("profile_info.language")}
 				hasDisclosure
-				value={user.language ? format(advanceInfoI18nKey(languageKeys, user.language)) : format("profile_info.english")}
+				value={
+					user.language
+						? format(advanceInfoI18nKey(languageKeys, user.language))
+						: format(advanceInfoI18nKey(languageKeys, getPreferredLangageCode(Object.keys(translations))))
+				}
 				action={() => editionBottomSheetRef.current?.present()}
 			/>
 			<InfoListItem
