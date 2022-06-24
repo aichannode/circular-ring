@@ -15,7 +15,7 @@ import { colors, intensityColors, SignalQualityColors } from "@ui/styles/colors"
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import moment from "moment";
 import React, { useEffect, useRef } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { HeartBeatCard } from "./heartBeatCard";
 import { LiveTutorialBottomSheet } from "./liveTutorialBottomSheet";
@@ -136,11 +136,14 @@ export const CircleLiveScreen: React.FC = () => {
 							<TertiaryText>{format("live.hrv.label")}</TertiaryText>
 							{data?.hrv ? <DataValue>{data.hrv} ms</DataValue> : listening ? <Spinner size={19} /> : null}
 						</InfoCard>
-						<View style={{ flex: 1 }} />
-						{/*<InfoCard style={{ flex: 1 }}>*/}
-						{/*	<TertiaryText>{format("live.blood_ox.label")}</TertiaryText>*/}
-						{/*	{data?.spo2 ? <DataValue>{data.spo2} %</DataValue> : listening ? <Spinner size={19} /> : null}*/}
-						{/*</InfoCard>*/}
+						{Platform.OS === "ios" ? (
+							<View style={{ flex: 1 }} />
+						) : (
+							<InfoCard style={{ flex: 1 }}>
+								<TertiaryText>{format("live.blood_ox.label")}</TertiaryText>
+								{data?.spo2 ? <DataValue>{data.spo2} %</DataValue> : listening ? <Spinner size={19} /> : null}
+							</InfoCard>
+						)}
 					</Row>
 				</Stack>
 			</ResponsiveCenterView>
