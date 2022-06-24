@@ -170,6 +170,7 @@
 	"activity.score.daily_metrics": "Métricas diarias",
 	"activity.score.details": "Detalles de la puntuación energética",
 	"activity.intensity": "INTENSIDAD DE LA ACTIVIDAD",
+	"activity.resting_heart_rate.30day": "media de 30 días",
 	"score.quality.poor": "Pobre",
 	"score.quality.good": "Buena",
 	"score.quality.optimal": "Óptimo",

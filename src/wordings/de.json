@@ -169,6 +169,7 @@
   "activity.score.daily_metrics": "Tägliche Kennzahlen",
   "activity.score.details": "Details zur Energiebewertung",
   "activity.intensity": "AKTIVITÄTSINTENSITÄT",
+  "activity.resting_heart_rate.30day": "30-Tage-Durchschnitt",
   "score.quality.poor": "Schlecht",
   "score.quality.good": "Gut",
   "score.quality.optimal": "Optimal",
