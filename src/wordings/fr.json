@@ -170,6 +170,7 @@
 	"activity.score.details": "Détails du score d'énergie",
 	"activity.intensity": "INTENSITÉ DE L'ACTIVITÉ",
 	"score.quality.poor": "Mauvais",
+	"activity.resting_heart_rate.30day" : "Moyenne sur 30 jours",
 	"score.quality.good": "Bon",
 	"score.quality.optimal": "Optimal",
 	"score.details.recovery.label": "Récupération physique",

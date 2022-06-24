@@ -134,8 +134,8 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					isLoading: !isLoaded,
 					RHR30daysMetrics,
 					RHR30daysConstants: {
-						average: Number(RHR30daysConstants[MetricType.User30DaysAverageRHR]) ?? 0,
-						reference: Number(RHR30daysConstants[MetricType.UserReferenceRHR]) ?? 0,
+						average: Number(RHR30daysConstants[MetricType.User30DaysAverageRHR]) ?? -1,
+						reference: Number(RHR30daysConstants[MetricType.UserReferenceRHR]) ?? -1,
 					},
 				};
 			},
