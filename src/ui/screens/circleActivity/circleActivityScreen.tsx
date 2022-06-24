@@ -142,7 +142,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 			selectedDay={selectedDay}
 			mode={screenModeWithoutDisabled}
 			dailyTrimOptions={dailyTrimOptions}
-			dataActivityIntensity={undefined}
+			dataActivityIntensity={activityIntensity}
 		/>,
 		<StepsGraph key={1} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,
 		<CaloriesBurnedGraph key={2} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,

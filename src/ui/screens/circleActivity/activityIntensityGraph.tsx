@@ -47,10 +47,10 @@ export function ActivityIntensityGraph({
 							label: "graph.time_frame.7days",
 							duration: TimeFrame.LAST_7_DAYS,
 						},
-						{
-							label: "graph.time_frame.all",
-							duration: TimeFrame.ALL,
-						},
+						// {
+						// 	label: "graph.time_frame.all",
+						// 	duration: TimeFrame.ALL,
+						// },
 					]}
 				/>
 			</View>
