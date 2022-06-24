@@ -163,9 +163,9 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 								mode={updatedMode}
 								rows={[
 									{
-										label: format("hr.average"),
+										label: format("30day.average"),
 										element: {
-											key: "hr.average",
+											key: "30day.average",
 											node: (
 												<View
 													style={{

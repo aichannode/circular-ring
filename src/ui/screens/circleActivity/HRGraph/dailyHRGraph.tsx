@@ -92,13 +92,13 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 	if (isInActiveMode(updatedMode) && constant.reference !== -1) {
 		averages.push({
 			value: constant.reference,
-			color: colors.red,
+			color: colors.redLight,
 		});
 	}
 	if ((isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && constant.hr !== -1) {
 		averages.push({
 			value: constant.hr,
-			color: colors.redLight,
+			color: colors.red,
 		});
 	}
 
@@ -177,7 +177,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 															marginTop: 5,
 														}}
 													>
-														<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
+														<DashedLine dashGap={5} dashLength={10} dashColor={colors.red} />
 													</View>
 												),
 											},
@@ -195,7 +195,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 															marginTop: 5,
 														}}
 													>
-														<DashedLine dashGap={5} dashLength={10} dashColor={colors.red} />
+														<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
 													</View>
 												),
 											},
