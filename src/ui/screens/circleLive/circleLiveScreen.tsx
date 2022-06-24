@@ -136,10 +136,11 @@ export const CircleLiveScreen: React.FC = () => {
 							<TertiaryText>{format("live.hrv.label")}</TertiaryText>
 							{data?.hrv ? <DataValue>{data.hrv} ms</DataValue> : listening ? <Spinner size={19} /> : null}
 						</InfoCard>
-						<InfoCard style={{ flex: 1 }}>
-							<TertiaryText>{format("live.blood_ox.label")}</TertiaryText>
-							{data?.spo2 ? <DataValue>{data.spo2} %</DataValue> : listening ? <Spinner size={19} /> : null}
-						</InfoCard>
+						<View style={{ flex: 1 }} />
+						{/*<InfoCard style={{ flex: 1 }}>*/}
+						{/*	<TertiaryText>{format("live.blood_ox.label")}</TertiaryText>*/}
+						{/*	{data?.spo2 ? <DataValue>{data.spo2} %</DataValue> : listening ? <Spinner size={19} /> : null}*/}
+						{/*</InfoCard>*/}
 					</Row>
 				</Stack>
 			</ResponsiveCenterView>
