@@ -55,7 +55,6 @@ export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 								<Stack style={{ marginTop: circle.id === 0 ? -10 : 0 }} gap={circle.id === 0 ? -3 : 10} align="center">
 									<Image
 										resizeMode="center"
-										style={{ borderWidth: 1 }}
 										source={
 											isInSleepMode ? circlesService.getIcon(circle.sleepModeIcon) : circlesService.getIcon(circle.icon)
 										}
@@ -73,7 +72,7 @@ export const CirclesBanner: React.FC<CirclesProps> = ({ style }) => {
 
 const Container = styled(Stack)`
 	background-color: ${colors.white};
-	padding: 15px 0px;
+	padding: 15px 0;
 `;
 
 const CircleLabel = styled(PrimaryText)`
