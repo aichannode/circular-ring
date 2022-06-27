@@ -16,7 +16,7 @@ import { SetUpFailed } from "@ui/screens/onboarding/ringSetup/setUpFailed";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Image, Platform, View } from "react-native";
+import { Image, Linking, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
 
@@ -100,7 +100,7 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 												: "setup.scan.location_disabled.message"
 										)}
 									</DisabledMessage>
-									{Platform.OS === "android" && (
+									{Platform.OS === "android" ? (
 										<PrimaryButton
 											onPress={async () => {
 												bluetoothService.enable();
@@ -115,6 +115,14 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 													? "setup.scan.disabled.enable"
 													: "setup.scan.location_disabled.enable"
 											)}
+										</PrimaryButton>
+									) : (
+										<PrimaryButton
+											onPress={() => {
+												Linking.openURL("app-settings:");
+											}}
+										>
+											{format("setup.scan.disabled.button")}
 										</PrimaryButton>
 									)}
 								</Stack>
