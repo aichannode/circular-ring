@@ -53,7 +53,7 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 
 	return (
 		<>
-			<StyledPrimaryText>Current version</StyledPrimaryText>
+			<StyledPrimaryText>{format("updateFirmware.currentVersion")}</StyledPrimaryText>
 			<VersionContainer
 				style={{
 					shadowColor: "#000",
