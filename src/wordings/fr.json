@@ -157,6 +157,7 @@
 	"home.banner.kira.general.title": "GÉNÉRALITÉS",
 	"home.banner.kira.general.description": "J'ai remarqué que vous n'avez aucun cercle installé 🧐.Installer des cercles via le menu ajouter un cercle pour commencer à utiliser votre bague et recevoir des recommandations de ma part.",
 	"home.banner.common.select": "Choisissez-en un",
+	"home.banner.no_ring": "Pas de bague connectée",
 	"home.kira.question.answered": "C'est noté!",
 	"activity.duration.label.sport_end": "Fin du sport",
 	"activity.duration.label.sport_start": "Début du sport",

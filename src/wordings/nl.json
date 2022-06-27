@@ -158,6 +158,7 @@
 	"home.banner.kira.general.title": "ALGEMEEN",
 	"home.banner.kira.general.description": "Ik heb gemerkt dat u nog geen cirkels hebt geïnstalleerd 🧐.Installeer cirkels via het menu Een cirkel toevoegen om uw ring te gaan gebruiken en aanbevelingen van mij te ontvangen.",
 	"home.banner.common.select": "Kies er een.",
+	"home.banner.no_ring": "Er is geen ring aangesloten\n",
 	"home.kira.question.answered": "Genoteerd",
 	"activity.duration.label.sport_end": "Sport einde",
 	"activity.duration.label.sport_start": "Sport start",

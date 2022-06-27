@@ -157,6 +157,7 @@
   "home.banner.kira.general.title": "ALLGEMEIN",
   "home.banner.kira.general.description": "Mir ist aufgefallen, dass Sie keinen Kreis installiert haben 🧐.\n\nInstallieren Sie Kreise über das Menü „Kreis hinzufügen“, um Ihren Ring zu verwenden und Empfehlungen von mir zu erhalten.",
   "home.banner.common.select": "Auswählen",
+  "home.banner.no_ring": "Kein Ring ist angeschlossen",
   "home.kira.question.answered": "Zur Kenntnis genommen",
   "activity.duration.label.sport_end": "Sport Ende",
   "activity.duration.label.sport_start": "Sport Start",

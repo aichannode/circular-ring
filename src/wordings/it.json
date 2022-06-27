@@ -158,6 +158,7 @@
 	"home.banner.kira.general.title": "GENERALE",
 	"home.banner.kira.general.description": "Ho notato che non hai installato nessun circle 🧐.\nPer iniziare ad usare il tuo anello e ricevere i miei consigli, installa i circle utilizzando il menu Aggiungi un circle.",
 	"home.banner.common.select": "Scegline uno",
+	"home.banner.no_ring": "Non è collegato alcun anello",
 	"home.kira.question.answered": "Nota bene",
 	"activity.duration.label.sport_end": "Fine sport",
 	"activity.duration.label.sport_start": "Inizio sport",

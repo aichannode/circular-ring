@@ -158,6 +158,7 @@
 	"home.banner.kira.general.title": "GENERAL",
 	"home.banner.kira.general.description": "Me he dado cuenta de que no tienes ningún círculo instalado 🧐. Instala círculos a través del menú de añadir un círculo para empezar a usar tu anillo y recibir recomendaciones de mi parte.",
 	"home.banner.common.select": "Elige uno",
+	"home.banner.no_ring": "No hay ningún anillo conectado",
 	"home.kira.question.answered": "Anotado",
 	"activity.duration.label.sport_end": "Fin del deporte",
 	"activity.duration.label.sport_start": "Deporte inicio",

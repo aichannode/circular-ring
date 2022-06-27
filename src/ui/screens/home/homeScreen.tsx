@@ -28,6 +28,7 @@ import Mailer, { Attachment } from "react-native-mail";
 import styled from "styled-components/native";
 import { SyncBanner } from "./syncBanner";
 import { UpdateBanner } from "./updateBanner";
+import { NoRingBanner } from "@ui/screens/home/NoRingBanner";
 
 const BANNER_TO_LOAD_ON_END = 2;
 
@@ -122,6 +123,7 @@ export const HomeScreen: React.FC = () => {
 
 	const data = [];
 	data.push(<SyncBanner onRetry={ringManagementService.syncData} />);
+	data.push(<NoRingBanner />);
 	data.push(<UpdateBanner />);
 	data.push(
 		<View style={{ paddingHorizontal: 6 }}>
