@@ -15,6 +15,7 @@
 	"setup.scan.disabled.title": "Abilitazione del Bluetooth",
 	"setup.scan.disabled.message": "Per poter abbinare un anello Circular, accertati che il telefono abbia Bluetooth abilitato e che l'anello sia vicino ad esso.",
 	"setup.scan.disabled.enable": "Abilita il Bluetooth",
+	"setup.scan.disabled.button": "Vai alle impostazioni",
 	"setup.scan.location_disabled.title": "Abilita la posizione",
 	"setup.scan.location_disabled.message": "Per poter utilizzare la connessione Bluetooth con Androind, è necessario che la localizzazione del cellulare sia abilitata.",
 	"setup.scan.location_disabled.enable": "Abilita la posizione",
