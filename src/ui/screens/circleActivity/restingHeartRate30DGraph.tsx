@@ -3,6 +3,7 @@ import { CalendarTag } from "@domain/calendar/calendar";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState, Points } from "@domain/measure/representation/api";
+import { useIsUSCS } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
@@ -12,6 +13,7 @@ import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useState } from "react";
@@ -28,6 +30,7 @@ export const RestingHeartRate30DGraph: React.FC<Props> = observer(function Resti
 }: Props) {
 	const { format } = useI18n();
 	const [tags, setTags] = useState<CalendarTag[]>([]);
+	const isUSCS = useIsUSCS();
 	const {
 		measure: {
 			hooks: { useLast7DaysRHR, useMonthlyRHR },
@@ -110,8 +113,13 @@ export const RestingHeartRate30DGraph: React.FC<Props> = observer(function Resti
 					scaleXEnabled={true}
 					onSelect={(x) => toUpdateTag(x)}
 					xAxisContentInset={15}
+					// labelFormatter={(x, y) => {
+					// 	return y + "";
+					// }}
 					labelFormatter={(x, y) => {
-						return y + "";
+						return isUSCS
+							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
+							: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${Math.round(y)}`;
 					}}
 				/>
 				<View style={{ marginTop: 20 }}>
