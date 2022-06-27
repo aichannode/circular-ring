@@ -24,6 +24,35 @@
 ### Features
 
 * Current Ring Firmware Banner in the Home, comment the Banner App version... ([dc15ef8](https://gitlab.com/circularing/mobile/app/commit/dc15ef865abb887aa8d701a281e7d8ae6bf40714))
+* little banner no ring ([a30f42c](https://gitlab.com/circularing/mobile/app/commit/a30f42c380d76b9ff01e0d9892c0860cb56850db))
+* Transition and Fade on the recommendations ([ee37f05](https://gitlab.com/circularing/mobile/app/commit/ee37f059b4f97384bcbcca58b8443d299cdfe0b0))
+
+# [1.2.0](https://gitlab.com/circularing/mobile/app/compare/v1.1.4...v1.2.0) (2022-06-27)
+
+
+### Bug Fixes
+
+* 1.2.0-rc.1 [skip ci] ([1e12dfe](https://gitlab.com/circularing/mobile/app/commit/1e12dfe0152198d60f298a89ec1104371d19a2bf))
+* a Activity graph as been accidentally replaced with a Sleep graph ([5e9c897](https://gitlab.com/circularing/mobile/app/commit/5e9c8976d3dfdea0f00c4ad0235d4178ce41170c))
+* display wording weekends ([a4337d3](https://gitlab.com/circularing/mobile/app/commit/a4337d30918763a9c9ba23da6bfe6184e2ce31b9))
+* fix live popup ui, and display condition ([c2a2f22](https://gitlab.com/circularing/mobile/app/commit/c2a2f22b5c2cdd5383f5b0e96b670039b09d7791))
+* force semantic release fix ([59c6f93](https://gitlab.com/circularing/mobile/app/commit/59c6f938e409cf2b0dced6d53c1b36e27448bc1f))
+* graphs ([0274cd4](https://gitlab.com/circularing/mobile/app/commit/0274cd44581cf47b4eee8f2e10f17f1ef69cc506))
+* locale sync when logging out ([13bc79f](https://gitlab.com/circularing/mobile/app/commit/13bc79f8687dac2e9f9c098a47702e63a7ed7ce1))
+* only disable spo2 on iOS ([d027c8c](https://gitlab.com/circularing/mobile/app/commit/d027c8c860bfd442095932a4a4f14a177a7d71ae))
+* remove borders in the tutorial ([e73dd96](https://gitlab.com/circularing/mobile/app/commit/e73dd960c2c8964adee193dde6ec3a892b081810))
+* Remove SPO2 and Oxygen Saturation in all translations and fallback to english ([b61d2fa](https://gitlab.com/circularing/mobile/app/commit/b61d2fa0381edbc57de30c719ad793fda92ea016))
+* resting heart rate graph ([40a3ace](https://gitlab.com/circularing/mobile/app/commit/40a3aced081685744ba645d2671bd2438e06740a))
+* RHR graphs ([01aac5c](https://gitlab.com/circularing/mobile/app/commit/01aac5c3779d0b7c60684226e8c37583d64d24a2))
+* skip ring onboarding ([2bdb577](https://gitlab.com/circularing/mobile/app/commit/2bdb577af99054237cc092b1600a488f820b0fb0))
+* Swipe enabled for the drawer only in the Home ([21ddf8f](https://gitlab.com/circularing/mobile/app/commit/21ddf8fc5c00f4be20a1acb411d30a9bb3916e87))
+* update language ([db99226](https://gitlab.com/circularing/mobile/app/commit/db992266e0dd8356fa67a7cfb27d589a68b08c23))
+* updated fastlane ([2d705fc](https://gitlab.com/circularing/mobile/app/commit/2d705fc6cafbf29d3e3d3ac46d4c3ff8ff300d4a))
+
+
+### Features
+
+* Current Ring Firmware Banner in the Home, comment the Banner App version... ([dc15ef8](https://gitlab.com/circularing/mobile/app/commit/dc15ef865abb887aa8d701a281e7d8ae6bf40714))
 * Transition and Fade on the recommendations ([ee37f05](https://gitlab.com/circularing/mobile/app/commit/ee37f059b4f97384bcbcca58b8443d299cdfe0b0))
 
 # [1.2.0](https://gitlab.com/circularing/mobile/app/compare/v1.1.4...v1.2.0) (2022-06-27)
