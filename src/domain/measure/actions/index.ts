@@ -645,7 +645,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			]);
 		},
 		async setDailyRestingHeartRate(localISODay: ISODay, useForceRefresh?: boolean) {
-			const data = await measureApi.fetchLastDailyMeasures([MetricType.UserDailyRHR], localISODay, useForceRefresh);
+			const data = await measureApi.fetchOneDayMeasures([MetricType.UserDailyRHR], localISODay, useForceRefresh);
 			present([
 				{
 					type: "setDailyRestingHeartRate",
