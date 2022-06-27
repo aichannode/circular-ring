@@ -1,4 +1,5 @@
 import { useServices } from "@core/services";
+import { useLastAuthenticatedUserEmail } from "@domain/user/hooks/useUser";
 import { PrimaryButton, SecondaryButton, SimpleTextButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
@@ -19,7 +20,7 @@ export const LoginScreen = () => {
 	const { userService, ringApi } = useServices();
 	const { navigate } = useRoutesNavigation();
 
-	const [email, setEmail] = useState("");
+	const [email, setEmail] = useState(useLastAuthenticatedUserEmail() || "");
 	const [password, setPassword] = useState("");
 	const passwordFieldRef = useRef<TextInput | null>(null);
 
