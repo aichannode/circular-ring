@@ -166,6 +166,7 @@
 	"home.banner.kira.general.title": "GENERAL",
 	"home.banner.kira.general.description": "I've noticed that you do not have any circle installed 🧐.\n\nInstall circles through the add a circle menu to start using your ring and receive recommendations from me.",
 	"home.banner.common.select": "Pick one",
+	"home.banner.no_ring": "No ring is connected",
 	"home.kira.question.answered": "Duly noted",
 	"activity.duration.label.sport_end": "Sport end",
 	"activity.duration.label.sport_start": "Sport start",
