@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import React, { useCallback } from "react";
 import { FormatDateOptions, useIntl } from "react-intl";
 import { ColorValue } from "react-native";
-import { WordingKey, translations } from "../wordings";
+import { translations, WordingKey } from "../wordings";
 import { Bold, Colored, Strong } from "./components/text";
 
 export type FormatterOptions = Partial<{
@@ -126,7 +126,7 @@ export function useI18n(options?: FormatterOptions) {
 				return intl.formatMessage({ id: "alarm.everydays" });
 			} else if (weekdays.every((day) => days.includes(day))) {
 				return intl.formatMessage({ id: "alarm.weekdays" });
-			} else if (weekends.every((day) => days.includes(day))) {
+			} else if (days.length === 2 && weekends.every((day) => days.includes(day))) {
 				return intl.formatMessage({ id: "alarm.weekends" });
 			} else {
 				return days
