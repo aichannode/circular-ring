@@ -161,10 +161,11 @@ export class BleDeviceService {
 				this.fakeDeviceService.fakeDeviceEnabled,
 			],
 			(bleState, locationAndroid, connectionState, scanning, faked) => {
-				if (connectionState === DeviceConnectionState.CONNECTED || faked) {
+				
+          		if (connectionState === DeviceConnectionState.CONNECTED || faked) {
 					return DeviceSetupState.FINISHED;
 				}
-				if (bleState === State.PoweredOff) {
+				if (bleState === State.PoweredOff || bleState ===  State.Unauthorized) {
 					return DeviceSetupState.DISABLED;
 				}
 				if (Platform.OS === "android" && !locationAndroid) {

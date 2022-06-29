@@ -3,6 +3,7 @@ import { CalendarTag } from "@domain/calendar/calendar";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState, Points } from "@domain/measure/representation/api";
+import { useIsUSCS } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
@@ -12,6 +13,7 @@ import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
+import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useState } from "react";
@@ -28,6 +30,7 @@ export const RestingHeartRate30DGraph: React.FC<Props> = observer(function Resti
 }: Props) {
 	const { format } = useI18n();
 	const [tags, setTags] = useState<CalendarTag[]>([]);
+	const isUSCS = useIsUSCS();
 	const {
 		measure: {
 			hooks: { useLast7DaysRHR, useMonthlyRHR },
@@ -46,14 +49,14 @@ export const RestingHeartRate30DGraph: React.FC<Props> = observer(function Resti
 				};
 		  }).reverse()
 		: [];
-	const valueFormatter = lines.map(({ x }) => {
-		const day = moment(x).format("dd");
-		return day !== "Invalid date" ? day[0] : "";
-	});
 	const [yMin, yMax] =
-		lines.length > 0 ? [Math.min(...lines.map((line) => line.y)), Math.max(...lines.map((line) => line.y))] : [0, 0];
+		lines.length > 0
+			? [Math.min(...lines.filter(({ y }) => y != -1).map((line) => line.y)), Math.max(...lines.map((line) => line.y))]
+			: [0, 0];
 	const constant = RHR30daysConstants;
 	const averages: Averages = [];
+
+	console.log({ yMin, yMax });
 
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 
@@ -66,12 +69,12 @@ export const RestingHeartRate30DGraph: React.FC<Props> = observer(function Resti
 	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.reference !== 0) {
 		averages.push({
 			value: constant.reference,
-			color: colors.redOrange,
+			color: colors.redLight,
 		});
 	}
 
 	const toUpdateTag = (x: number) => {
-		const date = moment(lines[x].x).format("Y-MM-DD") as ISODay;
+		const date = moment(new Date(x)).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
 
@@ -90,22 +93,34 @@ export const RestingHeartRate30DGraph: React.FC<Props> = observer(function Resti
 					</View>
 				)}
 				<LineChart
-					yMin={yMin}
-					yMax={yMax}
+					labelCount={30}
+					averages={averages}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
-					daysItem={[{ lines: lines, color: colors.red }]}
-					averages={averages}
+					data={lines}
 					shouldShowLabel={true}
+					shouldShowMarker={true}
 					shouldDrawCircles={true}
 					graphColor={colors.red}
-					valueFormatter={valueFormatter}
-					shouldShowMarker={true}
+					valueFormatterPattern="EEEEE"
+					valueFormatter="date"
+					yMin={yMin}
+					yMax={yMax}
+					mode={updatedMode}
 					highlightPerTapEnabled={true}
+					isMultipleLines={false}
+					daysItem={[{ lines: lines, color: colors.red }]}
 					scaleXEnabled={true}
 					onSelect={(x) => toUpdateTag(x)}
-					isMultipleLines={true}
-					mode={updatedMode}
+					xAxisContentInset={15}
+					// labelFormatter={(x, y) => {
+					// 	return y + "";
+					// }}
+					labelFormatter={(x, y) => {
+						return isUSCS
+							? `${dayjs(new Date(x)).format("MM/DD/YYYY")}\n${Math.round(y)}`
+							: `${dayjs(new Date(x)).format("DD/MM/YYYY")}\n${Math.round(y)}`;
+					}}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<GraphLegend
@@ -118,7 +133,7 @@ export const RestingHeartRate30DGraph: React.FC<Props> = observer(function Resti
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
@@ -139,11 +154,11 @@ export const RestingHeartRate30DGraph: React.FC<Props> = observer(function Resti
 									node: (
 										<View
 											style={{
-												width: 40,
+												width: 30,
 												marginTop: 5,
 											}}
 										>
-											<DashedLine dashGap={5} dashLength={10} dashColor={colors.orange} />
+											<DashedLine dashGap={5} dashLength={10} dashColor={colors.redLight} />
 										</View>
 									),
 								},

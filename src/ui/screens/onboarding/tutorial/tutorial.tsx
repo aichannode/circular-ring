@@ -2,6 +2,7 @@ import { useServices } from "@core/services";
 import { useFetchCircles } from "@domain/circles/hooks";
 import { DateFormat } from "@domain/units";
 import { Spinner } from "@ui/components/spinner";
+import { useI18n } from "@ui/i18n";
 import { Routes, useAppRoute, useRoutesNavigation } from "@ui/navigation/routes";
 import { Recommendation } from "@ui/screens/home/feedEntities/Recommendation";
 import { colors } from "@ui/styles/colors";
@@ -17,7 +18,6 @@ import { FakeRecommendation } from "./FakeRecommendation";
 import { FourDot } from "./fourDot";
 import { Mask } from "./mask";
 import { recommendationData, recommendationDataFeed } from "./recomandation";
-import { useI18n } from "@ui/i18n";
 
 export const Tutorial = () => {
 	const route = useAppRoute<Routes.OnboardingTutorial>();
@@ -48,27 +48,26 @@ export const Tutorial = () => {
 	}, [birthDate, sex, weight, height]);
 
 	const getPositionOfExplanation = (step: number) => {
-		if (step === 0) return 200;
-		if (step === 1) return 270;
-		if (step === 2) return 425;
-		if (step === 3) return 110;
+		if (step === 0) return 400;
+		if (step === 1) return 505;
+		if (step === 2) return 300;
+		if (step === 3) return 440;
 		return 0;
 	};
 
 	return (
 		<Container>
+			<Explanation top={getPositionOfExplanation(step)} step={step} revert={step === 3 || step === 2}></Explanation>
 			<Mask masked={true}>
 				<FakeHeader></FakeHeader>
 			</Mask>
 			<SubContainer>
-				<Explanation top={getPositionOfExplanation(step)} step={step} revert={step === 3}></Explanation>
 				<Mask masked={step !== 0}>
 					<CirclesBanner></CirclesBanner>
 				</Mask>
 				<View style={{ height: 16, backgroundColor: "rgba(0, 0, 0, 0.65)" }}></View>
 				<Mask masked={step !== 1} top={0}>
 					<FakeQuiAccess />
-					{/* <View></View> */}
 				</Mask>
 				<View style={{ height: 16, backgroundColor: "rgba(0, 0, 0, 0.65)" }}></View>
 				<FakeRecommendation

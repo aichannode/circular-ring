@@ -469,7 +469,7 @@ export const activityScoreContributors = [
 	MetricType.UserDailyBodyRecovery,
 	MetricType.UserDailyWakeUpScore,
 	MetricType.UserDailyScoreBR,
-	MetricType.UserDailyScoreSPO2,
+	// MetricType.UserDailyScoreSPO2,
 	MetricType.UserDailyScoreHRV,
 	MetricType.UserDailyScoreRHR,
 	MetricType.UserDailySleepScoreVarTemperature,

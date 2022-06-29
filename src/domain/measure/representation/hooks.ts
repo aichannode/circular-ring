@@ -134,8 +134,8 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					isLoading: !isLoaded,
 					RHR30daysMetrics,
 					RHR30daysConstants: {
-						average: Number(RHR30daysConstants[MetricType.User30DaysAverageRHR]) ?? 0,
-						reference: Number(RHR30daysConstants[MetricType.UserReferenceRHR]) ?? 0,
+						average: Number(RHR30daysConstants[MetricType.User30DaysAverageRHR]) ?? -1,
+						reference: Number(RHR30daysConstants[MetricType.UserReferenceRHR]) ?? -1,
 					},
 				};
 			},
@@ -563,17 +563,17 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 								score: Number(data[MetricType.UserDailyScoreBR]),
 							}),
 						},
-						[MetricType.UserDailyScoreSPO2]: {
-							value: toOptional<number>(data, MetricType.UserDailyAsleepSPO2),
-							thresholdLow: getOrElse(data, MetricType.UserDailyScoreBRGoalMin, 0.8),
-							thresholdHigh: getOrElse(data, MetricType.UserDailyScoreBRGoalMax, 0.9),
-							percent: toOptional<number>(data, MetricType.UserDailyScoreSPO2),
-							controlState: getScoreControlStates({
-								thresholdLow: getOrElse(data, MetricType.UserDailyScoreBRGoalMin, 0.8),
-								thresholdHigh: getOrElse(data, MetricType.UserDailyScoreBRGoalMax, 0.9),
-								score: Number(data[MetricType.UserDailyScoreSPO2]),
-							}),
-						},
+						// [MetricType.UserDailyScoreSPO2]: {
+						// 	value: toOptional<number>(data, MetricType.UserDailyAsleepSPO2),
+						// 	thresholdLow: getOrElse(data, MetricType.UserDailyScoreBRGoalMin, 0.8),
+						// 	thresholdHigh: getOrElse(data, MetricType.UserDailyScoreBRGoalMax, 0.9),
+						// 	percent: toOptional<number>(data, MetricType.UserDailyScoreSPO2),
+						// 	controlState: getScoreControlStates({
+						// 		thresholdLow: getOrElse(data, MetricType.UserDailyScoreBRGoalMin, 0.8),
+						// 		thresholdHigh: getOrElse(data, MetricType.UserDailyScoreBRGoalMax, 0.9),
+						// 		score: Number(data[MetricType.UserDailyScoreSPO2]),
+						// 	}),
+						// },
 						[MetricType.UserDailyScoreHRV]: {
 							value: toOptional<number>(data, MetricType.UserDailyAsleepHRV),
 							thresholdLow: getOrElse(data, MetricType.UserDailyScoreHRVGoalMin, 0.8),

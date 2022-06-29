@@ -136,7 +136,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 								mode={updatedMode}
 								rows={[
 									{
-										label: format("hr.average"),
+										label: format("activity.energy_score.7day"),
 										element: {
 											key: "temperature.average",
 											node: (

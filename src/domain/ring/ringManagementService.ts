@@ -69,7 +69,7 @@ export class RingManagementService {
 			}
 		});
 		// Sync ring data each 30 min
-		setInterval(() => this.syncData(), 30 * 60 * 1000);
+		setInterval(() => this.syncData(), 5 * 60 * 1000);
 	}
 
 	async registerConnectedRing() {
