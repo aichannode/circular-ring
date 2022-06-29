@@ -220,6 +220,8 @@
 	"profile.global_score.label": "Global score",
 	"profile.list_header.profile": "Profile",
 	"profile.list.profile_information": "Profile Information",
+	"profile.profile_pic_too_large": "Image is too large",
+	"profile.profile_pic_error": "Error uploading picture",
 	"profile_info.basic_info": "Basic info",
 	"profile_info.other": "Other",
 	"profile_info.name": "Name",
@@ -744,6 +746,6 @@
 	"sport.waterPolo" : "Water polo",
 	"sport.weightlifting" : "Weightlifting",
 	"sport.wrestling" : "Wrestling",
-	"sport.yoga" : "Yoga"
-
+	"sport.yoga" : "Yoga",
+	"general.error.title": "Error",
 }
