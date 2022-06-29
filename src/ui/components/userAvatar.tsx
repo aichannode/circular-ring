@@ -19,12 +19,17 @@ export const UserAvatar = () => {
 		const image = await launchImageLibrary({ mediaType: "photo" });
 		if (image.didCancel) return;
 		if (image.assets !== undefined) {
-			const { uri, fileName, type } = image?.assets[0];
+			const { uri, fileName, type, fileSize } = image?.assets[0];
+
+			if (fileSize ?? 0 >= 10 * 1024 * 1024) {
+				Alert.alert(format("general.error.title"), format("profile.profile_pic_too_large"));
+			}
+
 			try {
 				if (uri !== undefined && fileName !== undefined && type !== undefined)
 					await userService.uploadProfilPicture(uri, fileName, type);
 			} catch (err) {
-				Alert.alert("Error", "Error uploading picture");
+				Alert.alert(format("general.error.title"), format("profile.profile_pic_error"));
 			}
 		}
 	};
