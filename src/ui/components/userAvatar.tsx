@@ -21,7 +21,7 @@ export const UserAvatar = () => {
 		if (image.assets !== undefined) {
 			const { uri, fileName, type, fileSize } = image?.assets[0];
 
-			if (fileSize ?? 0 >= 10 * 1024 * 1024) {
+			if ((fileSize ?? 0) >= 10 * 1024 * 1024) {
 				Alert.alert(format("general.error.title"), format("profile.profile_pic_too_large"));
 				return;
 			}
