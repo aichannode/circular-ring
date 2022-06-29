@@ -60,7 +60,7 @@ export const StrideBottomSheet = ({ onSaved }: StrideBottomSheetProps) => {
 				animatedScrollToDefaultIndex={false}
 			/>
 			<SecondaryText
-				style={{ color: colors.primary }}
+				style={{ color: colors.primary, textAlign: "center" }}
 				onPress={() => {
 					// TODO API WAIT
 					setStride(80);
@@ -89,6 +89,7 @@ const TopContainer = styled.View``;
 const Title = styled.Text`
 	${textStyles.mediumTitle};
 	margin-top: 30px;
+	text-align: center;
 `;
 
 const ErrorMessage = styled.Text`
