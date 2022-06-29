@@ -5,6 +5,7 @@ import { useDeviceStored } from "@domain/device/hooks";
 import { UserRing } from "@domain/ring/ring";
 import { useAuthenticatedUserEmail, useUser } from "@domain/user/hooks/useUser";
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { DrawerContent } from "@ui/navigation/drawer/drawerContent";
 import { MainHomeNavigator } from "@ui/navigation/MainHomeNavigator";
@@ -28,7 +29,6 @@ import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
 import { useObservable } from "micro-observables";
 import React, { useEffect, useState } from "react";
 import { LocaleType, translations } from "../../wordings";
-import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 
 const SetupStack = createNativeStackNavigator();
 const OnboardingStack = createNativeStackNavigator();
