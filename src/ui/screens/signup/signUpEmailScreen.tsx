@@ -42,10 +42,11 @@ export const SignUpEmailScreen = () => {
 			await userService.signUpWithEmail(email, password);
 			setLoading(false);
 			navigate(Routes.SignUpConfirmationCode);
-		} catch (error) {
+		} catch (error: any) {
+			const isUsernameExist = error.code === "UsernameExistsException";
 			logger.warn("Error : " + JSON.stringify(error));
 			setLoading(false);
-			setErrorMessage(format("signup.error.default"));
+			setErrorMessage(format(isUsernameExist ? "signup.error.username_exists" : "signup.error.default"));
 		}
 	}, []);
 

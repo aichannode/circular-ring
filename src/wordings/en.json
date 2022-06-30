@@ -87,6 +87,7 @@
 	"signup.error.password_format": "Password must be at least 8 characters, 1 lowercase, 1 uppercase, 1 digit and 1 special character.",
 	"signup.error.password_confirm": "Password fields are not identical.",
 	"signup.error.default": "An error occurred.\nPlease try again later.",
+	"signup.error.username_exists": "This email is already in use",
 	"signup_code.title": "Check your inbox!",
 	"signup_code.description": "Enter the 6-digit code that we sent to <strong>{email}</strong> to activate your account. Please check your spam folder.",
 	"signup_code.resend_button": "Resend Code",

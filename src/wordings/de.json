@@ -86,6 +86,7 @@
   "signup.error.password_format": "Das Passwort muss aus mindestens 8 Zeichen bestehen, davon 1 Kleinbuchstabe, 1 Großbuchstabe, 1 Ziffer und 1 Sonderzeichen.",
   "signup.error.password_confirm": "Die Passwortfelder stimmen nicht überein.",
   "signup.error.default": "Ein Fehler ist aufgetreten.\nBitte versuche es später erneut.",
+  "signup.error.username_exists": "Diese E-Mail-Adresse wird schon verwendet",
   "signup_code.title": "Prüfen Sie Ihren Posteingang!",
   "signup_code.description": "Geben Sie den 6-stelligen Code ein, den wir an <strong>{email}</strong> geschickt haben, um Ihr Konto zu aktivieren. Bitte überprüfen Sie Ihren Spam-Ordner.",
   "signup_code.resend_button": "Code erneut senden",

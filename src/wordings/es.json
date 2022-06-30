@@ -87,6 +87,7 @@
 	"signup.error.password_format": "La contraseña debe tener al menos 8 caracteres, 1 minúscula, 1 mayúscula, 1 dígito y 1 carácter especial.",
 	"signup.error.password_confirm": "Los campos de la contraseña no son idénticos.",
 	"signup.error.default": "Se ha producido un error. Por favor, inténtalo más tarde.",
+	"signup.error.username_exists": "Este correo electrónico ya está en uso",
 	"signup_code.title": "Compruebe su bandeja de entrada.",
 	"signup_code.description": "Introduzca el código de 6 dígitos que hemos enviado a <strong>{email}</strong> para activar su cuenta. Por favor, compruebe su carpeta de spam.",
 	"signup_code.resend_button": "Reenviar código",
