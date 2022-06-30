@@ -86,6 +86,7 @@
 	"signup.error.password_format": "Le mot de passe doit comporter au moins 8 caractères, 1 minuscule, 1 majuscule, 1 chiffre et 1 caractère spécial.",
 	"signup.error.password_confirm": "Les champs du mot de passe ne sont pas identiques.",
 	"signup.error.default": "Une erreur s'est produite.\nVeuillez réessayer plus tard.",
+	"signup.error.username_exists": "Cet e-mail est déjà utilisée",
 	"signup_code.title": "Vérifiez votre boîte de réception !",
 	"signup_code.description": "Entrez le code à 6 chiffres que nous avons envoyé à <strong>{email}</strong> pour activer votre compte. Veuillez vérifier votre dossier spam.",
 	"signup_code.resend_button": "Renvoyer le code",

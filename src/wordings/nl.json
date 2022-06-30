@@ -87,6 +87,7 @@
 	"signup.error.password_format": "Wachtwoord moet bestaan uit minstens 8 tekens, 1 kleine letter, 1 hoofdletter, 1 cijfer en 1 speciaal teken.",
 	"signup.error.password_confirm": "De wachtwoordvelden zijn niet identiek.",
 	"signup.error.default": "Er is een fout opgetreden. Probeer het later nog eens.",
+	"signup.error.username_exists": "Deze email is al in gebruik",
 	"signup_code.title": "Controleer uw inbox!",
 	"signup_code.description": "Voer de 6-cijferige code in die we naar <strong>{email}</strong> hebben gestuurd om uw account te activeren. Controleer uw spam-map.",
 	"signup_code.resend_button": "Code opnieuw verzenden",
