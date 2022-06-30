@@ -165,6 +165,7 @@
 	"activity.duration.total": "Sport total",
 	"activity.active.minutes": "Minutes d'activité",
 	"activity.duration.title": "Durée de l'activité",
+	"activity.details.title": "Détails de l'activité",
 	"activity.resting_heart_rate": "Fréquence cardiaque au repos",
 	"activity.resting_heart_rate.reference": "Référence",
 	"activity.energy_score": "Score d'énergie",
