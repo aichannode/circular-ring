@@ -38,6 +38,7 @@ interface InfoListItemProps<T> {
 	errorMessage?: string;
 	loading?: boolean;
 	disabled?: boolean;
+	forceRightOption?: boolean;
 	children?: React.ReactElement;
 	lightTheme?: boolean;
 }
@@ -56,6 +57,7 @@ export function InfoListItem<T>({
 	style,
 	errorMessage,
 	loading,
+	forceRightOption,
 	disabled = false,
 	children,
 	lightTheme = false,
@@ -84,6 +86,7 @@ export function InfoListItem<T>({
 									currentOption={switchValue}
 									onSelectOption={onSwitchSelect}
 									disabled={disabled}
+									forceRightOption={forceRightOption}
 								/>
 							)}
 						</>

@@ -8,6 +8,7 @@ interface SwitchProps<T> {
 	currentOption: T;
 	onSelectOption: (option: T) => void;
 	containerBgColor: string;
+	forceRightOption?: boolean;
 	disabled?: boolean;
 	styles?: any;
 }
@@ -18,10 +19,15 @@ export function Switch<T>({
 	onSelectOption,
 	containerBgColor,
 	disabled = false,
+	forceRightOption = false,
 	styles,
 }: SwitchProps<T>) {
 	const leftSelected = currentOption === options[0];
 	const rightSelected = currentOption === options[1];
+
+	const isNoSelection = !leftSelected && !rightSelected;
+
+	const isTest = forceRightOption && isNoSelection ? true : false;
 
 	return (
 		<Container
@@ -38,9 +44,9 @@ export function Switch<T>({
 				</UnselectedLeftBackground>
 			</LeftOption>
 			<RightOption onPress={() => (disabled ? null : onSelectOption(options[1]))}>
-				<UnselectedRightBackground visible={!rightSelected} bgColor={containerBgColor}>
+				<UnselectedRightBackground visible={isTest ? false : !rightSelected} bgColor={containerBgColor}>
 					<OptionText
-						selected={rightSelected}
+						selected={isTest || rightSelected}
 						disabled={disabled}
 						bgColor={containerBgColor}
 						style={{ marginRight: 2 }}

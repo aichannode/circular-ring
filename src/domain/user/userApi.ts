@@ -2,12 +2,12 @@ import { ApiService } from "@core/api/apiService";
 import { addRequestInterceptor } from "@core/api/interceptors/interceptor";
 import { serializeArrayParametersInterceptor } from "@core/api/interceptors/serializeArrayParametersInterceptor";
 import { AdvancedInfo } from "@domain/user/advancedInfo";
+import { DailyGoals } from "@domain/user/goals.model";
 import { Sex, User } from "@domain/user/user";
 import { UserSettings } from "@domain/user/userSettings";
 import axios, { AxiosInstance } from "axios";
 import { userSettingsFromDto } from "./business";
 import { UserDto, UserPutDto, UserSettingsDto } from "./type";
-import { DailyGoals } from "@domain/user/goals.model";
 
 export class UserApi {
 	private readonly instance: AxiosInstance;
@@ -51,7 +51,7 @@ export class UserApi {
 	/** User Settings **/
 
 	async getUserSettings(): Promise<UserSettings> {
-		const result = await this.apiService.get<UserSettingsDto>("/user/setting");
+		const result = await this.apiService.get<UserSettingsDto>("/user/setting", {useForceRefresh: true})
 		return userSettingsFromDto(result.data);
 	}
 

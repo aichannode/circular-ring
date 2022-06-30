@@ -1,45 +1,22 @@
-import { useServices } from "@core/services";
 import { DateFormat } from "@domain/units";
 import { useUserSettings } from "@domain/user/hooks/useUser";
 import { PrimaryButton } from "@ui/components/buttons";
 import { ResponsiveCenterView } from "@ui/components/layout";
-import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
-import { textStyles } from "@ui/styles/textStyles";
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { Text, View } from "react-native";
 import styled from "styled-components/native";
 
 interface DateFormatBottomSheetProps {
-	onSaved: () => void;
+	dateFormat: DateFormat;
+	setDateFormat: React.Dispatch<React.SetStateAction<DateFormat>>;
+	onSaved: (dateFormat: DateFormat) => void;
 }
-export const DateFormatBottomSheet: React.FC<DateFormatBottomSheetProps> = ({ onSaved }) => {
+export const DateFormatBottomSheet: React.FC<DateFormatBottomSheetProps> = ({ dateFormat, setDateFormat, onSaved }) => {
 	const { format } = useI18n();
 
-	const { userService } = useServices();
 	const userSettings = useUserSettings();
-	const [errorMessage, setErrorMessage] = useState("");
-	const [isLoading, setLoading] = useState(false);
-	const [dateFormat, setDateFormat] = useState(userSettings?.dateFormat ?? DateFormat.USCS);
-
-	const saveDateFormat = useCallback(async () => {
-		if (!userSettings) {
-			return;
-		}
-		setLoading(true);
-		setErrorMessage("");
-		try {
-			if (dateFormat !== userSettings.dateFormat) {
-				await userService.updateUserSettings({ dateFormat });
-			}
-			setLoading(false);
-			onSaved();
-		} catch (error) {
-			setLoading(false);
-			setErrorMessage(format("global.default_error"));
-		}
-	}, [dateFormat]);
 
 	return !userSettings ? null : (
 		<Container maxWidth={320}>
@@ -58,15 +35,10 @@ export const DateFormatBottomSheet: React.FC<DateFormatBottomSheetProps> = ({ on
 				})}
 			</View>
 			<BottomContainer>
-				{errorMessage ? <ErrorMessage>{errorMessage}</ErrorMessage> : null}
 				<ButtonContainer>
-					{isLoading ? (
-						<Spinner size={24} />
-					) : (
-						<PrimaryButton style={{ width: 90 }} onPress={saveDateFormat}>
-							{format("global.save")}
-						</PrimaryButton>
-					)}
+					<PrimaryButton style={{ width: 90 }} onPress={() => onSaved(dateFormat)}>
+						{format("global.save")}
+					</PrimaryButton>
 				</ButtonContainer>
 			</BottomContainer>
 		</Container>
@@ -120,10 +92,4 @@ const BottomContainer = styled.View`
 
 const ButtonContainer = styled.View`
 	height: 38px;
-`;
-
-const ErrorMessage = styled.Text`
-	${textStyles.errorMessage};
-	margin-bottom: 16px;
-	text-align: center;
 `;
