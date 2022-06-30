@@ -166,6 +166,7 @@
 	"activity.duration.total": "Totaal aantal sporten",
 	"activity.active.minutes": "Actieve minuten",
 	"activity.duration.title": "Duur activiteit",
+	"activity.details.title": "Activiteitsdetails",
 	"activity.resting_heart_rate": "Hartslag in rust",
 	"activity.resting_heart_rate.reference": "Referentie",
 	"activity.energy_score": "Energie",

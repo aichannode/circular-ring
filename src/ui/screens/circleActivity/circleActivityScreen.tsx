@@ -258,7 +258,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 					<Spinner size={24} />
 				)}
 			</ElementStack>
-
+			<InfoListHeader>{format("activity.details.title")}</InfoListHeader>
 			<ElementStack gap={10} style={{ display: "flex" }}>
 				{graphs[activeItem]}
 

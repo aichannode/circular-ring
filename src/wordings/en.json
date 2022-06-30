@@ -174,6 +174,7 @@
 	"activity.duration.total": "Total sport",
 	"activity.active.minutes": "Active minutes",
 	"activity.duration.title": "Activity duration",
+	"activity.details.title": "Activity details",
 	"activity.resting_heart_rate": "Resting heart rate",
 	"activity.resting_heart_rate.reference": "Reference",
 	"activity.resting_heart_rate.30day": "30 day average",
