@@ -59,6 +59,7 @@
 	"header.quickaccess": "ACCÈS RAPIDE",
 	"header.ringUpdateFirmware": "MISE À JOUR DES BAGUES",
 	"header.leaderboard": "CLASSEMENT",
+	"leaderboard.updatedDaily": "mis à jour quotidiennement",
 	"ring.battery.error": "Une erreur s'est produite en essayant de changer le nom de la bague (aucune bague connectée).",
 	"ring.battery.label": "BATTERIE",
 	"ring.turnOn": "Allumer",

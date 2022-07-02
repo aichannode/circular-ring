@@ -1,14 +1,18 @@
+import { useServices } from "@core/services";
 import { useUser } from "@domain/user/hooks/useUser";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { textStyles } from "@ui/styles/textStyles";
-import dayjs from "dayjs";
+import moment from "moment";
 import React from "react";
+import { Alert, TouchableOpacity } from "react-native";
+import { launchImageLibrary } from "react-native-image-picker";
 import LinearGradient from "react-native-linear-gradient";
 import styled from "styled-components/native";
-import { launchImageLibrary } from "react-native-image-picker";
-import { TouchableOpacity, Alert } from "react-native";
-import { useServices } from "@core/services";
+
+function capitalizeFirstLetter(string: string) {
+	return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 export const UserAvatar = () => {
 	const { userService } = useServices();
@@ -36,8 +40,8 @@ export const UserAvatar = () => {
 	};
 
 	const userCreationDate = user?.createdAt || new Date();
-	const date = dayjs(userCreationDate);
-	const displayedDate = date.format("MMM. YYYY");
+
+	const displayedDate = capitalizeFirstLetter(moment(new Date(userCreationDate)).format("MMM YYYY"));
 
 	return !user ? null : (
 		<UserInfo>
