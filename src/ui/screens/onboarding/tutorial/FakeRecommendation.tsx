@@ -1,3 +1,4 @@
+import { getFeedEntityDate } from "@domain/feed/business";
 import {
 	Activity,
 	FeedEntityComponentType,
@@ -6,21 +7,20 @@ import {
 	ParagraphComponentConfigurationDto,
 	UserInputConfiguration,
 } from "@domain/feed/type";
+import { useUserSettings } from "@domain/user/hooks/useUser";
+import MaskedView from "@react-native-masked-view/masked-view";
 import { Row, row, Stack } from "@ui/components/layout";
 import { MetaDataText, SubTitleText, TitleText } from "@ui/components/text";
+import { useI18n } from "@ui/i18n";
+import { getGradient } from "@ui/screens/home/business";
+import { Paragraph } from "@ui/screens/home/components/Paragraph";
+import { UserInput } from "@ui/screens/home/components/UserInput";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import { ColorValue, Image, StyleProp, Text, TextProps, View, ViewStyle } from "react-native";
-import styled from "styled-components/native";
-import { Paragraph } from "@ui/screens/home/components/Paragraph";
-import { useUserSettings } from "@domain/user/hooks/useUser";
-import { getFeedEntityDate } from "@domain/feed/business";
-import { useI18n } from "@ui/i18n";
-import { UserInput } from "@ui/screens/home/components/UserInput";
 import LinearGradient from "react-native-linear-gradient";
-import { getGradient } from "@ui/screens/home/business";
+import styled from "styled-components/native";
 import { Mask } from "./mask";
-import MaskedView from "@react-native-masked-view/masked-view";
 
 type Props = {
 	recommendation: FeedRecommendation;
@@ -92,7 +92,7 @@ export const FakeRecommendation: React.FC<Props> = ({ recommendation, maskRecomm
 						{/* Use a wrapper to set the gutter so hat Separator will be at full width */}
 						<View style={{ paddingTop: 20, paddingRight: 26, paddingBottom: 10, paddingLeft: 30 }}>
 							<Row style={{ alignItems: "center", justifyContent: "space-between" }}>
-								<TitleText>{recommendation.title.toUpperCase()}</TitleText>
+								<TitleText>{format(recommendation.title)}</TitleText>
 								{maybeGradientBorder ? (
 									<GradientText stops={maybeGradientBorder} textElement={SubTitleText} style={{ textAlign: "right" }}>
 										{format(recommendation.secondaryTitle)}

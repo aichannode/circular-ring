@@ -59,6 +59,7 @@
   "header.quickaccess": "SCHNELLZUGRIFF",
   "header.ringUpdateFirmware": "RING FIRMWARE-UPDATE",
   "header.leaderboard": "LEADERBOARD",
+  "leaderboard.updatedDaily": "täglich aktualisiert",
   "ring.battery.error": "Beim Versuch, den Ringnamen zu ändern, ist ein Fehler aufgetreten (kein Ring verbunden)",
   "ring.battery.label": "AKKU",
   "ring.turnOn": "Schalten Sie",
