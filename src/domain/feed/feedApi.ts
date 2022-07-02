@@ -81,4 +81,11 @@ export class FeedApi {
 	async answerQuestion(selections: { feedEntryId: number, selectedOptionIds: number[] }[]) {
 		return await this.apiService.post(`${interactionsBaseUrl}/selections`, { selections });
 	}
+
+	/**
+	 * Answer to a Kira question which uses a Slider Or DatePicker input.
+	 */
+	async answerInput(inputs: { feedEntryId: number, componentId: number, value: {value: string | number} }[]) {
+		return await this.apiService.post(`${interactionsBaseUrl}/inputs`, { inputs });
+	}
 }
