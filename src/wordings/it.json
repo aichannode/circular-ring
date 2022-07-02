@@ -287,6 +287,8 @@
 	"drawer.storybook": "Libro di storie",
 	"drawer.close": "Chiudi",
 	"drawer.leaderboard": "Classifica",
+	"alarm.welcome": "Benvenuti nel cerchio della sveglia!\n\nSuggerimento rapido: premi due volte il pulsante dell'anello per interrompere le vibrazioni della sveglia.",
+	"alarm.welcome.show_again": "Non mostrare più questo messaggio",
 	"alarm.score.programmed": "Sveglie programmate",
 	"alarm.score.week": "Panoramica della settimana",
 	"alarm.score.add_button": "Aggiungi una sveglia",

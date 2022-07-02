@@ -7,7 +7,6 @@ export const useAuthenticatedUserEmail = () => useObservable(useServices().userS
 /**
  * It returns the last authenticated user's email address
  */
-export const useLastAuthenticatedUserEmail = () => useObservable(useServices().userService.lastAuthenticatedUserEmail);
 export const useUser = () => useObservable(useServices().userService.user);
 export const useUserSettings = () => useObservable(useServices().userService.userSettings);
 export const useIs24h = () => {

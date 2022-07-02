@@ -288,6 +288,8 @@
 	"drawer.storybook": "Libro de cuentos",
 	"drawer.close": "Cerrar",
 	"drawer.leaderboard": "Tablón de anuncios",
+	"alarm.welcome": "Bienvenida al círculo del despertador!\n\nConsejo rápido: presione el botón de su anillo dos veces para detener las vibraciones de su despertador.",
+	"alarm.welcome.show_again": "No volver a mostrar este mensaje",
 	"alarm.score.programmed": "Alarmas programadas",
 	"alarm.score.week": "Resumen de la semana",
 	"alarm.score.add_button": "Añadir una alarma",

@@ -286,6 +286,8 @@
 	"drawer.storybook": "Storybook",
 	"drawer.close": "Fermer",
 	"drawer.leaderboard": "Classement",
+	"alarm.welcome": "Bienvenue dans le cercle des réveils!\n\nPetite astuce : Appuyez deux fois sur le bouton de votre bague pour arrêter les vibrations de votre réveil.",
+	"alarm.welcome.show_again": "Ne plus afficher ce message",
 	"alarm.score.programmed": "Réveils programmés",
 	"alarm.score.week": "Aperçu de la semaine",
 	"alarm.score.add_button": "Créer une alarme",
