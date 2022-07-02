@@ -154,16 +154,22 @@ function Select({
 
 type DatePickerProps = DatePickerInputTypeConfig["inputConfig"] & BaseProps;
 
-function DatePicker({ value: initialDate, onLayout }: DatePickerProps) {
+function DatePicker({
+	value: initialDate,
+	compId,
+	feedEntryId,
+	onLayout,
+}: DatePickerProps & { compId: number; feedEntryId: number }) {
 	const { format } = useI18n();
 	const [value, setValue] = useState(initialDate);
+	const { feedService } = useServices();
+
 	const cancel = useCallback(() => {
 		setValue(initialDate);
 	}, []);
-	const save = useCallback(() => {
-		// TODO: remove console.log and use the service
-		console.log("save");
-	}, []);
+	const save = () => {
+		feedService.answerRecommendation(feedEntryId, compId, undefined, value.toISOString());
+	};
 
 	return (
 		<View onLayout={onLayout}>
@@ -193,21 +199,38 @@ function DatePicker({ value: initialDate, onLayout }: DatePickerProps) {
 
 type SliderProps = SliderInputTypeConfig["inputConfig"] & BaseProps;
 
-function Slider({ unit, min, max, value: initialValue }: SliderProps) {
+function Slider({
+	unit,
+	min,
+	max,
+	value: initialValue,
+	compId,
+	feedEntryId,
+}: SliderProps & { compId: number; feedEntryId: number }) {
 	const { format } = useI18n();
 	const [value, setValue] = useState(initialValue);
 
+	const { feedService } = useServices();
+
+	const save = () => {
+		feedService.answerRecommendation(feedEntryId, compId, undefined, value);
+	};
+
 	return (
-		<SliderBetweenTwoValues
-			title={format(unit)}
-			start={min}
-			stop={max}
-			defaultValue={initialValue}
-			value={value}
-			setValue={(args) => setValue(Array.isArray(args) ? args[0] : args)}
-			minimumTrackTintColor={colors.purple}
-			hideResetButton
-		/>
+		<>
+			<SliderBetweenTwoValues
+				title={format(unit)}
+				start={min}
+				stop={max}
+				defaultValue={initialValue}
+				value={value}
+				setValue={(args) => setValue(Array.isArray(args) ? args[0] : args)}
+				minimumTrackTintColor={colors.purple}
+				hideResetButton
+			/>
+
+			<PrimaryButton onPress={save}>{format("ok")}</PrimaryButton>
+		</>
 	);
 }
 
@@ -277,29 +300,6 @@ function animate(
 }
 
 export function UserInput({ feedEntryId, compId, configuration, palette }: Props) {
-	// TODO: remove this only for testing
-	// configuration = {
-	// 	inputConfig: {
-	// 		value: new Date(),
-	// 		answeredAt: null,
-	// 	},
-	// 	inputType: InputType.DATE_PICKER,
-	// 	title: "calibration.recommandation.4.date_picker.title",
-	// 	style: UserInputStyle.DEFAULT,
-	// };
-	// configuration = {
-	// 	inputConfig: {
-	// 		max: 12,
-	// 		min: 1,
-	// 		unit: "calibration.recommandation.4.slider.unit",
-	// 		value: 6,
-	// 		answeredAt: null,
-	// 	},
-	// 	inputType: InputType.SLIDER,
-	// 	title: "calibration.recommandation.4.slider.title",
-	// 	style: UserInputStyle.DEFAULT,
-	// };
-
 	const { inputType, inputConfig } = configuration;
 	const [isClosed, setIsClosed] = useState(!!inputConfig.answeredAt);
 	const paperHeightRef = useSharedValue(0);
@@ -336,6 +336,8 @@ export function UserInput({ feedEntryId, compId, configuration, palette }: Props
 				)}
 				{inputType === InputType.SLIDER && (
 					<Slider
+						feedEntryId={feedEntryId}
+						compId={compId}
 						onLayout={(e) => (paperHeightRef.value = e.nativeEvent.layout.height)}
 						palette={palette as FeedEntityStyle}
 						{...inputConfig}
@@ -343,6 +345,8 @@ export function UserInput({ feedEntryId, compId, configuration, palette }: Props
 				)}
 				{inputType === InputType.DATE_PICKER && (
 					<DatePicker
+						feedEntryId={feedEntryId}
+						compId={compId}
 						onLayout={(e) => (paperHeightRef.value = e.nativeEvent.layout.height)}
 						palette={palette as FeedEntityStyle}
 						{...inputConfig}
