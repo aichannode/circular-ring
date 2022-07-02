@@ -287,6 +287,8 @@
   "drawer.storybook": "Storybook",
   "drawer.close": "Schließen",
   "drawer.leaderboard": "Leaderboard",
+  "alarm.welcome": "Willkommen im Kreis der Wecker!\n\nSchneller Tipp: Drücken Sie den Knopf Ihres Rings zweimal, um die Vibrationen Ihres Weckers zu stoppen.",
+  "alarm.welcome.show_again": "Diese Nachricht nicht mehr anzeigen",
   "alarm.score.programmed": "Programmierte Wecker",
   "alarm.score.week": "Wochenübersicht",
   "alarm.score.add_button": "Einen Wecker hinzufügen",

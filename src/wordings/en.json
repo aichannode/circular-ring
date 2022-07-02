@@ -298,6 +298,8 @@
 	"drawer.storybook": "Storybook",
 	"drawer.close": "Close",
 	"drawer.leaderboard": "Leaderboard",
+	"alarm.welcome": "Welcome to the alarm clock circle!\n\nQuick tip: Push your ring’s button twice to stop the vibrations of your alarm clock.",
+	"alarm.welcome.show_again": "Don’t show this message again",
 	"alarm.score.programmed": "Programmed alarms",
 	"alarm.score.week": "Week overview",
 	"alarm.score.add_button": "Add an alarm",

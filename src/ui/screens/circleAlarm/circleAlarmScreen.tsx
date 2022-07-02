@@ -1,4 +1,5 @@
 import { useRepresentations } from "@core/representation";
+import { Storage } from "@core/storage";
 import { useAlarms } from "@domain/circleAlarm/alarmHooks";
 import { MAX_ALARMS } from "@domain/circleAlarm/circleAlarmService";
 import { getCurrentLocalISODay } from "@domain/common/business";
@@ -22,6 +23,7 @@ import styled from "styled-components/native";
 import { AlarmCard } from "./alarmCard";
 import { AlarmHypnogram } from "./AlarmHypnogram";
 import { AlarmWeekOverview } from "./alarmWeekOverview";
+import { AlarmWelcomeBottomSheet } from "./alarmWelcomeBottomSheet";
 
 export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen() {
 	const [isLoading, setLoading] = useState(false);
@@ -39,6 +41,8 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 	const [dailySleep, setData] = useState<DailySleepData | undefined>();
 	const { useDailySleepStages } = useRepresentations().measure.hooks;
 
+	const welcomeBottomSheet = useRef<CircularBottomSheetHandle>(null);
+
 	const hasCompleteCoreSleep = useHasCompleteCoreSleep(getCurrentLocalISODay());
 	const nbRemainingDays = useUserCalibrationRemainingDays();
 	// XXX: https://circularing.atlassian.net/browse/CIR-93
@@ -53,6 +57,15 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 			loadAlarms();
 		}
 	}, [loadAlarms, autoConnectState]);
+
+	useEffect(() => {
+		const fetchWelcomeBottomSheet = async () => {
+			const welcomeAlarmDontShowAgain: boolean | null = await Storage.load("welcomeAlarmDontShowAgain");
+			!welcomeAlarmDontShowAgain && welcomeBottomSheet.current?.present();
+		};
+
+		fetchWelcomeBottomSheet();
+	}, []);
 
 	const hasConnectedRing = autoConnectState === DeviceAutoConnectState.CONNECTED;
 	return (
@@ -117,6 +130,9 @@ export const CircleAlarmScreen: React.FC = observer(function CircleAlarmScreen()
 						warningBottomSheet.current?.close();
 					}}
 				/>
+			</CircularBottomSheet>
+			<CircularBottomSheet snapPoints={[580]} ref={welcomeBottomSheet}>
+				<AlarmWelcomeBottomSheet onClose={() => welcomeBottomSheet.current?.close()} />
 			</CircularBottomSheet>
 		</Container>
 	);
