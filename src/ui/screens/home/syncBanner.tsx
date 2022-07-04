@@ -74,7 +74,7 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({ style, onRetry }) => {
 								<>
 									<Spinner size={19} />
 									<SyncInfo>{format(syncStatus)}</SyncInfo>
-									{(syncStatus === "home.sync.fetching" || syncStatus === "home.sync.uploading") && (
+									{syncStatus === "home.sync.fetching" && (
 										<>
 											<Grow />
 											<SyncInfo>{`${formatNumber(
