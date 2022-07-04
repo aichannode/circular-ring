@@ -290,6 +290,7 @@
 	"drawer.leaderboard": "Tablón de anuncios",
 	"alarm.welcome": "Bienvenida al círculo del despertador!\n\nConsejo rápido: presione el botón de su anillo dos veces para detener las vibraciones de su despertador.",
 	"alarm.welcome.show_again": "No volver a mostrar este mensaje",
+	"alarm.welcome.warning.info": "Atención: El anillo sólo vibrará si tiene más del 10% de batería.",
 	"alarm.score.programmed": "Alarmas programadas",
 	"alarm.score.week": "Resumen de la semana",
 	"alarm.score.add_button": "Añadir una alarma",
