@@ -4,6 +4,7 @@ import { CheckBox } from "@ui/components/checkBox";
 import { ResponsiveCenterView } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
+import { colors } from "@ui/styles/colors";
 import React, { useState } from "react";
 import styled from "styled-components/native";
 
@@ -27,6 +28,7 @@ export const AlarmWelcomeBottomSheet: React.FC<AlarmWelcomeBottomSheetProps> = (
 			<Title>{format("alarm.welcome")}</Title>
 			<ImageFinger source={require("@assets/images/ringFinger.png")} />
 			<CheckBox value={dontShowAgain} onChange={setDontShowAgain} label={format("alarm.welcome.show_again")} />
+			<WarningText>{format("alarm.welcome.warning.info")}</WarningText>
 			<QuadraryButton onPress={onCloseBottomSheet}>{format("continue")}</QuadraryButton>
 		</Container>
 	);
@@ -40,6 +42,12 @@ const Container = styled(ResponsiveCenterView)`
 
 const Title = styled(SecondaryText)`
 	text-align: center;
+`;
+
+const WarningText = styled(SecondaryText)`
+	text-align: center;
+	color: ${colors.blue};
+	font-weight: bold;
 `;
 
 const ImageFinger = styled.Image`
