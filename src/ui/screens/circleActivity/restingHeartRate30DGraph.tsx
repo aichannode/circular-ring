@@ -39,24 +39,25 @@ export const RestingHeartRate30DGraph: React.FC<Props> = observer(function Resti
 			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
-	const { isLoading, RHR30daysMetrics, RHR30daysConstants } = useMonthlyRHR(selectedDay);
+	const monthlyRhr = useMonthlyRHR(selectedDay);
+	const isLoaded = isDefined(monthlyRhr);
 	const data = useLast7DaysRHR(selectedDay);
-	const lines: Points = RHR30daysMetrics
-		? RHR30daysMetrics.map((el) => {
-				return {
-					x: el ? moment(el.date).valueOf() : 0,
-					y: el?.value ? el.value : 0,
-				};
-		  }).reverse()
+	const lines: Points = monthlyRhr?.series
+		? monthlyRhr?.series
+				.map((el) => {
+					return {
+						x: el ? moment(el.date).valueOf() : 0,
+						y: el?.value ? el.value : 0,
+					};
+				})
+				.reverse()
 		: [];
 	const [yMin, yMax] =
 		lines.length > 0
 			? [Math.min(...lines.filter(({ y }) => y != -1).map((line) => line.y)), Math.max(...lines.map((line) => line.y))]
 			: [0, 0];
-	const constant = RHR30daysConstants;
+	const constant = monthlyRhr?.constant;
 	const averages: Averages = [];
-
-	console.log({ yMin, yMax });
 
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY);
 
@@ -78,7 +79,7 @@ export const RestingHeartRate30DGraph: React.FC<Props> = observer(function Resti
 		setTags(useDailyTags(date));
 	};
 
-	return isLoading ? (
+	return !isLoaded ? (
 		<Spinner size={24} />
 	) : !!lines.length ? (
 		<View>
@@ -143,8 +144,8 @@ export const RestingHeartRate30DGraph: React.FC<Props> = observer(function Resti
 								},
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(RHR30daysConstants) && RHR30daysConstants.average
-									? `${RHR30daysConstants.average.toFixed(0)} bpm`
+									: isDefined(monthlyRhr?.constant) && monthlyRhr?.constant.average
+									? `${monthlyRhr?.constant.average.toFixed(0)} bpm`
 									: "- %",
 							},
 							{
@@ -164,8 +165,8 @@ export const RestingHeartRate30DGraph: React.FC<Props> = observer(function Resti
 								},
 								value: isInCalibrationMode(updatedMode)
 									? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
-									: isDefined(constant) && RHR30daysConstants?.reference != 0
-									? `${RHR30daysConstants?.reference.toFixed(0)} bpm`
+									: isDefined(constant) && monthlyRhr?.constant?.reference != 0
+									? `${monthlyRhr?.constant?.reference.toFixed(0)} bpm`
 									: "- %",
 							},
 						]}

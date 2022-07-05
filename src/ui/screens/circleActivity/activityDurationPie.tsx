@@ -82,7 +82,6 @@ export function ActivityDurationPieChart({
 			}
 		}
 	});
-	// console.log(correctedStages);
 	return (
 		<Container>
 			{isLoading ? (

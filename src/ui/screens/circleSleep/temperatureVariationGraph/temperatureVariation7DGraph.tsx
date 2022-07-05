@@ -86,13 +86,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 		const date = moment(lines[x].x).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
-	const [yMin, yMax] =
-		lines.length > 0
-			? [
-					Math.min(...lines.filter((line) => line.y > -1000).map((line) => line.y)),
-					Math.max(...lines.map((line) => line.y)),
-			  ]
-			: [0, 0];
+	const yMax = lines.length > 0 ? Math.max(...lines.map((line) => line.y)) : 0;
 
 	const toGetAverageValue = (value: number | undefined): string => {
 		if (!isDefined(value)) return "-";
@@ -133,7 +127,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 							graphColor={colors.business.sleepPrimary}
 							onSelect={(x) => toUpdateTag(x)}
 							mode={updatedMode}
-							yMin={yMin}
+							yMin={-yMax}
 							yMax={yMax}
 							mapMarker={(el) =>
 								`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
