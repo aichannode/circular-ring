@@ -2,7 +2,7 @@ import { getLogger } from "@core/logger/logger";
 import { delay, observableToPromise } from "@core/utils";
 import { observable } from "micro-observables";
 import { PermissionsAndroid, Platform } from "react-native";
-import { BleManager, State } from "react-native-ble-plx";
+import { BleManager, BleRestoredState, State } from "react-native-ble-plx";
 import DeviceInfo from "react-native-device-info";
 
 const enableBluetoothTimeout = 5000;
@@ -11,7 +11,21 @@ export class BluetoothService {
 	private logger = getLogger("📶 BluetoothService");
 
 	private _state = observable<State>(State.Unknown);
-	manager: BleManager = new BleManager();
+	manager: BleManager = new BleManager({
+		restoreStateIdentifier: "bleManagerRestoredState",
+		restoreStateFunction: (bleRestoredState: BleRestoredState | null) => {
+			if (bleRestoredState == null) {
+				this.logger.info("BleManager was constructed for the first time.");
+				// BleManager was constructed for the first time.
+			} else {
+				this.logger.info(
+					"BleManager was restored. Check `bleRestoredState.connectedPeripherals` property.",
+					bleRestoredState
+				);
+				// BleManager was restored. Check `bleRestoredState.connectedPeripherals` property.
+			}
+		},
+	});
 
 	readonly state = this._state.readOnly();
 	readonly enabled = this._state.select((state) => state === State.PoweredOn);

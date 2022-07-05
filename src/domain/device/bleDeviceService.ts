@@ -161,11 +161,10 @@ export class BleDeviceService {
 				this.fakeDeviceService.fakeDeviceEnabled,
 			],
 			(bleState, locationAndroid, connectionState, scanning, faked) => {
-				
-          		if (connectionState === DeviceConnectionState.CONNECTED || faked) {
+				if (connectionState === DeviceConnectionState.CONNECTED || faked) {
 					return DeviceSetupState.FINISHED;
 				}
-				if (bleState === State.PoweredOff || bleState ===  State.Unauthorized) {
+				if (bleState === State.PoweredOff || bleState === State.Unauthorized) {
 					return DeviceSetupState.DISABLED;
 				}
 				if (Platform.OS === "android" && !locationAndroid) {
@@ -445,7 +444,7 @@ export class BleDeviceService {
 				});
 			}
 		} catch (e) {
-			this.logger.error("Error connecting to device", e);
+			this.logger.error("Error connecting to device", e, JSON.stringify(e));
 			this._connectionState.set(DeviceConnectionState.DISCONNECTED);
 			this.autoConnectFavoriteDevice();
 			throw e;
