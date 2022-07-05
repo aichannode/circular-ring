@@ -57,7 +57,7 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 	];
 	const updatedMode = updateMode(mode, dailyHRNight?.controlState !== DataControlState.READY);
 	const [yMin, yMax] =
-		lines.length > 0
+		lines.filter((line) => line.y > 0).length > 0
 			? [
 					Math.min(...lines.filter((line) => line.y > 0).map((line) => line.y)),
 					Math.max(...lines.map((line) => line.y)),
@@ -153,7 +153,6 @@ export const HrGraph30days: React.FC<Props> = observer(function HeartRateGraph({
 												</View>
 											),
 										},
-
 										value:
 											typeof constant.average == "undefined" || constant.average === -1
 												? "- bpm"

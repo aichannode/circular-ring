@@ -127,7 +127,6 @@ export function LineChart({
 	if (__DEV__) {
 		// XXX: pre-conditions:
 		if (maxDataLength === 0 && !isInDisabledMode(mode)) {
-			console.log(mode);
 			throw new Error(
 				`Only 'disabled' mode can render LineChart without data. Found '${mode.type}' mode without data.`
 			);
@@ -136,11 +135,16 @@ export function LineChart({
 	const [xMin, xMax] = !isMultipleLines
 		? [Math.min(...data.map((point) => point.x)), Math.max(...data.map((point) => point.x))]
 		: [0, maxDataLength - 1];
-	const shouldDisplay = isInActiveMode(mode) || isInCalibrationMode(mode);
-	const linspace = isDefined(yMin) && isDefined(yMax) ? ((yMax - yMin) * 10) / 100 : 0;
+	const shouldDisplay =
+		(isInActiveMode(mode) || isInCalibrationMode(mode)) &&
+		(data.filter((line) => line.y > 0).length || daysItem?.[0].lines.length);
+	let linspace = isDefined(yMin) && isDefined(yMax) ? ((yMax - yMin) * 10) / 100 : 0;
+	if (yMin === yMax && isDefined(yMin) && isDefined(yMax)) {
+		linspace = Math.abs((yMax * 10) / 100);
+	}
 	const [selectedX, setSelectedX] = useState<number | undefined>(data[0] ? (onSelect ? data[0].x : -1) : -1);
-	const axisMinimum = isDefined(yMin) ? (shouldUpdateYmin ? yMin - linspace : yMin) : 0;
-	const axisMaximum = isDefined(yMax) ? (shouldUpdateYmin ? yMax + linspace : yMax) : 0;
+	const axisMinimum = isDefined(yMin) ? (shouldUpdateYmin ? yMin - linspace : yMin - linspace) : 0;
+	const axisMaximum = isDefined(yMax) ? (shouldUpdateYmin ? yMax + linspace : yMax + linspace) : 0;
 	const yAxisContentInset = verticalContentInset.top;
 	const tooltipMinX = xAxisContentInset;
 	const tooltipMaxX = graphRect.current
@@ -169,8 +173,8 @@ export function LineChart({
 		textColor: processColor(xColor),
 		granularityEnabled: true,
 		axisLineColor: processColor("white"),
-		axisMinimum: xAxisMin ?? (Number.isFinite(xMin) ? xMin : undefined),
-		axisMaximum: xAxisMax ?? (Number.isFinite(xMax) ? xMax : undefined),
+		axisMinimum: Number.isFinite(xAxisMin) ? xAxisMin : undefined ?? (Number.isFinite(xMin) ? xMin : undefined),
+		axisMaximum: Number.isFinite(xAxisMax) ? xAxisMax : undefined ?? (Number.isFinite(xMax) ? xMax : undefined),
 	};
 
 	const yAxis = {
@@ -349,37 +353,42 @@ export function LineChart({
 				{ x: yMaxIndex ? data[yMaxIndex].x : 0, y: yMaxIndex ? data[yMaxIndex].y : 0 },
 		  ]
 		: [];
-	const tooltip = (value: number, x: number, y: number, yOffset: number) =>
-		renderTooltip && (
-			<View
-				style={{
-					position: "absolute",
-					justifyContent: "center",
-					alignItems: "center",
-					width: tooltipSize.width,
-					height: tooltipSize.height,
-					top: Math.max(
-						tooltipMinY,
-						y + // position relative to the graph
-							yAxisContentInset - // offset to the top of the graph
-							tooltipSize.height + // align bottom tooltip to the point
-							yOffset // add spacing between tooltip and point
-					),
-					left: Math.max(
-						tooltipMinX,
-						Math.min(
-							tooltipMaxX,
-							x + // position relative to graph
-								xAxisContentInset - // offset to the left of the graph
-								tooltipSize.width / 2 // horizontally center tooltip
-						)
-					),
-				}}
-				pointerEvents="none"
-			>
-				{renderTooltip(value)}
-			</View>
+	const tooltip = (value: number, x: number, y: number, yOffset: number) => {
+		const left = Math.max(
+			tooltipMinX,
+			Math.min(
+				tooltipMaxX,
+				x + // position relative to graph
+					xAxisContentInset - // offset to the left of the graph
+					tooltipSize.width / 2 // horizontally center tooltip
+			)
 		);
+		if (isNaN(left)) return null;
+		return (
+			renderTooltip && (
+				<View
+					style={{
+						position: "absolute",
+						justifyContent: "center",
+						alignItems: "center",
+						width: tooltipSize.width,
+						height: tooltipSize.height,
+						top: Math.max(
+							tooltipMinY,
+							y + // position relative to the graph
+								yAxisContentInset - // offset to the top of the graph
+								tooltipSize.height + // align bottom tooltip to the point
+								yOffset // add spacing between tooltip and point
+						),
+						left: left,
+					}}
+					pointerEvents="none"
+				>
+					{renderTooltip(value)}
+				</View>
+			)
+		);
+	};
 	return (
 		<Container>
 			{shouldDisplay ? (

@@ -103,13 +103,16 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 
 	const isLoading = !isDefined(data);
 
+	// return null;
+
 	const toUpdateTag = (x: number) => {
 		const item = series ? series[Math.round(x)] : undefined;
 		const date = moment(item?.date).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
-	const yMax = lines.length > 0 ? Math.max(...lines.filter((line) => line.y > 0).map((line) => line.y)) : 0;
+	const yMax = Math.max(...lines.map((line) => line.y)); ///lines.length > 0 ? Math.max(...lines.filter((line) => line.y > 0).map((line) => line.y)) : 0;
 
+	// return null;
 	return isLoading ? (
 		<Spinner size={24} />
 	) : !!lines ? (
@@ -153,11 +156,12 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 					shouldShowMarker={true}
 					mapXAxis={(el) => (el as typeof lines[number]).mappedX}
 					mapBarColor={(el) => (el as typeof lines[number]).color}
-					mapMarker={(el) =>
+					mapMarker={(el) => {
+						return "0";
 						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
 							el.y > 0 ? formatDuration(moment.duration((el as typeof lines[number]).y, "hours").as("seconds")) : 0
-						}`
-					}
+						}`;
+					}}
 					xColor={colors.textPrimary}
 					yColor={colors.darkGray}
 					data={lines}

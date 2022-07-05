@@ -108,10 +108,10 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 				useEffect(
 					action(function () {
-						actions.setMonthlyRhrConstants();
-						last30Days.forEach((d) =>
-							actions.setDailyRestingHeartRate(d, shouldByPassCache(model.dailySleepMetrics, d))
-						);
+						actions.setMonthlyRhrConstants(localISODay);
+						last30Days.forEach((d) => {
+							actions.setDailyRestingHeartRate(d, shouldByPassCache(model.dailyRestingHeartRate, d));
+						});
 					}),
 					[localISODay]
 				);
@@ -119,23 +119,21 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				const RHR30daysConstants = model.last30DRestingHeartRate.get(localISODay);
 				const isLoaded =
 					model.last30DRestingHeartRate.has(localISODay) &&
-					last30Days.every((date) => model.dailyRestingHeartRate.has(date)) &&
-					RHR30daysConstants;
+					last30Days.every((date) => model.dailyRestingHeartRate.has(date));
 
 				if (!isLoaded) {
-					return { isLoading: true, RHR30daysMetrics: undefined, RHR30daysConstants: undefined };
+					return undefined;
 				}
 
 				const RHR30daysMetrics = last30Days.map((date) => {
-					return { value: model.dailyRestingHeartRate.get(date), date: date };
+					return { value: model.dailyRestingHeartRate.get(date), date };
 				});
 
 				return {
-					isLoading: !isLoaded,
-					RHR30daysMetrics,
-					RHR30daysConstants: {
-						average: Number(RHR30daysConstants[MetricType.User30DaysAverageRHR]) ?? -1,
-						reference: Number(RHR30daysConstants[MetricType.UserReferenceRHR]) ?? -1,
+					series: RHR30daysMetrics,
+					constant: {
+						average: RHR30daysConstants ? Number(RHR30daysConstants[MetricType.User30DaysAverageRHR]) : -1,
+						reference: RHR30daysConstants ? Number(RHR30daysConstants[MetricType.UserReferenceRHR]) : -1,
 					},
 				};
 			},
@@ -157,16 +155,14 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					}),
 					[localISODay]
 				);
+				const last7DSleepMetrics = model.last7DSleepConstantMetrics.get(localISODay);
 
 				const isLoaded =
 					model.last7DSleepConstantMetrics.has(localISODay) &&
 					last7Days.every((date) => model.dailySleepMetrics.has(date));
-
 				if (!isLoaded) {
 					return undefined;
 				}
-
-				const last7DSleepMetrics = model.last7DSleepConstantMetrics.get(localISODay);
 
 				if (last7DSleepMetrics) {
 					const constant = {
@@ -203,9 +199,11 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						};
 					}) as unknown as Sleep7D["sleepStages"];
 
-					const controlState = sleepStages.some((stage) => isDefined(stage?.light))
-						? DataControlState.READY
-						: DataControlState.NO_DATA;
+					const controlState =
+						sleepStages.some((stage) => isDefined(stage?.light)) &&
+						last7DSleepMetrics?.[MetricType.User7DaysAwakeStageDuration]
+							? DataControlState.READY
+							: DataControlState.NO_DATA;
 
 					return { sleepStages, constant, controlState };
 				}
@@ -337,7 +335,9 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 						};
 					}) as unknown as Activity7D["activityMetrics"];
 
-					const controlState = activityMetrics.some((metric) => isDefined(metric?.low))
+					const controlState = activityMetrics.some(
+						(metric) => isDefined(metric?.low) && activityMetrics.some((metric) => metric?.low != -1)
+					)
 						? DataControlState.READY
 						: DataControlState.NO_DATA;
 
@@ -898,7 +898,9 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				const series = last30Days.map((date) => {
 					return { value: model.dailySpo2.get(date), date: date };
 				}) as unknown as Spo230Days["series"];
-				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+				const controlState = series.some((line) => line?.value !== -1)
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
 
 				return {
 					series,
@@ -931,7 +933,9 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				const series = last30Days.map((date) => {
 					return { value: model.dailyBR.get(date), date: date };
 				}) as unknown as BR30Days["series"];
-				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+				const controlState = series.some((line) => line?.value !== -1)
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
 
 				return {
 					series,
@@ -966,7 +970,10 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				const series = last30Days.map((date) => {
 					return { value: model.dailyHrNight.get(date), date: date };
 				}) as unknown as HrNight30Days["series"];
-				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+
+				const controlState = series.some((line) => line?.value != -1)
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
 
 				return {
 					series,
@@ -1002,7 +1009,9 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				const series = last30Days.map((date) => {
 					return { value: model.dailyHr.get(date), date: date };
 				}) as unknown as HrNight30Days["series"];
-				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+				const controlState = series.some((lines) => lines?.value !== -1)
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
 
 				return {
 					series,
@@ -1037,7 +1046,9 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				const series = last30Days.map((date) => {
 					return { value: model.dailyHRV.get(date), date: date };
 				}) as unknown as HrNight30Days["series"];
-				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+				const controlState = series.some((line) => line?.value !== -1)
+					? DataControlState.READY
+					: DataControlState.NO_DATA;
 
 				return {
 					series,
@@ -1072,7 +1083,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					[localISODay]
 				);
 
-				const isLoaded = last7Days.every((date) => model.dailyRestingHeartRate.has(date));
+				const isLoaded = last7Days.some((date) => model.dailyRestingHeartRate.has(date));
 
 				if (!isLoaded) {
 					return undefined;
@@ -1084,7 +1095,11 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				})) as RestingHeartRate7D["series"];
 
 				// Spec 00026: IS_READY if has some historical data
-				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
+				const controlState =
+					last7Days.some((date) => isDefined(model.dailyRestingHeartRate.get(date))) &&
+					last7Days.some((date) => model.dailyRestingHeartRate.get(date) != -1)
+						? DataControlState.READY
+						: DataControlState.NO_DATA;
 
 				const constants = model.last7DRestingHeartRate.get(localISODay);
 
@@ -1160,9 +1175,11 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				}
 
 				// Spec 00026: IS_READY if has some historical data
-				const controlState = last7Days.some((date) => isDefined(model.dailyCardioPoints.get(date)))
-					? DataControlState.READY
-					: DataControlState.NO_DATA;
+				const controlState =
+					last7Days.some((date) => isDefined(model.dailyCardioPoints.get(date))) &&
+					last7Days.some((date) => model.dailyCardioPoints.get(date) != -1)
+						? DataControlState.READY
+						: DataControlState.NO_DATA;
 
 				const series = last7Days.map((date) => ({
 					value: model.dailyCardioPoints.get(date),
@@ -1296,9 +1313,12 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				}
 
 				// Spec 00026: IS_READY if has some historical data
-				const controlState = last7Days.some((date) => isDefined(model.dailyHRSMetrics.get(date)))
-					? DataControlState.READY
-					: DataControlState.NO_DATA;
+
+				const controlState =
+					last7Days.some((date) => isDefined(model.dailyHRSMetrics.get(date))) &&
+					last7Days.some((date) => model.dailyHRSMetrics.get(date)?.["user.daily.real.sleep.duration"] != null)
+						? DataControlState.READY
+						: DataControlState.NO_DATA;
 
 				const series = last7Days.map((date) => {
 					const data = model.dailyHRSMetrics.get(date) || ({} as Metrics<DailyHRSMetrics>);
@@ -1381,9 +1401,11 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				}
 
 				// Spec 00026: IS_READY if has some historical data
-				const controlState = last7Days.some((date) => isDefined(model.dailyStepsMetrics.get(date)))
-					? DataControlState.READY
-					: DataControlState.NO_DATA;
+				const controlState =
+					last7Days.some((date) => isDefined(model.dailyStepsMetrics.get(date))) &&
+					last7Days.some((date) => model.dailyStepsMetrics.get(date) != -1)
+						? DataControlState.READY
+						: DataControlState.NO_DATA;
 
 				const series = last7Days.map((date) => ({
 					value: model.dailyStepsMetrics.get(date),
@@ -1427,9 +1449,11 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				}
 
 				// Spec 00026: IS_READY if has some historical data
-				const controlState = last7Days.some((date) => isDefined(model.dailyCalorieBurned.get(date)))
-					? DataControlState.READY
-					: DataControlState.NO_DATA;
+				const controlState =
+					last7Days.some((date) => isDefined(model.dailyCalorieBurned.get(date))) &&
+					last7Days.some((date) => model.dailyCalorieBurned.get(date) != -1)
+						? DataControlState.READY
+						: DataControlState.NO_DATA;
 
 				const series = last7Days.map((date) => ({
 					value: model.dailyCalorieBurned.get(date),

@@ -104,7 +104,8 @@ export function StepChart({
 	const xContentInset = { left: leftPadding, right: rightPadding };
 	const yAxisContentInset = verticalContentInset.top;
 	const canShowAxes = isInActiveMode(mode) || isInCalibrationMode(mode);
-	const shouldDisplay = (isInActiveMode(mode) || isInCalibrationMode(mode)) && data.length > 0;
+	const shouldDisplay =
+		(isInActiveMode(mode) || isInCalibrationMode(mode)) && data.filter((line) => line.y > 0).length > 0;
 	const graphRect = useRef<Rect>();
 	const dataRef = useRef({ xMin, xMax, yMin, yMax, xValues, yValues, data }); // Allow PanResponder to access to the latest available data
 	const longPressTimeout = useRef<NodeJS.Timeout>();
