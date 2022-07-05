@@ -74,12 +74,15 @@ export class RingManagementService {
 
 	async registerConnectedRing() {
 		const firmware = await this.deviceService.getResponse(Channel.FIRMWARE_VERSION);
-		const deviceName = this.deviceService.favoriteDevice.get()?.name;
-		const id = await this.deviceService.favoriteDeviceSNU.get();
+		const deviceName = this.deviceService.connectedDevice.get()?.name;
+		const id = await this.deviceService.connectedDeviceSnu.get();
 		this.logger.info(`🔧 registerConnectedRing Firmware Version: ${firmware}`);
 		if (id && firmware && deviceName) {
 			try {
-				return await this.ringApi.addRing({ id: id, firmware });
+				const ring = await this.ringApi.addRing({ id: id, firmware });
+				await this.deviceService.initializeDevice();
+				await this.deviceService.saveDeviceAsFavorite();
+				return ring;
 			} catch (e) {
 				await this.deviceService.disconnect({ dissociate: true });
 				throw e;
@@ -98,16 +101,7 @@ export class RingManagementService {
 				await this.ringApi.deleteRing(idToDelete);
 			} catch (e) {
 				this.logger.warn("Delete ring failed : " + JSON.stringify(e));
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				if (e.statusCode === 500) {
-					// SERVER PATCH : DELETE /rings/{id} returns error 500, but ring is correctly deleted from user
-					this.logger.debug("**** SERVER PATCH ****");
-					this.logger.debug("Consider ring deletion succeeded");
-					this.logger.debug("**********************");
-				} else {
-					throw e;
-				}
+				throw e;
 			}
 		} else {
 			throw new Error("Unknown ring");
