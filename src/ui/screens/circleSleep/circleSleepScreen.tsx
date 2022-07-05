@@ -24,7 +24,7 @@ import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useRef, useState } from "react";
-import { Image, LayoutAnimation, View } from "react-native";
+import { Image, LayoutAnimation, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { BRGraph } from "./breathingRateGraph/BRGraph";
 import { DailySleepChart } from "./DailySleepChart";
@@ -308,15 +308,17 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 							/>
 						</ImageContainer>
 
-						<ImageContainer onPress={() => setActiveItem(6)}>
-							<GraphSwitcherButton
-								source={
-									activeItem === 6
-										? require(`@assets/images/spo2Blue.png`)
-										: require(`@assets/images/spo2BlueTransparent.png`)
-								}
-							/>
-						</ImageContainer>
+						{Platform.OS === "android" && (
+							<ImageContainer onPress={() => setActiveItem(6)}>
+								<GraphSwitcherButton
+									source={
+										activeItem === 6
+											? require(`@assets/images/spo2Blue.png`)
+											: require(`@assets/images/spo2BlueTransparent.png`)
+									}
+								/>
+							</ImageContainer>
+						)}
 					</Row>
 				</ElementStack>
 			</ElementStack>

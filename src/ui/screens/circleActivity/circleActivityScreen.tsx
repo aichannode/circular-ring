@@ -32,6 +32,7 @@ import moment from "moment";
 import React, { useRef, useState } from "react";
 import { Image, LayoutAnimation, Platform, View } from "react-native";
 import styled from "styled-components/native";
+import { Spo2Graph } from "../circleSleep/spo2Graph/Spo2Graph";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
 import { CaloriesBurnedGraph } from "./caloriesBurnedGraph";
@@ -156,6 +157,13 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 		/>,
 		<HRGraph key={5} selectedDay={selectedDay} mode={screenModeWithoutDisabled} dailyTrimOptions={dailyTrimOptions} />,
 		<RestingHeartRateGraphs key={6} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,
+		<Spo2Graph
+			key={7}
+			selectedDay={selectedDay}
+			mode={screenMode}
+			screenModeWithoutDisabled={screenModeWithoutDisabled}
+			dailyTrimOptions={dailyTrimOptions}
+		/>,
 	];
 
 	return (
@@ -314,7 +322,6 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 								}
 							/>
 						</ImageContainer>
-
 						<ImageContainer onPress={() => setActiveItem(5)}>
 							<GraphSwitcherButton
 								source={
@@ -324,7 +331,6 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 								}
 							/>
 						</ImageContainer>
-
 						<ImageContainer onPress={() => setActiveItem(6)}>
 							<GraphSwitcherButton
 								source={
@@ -334,6 +340,17 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 								}
 							/>
 						</ImageContainer>
+						{Platform.OS === "android" && (
+							<ImageContainer onPress={() => setActiveItem(7)}>
+								<GraphSwitcherButton
+									source={
+										activeItem === 7
+											? require(`@assets/images/spo2.png`)
+											: require(`@assets/images/spo2Transparent.png`)
+									}
+								/>
+							</ImageContainer>
+						)}
 					</Row>
 				</ElementStack>
 			</ElementStack>
