@@ -23,8 +23,6 @@ export const Explanation = ({ top, step, revert }: { top: number; step: number; 
 		"tutorial.step4.explanation",
 	];
 
-	console.log("explanation HEgith", height);
-	if (height == 0) return null;
 	return (
 		<Container
 			style={{ top: top - height }}
