@@ -526,7 +526,7 @@ export class BleDeviceService {
 			}
 			const device = await this.findFavoriteDevice();
 			if (device) {
-				const connect = this.connect(device);
+				const connect = await this.connect(device);
 				// FIXME Should be good to check that the ring is still in the user's inventory ? (by using registerRing)
 				await this.initializeDevice();
 				return connect;
