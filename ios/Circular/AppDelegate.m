@@ -8,8 +8,6 @@
 #import "RNNordicDfu.h"
 #import "BleManager.h"
 
-#import <CodePush/CodePush.h>
-
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
 #import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
@@ -81,7 +79,7 @@ static void InitializeFlipper(UIApplication *application) {
 #if DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 #else
-  return [CodePush bundleURL];
+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
 }
 
