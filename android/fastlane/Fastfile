@@ -31,7 +31,7 @@ platform :android do
   lane :demo do
     apkName = getApkName("demo", nil)
     build("demo", apkName, nil)
-    appcenter("demo", apkName, true)
+#    appcenter("demo", apkName, true)
     codepush("demo")
   end
 
