@@ -182,7 +182,6 @@ android {
         dev {
             dimension "environment"
             applicationIdSuffix ".dev"
-            versionNameSuffix "-dev"
             resValue "string", "app_name", "Circular dev"
             manifestPlaceholders = [
                 appName: "Circular Dev",
@@ -192,7 +191,6 @@ android {
         demo {
             dimension "environment"
             applicationIdSuffix ".demo"
-            versionNameSuffix "-demo"
             resValue "string", "app_name", "Circular demo"
             manifestPlaceholders = [
                 appName: "Circular Demo",
@@ -202,7 +200,6 @@ android {
         staging {
             dimension "environment"
             applicationIdSuffix ".staging"
-            versionNameSuffix "-staging" + (project.hasProperty("buildName") ? ("-" + project.property("buildName") as String) : "")
             resValue "string", "app_name", "Circular staging"
             manifestPlaceholders = [
                 appName: "Circular Staging",

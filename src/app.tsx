@@ -61,12 +61,9 @@ const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: "
 
 // @refresh reset
 const App = () => {
-	CodePush.sync(
-		{},
-		(status) => console.log("UPDATE STATUS: ", status),
-		(progress) => console.log("DOWNLOAD PROGRESS", progress),
-		(update) => console.log("MISMATCH", update)
-	);
+	// eslint-disable-next-line @typescript-eslint/no-var-requires
+	const NativeCodePush = require("react-native").NativeModules.CodePush;
+	NativeCodePush.getConfiguration().then((tata: any) => console.log("CONFIG", tata));
 	// For some reason it can't be done in the main script
 	const [locale, setLocale] = useState<LocaleType>(getPreferredLangageCode(Object.keys(translations)));
 	const [initialized, setInitialized] = useState(false);
