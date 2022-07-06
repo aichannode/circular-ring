@@ -1,3 +1,55 @@
+# [1.3.0](https://gitlab.com/circularing/mobile/app/compare/v1.2.0...v1.3.0) (2022-07-06)
+
+
+### Bug Fixes
+
+* a Activity graph as been accidentally replaced with a Sleep graph ([0f979fb](https://gitlab.com/circularing/mobile/app/commit/0f979fbf09bae2ce99172ae31c947a88d44d99f8))
+* Added spO2 activity on Android devices ([2d67b40](https://gitlab.com/circularing/mobile/app/commit/2d67b401c1b0f749171218ae02f58fea2d952031))
+* autofill last used email when logout ([7329127](https://gitlab.com/circularing/mobile/app/commit/73291275c9f880727d9525f2fc5c925f7c31652b))
+* calibration days ([3bab842](https://gitlab.com/circularing/mobile/app/commit/3bab842fbfcf81ea65b6f37886d8ff1a9d62557b))
+* CIR 1052 -1053 ([5c4a66c](https://gitlab.com/circularing/mobile/app/commit/5c4a66c027a7a1f47c57c9bae1e3a9d4cc653de5))
+* CIR-1012-update-recommendation-animation ([06481b8](https://gitlab.com/circularing/mobile/app/commit/06481b83106ee73bb65d1579b858bd5ce6792374))
+* **CIR-1036:** l'encadré orange est coupé et on peut pas lire ([71bfa61](https://gitlab.com/circularing/mobile/app/commit/71bfa6121df5078e8d41731de5a9f065daeb9a6f))
+* **CIR-1036:** tutorial dissapeared ([54a09e1](https://gitlab.com/circularing/mobile/app/commit/54a09e10829c444c95e3402d9eda75db6375ef1b))
+* **CIR-1037:** center text in stride bottomsheet ([ba61072](https://gitlab.com/circularing/mobile/app/commit/ba6107295c355c97b8c91e6890bfe43e71f08f86))
+* CIR-1040 fix trads ([ad417a6](https://gitlab.com/circularing/mobile/app/commit/ad417a6225715c23113b58493cdee2bc3324c903))
+* **CIR-1048:** fix graphs not showing in no data mode ([0fee746](https://gitlab.com/circularing/mobile/app/commit/0fee746d7269c716d7c78d98ba194794b317648b))
+* **CIR-1056:** sync on ios when we put the app in background ([83a4477](https://gitlab.com/circularing/mobile/app/commit/83a4477ae4678fb06861bee8200fb91ea5f686c6))
+* CIR-1066-removed-uploading-percentage ([34c678c](https://gitlab.com/circularing/mobile/app/commit/34c678c5416f3afb74c2e71ed18050091e1b171a))
+* CIR/1058-1063 small fixes ([642ed2d](https://gitlab.com/circularing/mobile/app/commit/642ed2db24545dea0d955178de9a151bb7b705f2))
+* display wording weekends ([880ba18](https://gitlab.com/circularing/mobile/app/commit/880ba185ade7224d7ed381f62de26b2124ebcf1c))
+* fix live popup ui, and display condition ([93b34db](https://gitlab.com/circularing/mobile/app/commit/93b34db025c749a6128555864e395873e5f96e69))
+* fixed image size bad check ([f518188](https://gitlab.com/circularing/mobile/app/commit/f518188859d018be072eb2922cd80be374e96c07))
+* fixed missing translations ([02c9305](https://gitlab.com/circularing/mobile/app/commit/02c93057a9c49eb422608972e0eae47a52bc2332))
+* focus in the SixDigitInput when field is empty ([a6e2702](https://gitlab.com/circularing/mobile/app/commit/a6e2702328c1f3b2feab1f270d60ef063573b77e))
+* force ring backend check before saving it ([8387f78](https://gitlab.com/circularing/mobile/app/commit/8387f78f515a100dbda8795d828699726e5042d1))
+* force semantic release fix ([304335b](https://gitlab.com/circularing/mobile/app/commit/304335b9e4621fa375438f2fb72cccd89317a54c))
+* graphs ([9a65707](https://gitlab.com/circularing/mobile/app/commit/9a6570774496b30f93e824be404402353a272708))
+* locale sync when logging out ([bb01cd4](https://gitlab.com/circularing/mobile/app/commit/bb01cd40d39426ad23fda4fce4f6aead16a5247c))
+* only disable spo2 on iOS ([f291bb7](https://gitlab.com/circularing/mobile/app/commit/f291bb78d754f890351f3b6bda39ae74bfca904b))
+* profile pic too large custom error messagr ([3f7430d](https://gitlab.com/circularing/mobile/app/commit/3f7430d05bf171926117256f6206d7a243e0dd20))
+* remove borders in the tutorial ([f6858ae](https://gitlab.com/circularing/mobile/app/commit/f6858ae9c825466a3638baf0e1721b98bbfe0c33))
+* Remove SPO2 and Oxygen Saturation in all translations and fallback to english ([9224edf](https://gitlab.com/circularing/mobile/app/commit/9224edfcb92116920cb3adc9b28eecbe48122f08))
+* removed auto sync ([b3649b2](https://gitlab.com/circularing/mobile/app/commit/b3649b2a5c5169cc5b9a6aed8e0b8a0bc62a742f))
+* resting heart rate graph ([bec7e0f](https://gitlab.com/circularing/mobile/app/commit/bec7e0fdecfc52b6d484003a71bb4066712efa80))
+* Revert "feat: added Codepush" ([27bf27e](https://gitlab.com/circularing/mobile/app/commit/27bf27efb7ec32cc499bc1803f6260722686ec62))
+* RHR graphs ([07902f9](https://gitlab.com/circularing/mobile/app/commit/07902f915b6c8bf6abcbe380d0a2d8903a49bb3e))
+* skip ring onboarding ([85dbc65](https://gitlab.com/circularing/mobile/app/commit/85dbc653ecc7682241aa6492ac6e641074204db8))
+* Swipe enabled for the drawer only in the Home ([e520d94](https://gitlab.com/circularing/mobile/app/commit/e520d9489ff65b4a2e895154a4dccfbc121f5f36))
+* update language ([652cc0c](https://gitlab.com/circularing/mobile/app/commit/652cc0cc12be9669a859f0cd13d350d33a480be1))
+* updated fastlane ([c310a89](https://gitlab.com/circularing/mobile/app/commit/c310a895a42c70046b7c60c57e69242cfc6472b3))
+* using image resize ([403a862](https://gitlab.com/circularing/mobile/app/commit/403a862c5fd65ea1fa8b23d917f38292029aebe4))
+
+
+### Features
+
+* **CIR-802:** connect leaderboard to backend ([44a773e](https://gitlab.com/circularing/mobile/app/commit/44a773ee8e8b2752c3700ec650a2f9111e2bd196))
+* CIR/1016 connect input datepicker and slider to the back end ([3600ae4](https://gitlab.com/circularing/mobile/app/commit/3600ae4c9069104ebbc7ee598290ad30ffee135f))
+* CIR/1061-488 ([f9b04d3](https://gitlab.com/circularing/mobile/app/commit/f9b04d37892e9a57531ac54c25691b80832d28ee))
+* Current Ring Firmware Banner in the Home, comment the Banner App version... ([8674917](https://gitlab.com/circularing/mobile/app/commit/86749172e03351109b1512d5be66377d5ea8bcfa))
+* little banner no ring ([d886a6c](https://gitlab.com/circularing/mobile/app/commit/d886a6c0237842a172568411c1e78907962edf52))
+* Transition and Fade on the recommendations ([49a1993](https://gitlab.com/circularing/mobile/app/commit/49a1993738745a7158d2ba75e0fbafbdbdaf7b75))
+
 # [1.2.0](https://gitlab.com/circularing/mobile/app/compare/v1.1.4...v1.2.0) (2022-06-21)
 
 
