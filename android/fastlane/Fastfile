@@ -88,7 +88,7 @@ def codepush(flavor)
       app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
       owner_name: "#{APPCENTER_OWNER}",
       deployment: "Production",
-      target_version: "^" + load_json(json_path: "../package.json")["version"]
+      target_version: "^" + load_json(json_path: "./package.json")["version"]
     )
   end
 end
