@@ -1,16 +1,6 @@
-import CodePush from "react-native-code-push";
+import CodePush, { CodePushOptions } from "react-native-code-push";
 
-export const options = (): {
-	updateDialog: {
-		optionalIgnoreButtonLabel: string;
-		optionalInstallButtonLabel: string;
-		title: string;
-		optionalUpdateMessage: string;
-	};
-	installMode: CodePush.InstallMode;
-	checkFrequency: CodePush.CheckFrequency;
-	mandatoryInstallMode: CodePush.InstallMode;
-} => {
+export const options = (): CodePushOptions => {
 	return {
 		updateDialog: {
 			title: "A new update is available",

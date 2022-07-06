@@ -61,6 +61,12 @@ const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: "
 
 // @refresh reset
 const App = () => {
+	CodePush.sync(
+		{},
+		(status) => console.log("UPDATE STATUS: ", status),
+		(progress) => console.log("DOWNLOAD PROGRESS", progress),
+		(update) => console.log("MISMATCH", update)
+	);
 	// For some reason it can't be done in the main script
 	const [locale, setLocale] = useState<LocaleType>(getPreferredLangageCode(Object.keys(translations)));
 	const [initialized, setInitialized] = useState(false);
