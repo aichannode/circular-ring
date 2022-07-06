@@ -72,7 +72,7 @@ android:build:prod:
   script:
     - npm install -g appcenter-cli
     - npm ci --progress=false
-#    - npm run semver
+    - npm run semver
     - npx jetifier
     - bash ./scripts/copy-env.sh ${ENV}
     - cd android
