@@ -1,18 +1,19 @@
 import { useServices } from "@core/services";
-import { PrimaryText } from "@ui/components/text";
-import { useI18n } from "@ui/i18n";
-import React, { useEffect, useState, useRef } from "react";
-import { View } from "react-native";
-import styled from "styled-components/native";
-import { useObservable } from "micro-observables";
-import { colors } from "@ui/styles/colors";
-import { PrimaryButton } from "@ui/components/buttons";
-import { Device } from "react-native-ble-plx";
-import { useNavigation } from "@react-navigation/core";
-import { UserRing } from "@domain/ring/ring";
 import { useRingBattery } from "@domain/device/hooks";
+import { UserRing } from "@domain/ring/ring";
+import { useNavigation } from "@react-navigation/core";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
+import { PrimaryButton } from "@ui/components/buttons";
+import { PrimaryText } from "@ui/components/text";
+import { IfAdmin } from "@ui/containers/IfAdmin";
+import { useI18n } from "@ui/i18n";
 import { UpdateFailedBottomSheet } from "@ui/screens/myRing/firmwareUpdate/UpdateFailedBottomSheet";
+import { colors } from "@ui/styles/colors";
+import { useObservable } from "micro-observables";
+import React, { useEffect, useRef, useState } from "react";
+import { View } from "react-native";
+import { Device } from "react-native-ble-plx";
+import styled from "styled-components/native";
 
 interface I_IsUpToDate {
 	connectedRing: Device | null;
@@ -53,7 +54,7 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 
 	return (
 		<>
-			<StyledPrimaryText>Current version</StyledPrimaryText>
+			<StyledPrimaryText>{format("updateFirmware.currentVersion")}</StyledPrimaryText>
 			<VersionContainer
 				style={{
 					shadowColor: "#000",
@@ -89,13 +90,15 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 			) : (
 				// use to debug need to be deleted
 				<View style={{ display: "flex", flexDirection: "row", position: "absolute", bottom: "10%" }}>
-					<PrimaryButton
-						onPress={() => {
-							startUpdate();
-						}}
-					>
-						Update Again
-					</PrimaryButton>
+					<IfAdmin>
+						<PrimaryButton
+							onPress={() => {
+								startUpdate();
+							}}
+						>
+							Update Again
+						</PrimaryButton>
+					</IfAdmin>
 					<PrimaryButton
 						onPress={() => {
 							goBack();

@@ -1,5 +1,6 @@
 import { getLogger } from "@core/logger/logger";
 import { apiService, resetServices } from "@core/services";
+import { Storage } from "@core/storage";
 import { round2Digits, toServerDate } from "@core/utils";
 import { AppStateService } from "@domain/appState/appStateService";
 import { AuthService } from "@domain/auth/authService";
@@ -56,6 +57,7 @@ export class UserService {
 
 	private _justRegisteredUserEmail = observable<string | null>(null);
 	private _authenticatedUserEmail = observable<string | null>(null);
+	private _connectionStartTime = observable<string | null>(null);
 	private _user = observable<User | null>(null);
 	private _userSettings = observable<UserSettings | null>(null);
 	private _userNotificationsSettings = observable<UserNotificationsSettings>(defaultNotificationsSettings);
@@ -63,6 +65,7 @@ export class UserService {
 
 	readonly justRegisteredUserEmail = this._justRegisteredUserEmail.readOnly();
 	readonly authenticatedUserEmail = this._authenticatedUserEmail.readOnly();
+	readonly connectionStartTime = this._connectionStartTime.readOnly();
 	readonly user = this._user.readOnly();
 	readonly userSettings = this._userSettings.readOnly();
 	readonly userNotificationsSettings = this._userNotificationsSettings.readOnly();
@@ -85,6 +88,8 @@ export class UserService {
 		const authenticatedEmail = this.authService.userEmail.get();
 		if (!!authenticatedEmail) {
 			this._authenticatedUserEmail.set(authenticatedEmail);
+			this._connectionStartTime.set(new Date().toISOString());
+
 			// Async refresh user informations
 			this.retrieveUser().catch(() => {
 				this.logger.warn("Authenticated but user does not exist on server");
@@ -99,6 +104,7 @@ export class UserService {
 		this._userNotificationsSettings.set(defaultNotificationsSettings);
 		this._userAdvancedInfo.set(null);
 		this._authenticatedUserEmail.set(null);
+		this._connectionStartTime.set(null);
 		this._justRegisteredUserEmail.set(null);
 
 		/** Clean user Storage **/
@@ -117,6 +123,8 @@ export class UserService {
 			await this.authService.loginEmail(email, password);
 			await this.retrieveUser();
 			this._authenticatedUserEmail.set(email);
+			Storage.save("lastAuthenticatedUserEmail", email);
+			this._connectionStartTime.set(new Date().toISOString());
 		} catch (error) {
 			if ((error as { code: string }).code === "UserNotConfirmedException") {
 				await this.userStorage.saveJustRegisteredUser(email, password);

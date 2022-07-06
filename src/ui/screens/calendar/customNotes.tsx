@@ -102,16 +102,14 @@ const CustomNote = observer(function CustomNote({
 						)}
 					</TagContainer>
 				))}
-				{!deleteMode && (
-					<AddContainer
-						onPress={() => {
-							console.log("ONPRESS");
-							createCustomNoteRef.current?.present();
-						}}
-					>
-						<Add>+</Add>
-					</AddContainer>
-				)}
+
+				<AddContainer
+					onPress={() => {
+						createCustomNoteRef.current?.present();
+					}}
+				>
+					<Add>+</Add>
+				</AddContainer>
 			</Tags>
 			<CircularBottomSheet snapPoints={[400]} ref={createCustomNoteRef}>
 				<CreateCustomNoteBottomSheet onClose={() => createCustomNoteRef.current?.forceClose()} />

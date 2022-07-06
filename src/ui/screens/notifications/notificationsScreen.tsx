@@ -23,6 +23,7 @@ export const NotificationsScreen: React.FC = () => {
 				switchValue={notificationsSettings.kira}
 				onSwitchSelect={(val) => userService.updateUserNotificationsSettings({ kira: val })}
 				lightTheme
+				forceRightOption
 			/>
 			<InfoListItem
 				name={format("notifications.banner")}
@@ -38,6 +39,7 @@ export const NotificationsScreen: React.FC = () => {
 				switchValue={notificationsSettings.update}
 				onSwitchSelect={(val) => userService.updateUserNotificationsSettings({ update: val })}
 				lightTheme
+				forceRightOption
 			/>
 			<InfoListItem
 				name={format("notifications.perdiodTiming")}
@@ -45,6 +47,7 @@ export const NotificationsScreen: React.FC = () => {
 				switchValue={notificationsSettings.period}
 				onSwitchSelect={(val) => userService.updateUserNotificationsSettings({ period: val })}
 				lightTheme
+				forceRightOption
 			/>
 			<InfoListItem
 				name={format("notifications.PMSTiming")}
@@ -52,6 +55,7 @@ export const NotificationsScreen: React.FC = () => {
 				switchValue={notificationsSettings.PMS}
 				onSwitchSelect={(val) => userService.updateUserNotificationsSettings({ PMS: val })}
 				lightTheme
+				forceRightOption
 			/>
 			<InfoListItem
 				name={format("notifications.fertility")}

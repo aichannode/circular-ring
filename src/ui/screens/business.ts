@@ -37,6 +37,5 @@ export const mergeDefaultAndUserCirle = (userCircles: CircleEntity[], defaultCir
 		if (c) mergedCircle.push(c);
 		else mergedCircle.push({ ...circle, enabled: false });
 	}
-	console.log("mergedCircle", mergedCircle);
 	return mergedCircle;
 };

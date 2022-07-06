@@ -5,6 +5,7 @@ import { useDeviceStored } from "@domain/device/hooks";
 import { UserRing } from "@domain/ring/ring";
 import { useAuthenticatedUserEmail, useUser } from "@domain/user/hooks/useUser";
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { DrawerContent } from "@ui/navigation/drawer/drawerContent";
 import { MainHomeNavigator } from "@ui/navigation/MainHomeNavigator";
@@ -121,7 +122,16 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 			screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
 			drawerContent={() => <DrawerContent />}
 		>
-			<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} options={{ swipeEnabled: false }} />
+			<HomeDrawer.Screen
+				name={Routes.MainHome}
+				component={MainHomeNavigator}
+				options={({ route }) => {
+					const routeName = getFocusedRouteNameFromRoute(route);
+					return {
+						swipeEnabled: routeName === Routes.Home,
+					};
+				}}
+			/>
 		</HomeDrawer.Navigator>
 	);
 };

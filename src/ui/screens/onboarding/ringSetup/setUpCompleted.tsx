@@ -28,7 +28,7 @@ export const SetUpCompleted = ({ route }: I_SetUpCompleted) => {
 					<BoldText style={{ marginTop: 70 }}>{route.params.ringName}</BoldText>
 				</Stack>
 				<Stack align="center">
-					<BoldText>Set up complete</BoldText>
+					<BoldText>{format("setup.connection.complete.title")}</BoldText>
 					<Image source={require("@assets/images/checkBig.png")} style={{ marginTop: 36 }} />
 				</Stack>
 				<SecondaryButton style={{}} onPress={() => route.params.action()}>

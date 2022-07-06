@@ -25,11 +25,11 @@ export const CalendarDay = observer(function CalendarDay({ date, marking, onPres
 	);
 
 	return (
-		<Container onPress={() => onPress?.(date)}>
+		<Container onPress={() => onPress?.(date)} selected={fixedMarking?.selected}>
 			<StarContainer>
 				{dayCalendar && dayCalendar.streak && <Image source={require("@assets/images/goldStar.png")} />}
 			</StarContainer>
-			<DayInfo selected={fixedMarking?.selected}>
+			<DayInfo>
 				<DayText today={state === "today"} disabled={state === "disabled"}>
 					{date?.day}
 				</DayText>
@@ -41,14 +41,14 @@ export const CalendarDay = observer(function CalendarDay({ date, marking, onPres
 	);
 });
 
-const Container = styled.Pressable`
+const Container = styled.Pressable<{ selected?: boolean }>`
 	align-items: center;
+	${({ selected }) => selected && `background-color: ${colors.lightgray}`};
+	border-radius: 5px;
 `;
 
 const DayInfo = styled.View<{ selected?: boolean }>`
-	padding: 4px 12px;
-	border-radius: 5px;
-	${({ selected }) => selected && `background-color: ${colors.lightgray}`};
+	padding: 0px 12px;
 	align-items: center;
 `;
 
@@ -61,7 +61,7 @@ const DayText = styled.Text<{ today: boolean; disabled: boolean }>`
 const StarContainer = styled.View`
 	height: 11px;
 	width: 12px;
-	margin-bottom: 4px;
+	margin-bottom: 2px;
 `;
 
 const TagsContainer = styled.View`

@@ -5,7 +5,7 @@ import moment from "moment";
 import { getStaleLocalUserInputStates, reconciliate, removeStaleLocalAnswers } from "./business";
 import { FeedApi } from "./feedApi";
 import { FeedStorage } from "./feedStorage";
-import { FeedNotification, FeedRecommendation, InputAnswer, InputType, UserInputState, UserInputStates } from "./type";
+import { FeedNotification, FeedRecommendation, InputAnswer, InputType, InputValueTest, UserInputState, UserInputStates } from "./type";
 
 export class FeedService {
 	private serverNotifications = observable<FeedNotification[]>([]);
@@ -13,6 +13,7 @@ export class FeedService {
 
 	private serverRecommandations = observable<FeedRecommendation[]>([]);
 	private localyAnsweredQuestions = observable<UserInputStates>([]);
+
 	// Store the last fetch time for conflict resolution
 	private lastFetchedAt = {
 		notifications: NaN,
@@ -160,16 +161,19 @@ export class FeedService {
 	 * until fetching recommandations again.
 	 * Then we clear answers that has been taken in account to the server.
 	 */
-	answerRecommendation(feedEntryId: number, componentId: number, answer: InputAnswer<InputType.SELECT>) {
+	answerRecommendation(feedEntryId: number, componentId: number, answer?: InputAnswer<InputType.SELECT> , value?: InputValueTest<InputType.DATE_PICKER | InputType.SLIDER>) {
+
 		// CIR-429 need at least one option
-		if (!answer.length) return;
+		if (!answer?.length && typeof value === undefined) return;
+		
 		const answeredAt = moment().utc().toISOString();
-		const userInputState = { id: componentId, answeredAt, answer, feedEntryId };
+		const userInputState = { id: componentId, answeredAt, answer, value, feedEntryId };
+		
 		// Upsert the anwser in the locale state
 		this.localyAnsweredQuestions.update((state) => {
-			const reco = state.find(({ id: _id }) => _id === componentId) as UserInputState<InputType.SELECT> | undefined;
+			const reco = state.find(({ id: _id }) => _id === componentId) as UserInputState<InputType.SELECT | InputType.DATE_PICKER | InputType.SLIDER> | undefined;
 			if (reco) {
-				reco.answer = [...answer];
+				answer ? reco.answer = [...answer] : reco.value = value 
 				reco.answeredAt = answeredAt;
 			} else {
 				state.push(userInputState);
@@ -181,9 +185,12 @@ export class FeedService {
 		this.feedStorage.saveRecommendationState(userInputState);
 		// TODO turn into reaction to the above update
 		// side effect (fire and forget)
-		this.feedApi
-			.answerQuestion([{ feedEntryId, selectedOptionIds: answer }])
-			// now, refetch the notifications to sync with the server
-			.then(() => this.fetchRecommendations(this.appStateService.recommendationsCount.get()));
+
+		// now, refetch the notifications to sync with the server
+		answer && this.feedApi.answerQuestion([{ feedEntryId, selectedOptionIds: answer }]).then(() => this.fetchRecommendations(this.appStateService.recommendationsCount.get()));
+		value && this.feedApi.answerInput([{ feedEntryId,componentId, value: {value} }]).then(() => this.fetchRecommendations(this.appStateService.recommendationsCount.get()));
+		
 	}
+
+	
 }

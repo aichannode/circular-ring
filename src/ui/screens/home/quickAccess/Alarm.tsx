@@ -183,7 +183,7 @@ export const AlarmTile = () => {
 				<Bold>
 					{quickAccessAlarm
 						? `${quickAccessAlarm.time.hour}:${("0" + quickAccessAlarm.time.minute).slice(-2)}`
-						: "Alarm"}
+						: format("alarm.label.default")}
 				</Bold>
 				<Light>{isAlarmOn ? "on" : "off"}</Light>
 			</Tile>

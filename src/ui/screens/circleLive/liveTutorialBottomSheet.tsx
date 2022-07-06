@@ -6,7 +6,7 @@ import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { useObservable } from "micro-observables";
 import React, { useCallback, useEffect, useState } from "react";
-import { BackHandler, Image } from "react-native";
+import { BackHandler, Image, View } from "react-native";
 import styled from "styled-components/native";
 
 enum TutorialStep {
@@ -25,6 +25,7 @@ export const LiveTutorialBottomSheet: React.FC<LiveTutorialBottomSheetProps> = (
 	const showWarning = useObservable(appStateService.showLiveCircleWaringBottomSheet);
 	const [skipWarning, setSkipWarning] = useState(false);
 	const [hideTutorialWarning, setHideTutorialWarning] = useState(false);
+	console.log("showWarning", showWarning);
 
 	const backToStepOne = useCallback(() => {
 		setStep(TutorialStep.ONE);
@@ -40,28 +41,30 @@ export const LiveTutorialBottomSheet: React.FC<LiveTutorialBottomSheetProps> = (
 		}
 	}, [step]);
 
-	if (showWarning && !skipWarning)
+	if (showWarning !== false && !skipWarning)
 		return (
-			<Container>
-				<Stack gap={35} align="center" style={{ flex: 1, justifyContent: "space-evenly" }}>
-					<SecondaryText style={{ textAlign: "center" }}>{format("live.tutorial.not.medical.warning")}</SecondaryText>
-					<SecondaryText style={{ textAlign: "center" }}>{format("live.tutorial.not.medical.warning2")}</SecondaryText>
-				</Stack>
-				<Stack gap={60} align="center">
+			<Container style={{ flex: 1, justifyContent: "space-between", alignContent: "center" }}>
+				<View style={{ flex: 1, justifyContent: "space-evenly", alignContent: "center" }}>
+					<View>
+						<SecondaryText style={{ textAlign: "center" }}>{format("live.tutorial.not.medical.warning")}</SecondaryText>
+						<SecondaryText style={{ textAlign: "center", marginTop: 30 }}>
+							{format("live.tutorial.not.medical.warning2")}
+						</SecondaryText>
+					</View>
 					<CheckBox
 						value={hideTutorialWarning}
 						onChange={setHideTutorialWarning}
 						label="I understand, don’t show this message again"
 					/>
-					<PrimaryButton
-						onPress={() => {
-							setSkipWarning(true);
-							if (hideTutorialWarning) appStateService.showLiveCircleWaringBottomSheet.set(false);
-						}}
-					>
-						{format("continue")}
-					</PrimaryButton>
-				</Stack>
+				</View>
+				<PrimaryButton
+					onPress={() => {
+						setSkipWarning(true);
+						if (hideTutorialWarning) appStateService.showLiveCircleWaringBottomSheet.set(false);
+					}}
+				>
+					{format("continue")}
+				</PrimaryButton>
 			</Container>
 		);
 
