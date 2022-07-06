@@ -16,6 +16,8 @@ import { DevFakeDeviceService, EmptyFakeDeviceService } from "@domain/fake/fakeD
 import { FeedApi } from "@domain/feed/feedApi";
 import { FeedService } from "@domain/feed/feedService";
 import { FeedStorage } from "@domain/feed/feedStorage";
+import { LeaderboardApi } from "@domain/leaderboard/leaderboardApi";
+import { LeaderboardService } from "@domain/leaderboard/leaderboardService";
 import { UserPreferencesService } from "@domain/preferences/userPreferencesService";
 import { UserPreferencesStorage } from "@domain/preferences/userPreferencesStorage";
 import { RingApi } from "@domain/ring/ringApi";
@@ -72,6 +74,8 @@ const feedApi = new FeedApi(apiService);
 const feedService = new FeedService(feedStorage, feedApi, appStateService, userService);
 
 const timerService = new TimerService(bleDeviceService);
+const leaderboardApi = new LeaderboardApi(apiService);
+const leaderboardService = new LeaderboardService(leaderboardApi);
 
 export const services = {
 	cognitoAuthService,
@@ -89,6 +93,7 @@ export const services = {
 	ringApi,
 	userDevicesStorage,
 	appStateService,
+	leaderboardService,
 };
 
 export type Services = typeof services;
