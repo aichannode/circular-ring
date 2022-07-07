@@ -23,7 +23,8 @@ platform :android do
   lane :dev do
     apkName = getApkName("dev", nil)
     build("dev", apkName, nil)
-    appcenter("dev", apkName, true)
+#    appcenter("dev", apkName, true)
+    codepush("dev")
   end
 
   desc "Build demo version"
@@ -31,19 +32,22 @@ platform :android do
     apkName = getApkName("demo", nil)
     build("demo", apkName, nil)
     appcenter("demo", apkName, true)
+    codepush("demo")
   end
 
   desc "Build staging version"
   lane :staging do |values|
-    apkName = getApkName("staging", values[:buildName])
-    build("staging", apkName, values[:buildName])
-    appcenter("staging", apkName, true)
+    apkName = getApkName("rc", values[:buildName])
+    build("rc", apkName, values[:buildName])
+    appcenter("rc", apkName, true)
+    codepush("rc")
   end
 
   desc "Build prod version"
   lane :prod do
     apkName = getApkName("prod", nil)
     build("prod", apkName, nil)
+    codepush("prod")
     upload_to_play_store(track: "alpha", release_status: "draft")
   end
 end
@@ -78,13 +82,24 @@ def appcenter(flavor, apkName, notify)
   )
 end
 
+def codepush(flavor)
+  Dir.chdir("..") do
+    appcenter_codepush_release_react(
+      app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
+      owner_name: "#{APPCENTER_OWNER}",
+      deployment: "Production",
+      target_version: "^1.0.0"# + load_json(json_path: "./package.json")["version"]
+    )
+  end
+end
+
 def changelog(flavor)
   begin
     result = appcenter_fetch_version_number(
       app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
       owner_name: "#{APPCENTER_OWNER}")
     commits_count = number_of_commits - Integer(result["build_number"])
-    commits_count = commits_count >= 1 ? commits_count : 1
+    commits_count = commits_count >= 1 && commits_count < 20 ? commits_count : 1
   rescue
     commits_count = 1
   end

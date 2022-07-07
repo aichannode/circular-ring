@@ -2,7 +2,6 @@ import {
 	createActiveMode,
 	createCalibrationMode,
 	createDisabledMode,
-	getInitMode,
 	isInActiveMode,
 	isInCalibrationMode,
 	isInDisabledMode,
@@ -37,12 +36,12 @@ test("update mode", function () {
 	expect(isInDisabledMode(updateMode(createCalibrationMode(0), true))).toBeTruthy();
 });
 
-test("get init mode", function () {
-	expect(getInitMode(0, true)).toEqual(createActiveMode());
-	expect(getInitMode(0, false)).toEqual(createDisabledMode());
-	expect(getInitMode(12, true)).toEqual(createCalibrationMode(12));
-	expect(getInitMode(12, false)).toEqual(createCalibrationMode(12));
-});
+// test("get init mode", function () {
+// 	expect(getInitMode(0, true)).toEqual(createActiveMode());
+// 	expect(getInitMode(0, false)).toEqual(createDisabledMode());
+// 	expect(getInitMode(12, true)).toEqual(createCalibrationMode(12));
+// 	expect(getInitMode(12, false)).toEqual(createCalibrationMode(12));
+// });
 
 test("trimData", function () {
 	const getTimestampFromValue = (x: number) => x;

@@ -46,7 +46,7 @@ android:build:staging:
   variables:
     ENV: staging
   before_script:
-    - export BUILD_NAME=staging
+    - export BUILD_NAME=rc
   only:
     - staging
 
@@ -70,6 +70,7 @@ android:build:prod:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - mkdir artifacts
   script:
+    - npm install -g appcenter-cli
     - npm ci --progress=false
     - npm run semver
     - npx jetifier

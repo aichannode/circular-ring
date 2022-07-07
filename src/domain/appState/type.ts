@@ -24,4 +24,5 @@ export interface I_AppState {
 	userCircles: CircleEntity[];
 	waitForRingRegistration: boolean;
 	showLiveCircleWaringBottomSheet: boolean;
+	showUpdateBanner: { display: boolean; firmwareVersion: string };
 }

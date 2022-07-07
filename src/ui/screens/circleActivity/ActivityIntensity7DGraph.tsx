@@ -2,7 +2,7 @@ import { useRepresentations } from "@core/representation";
 import { CalendarTag } from "@domain/calendar/calendar";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { ActivityData } from "@domain/measure/representation/api";
+import { ActivityData, DataControlState } from "@domain/measure/representation/api";
 import { useIsUSCS } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
@@ -85,7 +85,8 @@ export const ActivityIntensity7DGraph: React.FC<Props> = observer(function Activ
 			].map((el) => el)
 		),
 	];
-	const updatedMode = updateMode(mode, lines.length === 0);
+	const updatedMode = updateMode(mode, activity7D?.controlState !== DataControlState.READY);
+
 	const isLoading = !isDefined(activity7D);
 	const toUpdateTag = (x: number) => {
 		const date = moment(new Date(lines[x].date)).format("Y-MM-DD") as ISODay;

@@ -1,5 +1,5 @@
 {
-  "branches": [{"name": "staging", "channel": "rc", "prerelease": "rc"}, "develop"],
+  "branches": ["develop"],
   "plugins": [
     ["@semantic-release/commit-analyzer", {
       "preset": "conventionalcommits",

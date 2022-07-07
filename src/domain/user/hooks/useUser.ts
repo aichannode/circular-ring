@@ -4,10 +4,7 @@ import { useObservable } from "micro-observables";
 
 export const useJustRegisteredUserEmail = () => useObservable(useServices().userService.justRegisteredUserEmail);
 export const useAuthenticatedUserEmail = () => useObservable(useServices().userService.authenticatedUserEmail);
-/**
- * It returns the last authenticated user's email address
- */
-export const useLastAuthenticatedUserEmail = () => useObservable(useServices().userService.lastAuthenticatedUserEmail);
+export const useConnectionStartTime = () => useObservable(useServices().userService.connectionStartTime);
 export const useUser = () => useObservable(useServices().userService.user);
 export const useUserSettings = () => useObservable(useServices().userService.userSettings);
 export const useIs24h = () => {

@@ -1,166 +1,25 @@
-import React, { createRef } from "react";
-import { ScrollView } from "react-native";
-import styled from "styled-components/native";
-import LinearGradient from "react-native-linear-gradient";
+import { useServices } from "@core/services";
+import { Spinner } from "@ui/components/spinner";
+import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import emoji from "node-emoji";
-import { useI18n } from "@ui/i18n";
+import React, { createRef, useEffect, useState } from "react";
+import { ScrollView, Text, View } from "react-native";
+import LinearGradient from "react-native-linear-gradient";
+import styled from "styled-components/native";
 
-interface I_Data {
+interface I_LeaderboardData {
 	rank: number;
-	firstname: string;
-	lastname: string;
 	score: number;
-	progress: boolean;
-	subscore: number;
-	country?: string;
+	previousScore: number;
+	user: {
+		userName: string;
+		profilePictureUrl: string;
+		country?: string;
+		streak: number;
+	};
 }
-
-const data: I_Data[] = [
-	{
-		rank: 1,
-		firstname: "William",
-		lastname: "Doe",
-		score: 99.78,
-		progress: true,
-		subscore: 45,
-	},
-	{
-		rank: 2,
-		firstname: "Rose",
-		lastname: "Jose",
-		score: 99.23,
-		progress: true,
-		subscore: 45,
-		country: "flag-fr",
-	},
-	{
-		rank: 3,
-		firstname: "Gale",
-		lastname: "Blue",
-		score: 99.21,
-		progress: false,
-		subscore: 34,
-		country: "flag-fi",
-	},
-	{
-		rank: 4,
-		firstname: "William",
-		lastname: "Bowlow",
-		score: 98.41,
-		progress: false,
-		subscore: 39,
-		country: "flag-ru",
-	},
-	{
-		rank: 5,
-		firstname: "John",
-		lastname: "Lee",
-		score: 98.09,
-		progress: true,
-		subscore: 51,
-		country: "flag-us",
-	},
-	{
-		rank: 6,
-		firstname: "Simone",
-		lastname: "Roger",
-		score: 98.01,
-		progress: true,
-		subscore: 51,
-		country: "flag-cw",
-	},
-	{
-		rank: 7,
-		firstname: "Elen",
-		lastname: "Love",
-		score: 97.99,
-		progress: false,
-		subscore: 32,
-		country: "flag-fr",
-	},
-	{
-		rank: 8,
-		firstname: "Clara",
-		lastname: "Ocean",
-		score: 97.93,
-		progress: true,
-		subscore: 46,
-		country: "flag-fr",
-	},
-	{
-		rank: 1,
-		firstname: "William",
-		lastname: "Doe",
-		score: 99.78,
-		progress: true,
-		subscore: 45,
-	},
-	{
-		rank: 2,
-		firstname: "Rose",
-		lastname: "Jose",
-		score: 99.23,
-		progress: true,
-		subscore: 45,
-		country: "flag-fr",
-	},
-	{
-		rank: 3,
-		firstname: "Gale",
-		lastname: "Blue",
-		score: 99.21,
-		progress: false,
-		subscore: 34,
-		country: "flag-fr",
-	},
-	{
-		rank: 4,
-		firstname: "William",
-		lastname: "Bowlow",
-		score: 98.41,
-		progress: false,
-		subscore: 39,
-		country: "flag-fr",
-	},
-	{
-		rank: 5,
-		firstname: "John",
-		lastname: "Lee",
-		score: 98.09,
-		progress: true,
-		subscore: 51,
-		country: "flag-fr",
-	},
-	{
-		rank: 6,
-		firstname: "Simone",
-		lastname: "Roger",
-		score: 98.01,
-		progress: true,
-		subscore: 51,
-		country: "flag-fr",
-	},
-	{
-		rank: 7,
-		firstname: "Elen",
-		lastname: "Love",
-		score: 97.99,
-		progress: false,
-		subscore: 32,
-		country: "flag-fr",
-	},
-	{
-		rank: 8,
-		firstname: "Clara",
-		lastname: "Ocean",
-		score: 97.93,
-		progress: true,
-		subscore: 46,
-		country: "flag-fr",
-	},
-];
 
 const Tile = styled(LinearGradient)`
 	width: 100%;
@@ -272,25 +131,19 @@ const LightScore = styled.Text<{ color: string }>`
 `;
 
 const ColoredStar = ({ position }: { position: number }) => {
-	if (position === 0) return <Star resizeMode="contain" source={require("@assets/images/goldStar.png")} />;
-	if (position === 1) return <Star resizeMode="contain" source={require("@assets/images/starSilver.png")} />;
-	if (position === 2) return <Star resizeMode="contain" source={require("@assets/images/starCopper.png")} />;
+	if (position === 1) return <Star resizeMode="contain" source={require("@assets/images/goldStar.png")} />;
+	if (position === 2) return <Star resizeMode="contain" source={require("@assets/images/starSilver.png")} />;
+	if (position === 3) return <Star resizeMode="contain" source={require("@assets/images/starCopper.png")} />;
 	return <Star resizeMode="contain" source={require("@assets/images/starOrange.png")} />;
 };
 
-const LeaderboardTile = ({
-	data,
-	gradient,
-	color,
-	i,
-}: {
-	data: I_Data;
-	gradient: boolean;
-	color: string;
-	i: number;
-}) => {
-	const { firstname, lastname, score, progress, subscore, country } = data;
+const LeaderboardTile = ({ data, gradient, color }: { data: I_LeaderboardData; gradient: boolean; color: string }) => {
+	let { score } = data;
+	const { previousScore, rank } = data;
+	const { userName, country, profilePictureUrl } = data.user;
+	const progress = score > previousScore;
 
+	score *= 100;
 	return (
 		<Tile
 			start={{ x: 0, y: 1 }}
@@ -307,20 +160,22 @@ const LeaderboardTile = ({
 				elevation: 5,
 			}}
 		>
-			<Rank color={color}>{i + 1}</Rank>
+			<Rank color={color}>{rank}</Rank>
 			<PictureContainer>
-				<UserPic resizeMode="contain" source={require("@assets/images/man.png")}></UserPic>
+				<UserPic
+					resizeMode="cover"
+					source={profilePictureUrl ? { uri: profilePictureUrl } : require("@assets/images/man.png")}
+				></UserPic>
 			</PictureContainer>
 			<MiddleTileContainer>
 				<UserName>
-					<FirstName color={color}>{firstname}</FirstName>
-					<LastName color={color}>{lastname}</LastName>
+					<FirstName color={color}>{userName.split(" ")[0]}</FirstName>
+					<LastName color={color}>{userName.split(" ")[1]}</LastName>
 				</UserName>
 				<MiddleBottomContainer>
-					<ColoredStar position={i}></ColoredStar>
-					<SubScore color={color}>{subscore}</SubScore>
-					{/* <Country resizeMode="contain" source={require("@assets/images/france.png")}></Country> */}
-					{country && <CountryEmoji>{emoji.get(country)}</CountryEmoji>}
+					<ColoredStar position={rank}></ColoredStar>
+					<SubScore color={color}>{0}</SubScore>
+					{country && <CountryEmoji>{emoji.get(`flag-${country}`.toLowerCase())}</CountryEmoji>}
 				</MiddleBottomContainer>
 			</MiddleTileContainer>
 			<TileRightContainer color={color}>
@@ -330,7 +185,7 @@ const LeaderboardTile = ({
 				></Arrow>
 				<BoldScore color={color}>{Math.floor(score)}</BoldScore>
 				<LightScore color={color}>
-					,{Math.round((score % 1) * 100) < 10 ? "0" + Math.round((score % 1) * 100) : Math.round((score % 1) * 100)}
+					,{Math.round((score % 1) * 100) < 10 ? "0" + Math.round((score % 1) * 100) : Math.round((score % 1) * 100)}%
 				</LightScore>
 			</TileRightContainer>
 		</Tile>
@@ -340,6 +195,9 @@ const LeaderboardTile = ({
 export const LeaderboardScreen: React.FC = () => {
 	const scrollRef = createRef<ScrollView>();
 	const { format } = useI18n();
+	const { leaderboardService } = useServices();
+	const [data, setData] = useState<null | any>(null);
+	const [loading, setLoading] = useState(false);
 
 	const ScrollToPosition = (position: number) => {
 		const y = position * 67;
@@ -350,6 +208,30 @@ export const LeaderboardScreen: React.FC = () => {
 		});
 	};
 
+	const fetchLeaderboard = async () => {
+		setLoading(true);
+		try {
+			const res = await leaderboardService.getLeaderboard();
+			setData(res);
+		} catch (err) {}
+		setLoading(false);
+	};
+
+	useEffect(() => {
+		fetchLeaderboard();
+	}, []);
+
+	if (loading)
+		return (
+			<View style={{ flex: 1, alignContent: "center", justifyContent: "center" }}>
+				<Spinner size={50}></Spinner>
+			</View>
+		);
+
+	if (!data) return null;
+
+	if (data.leaderboard.data.length === 0) return <Text style={{ textAlign: "center", marginTop: 30 }}>No data</Text>;
+
 	return (
 		<>
 			<Container ref={scrollRef}>
@@ -358,21 +240,23 @@ export const LeaderboardScreen: React.FC = () => {
 					<SubTitle>{`${moment().format("MMMM")} - ${format("leaderboard.updatedDaily")}`}</SubTitle>
 				</TitleContainer>
 				<LeaderboardContainer>
-					{data.map((d, key) =>
-						key !== 12 ? (
-							<LeaderboardTile color="black" gradient={false} data={d} i={key} key={key} />
+					{data.leaderboard.data.map((d: I_LeaderboardData, key: number) =>
+						data?.targetUser?.rank !== d.rank ? (
+							<LeaderboardTile color="black" gradient={false} data={d} key={key} />
 						) : (
-							<LeaderboardTile color="white" gradient={true} data={d} i={key} key={key} />
+							<LeaderboardTile color="white" gradient={true} data={d} key={key} />
 						)
 					)}
 				</LeaderboardContainer>
 			</Container>
-			<MyScore onPress={() => ScrollToPosition(12)}>
-				<>
-					<Separator></Separator>
-					<LeaderboardTile color="white" gradient={true} data={data[12]} i={12} />
-				</>
-			</MyScore>
+			{data.targetUser && (
+				<MyScore onPress={() => ScrollToPosition(data.targetUser.rank)}>
+					<>
+						<Separator></Separator>
+						<LeaderboardTile color="white" gradient={true} data={data.targetUser} />
+					</>
+				</MyScore>
+			)}
 		</>
 	);
 };

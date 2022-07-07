@@ -155,11 +155,16 @@ export type NotificationsState = {
 
 export type InputAnswer<T extends InputType = never> = T extends InputType.SELECT ? number[] : never;
 
+export type InputValueTest<T extends InputType = never> = T extends InputType.SLIDER ? number : string;
+
+
 export type UserInputState<T extends InputType = any> = {
 	id: number;
 	answeredAt: string;
-	answer: InputAnswer<T>;
 	feedEntryId: number;
+	answer?: InputAnswer<T>;
+	value?: InputValueTest<T>;
+	compId?: number;
 };
 
 export type UserInputStates = Array<UserInputState>;

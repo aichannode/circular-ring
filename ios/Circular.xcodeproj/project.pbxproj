@@ -12,6 +12,12 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		1F1A8633272070980040D432 /* bridgingFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1A8632272070980040D432 /* bridgingFile.swift */; };
+		1FC406C8286C9D270049182C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
+		1FC406C9286C9D270049182C /* bridgingFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1A8632272070980040D432 /* bridgingFile.swift */; };
+		1FC406CA286C9D270049182C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1FC406CC286C9D270049182C /* libPods-Circular-Dev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F13A039E092ED5DBD01D36EC /* libPods-Circular-Dev.a */; };
+		1FC406CE286C9D270049182C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		1FC406CF286C9D270049182C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		9ED228C4586BF15928AA5D55 /* libPods-Circular-Dev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F13A039E092ED5DBD01D36EC /* libPods-Circular-Dev.a */; };
 		A1001E6A26DE38D1000C80A0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
@@ -38,6 +44,8 @@
 		189206352856354700C1F3CC /* OpenSSL.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OpenSSL.xcframework; path = "Pods/OpenSSL-Universal/Frameworks/OpenSSL.xcframework"; sourceTree = "<group>"; };
 		1F1A8631272070980040D432 /* Circular-Dev-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Circular-Dev-Bridging-Header.h"; sourceTree = "<group>"; };
 		1F1A8632272070980040D432 /* bridgingFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bridgingFile.swift; sourceTree = "<group>"; };
+		1FC406D6286C9D270049182C /* Circular-Stg.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Circular-Stg.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FC406D7286C9D270049182C /* Circular-Dev copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Circular-Dev copy-Info.plist"; path = "/Users/anon/Work/circular/app/ios/Circular-Dev copy-Info.plist"; sourceTree = "<absolute>"; };
 		3A2A5328308A6ECDB3C04026 /* Pods-Circular-Dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Dev.release.xcconfig"; path = "Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev.release.xcconfig"; sourceTree = "<group>"; };
 		609D0566AC617620258788BF /* Pods-Circular-Dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Circular-Dev.debug.xcconfig"; path = "Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Circular/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -58,6 +66,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				043C34314B6C2F6543C44122 /* libPods-Circular-Prod.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1FC406CB286C9D270049182C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1FC406CC286C9D270049182C /* libPods-Circular-Dev.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,6 +169,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				672D3529AA639A21F5DFE051 /* Pods */,
 				1F1A8631272070980040D432 /* Circular-Dev-Bridging-Header.h */,
+				1FC406D7286C9D270049182C /* Circular-Dev copy-Info.plist */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -165,6 +182,7 @@
 				13B07F961A680F5B00A75B9A /* Circular.app */,
 				A1001E7726DE38D1000C80A0 /* Circular-Dev.app */,
 				A1001E8A26DE38EA000C80A0 /* Circular-Demo.app */,
+				1FC406D6286C9D270049182C /* Circular-Stg.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -192,6 +210,28 @@
 			name = "Circular-Prod";
 			productName = Circular;
 			productReference = 13B07F961A680F5B00A75B9A /* Circular.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1FC406C4286C9D270049182C /* Circular-Stg */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1FC406D3286C9D270049182C /* Build configuration list for PBXNativeTarget "Circular-Stg" */;
+			buildPhases = (
+				1FC406C5286C9D270049182C /* [CP] Check Pods Manifest.lock */,
+				1FC406C6286C9D270049182C /* Start Packager */,
+				1FC406C7286C9D270049182C /* Sources */,
+				1FC406CB286C9D270049182C /* Frameworks */,
+				1FC406CD286C9D270049182C /* Resources */,
+				1FC406D0286C9D270049182C /* Bundle React Native code and images */,
+				1FC406D1286C9D270049182C /* [CP] Embed Pods Frameworks */,
+				1FC406D2286C9D270049182C /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Circular-Stg";
+			productName = Circular;
+			productReference = 1FC406D6286C9D270049182C /* Circular-Stg.app */;
 			productType = "com.apple.product-type.application";
 		};
 		A1001E6626DE38D1000C80A0 /* Circular-Dev */ = {
@@ -271,6 +311,7 @@
 				13B07F861A680F5B00A75B9A /* Circular-Prod */,
 				A1001E6626DE38D1000C80A0 /* Circular-Dev */,
 				A1001E7926DE38EA000C80A0 /* Circular-Demo */,
+				1FC406C4286C9D270049182C /* Circular-Stg */,
 			);
 		};
 /* End PBXProject section */
@@ -282,6 +323,15 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1FC406CD286C9D270049182C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1FC406CE286C9D270049182C /* LaunchScreen.storyboard in Resources */,
+				1FC406CF286C9D270049182C /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,6 +369,95 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
+		};
+		1FC406C5286C9D270049182C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Circular-Dev-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		1FC406C6286C9D270049182C /* Start Packager */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Start Packager";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		1FC406D0286C9D270049182C /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
+		};
+		1FC406D1286C9D270049182C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		1FC406D2286C9D270049182C /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		2EA1570055F7E27B08BA2954 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -552,6 +691,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1FC406C7286C9D270049182C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1FC406C8286C9D270049182C /* AppDelegate.m in Sources */,
+				1FC406C9286C9D270049182C /* bridgingFile.swift in Sources */,
+				1FC406CA286C9D270049182C /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A1001E6926DE38D1000C80A0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -580,6 +729,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODEPUSH_DEPLOYMENT_KEY = "zZfAHfqj8u-PMHBMBWCtqY-gnWA_Pme6oHxxI";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 8;
@@ -613,6 +763,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODEPUSH_DEPLOYMENT_KEY = b_TyAlxPpF0LYTT1FLcADbznogpiDAnuVfoeD;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
@@ -632,8 +783,72 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular;
 				PRODUCT_NAME = Circular;
-				PROVISIONING_PROFILE_SPECIFIER = "Aurelien prod";
+				PROVISIONING_PROFILE_SPECIFIER = "Esteban Prod2";
 				SWIFT_OBJC_BRIDGING_HEADER = "Circular-Prod-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		1FC406D4286C9D270049182C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 609D0566AC617620258788BF /* Pods-Circular-Dev.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEVELOPMENT_TEAM = WGW7T2NP8M;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "Circular-Dev copy-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.31;
+				NEW_SETTING = "";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular.stg;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Circular-Dev-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		1FC406D5286C9D270049182C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3A2A5328308A6ECDB3C04026 /* Pods-Circular-Dev.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEVELOPMENT_TEAM = WGW7T2NP8M;
+				INFOPLIST_FILE = "Circular-Dev copy-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.31;
+				NEW_SETTING = "";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular.stg;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Circular-Dev-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -762,6 +977,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODEPUSH_DEPLOYMENT_KEY = rMdWLGPKrnm8UFl_36S1tpnGDYQOch0AbuLft;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 4;
@@ -779,7 +995,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = xyz.circular.circular.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Circular-Dev-Bridging-Header.h";
@@ -795,6 +1011,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODEPUSH_DEPLOYMENT_KEY = 292xlnGJIaIm2DcV2e07mXducFl3WPjkVOKtE;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 4;
@@ -811,7 +1028,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = xyz.circular.circular.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.circular.circular.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Circular-Dev-Bridging-Header.h";
@@ -826,6 +1043,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODEPUSH_DEPLOYMENT_KEY = "1H4RHP6nHY-gkkPlICdKIlijkURNJEVnOEgLr";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 5;
@@ -858,6 +1076,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODEPUSH_DEPLOYMENT_KEY = jdPeNO3GW8PhFki0Lh4oNtJYbZgypdaZrMDCT;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 5;
@@ -890,6 +1109,15 @@
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
 				13B07F951A680F5B00A75B9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1FC406D3286C9D270049182C /* Build configuration list for PBXNativeTarget "Circular-Stg" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1FC406D4286C9D270049182C /* Debug */,
+				1FC406D5286C9D270049182C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

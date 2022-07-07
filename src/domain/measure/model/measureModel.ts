@@ -164,6 +164,8 @@ export class MeasureModel implements Model<Proposal> {
 	public dailySleepScore: Map<ISODay, Metrics<DailySleepScoreMetrics>> = new Map();
 	public dailyWakeUpScore: Map<ISODay, Metrics<DailyWakeUpScoreMetrics>> = new Map();
 	public dailyPhaseBeforeWakeUp: Map<ISODay, Metrics<DailyPhaseBeforeWakeUpMetrics>> = new Map();
+	//@ TODO SET TYPE;
+	public userRankAndStreak: any = null;
 
 	public lastAcceptedMutations: Proposal[] = [];
 
@@ -381,6 +383,8 @@ export class MeasureModel implements Model<Proposal> {
 				mutate.call(this, mutation, () => {
 					this.last30DRestingHeartRate.set(mutation.payload.localISODay, mutation.payload.constant);
 				});
+			} else if (mutation.type === "setUserRankAndStreak") {
+				mutate.call(this, mutation, () => (this.userRankAndStreak = mutation.payload));
 			}
 		});
 	};
