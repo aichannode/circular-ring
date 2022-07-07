@@ -322,6 +322,7 @@ export class UserService {
 		try {
 			const user = await this.userApi.updateUser(userPutDto);
 			user.language = userPutDto.language;
+			if (user.calibrationRemainingDays === null) user.calibrationRemainingDays = 4;
 			await this.userStorage.saveUser(user);
 			this._user.set(user);
 		} catch (error) {

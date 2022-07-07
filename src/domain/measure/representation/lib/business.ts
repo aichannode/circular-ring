@@ -2,7 +2,7 @@ import { getLogger } from "@core/logger/logger";
 import { hasMetric } from "@ui/utils/guard";
 import produce from "immer";
 import { action, reaction } from "mobx";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { InteractionManager } from "react-native";
 import { MetricType, RangeMetrics } from "../../metric";
 import { ActivityStage, SleepStage } from "../../type";
@@ -278,22 +278,15 @@ export type HeavyComputationHandler = ReturnType<typeof InteractionManager.runAf
 export function setAfterHeavyComputation<M, T>(
 	setData: (data: T) => void,
 	heavyComputation: (metrics: M) => T,
-	heavyComputationHandlerRef: React.MutableRefObject<HeavyComputationHandler | undefined>,
 	metrics: M,
 	setLoading: (loading: boolean) => void
 ) {
-	let start = 0;
-	heavyComputationHandlerRef.current?.cancel();
-	heavyComputationHandlerRef.current = InteractionManager.runAfterInteractions(() => {
-		setLoading(true);
-		start = new Date().getTime();
-		__DEV__ && console.log("[MEASURE: Representation] Start of daily data computation.");
-		setData(heavyComputation(metrics));
-	});
-	heavyComputationHandlerRef.current.then(() => {
-		__DEV__ && console.log("[MEASURE: Representation] End of daily data computation.", new Date().getTime() - start);
-		setLoading(false);
-	});
+	const start = new Date().getTime();
+	__DEV__ && console.log("[MEASURE: Representation] Start of daily data computation.");
+	setLoading(true);
+	setData(heavyComputation(metrics));
+	setLoading(false);
+	__DEV__ && console.log("[MEASURE: Representation] End of daily data computation.", new Date().getTime() - start);
 }
 
 export function useDailyHeavyComputationData<M, T>(
@@ -307,14 +300,13 @@ export function useDailyHeavyComputationData<M, T>(
 	fetchData: (localISODay: string) => void,
 	setLoading: (loading: boolean) => void
 ) {
-	const heavyComputationHandlerRef = useRef<HeavyComputationHandler>();
 	useEffect(
 		action(function () {
 			const isLoaded = modelField.has(localISODay);
 			if (isLoaded) {
 				const metrics = modelField.get(localISODay);
 				if (metrics) {
-					setAfterHeavyComputation(setData, heavyComputation, heavyComputationHandlerRef, metrics, setLoading);
+					setAfterHeavyComputation(setData, heavyComputation, metrics, setLoading);
 				}
 			} else {
 				__DEV__ && console.log("[MEASURE: Action] FETCH daily measure");
@@ -326,7 +318,7 @@ export function useDailyHeavyComputationData<M, T>(
 					function (metrics) {
 						if (metrics) {
 							dispose();
-							setAfterHeavyComputation(setData, heavyComputation, heavyComputationHandlerRef, metrics, setLoading);
+							setAfterHeavyComputation(setData, heavyComputation, metrics, setLoading);
 						}
 					}
 				);

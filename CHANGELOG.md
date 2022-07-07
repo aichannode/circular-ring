@@ -1,4 +1,4 @@
-# [1.2.0-demo.1](https://gitlab.com/circularing/mobile/app/compare/v1.1.4...v1.2.0-demo.1) (2022-07-06)
+# [1.3.0](https://gitlab.com/circularing/mobile/app/compare/v1.2.0...v1.3.0) (2022-07-06)
 
 
 ### Bug Fixes

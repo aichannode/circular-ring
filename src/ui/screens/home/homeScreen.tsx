@@ -19,7 +19,7 @@ import { QuickAccess } from "@ui/screens/home/quickAccess/quickAccess";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, Animated, Platform, RefreshControl, View } from "react-native";
+import { Alert, Animated, Platform, RefreshControl, Text, View } from "react-native";
 import fs from "react-native-fs";
 import Mailer, { Attachment } from "react-native-mail";
 import styled from "styled-components/native";
@@ -119,18 +119,33 @@ export const HomeScreen: React.FC = () => {
 				</PrimaryButton>
 				<PrimaryButton onPress={feedService._DEBUG_resetAnswers}>RESET ANSWERS</PrimaryButton>
 				<PrimaryButton onPress={() => resetCache()}>CLEAR MEASURE AND CACHE</PrimaryButton>
-				<PrimaryButton
-					onPress={() => {
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						//@ts-ignore
-						userService.user?.set?.({
-							...userService.user.get(),
-							calibrationRemainingDays: 12,
-						});
-					}}
-				>
-					ADD {remainingDays}
-				</PrimaryButton>
+				<View style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}>
+					<PrimaryButton
+						onPress={() => {
+							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+							//@ts-ignore
+							userService.user?.set?.({
+								...userService.user.get(),
+								calibrationRemainingDays: remainingDays - 1,
+							});
+						}}
+					>
+						calibDay - 1
+					</PrimaryButton>
+					<Text style={{ margin: 10, fontWeight: "bold" }}>remainingDays : {remainingDays}</Text>
+					<PrimaryButton
+						onPress={() => {
+							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+							//@ts-ignore
+							userService.user?.set?.({
+								...userService.user.get(),
+								calibrationRemainingDays: remainingDays + 1,
+							});
+						}}
+					>
+						calibDay + 1
+					</PrimaryButton>
+				</View>
 			</IfAdmin>
 			{notifications[0] && (
 				<Fade isVisible isAnimatedOnMount>
