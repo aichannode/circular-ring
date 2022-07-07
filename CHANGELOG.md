@@ -1,3 +1,10 @@
+## [1.4.1](https://gitlab.com/circularing/mobile/app/compare/v1.4.0...v1.4.1) (2022-07-07)
+
+
+### Bug Fixes
+
+* using suspend install mode ([67c098b](https://gitlab.com/circularing/mobile/app/commit/67c098b19c39eb098fa59fe8255338629881a004))
+
 # [1.4.0](https://gitlab.com/circularing/mobile/app/compare/v1.3.0...v1.4.0) (2022-07-07)
 
 
