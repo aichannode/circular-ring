@@ -21,6 +21,7 @@ export class AppStateService {
 	waitForRingRegistration = observable(false);
 	showLiveCircleWaringBottomSheet = observable(true);
 	hasReachedHomeScreen = observable(false);
+	showUpdateBanner = observable({ display: false, firmwareVersion: "" });
 
 	private get appState(): I_AppState {
 		return {
@@ -32,6 +33,7 @@ export class AppStateService {
 			userRings: this.userRings.get(),
 			waitForRingRegistration: this.waitForRingRegistration.get(),
 			showLiveCircleWaringBottomSheet: this.showLiveCircleWaringBottomSheet.get(),
+			showUpdateBanner: this.showUpdateBanner.get(),
 		};
 	}
 
@@ -45,6 +47,7 @@ export class AppStateService {
 		this.userCircles.set(state.userCircles);
 		this.defaultCircles.set(state.defaultCircles);
 		this.showLiveCircleWaringBottomSheet.set(state.showLiveCircleWaringBottomSheet);
+		this.showUpdateBanner.set(state.showUpdateBanner);
 	}
 
 	async reset() {
@@ -60,6 +63,7 @@ export class AppStateService {
 		this.defaultCircles.set([]);
 		this.showLiveCircleWaringBottomSheet.set(true);
 		this.hasReachedHomeScreen.set(false);
+		this.showUpdateBanner.set({ display: false, firmwareVersion: "" });
 	}
 
 	async init() {
@@ -78,6 +82,7 @@ export class AppStateService {
 		this.userRings.subscribe(() => this.AppStateStorage.save(this.appState));
 		this.defaultCircles.subscribe(() => this.AppStateStorage.save(this.appState));
 		this.showLiveCircleWaringBottomSheet.subscribe(() => this.AppStateStorage.save(this.appState));
+		this.showUpdateBanner.subscribe(() => this.AppStateStorage.save(this.appState));
 	}
 
 	updateQuickaccess({ active, disabled }: I_QuickAccess) {

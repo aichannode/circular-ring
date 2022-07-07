@@ -1,21 +1,22 @@
+import { CloseButton } from "@ui/components/closeButton";
 import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import React, { useState } from "react";
 import { ImageSourcePropType, Pressable, View } from "react-native";
-import styled from "styled-components/native";
-import { WordingKey } from "src/wordings";
 import LinearGradient from "react-native-linear-gradient";
-import { CloseButton } from "@ui/components/closeButton";
+import { WordingKey } from "src/wordings";
+import styled from "styled-components/native";
 
 interface BannerProps {
 	img: ImageSourcePropType;
 	title: WordingKey;
 	description: WordingKey;
 	onPress: () => void;
+	onClose?: () => void;
 }
 
-export const Banner: React.FC<BannerProps> = ({ img, title, description, onPress }) => {
+export const Banner: React.FC<BannerProps> = ({ img, title, description, onPress, onClose }) => {
 	const [isPressed, setIsPressed] = useState(false);
 	const [isDisplayed, setIsDisplayed] = useState(true);
 	const { format } = useI18n();
@@ -45,7 +46,7 @@ export const Banner: React.FC<BannerProps> = ({ img, title, description, onPress
 					<Description>{format(description)}</Description>
 				</ContainerText>
 			</Gradient>
-			<CloseBtn onClose={disable} />
+			<CloseBtn onClose={onClose ? onClose : disable} />
 		</Pressable>
 	);
 };
