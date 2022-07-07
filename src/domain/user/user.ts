@@ -42,4 +42,5 @@ export interface User {
 	tutorialCompleted: boolean;
 	createdAt: Date;
 	calibrationRemainingDays: number;
+	leaderboardRank?: string;
 }

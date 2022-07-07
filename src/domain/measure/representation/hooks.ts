@@ -1553,6 +1553,17 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				const dailyGlobalScore = model.dailyGlobalScore.get(localISODay);
 				return typeof dailyGlobalScore === "number" ? dailyGlobalScore : undefined;
 			},
+			useUserRankAndStreak() {
+				useEffect(
+					action(function () {
+						actions.setUserRankAndStreak(true);
+					}),
+					[]
+				);
+
+				if (model.userRankAndStreak) return model.userRankAndStreak;
+				return {};
+			},
 		},
 	};
 }

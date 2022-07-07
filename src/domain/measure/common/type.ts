@@ -455,6 +455,11 @@ export type Mutations =
 				localISODay: ISOMonth;
 				constant: Metrics<THRH30DConstantMetrics>;
 			};
+	  }
+	| {
+			//@ TODO set payload type when we know it;
+			type: "setUserRankAndStreak";
+			payload: any;
 	  };
 
 export type Proposal = Mutations[];

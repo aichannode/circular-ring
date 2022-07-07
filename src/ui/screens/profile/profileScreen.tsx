@@ -1,7 +1,7 @@
 import { useRepresentations } from "@core/representation";
 import { useServices } from "@core/services";
 import { getCurrentLocalISODay, isDefined } from "@domain/common/business";
-import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
+import { useUser, useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
 import { getInitMode, updateMode } from "@ui/business";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
@@ -13,22 +13,26 @@ import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { ChangePasswordBottomSheet } from "@ui/screens/profile/changePasswordBottomSheet";
 import { LogoutBottomSheet } from "@ui/screens/profile/logoutBottomSheet";
+import { useObservable } from "micro-observables";
 import { observer } from "mobx-react-lite";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components/native";
-import { useObservable } from "micro-observables";
+import { StreakBadge } from "./StreakBadgeComponenent";
 
 export const ProfileScreen = observer(function ProfileScreen() {
 	const { format } = useI18n();
 	const { navigate } = useRoutesNavigation();
 	const { cognitoAuthService } = useServices();
+	const user = useUser();
 
 	const authUser = useObservable(cognitoAuthService.user);
 	const {
 		measure: {
-			hooks: { useHasCompleteCoreSleep },
+			hooks: { useHasCompleteCoreSleep, useUserRankAndStreak },
 		},
 	} = useRepresentations();
+
+	const { bestStreak } = useUserRankAndStreak();
 
 	const dailyScore = useRepresentations().measure.hooks.useDailyGlobalScore(getCurrentLocalISODay());
 	const [isConnectedByEmail, setIsConnectedByEmail] = useState(false);
@@ -64,6 +68,7 @@ export const ProfileScreen = observer(function ProfileScreen() {
 		>
 			<UserAvatar />
 			<ResponsiveCenterView>
+				<StreakBadge streak={bestStreak ?? 0} leaderboardRank={user?.leaderboardRank ?? "-"}></StreakBadge>
 				<GlobalScoreCard
 					score={dailyScore}
 					mode={updateMode(screenMode, !isDefined(dailyScore) || isNaN(dailyScore))}

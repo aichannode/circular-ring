@@ -106,6 +106,7 @@ import {
 	TemperatureVariationConstantMetrics,
 	temperatureVariationConstantMetrics,
 } from "../representation/lib/type";
+import { userBestStreak } from "./../representation/lib/type";
 import { MeasureApi } from "./lib/measureApi";
 
 /**
@@ -1169,6 +1170,21 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					},
 				]);
 			});
+		},
+
+		async setUserRankAndStreak(useForceRefresh?: boolean) {
+			const result = await measureApi.fetchLastDailyMeasures<typeof userBestStreak[number]>(
+				userBestStreak,
+				lifetimeDate
+			);
+			present([
+				{
+					type: "setUserRankAndStreak",
+					payload: {
+						bestStreak: result["user.lifetime.best.streak"],
+					},
+				},
+			]);
 		},
 	};
 }

@@ -276,4 +276,11 @@ export enum MetricType {
 	UserDailyTemperatureScore = "user.daily.sleep.var.temperature",
 	UserDailyVarTemperature = "user.7days.sleep.var.temperature",
 	UserMonthlyTemperatureAverage = "user.30days.sleep.var.temperature",
+
+	///////////////////
+	// User Streak and Rank
+	///////////////////
+	UserLifeTimeBestStreak = "user.lifetime.best.streak",
+	UserStreak = "user.streak",
+	UserLeaderboardRankCategory = "user.leaderboard.rank.category",
 }

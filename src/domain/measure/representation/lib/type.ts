@@ -500,3 +500,6 @@ export const sleepScoreContributors = [
 	MetricType.UserDailySleepDebt,
 ] as const;
 export type SleepScoreContributors = typeof sleepScoreContributors[number];
+
+export const userBestStreak = [MetricType.UserLifeTimeBestStreak] as const;
+export const userStreak = [MetricType.UserStreak] as const;
