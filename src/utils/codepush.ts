@@ -2,15 +2,15 @@ import CodePush, { CodePushOptions } from "react-native-code-push";
 
 export const options = (): CodePushOptions => {
 	return {
-		updateDialog: {
+		/*updateDialog: {
 			title: "A new update is available",
 			optionalIgnoreButtonLabel: "Later",
 			optionalInstallButtonLabel: "Update now",
 			optionalUpdateMessage: "A new update is available. Do you want to install it ?",
-		},
+		},*/
 		checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
-		installMode: CodePush.InstallMode.ON_NEXT_RESUME,
-		mandatoryInstallMode: CodePush.InstallMode.IMMEDIATE,
+		installMode: CodePush.InstallMode.ON_NEXT_SUSPEND,
+		mandatoryInstallMode: CodePush.InstallMode.ON_NEXT_SUSPEND,
 		//syncStatusChangeCallback: CodePushManager.syncStatusChange(syncStatus),
 		//downloadProgressCallback: CodePushManager.downloadProgress(progress)
 	};
