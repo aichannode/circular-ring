@@ -15,7 +15,7 @@ interface I_LeaderboardData {
 	previousScore: number;
 	user: {
 		userName: string;
-		profilPictureUrl: string;
+		profilePictureUrl: string;
 		country?: string;
 		streak: number;
 	};
@@ -131,17 +131,19 @@ const LightScore = styled.Text<{ color: string }>`
 `;
 
 const ColoredStar = ({ position }: { position: number }) => {
-	if (position === 0) return <Star resizeMode="contain" source={require("@assets/images/goldStar.png")} />;
-	if (position === 1) return <Star resizeMode="contain" source={require("@assets/images/starSilver.png")} />;
-	if (position === 2) return <Star resizeMode="contain" source={require("@assets/images/starCopper.png")} />;
+	if (position === 1) return <Star resizeMode="contain" source={require("@assets/images/goldStar.png")} />;
+	if (position === 2) return <Star resizeMode="contain" source={require("@assets/images/starSilver.png")} />;
+	if (position === 3) return <Star resizeMode="contain" source={require("@assets/images/starCopper.png")} />;
 	return <Star resizeMode="contain" source={require("@assets/images/starOrange.png")} />;
 };
 
 const LeaderboardTile = ({ data, gradient, color }: { data: I_LeaderboardData; gradient: boolean; color: string }) => {
-	const { previousScore, score, rank } = data;
-	const { userName, country, profilPictureUrl } = data.user;
+	let { score } = data;
+	const { previousScore, rank } = data;
+	const { userName, country, profilePictureUrl } = data.user;
 	const progress = score > previousScore;
 
+	score *= 100;
 	return (
 		<Tile
 			start={{ x: 0, y: 1 }}
@@ -161,8 +163,8 @@ const LeaderboardTile = ({ data, gradient, color }: { data: I_LeaderboardData; g
 			<Rank color={color}>{rank}</Rank>
 			<PictureContainer>
 				<UserPic
-					resizeMode="contain"
-					source={profilPictureUrl ? { uri: profilPictureUrl } : require("@assets/images/man.png")}
+					resizeMode="cover"
+					source={profilePictureUrl ? { uri: profilePictureUrl } : require("@assets/images/man.png")}
 				></UserPic>
 			</PictureContainer>
 			<MiddleTileContainer>
@@ -173,7 +175,7 @@ const LeaderboardTile = ({ data, gradient, color }: { data: I_LeaderboardData; g
 				<MiddleBottomContainer>
 					<ColoredStar position={rank}></ColoredStar>
 					<SubScore color={color}>{0}</SubScore>
-					{country && <CountryEmoji>{emoji.get(country)}</CountryEmoji>}
+					{country && <CountryEmoji>{emoji.get(`flag-${country}`.toLowerCase())}</CountryEmoji>}
 				</MiddleBottomContainer>
 			</MiddleTileContainer>
 			<TileRightContainer color={color}>
@@ -183,7 +185,7 @@ const LeaderboardTile = ({ data, gradient, color }: { data: I_LeaderboardData; g
 				></Arrow>
 				<BoldScore color={color}>{Math.floor(score)}</BoldScore>
 				<LightScore color={color}>
-					,{Math.round((score % 1) * 100) < 10 ? "0" + Math.round((score % 1) * 100) : Math.round((score % 1) * 100)}
+					,{Math.round((score % 1) * 100) < 10 ? "0" + Math.round((score % 1) * 100) : Math.round((score % 1) * 100)}%
 				</LightScore>
 			</TileRightContainer>
 		</Tile>
@@ -239,7 +241,7 @@ export const LeaderboardScreen: React.FC = () => {
 				</TitleContainer>
 				<LeaderboardContainer>
 					{data.leaderboard.data.map((d: I_LeaderboardData, key: number) =>
-						data?.targetUser?.rank === data.rank ? (
+						data?.targetUser?.rank !== d.rank ? (
 							<LeaderboardTile color="black" gradient={false} data={d} key={key} />
 						) : (
 							<LeaderboardTile color="white" gradient={true} data={d} key={key} />
