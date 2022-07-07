@@ -1,3 +1,10 @@
+## [1.4.3](https://gitlab.com/circularing/mobile/app/compare/v1.4.2...v1.4.3) (2022-07-07)
+
+
+### Bug Fixes
+
+* (CIR-1077) leaderboard ([592ec41](https://gitlab.com/circularing/mobile/app/commit/592ec4130882bb0cdc9cabfa48da96d979aecb59))
+
 ## [1.4.2](https://gitlab.com/circularing/mobile/app/compare/v1.4.1...v1.4.2) (2022-07-07)
 
 
