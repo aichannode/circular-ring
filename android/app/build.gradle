@@ -199,10 +199,10 @@ android {
         }
         staging {
             dimension "environment"
-            applicationIdSuffix ".staging"
-            resValue "string", "app_name", "Circular staging"
+            applicationIdSuffix ".rc"
+            resValue "string", "app_name", "Circular Release Candidate"
             manifestPlaceholders = [
-                appName: "Circular Staging",
+                appName: "Circular Release Candidate",
             ]
             resValue "string", "CodePushDeploymentKey", '"03tMHY7M-PhS8Ib9A4eVhBLbMajPahuN14Mk4"'
         }

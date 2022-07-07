@@ -37,10 +37,10 @@ platform :android do
 
   desc "Build staging version"
   lane :staging do |values|
-    apkName = getApkName("staging", values[:buildName])
-    build("staging", apkName, values[:buildName])
-    appcenter("staging", apkName, true)
-    codepush("staging")
+    apkName = getApkName("rc", values[:buildName])
+    build("rc", apkName, values[:buildName])
+    appcenter("rc", apkName, true)
+    codepush("rc")
   end
 
   desc "Build prod version"
