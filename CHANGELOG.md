@@ -1,3 +1,10 @@
+## [1.4.2](https://gitlab.com/circularing/mobile/app/compare/v1.4.1...v1.4.2) (2022-07-07)
+
+
+### Bug Fixes
+
+* (CIR-281) update banner ([bd98f5a](https://gitlab.com/circularing/mobile/app/commit/bd98f5aaac27ab49f99bf7c180f2ea94bb74e844))
+
 ## [1.4.1](https://gitlab.com/circularing/mobile/app/compare/v1.4.0...v1.4.1) (2022-07-07)
 
 
