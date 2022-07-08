@@ -74,7 +74,7 @@ export function AlarmHypnogram({
 				<StepChart
 					data={stepsData}
 					labelColor={colors.white}
-					yAxisWidth={31}
+					yAxisWidth={60}
 					yColor={yColor}
 					yLabelFormat={yLabelFormat}
 					yAxisRight
@@ -84,7 +84,7 @@ export function AlarmHypnogram({
 					defaultYAxis={defaultYAxis}
 					defaultXAxis={defaultXAxis}
 					tooltipYOffset={-30}
-					tooltipSize={{ width: 40, height: 30 }}
+					tooltipSize={{ width: 60, height: 30 }}
 					chartHeight={200}
 					mode={mode}
 					renderTooltip={(step) => (
