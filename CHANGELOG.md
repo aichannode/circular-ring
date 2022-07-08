@@ -1,3 +1,10 @@
+# [1.5.0](https://gitlab.com/circularing/mobile/app/compare/v1.4.5...v1.5.0) (2022-07-08)
+
+
+### Features
+
+* ring data rate ([d957fad](https://gitlab.com/circularing/mobile/app/commit/d957fad40580816b23c9b583846264a68f61d717))
+
 ## [1.4.5](https://gitlab.com/circularing/mobile/app/compare/v1.4.4...v1.4.5) (2022-07-08)
 
 
