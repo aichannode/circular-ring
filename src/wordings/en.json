@@ -752,5 +752,13 @@
 	"sport.weightlifting": "Weightlifting",
 	"sport.wrestling": "Wrestling",
 	"sport.yoga": "Yoga",
-	"general.error.title": "Error"
+	"general.error.title": "Error",
+	"home.bottomsheet.ring.data.rate.title": "Pick your Data mode",
+	"home.bottomsheet.ring.data.rate.description": "Pick which mode you’d like. Performance tracks metrics more often but affects battery life more and eco will track metrics less often but provide an extended battery life. This setting is also editable in the “my ring” menu.",
+	"home.bottomsheet.ring.data.rate.hide": "Don’t show this message again",
+	"ring.data_mode": "Data mode",
+	"ring.data_mode.eco": "Eco",
+	"ring.data_mode.performance": "Performance",
+	"ring.data_mode.desc.part1": "Heart metrics will be acquired every ",
+	"ring.data_mode.desc.part2": " minutes outside of sport sessions (a sport mode with continuous measurements automatically triggers)"
 }

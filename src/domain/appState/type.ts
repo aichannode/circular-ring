@@ -25,4 +25,6 @@ export interface I_AppState {
 	waitForRingRegistration: boolean;
 	showLiveCircleWaringBottomSheet: boolean;
 	showUpdateBanner: { display: boolean; firmwareVersion: string };
+	showDataRatePopup: boolean;
+	performanceMode: boolean;
 }

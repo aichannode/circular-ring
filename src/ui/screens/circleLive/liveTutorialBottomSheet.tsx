@@ -54,7 +54,7 @@ export const LiveTutorialBottomSheet: React.FC<LiveTutorialBottomSheetProps> = (
 					<CheckBox
 						value={hideTutorialWarning}
 						onChange={setHideTutorialWarning}
-						label="I understand, don’t show this message again"
+						label={format("live.tutorial.checkbox")}
 					/>
 				</View>
 				<PrimaryButton

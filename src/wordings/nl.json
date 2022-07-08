@@ -678,5 +678,13 @@
 	"steps.title": "Aantal stappen",
 	"cardio.7day.total": "Totaal 7 dagen",
 	"calories.burned": "verbrande calorieën",
-	"30day.average": "30 dagen gemiddelde"
+	"30day.average": "30 dagen gemiddelde",
+	"home.bottomsheet.ring.data.rate.title": "Pick your Data mode",
+	"home.bottomsheet.ring.data.rate.description": "Kies welke modus je wilt. Prestaties houdt vaker metingen bij maar heeft meer invloed op de levensduur van de batterij en eco zal minder vaak metingen bijhouden maar zorgt voor een langere levensduur van de batterij. Deze instelling kan ook worden aangepast in het menu ”mijn ring”.",
+	"home.bottomomsheet.ring.data.rate.hide": "Laat dit bericht niet meer zien",
+	"ring.data_mode": "Gegevensmodus",
+	"ring.data_mode.eco": "Eco",
+	"ring.data_mode.performance": "Performance",
+	"ring.data_mode.desc.part1": "Hartmetriek zal worden verworven elke ",
+	"ring.data_mode.desc.part2": " minuten buiten sportsessies (een sportmodus met continue metingen triggert automatisch)"
 }

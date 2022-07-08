@@ -678,5 +678,13 @@
 	"steps.title": "Número de pasos",
 	"cardio.7day.total": "Total de 7 días",
 	"calories.burned": "calorías quemadas",
-	"30day.average": "Media de 30 días"
+	"30day.average": "Media de 30 días",
+	"home.bottomsheet.ring.data.rate.title": "Elige tu modo de datos",
+	"home.bottomsheet.ring.data.rate.description": "Elige el modo que quieras. El modo Rendimiento realiza un seguimiento de las métricas con mayor frecuencia, pero afecta más a la duración de la batería, y el modo Eco realiza un seguimiento de las métricas con menor frecuencia, pero proporciona una mayor duración de la batería. Este ajuste también se puede editar en el menú ”mi anillo”",
+	"home.bottomsheet.ring.data.rate.hide": "No volver a mostrar este mensaje",
+	"ring.data_mode": "Modo de datos",
+	"ring.data_mode.eco": "Eco",
+	"ring.data_mode.performance": "Rendimiento",
+	"ring.data_mode.desc.part1": "Las métricas del corazón se adquirirán cada ",
+	"ring.data_mode.desc.part2": "minutos fuera de las sesiones de deporte (un modo de deporte con mediciones continuas se activa automáticamente)"
 }
