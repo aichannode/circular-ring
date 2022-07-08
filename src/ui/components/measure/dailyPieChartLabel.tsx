@@ -31,9 +31,9 @@ export const DailyPieChartLabel: React.FC<Props> = ({ chartSize, labels }) => {
 	const getAngleDeg = (text: string, date: number | string) => {
 		let angleDeg = angle(moment(date)) - RIGHT_ANGLE;
 		if (text == "activity.duration.label.sport_end") {
-			angleDeg += 10;
+			angleDeg -= 10;
 		} else {
-			angleDeg -= 5;
+			angleDeg -= 11;
 		}
 		return angleDeg;
 	};
@@ -53,11 +53,12 @@ export const DailyPieChartLabel: React.FC<Props> = ({ chartSize, labels }) => {
 								<View
 									style={
 										angle(moment(date)) - RIGHT_ANGLE < 0 &&
-										angle(moment(date)) - RIGHT_ANGLE > -75 && { marginLeft: 25 }
+										angle(moment(date)) - RIGHT_ANGLE > -75 && { marginLeft: 30 }
 									}
 								>
-									<Label style={{ fontWeight: "500" }}>{text && format(text)}</Label>
-									<Label>{formatHour(new Date(date), is24h)}</Label>
+									<Label style={{ fontWeight: "500", marginLeft: 20 }}>
+										{text && format(text)} {formatHour(new Date(date), is24h)}
+									</Label>
 								</View>
 							</LabelPolarView>
 							<PolarSvg
