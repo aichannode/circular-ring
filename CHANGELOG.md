@@ -1,3 +1,18 @@
+## [1.4.5](https://gitlab.com/circularing/mobile/app/compare/v1.4.4...v1.4.5) (2022-07-08)
+
+
+### Bug Fixes
+
+* corrected text ([c5d2614](https://gitlab.com/circularing/mobile/app/commit/c5d26140291b8404028f848148f663c946555a33))
+
+## [1.4.4](https://gitlab.com/circularing/mobile/app/compare/v1.4.3...v1.4.4) (2022-07-08)
+
+
+### Bug Fixes
+
+* pie chart label ([8c4004d](https://gitlab.com/circularing/mobile/app/commit/8c4004d9b8f1a5e1590796bfa0f661f673dcacc1))
+* updated alarm hypnogram UI ([8627a41](https://gitlab.com/circularing/mobile/app/commit/8627a41013c23b6fd9be67f582a5d4fc4efeb149))
+
 ## [1.4.3](https://gitlab.com/circularing/mobile/app/compare/v1.4.2...v1.4.3) (2022-07-07)
 
 
