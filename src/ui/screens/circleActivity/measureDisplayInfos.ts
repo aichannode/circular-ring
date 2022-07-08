@@ -58,14 +58,14 @@ export function getActivityGaugesConfig(format: (v: WordingKey) => string): Dail
 			computeMode: computeModeFactory(MetricType.UserDailyScoreBR),
 			shouldForceDisplayValue: true,
 		},
-		// [MetricType.UserDailyScoreSPO2]: {
-		// 	SPO2
-		// titleKey: "score.details.spo2.label",
-		// descriptionKey: "score.details.spo2.description",
-		// renderValue: ({ value }: { value?: number }) => (isDefined(value) ? `${Math.round(value)} %` : undefined),
-		// computeMode: computeModeFactory(MetricType.UserDailyScoreSPO2),
-		// shouldForceDisplayValue: true,
-		// },
+		[MetricType.UserDailyScoreSPO2]: {
+			//SPO2
+			titleKey: "score.details.spo2.label",
+			descriptionKey: "score.details.spo2.description",
+			renderValue: ({ value }: { value?: number }) => (isDefined(value) ? `${Math.round(value)} %` : undefined),
+			computeMode: computeModeFactory(MetricType.UserDailyScoreSPO2),
+			shouldForceDisplayValue: true,
+		},
 		[MetricType.UserDailyScoreHRV]: {
 			// Heart rate variability
 			titleKey: "score.details.hrv.label",
