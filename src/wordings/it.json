@@ -677,5 +677,13 @@
 	"steps.title": "Numero di passi",
 	"cardio.7day.total": "Totale 7 giorni",
 	"calories.burned": "calorie bruciate",
-	"30day.average": "Media di 30 giorni"
+	"30day.average": "Media di 30 giorni",
+	"home.bottomsheet.ring.data.rate.title": "Scegli la tua modalità dati",
+	"home.bottomsheet.ring.data.rate.description": "Scegli la modalità che preferisci. Performance tiene traccia delle metriche più spesso, ma influisce maggiormente sulla durata della batteria, mentre Eco tiene traccia delle metriche meno spesso, ma garantisce una maggiore durata della batteria. Questa impostazione è modificabile anche nel menu ”Il mio anello”.",
+	"home.bottomsheet.ring.data.rate.hide": "Non mostrare più questo messaggio",
+	"ring.data_mode": "Modalità dati",
+	"ring.data_mode.eco": "Eco",
+	"ring.data_mode.performance": "Performance",
+	"ring.data_mode.desc.part1": "Le metriche cardiache saranno acquisite ogni ",
+	"ring.data_mode.desc.part2": " minuti al di fuori delle sessioni sportive (si attiva automaticamente una modalità sportiva con misurazioni continue)"
 }

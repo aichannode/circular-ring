@@ -430,6 +430,7 @@ export class BleDeviceService {
 		await this.write(`${Channel.CALENDAR}${getUTCTimestamp()}`);
 		this.logger.info("🕒 Time set to device", device.name, getUTCTimestamp());
 		await this.listenBattery();
+		await this.write(Channel.MODE + `${this.appStateService.performanceMode.get() ? "1" : "0"}`);
 		const firmware = await this.getResponse(Channel.FIRMWARE_VERSION);
 		this.logger.info("🔧 Firmware Version", firmware);
 		if (

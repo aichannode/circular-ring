@@ -8,6 +8,7 @@ import { useNotifications, useRecommendations } from "@domain/feed/hooks";
 import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringManagementService";
 import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { PrimaryButton } from "@ui/components/buttons";
 import Fade from "@ui/components/fade";
 import { Spinner } from "@ui/components/spinner";
@@ -23,6 +24,7 @@ import { Alert, Animated, Platform, RefreshControl, Text, View } from "react-nat
 import fs from "react-native-fs";
 import Mailer, { Attachment } from "react-native-mail";
 import styled from "styled-components/native";
+import { DataModeBottomSheet } from "./dataModeBottomSheet";
 import RecommendationWrapper from "./feedEntities/RecommendationWrapper";
 import { SyncBanner } from "./syncBanner";
 import { UpdateBanner } from "./updateBanner";
@@ -36,6 +38,8 @@ export const HomeScreen: React.FC = () => {
 	const syncState = useSyncState();
 	const previousScrollViewY = useRef(0);
 	const setupState = useSetupState();
+	const dataRateBottomSheet = useRef<CircularBottomSheetHandle>(null);
+
 	const {
 		measure: {
 			hooks: { useResetMeasureModel },
@@ -47,6 +51,10 @@ export const HomeScreen: React.FC = () => {
 	useFetchCircles();
 
 	useEffect(() => {
+		if (appStateService.showDataRatePopup.get()) {
+			dataRateBottomSheet?.current?.present();
+			appStateService.showDataRatePopup.set(false);
+		}
 		if (setupState === DeviceSetupState.DISABLED) {
 			bluetoothService.enable();
 			bleDeviceService.checkSettings();
@@ -58,7 +66,6 @@ export const HomeScreen: React.FC = () => {
 	}, []);
 
 	const sendLogsByEmail = async () => {
-		console.log("DEFAULT_LOG_DIR", DEFAULT_LOG_DIR);
 		const reader = await fs.readDir(DEFAULT_LOG_DIR);
 		const attachements: Attachment[] = reader.map((file) => ({
 			file,
@@ -146,6 +153,16 @@ export const HomeScreen: React.FC = () => {
 						calibDay + 1
 					</PrimaryButton>
 				</View>
+				<PrimaryButton
+					onPress={() => {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						//@ts-ignore
+						dataRateBottomSheet?.current?.present();
+						appStateService.showDataRatePopup.set(true);
+					}}
+				>
+					SHOW DATA RATE POPUP
+				</PrimaryButton>
 			</IfAdmin>
 			{notifications[0] && (
 				<Fade isVisible isAnimatedOnMount>
@@ -218,6 +235,9 @@ export const HomeScreen: React.FC = () => {
 				refreshing={loading}
 				progressViewOffset={100}
 			/>
+			<CircularBottomSheet snapPoints={[580]} ref={dataRateBottomSheet}>
+				<DataModeBottomSheet onClose={() => dataRateBottomSheet.current?.close()}></DataModeBottomSheet>
+			</CircularBottomSheet>
 		</Container>
 	);
 };

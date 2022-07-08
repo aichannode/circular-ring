@@ -678,5 +678,13 @@
 	"steps.title": "Anzahl der Schritte",
 	"cardio.7day.total": "7-Tage-Gesamtsumme",
 	"calories.burned": "verbrannte Kalorien",
-	"30day.average": "30-Tage-Durchschnitt"
+	"30day.average": "30-Tage-Durchschnitt",
+	"home.bottomsheet.ring.data.rate.title": "Wählen Sie Ihren Datenmodus",
+	"home.bottomsheet.ring.data.rate.description": "Wählen Sie den gewünschten Modus. ”Performance” erfasst die Daten häufiger, wirkt sich aber stärker auf die Akkulaufzeit aus. ”Eco” erfasst die Daten weniger häufig, bietet aber eine längere Akkulaufzeit. Diese Einstellung kann auch im Menü ”Mein Ring” geändert werden.",
+	"home.bottomsheet.ring.data.rate.hide": "Diese Meldung nicht mehr anzeigen",
+	"ring.data_mode": "Datenmodus",
+	"ring.data_mode.eco": "Eco",
+	"ring.data_mode.performance": "Leistung",
+	"ring.data_mode.desc.part1": "Herzmetriken werden jeden Tag erfasst",
+	"ring.data_mode.desc.part2": " Minuten außerhalb von Sportsitzungen (ein Sportmodus mit kontinuierlichen Messungen wird automatisch ausgelöst)"
 }

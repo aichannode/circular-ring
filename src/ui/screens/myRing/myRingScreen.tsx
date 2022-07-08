@@ -16,6 +16,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
 import Dialog from "react-native-dialog";
 import styled from "styled-components/native";
+import { DataModeBottomSheet } from "./dataModeBottomSheet";
 
 const RING_NAME_PREFIX = "Circular ";
 
@@ -24,6 +25,7 @@ export const MyRingScreen: React.FC = () => {
 	const { navigate } = useRoutesNavigation();
 	const { format } = useI18n();
 	const factoryResetBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
+	const dataModeBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const viewModel = new RingViewModel();
 	const userRings = useObservable(appStateService.userRings);
 	const currentRing: NamedUserRing = userRings.filter((ring) => ring.connected)[0];
@@ -32,6 +34,8 @@ export const MyRingScreen: React.FC = () => {
 	const [editedName, setEditedName] = useState<string>(
 		currentRing?.name ? currentRing?.name.slice(RING_NAME_PREFIX.length) : ""
 	);
+
+	const performanceMode = useObservable(appStateService.performanceMode);
 
 	useEffect(() => {
 		const currentRing: NamedUserRing = userRings.filter((ring) => ring.connected)[0];
@@ -101,7 +105,6 @@ export const MyRingScreen: React.FC = () => {
 					</InfoListItem>
 				</>
 			)}
-
 			<InfoListItem
 				name={format("ring.manage")}
 				hasDisclosure
@@ -109,17 +112,33 @@ export const MyRingScreen: React.FC = () => {
 					navigate(Routes.ManageMyRings);
 				}}
 			/>
+			{connected === DeviceConnectionState.CONNECTED && (
+				<InfoListItem
+					name={format("ring.data_mode")}
+					hasDisclosure
+					action={() => {
+						dataModeBottomSheetRef.current?.present();
+					}}
+				>
+					<FirmwareVersionText>
+						{performanceMode ? format("ring.data_mode.performance") : format("ring.data_mode.eco")}
+					</FirmwareVersionText>
+				</InfoListItem>
+			)}
 
 			<InfoListItem
 				style={{ marginTop: 20 }}
+				textStyle={{ color: "red" }}
 				name={format("ring.factory_reset")}
-				hasDisclosure
 				action={() => {
 					factoryResetBottomSheetRef.current?.present();
 				}}
 			/>
 			<CircularBottomSheet snapPoints={[480]} ref={factoryResetBottomSheetRef}>
 				<FactoryResetBottomSheet onClose={() => factoryResetBottomSheetRef.current?.close()} />
+			</CircularBottomSheet>
+			<CircularBottomSheet snapPoints={[480]} ref={dataModeBottomSheetRef}>
+				<DataModeBottomSheet onClose={() => dataModeBottomSheetRef.current?.close()} />
 			</CircularBottomSheet>
 		</Container>
 	);
