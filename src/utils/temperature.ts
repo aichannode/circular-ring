@@ -2,7 +2,7 @@ import { TemperatureVariation30Days, TemperatureVariation7D } from "@domain/meas
 
 export const convertToF = (celsius: number) => {
 	if (celsius === -1000) return 0;
-	const fahrenheit = (celsius * 9) / 5 + 32;
+	const fahrenheit = (celsius * 9) / 5;
 	return Math.trunc(fahrenheit);
 };
 
