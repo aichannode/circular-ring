@@ -49,7 +49,7 @@ platform :android do
     apkName = getApkName("prod", nil)
     build("prod", apkName, nil)
     codepush("prod")
-#    upload_to_play_store(track: "alpha", release_status: "draft")
+    upload_to_play_store(track: "alpha", release_status: "draft")
   end
 end
 
@@ -92,11 +92,11 @@ def codepush(flavor)
       target_version: "^1.0.0"# + load_json(json_path: "./package.json")["version"]
     )
     appcenter_codepush_release_react(
-          app_name: "#{APPCENTER_IOS_PREFIX}#{flavor.capitalize}",
-          owner_name: "#{APPCENTER_OWNER}",
-          deployment: "Production",
-          target_version: "^1.0.0"# + load_json(json_path: "./package.json")["version"]
-        )
+      app_name: "#{APPCENTER_IOS_PREFIX}#{flavor.capitalize}",
+      owner_name: "#{APPCENTER_OWNER}",
+      deployment: "Production",
+      target_version: "^1.0.0"# + load_json(json_path: "./package.json")["version"]
+    )
   end
 end
 
