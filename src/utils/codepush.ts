@@ -9,8 +9,8 @@ export const options = (): CodePushOptions => {
 			optionalUpdateMessage: "A new update is available. Do you want to install it ?",
 		},*/
 		checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
-		installMode: CodePush.InstallMode.ON_NEXT_SUSPEND,
-		mandatoryInstallMode: CodePush.InstallMode.ON_NEXT_SUSPEND,
+		installMode: CodePush.InstallMode.ON_NEXT_RESTART,
+		mandatoryInstallMode: CodePush.InstallMode.ON_NEXT_RESTART,
 		//syncStatusChangeCallback: CodePushManager.syncStatusChange(syncStatus),
 		//downloadProgressCallback: CodePushManager.downloadProgress(progress)
 	};
@@ -19,6 +19,6 @@ export const options = (): CodePushOptions => {
 export const silentOptions = (): { checkFrequency: CodePush.CheckFrequency; installMode: CodePush.InstallMode } => {
 	return {
 		checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
-		installMode: CodePush.InstallMode.ON_NEXT_RESUME,
+		installMode: CodePush.InstallMode.ON_NEXT_RESTART,
 	};
 };
