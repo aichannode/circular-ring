@@ -1,3 +1,10 @@
+## [1.5.9](https://gitlab.com/circularing/mobile/app/compare/v1.5.8...v1.5.9) (2022-07-11)
+
+
+### Bug Fixes
+
+* force update ([ea6e8fc](https://gitlab.com/circularing/mobile/app/commit/ea6e8fc49101592c6b6609e42de0871c8e7a3040))
+
 ## [1.5.8](https://gitlab.com/circularing/mobile/app/compare/v1.5.7...v1.5.8) (2022-07-11)
 
 
