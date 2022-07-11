@@ -12,11 +12,13 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		1F1A8633272070980040D432 /* bridgingFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1A8632272070980040D432 /* bridgingFile.swift */; };
-		1FC406C8286C9D270049182C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
-		1FC406C9286C9D270049182C /* bridgingFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1A8632272070980040D432 /* bridgingFile.swift */; };
-		1FC406CA286C9D270049182C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1FC406CE286C9D270049182C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		1FC406CF286C9D270049182C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		1F4DBEEB287C83C2001F016D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
+		1F4DBEEC287C83C2001F016D /* bridgingFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1A8632272070980040D432 /* bridgingFile.swift */; };
+		1F4DBEED287C83C2001F016D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1F4DBEEF287C83C2001F016D /* libPods-Circular-Dev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F13A039E092ED5DBD01D36EC /* libPods-Circular-Dev.a */; };
+		1F4DBEF0287C83C2001F016D /* libPods-Circular-Dev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F13A039E092ED5DBD01D36EC /* libPods-Circular-Dev.a */; };
+		1F4DBEF2287C83C2001F016D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		1F4DBEF3287C83C2001F016D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		6D60DB243384A3891B8B2F23 /* libPods-Circular-Dev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F13A039E092ED5DBD01D36EC /* libPods-Circular-Dev.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		9ED228C4586BF15928AA5D55 /* libPods-Circular-Dev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F13A039E092ED5DBD01D36EC /* libPods-Circular-Dev.a */; };
@@ -44,7 +46,8 @@
 		189206352856354700C1F3CC /* OpenSSL.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OpenSSL.xcframework; path = "Pods/OpenSSL-Universal/Frameworks/OpenSSL.xcframework"; sourceTree = "<group>"; };
 		1F1A8631272070980040D432 /* Circular-Dev-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Circular-Dev-Bridging-Header.h"; sourceTree = "<group>"; };
 		1F1A8632272070980040D432 /* bridgingFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bridgingFile.swift; sourceTree = "<group>"; };
-		1FC406D6286C9D270049182C /* Circular-Stg.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Circular-Stg.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1F4DBEFA287C83C2001F016D /* Circular-Stg.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Circular-Stg.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1F4DBEFB287C83C2001F016D /* Circular-Dev copy2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Circular-Dev copy2-Info.plist"; path = "/Users/anon/Work/circular/app/ios/Circular-Dev copy2-Info.plist"; sourceTree = "<absolute>"; };
 		1FC406D7286C9D270049182C /* Circular-Dev copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Circular-Dev copy-Info.plist"; path = "/Users/anon/Work/circular/app/ios/Circular-Dev copy-Info.plist"; sourceTree = "<absolute>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Circular/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A1001E7726DE38D1000C80A0 /* Circular-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Circular-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,10 +72,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1FC406CB286C9D270049182C /* Frameworks */ = {
+		1F4DBEEE287C83C2001F016D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F4DBEEF287C83C2001F016D /* libPods-Circular-Dev.a in Frameworks */,
+				1F4DBEF0287C83C2001F016D /* libPods-Circular-Dev.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -170,6 +175,7 @@
 				672D3529AA639A21F5DFE051 /* Pods */,
 				1F1A8631272070980040D432 /* Circular-Dev-Bridging-Header.h */,
 				1FC406D7286C9D270049182C /* Circular-Dev copy-Info.plist */,
+				1F4DBEFB287C83C2001F016D /* Circular-Dev copy2-Info.plist */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -182,7 +188,7 @@
 				13B07F961A680F5B00A75B9A /* Circular.app */,
 				A1001E7726DE38D1000C80A0 /* Circular-Dev.app */,
 				A1001E8A26DE38EA000C80A0 /* Circular-Demo.app */,
-				1FC406D6286C9D270049182C /* Circular-Stg.app */,
+				1F4DBEFA287C83C2001F016D /* Circular-Stg.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -212,15 +218,18 @@
 			productReference = 13B07F961A680F5B00A75B9A /* Circular.app */;
 			productType = "com.apple.product-type.application";
 		};
-		1FC406C4286C9D270049182C /* Circular-Stg */ = {
+		1F4DBEE7287C83C2001F016D /* Circular-Stg */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1FC406D3286C9D270049182C /* Build configuration list for PBXNativeTarget "Circular-Stg" */;
+			buildConfigurationList = 1F4DBEF7287C83C2001F016D /* Build configuration list for PBXNativeTarget "Circular-Stg" */;
 			buildPhases = (
-				1FC406C6286C9D270049182C /* Start Packager */,
-				1FC406C7286C9D270049182C /* Sources */,
-				1FC406CB286C9D270049182C /* Frameworks */,
-				1FC406CD286C9D270049182C /* Resources */,
-				1FC406D0286C9D270049182C /* Bundle React Native code and images */,
+				1F4DBEE8287C83C2001F016D /* [CP] Check Pods Manifest.lock */,
+				1F4DBEE9287C83C2001F016D /* Start Packager */,
+				1F4DBEEA287C83C2001F016D /* Sources */,
+				1F4DBEEE287C83C2001F016D /* Frameworks */,
+				1F4DBEF1287C83C2001F016D /* Resources */,
+				1F4DBEF4287C83C2001F016D /* Bundle React Native code and images */,
+				1F4DBEF5287C83C2001F016D /* [CP] Embed Pods Frameworks */,
+				1F4DBEF6287C83C2001F016D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -228,7 +237,7 @@
 			);
 			name = "Circular-Stg";
 			productName = Circular;
-			productReference = 1FC406D6286C9D270049182C /* Circular-Stg.app */;
+			productReference = 1F4DBEFA287C83C2001F016D /* Circular-Stg.app */;
 			productType = "com.apple.product-type.application";
 		};
 		A1001E6626DE38D1000C80A0 /* Circular-Dev */ = {
@@ -308,7 +317,7 @@
 				13B07F861A680F5B00A75B9A /* Circular-Prod */,
 				A1001E6626DE38D1000C80A0 /* Circular-Dev */,
 				A1001E7926DE38EA000C80A0 /* Circular-Demo */,
-				1FC406C4286C9D270049182C /* Circular-Stg */,
+				1F4DBEE7287C83C2001F016D /* Circular-Stg */,
 			);
 		};
 /* End PBXProject section */
@@ -323,12 +332,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1FC406CD286C9D270049182C /* Resources */ = {
+		1F4DBEF1287C83C2001F016D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FC406CE286C9D270049182C /* LaunchScreen.storyboard in Resources */,
-				1FC406CF286C9D270049182C /* Images.xcassets in Resources */,
+				1F4DBEF2287C83C2001F016D /* LaunchScreen.storyboard in Resources */,
+				1F4DBEF3287C83C2001F016D /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,7 +376,29 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		1FC406C6286C9D270049182C /* Start Packager */ = {
+		1F4DBEE8287C83C2001F016D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Circular-Dev-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		1F4DBEE9287C83C2001F016D /* Start Packager */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -386,7 +417,7 @@
 			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		1FC406D0286C9D270049182C /* Bundle React Native code and images */ = {
+		1F4DBEF4287C83C2001F016D /* Bundle React Native code and images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -399,6 +430,40 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
+		};
+		1F4DBEF5287C83C2001F016D /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		1F4DBEF6287C83C2001F016D /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Circular-Dev/Pods-Circular-Dev-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		2EA1570055F7E27B08BA2954 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -632,13 +697,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1FC406C7286C9D270049182C /* Sources */ = {
+		1F4DBEEA287C83C2001F016D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FC406C8286C9D270049182C /* AppDelegate.m in Sources */,
-				1FC406C9286C9D270049182C /* bridgingFile.swift in Sources */,
-				1FC406CA286C9D270049182C /* main.m in Sources */,
+				1F4DBEEB287C83C2001F016D /* AppDelegate.m in Sources */,
+				1F4DBEEC287C83C2001F016D /* bridgingFile.swift in Sources */,
+				1F4DBEED287C83C2001F016D /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -670,7 +735,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODEPUSH_DEPLOYMENT_KEY = zZfAHfqj8u-PMHBMBWCtqY-gnWA_Pme6oHxxI;
+				CODEPUSH_DEPLOYMENT_KEY = "zZfAHfqj8u-PMHBMBWCtqY-gnWA_Pme6oHxxI";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 8;
@@ -731,17 +796,19 @@
 			};
 			name = Release;
 		};
-		1FC406D4286C9D270049182C /* Debug */ = {
+		1F4DBEF8287C83C2001F016D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A686F215891CB8081F6D5A60 /* Pods-Circular-Dev.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODEPUSH_DEPLOYMENT_KEY = rMdWLGPKrnm8UFl_36S1tpnGDYQOch0AbuLft;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = WGW7T2NP8M;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "Circular-Dev copy-Info.plist";
+				INFOPLIST_FILE = "Circular-Dev copy2-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -763,16 +830,18 @@
 			};
 			name = Debug;
 		};
-		1FC406D5286C9D270049182C /* Release */ = {
+		1F4DBEF9287C83C2001F016D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D50AE9FA8847BB4C6F192FC0 /* Pods-Circular-Dev.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODEPUSH_DEPLOYMENT_KEY = 292xlnGJIaIm2DcV2e07mXducFl3WPjkVOKtE;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = WGW7T2NP8M;
-				INFOPLIST_FILE = "Circular-Dev copy-Info.plist";
+				INFOPLIST_FILE = "Circular-Dev copy2-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1015,7 +1084,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODEPUSH_DEPLOYMENT_KEY = HquAKifu1VNNM_p-D4iplh9xZ0cto2zaiFvpt;
+				CODEPUSH_DEPLOYMENT_KEY = "HquAKifu1VNNM_p-D4iplh9xZ0cto2zaiFvpt";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 5;
@@ -1052,11 +1121,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1FC406D3286C9D270049182C /* Build configuration list for PBXNativeTarget "Circular-Stg" */ = {
+		1F4DBEF7287C83C2001F016D /* Build configuration list for PBXNativeTarget "Circular-Stg" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1FC406D4286C9D270049182C /* Debug */,
-				1FC406D5286C9D270049182C /* Release */,
+				1F4DBEF8287C83C2001F016D /* Debug */,
+				1F4DBEF9287C83C2001F016D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
