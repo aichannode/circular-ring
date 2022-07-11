@@ -19,12 +19,14 @@ import {
 	WorkTime,
 } from "@domain/user/advancedInfo";
 import { TutorialInfo } from "@domain/user/tutorialInfo";
-import { Language, Sex, User } from "@domain/user/user";
+import { Sex, User } from "@domain/user/user";
 import { UserApi } from "@domain/user/userApi";
 import { UserNotificationsSettings } from "@domain/user/userNotificationsSettings";
 import { UserSettings } from "@domain/user/userSettings";
 import { UserStorage } from "@domain/user/userStorage";
+import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
 import { observable } from "micro-observables";
+import { LocaleType, translations } from "../../../src/wordings";
 import { dtoFromUserSettings } from "./business";
 import { UserPutDto } from "./type";
 
@@ -281,7 +283,7 @@ export class UserService {
 			bornDate: toServerDate(tutorialInfo.birthDate),
 			phoneNumber: "+33666666666",
 			profilePictureUrl: null,
-			language: Language.EN,
+			language: getPreferredLangageCode(Object.keys(translations)),
 			scorePublic: true,
 			tutorialCompleted: true,
 			stride: 0,
@@ -296,7 +298,7 @@ export class UserService {
 		weight?: number;
 		sex?: Sex;
 		bornDate?: Date;
-		language?: Language;
+		language?: LocaleType;
 	}) {
 		const currentUser = this._user.get();
 		if (currentUser) {

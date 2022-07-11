@@ -2,15 +2,18 @@
 import { useSentry } from "@core/logger/hooks/useSentry";
 import { RepresentationsProvider } from "@core/representation";
 import { initializeServices, ServicesProvider } from "@core/services";
+import { Language } from "@domain/user/user";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import StorybookUIRoot from "@stories";
 import { RootNavigator } from "@ui/navigation/rootNavigator";
+import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import utc from "dayjs/plugin/utc";
 import { enableES5 } from "immer";
 import { configure } from "mobx";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { createIntl, IntlProvider } from "react-intl";
 import { DevSettings, LogBox, Platform, StatusBar, UIManager } from "react-native";
@@ -21,17 +24,14 @@ import "react-native-get-random-values";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import SplashScreen from "react-native-splash-screen";
 import { LocaleType, translations } from "./wordings";
-import { Language } from "@domain/user/user";
-import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
-import moment from "moment";
 
+import { options } from "@utils/codepush";
 import "moment/locale/de";
 import "moment/locale/es";
 import "moment/locale/fr";
 import "moment/locale/it";
 import "moment/locale/nl";
 import CodePush from "react-native-code-push";
-import { options } from "@utils/codepush";
 
 // Setup Mobx for RN
 configure({

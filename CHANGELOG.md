@@ -1,3 +1,54 @@
+## [1.5.7](https://gitlab.com/circularing/mobile/app/compare/v1.5.6...v1.5.7) (2022-07-11)
+
+
+### Bug Fixes
+
+* hide woman related notification setting when user is male ([ab1dd87](https://gitlab.com/circularing/mobile/app/commit/ab1dd871c7b758e3a490030ba8c2c5c6fc27b03c))
+
+## [1.5.6](https://gitlab.com/circularing/mobile/app/compare/v1.5.5...v1.5.6) (2022-07-11)
+
+
+### Bug Fixes
+
+* force upgrade version ([ff5e953](https://gitlab.com/circularing/mobile/app/commit/ff5e953131339611145ffb2862b210428f3b383e))
+
+## [1.5.5](https://gitlab.com/circularing/mobile/app/compare/v1.5.4...v1.5.5) (2022-07-11)
+
+
+### Bug Fixes
+
+* CIR-1084 keep default phone language after onboarding ([f441ae9](https://gitlab.com/circularing/mobile/app/commit/f441ae95727c1838f43e5ccb66afae01564e6314))
+* fastfile now uploads also to ios, updated ios config ([7f1322a](https://gitlab.com/circularing/mobile/app/commit/7f1322a2b66dd798cc3d1055c27afbc73b4f3729))
+
+## [1.5.4](https://gitlab.com/circularing/mobile/app/compare/v1.5.3...v1.5.4) (2022-07-11)
+
+
+### Bug Fixes
+
+* fastfile now uploads also to ios, updated ios config ([47ee67c](https://gitlab.com/circularing/mobile/app/commit/47ee67c43c66ba7b0571e281932b498e0a626206))
+
+## [1.5.3](https://gitlab.com/circularing/mobile/app/compare/v1.5.2...v1.5.3) (2022-07-11)
+
+
+### Bug Fixes
+
+* force new release ([f3682ea](https://gitlab.com/circularing/mobile/app/commit/f3682ea956173bdd85caabe79fa1061ba7a4a5a3))
+
+## [1.5.2](https://gitlab.com/circularing/mobile/app/compare/v1.5.1...v1.5.2) (2022-07-11)
+
+
+### Bug Fixes
+
+* updated install mode for codepush to RESTART ([5927f77](https://gitlab.com/circularing/mobile/app/commit/5927f7767f54ab0173cefa07620a38c66cf50e4b))
+
+## [1.5.1](https://gitlab.com/circularing/mobile/app/compare/v1.5.0...v1.5.1) (2022-07-11)
+
+
+### Bug Fixes
+
+* (CIR-1081) farehenheit ([bd5f552](https://gitlab.com/circularing/mobile/app/commit/bd5f55211e11a400f9dead6237ee420b877bd970))
+* dynamic paragraph works even without a valid key ([5bae08a](https://gitlab.com/circularing/mobile/app/commit/5bae08a21daa49f4dbfef9f5647fc541d61878d8))
+
 # [1.5.0](https://gitlab.com/circularing/mobile/app/compare/v1.4.5...v1.5.0) (2022-07-08)
 
 

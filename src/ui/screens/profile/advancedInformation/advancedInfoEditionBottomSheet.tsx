@@ -7,7 +7,6 @@ import {
 	SleepingPills,
 	WorkTime,
 } from "@domain/user/advancedInfo";
-import { Language } from "@domain/user/user";
 import { PrimaryButton } from "@ui/components/buttons";
 import { ResponsiveCenterView } from "@ui/components/layout";
 import { Spinner } from "@ui/components/spinner";
@@ -19,7 +18,7 @@ import React, { useCallback, useState } from "react";
 import { Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import styled from "styled-components/native";
-import { WordingKey } from "../../../../wordings";
+import { LocaleType, WordingKey } from "../../../../wordings";
 
 export type EditionInfoType =
 	| WorkTime
@@ -29,7 +28,7 @@ export type EditionInfoType =
 	| DietarySupplements
 	| FertilityState
 	| PillPackFormat
-	| Language;
+	| LocaleType;
 
 export interface AdvancedInfoEditionConfig<T extends EditionInfoType> {
 	title: string;

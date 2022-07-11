@@ -16,6 +16,7 @@
 default_platform(:android)
 
 APPCENTER_APP_PREFIX = "Circular-Android-"
+APPCENTER_IOS_PREFIX = "Circular-iOS-"
 APPCENTER_OWNER = "Circular"
 
 platform :android do
@@ -31,7 +32,7 @@ platform :android do
   lane :demo do
     apkName = getApkName("demo", nil)
     build("demo", apkName, nil)
-    appcenter("demo", apkName, true)
+#    appcenter("demo", apkName, true)
     codepush("demo")
   end
 
@@ -39,7 +40,7 @@ platform :android do
   lane :staging do |values|
     apkName = getApkName("staging", values[:buildName])
     build("staging", apkName, values[:buildName])
-    appcenter("staging", apkName, true)
+#    appcenter("staging", apkName, true)
     codepush("staging")
   end
 
@@ -48,7 +49,7 @@ platform :android do
     apkName = getApkName("prod", nil)
     build("prod", apkName, nil)
     codepush("prod")
-    upload_to_play_store(track: "alpha", release_status: "draft")
+#    upload_to_play_store(track: "alpha", release_status: "draft")
   end
 end
 
@@ -90,6 +91,12 @@ def codepush(flavor)
       deployment: "Production",
       target_version: "^1.0.0"# + load_json(json_path: "./package.json")["version"]
     )
+    appcenter_codepush_release_react(
+          app_name: "#{APPCENTER_IOS_PREFIX}#{flavor.capitalize}",
+          owner_name: "#{APPCENTER_OWNER}",
+          deployment: "Production",
+          target_version: "^1.0.0"# + load_json(json_path: "./package.json")["version"]
+        )
   end
 end
 
