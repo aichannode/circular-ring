@@ -1,3 +1,11 @@
+## [1.5.5](https://gitlab.com/circularing/mobile/app/compare/v1.5.4...v1.5.5) (2022-07-11)
+
+
+### Bug Fixes
+
+* CIR-1084 keep default phone language after onboarding ([f441ae9](https://gitlab.com/circularing/mobile/app/commit/f441ae95727c1838f43e5ccb66afae01564e6314))
+* fastfile now uploads also to ios, updated ios config ([7f1322a](https://gitlab.com/circularing/mobile/app/commit/7f1322a2b66dd798cc3d1055c27afbc73b4f3729))
+
 ## [1.5.4](https://gitlab.com/circularing/mobile/app/compare/v1.5.3...v1.5.4) (2022-07-11)
 
 
