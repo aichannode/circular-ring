@@ -1,3 +1,10 @@
+## [1.5.4](https://gitlab.com/circularing/mobile/app/compare/v1.5.3...v1.5.4) (2022-07-11)
+
+
+### Bug Fixes
+
+* fastfile now uploads also to ios, updated ios config ([47ee67c](https://gitlab.com/circularing/mobile/app/commit/47ee67c43c66ba7b0571e281932b498e0a626206))
+
 ## [1.5.3](https://gitlab.com/circularing/mobile/app/compare/v1.5.2...v1.5.3) (2022-07-11)
 
 
