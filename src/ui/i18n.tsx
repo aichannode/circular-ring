@@ -31,7 +31,7 @@ export function useI18n(options?: FormatterOptions) {
 			(key: WordingKey, values?: Record<string, string | number | boolean | Date | null | undefined> | undefined) => {
 				try {
 					return intl.formatMessage(
-						{ id: key, defaultMessage: translations.en[key] }, // Default message permits to fallback to English if
+						{ id: key, defaultMessage: translations.en[key] ?? key }, // Default message permits to fallback to English if
 						// there is missing translations
 						{ ...values, ...createXmlFormatters(options) }
 					) as string;
