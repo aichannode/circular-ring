@@ -2,21 +2,21 @@ import { useServices } from "@core/services";
 import { round2Digits } from "@core/utils";
 import { cmToFt, HeightUnit, kgToLbs, UNDEFINED_HEIGHT, UNDEFINED_WEIGHT, WeightUnit } from "@domain/units";
 import { useUser, useUserSettings } from "@domain/user/hooks/useUser";
-import { Language, languageKeys, Sex } from "@domain/user/user";
+import { languageKeys, Sex } from "@domain/user/user";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { AdvancedInfoEditionBottomSheet } from "@ui/screens/profile/advancedInformation/advancedInfoEditionBottomSheet";
+import { advanceInfoI18nKey } from "@ui/screens/profile/advancedInformation/profileAdvancedInfoI18n";
 import { ConfirmSexBottomSheet } from "@ui/screens/profile/basicInformation/confirmSexBottomSheet";
 import { DeleteAccountBottomSheet } from "@ui/screens/profile/basicInformation/deleteAccountBottomSheet";
 import { HeightBottomSheet } from "@ui/screens/profile/basicInformation/heightBottomSheet";
 import { WeightBottomSheet } from "@ui/screens/profile/basicInformation/weightBottomSheet";
-import React, { useRef, useState } from "react";
-import { AdvancedInfoEditionBottomSheet } from "@ui/screens/profile/advancedInformation/advancedInfoEditionBottomSheet";
-import { advanceInfoI18nKey } from "@ui/screens/profile/advancedInformation/profileAdvancedInfoI18n";
 import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
-import { translations } from "../../../../wordings";
+import React, { useRef, useState } from "react";
+import { LocaleType, translations } from "../../../../wordings";
 
 export const ProfileInformationScreen = () => {
 	const { format, formatDate } = useI18n();
@@ -152,9 +152,9 @@ export const ProfileInformationScreen = () => {
 					config={{
 						title: format("profile_info.language"),
 						description: undefined,
-						options: [Language.EN, Language.FR, Language.ES, Language.DE, Language.IT, Language.NL],
+						options: [...Object.keys(translations)] as LocaleType[],
 						translationSet: languageKeys,
-						saveProcess: async (option: Language) => {
+						saveProcess: async (option: LocaleType) => {
 							await userService.updateUserInfo({ language: option });
 						},
 					}}

@@ -1,5 +1,5 @@
 import { NotificationsFormat } from "@domain/units";
-import { Language } from "@domain/user/user";
+import { LocaleType } from "src/wordings";
 
 export enum WeightUnitDto {
 	kg = "KG",
@@ -47,7 +47,7 @@ export interface UserDtoBase {
 	height: number;
 	sex: string;
 	bornDate: string;
-	language: Language;
+	language: LocaleType;
 	scorePublic: boolean;
 	stride: number;
 	tutorialCompleted: boolean;
