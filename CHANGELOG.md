@@ -1,3 +1,11 @@
+## [1.5.1](https://gitlab.com/circularing/mobile/app/compare/v1.5.0...v1.5.1) (2022-07-11)
+
+
+### Bug Fixes
+
+* (CIR-1081) farehenheit ([bd5f552](https://gitlab.com/circularing/mobile/app/commit/bd5f55211e11a400f9dead6237ee420b877bd970))
+* dynamic paragraph works even without a valid key ([5bae08a](https://gitlab.com/circularing/mobile/app/commit/5bae08a21daa49f4dbfef9f5647fc541d61878d8))
+
 # [1.5.0](https://gitlab.com/circularing/mobile/app/compare/v1.4.5...v1.5.0) (2022-07-08)
 
 
