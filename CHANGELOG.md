@@ -1,3 +1,10 @@
+## [1.5.2](https://gitlab.com/circularing/mobile/app/compare/v1.5.1...v1.5.2) (2022-07-11)
+
+
+### Bug Fixes
+
+* updated install mode for codepush to RESTART ([5927f77](https://gitlab.com/circularing/mobile/app/commit/5927f7767f54ab0173cefa07620a38c66cf50e4b))
+
 ## [1.5.1](https://gitlab.com/circularing/mobile/app/compare/v1.5.0...v1.5.1) (2022-07-11)
 
 
