@@ -104,6 +104,7 @@ export class BleDeviceService {
 	private _locationEnabledAndroid = observable(false);
 	private _scannedDevices = observable(new Map<string, Device>());
 	private _connectedDevice = observable<Device | null>(null);
+	private _connectedDeviceSnu = observable<string | null>(null);
 	private _connectionState = observable(DeviceConnectionState.DISCONNECTED);
 	private _scanning = observable(false);
 	private _lookingForDevice = observable(false);
@@ -122,6 +123,7 @@ export class BleDeviceService {
 	scannedDevices = this._scannedDevices.select((devicesMap) => [...devicesMap.values()]);
 
 	readonly connectedDevice = this._connectedDevice.readOnly();
+	readonly connectedDeviceSnu = this._connectedDeviceSnu.readOnly();
 	setupState: Observable<DeviceSetupState>;
 	readonly autoConnectState: Observable<DeviceAutoConnectState>;
 	favoriteDevice = this._favoriteDevice;
@@ -142,6 +144,7 @@ export class BleDeviceService {
 		private readonly appStateService: AppStateService
 	) {
 		this._favoriteDevice.subscribe((device) => {
+			this.logger.info("_favoriteDevice", device);
 			if (device) this.favoriteDeviceStorage.save(device);
 			return device;
 		});
@@ -163,7 +166,7 @@ export class BleDeviceService {
 				if (connectionState === DeviceConnectionState.CONNECTED || faked) {
 					return DeviceSetupState.FINISHED;
 				}
-				if (bleState === State.PoweredOff) {
+				if (bleState === State.PoweredOff || bleState === State.Unauthorized) {
 					return DeviceSetupState.DISABLED;
 				}
 				if (Platform.OS === "android" && !locationAndroid) {
@@ -223,6 +226,7 @@ export class BleDeviceService {
 		this._currentRingBattery.set(null);
 		this._favoriteDevice.set(null);
 		this._favoriteDeviceSNU.set(null);
+		this._connectedDeviceSnu.set(null);
 		this.favoriteDeviceStorage.clear();
 	}
 
@@ -403,51 +407,77 @@ export class BleDeviceService {
 			this._onDeviceDisconnectedSubscription = device.onDisconnected((error, disconnectedDevice) => {
 				this.handleDeviceDisconnection(error, disconnectedDevice);
 			});
-			const storedDevice = { name: device.name };
-			await this.favoriteDeviceStorage.save(storedDevice);
-			this._favoriteDevice.set(storedDevice);
 			await this.startMonitoring();
 			const snu = await this.getResponse(Channel.SNU);
-			if (snu) {
-				this._favoriteDeviceSNU.set(snu);
-			}
-			await this.write(`${Channel.CALENDAR}${getUTCTimestamp()}`);
-			this.logger.info("🕒 Time set to device", device.name, getUTCTimestamp());
-			await this.listenBattery();
-			const firmware = await this.getResponse(Channel.FIRMWARE_VERSION);
-			this.logger.info("🔧 Firmware Version", firmware);
-			if (
-				this.appStateService.userRings.get().find((userRing: NamedUserRing) => userRing.name === device.name) ===
-				undefined
-			) {
-				this.ringApi.getLatestFirmware();
-				this.appStateService.userRings.update((userRing) => {
-					const rings = userRing.map((ring) => ({ ...ring, connected: false }));
-					const newRing = {
-						name: device.name ? device.name : undefined,
-						id: snu ? snu : "000000000000",
-						ringId: device.id,
-						firmware,
-						connected: true,
-						lastSyncDate: new Date(),
-						userId: undefined,
-					};
-					return [...rings, newRing];
-				});
-			} else {
-				this.appStateService.userRings.update((userRing) => {
-					return userRing.map((userRing) => ({
-						...userRing,
-						connected: userRing.name === device.name ? true : false,
-					}));
-				});
-			}
+			this._connectedDeviceSnu.set(snu ?? "000000000000");
 		} catch (e) {
-			this.logger.error("Error connecting to device", e);
+			this.logger.error("Error connecting to device", e, JSON.stringify(e));
 			this._connectionState.set(DeviceConnectionState.DISCONNECTED);
 			this.autoConnectFavoriteDevice();
 			throw e;
 		}
+	}
+
+	async initializeDevice() {
+		const device = this._connectedDevice.get();
+		if (!device) {
+			return;
+		}
+		const snu = this._connectedDeviceSnu.get();
+		if (!device) {
+			throw new Error("No SNU found");
+		}
+		await this.write(`${Channel.CALENDAR}${getUTCTimestamp()}`);
+		this.logger.info("🕒 Time set to device", device.name, getUTCTimestamp());
+		await this.listenBattery();
+		await this.write(Channel.MODE + `${this.appStateService.performanceMode.get() ? "1" : "0"}`);
+		const firmware = await this.getResponse(Channel.FIRMWARE_VERSION);
+		this.logger.info("🔧 Firmware Version", firmware);
+		if (
+			this.appStateService.userRings.get().find((userRing: NamedUserRing) => userRing.name === device.name) ===
+			undefined
+		) {
+			this.ringApi.getLatestFirmware();
+			this.appStateService.userRings.update((userRing) => {
+				const rings = userRing.map((ring) => ({ ...ring, connected: false }));
+				const newRing = {
+					name: device.name ? device.name : undefined,
+					id: snu ? snu : "000000000000",
+					ringId: device.id,
+					firmware,
+					connected: true,
+					lastSyncDate: new Date(),
+					userId: undefined,
+				};
+				return [...rings, newRing];
+			});
+		} else {
+			this.appStateService.userRings.update((userRing) => {
+				return userRing.map((userRing) => ({
+					...userRing,
+					connected: userRing.name === device.name ? true : false,
+				}));
+			});
+		}
+	}
+
+	async saveDeviceAsFavorite(name?: string, snu?: string) {
+		if (!name) {
+			const device = this.connectedDevice.get();
+			if (!device) {
+				return;
+			}
+			name = device.name ?? undefined;
+		}
+
+		if (!name) {
+			throw Error("Bad device name");
+		}
+
+		const storedDevice = { name: name };
+		await this.favoriteDeviceStorage.save(storedDevice);
+		this._favoriteDevice.set(storedDevice);
+		this._favoriteDeviceSNU.set(snu ?? this._connectedDeviceSnu.get());
 	}
 
 	private handleDeviceDisconnection(error: BleError | null, device: Device) {
@@ -497,7 +527,10 @@ export class BleDeviceService {
 			}
 			const device = await this.findFavoriteDevice();
 			if (device) {
-				return this.connect(device);
+				const connect = await this.connect(device);
+				// FIXME Should be good to check that the ring is still in the user's inventory ? (by using registerRing)
+				await this.initializeDevice();
+				return connect;
 			}
 		} finally {
 			this._lookingForDevice.set(false);
@@ -638,6 +671,7 @@ export class BleDeviceService {
 		const subscription = device.monitorCharacteristicForService(NUServiceUUID, TXCharacteristicUUID, (err, charac) => {
 			if (err) {
 				this._monitoring.set(false);
+				this.onMessageReceived = new Signal();
 				this.logger.error("Error during monitoring", err);
 				subscription.remove();
 			} else {

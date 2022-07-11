@@ -82,6 +82,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
 /**
@@ -181,29 +182,29 @@ android {
         dev {
             dimension "environment"
             applicationIdSuffix ".dev"
-            versionNameSuffix "-dev"
             resValue "string", "app_name", "Circular dev"
             manifestPlaceholders = [
                 appName: "Circular Dev",
             ]
+            resValue "string", "CodePushDeploymentKey", '"8GABzhWGNbmFmDXl5U2gmlBKADRmPxZ30TMqu"'
         }
         demo {
             dimension "environment"
             applicationIdSuffix ".demo"
-            versionNameSuffix "-demo"
             resValue "string", "app_name", "Circular demo"
             manifestPlaceholders = [
                 appName: "Circular Demo",
             ]
+            resValue "string", "CodePushDeploymentKey", '"b_YSonY7DKWBEZJIX_8sKfQcLz4Y-ZZa0MmQI"'
         }
         staging {
             dimension "environment"
             applicationIdSuffix ".staging"
-            versionNameSuffix "-staging" + (project.hasProperty("buildName") ? ("-" + project.property("buildName") as String) : "")
-            resValue "string", "app_name", "Circular staging"
+            resValue "string", "app_name", "Circular Release Candidate"
             manifestPlaceholders = [
-                appName: "Circular Staging",
+                appName: "Circular Release Candidate",
             ]
+            resValue "string", "CodePushDeploymentKey", '"03tMHY7M-PhS8Ib9A4eVhBLbMajPahuN14Mk4"'
         }
         prod {
             dimension "environment"
@@ -211,6 +212,7 @@ android {
             manifestPlaceholders = [
                 appName: "Circular",
             ]
+            resValue "string", "CodePushDeploymentKey", '"ZGqD0CutfkntN8CiPsJstDrcqYFFeaDDY3YN8"'
         }
     }
 

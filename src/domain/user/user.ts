@@ -1,4 +1,4 @@
-import { WordingKey } from "../../wordings";
+import { LocaleType, WordingKey } from "../../wordings";
 
 export enum Sex {
 	Male = "male",
@@ -36,10 +36,11 @@ export interface User {
 	height: number;
 	sex: Sex;
 	bornDate: Date;
-	language: Language;
+	language: LocaleType;
 	scorePublic: boolean;
 	stride: number;
 	tutorialCompleted: boolean;
 	createdAt: Date;
 	calibrationRemainingDays: number;
+	leaderboardRank?: string;
 }

@@ -12,8 +12,10 @@ export type StageInfos<T extends SleepStage | ActivityStage> = {
 /**
  * Metrics grouped by usage for the representation
  */
+export const HRH30DConstantMetrics = [MetricType.User30DaysAverageRHR, MetricType.UserReferenceRHR] as const;
+export type THRH30DConstantMetrics = typeof HRH30DConstantMetrics[number];
 
-export const HRH7DConstantMetrics = [MetricType.User7DaysAverageRHR, MetricType.User7DaysReferenceRHR] as const;
+export const HRH7DConstantMetrics = [MetricType.User7DaysAverageRHR, MetricType.UserReferenceRHR] as const;
 export type THRH7DConstantMetrics = typeof HRH7DConstantMetrics[number];
 
 // XXX: 05/04/2022 - Server does not send metrics
@@ -498,3 +500,6 @@ export const sleepScoreContributors = [
 	MetricType.UserDailySleepDebt,
 ] as const;
 export type SleepScoreContributors = typeof sleepScoreContributors[number];
+
+export const userBestStreak = [MetricType.UserLifeTimeBestStreak] as const;
+export const userStreak = [MetricType.UserStreak] as const;

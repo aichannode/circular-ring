@@ -28,6 +28,8 @@ interface BarChartProps {
 	horizontalPadding?: number;
 	labelCount?: number;
 	isTemperature?: boolean;
+	barWidth?: number;
+	labelCountForceX?: boolean;
 }
 
 export function BarChart({
@@ -48,9 +50,14 @@ export function BarChart({
 	horizontalPadding = 0.1,
 	labelCount,
 	isTemperature = false,
+	barWidth = 0.07,
+	labelCountForceX = true,
 }: BarChartProps) {
 	const [selectedX, setSelectedX] = useState<number | undefined>(-1);
-	const linspace = isDefined(yMin) && isDefined(yMax) ? ((yMax - yMin) * 10) / 100 : 0;
+	let linspace = isDefined(yMin) && isDefined(yMax) ? ((yMax - yMin) * 10) / 100 : 0;
+	if (yMin === yMax && isDefined(yMin) && isDefined(yMax)) {
+		linspace = (yMax * 10) / 100;
+	}
 	const axisMinimum = isDefined(yMin) ? yMin - linspace : 0;
 	const axisMaximum = isDefined(yMax) ? yMax + linspace : 0;
 	const dataSets = {
@@ -81,7 +88,7 @@ export function BarChart({
 		],
 
 		config: {
-			barWidth: 0.07,
+			barWidth: barWidth,
 		},
 	};
 
@@ -96,7 +103,7 @@ export function BarChart({
 		drawGridLines: false,
 		textSize: 10,
 		yOffset: 10,
-		labelCountForce: true,
+		labelCountForce: labelCountForceX,
 		textColor: processColor(xColor),
 		granularityEnabled: true,
 		axisLineColor: processColor("white"),
@@ -107,8 +114,8 @@ export function BarChart({
 	const yAxis = {
 		left: {
 			enabled: true,
-			axisMinimum: axisMinimum,
-			axisMaximum: axisMaximum,
+			axisMinimum: Number.isFinite(axisMinimum) ? axisMinimum : undefined,
+			axisMaximum: Number.isFinite(axisMaximum) ? axisMaximum : undefined,
 			labelCount: isTemperature ? 3 : undefined,
 			labelCountForce: isTemperature,
 			textColor: processColor(yColor),
@@ -140,7 +147,7 @@ export function BarChart({
 
 	return (
 		<Container>
-			{isInDisabledMode(mode) ? (
+			{isInDisabledMode(mode) && data.filter((line) => line.y > 0).length == 0 ? (
 				<TextPlaceholder content={format("global.no_data_yet")} />
 			) : (
 				<BarChartWrapper

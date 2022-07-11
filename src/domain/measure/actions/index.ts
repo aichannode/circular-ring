@@ -106,6 +106,7 @@ import {
 	TemperatureVariationConstantMetrics,
 	temperatureVariationConstantMetrics,
 } from "../representation/lib/type";
+import { userBestStreak } from "./../representation/lib/type";
 import { MeasureApi } from "./lib/measureApi";
 
 /**
@@ -145,6 +146,27 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 				},
 			]);
 		},
+
+		async setMonthlyRhrConstants(localISODay: ISODay = getCurrentLocalISODay(), useForceRefresh = false) {
+			Promise.all([
+				measureApi.fetchLastDailyMeasures([MetricType.User30DaysAverageRHR], localISODay, useForceRefresh),
+				measureApi.fetchLastDailyMeasures([MetricType.UserReferenceRHR], lifetimeDate, useForceRefresh),
+			]).then(function ([average, reference]) {
+				present([
+					{
+						type: "setMonthlyRhrConstants",
+						payload: {
+							localISODay,
+							constant: {
+								[MetricType.User30DaysAverageRHR]: average[MetricType.User30DaysAverageRHR],
+								[MetricType.UserReferenceRHR]: reference[MetricType.UserReferenceRHR],
+							},
+						},
+					},
+				]);
+			});
+		},
+
 		async pullMonthlySleepStageMetrics(
 			localISOMonth: ISOMonth = toISOMonth(getCurrentLocalISODay()),
 			useForceRefresh = false
@@ -384,7 +406,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		async setMonthlyHRVConstants(localISODay: ISODay, useForceRefresh = false) {
 			Promise.all([
 				measureApi.fetchLastDailyMeasures([MetricType.UserMonthlyHRVAverage], localISODay, useForceRefresh),
-				measureApi.fetchLastDailyMeasures([MetricType.UserDailyReferenceHRV], lifetimeDate, useForceRefresh),
+				measureApi.fetchLastDailyMeasures([MetricType.UserDailyReferenceHRV], localISODay, useForceRefresh),
 			]).then(function ([constant, reference]) {
 				present([
 					{
@@ -638,7 +660,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		async setLast7DRestingHeartRate(localISODay: ISODay, useForceRefresh?: boolean) {
 			Promise.all([
 				measureApi.fetchLastDailyMeasures([MetricType.User7DaysAverageRHR], localISODay, useForceRefresh),
-				measureApi.fetchLastDailyMeasures([MetricType.User7DaysReferenceRHR], lifetimeDate, useForceRefresh),
+				measureApi.fetchLastDailyMeasures([MetricType.UserReferenceRHR], lifetimeDate, useForceRefresh),
 			]).then(function ([data, reference]) {
 				present([
 					{
@@ -647,7 +669,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 							localISODay,
 							constant: {
 								[MetricType.User7DaysAverageRHR]: data[MetricType.User7DaysAverageRHR],
-								[MetricType.User7DaysReferenceRHR]: reference[MetricType.User7DaysReferenceRHR],
+								[MetricType.UserReferenceRHR]: reference[MetricType.UserReferenceRHR],
 							},
 						},
 					},
@@ -1148,6 +1170,21 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					},
 				]);
 			});
+		},
+
+		async setUserRankAndStreak(useForceRefresh?: boolean) {
+			const result = await measureApi.fetchLastDailyMeasures<typeof userBestStreak[number]>(
+				userBestStreak,
+				lifetimeDate
+			);
+			present([
+				{
+					type: "setUserRankAndStreak",
+					payload: {
+						bestStreak: result["user.lifetime.best.streak"],
+					},
+				},
+			]);
 		},
 	};
 }

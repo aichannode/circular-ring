@@ -10,15 +10,15 @@ import { Spinner } from "@ui/components/spinner";
 import { PrimaryText, SecondaryText } from "@ui/components/text";
 import { IfAdmin } from "@ui/containers/IfAdmin";
 import { useI18n } from "@ui/i18n";
+import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { SetUpFailed } from "@ui/screens/onboarding/ringSetup/setUpFailed";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
+import { useObservable } from "micro-observables";
 import React, { useEffect, useRef, useState } from "react";
 import { Image, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
-import { SetUpFailed } from "@ui/screens/onboarding/ringSetup/setUpFailed";
-import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
-import { useObservable } from "micro-observables";
 
 interface IRingSetupScreen {
 	route: {
@@ -162,6 +162,7 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 												onPress={async () => {
 													bleDeviceService.stopScan();
 													setConnecting(true);
+													appStateService.waitForRingRegistration.set(true);
 													// store current device, because connect function overwrite it, then check if the ring belong to the user, then throw and error if not, then try to reconnect to fav device but name is not the right one
 													const currentDevice = await bleDeviceService.favoriteDevice.get();
 													try {
@@ -182,6 +183,8 @@ export const NewRingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 														} else {
 															setError(true);
 														}
+														// wait for next tick https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/
+														setTimeout(() => appStateService.waitForRingRegistration.set(false), 0);
 													}
 												}}
 											>

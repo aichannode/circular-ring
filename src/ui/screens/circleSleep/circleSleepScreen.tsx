@@ -33,7 +33,6 @@ import { HRSGraph } from "./HRSGraph";
 import { HRVGraph } from "./HRVGraph/HRVGraph";
 import { getSleepGaugesConfig } from "./measureDisplayInfos";
 import { Sleep7DChart } from "./Sleep7DChart";
-import { SleepAllChart } from "./SleepAllChart";
 import { SleepDurationPieChart } from "./sleepDurationPie";
 import { SleepQualityScoreGraph } from "./sleepQualityScoreGraph";
 import { Spo2Graph } from "./spo2Graph/Spo2Graph";
@@ -167,10 +166,10 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 										label: "graph.time_frame.7days",
 										duration: TimeFrame.LAST_7_DAYS,
 									},
-									{
-										label: "graph.time_frame.all",
-										duration: TimeFrame.ALL,
-									},
+									// {
+									// 	label: "graph.time_frame.all",
+									// 	duration: TimeFrame.ALL,
+									// },
 								]}
 							/>
 						</View>
@@ -182,9 +181,9 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 								{graphPeriod === TimeFrame.LAST_7_DAYS && (
 									<Sleep7DChart selectedDay={selectedDay} mode={screenModeWithoutDisabled} />
 								)}
-								{graphPeriod === TimeFrame.ALL && (
+								{/* {graphPeriod === TimeFrame.ALL && (
 									<SleepAllChart selectedDay={selectedDay} mode={screenModeWithoutDisabled} />
-								)}
+								)} */}
 							</GraphContainer>
 						) : (
 							<Spinner />

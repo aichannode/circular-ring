@@ -78,11 +78,10 @@ const Container = styled(ScrollScreen)`
 
 const CalendarWrapper = styled.View`
 	${whiteCardStyle};
+	padding: 12px 0px 16px;
 	width: 100%;
-	padding-left: 0;
-	padding-right: 0;
 	border-radius: 5px;
-	margin-bottom: 50px;
+	margin-bottom: 30px;
 	max-width: 335px;
 	margin-left: 10px;
 	margin-right: 10px;

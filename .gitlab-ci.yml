@@ -45,10 +45,10 @@ android:build:staging:
   extends: .build-android
   variables:
     ENV: staging
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH =~ /^release\/.*$/'
   before_script:
-    - export BUILD_NAME=$(sed 's/release\///g' <<< ${CI_COMMIT_BRANCH})
+    - export BUILD_NAME=staging
+  only:
+    - staging
 
 android:build:prod:
   extends: .build-android
@@ -70,6 +70,7 @@ android:build:prod:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - mkdir artifacts
   script:
+    - npm install -g appcenter-cli
     - npm ci --progress=false
     - npm run semver
     - npx jetifier

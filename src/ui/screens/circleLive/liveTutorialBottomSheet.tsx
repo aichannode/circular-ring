@@ -1,10 +1,12 @@
+import { useServices } from "@core/services";
 import { PrimaryButton, SecondaryButton } from "@ui/components/buttons";
 import { CheckBox } from "@ui/components/checkBox";
 import { ResponsiveCenterView, Row, Stack } from "@ui/components/layout";
 import { SecondaryText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
+import { useObservable } from "micro-observables";
 import React, { useCallback, useEffect, useState } from "react";
-import { BackHandler, Image } from "react-native";
+import { BackHandler, Image, View } from "react-native";
 import styled from "styled-components/native";
 
 enum TutorialStep {
@@ -19,6 +21,11 @@ export const LiveTutorialBottomSheet: React.FC<LiveTutorialBottomSheetProps> = (
 	const { format } = useI18n();
 	const [step, setStep] = useState(TutorialStep.ONE);
 	const [tutorialHidden, setTutorialHidden] = useState(false);
+	const { appStateService } = useServices();
+	const showWarning = useObservable(appStateService.showLiveCircleWaringBottomSheet);
+	const [skipWarning, setSkipWarning] = useState(false);
+	const [hideTutorialWarning, setHideTutorialWarning] = useState(false);
+	console.log("showWarning", showWarning);
 
 	const backToStepOne = useCallback(() => {
 		setStep(TutorialStep.ONE);
@@ -33,6 +40,33 @@ export const LiveTutorialBottomSheet: React.FC<LiveTutorialBottomSheetProps> = (
 			return () => BackHandler.removeEventListener("hardwareBackPress", backToStepOne);
 		}
 	}, [step]);
+
+	if (showWarning !== false && !skipWarning)
+		return (
+			<Container style={{ flex: 1, justifyContent: "space-between", alignContent: "center" }}>
+				<View style={{ flex: 1, justifyContent: "space-evenly", alignContent: "center" }}>
+					<View>
+						<SecondaryText style={{ textAlign: "center" }}>{format("live.tutorial.not.medical.warning")}</SecondaryText>
+						<SecondaryText style={{ textAlign: "center", marginTop: 30 }}>
+							{format("live.tutorial.not.medical.warning2")}
+						</SecondaryText>
+					</View>
+					<CheckBox
+						value={hideTutorialWarning}
+						onChange={setHideTutorialWarning}
+						label={format("live.tutorial.checkbox")}
+					/>
+				</View>
+				<PrimaryButton
+					onPress={() => {
+						setSkipWarning(true);
+						if (hideTutorialWarning) appStateService.showLiveCircleWaringBottomSheet.set(false);
+					}}
+				>
+					{format("continue")}
+				</PrimaryButton>
+			</Container>
+		);
 
 	return (
 		<Container>

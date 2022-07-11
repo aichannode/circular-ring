@@ -30,7 +30,7 @@ import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useRef, useState } from "react";
-import { Image, LayoutAnimation, View } from "react-native";
+import { Image, LayoutAnimation, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
 import { ActivityIntensityGraph } from "./activityIntensityGraph";
@@ -40,7 +40,7 @@ import { DailyMetric } from "./dailyMetric";
 import { EnergyScoreGraph } from "./energyScoreGraph";
 import { HRGraph } from "./HRGraph/HRGraph";
 import { dailyActivitiesUIConfig, getActivityGaugesConfig } from "./measureDisplayInfos";
-import { RestingHeartRate7DGraph } from "./restingHeartRate7DGraph";
+import { RestingHeartRateGraphs } from "./restingHeartRateGraphs";
 import { StepsGraph } from "./StepsGraph";
 function getIcon(path: string) {
 	switch (path) {
@@ -135,6 +135,29 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 		],
 		excludes: coreSleepTiming ? [[moment(coreSleepTiming[0]).valueOf(), moment(coreSleepTiming[1]).valueOf()]] : [],
 	};
+
+	const graphs = [
+		<ActivityIntensityGraph
+			key={0}
+			selectedDay={selectedDay}
+			mode={screenModeWithoutDisabled}
+			dailyTrimOptions={dailyTrimOptions}
+			dataActivityIntensity={activityIntensity}
+		/>,
+		<StepsGraph key={1} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,
+		<CaloriesBurnedGraph key={2} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,
+		<CardioPointsGraph key={3} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,
+		<EnergyScoreGraph
+			key={4}
+			selectedDay={selectedDay}
+			// XXX: Energy score should not be displayed in calibration mode.
+			// https://circularing.atlassian.net/browse/CIR-904
+			mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenModeWithoutDisabled))}
+		/>,
+		<HRGraph key={5} selectedDay={selectedDay} mode={screenModeWithoutDisabled} dailyTrimOptions={dailyTrimOptions} />,
+		<RestingHeartRateGraphs key={6} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,
+	];
+
 	return (
 		<Container>
 			<View>
@@ -198,6 +221,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 						.map((metric, index) => {
 							const uiConfig = activityContributorGaugesConfig[metric];
 							const percent = energyScoreDetails?.[metric].percent;
+							if (Platform.OS === "ios" && uiConfig.titleKey === "score.details.spo2.label") return null;
 							return [
 								<ScoreGauge
 									key={metric}
@@ -234,31 +258,9 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 					<Spinner size={24} />
 				)}
 			</ElementStack>
-
+			<InfoListHeader>{format("activity.details.title")}</InfoListHeader>
 			<ElementStack gap={10} style={{ display: "flex" }}>
-				{activeItem === 0 && (
-					<ActivityIntensityGraph
-						dataActivityIntensity={activityIntensity}
-						selectedDay={selectedDay}
-						mode={screenModeWithoutDisabled}
-						dailyTrimOptions={dailyTrimOptions}
-					/>
-				)}
-				{activeItem === 1 && <StepsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-				{activeItem === 2 && <CaloriesBurnedGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-				{activeItem === 3 && <CardioPointsGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
-				{activeItem === 4 && (
-					<EnergyScoreGraph
-						selectedDay={selectedDay}
-						// XXX: Energy score should not be displayed in calibration mode.
-						// https://circularing.atlassian.net/browse/CIR-904
-						mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenModeWithoutDisabled))}
-					/>
-				)}
-				{activeItem === 5 && (
-					<HRGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} dailyTrimOptions={dailyTrimOptions} />
-				)}
-				{activeItem === 6 && <RestingHeartRate7DGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+				{graphs[activeItem]}
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
 					<Row style={{ justifyContent: "center" }}>
@@ -312,7 +314,6 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 								}
 							/>
 						</ImageContainer>
-
 						<ImageContainer onPress={() => setActiveItem(5)}>
 							<GraphSwitcherButton
 								source={
@@ -322,7 +323,6 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 								}
 							/>
 						</ImageContainer>
-
 						<ImageContainer onPress={() => setActiveItem(6)}>
 							<GraphSwitcherButton
 								source={
@@ -335,7 +335,6 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 					</Row>
 				</ElementStack>
 			</ElementStack>
-
 			<CircularBottomSheet ref={calendarBottomSheet} snapPoints={[480]}>
 				<View style={{ padding: 20 }}>
 					<CalendarView

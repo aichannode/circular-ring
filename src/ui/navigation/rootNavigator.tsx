@@ -1,9 +1,11 @@
 import { useServices } from "@core/services";
+import { useWaitForRingRegistration } from "@domain/appState/appStateHooks";
 import { UpdateState } from "@domain/device/bleDeviceService";
 import { useDeviceStored } from "@domain/device/hooks";
 import { UserRing } from "@domain/ring/ring";
 import { useAuthenticatedUserEmail, useUser } from "@domain/user/hooks/useUser";
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { DrawerContent } from "@ui/navigation/drawer/drawerContent";
 import { MainHomeNavigator } from "@ui/navigation/MainHomeNavigator";
@@ -23,10 +25,10 @@ import { Tutorial } from "@ui/screens/onboarding/tutorial/tutorial";
 import { SignUpConfirmationCodeScreen } from "@ui/screens/signup/signUpConfirmationCodeScreen";
 import { SignUpEmailScreen } from "@ui/screens/signup/signUpEmailScreen";
 import { WebViewScreen } from "@ui/screens/webViewScreen";
+import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
 import { useObservable } from "micro-observables";
 import React, { useEffect, useState } from "react";
 import { LocaleType, translations } from "../../wordings";
-import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
 
 const SetupStack = createNativeStackNavigator();
 const OnboardingStack = createNativeStackNavigator();
@@ -37,18 +39,19 @@ export interface RootNavigatorProps {
 }
 
 export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }) => {
-	const [wait, setWait] = useState(false);
 	const isAuthenticated = !!useAuthenticatedUserEmail();
 	const { appStateService, ringApi, bleDeviceService } = useServices();
 	const user = useUser();
 	const hasUser = !!user;
 	const deviceStored = useDeviceStored(); // useObservable(useServices().bleDeviceService.favoriteDevice);
 	const userRings = useObservable(appStateService.userRings);
+	const hasReachedHomeScreen = useObservable(appStateService.hasReachedHomeScreen);
 	const currentRing: UserRing = userRings.filter((ring) => ring.connected)[0];
 	const lastFirmwareVersion = useObservable(ringApi.firmwareVersion);
 	const [useByPass, setByPass] = useState(false);
 	const [byPassForcedFirmwareUpdate, setByPassForcedFirmwareUpdate] = useState(false);
 	const updateState = useObservable(bleDeviceService.updateState);
+	const wait = useWaitForRingRegistration();
 	const {
 		cognitoAuthService: { payload },
 	} = useServices();
@@ -77,24 +80,35 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 		);
 	}
 
-	if (!useByPass && (wait || !deviceStored)) {
+	if (!useByPass && (wait || !deviceStored) && !hasReachedHomeScreen) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
 				{!hasUser && <OnboardingStack.Screen name={Routes.RingSetupStart} component={RingSetupStartScreen} />}
 				<OnboardingStack.Screen
 					name={Routes.Pairing}
-					initialParams={{ setWait, onByPass: () => setByPass(true) }}
+					initialParams={{ onByPass: () => setByPass(true) }}
 					component={RingSetupScreen}
 				/>
-				<OnboardingStack.Screen name={Routes.SetUpCompleted} initialParams={{ setWait }} component={SetUpCompleted} />
+				<OnboardingStack.Screen name={Routes.SetUpCompleted} component={SetUpCompleted} />
 			</OnboardingStack.Navigator>
 		);
 	}
-	if (
-		(updateState.status !== UpdateState.IDLE.status ||
-			(currentRing && lastFirmwareVersion !== currentRing.firmware && lastFirmwareVersion)) &&
-		!byPassForcedFirmwareUpdate
-	) {
+
+	if (!isOnboardingDone && !useByPass) {
+		return (
+			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
+				<OnboardingStack.Screen name={Routes.OnboardingWearInfo} component={OnboardingWearInfoScreen} />
+				<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo1} component={OnboardingPersonalInfo1Screen} />
+				<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo2} component={OnboardingPersonalInfo2Screen} />
+				<OnboardingStack.Screen name={Routes.OnboardingTutorial} component={Tutorial} />
+			</OnboardingStack.Navigator>
+		);
+	}
+
+	const firmwareIsNotTheLast = currentRing && lastFirmwareVersion !== currentRing.firmware && lastFirmwareVersion;
+	const isNotUpdating = updateState.status !== UpdateState.IDLE.status;
+
+	if (!wait && (isNotUpdating || firmwareIsNotTheLast) && !byPassForcedFirmwareUpdate) {
 		return (
 			<RingFirmwareUpdate
 				showCross={payload.get()?.["cognito:groups"]?.some((groupName) => groupName === "admin")}
@@ -103,19 +117,21 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 		);
 	}
 
-	return isOnboardingDone || useByPass ? (
+	return (
 		<HomeDrawer.Navigator
 			screenOptions={{ headerShown: false, drawerStyle: { width: "100%" } }}
 			drawerContent={() => <DrawerContent />}
 		>
-			<HomeDrawer.Screen name={Routes.MainHome} component={MainHomeNavigator} options={{ swipeEnabled: false }} />
+			<HomeDrawer.Screen
+				name={Routes.MainHome}
+				component={MainHomeNavigator}
+				options={({ route }) => {
+					const routeName = getFocusedRouteNameFromRoute(route);
+					return {
+						swipeEnabled: routeName === Routes.Home,
+					};
+				}}
+			/>
 		</HomeDrawer.Navigator>
-	) : (
-		<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
-			<OnboardingStack.Screen name={Routes.OnboardingWearInfo} component={OnboardingWearInfoScreen} />
-			<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo1} component={OnboardingPersonalInfo1Screen} />
-			<OnboardingStack.Screen name={Routes.OnboardingPersonalInfo2} component={OnboardingPersonalInfo2Screen} />
-			<OnboardingStack.Screen name={Routes.OnboardingTutorial} component={Tutorial} />
-		</OnboardingStack.Navigator>
 	);
 };

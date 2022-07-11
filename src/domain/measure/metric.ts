@@ -34,7 +34,12 @@ export enum MetricType {
 	// 7 Days RHR
 	///////////////////
 	User7DaysAverageRHR = "user.7days.rhr",
-	User7DaysReferenceRHR = "user.reference.rhr",
+	UserReferenceRHR = "user.reference.rhr",
+
+	///////////////////
+	// 30 Days RHR
+	///////////////////
+	User30DaysAverageRHR = "user.30days.rhr",
 
 	///////////////////
 	// 7 Days sleep
@@ -271,4 +276,11 @@ export enum MetricType {
 	UserDailyTemperatureScore = "user.daily.sleep.var.temperature",
 	UserDailyVarTemperature = "user.7days.sleep.var.temperature",
 	UserMonthlyTemperatureAverage = "user.30days.sleep.var.temperature",
+
+	///////////////////
+	// User Streak and Rank
+	///////////////////
+	UserLifeTimeBestStreak = "user.lifetime.best.streak",
+	UserStreak = "user.streak",
+	UserLeaderboardRankCategory = "user.leaderboard.rank.category",
 }

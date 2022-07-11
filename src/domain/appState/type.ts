@@ -1,6 +1,6 @@
-import { NamedUserRing } from "@domain/ring/ring";
 import { CalendarTag } from "@domain/calendar/calendar";
 import { CircleEntity } from "@domain/circles/type";
+import { NamedUserRing } from "@domain/ring/ring";
 
 export interface I_QuickAccessElem {
 	title: string;
@@ -22,4 +22,9 @@ export interface I_AppState {
 	defaultCircles: CircleEntity[];
 	userRings: NamedUserRing[];
 	userCircles: CircleEntity[];
+	waitForRingRegistration: boolean;
+	showLiveCircleWaringBottomSheet: boolean;
+	showUpdateBanner: { display: boolean; firmwareVersion: string };
+	showDataRatePopup: boolean;
+	performanceMode: boolean;
 }

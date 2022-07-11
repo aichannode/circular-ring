@@ -16,14 +16,13 @@ import { SetUpFailed } from "@ui/screens/onboarding/ringSetup/setUpFailed";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Image, Platform, View } from "react-native";
+import { Image, Linking, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { PairingFailedBottomSheet } from "./pairingFailedBottomSheet";
 
 interface IRingSetupScreen {
 	route: {
 		params: {
-			setWait: (arg0: boolean) => void;
 			/**
 			 * 	CIR-467: will by pass the ring setup for debuging puropose
 			 */
@@ -33,10 +32,8 @@ interface IRingSetupScreen {
 }
 
 export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
-	const { userService } = useServices();
+	const { userService, appStateService, bluetoothService, bleDeviceService, ringManagementService } = useServices();
 	const { format } = useI18n();
-	const { bluetoothService, bleDeviceService, ringManagementService } = useServices();
-	const { setWait } = props.route.params;
 	const { navigate } = useRoutesNavigation();
 	const pairingFailedBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const logger = useLogger("RingSetupScreen");
@@ -103,7 +100,7 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 												: "setup.scan.location_disabled.message"
 										)}
 									</DisabledMessage>
-									{Platform.OS === "android" && (
+									{Platform.OS === "android" ? (
 										<PrimaryButton
 											onPress={async () => {
 												bluetoothService.enable();
@@ -118,6 +115,14 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 													? "setup.scan.disabled.enable"
 													: "setup.scan.location_disabled.enable"
 											)}
+										</PrimaryButton>
+									) : (
+										<PrimaryButton
+											onPress={() => {
+												Linking.openURL("app-settings:");
+											}}
+										>
+											{format("setup.scan.disabled.button")}
 										</PrimaryButton>
 									)}
 								</Stack>
@@ -156,13 +161,16 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 												onPress={async () => {
 													bleDeviceService.stopScan();
 													setConnecting(true);
-													setWait(true);
+													appStateService.waitForRingRegistration.set(true);
 													try {
 														await bleDeviceService.connect(device);
 														await ringManagementService.registerConnectedRing();
 														setConnecting(false);
 														bleDeviceService.stopScan();
-														navigate(Routes.SetUpCompleted, { ringName: device.name, action: () => setWait(false) });
+														navigate(Routes.SetUpCompleted, {
+															ringName: device.name,
+															action: () => appStateService.waitForRingRegistration.set(false),
+														});
 													} catch (e) {
 														setConnecting(false);
 
@@ -173,7 +181,7 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 														} else {
 															setError(true);
 														}
-														setWait(false);
+														appStateService.waitForRingRegistration.set(false);
 													}
 												}}
 											>

@@ -44,10 +44,10 @@ export function Spo2Graph({
 							label: "graph.time_frame.30days",
 							duration: TimeFrame.LAST_30_DAYS,
 						},
-						{
-							label: "graph.time_frame.all",
-							duration: TimeFrame.ALL,
-						},
+						// {
+						// 	label: "graph.time_frame.all",
+						// 	duration: TimeFrame.ALL,
+						// },
 					]}
 				/>
 			</View>

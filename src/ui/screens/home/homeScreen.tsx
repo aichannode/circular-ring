@@ -7,35 +7,39 @@ import { useSetupState } from "@domain/device/hooks";
 import { useNotifications, useRecommendations } from "@domain/feed/hooks";
 import { useSyncState } from "@domain/ring/hooks";
 import { SyncState } from "@domain/ring/ringManagementService";
-import { DateFormat } from "@domain/units";
-import { useUserSettings } from "@domain/user/hooks/useUser";
+import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { PrimaryButton } from "@ui/components/buttons";
 import Fade from "@ui/components/fade";
 import { Spinner } from "@ui/components/spinner";
-import { MetaDataText } from "@ui/components/text";
 import { IfAdmin } from "@ui/containers/IfAdmin";
-import { useI18n } from "@ui/i18n";
 import { CirclesBanner } from "@ui/screens/home/circlesBanner";
 import { Notification } from "@ui/screens/home/feedEntities/Notification";
-import { Recommendation } from "@ui/screens/home/feedEntities/Recommendation";
+import { NoRingBanner } from "@ui/screens/home/NoRingBanner";
 import { QuickAccess } from "@ui/screens/home/quickAccess/quickAccess";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, Animated, Platform, RefreshControl, View } from "react-native";
+import { Alert, Animated, Platform, RefreshControl, Text, View } from "react-native";
 import fs from "react-native-fs";
 import Mailer, { Attachment } from "react-native-mail";
 import styled from "styled-components/native";
+import { DataModeBottomSheet } from "./dataModeBottomSheet";
+import RecommendationWrapper from "./feedEntities/RecommendationWrapper";
 import { SyncBanner } from "./syncBanner";
+import { UpdateBanner } from "./updateBanner";
 
 const BANNER_TO_LOAD_ON_END = 2;
 
 export const HomeScreen: React.FC = () => {
-	const { feedService, bluetoothService, bleDeviceService, appStateService, ringManagementService } = useServices();
+	const { userService, feedService, bluetoothService, bleDeviceService, appStateService, ringManagementService } =
+		useServices();
 	const [hideQuickaccess, setHideQuickaccess] = useState(true);
 	const syncState = useSyncState();
 	const previousScrollViewY = useRef(0);
 	const setupState = useSetupState();
+	const dataRateBottomSheet = useRef<CircularBottomSheetHandle>(null);
+
 	const {
 		measure: {
 			hooks: { useResetMeasureModel },
@@ -47,6 +51,10 @@ export const HomeScreen: React.FC = () => {
 	useFetchCircles();
 
 	useEffect(() => {
+		if (appStateService.showDataRatePopup.get()) {
+			dataRateBottomSheet?.current?.present();
+			appStateService.showDataRatePopup.set(false);
+		}
 		if (setupState === DeviceSetupState.DISABLED) {
 			bluetoothService.enable();
 			bleDeviceService.checkSettings();
@@ -54,10 +62,10 @@ export const HomeScreen: React.FC = () => {
 		if (setupState === DeviceSetupState.LOCATION_DISABLED && Platform.OS === "android") {
 			bleDeviceService.requestLocation();
 		}
+		appStateService.hasReachedHomeScreen.set(true);
 	}, []);
 
 	const sendLogsByEmail = async () => {
-		console.log("DEFAULT_LOG_DIR", DEFAULT_LOG_DIR);
 		const reader = await fs.readDir(DEFAULT_LOG_DIR);
 		const attachements: Attachment[] = reader.map((file) => ({
 			file,
@@ -99,13 +107,14 @@ export const HomeScreen: React.FC = () => {
 		await feedService.fetchAll();
 	}, [syncState]);
 
-	const userSettings = useUserSettings();
-	const { format } = useI18n();
 	const notifications = useNotifications();
 	const { loading, result: recommendations } = useRecommendations();
+	const remainingDays = useUserCalibrationRemainingDays();
 
 	const data = [];
 	data.push(<SyncBanner onRetry={ringManagementService.syncData} />);
+	data.push(<NoRingBanner />);
+	data.push(<UpdateBanner />);
 	data.push(
 		<View style={{ paddingHorizontal: 6 }}>
 			<IfAdmin>
@@ -117,6 +126,43 @@ export const HomeScreen: React.FC = () => {
 				</PrimaryButton>
 				<PrimaryButton onPress={feedService._DEBUG_resetAnswers}>RESET ANSWERS</PrimaryButton>
 				<PrimaryButton onPress={() => resetCache()}>CLEAR MEASURE AND CACHE</PrimaryButton>
+				<View style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}>
+					<PrimaryButton
+						onPress={() => {
+							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+							//@ts-ignore
+							userService.user?.set?.({
+								...userService.user.get(),
+								calibrationRemainingDays: remainingDays - 1,
+							});
+						}}
+					>
+						calibDay - 1
+					</PrimaryButton>
+					<Text style={{ margin: 10, fontWeight: "bold" }}>remainingDays : {remainingDays}</Text>
+					<PrimaryButton
+						onPress={() => {
+							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+							//@ts-ignore
+							userService.user?.set?.({
+								...userService.user.get(),
+								calibrationRemainingDays: remainingDays + 1,
+							});
+						}}
+					>
+						calibDay + 1
+					</PrimaryButton>
+				</View>
+				<PrimaryButton
+					onPress={() => {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						//@ts-ignore
+						dataRateBottomSheet?.current?.present();
+						appStateService.showDataRatePopup.set(true);
+					}}
+				>
+					SHOW DATA RATE POPUP
+				</PrimaryButton>
 			</IfAdmin>
 			{notifications[0] && (
 				<Fade isVisible isAnimatedOnMount>
@@ -125,23 +171,8 @@ export const HomeScreen: React.FC = () => {
 			)}
 		</View>
 	);
-	Object.keys(recommendations).map((date, key) => {
-		const dateFormat = userSettings?.dateFormat === DateFormat.SI ? "DD/MM/YYYY" : "MM/DD/YYYY";
-		data.push(
-			<View style={{ paddingHorizontal: 6 }} key={date}>
-				{date !== "today" && (
-					<View style={{ alignItems: "center", marginTop: 15 }}>
-						<Separator />
-						<MetaDataText style={{ paddingHorizontal: 8, fontSize: 8, backgroundColor: colors.lightgray }}>
-							{date === "yesterday" ? format("global.yesterday").toUpperCase() : moment(date).format(dateFormat)}
-						</MetaDataText>
-					</View>
-				)}
-				{recommendations[date].map((banner) => {
-					return <Recommendation key={banner.id} recommendation={banner} style={{ margin: 10 }} />;
-				})}
-			</View>
-		);
+	Object.keys(recommendations).map((date) => {
+		data.push(<RecommendationWrapper loading={loading} date={date} recommendations={recommendations} />);
 	});
 	data.push(<SpinnerContainer>{loading && <Spinner size={20}></Spinner>}</SpinnerContainer>);
 
@@ -198,12 +229,15 @@ export const HomeScreen: React.FC = () => {
 					}
 					previousScrollViewY.current = positionY;
 				}}
-				onEndReached={(end) => {
+				onEndReached={() => {
 					if (!loading) appStateService.recommendationsCount.update((state) => state + BANNER_TO_LOAD_ON_END);
 				}}
 				refreshing={loading}
 				progressViewOffset={100}
 			/>
+			<CircularBottomSheet snapPoints={[580]} ref={dataRateBottomSheet}>
+				<DataModeBottomSheet onClose={() => dataRateBottomSheet.current?.close()}></DataModeBottomSheet>
+			</CircularBottomSheet>
 		</Container>
 	);
 };
@@ -216,13 +250,4 @@ const SpinnerContainer = styled.View`
 const Container = styled.View`
 	flex: 1;
 	background-color: ${colors.lightgray};
-`;
-
-const Separator = styled.View`
-	height: 1px;
-	position: absolute;
-	left: 20px;
-	top: 5px;
-	right: 20px;
-	background-color: ${colors.gray};
 `;

@@ -71,7 +71,7 @@ export const CircleAddScreen: React.FC = () => {
 const Button = styled.TouchableOpacity`
 	padding: 6px;
 	margin-top: -10px;
-	margin-left: -10px;
+	margin-left: -15px;
 `;
 
 const ButtonContainer = styled(LinearGradient)`
@@ -118,13 +118,9 @@ const TypeTile = styled.Text`
 `;
 
 const Status = styled.Text<{ enabled: boolean }>`
-	color: ${(props) => (props.enabled ? colors.white : colors.gray)};
+	color: ${colors.white};
 	font-size: 14px;
-	text-align: right;
-	width: 100%;
-	background-color: ${(props) => (!props.enabled ? colors.lightgray : "transparent")};
 	padding: 4px 10px;
-	border-radius: 19px;
 `;
 
 const CircleIcon = styled.Image`

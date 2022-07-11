@@ -31,9 +31,9 @@ export const SleepAllChart = observer(function SleepAllChart({ selectedDay, mode
 	const daysAllSleep = useAllMonthsSleep(toISOMonth(beginDay), toISOMonth(selectedDay));
 
 	const lines = daysAllSleep
-		? ([...daysAllSleep.sleepStages]
-				.reverse()
-				.filter((line) => hasAttributesDefined(line, ["REM", "awake", "deep", "light"])) as SleepStageData[])
+		? ([...daysAllSleep.sleepStages].filter((line) =>
+				hasAttributesDefined(line, ["REM", "awake", "deep", "light"])
+		  ) as SleepStageData[])
 		: [];
 	const valueFormatter = lines.map(({ date }) => moment(date).format("MMMM").substr(0, 3));
 
@@ -46,6 +46,25 @@ export const SleepAllChart = observer(function SleepAllChart({ selectedDay, mode
 		],
 		[[], [], [], []]
 	) || [[], [], [], []];
+
+	const [yMin, yMax] = [
+		Math.min(
+			...[
+				Math.min(...awakeData.map((line) => line.y)),
+				Math.min(...deepData.map((line) => line.y)),
+				Math.min(...REMData.map((line) => line.y)),
+				Math.min(...lightData.map((line) => line.y)),
+			].map((el) => el)
+		),
+		Math.max(
+			...[
+				Math.max(...awakeData.map((line) => line.y)),
+				Math.max(...deepData.map((line) => line.y)),
+				Math.max(...REMData.map((line) => line.y)),
+				Math.max(...lightData.map((line) => line.y)),
+			].map((el) => el)
+		),
+	];
 
 	const updatedMode = updateMode(mode, lines.length === 0);
 	const sleepConstant = daysAllSleep?.constant;
@@ -64,7 +83,7 @@ export const SleepAllChart = observer(function SleepAllChart({ selectedDay, mode
 						<LineChart
 							daysItem={[
 								{
-									lines: awakeData,
+									lines: awakeData.reverse(),
 									color: colors.business.sleepAwake,
 								},
 								{
@@ -81,6 +100,8 @@ export const SleepAllChart = observer(function SleepAllChart({ selectedDay, mode
 								},
 							]}
 							isMultipleLines={true}
+							yMin={yMin - 0.1}
+							yMax={yMax + 0.1}
 							xColor={colors.textPrimary}
 							yColor={colors.darkGray}
 							shouldDrawCircles={true}

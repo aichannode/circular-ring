@@ -5,3 +5,4 @@ export const useQuickAccess = () => useObservable(useServices().appStateService.
 export const useSleepMode = () => useObservable(useServices().appStateService.isInSleepMode);
 export const useCircles = () => useObservable(useServices().appStateService.userCircles);
 export const useDefaultCircles = () => useObservable(useServices().appStateService.defaultCircles);
+export const useWaitForRingRegistration = () => useObservable(useServices().appStateService.waitForRingRegistration);

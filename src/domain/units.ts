@@ -11,7 +11,7 @@ export enum HeightUnit {
 }
 
 export enum DateFormat {
-	USCS = "mm/dd/yyyy",
+	USCS = "MM/DD/YYYY",
 	SI = "DD/MM/YYYY",
 }
 

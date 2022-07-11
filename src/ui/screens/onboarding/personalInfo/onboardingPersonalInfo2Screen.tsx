@@ -167,7 +167,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 					animatedScrollToDefaultIndex={false}
 				/>
 			</InfoBlock>
-			<ErrorMessage>{errorMessage}</ErrorMessage>
+			{errorMessage.length > 0 && <ErrorMessage>{errorMessage}</ErrorMessage>}
 			<Grow />
 			<ButtonContainer>
 				<RowButtonContainer>
@@ -182,7 +182,7 @@ export const OnboardingPersonalInfo2Screen = () => {
 const TopContainer = styled.View`
 	width: 100%;
 	margin-top: 67px;
-	margin-bottom: 70px;
+	margin-bottom: 50px;
 `;
 
 const StyledScrollScreen = styled(ScrollScreen)`
@@ -206,6 +206,7 @@ const Title = styled.Text`
 
 const InfoBlock = styled.View`
 	${whiteCardStyle};
+	padding: 20px 24px 20px;
 	width: 100%;
 	margin-bottom: 12px;
 `;
@@ -262,5 +263,5 @@ const RowButtonContainer = styled.View`
 
 const StyledSimpleTextButton = styled(SimpleTextButton)`
 	text-decoration: none;
-	padding: 10px;
+	padding: 0 10px 10px 10px;
 `;

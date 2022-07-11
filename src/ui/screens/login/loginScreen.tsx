@@ -1,4 +1,5 @@
 import { useServices } from "@core/services";
+import { Storage } from "@core/storage";
 import { PrimaryButton, SecondaryButton, SimpleTextButton } from "@ui/components/buttons";
 import { Grow, ResponsiveCenterView, Row } from "@ui/components/layout";
 import { ScrollScreen } from "@ui/components/scrollScreen";
@@ -7,7 +8,7 @@ import { TextField } from "@ui/components/textField";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { textStyles } from "@ui/styles/textStyles";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, TextInput } from "react-native";
 import styled from "styled-components/native";
 import { ErrorMessage } from "../../components/errorMessage";
@@ -22,6 +23,15 @@ export const LoginScreen = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const passwordFieldRef = useRef<TextInput | null>(null);
+
+	useEffect(() => {
+		const fetchLastAuthenticatedUserEmail = async () => {
+			const lastAuthenticatedUserEmail: string | null = await Storage.load("lastAuthenticatedUserEmail");
+			setEmail(lastAuthenticatedUserEmail || "");
+		};
+
+		fetchLastAuthenticatedUserEmail();
+	}, []);
 
 	const [errorMessage, setErrorMessage] = useState<string>("");
 

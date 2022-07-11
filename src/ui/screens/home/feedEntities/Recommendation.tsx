@@ -92,15 +92,29 @@ export const Recommendation: React.FC<Props> = ({ recommendation }) => {
 				)}
 				<Stack gap={10} style={{ flex: 1 }}>
 					{/* Use a wrapper to set the gutter so hat Separator will be at full width */}
-					<View style={{ paddingTop: 20, paddingRight: 26, paddingBottom: 10, paddingLeft: 30 }}>
+					<View
+						style={{
+							paddingTop: 20,
+							paddingBottom: 10,
+							paddingLeft: 30,
+							paddingRight: 26,
+						}}
+					>
 						<Row style={{ alignItems: "center", justifyContent: "space-between" }}>
 							<TitleText>{format(recommendation.title).toUpperCase()}</TitleText>
 							{maybeGradientBorder ? (
-								<GradientText stops={maybeGradientBorder} textElement={SubTitleText} style={{ textAlign: "right" }}>
-									{format(recommendation.secondaryTitle)}
+								<GradientText
+									stops={maybeGradientBorder}
+									textElement={SubTitleText}
+									style={{
+										textAlign: "left",
+										paddingHorizontal: 5,
+									}}
+								>
+									{format(recommendation.secondaryTitle) + " "}
 								</GradientText>
 							) : (
-								<SubTitleText style={{ color: highlightColor, textAlign: "right" }}>
+								<SubTitleText style={{ color: highlightColor, textAlign: "center" }}>
 									{format(recommendation.secondaryTitle)}
 								</SubTitleText>
 							)}

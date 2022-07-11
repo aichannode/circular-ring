@@ -18,6 +18,12 @@ export class AppStateService {
 	recommendationsCount = observable<number>(10);
 	userCircles = observable<CircleEntity[]>([]);
 	defaultCircles = observable<CircleEntity[]>([]);
+	waitForRingRegistration = observable(false);
+	showLiveCircleWaringBottomSheet = observable(true);
+	hasReachedHomeScreen = observable(false);
+	showUpdateBanner = observable({ display: false, firmwareVersion: "" });
+	performanceMode = observable<boolean>(false);
+	showDataRatePopup = observable<boolean>(true);
 
 	private get appState(): I_AppState {
 		return {
@@ -27,6 +33,11 @@ export class AppStateService {
 			userCircles: this.userCircles.get(),
 			defaultCircles: this.defaultCircles.get(),
 			userRings: this.userRings.get(),
+			waitForRingRegistration: this.waitForRingRegistration.get(),
+			showLiveCircleWaringBottomSheet: this.showLiveCircleWaringBottomSheet.get(),
+			showUpdateBanner: this.showUpdateBanner.get(),
+			showDataRatePopup: this.showDataRatePopup.get(),
+			performanceMode: this.performanceMode.get(),
 		};
 	}
 
@@ -39,6 +50,10 @@ export class AppStateService {
 		this.userRings.set(state.userRings);
 		this.userCircles.set(state.userCircles);
 		this.defaultCircles.set(state.defaultCircles);
+		this.showLiveCircleWaringBottomSheet.set(state.showLiveCircleWaringBottomSheet);
+		this.showUpdateBanner.set(state.showUpdateBanner);
+		this.showDataRatePopup.set(state.showDataRatePopup);
+		this.performanceMode.set(state.performanceMode);
 	}
 
 	async reset() {
@@ -52,6 +67,10 @@ export class AppStateService {
 		this.recommendationsCount.set(3);
 		this.userCircles.set([]);
 		this.defaultCircles.set([]);
+		this.showLiveCircleWaringBottomSheet.set(true);
+		this.hasReachedHomeScreen.set(false);
+		this.showUpdateBanner.set({ display: false, firmwareVersion: "" });
+		this.performanceMode.set(false);
 	}
 
 	async init() {
@@ -69,6 +88,10 @@ export class AppStateService {
 		this.userCircles.subscribe(() => this.AppStateStorage.save(this.appState));
 		this.userRings.subscribe(() => this.AppStateStorage.save(this.appState));
 		this.defaultCircles.subscribe(() => this.AppStateStorage.save(this.appState));
+		this.showLiveCircleWaringBottomSheet.subscribe(() => this.AppStateStorage.save(this.appState));
+		this.showUpdateBanner.subscribe(() => this.AppStateStorage.save(this.appState));
+		this.showDataRatePopup.subscribe(() => this.AppStateStorage.save(this.appState));
+		this.performanceMode.subscribe(() => this.AppStateStorage.save(this.appState));
 	}
 
 	updateQuickaccess({ active, disabled }: I_QuickAccess) {

@@ -11,8 +11,8 @@ import { colors } from "@ui/styles/colors";
 import { whiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useCallback, useRef, useState } from "react";
-import styled from "styled-components/native";
 import * as RNLocalize from "react-native-localize";
+import styled from "styled-components/native";
 
 export const OnboardingPersonalInfo1Screen = () => {
 	const { format } = useI18n();
@@ -89,7 +89,7 @@ export const OnboardingPersonalInfo1Screen = () => {
 const TopContainer = styled.View`
 	width: 100%;
 	margin-top: 67px;
-	margin-bottom: 70px;
+	margin-bottom: 50px;
 `;
 
 const StyledScrollScreen = styled(ScrollScreen)`

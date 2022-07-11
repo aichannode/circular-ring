@@ -1,22 +1,14 @@
-import { colors } from "@ui/styles/colors";
-import React from "react";
-import styled from "styled-components/native";
-import LinearGradient from "react-native-linear-gradient";
 import { useI18n } from "@ui/i18n";
+import { colors } from "@ui/styles/colors";
+import React, { useState } from "react";
+import { View } from "react-native";
+import LinearGradient from "react-native-linear-gradient";
 import { WordingKey } from "src/wordings";
+import styled from "styled-components/native";
 
-export const Explanation = ({
-	top,
-	step,
-	revert,
-	image,
-}: {
-	top: number;
-	step: number;
-	revert: boolean;
-	image?: number;
-}) => {
+export const Explanation = ({ top, step, revert }: { top: number; step: number; revert: boolean }) => {
 	const { format } = useI18n();
+	const [height, setHeight] = useState(0);
 
 	const title: WordingKey[] = [
 		"tutorial.step1.title",
@@ -33,15 +25,17 @@ export const Explanation = ({
 
 	return (
 		<Container
-			style={{ top }}
+			style={{ top: top - height }}
 			colors={["rgb(244, 74, 89)", "rgb(252, 85, 26)"]}
 			start={{ x: 1, y: 0 }}
 			end={{ x: 1, y: 1 }}
 		>
 			{!revert ? <TopTriangle></TopTriangle> : <BottomTriangle></BottomTriangle>}
-			{step === 3 && <Logo source={require("@assets/images/logoWhite.png")}></Logo>}
-			<Title>{format(title[step])}</Title>
-			<Description>{format(explanation[step])}</Description>
+			<View onLayout={(e) => setHeight(e.nativeEvent.layout.height)}>
+				{step === 3 && <Logo source={require("@assets/images/logoWhite.png")}></Logo>}
+				<Title>{format(title[step])}</Title>
+				<Description>{format(explanation[step])}</Description>
+			</View>
 		</Container>
 	);
 };

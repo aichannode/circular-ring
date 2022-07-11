@@ -28,6 +28,14 @@ export const SixDigitInput = (props: SixDigitInputProps) => {
 		}
 	}, codeValue);
 
+	const whenEmpty = () => {
+		const emptyIndex = codeValue.findIndex((value) => value === "");
+		if (emptyIndex !== -1) {
+			codeFieldRef[emptyIndex].current?.focus();
+			return false;
+		}
+	};
+
 	return (
 		<FlexRow style={style}>
 			<InputField
@@ -41,6 +49,7 @@ export const SixDigitInput = (props: SixDigitInputProps) => {
 						codeFieldRef[1].current?.focus();
 					}
 				}}
+				onBlur={whenEmpty}
 				maxLength={1}
 				keyboardType={"numeric"}
 			/>
@@ -60,6 +69,7 @@ export const SixDigitInput = (props: SixDigitInputProps) => {
 						codeFieldRef[0].current?.focus();
 					}
 				}}
+				onBlur={whenEmpty}
 				maxLength={1}
 				keyboardType={"numeric"}
 			/>
@@ -79,6 +89,7 @@ export const SixDigitInput = (props: SixDigitInputProps) => {
 						codeFieldRef[1].current?.focus();
 					}
 				}}
+				onBlur={whenEmpty}
 				maxLength={1}
 				keyboardType={"numeric"}
 			/>
@@ -98,6 +109,7 @@ export const SixDigitInput = (props: SixDigitInputProps) => {
 						codeFieldRef[2].current?.focus();
 					}
 				}}
+				onBlur={whenEmpty}
 				maxLength={1}
 				keyboardType={"numeric"}
 			/>
@@ -117,6 +129,7 @@ export const SixDigitInput = (props: SixDigitInputProps) => {
 						codeFieldRef[3].current?.focus();
 					}
 				}}
+				onBlur={whenEmpty}
 				maxLength={1}
 				keyboardType={"numeric"}
 			/>

@@ -3,7 +3,8 @@ import { CalendarTag } from "@domain/calendar/calendar";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DataControlState, Points } from "@domain/measure/representation/api";
-import { useIsUSCS } from "@domain/user/hooks/useUser";
+import { TemperatureFormat } from "@domain/units";
+import { useIsUSCS, useUserSettings } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { BarChart } from "@ui/components/measure/barChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
@@ -13,6 +14,7 @@ import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Averages, Mode } from "@ui/type";
+import { convertData, convertToF } from "@utils/temperature";
 import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
@@ -30,6 +32,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 	mode = createActiveMode(),
 }: Props) {
 	const { format } = useI18n();
+	const userSettings = useUserSettings();
 	const [isLoading, setLoading] = useState(true);
 	const [tags, setTags] = useState<CalendarTag[]>([]);
 	const isUSCS = useIsUSCS();
@@ -42,9 +45,15 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 		},
 	} = useRepresentations();
 
+	const isCelcius = userSettings?.temperatureFormat === TemperatureFormat.CELSIUS;
+	const unitTemperature = isCelcius ? "°C" : "°F";
+
 	const data = useLast7DaysTemperatureVariation(selectedDay);
-	const lines: Points = data
-		? data.series
+
+	const currentData = data ? convertData(data, isCelcius) : [];
+
+	const lines: Points = currentData
+		? currentData
 				.map((el) => {
 					return {
 						x: el ? moment(el.date).valueOf() : 0,
@@ -77,20 +86,16 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 		const date = moment(lines[x].x).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
-	const [yMin, yMax] =
-		lines.length > 0
-			? [
-					Math.min(...lines.filter((line) => line.y > -1000).map((line) => line.y)),
-					Math.max(...lines.map((line) => line.y)),
-			  ]
-			: [0, 0];
+	const yMax = lines.length > 0 ? Math.max(...lines.map((line) => line.y)) : 0;
 
 	const toGetAverageValue = (value: number | undefined): string => {
 		if (!isDefined(value)) return "-";
-		if (value > 0) {
-			return `+ ${value} °C`;
+		const currentValue = isCelcius ? value : convertToF(value);
+
+		if (currentValue > 0) {
+			return `+ ${currentValue} ${unitTemperature}`;
 		}
-		return `${value} °C`;
+		return `${currentValue} ${unitTemperature}`;
 	};
 
 	return (
@@ -122,7 +127,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 							graphColor={colors.business.sleepPrimary}
 							onSelect={(x) => toUpdateTag(x)}
 							mode={updatedMode}
-							yMin={yMin}
+							yMin={-yMax}
 							yMax={yMax}
 							mapMarker={(el) =>
 								`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
@@ -136,7 +141,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 								mode={updatedMode}
 								rows={[
 									{
-										label: format("hr.average"),
+										label: format("activity.energy_score.7day"),
 										element: {
 											key: "temperature.average",
 											node: (

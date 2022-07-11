@@ -59,6 +59,7 @@ import {
 	StepsConstantMetrics,
 	StepsTaken,
 	TemperatureVariationConstantMetrics,
+	THRH30DConstantMetrics,
 	THRH7DConstantMetrics,
 	WalkingEquivalency,
 } from "../representation/lib/type";
@@ -447,6 +448,18 @@ export type Mutations =
 				localISODay: ISODay;
 				data: number | null;
 			};
+	  }
+	| {
+			type: "setMonthlyRhrConstants";
+			payload: {
+				localISODay: ISOMonth;
+				constant: Metrics<THRH30DConstantMetrics>;
+			};
+	  }
+	| {
+			//@ TODO set payload type when we know it;
+			type: "setUserRankAndStreak";
+			payload: any;
 	  };
 
 export type Proposal = Mutations[];

@@ -32,10 +32,11 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 		bleDeviceService.disconnect({ dissociate: false });
 	};
 
-	const connectToRing = (ring: NamedUserRing) => {
+	const connectToRing = async (ring: NamedUserRing) => {
 		disconnectAllRings();
-		if (ring.name) bleDeviceService.favoriteDevice.set({ name: ring.name });
-		bleDeviceService.favoriteDeviceSNU.set(ring.id);
+		if (ring.name) {
+			await bleDeviceService.saveDeviceAsFavorite(ring.name, ring.id);
+		}
 		setTimeout(() => {
 			bleDeviceService.autoConnectFavoriteDevice();
 		}, 200);
@@ -84,7 +85,7 @@ export const RingCard: React.FC<RingCardProps> = ({ ring, style, onDeleteClicked
 								bleDeviceService.write(serializeMelody(Melody.NOTIF1, 50));
 							}}
 						>
-							<VibrateText>Vibrate</VibrateText>
+							<VibrateText>{format("manage_rings.ring.vibrate")}</VibrateText>
 						</Vibrate>
 					)}
 				</TopContainer>

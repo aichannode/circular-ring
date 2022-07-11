@@ -60,6 +60,7 @@ import {
 	StepsConstantMetrics,
 	StepsTaken,
 	TemperatureVariationConstantMetrics,
+	THRH30DConstantMetrics,
 	THRH7DConstantMetrics,
 	WalkingEquivalency,
 } from "../representation/lib/type";
@@ -134,6 +135,7 @@ export class MeasureModel implements Model<Proposal> {
 	public dailySleepScoreQuality: Map<ISODay, number | null> = new Map();
 	public last7DSleepScore: Map<ISODay, number | null> = new Map();
 	public last7DRestingHeartRate: Map<ISODay, Metrics<THRH7DConstantMetrics>> = new Map();
+	public last30DRestingHeartRate: Map<ISODay, Metrics<THRH30DConstantMetrics>> = new Map();
 	public last7DActivityIntensityAverageMetrics: Map<ISODay, Metrics<ActivityIntensity7DAverageMetrics>> = new Map();
 	public dailyCardioPoints: Map<ISODay, number | null> = new Map();
 	public dailyTemperatureVariation: Map<ISODay, number | null> = new Map();
@@ -162,6 +164,8 @@ export class MeasureModel implements Model<Proposal> {
 	public dailySleepScore: Map<ISODay, Metrics<DailySleepScoreMetrics>> = new Map();
 	public dailyWakeUpScore: Map<ISODay, Metrics<DailyWakeUpScoreMetrics>> = new Map();
 	public dailyPhaseBeforeWakeUp: Map<ISODay, Metrics<DailyPhaseBeforeWakeUpMetrics>> = new Map();
+	//@ TODO SET TYPE;
+	public userRankAndStreak: any = null;
 
 	public lastAcceptedMutations: Proposal[] = [];
 
@@ -375,6 +379,12 @@ export class MeasureModel implements Model<Proposal> {
 				mutate.call(this, mutation, () => {
 					this.last30DTemperatureVariation.set(mutation.payload.localISODay, mutation.payload.constant);
 				});
+			} else if (mutation.type === "setMonthlyRhrConstants") {
+				mutate.call(this, mutation, () => {
+					this.last30DRestingHeartRate.set(mutation.payload.localISODay, mutation.payload.constant);
+				});
+			} else if (mutation.type === "setUserRankAndStreak") {
+				mutate.call(this, mutation, () => (this.userRankAndStreak = mutation.payload));
 			}
 		});
 	};

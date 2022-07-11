@@ -1,4 +1,6 @@
 import { useServices } from "@core/services";
+import { useUser } from "@domain/user/hooks/useUser";
+import { Sex } from "@domain/user/user";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
@@ -13,6 +15,7 @@ export const NotificationsScreen: React.FC = () => {
 	const options = [format("global.onShift"), format("global.offShift")];
 	const { userService } = useServices();
 	const notificationsSettings = useObservable(userService.userNotificationsSettings);
+	const user = useUser();
 
 	return (
 		<Container>
@@ -23,6 +26,7 @@ export const NotificationsScreen: React.FC = () => {
 				switchValue={notificationsSettings.kira}
 				onSwitchSelect={(val) => userService.updateUserNotificationsSettings({ kira: val })}
 				lightTheme
+				forceRightOption
 			/>
 			<InfoListItem
 				name={format("notifications.banner")}
@@ -38,29 +42,36 @@ export const NotificationsScreen: React.FC = () => {
 				switchValue={notificationsSettings.update}
 				onSwitchSelect={(val) => userService.updateUserNotificationsSettings({ update: val })}
 				lightTheme
+				forceRightOption
 			/>
-			<InfoListItem
-				name={format("notifications.perdiodTiming")}
-				switchOptions={options}
-				switchValue={notificationsSettings.period}
-				onSwitchSelect={(val) => userService.updateUserNotificationsSettings({ period: val })}
-				lightTheme
-			/>
-			<InfoListItem
-				name={format("notifications.PMSTiming")}
-				switchOptions={options}
-				switchValue={notificationsSettings.PMS}
-				onSwitchSelect={(val) => userService.updateUserNotificationsSettings({ PMS: val })}
-				lightTheme
-			/>
-			<InfoListItem
-				name={format("notifications.fertility")}
-				switchOptions={options}
-				switchValue={notificationsSettings.fertility}
-				onSwitchSelect={(val) => userService.updateUserNotificationsSettings({ fertility: val })}
-				disabled
-				lightTheme
-			/>
+			{(user?.sex === Sex.Female ?? false) && (
+				<>
+					<InfoListItem
+						name={format("notifications.perdiodTiming")}
+						switchOptions={options}
+						switchValue={notificationsSettings.period}
+						onSwitchSelect={(val) => userService.updateUserNotificationsSettings({ period: val })}
+						lightTheme
+						forceRightOption
+					/>
+					<InfoListItem
+						name={format("notifications.PMSTiming")}
+						switchOptions={options}
+						switchValue={notificationsSettings.PMS}
+						onSwitchSelect={(val) => userService.updateUserNotificationsSettings({ PMS: val })}
+						lightTheme
+						forceRightOption
+					/>
+					<InfoListItem
+						name={format("notifications.fertility")}
+						switchOptions={options}
+						switchValue={notificationsSettings.fertility}
+						onSwitchSelect={(val) => userService.updateUserNotificationsSettings({ fertility: val })}
+						disabled
+						lightTheme
+					/>
+				</>
+			)}
 			<InfoListItem
 				name={format("notifications.hightHeartRate")}
 				lightTheme

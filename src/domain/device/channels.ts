@@ -12,4 +12,5 @@ export enum Channel {
 	NAME = "NAM",
 	RENAME = "NAM",
 	DATA_QUANTITY = "FBQ",
+	MODE = "MOD",
 }

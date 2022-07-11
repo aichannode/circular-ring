@@ -2,7 +2,7 @@ import { useRepresentations } from "@core/representation";
 import { CalendarTag } from "@domain/calendar/calendar";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { Points, SleepStageData } from "@domain/measure/representation/api";
+import { DataControlState, Points, SleepStageData } from "@domain/measure/representation/api";
 import { useIsUSCS } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
 import { LineChart } from "@ui/components/lineChart/LineChart";
@@ -75,7 +75,7 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 		),
 	];
 
-	const updatedMode = updateMode(mode, lines.length === 0);
+	const updatedMode = updateMode(mode, days7DSleep?.controlState !== DataControlState.READY);
 	const sleepConstant = days7DSleep?.constant;
 	const isLoaded = isDefined(days7DSleep);
 	const toUpdateTag = (x: number) => {
