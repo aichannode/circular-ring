@@ -16,6 +16,7 @@
 default_platform(:android)
 
 APPCENTER_APP_PREFIX = "Circular-Android-"
+APPCENTER_APP_PREFIX = "Circular-iOS-"
 APPCENTER_OWNER = "Circular"
 
 platform :android do
@@ -90,6 +91,12 @@ def codepush(flavor)
       deployment: "Production",
       target_version: "^1.0.0"# + load_json(json_path: "./package.json")["version"]
     )
+    appcenter_codepush_release_react(
+          app_name: "#{APPCENTER_APP_PREFIX}#{flavor.capitalize}",
+          owner_name: "#{APPCENTER_OWNER}",
+          deployment: "Production",
+          target_version: "^1.0.0"# + load_json(json_path: "./package.json")["version"]
+        )
   end
 end
 
