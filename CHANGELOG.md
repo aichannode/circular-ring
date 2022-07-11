@@ -1,3 +1,10 @@
+## [1.5.7](https://gitlab.com/circularing/mobile/app/compare/v1.5.6...v1.5.7) (2022-07-11)
+
+
+### Bug Fixes
+
+* hide woman related notification setting when user is male ([ab1dd87](https://gitlab.com/circularing/mobile/app/commit/ab1dd871c7b758e3a490030ba8c2c5c6fc27b03c))
+
 ## [1.5.6](https://gitlab.com/circularing/mobile/app/compare/v1.5.5...v1.5.6) (2022-07-11)
 
 
