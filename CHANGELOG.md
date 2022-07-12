@@ -1,3 +1,10 @@
+## [1.5.11](https://gitlab.com/circularing/mobile/app/compare/v1.5.10...v1.5.11) (2022-07-12)
+
+
+### Bug Fixes
+
+* app crash when receiving a new feed post ([bf854fd](https://gitlab.com/circularing/mobile/app/commit/bf854fd03f96c9cc0bd7b7f29fe01951e20a6c0a))
+
 ## [1.5.10](https://gitlab.com/circularing/mobile/app/compare/v1.5.9...v1.5.10) (2022-07-12)
 
 
