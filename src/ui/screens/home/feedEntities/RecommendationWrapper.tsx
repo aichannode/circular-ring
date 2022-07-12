@@ -36,9 +36,9 @@ const RecommendationWrapper: React.FC<Props> = ({ loading, date, recommendations
 			)}
 			{recommendations[date].map((banner) =>
 				moment(banner.startDate).isAfter(connectionStartTime) && recommendations[date].indexOf(banner) === 0 ? (
-					<AnimatedViewRecommendation loading={loading} recommendation={banner} />
+					<AnimatedViewRecommendation key={banner.id} loading={loading} recommendation={banner} />
 				) : (
-					<Recommendation recommendation={banner} style={{ margin: 10 }} />
+					<Recommendation key={banner.id} recommendation={banner} style={{ margin: 10 }} />
 				)
 			)}
 		</View>

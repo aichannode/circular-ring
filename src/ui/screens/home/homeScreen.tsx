@@ -171,8 +171,8 @@ export const HomeScreen: React.FC = () => {
 			)}
 		</View>
 	);
-	Object.keys(recommendations).map((date) => {
-		data.push(<RecommendationWrapper loading={loading} date={date} recommendations={recommendations} />);
+	Object.keys(recommendations).map((date, key) => {
+		data.push(<RecommendationWrapper loading={loading} key={date} date={date} recommendations={recommendations} />);
 	});
 	data.push(<SpinnerContainer>{loading && <Spinner size={20}></Spinner>}</SpinnerContainer>);
 
