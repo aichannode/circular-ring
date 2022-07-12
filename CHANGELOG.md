@@ -1,3 +1,10 @@
+## [1.5.10](https://gitlab.com/circularing/mobile/app/compare/v1.5.9...v1.5.10) (2022-07-12)
+
+
+### Bug Fixes
+
+* some key missing error on .map ([18b54df](https://gitlab.com/circularing/mobile/app/commit/18b54df1b2a37b13c944f09261264916858b34c1))
+
 ## [1.5.9](https://gitlab.com/circularing/mobile/app/compare/v1.5.8...v1.5.9) (2022-07-11)
 
 
