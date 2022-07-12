@@ -31,7 +31,7 @@ const AnimatedViewRecommendation: React.FC<Props> = ({ loading, recommendation }
 			}}
 		>
 			<Fade isVisible isAnimatedOnMount duration={1000}>
-				<Recommendation recommendation={recommendation} style={{ margin: 10 }} />;
+				<Recommendation recommendation={recommendation} style={{ margin: 10 }} />
 			</Fade>
 		</Animated.View>
 	);
