@@ -42,5 +42,6 @@ export interface User {
 	tutorialCompleted: boolean;
 	createdAt: Date;
 	calibrationRemainingDays: number;
-	leaderboardRank?: string;
+	leaderboardRank?: "SPECIALIST" | "EXPERT" | "ADVANCED" | "EXPERIENCED" | "NOVICE" | "ROOKIE" | "TOP100";
+	leaderboardPosition?: number;
 }
