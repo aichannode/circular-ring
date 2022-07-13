@@ -1,3 +1,10 @@
+## [1.5.12](https://gitlab.com/circularing/mobile/app/compare/v1.5.11...v1.5.12) (2022-07-13)
+
+
+### Bug Fixes
+
+* show leaderboard position when leaderboard rank is TOP100 ([391f44c](https://gitlab.com/circularing/mobile/app/commit/391f44c216c290d4eed7db724e7fba38ba3465ce))
+
 ## [1.5.11](https://gitlab.com/circularing/mobile/app/compare/v1.5.10...v1.5.11) (2022-07-12)
 
 
