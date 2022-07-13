@@ -1,3 +1,10 @@
+## [1.5.13](https://gitlab.com/circularing/mobile/app/compare/v1.5.12...v1.5.13) (2022-07-13)
+
+
+### Bug Fixes
+
+* removed leaderboard % ([8a9dc18](https://gitlab.com/circularing/mobile/app/commit/8a9dc180ac5835ccc7035d1cf9a3f831548c39f3))
+
 ## [1.5.12](https://gitlab.com/circularing/mobile/app/compare/v1.5.11...v1.5.12) (2022-07-13)
 
 
