@@ -185,7 +185,7 @@ const LeaderboardTile = ({ data, gradient, color }: { data: I_LeaderboardData; g
 				></Arrow>
 				<BoldScore color={color}>{Math.floor(score)}</BoldScore>
 				<LightScore color={color}>
-					,{Math.round((score % 1) * 100) < 10 ? "0" + Math.round((score % 1) * 100) : Math.round((score % 1) * 100)}%
+					,{Math.round((score % 1) * 100) < 10 ? "0" + Math.round((score % 1) * 100) : Math.round((score % 1) * 100)}
 				</LightScore>
 			</TileRightContainer>
 		</Tile>
