@@ -1,3 +1,10 @@
+## [1.5.14](https://gitlab.com/circularing/mobile/app/compare/v1.5.13...v1.5.14) (2022-07-13)
+
+
+### Bug Fixes
+
+* temperature chart ([816239a](https://gitlab.com/circularing/mobile/app/commit/816239abf285ec1846d16330f593385a8a85fd50))
+
 ## [1.5.13](https://gitlab.com/circularing/mobile/app/compare/v1.5.12...v1.5.13) (2022-07-13)
 
 
