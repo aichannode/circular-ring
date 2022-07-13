@@ -9,7 +9,7 @@ export type SelectEventPayload = { data: { x: number; y: number } };
 
 export interface Average {
 	/** value */
-	value: number;
+	value: number | undefined;
 	/** color */
 	color: string;
 }

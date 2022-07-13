@@ -71,7 +71,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 	const averages: Averages = [];
 	if (isDefined(constant)) {
 		averages.push({
-			value: constant.average,
+			value: !isCelcius ? convertToF(constant.average) : constant.average,
 			color: colors.darkBlue,
 		});
 	}
@@ -86,7 +86,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 		const date = moment(lines[x].x).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
-	const yMax = lines.length > 0 ? Math.max(...lines.map((line) => line.y)) : 0;
+	const yMax = lines.length > 0 ? Math.max(...lines.map((line) => (line.y === -1000 ? 0 : Math.abs(line.y)))) : 0;
 
 	const toGetAverageValue = (value: number | undefined): string => {
 		if (!isDefined(value)) return "-";

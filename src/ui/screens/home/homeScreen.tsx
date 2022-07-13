@@ -133,7 +133,7 @@ export const HomeScreen: React.FC = () => {
 							//@ts-ignore
 							userService.user?.set?.({
 								...userService.user.get(),
-								calibrationRemainingDays: remainingDays - 1,
+								calibrationRemainingDays: remainingDays - 2,
 							});
 						}}
 					>
@@ -146,7 +146,7 @@ export const HomeScreen: React.FC = () => {
 							//@ts-ignore
 							userService.user?.set?.({
 								...userService.user.get(),
-								calibrationRemainingDays: remainingDays + 1,
+								calibrationRemainingDays: remainingDays + 2,
 							});
 						}}
 					>

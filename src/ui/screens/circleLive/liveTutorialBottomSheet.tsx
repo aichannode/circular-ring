@@ -25,7 +25,6 @@ export const LiveTutorialBottomSheet: React.FC<LiveTutorialBottomSheetProps> = (
 	const showWarning = useObservable(appStateService.showLiveCircleWaringBottomSheet);
 	const [skipWarning, setSkipWarning] = useState(false);
 	const [hideTutorialWarning, setHideTutorialWarning] = useState(false);
-	console.log("showWarning", showWarning);
 
 	const backToStepOne = useCallback(() => {
 		setStep(TutorialStep.ONE);

@@ -58,8 +58,8 @@ export function BarChart({
 	if (yMin === yMax && isDefined(yMin) && isDefined(yMax)) {
 		linspace = (yMax * 10) / 100;
 	}
-	const axisMinimum = isDefined(yMin) ? yMin - linspace : 0;
-	const axisMaximum = isDefined(yMax) ? yMax + linspace : 0;
+	const axisMinimum = isDefined(yMin) ? Math.trunc((yMin - linspace) * 100) / 100 : 0;
+	const axisMaximum = isDefined(yMax) ? Math.trunc((yMax + linspace) * 100) / 100 : 0;
 	const dataSets = {
 		dataSets: [
 			{
@@ -128,15 +128,17 @@ export function BarChart({
 			granularity: 1,
 			drawGridLines: true,
 			drawAxisLine: false,
-			limitLines: averages?.map(({ value, color }) => {
-				return {
-					limit: value,
-					lineColor: processColor(color),
-					lineDashPhase: 2,
-					lineWidth: 2,
-					lineDashLengths: [30, 15],
-				};
-			}),
+			limitLines: averages?.length
+				? averages?.map(({ value, color }) => {
+						return {
+							limit: value ?? 0,
+							lineColor: processColor(color),
+							lineDashPhase: 2,
+							lineWidth: 2,
+							lineDashLengths: [30, 15],
+						};
+				  })
+				: undefined,
 		},
 		right: {
 			enabled: false,

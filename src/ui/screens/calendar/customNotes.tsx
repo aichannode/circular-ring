@@ -67,19 +67,9 @@ const CustomNote = observer(function CustomNote({
 						<Touchable
 							onPress={() => {
 								const isAlreadySelected = selectedTags.filter((t) => t.id === tag.id).length > 0;
-								console.log(
-									"AlreadtS",
-									isAlreadySelected,
-									selectedTags.filter((t) => t.id === tag.id)
-								);
 								if (isAlreadySelected) {
 									setSelectedTags(selectedTags.filter((t) => t.id !== tag.id));
-									console.log(
-										"Filter",
-										selectedTags.filter((t) => t.id !== tag.id)
-									);
 								} else {
-									console.log("Else", tag);
 									setSelectedTags([...selectedTags, tag]);
 								}
 							}}

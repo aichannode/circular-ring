@@ -149,7 +149,6 @@ export function createActions(calendarApi: CalendarApi, present: Present<Proposa
 		},
 
 		deleteNote: function (note: CalendarNote) {
-			console.log(note);
 			present([
 				{
 					type: "deleteNote",

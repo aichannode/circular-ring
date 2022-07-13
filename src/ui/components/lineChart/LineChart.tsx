@@ -195,15 +195,17 @@ export function LineChart({
 			granularity: 1,
 			valueFormatter: yValueFormatter,
 			axisLineColor: processColor("white"),
-			limitLines: averages?.map(({ value, color }) => {
-				return {
-					limit: value,
-					lineColor: processColor(color),
-					lineDashPhase: 2,
-					lineWidth: 2,
-					lineDashLengths: [30, 15],
-				};
-			}),
+			limitLines: averages
+				? averages?.map(({ value, color }) => {
+						return {
+							limit: value ?? 0,
+							lineColor: processColor(color),
+							lineDashPhase: 2,
+							lineWidth: 2,
+							lineDashLengths: [30, 15],
+						};
+				  })
+				: undefined,
 		},
 		right: {
 			enabled: false,

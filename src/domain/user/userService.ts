@@ -248,7 +248,6 @@ export class UserService {
 		await this.userStorage.saveUserNotificationsSettings({ ...this._userNotificationsSettings.get(), ...newValue });
 		const userNotifications = this._userNotificationsSettings.get();
 		if ("lowHR" in newValue || "lowHRAlert" in newValue) {
-			console.log("userNotifications.lowHRAlert", userNotifications.lowHRAlert);
 			const activated = userNotifications.lowHRAlert === "On" ? "01" : "00";
 			const value = userNotifications.lowHR.toString(16);
 			await this.bleDeviceService.write(`ALT01${activated}${value}`);

@@ -76,7 +76,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 	const updatedMode = updateMode(mode, data?.controlState !== DataControlState.READY || lines.length === 0);
 
 	const valueFormatter = series?.map((item) => {
-		const day = moment(item?.date).format("dd");
+		const day = moment(item?.date).format("dd").toUpperCase();
 		return day !== "Invalid date" ? day[0] : "";
 	});
 
@@ -157,8 +157,9 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 					mapXAxis={(el) => (el as typeof lines[number]).mappedX}
 					mapBarColor={(el) => (el as typeof lines[number]).color}
 					mapMarker={(el) => {
-						return "0";
-						`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
+						return `${
+							isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")
+						}\n${
 							el.y > 0 ? formatDuration(moment.duration((el as typeof lines[number]).y, "hours").as("seconds")) : 0
 						}`;
 					}}

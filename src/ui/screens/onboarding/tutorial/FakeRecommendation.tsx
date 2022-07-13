@@ -66,8 +66,6 @@ export const FakeRecommendation: React.FC<Props> = ({ recommendation, maskRecomm
 		| ParagraphComponentConfigurationDto[];
 	const maybeGradientBorder = getGradient(recommendation.style as FeedEntityStyle);
 
-	console.log("UserInput", userInput);
-
 	return (
 		<>
 			<Mask masked={maskRecommendation}>

@@ -1225,8 +1225,11 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					[localISODay]
 				);
 				const isLoaded = last7Days.some((date) => model.dailyTemperatureVariation.has(date));
+				const constants = model.last7DTemperatureVariationConstants.get(localISODay)
+					? model.last7DTemperatureVariationConstants.get(localISODay)
+					: undefined;
 
-				if (!isLoaded) {
+				if (!isLoaded && !constants) {
 					return undefined;
 				}
 
@@ -1240,16 +1243,13 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					date,
 				})) as TemperatureVariation7D["series"];
 
-				const constants = model.last7DTemperatureVariationConstants.get(localISODay);
-				if (constants) {
-					return {
-						series,
-						constant: {
-							average: Number(constants[MetricType.UserDailyVarTemperature]),
-						},
-						controlState,
-					};
-				}
+				return {
+					series,
+					constant: {
+						average: Number(constants?.[MetricType.UserDailyVarTemperature] ?? 0),
+					},
+					controlState,
+				};
 			},
 			useLast30DaysTemperatureVariation(localISODay: ISODay): TemperatureVariation30Days | undefined {
 				// Compute the 30 previous date from the given date
@@ -1271,7 +1271,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					model.last30DTemperatureVariation.has(localISODay) &&
 					last30Days.every((date) => model.dailyTemperatureVariation.has(date));
 
-				if (!isLoaded) {
+				if (!isLoaded || !temperature30daysConstants) {
 					return undefined;
 				}
 
@@ -1283,9 +1283,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				return {
 					series,
 					constant: {
-						average: temperature30daysConstants
-							? Number(temperature30daysConstants[MetricType.UserMonthlyTemperatureAverage])
-							: -1,
+						average: Number(temperature30daysConstants[MetricType.UserMonthlyTemperatureAverage] ?? 0),
 					},
 					controlState,
 				};
