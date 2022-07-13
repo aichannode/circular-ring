@@ -290,7 +290,7 @@
 	"drawer.leaderboard": "Leaderboard",
 	"alarm.welcome": "Welkom bij de wekkerkring!\n\nSnelle tip: druk twee keer op de knop van je ring om het trillen van je wekker te stoppen.",
 	"alarm.welcome.show_again": "Dit bericht niet meer weergeven",
-	"alarm.welcome.warning.info": "Waarschuwing: De ring gaat alleen trillen als de batterij nog voor meer dan 10% opgeladen is.",
+	"alarm.welcome.warning.info": "Waarschuwing: De ring gaat alleen trillen als de batterij nog voor meer dan 15% opgeladen is.",
 	"alarm.score.programmed": "Geprogrammeerde alarmen",
 	"alarm.score.week": "Week overzicht",
 	"alarm.score.add_button": "Een alarm toevoegen",

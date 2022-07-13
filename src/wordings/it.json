@@ -289,7 +289,7 @@
 	"drawer.leaderboard": "Classifica",
 	"alarm.welcome": "Benvenuti nel cerchio della sveglia!\n\nSuggerimento rapido: premi due volte il pulsante dell'anello per interrompere le vibrazioni della sveglia.",
 	"alarm.welcome.show_again": "Non mostrare più questo messaggio",
-	"alarm.welcome.warning.info": "Attenzione: L'anello vibra solo se ha più del 10% di batteria.",
+	"alarm.welcome.warning.info": "Attenzione: L'anello vibra solo se ha più del 15% di batteria.",
 	"alarm.score.programmed": "Sveglie programmate",
 	"alarm.score.week": "Panoramica della settimana",
 	"alarm.score.add_button": "Aggiungi una sveglia",

@@ -371,7 +371,7 @@
 	"banner.app_update.description": "Sehen Sie sich die neueste Version in Ihrem App Store an.",
 	"banner.firmware_update.title": "Firmware-Update verfügbar",
 	"banner.firmware_update.description": "Klicken Sie hier, um die neuesten Funktionen herunterzuladen und zu nutzen.",
-	"banner.calibration.title": "Kalibrierungszeitraum",
+	"banner.calibration.title": "Kalibrierung",
 	"banner.calibration.message": "Tragen Sie Ihren Ring während des gesamten Kalibrierungszeitraums von {days} Tagen, um bessere Ergebnisse zu erzielen!",
 	"banner.disturbances.title": "Störungen",
 	"calibration.recommandation.1": "Hallo, {Benutzername}, hier ist Kira. Herzlich willkommen in der Circular-Stamm! 👋\n\nMit der Circular-App können Sie Ihre Empfehlungen und detaillierten biometrischen Daten überprüfen, einen Wecker einrichten, Ihre Benachrichtigungen bearbeiten und vieles mehr!",
