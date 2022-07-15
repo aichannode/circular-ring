@@ -97,6 +97,7 @@ export const TemperatureVariation30DGraph: React.FC<Props> = observer(function S
 		}
 		return `${currentValue} ${unitTemperature}`;
 	};
+
 	return (
 		<View>
 			{/** Wait for available data on week/month */}
@@ -140,7 +141,6 @@ export const TemperatureVariation30DGraph: React.FC<Props> = observer(function S
 						/>
 						<View style={{ marginTop: 20 }}>
 							<GraphLegend
-								mode={updatedMode}
 								rows={[
 									{
 										label: format("hr.average"),

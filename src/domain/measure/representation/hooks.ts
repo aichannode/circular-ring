@@ -528,6 +528,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					[localISODay]
 				);
 				const data = model.dailyEnergyScoreContributorsMetrics.get(localISODay);
+
 				if (data) {
 					return {
 						[MetricType.UserDailyBodyRecovery]: {

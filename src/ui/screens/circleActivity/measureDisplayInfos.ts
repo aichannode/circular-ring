@@ -89,6 +89,7 @@ export function getActivityGaugesConfig(format: (v: WordingKey) => string): Dail
 			renderValue: ({ value }: { value?: number }) =>
 				isDefined(value) ? formatTemperature(value, isCelsius) : undefined,
 			computeMode: computeModeFactory(MetricType.UserDailySleepScoreVarTemperature),
+			shouldForceDisplayValue: true,
 		},
 		[MetricType.UserDailySleepScore]: {
 			// Sleep quality
