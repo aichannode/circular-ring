@@ -1,3 +1,10 @@
+## [1.5.16](https://gitlab.com/circularing/mobile/app/compare/v1.5.15...v1.5.16) (2022-07-15)
+
+
+### Bug Fixes
+
+* temperature contributor in calib, temperature 7 day graph & average temperature 30d graph ([88f2a79](https://gitlab.com/circularing/mobile/app/commit/88f2a79431928ab8c34fc891f118cb35d6c814d5))
+
 ## [1.5.15](https://gitlab.com/circularing/mobile/app/compare/v1.5.14...v1.5.15) (2022-07-15)
 
 
