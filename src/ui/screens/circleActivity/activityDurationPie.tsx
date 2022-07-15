@@ -133,4 +133,6 @@ const Container = styled.View`
 	background-color: ${colors.lightgray};
 	align-items: center;
 	padding: 50px;
+	padding-bottom: 60px;
+	padding-top: 60px;
 `;
