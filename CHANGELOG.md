@@ -1,3 +1,11 @@
+## [1.5.15](https://gitlab.com/circularing/mobile/app/compare/v1.5.14...v1.5.15) (2022-07-15)
+
+
+### Bug Fixes
+
+* added changelog webview ([176541d](https://gitlab.com/circularing/mobile/app/commit/176541d0a7da4dd114ff89da5fac7ec1d775bbd4))
+* FakeRecommendation gradient text padding ([249def6](https://gitlab.com/circularing/mobile/app/commit/249def68deda3d16448b69e4d9eb452be0f4cc49))
+
 ## [1.5.14](https://gitlab.com/circularing/mobile/app/compare/v1.5.13...v1.5.14) (2022-07-13)
 
 
