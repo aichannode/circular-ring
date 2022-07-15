@@ -1,3 +1,10 @@
+## [1.5.19](https://gitlab.com/circularing/mobile/app/compare/v1.5.18...v1.5.19) (2022-07-15)
+
+
+### Bug Fixes
+
+* graph notes ([3f5817d](https://gitlab.com/circularing/mobile/app/commit/3f5817d2bb23623096b08c4752a25bc3e224ef9d))
+
 ## [1.5.18](https://gitlab.com/circularing/mobile/app/compare/v1.5.17...v1.5.18) (2022-07-15)
 
 
