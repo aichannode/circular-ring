@@ -287,7 +287,7 @@
 	"drawer.storybook": "Storybook",
 	"drawer.close": "Fermer",
 	"drawer.leaderboard": "Classement",
-	"alarm.welcome": "Bienvenue dans le cercle des réveil!\n\nPetite astuce : Appuyez deux fois sur le bouton de votre bague pour arrêter les vibrations de votre réveil.",
+	"alarm.welcome": "Bienvenue dans le cercle des réveils!\n\nPetite astuce : Appuyez deux fois sur le bouton de votre bague pour arrêter les vibrations de votre réveil.",
 	"alarm.welcome.show_again": "Ne plus afficher ce message",
 	"alarm.welcome.warning.info": "Attention : La bague ne vibrera que s'il reste plus de 10 % de batterie.",
 	"alarm.score.programmed": "Réveils programmés",
@@ -620,7 +620,7 @@
 	"updateFirmware.newVersionAvailable": "Une nouvelle version est disponible. Veuillez la mettre à jour afin d'accéder aux nouvelles fonctionnalités et aux corrections de bug. Ne déconnectez pas votre téléphone et ne fermez pas l'application pendant ce processus.",
 	"updateFirmware.updateFailed": "Échec de la mise à jour",
 	"updateFirmware.updateFailed.description": "La mise à jour du firmware n'a pas pu être effectuée. Veuillez vérifier que la batterie de votre bague est supérieure à 20 % ou qu'elle est en charge. Il se peut également que la mise à jour ait échoué pour une autre raison, par exemple si votre bague est trop éloignée de votre téléphone.",
-	"updateFirmware.updating.description": "Veuillez garder votre bague et votre téléphone à proximité l'un de l'autre pendant la mise à jour du micrologiciel. Ne déconnectez pas votre bague et ne fermez pas l'application pendant ce processus. La mise à jour peut prendre jusqu'à quelques minutes.",
+	"updateFirmware.updating.description": "Veuillez garder votre bague et votre téléphone à proximité l'un de l'autre pendant la mise à jour. Ne déconnectez pas votre bague et ne fermez pas l'application pendant ce processus. La mise à jour peut prendre jusqu'à quelques minutes.",
 	"updateFirmware.versionIsUptodate": "Votre bague fonctionne avec le dernier firmware. Aucune autre action n'est requise.",
 	"updateFirmware.updateSuccess": "Mise à jour du firmware terminée",
 	"notifications.appNotifications": "Notifications de l'application",
@@ -684,6 +684,6 @@
 	"ring.data_mode" : "Mode données",
 	"ring.data_mode.eco" : "Eco",
 	"ring.data_mode.performance" : "Performance",
-	"ring.data_mode.desc.part1" : "Les mesures du cœur seront acquises tous les ",
+	"ring.data_mode.desc.part1" : "Les mesures cardiaques seront acquises tous les ",
 	"ring.data_mode.desc.part2" : " minutes en dehors des sessions de sport (un mode sport avec des mesures continues se déclenche automatiquement)"
 }
