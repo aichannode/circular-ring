@@ -1,3 +1,10 @@
+## [1.5.17](https://gitlab.com/circularing/mobile/app/compare/v1.5.16...v1.5.17) (2022-07-15)
+
+
+### Bug Fixes
+
+* streak ui and added stars in calendar ([28b7520](https://gitlab.com/circularing/mobile/app/commit/28b752090c0c78b41894eb599edd3e14fe63c8ef))
+
 ## [1.5.16](https://gitlab.com/circularing/mobile/app/compare/v1.5.15...v1.5.16) (2022-07-15)
 
 
