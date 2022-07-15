@@ -1,3 +1,10 @@
+## [1.5.18](https://gitlab.com/circularing/mobile/app/compare/v1.5.17...v1.5.18) (2022-07-15)
+
+
+### Bug Fixes
+
+*  CIR-1012 feed animation ([e8acbf0](https://gitlab.com/circularing/mobile/app/commit/e8acbf0971b6d4b05fb2380dc8c7b59ed06f635e))
+
 ## [1.5.17](https://gitlab.com/circularing/mobile/app/compare/v1.5.16...v1.5.17) (2022-07-15)
 
 
