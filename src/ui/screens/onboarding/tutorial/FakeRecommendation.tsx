@@ -92,7 +92,14 @@ export const FakeRecommendation: React.FC<Props> = ({ recommendation, maskRecomm
 							<Row style={{ alignItems: "center", justifyContent: "space-between" }}>
 								<TitleText>{format(recommendation.title)}</TitleText>
 								{maybeGradientBorder ? (
-									<GradientText stops={maybeGradientBorder} textElement={SubTitleText} style={{ textAlign: "right" }}>
+									<GradientText
+										stops={maybeGradientBorder}
+										textElement={SubTitleText}
+										style={{
+											textAlign: "left",
+											paddingHorizontal: 5,
+										}}
+									>
 										{format(recommendation.secondaryTitle)}
 									</GradientText>
 								) : (
