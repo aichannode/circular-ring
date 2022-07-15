@@ -67,7 +67,7 @@ export class UserService {
 
 	readonly justRegisteredUserEmail = this._justRegisteredUserEmail.readOnly();
 	readonly authenticatedUserEmail = this._authenticatedUserEmail.readOnly();
-	readonly connectionStartTime = this._connectionStartTime.readOnly();
+	connectionStartTime = this._connectionStartTime;
 	readonly user = this._user.readOnly();
 	readonly userSettings = this._userSettings.readOnly();
 	readonly userNotificationsSettings = this._userNotificationsSettings.readOnly();

@@ -1,6 +1,6 @@
 import { FeedRecommendation } from "@domain/feed/type";
 import { DateFormat } from "@domain/units";
-import { useUserSettings } from "@domain/user/hooks/useUser";
+import { useConnectionStartTime, useUserSettings } from "@domain/user/hooks/useUser";
 import { MetaDataText } from "@ui/components/text";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -8,6 +8,7 @@ import moment from "moment";
 import React from "react";
 import { View } from "react-native";
 import styled from "styled-components/native";
+import AnimatedViewRecommendation from "./AnimatedViewRecommendation";
 import { Recommendation } from "./Recommendation";
 
 type Props = {
@@ -17,7 +18,7 @@ type Props = {
 };
 
 const RecommendationWrapper: React.FC<Props> = ({ loading, date, recommendations }) => {
-	// const connectionStartTime = useConnectionStartTime();
+	const connectionStartTime = useConnectionStartTime();
 	const userSettings = useUserSettings();
 
 	const { format } = useI18n();
@@ -33,14 +34,12 @@ const RecommendationWrapper: React.FC<Props> = ({ loading, date, recommendations
 					</MetaDataText>
 				</View>
 			)}
-			{recommendations[date].map(
-				(banner, key) => (
-					// moment(banner.startDate).isAfter(connectionStartTime) && recommendations[date].indexOf(banner) === 0 ? (
-					// 	<AnimatedViewRecommendation loading={loading} recommendation={banner} />
-					// ) : (
+			{recommendations[date].map((banner, key) =>
+				moment(banner.startDate).isAfter(connectionStartTime) && recommendations[date].indexOf(banner) === 0 ? (
+					<AnimatedViewRecommendation key={key} loading={loading} recommendation={banner} />
+				) : (
 					<Recommendation key={key} recommendation={banner} style={{ margin: 10 }} />
 				)
-				// )
 			)}
 		</View>
 	);
