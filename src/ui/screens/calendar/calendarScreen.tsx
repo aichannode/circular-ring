@@ -1,6 +1,8 @@
 import { useRepresentations } from "@core/representation";
+import { measureApi } from "@core/services";
 import { getCurrentLocalISODay, isDefined, toISOMonth } from "@domain/common/business";
-import { ISODay } from "@domain/common/type";
+import { ISODate, ISODay, ISOMonth } from "@domain/common/type";
+import { MetricType } from "@domain/measure/metric";
 import { getScoreControlStates } from "@domain/measure/representation/business";
 import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
 import { getInitMode, updateMode } from "@ui/business";
@@ -34,6 +36,7 @@ export const CalendarScreen = observer(function CalendarScreen() {
 	const hasCompleteCoreSleep = useHasCompleteCoreSleep(selectedLocalIsoDay);
 	const nbRemainingDays = useUserCalibrationRemainingDays();
 	const dailyScore = useDailyGlobalScore(selectedLocalIsoDay);
+	const [streak, setStreak] = useState<any[]>([]);
 
 	// XXX: https://circularing.atlassian.net/browse/CIR-93
 	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
@@ -44,14 +47,25 @@ export const CalendarScreen = observer(function CalendarScreen() {
 		thresholdLow: 0.8,
 	});
 
+	const fetchCalendarStreak = async (selectedLocalIsoDay: ISODate) => {
+		const month: ISOMonth = toISOMonth(selectedLocalIsoDay);
+		const result = await measureApi.fetchMonthlyMeasures([MetricType.UserStreak], month);
+		setStreak(result);
+	};
+
 	useEffect(() => {
 		setEachDayOfMonthScore(toISOMonth(selectedLocalIsoDay));
+		fetchCalendarStreak(selectedLocalIsoDay);
 	}, [selectedLocalIsoDay]);
 
 	return (
 		<Container>
 			<CalendarWrapper>
-				<CalendarView selectedLocalIsoDay={selectedLocalIsoDay} onDaySelected={(day) => setSelectedDay(day)} />
+				<CalendarView
+					streak={streak}
+					selectedLocalIsoDay={selectedLocalIsoDay}
+					onDaySelected={(day) => setSelectedDay(day)}
+				/>
 			</CalendarWrapper>
 			<ResponsiveCenterView>
 				<GlobalScoreCard

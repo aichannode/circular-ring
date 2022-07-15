@@ -18,6 +18,7 @@ import { FeedService } from "@domain/feed/feedService";
 import { FeedStorage } from "@domain/feed/feedStorage";
 import { LeaderboardApi } from "@domain/leaderboard/leaderboardApi";
 import { LeaderboardService } from "@domain/leaderboard/leaderboardService";
+import { MeasureApi } from "@domain/measure/actions/lib/measureApi";
 import { UserPreferencesService } from "@domain/preferences/userPreferencesService";
 import { UserPreferencesStorage } from "@domain/preferences/userPreferencesStorage";
 import { RingApi } from "@domain/ring/ringApi";
@@ -41,6 +42,7 @@ const ringDataStorage = new RingDataStorage();
 const userDevicesStorage = new UserDevicesStorage();
 
 export const apiService = new ApiService();
+export const measureApi = new MeasureApi(apiService);
 
 const ringApi = new RingApi(apiService);
 

@@ -10,25 +10,27 @@ interface StreakBadgeProps {
 
 export const StreakBadge = ({ leaderboardRank, streak }: StreakBadgeProps) => {
 	return (
-		<Gradient colors={[...colors.gradient.orange]} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0.5 }}>
-			<Division>
-				<LightText>Rank</LightText>
-			</Division>
-			<Division>
-				<LightText>Best Streak</LightText>
-			</Division>
-			<Division>
-				<BoldText>{leaderboardRank}</BoldText>
-			</Division>
-			<Division>
-				<StarContainer>
-					<Star resizeMode="contain" source={require("@assets/images/starGold.png")}></Star>
-					<BoldText>{streak} days</BoldText>
-				</StarContainer>
-			</Division>
+		<>
+			<Gradient colors={[...colors.gradient.orange]} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0.5 }}>
+				<Division>
+					<LightText>Rank</LightText>
+				</Division>
+				<Division>
+					<LightText>Best Streak</LightText>
+				</Division>
+				<Division>
+					<BoldText>{leaderboardRank}</BoldText>
+				</Division>
+				<Division>
+					<StarContainer>
+						<Star resizeMode="contain" source={require("@assets/images/starGold.png")}></Star>
+						<BoldText>{streak} days</BoldText>
+					</StarContainer>
+				</Division>
+				<LittleVerticalBar />
+			</Gradient>
 			<Medal resizeMode="contain" source={require("@assets/images/medal.png")}></Medal>
-			<LittleVerticalBar />
-		</Gradient>
+		</>
 	);
 };
 
@@ -58,7 +60,7 @@ const Star = styled.Image`
 
 const Medal = styled.Image`
 	position: absolute;
-	top: -30px;
+	top: -5px;
 	width: 100%;
 `;
 
