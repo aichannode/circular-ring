@@ -1,6 +1,6 @@
 import { useServices } from "@core/services";
 import { useWaitForRingRegistration } from "@domain/appState/appStateHooks";
-import { UpdateState } from "@domain/device/bleDeviceService";
+import { DeviceConnectionState, UpdateState } from "@domain/device/bleDeviceService";
 import { useDeviceStored } from "@domain/device/hooks";
 import { UserRing } from "@domain/ring/ring";
 import { useAuthenticatedUserEmail, useUser } from "@domain/user/hooks/useUser";
@@ -51,6 +51,7 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 	const [useByPass, setByPass] = useState(false);
 	const [byPassForcedFirmwareUpdate, setByPassForcedFirmwareUpdate] = useState(false);
 	const updateState = useObservable(bleDeviceService.updateState);
+	const connectionState = useObservable(bleDeviceService.connectionState);
 	const wait = useWaitForRingRegistration();
 	const {
 		cognitoAuthService: { payload },
@@ -108,7 +109,13 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 	const firmwareIsNotTheLast = currentRing && lastFirmwareVersion !== currentRing.firmware && lastFirmwareVersion;
 	const isNotUpdating = updateState.status !== UpdateState.IDLE.status;
 
-	if (!wait && (isNotUpdating || firmwareIsNotTheLast) && !byPassForcedFirmwareUpdate) {
+	if (
+		!wait &&
+		(isNotUpdating || firmwareIsNotTheLast) &&
+		!byPassForcedFirmwareUpdate &&
+		connectionState === DeviceConnectionState.CONNECTED &&
+		hasReachedHomeScreen
+	) {
 		return (
 			<RingFirmwareUpdate
 				showCross={payload.get()?.["cognito:groups"]?.some((groupName) => groupName === "admin")}
