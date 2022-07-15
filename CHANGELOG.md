@@ -1,3 +1,11 @@
+## [1.5.20](https://gitlab.com/circularing/mobile/app/compare/v1.5.19...v1.5.20) (2022-07-15)
+
+
+### Bug Fixes
+
+* onboarding ([b3567d0](https://gitlab.com/circularing/mobile/app/commit/b3567d04bad19c1dffbd7a3b9a24eb998f9d83a5))
+* pie chart label go out of grey zone ([67aa2d1](https://gitlab.com/circularing/mobile/app/commit/67aa2d1c7dfa94d145d2b03f936d77be30ceca16))
+
 ## [1.5.19](https://gitlab.com/circularing/mobile/app/compare/v1.5.18...v1.5.19) (2022-07-15)
 
 
