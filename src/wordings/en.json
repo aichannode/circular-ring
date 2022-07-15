@@ -11,6 +11,7 @@
 	"url.learn": "https://www.circular.xyz/learn",
 	"url.store": "https://www.circular.xyz/shop",
 	"url.privacy": "https://www.circular.xyz/terms-of-use",
+	"url.changelog": "https://www.circular.xyz/release-notes",
 	"url.help": "https://fr.circular.xyz/help",
 	"setup.scan.disabled.title": "Enable bluetooth",
 	"setup.scan.disabled.message": "Make sure that your Bluetooth is enabled on your phone to begin pairing with a Circular ring and that you have your ring close to your phone.",

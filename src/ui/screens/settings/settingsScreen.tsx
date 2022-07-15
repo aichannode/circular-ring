@@ -145,7 +145,12 @@ export const SettingsScreen: React.FC = () => {
 				hasDisclosure
 				action={() => navigate(Routes.WebView, { uri: format("url.privacy"), label: format("settings.privacy") })}
 			/>
-			<InfoListItem name={format("settings.app_version")} value={version} />
+			<InfoListItem
+				name={format("settings.app_version")}
+				value={version}
+				hasDisclosure
+				action={() => navigate(Routes.WebView, { uri: format("url.changelog"), label: format("settings.app_version") })}
+			/>
 			<InfoListHeader>{format("settings.support")}</InfoListHeader>
 			<InfoListItem
 				name={format("settings.help")}
