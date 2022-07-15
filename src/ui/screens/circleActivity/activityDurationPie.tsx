@@ -104,6 +104,7 @@ export function ActivityDurationPieChart({
 					noDataPhaseColor={colors.business.activityDurationNone}
 				>
 					<DailyPieChartLabel
+						linedUpText={true}
 						chartSize={200}
 						labels={sportSessionDates.flatMap((session) =>
 							[

@@ -9,6 +9,7 @@ import { WordingKey } from "src/wordings";
 import styled, { css } from "styled-components/native";
 
 type Props = {
+	linedUpText?: boolean;
 	labels: Array<{
 		date: string | number;
 		text?: WordingKey;
@@ -19,7 +20,7 @@ type Props = {
 
 const RIGHT_ANGLE = 90;
 
-export const DailyPieChartLabel: React.FC<Props> = ({ chartSize, labels }) => {
+export const DailyPieChartLabel: React.FC<Props> = ({ chartSize, labels, linedUpText }) => {
 	// Used for the transform origin of the labels
 	const polarOrigin = {
 		x: chartSize / 2,
@@ -31,34 +32,41 @@ export const DailyPieChartLabel: React.FC<Props> = ({ chartSize, labels }) => {
 	const getAngleDeg = (text: string, date: number | string) => {
 		let angleDeg = angle(moment(date)) - RIGHT_ANGLE;
 		if (text == "activity.duration.label.sport_end") {
-			angleDeg -= 10;
+			angleDeg += 5;
 		} else {
-			angleDeg -= 11;
+			angleDeg -= 10;
 		}
 		return angleDeg;
 	};
 	return (
 		<>
-			{labels.map(
-				({ text, date }) =>
+			{labels.map(({ text, date }, index, array) => {
+				const currentAngle = angle(moment(date));
+				const nextAngle = (index + 1 < array.length && angle(moment(array[index + 1].date))) || 0;
+				return (
 					!!text && (
 						<React.Fragment key={`${date}`}>
 							<LabelPolarView
 								polarOrigin={polarOrigin}
-								width={100}
+								width={110}
 								height={20}
-								r={135}
-								angleDeg={getAngleDeg(text, date)}
+								r={150}
+								angleDeg={
+									getDifference(currentAngle, nextAngle) < 6 ? getAngleDeg(text, date) - 6 : getAngleDeg(text, date)
+								}
 							>
-								<View
-									style={
-										angle(moment(date)) - RIGHT_ANGLE < 0 &&
-										angle(moment(date)) - RIGHT_ANGLE > -75 && { marginLeft: 30 }
-									}
-								>
-									<Label style={{ fontWeight: "500", marginLeft: 20 }}>
-										{text && format(text)} {formatHour(new Date(date), is24h)}
-									</Label>
+								<View>
+									{linedUpText ? (
+										<Label>
+											<Label style={{ fontWeight: "500" }}>{text && format(text)}</Label>{" "}
+											{formatHour(new Date(date), is24h)}
+										</Label>
+									) : (
+										<>
+											<Label style={{ fontWeight: "500" }}>{text && format(text)}</Label>
+											<Label>{formatHour(new Date(date), is24h)}</Label>
+										</>
+									)}
 								</View>
 							</LabelPolarView>
 							<PolarSvg
@@ -73,7 +81,8 @@ export const DailyPieChartLabel: React.FC<Props> = ({ chartSize, labels }) => {
 							</PolarSvg>
 						</React.Fragment>
 					)
-			)}
+				);
+			})}
 		</>
 	);
 };
@@ -84,6 +93,10 @@ function angle(t: Moment) {
 
 function toRad(angle: number) {
 	return (angle / 360) * 2 * Math.PI;
+}
+
+function getDifference(a: number, b: number) {
+	return Math.abs(a - b);
 }
 
 interface PolarProps {
