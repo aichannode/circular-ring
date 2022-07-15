@@ -1,12 +1,11 @@
-import { useRepresentations } from "@core/representation";
-import { isDefined, toLocale } from "@domain/common/business";
+import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DailyActivityIntensityData, DataControlState } from "@domain/measure/representation/api";
 import { useIs24h } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInDisabledMode, isInSomeIntervals, trimData, TrimOptions, updateMode } from "@ui/business";
+import { DailyTags } from "@ui/components/dailyTags";
 import { TextPlaceholder } from "@ui/components/placeholder/TextPlaceholder";
 import { Spinner } from "@ui/components/spinner";
-import { Tags } from "@ui/components/Tags";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Mode } from "@ui/type";
@@ -33,22 +32,12 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 }: Props) {
 	const { format, formatHour } = useI18n();
 	const is24h = useIs24h();
-	const {
-		calendar: {
-			hooks: { useRangeTags },
-		},
-	} = useRepresentations();
 	const prevDataActivityIntensity = useRef(dataActivityIntensity);
 
 	const graphData: Array<{
 		value: number;
 		isoTime: string;
 	}> = dataActivityIntensity?.stages.map((stage) => ({ value: stage.level, isoTime: stage.start })) ?? [];
-
-	const tags = useRangeTags(
-		toLocale(moment(selectedDay).startOf("day").toISOString()),
-		toLocale(moment(selectedDay).endOf("day").toISOString())
-	);
 
 	const getTimestampFromValue = (x: { value: number; isoTime: string }) => moment(x.isoTime).valueOf();
 	const parsedData = trimOptions
@@ -143,8 +132,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 
 	return (
 		<>
-			<Tags tags={isInDisabledMode(updatedMode) ? [] : tags} />
-
+			<DailyTags selectedDay={selectedDay}></DailyTags>
 			<>
 				<View style={{ height: 200 }}>
 					{isInDisabledMode(updatedMode) ? (

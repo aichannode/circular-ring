@@ -4,10 +4,10 @@ import { ISODay } from "@domain/common/type";
 import { DataControlState } from "@domain/measure/representation/api";
 import { useIs24h } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, trimData, TrimOptions, updateMode } from "@ui/business";
+import { DailyTags } from "@ui/components/dailyTags";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
-import { Tag } from "@ui/components/tag";
 import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -36,9 +36,6 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 		measure: {
 			hooks: { useDailyHRV, useDailyHRVTrend },
 		},
-		calendar: {
-			hooks: { useDailyTags },
-		},
 	} = useRepresentations();
 
 	const dailyHrv = useDailyHRV(selectedDay);
@@ -61,7 +58,6 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 		parsedData.findIndex((line) => line.y == yMin),
 		parsedData.findIndex((line) => line.y == yMax),
 	];
-	const tags = useDailyTags(selectedDay);
 	const averages: Averages = [];
 	const updatedMode = updateMode(mode, dailyHrv?.controlState !== DataControlState.READY);
 	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.reference !== -1) {
@@ -94,15 +90,7 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 		<View>
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
-				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
-					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-						{tags.map(({ name, id }) => (
-							<View key={id} style={{ marginLeft: 8 }}>
-								<Tag>{name}</Tag>
-							</View>
-						))}
-					</View>
-				)}
+				<DailyTags selectedDay={selectedDay} />
 				{isLoading ? (
 					<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
 						<Spinner size={35} />

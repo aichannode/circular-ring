@@ -1,10 +1,8 @@
-import { useRepresentations } from "@core/representation";
-import { toLocale } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { DailySleepData } from "@domain/measure/representation/api";
 import { SleepStage } from "@domain/measure/type";
-import { createActiveMode, isInDisabledMode } from "@ui/business";
-import { Tags } from "@ui/components/Tags";
+import { createActiveMode } from "@ui/business";
+import { DailyTags } from "@ui/components/dailyTags";
 import { Mode } from "@ui/type";
 import produce from "immer";
 import moment from "moment";
@@ -20,12 +18,6 @@ interface Props {
 }
 
 export function DailySleepChart({ data, selectedDay, mode = createActiveMode() }: Props) {
-	const { useRangeTags } = useRepresentations().calendar.hooks;
-	const tags = useRangeTags(
-		toLocale(moment(selectedDay).startOf("day").toISOString()),
-		toLocale(moment(selectedDay).endOf("day").toISOString())
-	);
-
 	const awakeDuration = data.sleepStagesDuration[SleepStage.AWAKE];
 	const REMDuration = data.sleepStagesDuration[SleepStage.REM];
 	const lightDuration = data.sleepStagesDuration[SleepStage.LIGHT];
@@ -52,9 +44,8 @@ export function DailySleepChart({ data, selectedDay, mode = createActiveMode() }
 	});
 	return (
 		<View style={{ flex: 1, position: "relative" }}>
-			<View>
-				<Tags tags={isInDisabledMode(mode) ? [] : tags} />
-			</View>
+			<DailyTags selectedDay={selectedDay} />
+
 			<Hypnogram data={correctedStages} mode={mode} />
 			<View style={{ marginTop: 30 }}>
 				<SleepLegend
