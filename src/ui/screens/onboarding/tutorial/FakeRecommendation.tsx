@@ -100,11 +100,11 @@ export const FakeRecommendation: React.FC<Props> = ({ recommendation, maskRecomm
 											paddingHorizontal: 5,
 										}}
 									>
-										{format(recommendation.secondaryTitle)}
+										{format(recommendation.secondaryTitle) + "  "}
 									</GradientText>
 								) : (
 									<SubTitleText style={{ color: highlightColor, textAlign: "right" }}>
-										{format(recommendation.secondaryTitle)}
+										{format(recommendation.secondaryTitle) + "  "}
 									</SubTitleText>
 								)}
 							</Row>

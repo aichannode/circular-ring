@@ -95,7 +95,7 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 		);
 	}
 
-	if (!isOnboardingDone && !useByPass) {
+	if (!isOnboardingDone) {
 		return (
 			<OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
 				<OnboardingStack.Screen name={Routes.OnboardingWearInfo} component={OnboardingWearInfoScreen} />

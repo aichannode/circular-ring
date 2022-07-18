@@ -384,7 +384,7 @@
 	"banner.firmware_update.description": "Click here to download and take advantage of the latest features.",
 	"banner.calibration.title": "Calibration",
 	"banner.calibration.message": "Keep wearing your ring during the entirety of the {days} days calibration period for improved results!",
-	"banner.disturbances.title": "Disturbancess",
+	"banner.disturbances.title": "Disturbances",
 	"calibration.recommandation.1": "Hi, {username}, this is Kira. I would like to welcome you to the Circular tribe! 👋\n\nYour Circular app will allow you to check your recommendations and detailed biometrics, set up an alarm clock, edit your alerts, and so much more!",
 	"calibration.recommandation.2": "Through Circular, checking and improving your health & sleep while optimizing your activities becomes easy 💪\n\nOn top of that, you'll be able to know more about yourself and understand the effects of your environment on your wellbeing. Nothing complicated, everything will be made easy to understand! That's my job!",
 	"calibration.recommandation.3": "In order to get the most of your Circular, I strongly suggest that you wear the ring as much as possible (night & day) and that you answer the questions I might be asking on your feed. They help me refine each recommendation to your needs and profile.",
