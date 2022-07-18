@@ -210,7 +210,7 @@ export function useI18n(options?: FormatterOptions) {
 			}
 		},
 		formatTemperature: (temperature: number, isCelsius: boolean) =>
-			`${temperature > 0 ? "+" : ""}${isCelsius ? temperature + " °C" : (temperature * 9) / 5 + " °F"}`,
+			`${temperature > 0 ? "+" : ""}${isCelsius ? temperature + " °C" : ((temperature * 9) / 5).toFixed(2) + " °F"}`,
 		formatNumber: (number: number, maxDigits = 2) =>
 			intl.formatNumber(number, {
 				maximumSignificantDigits: maxDigits,
