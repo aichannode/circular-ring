@@ -1,3 +1,10 @@
+## [1.6.2](https://gitlab.com/circularing/mobile/app/compare/v1.6.1...v1.6.2) (2022-07-18)
+
+
+### Bug Fixes
+
+* removed debug code ([115882e](https://gitlab.com/circularing/mobile/app/commit/115882e4df0189f7107e88d6bbb3775ea9805721))
+
 ## [1.6.1](https://gitlab.com/circularing/mobile/app/compare/v1.6.0...v1.6.1) (2022-07-18)
 
 
