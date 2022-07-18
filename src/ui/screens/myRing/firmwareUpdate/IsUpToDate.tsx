@@ -71,7 +71,7 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing, setShowWebvi
 					}}
 				>
 					<Info resizeMode="cover" source={require("@assets/images/info.png")}></Info>
-					<VersionText>1.50.0{currentRing?.firmware?.split("-")[0]}</VersionText>
+					<VersionText>{currentRing?.firmware?.split("-")[0]}</VersionText>
 					{outOfDate ? (
 						<OutOfDate>{format("updateFirmware.outofdate")}</OutOfDate>
 					) : (
