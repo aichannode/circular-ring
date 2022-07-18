@@ -33,7 +33,7 @@ export const DailyPieChartLabel: React.FC<Props> = ({ chartSize, labels, linedUp
 		let angleDeg = angle(moment(date)) - RIGHT_ANGLE;
 		if (text == "activity.duration.label.sport_end") {
 			angleDeg += 5;
-		} else {
+		} else if (text == "activity.duration.label.sport_start") {
 			angleDeg -= 10;
 		}
 		return angleDeg;
@@ -50,7 +50,7 @@ export const DailyPieChartLabel: React.FC<Props> = ({ chartSize, labels, linedUp
 								polarOrigin={polarOrigin}
 								width={110}
 								height={20}
-								r={150}
+								r={140}
 								angleDeg={
 									getDifference(currentAngle, nextAngle) < 6 ? getAngleDeg(text, date) - 6 : getAngleDeg(text, date)
 								}
