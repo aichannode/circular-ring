@@ -1,3 +1,11 @@
+## [1.6.6](https://gitlab.com/circularing/mobile/app/compare/v1.6.5...v1.6.6) (2022-07-18)
+
+
+### Bug Fixes
+
+* piechart label placement ([db4f2bf](https://gitlab.com/circularing/mobile/app/commit/db4f2bfdb013b81b009ffa2fd98caed5b79493f9))
+* set decimal to 2 after comma ([957fc96](https://gitlab.com/circularing/mobile/app/commit/957fc96b59b1f490f1acd5a35fd1e5d02d8cbc4f))
+
 ## [1.6.5](https://gitlab.com/circularing/mobile/app/compare/v1.6.4...v1.6.5) (2022-07-18)
 
 
