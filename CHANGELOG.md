@@ -1,3 +1,10 @@
+## [1.6.5](https://gitlab.com/circularing/mobile/app/compare/v1.6.4...v1.6.5) (2022-07-18)
+
+
+### Bug Fixes
+
+* (CIR-1012)animations ([e71f69a](https://gitlab.com/circularing/mobile/app/commit/e71f69a9d2412120dcae03681566836ec722dfc4))
+
 ## [1.6.4](https://gitlab.com/circularing/mobile/app/compare/v1.6.3...v1.6.4) (2022-07-18)
 
 
