@@ -11,15 +11,16 @@ import { UpdateFailedBottomSheet } from "@ui/screens/myRing/firmwareUpdate/Updat
 import { colors } from "@ui/styles/colors";
 import { useObservable } from "micro-observables";
 import React, { useEffect, useRef, useState } from "react";
-import { View } from "react-native";
+import { Image, View } from "react-native";
 import { Device } from "react-native-ble-plx";
 import styled from "styled-components/native";
 
 interface I_IsUpToDate {
 	connectedRing: Device | null;
+	setShowWebview: (arg0: boolean) => void;
 }
 
-export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
+export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing, setShowWebview }) => {
 	const { bleDeviceService } = useServices();
 	const { format } = useI18n();
 	const { ringApi, appStateService } = useServices();
@@ -41,7 +42,7 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 		} else await bleDeviceService.startDfuMode();
 	};
 
-	const firmwareDiff = async () => {
+	const checkIsFirmwareUptoDate = async () => {
 		if (lastFirmwareVersion !== currentRing.firmware) setOutOfDate(true);
 		else {
 			setOutOfDate(false);
@@ -49,32 +50,35 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 	};
 
 	useEffect(() => {
-		firmwareDiff();
+		checkIsFirmwareUptoDate();
 	}, [userRings]);
 
 	return (
 		<>
 			<StyledPrimaryText>{format("updateFirmware.currentVersion")}</StyledPrimaryText>
-			<VersionContainer
-				style={{
-					shadowColor: "#000",
-					shadowOffset: {
-						width: 0,
-						height: 3,
-					},
-					shadowOpacity: 0.29,
-					shadowRadius: 4.65,
+			<VersionTouchable onPress={() => setShowWebview(true)}>
+				<VersionContainer
+					style={{
+						shadowColor: "#000",
+						shadowOffset: {
+							width: 0,
+							height: 3,
+						},
+						shadowOpacity: 0.29,
+						shadowRadius: 4.65,
 
-					elevation: 7,
-				}}
-			>
-				<VersionText>{currentRing?.firmware?.split("-")[0]}</VersionText>
-				{outOfDate ? (
-					<OutOfDate>{format("updateFirmware.outofdate")}</OutOfDate>
-				) : (
-					<UpToDate>{format("updateFirmware.uptodate")}</UpToDate>
-				)}
-			</VersionContainer>
+						elevation: 7,
+					}}
+				>
+					<Info resizeMode="cover" source={require("@assets/images/info.png")}></Info>
+					<VersionText>1.50.0{currentRing?.firmware?.split("-")[0]}</VersionText>
+					{outOfDate ? (
+						<OutOfDate>{format("updateFirmware.outofdate")}</OutOfDate>
+					) : (
+						<UpToDate>{format("updateFirmware.uptodate")}</UpToDate>
+					)}
+				</VersionContainer>
+			</VersionTouchable>
 			<VersionInfo>
 				{outOfDate ? format("updateFirmware.newVersionAvailable") : format("updateFirmware.versionIsUptodate")}
 			</VersionInfo>
@@ -118,6 +122,16 @@ export const IsUpToDate: React.FC<I_IsUpToDate> = ({ connectedRing }) => {
 	);
 };
 
+const VersionTouchable = styled.TouchableOpacity``;
+
+const Info = styled(Image)`
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+`;
+
 const StyledPrimaryText = styled(PrimaryText)`
 	color: ${colors.textPlaceholder};
 	font-size: 14px;
@@ -135,6 +149,7 @@ const VersionContainer = styled.View`
 	justify-content: center;
 	border-radius: 10px;
 	margin-top: 24px;
+	padding-top: 10px;
 `;
 
 const VersionText = styled.Text`

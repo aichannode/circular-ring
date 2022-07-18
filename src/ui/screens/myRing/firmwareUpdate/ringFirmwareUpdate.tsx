@@ -1,8 +1,12 @@
 import { useServices } from "@core/services";
 import { UpdateState } from "@domain/device/bleDeviceService";
+import { SecondaryButton } from "@ui/components/buttons";
+import { ScrollScreen } from "@ui/components/scrollScreen";
+import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { useObservable } from "micro-observables";
-import React from "react";
+import React, { useState } from "react";
+import WebView from "react-native-webview";
 import styled from "styled-components/native";
 import { IsUpToDate } from "./IsUpToDate";
 import { UpdatingComponent } from "./updatingComponent";
@@ -15,6 +19,20 @@ export const RingFirmwareUpdate: React.FC<RingFirmwareUpdateProps> = ({ showCros
 	const { bleDeviceService } = useServices();
 	const connectedRing = useObservable(bleDeviceService.connectedDevice);
 	const updateState = useObservable(bleDeviceService.updateState);
+	const [showWebview, setShowWebview] = useState(false);
+	const { format } = useI18n();
+
+	if (showWebview)
+		return (
+			<>
+				<ScrollScreen contentContainerStyle={{ paddingVertical: 0, marginTop: 40 }}>
+					<StyledWebView source={{ uri: "https://www.circular.xyz/release-notes?tab=ringtab" }} />
+					<ButtonContainer>
+						<SecondaryButton onPress={() => setShowWebview(false)}>{format("global.back")}</SecondaryButton>
+					</ButtonContainer>
+				</ScrollScreen>
+			</>
+		);
 
 	return (
 		<Container>
@@ -26,13 +44,23 @@ export const RingFirmwareUpdate: React.FC<RingFirmwareUpdateProps> = ({ showCros
 				</CloseContainer>
 			)}
 			{updateState.status === UpdateState.IDLE.status ? (
-				<IsUpToDate connectedRing={connectedRing}></IsUpToDate>
+				<IsUpToDate setShowWebview={setShowWebview} connectedRing={connectedRing}></IsUpToDate>
 			) : (
 				<UpdatingComponent></UpdatingComponent>
 			)}
 		</Container>
 	);
 };
+
+const ButtonContainer = styled.View`
+	margin-top: 20px;
+	margin-bottom: 30px;
+	align-items: center;
+`;
+
+const StyledWebView = styled(WebView)`
+	flex: 1;
+`;
 
 const Container = styled.View`
 	flex: 1;
