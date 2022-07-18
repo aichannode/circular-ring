@@ -1,3 +1,16 @@
+# [1.6.0](https://gitlab.com/circularing/mobile/app/compare/v1.5.20...v1.6.0) (2022-07-18)
+
+
+### Bug Fixes
+
+* farenheit conversion ([5cc8c16](https://gitlab.com/circularing/mobile/app/commit/5cc8c1651ec504def75731cc296b841789df7bcb))
+* leaderboard name ([4921b05](https://gitlab.com/circularing/mobile/app/commit/4921b05c7c8306467752caddee1294248a45b37b))
+
+
+### Features
+
+* changelog ring ([798b21d](https://gitlab.com/circularing/mobile/app/commit/798b21d9a42eb44fa0ab3bcd581fdf8b2a12463f))
+
 ## [1.5.20](https://gitlab.com/circularing/mobile/app/compare/v1.5.19...v1.5.20) (2022-07-15)
 
 
