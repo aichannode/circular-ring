@@ -287,6 +287,7 @@ export class UserService {
 			tutorialCompleted: true,
 			stride: 0,
 		});
+		this._connectionStartTime.set(new Date().toISOString());
 	}
 
 	// TODO : add the other fields while implementing edition
