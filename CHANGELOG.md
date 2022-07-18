@@ -1,3 +1,10 @@
+## [1.6.3](https://gitlab.com/circularing/mobile/app/compare/v1.6.2...v1.6.3) (2022-07-18)
+
+
+### Bug Fixes
+
+* force mandatory installations to be immediate ([fce2d81](https://gitlab.com/circularing/mobile/app/commit/fce2d81de27cf7bb82bb15eced0b14890cb965cc))
+
 ## [1.6.2](https://gitlab.com/circularing/mobile/app/compare/v1.6.1...v1.6.2) (2022-07-18)
 
 
