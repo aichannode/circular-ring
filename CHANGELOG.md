@@ -1,3 +1,10 @@
+## [1.6.4](https://gitlab.com/circularing/mobile/app/compare/v1.6.3...v1.6.4) (2022-07-18)
+
+
+### Bug Fixes
+
+* move language settings from profil information to settings ([6e6ae26](https://gitlab.com/circularing/mobile/app/commit/6e6ae2604d87bf9ffd9fd18702ea252468823f6f))
+
 ## [1.6.3](https://gitlab.com/circularing/mobile/app/compare/v1.6.2...v1.6.3) (2022-07-18)
 
 
