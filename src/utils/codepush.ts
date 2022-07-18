@@ -10,7 +10,7 @@ export const options = (): CodePushOptions => {
 		},*/
 		checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
 		installMode: CodePush.InstallMode.ON_NEXT_RESTART,
-		mandatoryInstallMode: CodePush.InstallMode.ON_NEXT_RESTART,
+		mandatoryInstallMode: CodePush.InstallMode.IMMEDIATE,
 		minimumBackgroundDuration: 0,
 		rollbackRetryOptions: {
 			maxRetryAttempts: 1000,
