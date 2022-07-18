@@ -283,7 +283,7 @@
 	"live.start": "START",
 	"live.hrv_blood_ox.label": "HRV.",
 	"live.hrv.label": "HRV",
-	"live.blood_ox.label": "",
+	"live.blood_ox.label": "Oxygen level",
 	"live.disconnected": "Cannot start live measurements, no ring is currently connected.",
 	"intensity.rest": "Rest",
 	"intensity.low": "Low",
