@@ -1,3 +1,10 @@
+## [1.6.1](https://gitlab.com/circularing/mobile/app/compare/v1.6.0...v1.6.1) (2022-07-18)
+
+
+### Bug Fixes
+
+* set max yAxis to be max 100 on dailySpo2 ([65c23bf](https://gitlab.com/circularing/mobile/app/commit/65c23bfbdb38cf1d88468cafc76531df98422a4c))
+
 # [1.6.0](https://gitlab.com/circularing/mobile/app/compare/v1.5.20...v1.6.0) (2022-07-18)
 
 
