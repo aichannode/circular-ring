@@ -1,6 +1,6 @@
 {
 	"name": "Circular",
-	"version": "1.6.6",
+	"version": "1.6.7",
 	"private": true,
 	"scripts": {
 		"finish-release": "standard-version && git-flow release finish -n",

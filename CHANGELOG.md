@@ -1,3 +1,10 @@
+## [1.6.7](https://gitlab.com/circularing/mobile/app/compare/v1.6.6...v1.6.7) (2022-07-18)
+
+
+### Bug Fixes
+
+* text being cut, type in en.json, bypassring button for dev shouldnt by pass onboarding ([6969d87](https://gitlab.com/circularing/mobile/app/commit/6969d877dfef178c9add5b9d49b74fc305ec8eb4))
+
 ## [1.6.6](https://gitlab.com/circularing/mobile/app/compare/v1.6.5...v1.6.6) (2022-07-18)
 
 
