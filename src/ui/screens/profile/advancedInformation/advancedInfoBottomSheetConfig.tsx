@@ -1,6 +1,7 @@
 import {
 	AdvancedInfo,
 	DietarySupplements,
+	FemaleInfo,
 	FertilityState,
 	PhysicalDisability,
 	PillPackFormat,
@@ -43,7 +44,7 @@ export class AdvancedInfoBottomSheetConfig {
 			description: undefined,
 			options: [WorkTime.DAY, WorkTime.NIGHT],
 			translationSet: workTimeKeys,
-			saveProcess: async (option: EditionInfoType) => {
+			saveProcess: async (option: EditionInfoType, female: FemaleInfo) => {
 				await this.userService.updateUserAdvancedInfo({ workTime: option as WorkTime });
 			},
 		};
@@ -52,7 +53,7 @@ export class AdvancedInfoBottomSheetConfig {
 			description: this.format("profile_advanced_info.physical_disability.description"),
 			options: [PhysicalDisability.NONE, PhysicalDisability.TOTAL, PhysicalDisability.MODERATE],
 			translationSet: physicalDisabilityKeys,
-			saveProcess: async (option: EditionInfoType) => {
+			saveProcess: async (option: EditionInfoType, female: FemaleInfo) => {
 				await this.userService.updateUserAdvancedInfo({ physicalDisabilities: option as PhysicalDisability });
 			},
 		};
@@ -61,7 +62,7 @@ export class AdvancedInfoBottomSheetConfig {
 			description: undefined,
 			options: [SleepDisorder.NONE, SleepDisorder.INSOMNIA, SleepDisorder.HYPERSOMNIA, SleepDisorder.OTHER],
 			translationSet: sleepDisorderKeys,
-			saveProcess: async (option: EditionInfoType) => {
+			saveProcess: async (option: EditionInfoType, female: FemaleInfo) => {
 				await this.userService.updateUserAdvancedInfo({ sleepDisorder: option as SleepDisorder });
 			},
 		};
@@ -70,7 +71,7 @@ export class AdvancedInfoBottomSheetConfig {
 			description: this.format("profile_advanced_info.sleeping_pills.description"),
 			options: [SleepingPills.NONE, SleepingPills.DAILY, SleepingPills.WEEKLY, SleepingPills.MONTHLY],
 			translationSet: sleepingPillsKeys,
-			saveProcess: async (option: EditionInfoType) => {
+			saveProcess: async (option: EditionInfoType, female: FemaleInfo) => {
 				await this.userService.updateUserAdvancedInfo({ sleepingPills: option as SleepingPills });
 			},
 		};
@@ -84,7 +85,7 @@ export class AdvancedInfoBottomSheetConfig {
 				DietarySupplements.MONTHLY,
 			],
 			translationSet: dietarySupplementsKeys,
-			saveProcess: async (option: EditionInfoType) => {
+			saveProcess: async (option: EditionInfoType, female: FemaleInfo) => {
 				await this.userService.updateUserAdvancedInfo({ dietarySupplements: option as DietarySupplements });
 			},
 		};
@@ -93,10 +94,10 @@ export class AdvancedInfoBottomSheetConfig {
 			description: undefined,
 			options: [FertilityState.MENSTRUAL_CYCLE, FertilityState.PERIMENOPAUSE, FertilityState.MENOPAUSE],
 			translationSet: fertilityStateKeys,
-			saveProcess: async (option: EditionInfoType) => {
+			saveProcess: async (option: EditionInfoType, female: FemaleInfo) => {
 				if (advancedInfo) {
 					await this.userService.updateUserAdvancedInfo({
-						female: { ...advancedInfo.female, fertilityState: option as FertilityState },
+						female: { ...female, fertilityState: option as FertilityState },
 					});
 				}
 			},
@@ -106,10 +107,10 @@ export class AdvancedInfoBottomSheetConfig {
 			description: undefined,
 			options: [PillPackFormat.DAYS_28, PillPackFormat.DAYS_24, PillPackFormat.DAYS_21],
 			translationSet: pillPackFormatKeys,
-			saveProcess: async (option: EditionInfoType) => {
+			saveProcess: async (option: EditionInfoType, female: FemaleInfo) => {
 				if (advancedInfo) {
 					await this.userService.updateUserAdvancedInfo({
-						female: { ...advancedInfo.female, pillPackFormat: option as PillPackFormat },
+						female: { ...female, pillPackFormat: option as PillPackFormat },
 					});
 				}
 			},
