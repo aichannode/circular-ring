@@ -1,3 +1,10 @@
+## [1.6.10](https://gitlab.com/circularing/mobile/app/compare/v1.6.9...v1.6.10) (2022-07-19)
+
+
+### Bug Fixes
+
+* vo2max unit ([8bd4e81](https://gitlab.com/circularing/mobile/app/commit/8bd4e8104ebadc9ef32d47cba9f327ddc0e0a16b))
+
 ## [1.6.9](https://gitlab.com/circularing/mobile/app/compare/v1.6.8...v1.6.9) (2022-07-19)
 
 
