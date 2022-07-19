@@ -65,7 +65,7 @@ export const HeartRateCard = () => {
 					<HRItemValue>
 						<HRItemValueNumber>
 							{advancedInfo.comparativeVo2Max ?? "-"}
-							<HRItemValueUnit> bpm</HRItemValueUnit>
+							<HRItemValueUnit> ml/kg/min</HRItemValueUnit>
 						</HRItemValueNumber>
 					</HRItemValue>
 				</HRItem>
