@@ -1,3 +1,10 @@
+## [1.6.8](https://gitlab.com/circularing/mobile/app/compare/v1.6.7...v1.6.8) (2022-07-19)
+
+
+### Bug Fixes
+
+* date format ([bc76bf3](https://gitlab.com/circularing/mobile/app/commit/bc76bf37c91274820f5294aa3fba10d69cdfba62))
+
 ## [1.6.7](https://gitlab.com/circularing/mobile/app/compare/v1.6.6...v1.6.7) (2022-07-18)
 
 
