@@ -1,3 +1,10 @@
+## [1.6.11](https://gitlab.com/circularing/mobile/app/compare/v1.6.10...v1.6.11) (2022-07-19)
+
+
+### Bug Fixes
+
+* hide streak while in calib ([e327a2a](https://gitlab.com/circularing/mobile/app/commit/e327a2acae03532e3b2ed94e71a22b26edfe26f1))
+
 ## [1.6.10](https://gitlab.com/circularing/mobile/app/compare/v1.6.9...v1.6.10) (2022-07-19)
 
 
