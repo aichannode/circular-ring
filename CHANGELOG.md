@@ -1,3 +1,10 @@
+## [1.6.13](https://gitlab.com/circularing/mobile/app/compare/v1.6.12...v1.6.13) (2022-07-19)
+
+
+### Bug Fixes
+
+* temp graph ([1ccd794](https://gitlab.com/circularing/mobile/app/commit/1ccd794a9f4d6198e28ee7b880aecf7e928b457b))
+
 ## [1.6.12](https://gitlab.com/circularing/mobile/app/compare/v1.6.11...v1.6.12) (2022-07-19)
 
 
