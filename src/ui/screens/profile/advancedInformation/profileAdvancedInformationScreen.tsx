@@ -16,7 +16,6 @@ import {
 	EditionInfoType,
 } from "@ui/screens/profile/advancedInformation/advancedInfoEditionBottomSheet";
 import { BMICard } from "@ui/screens/profile/advancedInformation/bmiCard";
-import { ChronotypeCard } from "@ui/screens/profile/advancedInformation/chronotypeCard";
 import { HeartRateCard } from "@ui/screens/profile/advancedInformation/heartRateCard";
 import {
 	advanceInfoI18nKey,
@@ -32,6 +31,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import styled from "styled-components/native";
+import { ChronotypeCard } from "./chronotypeCard";
 import { CycleLengthBottomSheet } from "./cycleLengthBottomSheet";
 import { StrideBottomSheet } from "./strideBottomSheet";
 

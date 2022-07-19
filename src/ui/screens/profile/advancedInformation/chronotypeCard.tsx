@@ -1,21 +1,22 @@
 import { ChronoType } from "@domain/user/advancedInfo";
-import { useUserAdvancedInfo } from "@domain/user/hooks/useUser";
+import { useUserAdvancedInfo, useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { Grow } from "@ui/components/layout";
 import { useI18n } from "@ui/i18n";
+import { ChronoTypeInfoInfoBottomSheet } from "@ui/screens/profile/advancedInformation/chronoTypeInfoBottomSheet";
 import { advanceInfoI18nKey, chronoTypeKeys } from "@ui/screens/profile/advancedInformation/profileAdvancedInfoI18n";
 import { colors } from "@ui/styles/colors";
 import { roundedWhiteCardStyle } from "@ui/styles/containerStyles";
 import { textStyles } from "@ui/styles/textStyles";
 import React, { useRef } from "react";
-import styled from "styled-components/native";
 import { Image, Pressable, useWindowDimensions } from "react-native";
-import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
-import { ChronoTypeInfoInfoBottomSheet } from "@ui/screens/profile/advancedInformation/chronoTypeInfoBottomSheet";
+import styled from "styled-components/native";
 
 export const ChronotypeCard = () => {
 	const { format } = useI18n();
 	const advancedInfo = useUserAdvancedInfo();
 	const { height } = useWindowDimensions();
+	const remainingDays = useUserCalibrationRemainingDays();
 
 	const iconSource = () => {
 		switch (advancedInfo?.chronoType ?? ChronoType.MORNING) {
@@ -51,9 +52,11 @@ export const ChronotypeCard = () => {
 					</Pressable>
 				)}
 			</TitleContainer>
-			{advancedInfo?.chronoType ? <Icon source={iconSource()} /> : null}
+			{advancedInfo?.chronoType && remainingDays <= 0 ? <Icon source={iconSource()} /> : null}
 			<Grow />
-			<Value>{displayedTypeName}</Value>
+			<Value>
+				{remainingDays <= 0 ? displayedTypeName : format("calibration.placeholder", { days: remainingDays })}
+			</Value>
 			<Grow />
 			<CircularBottomSheet snapPoints={[height * 0.8]} ref={chronoTypeInfoRef}>
 				<ChronoTypeInfoInfoBottomSheet

@@ -39,8 +39,6 @@ export const StreakBadge = ({ leaderboardRank, streak }: StreakBadgeProps) => {
 	);
 };
 
-// user.lifetime.best.streak
-
 const StarContainer = styled.View`
 	display: flex;
 	flex-direction: row;
