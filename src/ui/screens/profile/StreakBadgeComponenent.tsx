@@ -1,3 +1,4 @@
+import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import LinearGradient from "react-native-linear-gradient";
@@ -9,6 +10,8 @@ interface StreakBadgeProps {
 }
 
 export const StreakBadge = ({ leaderboardRank, streak }: StreakBadgeProps) => {
+	const remainingCalibDays = useUserCalibrationRemainingDays();
+
 	return (
 		<>
 			<Gradient colors={[...colors.gradient.orange]} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0.5 }}>
@@ -23,8 +26,10 @@ export const StreakBadge = ({ leaderboardRank, streak }: StreakBadgeProps) => {
 				</Division>
 				<Division>
 					<StarContainer>
-						<Star resizeMode="contain" source={require("@assets/images/starGold.png")}></Star>
-						<BoldText>{streak} days</BoldText>
+						{remainingCalibDays <= 0 && (
+							<Star resizeMode="contain" source={require("@assets/images/starGold.png")}></Star>
+						)}
+						<BoldText>{remainingCalibDays <= 0 ? `${streak} days` : "-"} </BoldText>
 					</StarContainer>
 				</Division>
 				<LittleVerticalBar />
