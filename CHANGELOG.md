@@ -1,3 +1,10 @@
+## [1.6.12](https://gitlab.com/circularing/mobile/app/compare/v1.6.11...v1.6.12) (2022-07-19)
+
+
+### Bug Fixes
+
+* add calibration in chronotype ([36006ce](https://gitlab.com/circularing/mobile/app/commit/36006cecc0c0c2d86319c35d97bd0872c3bec041))
+
 ## [1.6.11](https://gitlab.com/circularing/mobile/app/compare/v1.6.10...v1.6.11) (2022-07-19)
 
 
