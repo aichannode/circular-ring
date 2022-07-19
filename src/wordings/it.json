@@ -11,7 +11,7 @@
 	"url.learn": "https://www.circular.xyz/learn",
 	"url.store": "https://www.circular.xyz/shop",
 	"url.privacy": "https://www.circular.xyz/terms-of-use",
-	"url.help": "https://fr.circular.xyz/help",
+	"url.help": "https://www.circular.xyz/help",
 	"setup.scan.disabled.title": "Abilitazione del Bluetooth",
 	"setup.scan.disabled.message": "Per poter abbinare un anello Circular, accertati che il telefono abbia Bluetooth abilitato e che l'anello sia vicino ad esso.",
 	"setup.scan.disabled.enable": "Abilita il Bluetooth",
