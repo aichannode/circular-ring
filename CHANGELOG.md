@@ -1,3 +1,10 @@
+## [1.6.9](https://gitlab.com/circularing/mobile/app/compare/v1.6.8...v1.6.9) (2022-07-19)
+
+
+### Bug Fixes
+
+* female info & stride error ([9324f0d](https://gitlab.com/circularing/mobile/app/commit/9324f0d1d2661fe1ef0ad8219c75fa9dbad957ad))
+
 ## [1.6.8](https://gitlab.com/circularing/mobile/app/compare/v1.6.7...v1.6.8) (2022-07-19)
 
 
