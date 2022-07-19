@@ -128,6 +128,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 							onSelect={(x) => toUpdateTag(x)}
 							yMin={-yMax}
 							yMax={yMax}
+							mode={updatedMode}
 							mapMarker={(el) =>
 								`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
 									el.y > 0 ? "+" + el.y : el.y
