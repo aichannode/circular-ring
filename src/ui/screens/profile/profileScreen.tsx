@@ -68,7 +68,12 @@ export const ProfileScreen = observer(function ProfileScreen() {
 		>
 			<UserAvatar />
 			<ResponsiveCenterView>
-				<StreakBadge streak={bestStreak ?? 0} leaderboardRank={user?.leaderboardRank ?? "-"}></StreakBadge>
+				<StreakBadge
+					streak={bestStreak ?? 0}
+					leaderboardRank={
+						user?.leaderboardRank === "TOP100" ? `${user?.leaderboardPosition}` : user?.leaderboardRank ?? "-"
+					}
+				></StreakBadge>
 				<GlobalScoreCard
 					score={dailyScore}
 					mode={updateMode(screenMode, !isDefined(dailyScore) || isNaN(dailyScore))}

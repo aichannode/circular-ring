@@ -67,7 +67,7 @@ export class UserService {
 
 	readonly justRegisteredUserEmail = this._justRegisteredUserEmail.readOnly();
 	readonly authenticatedUserEmail = this._authenticatedUserEmail.readOnly();
-	readonly connectionStartTime = this._connectionStartTime.readOnly();
+	connectionStartTime = this._connectionStartTime;
 	readonly user = this._user.readOnly();
 	readonly userSettings = this._userSettings.readOnly();
 	readonly userNotificationsSettings = this._userNotificationsSettings.readOnly();
@@ -248,7 +248,6 @@ export class UserService {
 		await this.userStorage.saveUserNotificationsSettings({ ...this._userNotificationsSettings.get(), ...newValue });
 		const userNotifications = this._userNotificationsSettings.get();
 		if ("lowHR" in newValue || "lowHRAlert" in newValue) {
-			console.log("userNotifications.lowHRAlert", userNotifications.lowHRAlert);
 			const activated = userNotifications.lowHRAlert === "On" ? "01" : "00";
 			const value = userNotifications.lowHR.toString(16);
 			await this.bleDeviceService.write(`ALT01${activated}${value}`);
@@ -288,6 +287,7 @@ export class UserService {
 			tutorialCompleted: true,
 			stride: 0,
 		});
+		this._connectionStartTime.set(new Date().toISOString());
 	}
 
 	// TODO : add the other fields while implementing edition

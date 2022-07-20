@@ -1,14 +1,19 @@
 import { useServices } from "@core/services";
 import { DateFormat, HeightUnit, HourFormat, TemperatureFormat, WeightUnit } from "@domain/units";
-import { useUserSettings } from "@domain/user/hooks/useUser";
+import { useUser, useUserSettings } from "@domain/user/hooks/useUser";
+import { languageKeys } from "@domain/user/user";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
+import { advanceInfoI18nKey } from "@ui/screens/profile/advancedInformation/profileAdvancedInfoI18n";
+import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
 import React, { useRef, useState } from "react";
 import styled from "styled-components/native";
 import { version } from "../../../../package.json";
+import { LocaleType, translations } from "../../../wordings/";
+import { AdvancedInfoEditionBottomSheet } from "../profile/advancedInformation/advancedInfoEditionBottomSheet";
 import { DateFormatBottomSheet } from "./dateFormatBottomSheet";
 
 export const SettingsScreen: React.FC = () => {
@@ -22,7 +27,9 @@ export const SettingsScreen: React.FC = () => {
 	const [weightFormat, setWeightFormat] = useState(userSettings?.weightFormat);
 	const [temperatureFormat, setTemperatureFormat] = useState(userSettings?.temperatureFormat);
 	const [hourFormat, setHourFormat] = useState(userSettings?.hourFormat);
+	const user = useUser();
 
+	const editionBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const dateFormatBottomSheet = useRef<CircularBottomSheetHandle>(null);
 
 	const onSwitchSelectDateFormat = async (option: DateFormat) => {
@@ -96,6 +103,16 @@ export const SettingsScreen: React.FC = () => {
 			<InfoListHeader>{format("settings.general")}</InfoListHeader>
 			{/* <InfoListItem name={format("settings.notifications.title")} /> */}
 			<InfoListItem
+				name={format("profile_info.language")}
+				hasDisclosure
+				value={
+					user?.language
+						? format(advanceInfoI18nKey(languageKeys, user.language))
+						: format(advanceInfoI18nKey(languageKeys, getPreferredLangageCode(Object.keys(translations))))
+				}
+				action={() => editionBottomSheetRef.current?.present()}
+			/>
+			<InfoListItem
 				name={format("settings.notifications")}
 				hasDisclosure
 				action={() => navigate(Routes.Notifications)}
@@ -145,7 +162,12 @@ export const SettingsScreen: React.FC = () => {
 				hasDisclosure
 				action={() => navigate(Routes.WebView, { uri: format("url.privacy"), label: format("settings.privacy") })}
 			/>
-			<InfoListItem name={format("settings.app_version")} value={version} />
+			<InfoListItem
+				name={format("settings.app_version")}
+				value={version}
+				hasDisclosure
+				action={() => navigate(Routes.WebView, { uri: format("url.changelog"), label: format("settings.app_version") })}
+			/>
 			<InfoListHeader>{format("settings.support")}</InfoListHeader>
 			<InfoListItem
 				name={format("settings.help")}
@@ -155,6 +177,21 @@ export const SettingsScreen: React.FC = () => {
 			{/* <InfoListItem name={format("settings.support")} />*/}
 			<CircularBottomSheet ref={dateFormatBottomSheet} snapPoints={[480]}>
 				<DateFormatBottomSheet {...{ dateFormat, setDateFormat, onSaved: onSwitchSelectDateFormat }} />
+			</CircularBottomSheet>
+			<CircularBottomSheet snapPoints={[550]} ref={editionBottomSheetRef}>
+				<AdvancedInfoEditionBottomSheet
+					config={{
+						title: format("profile_info.language"),
+						description: undefined,
+						options: [...Object.keys(translations)] as LocaleType[],
+						translationSet: languageKeys,
+						saveProcess: async (option: LocaleType) => {
+							await userService.updateUserInfo({ language: option });
+						},
+					}}
+					currentOption={user?.language ?? getPreferredLangageCode(Object.keys(translations))}
+					onClose={() => editionBottomSheetRef.current?.close()}
+				/>
 			</CircularBottomSheet>
 		</Container>
 	);

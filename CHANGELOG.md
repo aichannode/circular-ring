@@ -1,3 +1,194 @@
+## [1.6.14](https://gitlab.com/circularing/mobile/app/compare/v1.6.13...v1.6.14) (2022-07-20)
+
+
+### Bug Fixes
+
+* sleep HRV graph keep only trend line ([34e8b5e](https://gitlab.com/circularing/mobile/app/commit/34e8b5edd9fc1f29118dd1017f4fd265aeca58d9))
+
+## [1.6.13](https://gitlab.com/circularing/mobile/app/compare/v1.6.12...v1.6.13) (2022-07-19)
+
+
+### Bug Fixes
+
+* temp graph ([1ccd794](https://gitlab.com/circularing/mobile/app/commit/1ccd794a9f4d6198e28ee7b880aecf7e928b457b))
+
+## [1.6.12](https://gitlab.com/circularing/mobile/app/compare/v1.6.11...v1.6.12) (2022-07-19)
+
+
+### Bug Fixes
+
+* add calibration in chronotype ([36006ce](https://gitlab.com/circularing/mobile/app/commit/36006cecc0c0c2d86319c35d97bd0872c3bec041))
+
+## [1.6.11](https://gitlab.com/circularing/mobile/app/compare/v1.6.10...v1.6.11) (2022-07-19)
+
+
+### Bug Fixes
+
+* hide streak while in calib ([e327a2a](https://gitlab.com/circularing/mobile/app/commit/e327a2acae03532e3b2ed94e71a22b26edfe26f1))
+
+## [1.6.10](https://gitlab.com/circularing/mobile/app/compare/v1.6.9...v1.6.10) (2022-07-19)
+
+
+### Bug Fixes
+
+* vo2max unit ([8bd4e81](https://gitlab.com/circularing/mobile/app/commit/8bd4e8104ebadc9ef32d47cba9f327ddc0e0a16b))
+
+## [1.6.9](https://gitlab.com/circularing/mobile/app/compare/v1.6.8...v1.6.9) (2022-07-19)
+
+
+### Bug Fixes
+
+* female info & stride error ([9324f0d](https://gitlab.com/circularing/mobile/app/commit/9324f0d1d2661fe1ef0ad8219c75fa9dbad957ad))
+
+## [1.6.8](https://gitlab.com/circularing/mobile/app/compare/v1.6.7...v1.6.8) (2022-07-19)
+
+
+### Bug Fixes
+
+* date format ([bc76bf3](https://gitlab.com/circularing/mobile/app/commit/bc76bf37c91274820f5294aa3fba10d69cdfba62))
+
+## [1.6.7](https://gitlab.com/circularing/mobile/app/compare/v1.6.6...v1.6.7) (2022-07-18)
+
+
+### Bug Fixes
+
+* text being cut, type in en.json, bypassring button for dev shouldnt by pass onboarding ([6969d87](https://gitlab.com/circularing/mobile/app/commit/6969d877dfef178c9add5b9d49b74fc305ec8eb4))
+
+## [1.6.6](https://gitlab.com/circularing/mobile/app/compare/v1.6.5...v1.6.6) (2022-07-18)
+
+
+### Bug Fixes
+
+* piechart label placement ([db4f2bf](https://gitlab.com/circularing/mobile/app/commit/db4f2bfdb013b81b009ffa2fd98caed5b79493f9))
+* set decimal to 2 after comma ([957fc96](https://gitlab.com/circularing/mobile/app/commit/957fc96b59b1f490f1acd5a35fd1e5d02d8cbc4f))
+
+## [1.6.5](https://gitlab.com/circularing/mobile/app/compare/v1.6.4...v1.6.5) (2022-07-18)
+
+
+### Bug Fixes
+
+* (CIR-1012)animations ([e71f69a](https://gitlab.com/circularing/mobile/app/commit/e71f69a9d2412120dcae03681566836ec722dfc4))
+
+## [1.6.4](https://gitlab.com/circularing/mobile/app/compare/v1.6.3...v1.6.4) (2022-07-18)
+
+
+### Bug Fixes
+
+* move language settings from profil information to settings ([6e6ae26](https://gitlab.com/circularing/mobile/app/commit/6e6ae2604d87bf9ffd9fd18702ea252468823f6f))
+
+## [1.6.3](https://gitlab.com/circularing/mobile/app/compare/v1.6.2...v1.6.3) (2022-07-18)
+
+
+### Bug Fixes
+
+* force mandatory installations to be immediate ([fce2d81](https://gitlab.com/circularing/mobile/app/commit/fce2d81de27cf7bb82bb15eced0b14890cb965cc))
+
+## [1.6.2](https://gitlab.com/circularing/mobile/app/compare/v1.6.1...v1.6.2) (2022-07-18)
+
+
+### Bug Fixes
+
+* removed debug code ([115882e](https://gitlab.com/circularing/mobile/app/commit/115882e4df0189f7107e88d6bbb3775ea9805721))
+
+## [1.6.1](https://gitlab.com/circularing/mobile/app/compare/v1.6.0...v1.6.1) (2022-07-18)
+
+
+### Bug Fixes
+
+* set max yAxis to be max 100 on dailySpo2 ([65c23bf](https://gitlab.com/circularing/mobile/app/commit/65c23bfbdb38cf1d88468cafc76531df98422a4c))
+
+# [1.6.0](https://gitlab.com/circularing/mobile/app/compare/v1.5.20...v1.6.0) (2022-07-18)
+
+
+### Bug Fixes
+
+* farenheit conversion ([5cc8c16](https://gitlab.com/circularing/mobile/app/commit/5cc8c1651ec504def75731cc296b841789df7bcb))
+* leaderboard name ([4921b05](https://gitlab.com/circularing/mobile/app/commit/4921b05c7c8306467752caddee1294248a45b37b))
+
+
+### Features
+
+* changelog ring ([798b21d](https://gitlab.com/circularing/mobile/app/commit/798b21d9a42eb44fa0ab3bcd581fdf8b2a12463f))
+
+## [1.5.20](https://gitlab.com/circularing/mobile/app/compare/v1.5.19...v1.5.20) (2022-07-15)
+
+
+### Bug Fixes
+
+* onboarding ([b3567d0](https://gitlab.com/circularing/mobile/app/commit/b3567d04bad19c1dffbd7a3b9a24eb998f9d83a5))
+* pie chart label go out of grey zone ([67aa2d1](https://gitlab.com/circularing/mobile/app/commit/67aa2d1c7dfa94d145d2b03f936d77be30ceca16))
+
+## [1.5.19](https://gitlab.com/circularing/mobile/app/compare/v1.5.18...v1.5.19) (2022-07-15)
+
+
+### Bug Fixes
+
+* graph notes ([3f5817d](https://gitlab.com/circularing/mobile/app/commit/3f5817d2bb23623096b08c4752a25bc3e224ef9d))
+
+## [1.5.18](https://gitlab.com/circularing/mobile/app/compare/v1.5.17...v1.5.18) (2022-07-15)
+
+
+### Bug Fixes
+
+*  CIR-1012 feed animation ([e8acbf0](https://gitlab.com/circularing/mobile/app/commit/e8acbf0971b6d4b05fb2380dc8c7b59ed06f635e))
+
+## [1.5.17](https://gitlab.com/circularing/mobile/app/compare/v1.5.16...v1.5.17) (2022-07-15)
+
+
+### Bug Fixes
+
+* streak ui and added stars in calendar ([28b7520](https://gitlab.com/circularing/mobile/app/commit/28b752090c0c78b41894eb599edd3e14fe63c8ef))
+
+## [1.5.16](https://gitlab.com/circularing/mobile/app/compare/v1.5.15...v1.5.16) (2022-07-15)
+
+
+### Bug Fixes
+
+* temperature contributor in calib, temperature 7 day graph & average temperature 30d graph ([88f2a79](https://gitlab.com/circularing/mobile/app/commit/88f2a79431928ab8c34fc891f118cb35d6c814d5))
+
+## [1.5.15](https://gitlab.com/circularing/mobile/app/compare/v1.5.14...v1.5.15) (2022-07-15)
+
+
+### Bug Fixes
+
+* added changelog webview ([176541d](https://gitlab.com/circularing/mobile/app/commit/176541d0a7da4dd114ff89da5fac7ec1d775bbd4))
+* FakeRecommendation gradient text padding ([249def6](https://gitlab.com/circularing/mobile/app/commit/249def68deda3d16448b69e4d9eb452be0f4cc49))
+
+## [1.5.14](https://gitlab.com/circularing/mobile/app/compare/v1.5.13...v1.5.14) (2022-07-13)
+
+
+### Bug Fixes
+
+* temperature chart ([816239a](https://gitlab.com/circularing/mobile/app/commit/816239abf285ec1846d16330f593385a8a85fd50))
+
+## [1.5.13](https://gitlab.com/circularing/mobile/app/compare/v1.5.12...v1.5.13) (2022-07-13)
+
+
+### Bug Fixes
+
+* removed leaderboard % ([8a9dc18](https://gitlab.com/circularing/mobile/app/commit/8a9dc180ac5835ccc7035d1cf9a3f831548c39f3))
+
+## [1.5.12](https://gitlab.com/circularing/mobile/app/compare/v1.5.11...v1.5.12) (2022-07-13)
+
+
+### Bug Fixes
+
+* show leaderboard position when leaderboard rank is TOP100 ([391f44c](https://gitlab.com/circularing/mobile/app/commit/391f44c216c290d4eed7db724e7fba38ba3465ce))
+
+## [1.5.11](https://gitlab.com/circularing/mobile/app/compare/v1.5.10...v1.5.11) (2022-07-12)
+
+
+### Bug Fixes
+
+* app crash when receiving a new feed post ([bf854fd](https://gitlab.com/circularing/mobile/app/commit/bf854fd03f96c9cc0bd7b7f29fe01951e20a6c0a))
+
+## [1.5.10](https://gitlab.com/circularing/mobile/app/compare/v1.5.9...v1.5.10) (2022-07-12)
+
+
+### Bug Fixes
+
+* some key missing error on .map ([18b54df](https://gitlab.com/circularing/mobile/app/commit/18b54df1b2a37b13c944f09261264916858b34c1))
+
 ## [1.5.9](https://gitlab.com/circularing/mobile/app/compare/v1.5.8...v1.5.9) (2022-07-11)
 
 

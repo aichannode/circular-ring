@@ -1,8 +1,11 @@
 import { useRepresentations } from "@core/representation";
 import { getCurrentLocalISODay, getLocalISODayFromLocalDate } from "@domain/common/business";
+import { MetricType } from "@domain/measure/metric";
+import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
 import { Row } from "@ui/components/layout";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import React from "react";
 import { Image } from "react-native";
 import { DateData } from "react-native-calendars";
@@ -11,15 +14,20 @@ import styled from "styled-components/native";
 
 type Props = DayProps & {
 	date?: DateData;
+	streak?: any[];
 };
 
-export const CalendarDay = observer(function CalendarDay({ date, marking, onPress, state }: Props) {
+export const CalendarDay = observer(function CalendarDay({ date, marking, onPress, state, streak }: Props) {
 	const fixedMarking = marking;
+	const dayStreak = streak?.find(
+		(s) => moment(s.timestamp).format("YYYY-MM-DD") === date?.dateString && s.metrics[MetricType.UserStreak]
+	);
 	const {
 		calendar: {
 			hooks: { useCalendar },
 		},
 	} = useRepresentations();
+	const remainingCalibDays = useUserCalibrationRemainingDays();
 	const dayCalendar = useCalendar(
 		date?.dateString ? getLocalISODayFromLocalDate(date.dateString) : getCurrentLocalISODay()
 	);
@@ -27,7 +35,7 @@ export const CalendarDay = observer(function CalendarDay({ date, marking, onPres
 	return (
 		<Container onPress={() => onPress?.(date)} selected={fixedMarking?.selected}>
 			<StarContainer>
-				{dayCalendar && dayCalendar.streak && <Image source={require("@assets/images/goldStar.png")} />}
+				{remainingCalibDays <= 0 && dayStreak && <Image source={require("@assets/images/goldStar.png")} />}
 			</StarContainer>
 			<DayInfo>
 				<DayText today={state === "today"} disabled={state === "disabled"}>

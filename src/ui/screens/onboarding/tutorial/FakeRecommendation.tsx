@@ -66,8 +66,6 @@ export const FakeRecommendation: React.FC<Props> = ({ recommendation, maskRecomm
 		| ParagraphComponentConfigurationDto[];
 	const maybeGradientBorder = getGradient(recommendation.style as FeedEntityStyle);
 
-	console.log("UserInput", userInput);
-
 	return (
 		<>
 			<Mask masked={maskRecommendation}>
@@ -94,12 +92,19 @@ export const FakeRecommendation: React.FC<Props> = ({ recommendation, maskRecomm
 							<Row style={{ alignItems: "center", justifyContent: "space-between" }}>
 								<TitleText>{format(recommendation.title)}</TitleText>
 								{maybeGradientBorder ? (
-									<GradientText stops={maybeGradientBorder} textElement={SubTitleText} style={{ textAlign: "right" }}>
-										{format(recommendation.secondaryTitle)}
+									<GradientText
+										stops={maybeGradientBorder}
+										textElement={SubTitleText}
+										style={{
+											textAlign: "left",
+											paddingHorizontal: 5,
+										}}
+									>
+										{format(recommendation.secondaryTitle) + "  "}
 									</GradientText>
 								) : (
 									<SubTitleText style={{ color: highlightColor, textAlign: "right" }}>
-										{format(recommendation.secondaryTitle)}
+										{format(recommendation.secondaryTitle) + "  "}
 									</SubTitleText>
 								)}
 							</Row>

@@ -1,5 +1,6 @@
 import {
 	DietarySupplements,
+	FemaleInfo,
 	FertilityState,
 	PhysicalDisability,
 	PillPackFormat,
@@ -7,6 +8,7 @@ import {
 	SleepingPills,
 	WorkTime,
 } from "@domain/user/advancedInfo";
+import { useUserAdvancedInfo } from "@domain/user/hooks/useUser";
 import { PrimaryButton } from "@ui/components/buttons";
 import { ResponsiveCenterView } from "@ui/components/layout";
 import { Spinner } from "@ui/components/spinner";
@@ -35,7 +37,7 @@ export interface AdvancedInfoEditionConfig<T extends EditionInfoType> {
 	description?: string;
 	options: T[];
 	translationSet: Map<T, WordingKey>;
-	saveProcess: (option: T) => void;
+	saveProcess: (option: T, female: FemaleInfo) => void;
 }
 
 interface AdvancedInfoEditionBottomSheetProps<T extends EditionInfoType> {
@@ -50,7 +52,7 @@ export function AdvancedInfoEditionBottomSheet<T extends EditionInfoType>({
 	onClose,
 }: AdvancedInfoEditionBottomSheetProps<T>) {
 	const { format } = useI18n();
-
+	const advancedInfo = useUserAdvancedInfo();
 	const [selectedOption, setSelectedOption] = useState<T>(currentOption);
 	const [isLoading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
@@ -63,7 +65,7 @@ export function AdvancedInfoEditionBottomSheet<T extends EditionInfoType>({
 		setLoading(true);
 		setErrorMessage(undefined);
 		try {
-			await config.saveProcess(selectedOption);
+			if (advancedInfo) await config.saveProcess(selectedOption, advancedInfo.female);
 			setLoading(false);
 			onClose();
 		} catch (error) {

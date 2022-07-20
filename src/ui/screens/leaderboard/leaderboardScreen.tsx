@@ -14,7 +14,8 @@ interface I_LeaderboardData {
 	score: number;
 	previousScore: number;
 	user: {
-		userName: string;
+		firstName: string;
+		lastName: string;
 		profilePictureUrl: string;
 		country?: string;
 		streak: number;
@@ -140,7 +141,7 @@ const ColoredStar = ({ position }: { position: number }) => {
 const LeaderboardTile = ({ data, gradient, color }: { data: I_LeaderboardData; gradient: boolean; color: string }) => {
 	let { score } = data;
 	const { previousScore, rank } = data;
-	const { userName, country, profilePictureUrl } = data.user;
+	const { firstName, lastName, country, profilePictureUrl } = data.user;
 	const progress = score > previousScore;
 
 	score *= 100;
@@ -169,8 +170,8 @@ const LeaderboardTile = ({ data, gradient, color }: { data: I_LeaderboardData; g
 			</PictureContainer>
 			<MiddleTileContainer>
 				<UserName>
-					<FirstName color={color}>{userName.split(" ")[0]}</FirstName>
-					<LastName color={color}>{userName.split(" ")[1]}</LastName>
+					<FirstName color={color}>{firstName}</FirstName>
+					<LastName color={color}>{lastName}</LastName>
 				</UserName>
 				<MiddleBottomContainer>
 					<ColoredStar position={rank}></ColoredStar>
@@ -185,7 +186,7 @@ const LeaderboardTile = ({ data, gradient, color }: { data: I_LeaderboardData; g
 				></Arrow>
 				<BoldScore color={color}>{Math.floor(score)}</BoldScore>
 				<LightScore color={color}>
-					,{Math.round((score % 1) * 100) < 10 ? "0" + Math.round((score % 1) * 100) : Math.round((score % 1) * 100)}%
+					,{Math.round((score % 1) * 100) < 10 ? "0" + Math.round((score % 1) * 100) : Math.round((score % 1) * 100)}
 				</LightScore>
 			</TileRightContainer>
 		</Tile>

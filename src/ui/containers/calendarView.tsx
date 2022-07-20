@@ -15,12 +15,14 @@ interface CalendarProps {
 	selectedLocalIsoDay: ISODay;
 	onDaySelected: (day: ISODay) => void;
 	autoSelectDayOnMonthChange?: boolean;
+	streak?: any[];
 }
 export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 	selectedLocalIsoDay,
 	onDaySelected,
 	autoSelectDayOnMonthChange = true,
 	style,
+	streak,
 }) {
 	const { setMonthCalendars } = useRepresentations().calendar.actions;
 	const [visibleMonthDay, setVisibleMonthDay] = useState(selectedLocalIsoDay);
@@ -80,7 +82,7 @@ export const CalendarView: React.FC<CalendarProps> = function CalendarView({
 			style={style}
 			hideExtraDays
 			markedDates={selectedLocalIsoDay ? { [selectedLocalIsoDay]: { selected: true } } : undefined}
-			dayComponent={CalendarDay}
+			dayComponent={(props) => <CalendarDay {...props} streak={streak}></CalendarDay>}
 			theme={circularCalendarTheme}
 		/>
 	);

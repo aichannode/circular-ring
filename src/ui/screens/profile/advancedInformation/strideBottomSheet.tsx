@@ -1,7 +1,7 @@
 import { useServices } from "@core/services";
 import { round2Digits } from "@core/utils";
 import { cmToFt, ftToCm, HeightUnit, strideValuesCm, strideValuesFt } from "@domain/units";
-import { useUser, useUserSettings } from "@domain/user/hooks/useUser";
+import { useUserAdvancedInfo, useUserSettings } from "@domain/user/hooks/useUser";
 import { PrimaryButton } from "@ui/components/buttons";
 import { HorizontalCarousel } from "@ui/components/horizontalCarousel";
 import { ResponsiveCenterView } from "@ui/components/layout";
@@ -20,11 +20,11 @@ interface StrideBottomSheetProps {
 export const StrideBottomSheet = ({ onSaved }: StrideBottomSheetProps) => {
 	const { format } = useI18n();
 	const { userService } = useServices();
-	const user = useUser();
+	const advancedInfo = useUserAdvancedInfo();
 	const userSettings = useUserSettings();
 	const userStrideUnit = userSettings?.heightFormat || HeightUnit.cm;
 
-	const [stride, setStride] = useState(user?.stride ?? 0); // stride always in cm
+	const [stride, setStride] = useState(advancedInfo?.stride ?? 0); // stride always in cm
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isLoading, setLoading] = useState(false);
 
@@ -41,7 +41,7 @@ export const StrideBottomSheet = ({ onSaved }: StrideBottomSheetProps) => {
 		}
 	}, [stride, userStrideUnit]);
 
-	return !user ? null : (
+	return !advancedInfo ? null : (
 		<Container>
 			<TopContainer>
 				<Title>{format("profile_advanced_info.stride.bottom_sheet.title")}</Title>
@@ -55,15 +55,15 @@ export const StrideBottomSheet = ({ onSaved }: StrideBottomSheetProps) => {
 					</PickerValue>
 				)}
 				itemWidth={userStrideUnit === HeightUnit.cm ? 50 : 60}
-				onItemChange={(value) => setStride(userStrideUnit === HeightUnit.cm ? value : round2Digits(ftToCm(value)))}
+				onItemChange={(value) => setStride(userStrideUnit === HeightUnit.cm ? value : Math.round(ftToCm(value)))}
 				item={userStrideUnit === HeightUnit.cm ? Math.round(stride) : round2Digits(cmToFt(stride))}
 				animatedScrollToDefaultIndex={false}
 			/>
 			<SecondaryText
 				style={{ color: colors.primary, textAlign: "center" }}
 				onPress={() => {
-					// TODO API WAIT
 					setStride(80);
+					saveStride();
 				}}
 			>
 				{format("profile_advanced_info.stride.reset")}

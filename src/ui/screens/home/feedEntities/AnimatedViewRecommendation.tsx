@@ -1,3 +1,4 @@
+import { useServices } from "@core/services";
 import { FeedRecommendation } from "@domain/feed/type";
 import Fade from "@ui/components/fade";
 import React, { useEffect, useRef } from "react";
@@ -16,11 +17,15 @@ const AnimatedViewRecommendation: React.FC<Props> = ({ loading, recommendation }
 		duration: 1500,
 		useNativeDriver: true,
 	});
+	const userService = useServices().userService;
 
 	useEffect(() => {
-		if (!loading) animation.start();
-		else animation.stop();
-	}, [recommendationsAnim]);
+		if (!loading) {
+			recommendationsAnim.setValue(0);
+			animation.start();
+			setTimeout(() => userService.connectionStartTime.set(new Date().toISOString()), 1500);
+		}
+	}, [recommendationsAnim, loading]);
 
 	return (
 		<Animated.View
@@ -30,8 +35,8 @@ const AnimatedViewRecommendation: React.FC<Props> = ({ loading, recommendation }
 				transform: [{ translateY: recommendationsAnim }],
 			}}
 		>
-			<Fade isVisible isAnimatedOnMount duration={1000}>
-				<Recommendation recommendation={recommendation} style={{ margin: 10 }} />;
+			<Fade isVisible isAnimatedOnMount duration={2000}>
+				<Recommendation recommendation={recommendation} style={{ margin: 10 }} />
 			</Fade>
 		</Animated.View>
 	);

@@ -4,10 +4,10 @@ import { ISODay } from "@domain/common/type";
 import { DataControlState } from "@domain/measure/representation/api";
 import { useIs24h } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, trimData, TrimOptions, updateMode } from "@ui/business";
+import { DailyTags } from "@ui/components/dailyTags";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
-import { Tag } from "@ui/components/tag";
 import { GraphLegend } from "@ui/containers/graphLegend";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
@@ -37,9 +37,6 @@ export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 		measure: {
 			hooks: { useDailySpo2 },
 		},
-		calendar: {
-			hooks: { useDailyTags },
-		},
 	} = useRepresentations();
 
 	const dailySpo2 = useDailySpo2(selectedDay);
@@ -60,7 +57,6 @@ export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 		parsedLines.findIndex((line) => line.y == yMin),
 		parsedLines.findIndex((line) => line.y == yMax),
 	];
-	const tags = useDailyTags(selectedDay);
 
 	const averages: Averages = [];
 	if (
@@ -89,15 +85,7 @@ export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 		<View>
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
-				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
-					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-						{tags.map(({ name, id }) => (
-							<View key={id} style={{ marginLeft: 8 }}>
-								<Tag>{name}</Tag>
-							</View>
-						))}
-					</View>
-				)}
+				<DailyTags selectedDay={selectedDay}></DailyTags>
 				{isLoading ? (
 					<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
 						<Spinner size={35} />
@@ -116,9 +104,9 @@ export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 							shouldDrawCircles={false}
 							graphColor={colors.darkBlue}
 							valueFormatter="date"
-							valueFormatterPattern={[is24h ? "h'h'" : "h a", is24h ? "h'h':mm" : "h:mm a"]}
+							valueFormatterPattern={[is24h ? "H'h" : "h a", is24h ? "H'h'mm" : "h:mm a"]}
 							yMin={yMin}
-							yMax={yMax}
+							yMax={99}
 							yMinIndex={yMinIndex}
 							yMaxIndex={yMaxIndex}
 							mode={updatedMode}

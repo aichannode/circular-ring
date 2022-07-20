@@ -29,7 +29,6 @@ export class CalendarApi {
 		useForceRefresh?: boolean;
 	}): Promise<CalendarTag[]> {
 		const result = await this.apiService.get<CalendarTag[]>("/notes/me/tags", { useForceRefresh });
-		console.log("GETALLTAGS RESULT", result);
 		return result.data;
 	}
 

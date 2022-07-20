@@ -2,21 +2,17 @@ import { useServices } from "@core/services";
 import { round2Digits } from "@core/utils";
 import { cmToFt, HeightUnit, kgToLbs, UNDEFINED_HEIGHT, UNDEFINED_WEIGHT, WeightUnit } from "@domain/units";
 import { useUser, useUserSettings } from "@domain/user/hooks/useUser";
-import { languageKeys, Sex } from "@domain/user/user";
+import { Sex } from "@domain/user/user";
 import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { InfoListHeader, InfoListItem } from "@ui/components/infoList";
 import { ScrollScreen } from "@ui/components/scrollScreen";
 import { useI18n } from "@ui/i18n";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
-import { AdvancedInfoEditionBottomSheet } from "@ui/screens/profile/advancedInformation/advancedInfoEditionBottomSheet";
-import { advanceInfoI18nKey } from "@ui/screens/profile/advancedInformation/profileAdvancedInfoI18n";
 import { ConfirmSexBottomSheet } from "@ui/screens/profile/basicInformation/confirmSexBottomSheet";
 import { DeleteAccountBottomSheet } from "@ui/screens/profile/basicInformation/deleteAccountBottomSheet";
 import { HeightBottomSheet } from "@ui/screens/profile/basicInformation/heightBottomSheet";
 import { WeightBottomSheet } from "@ui/screens/profile/basicInformation/weightBottomSheet";
-import { getPreferredLangageCode } from "@utils/getPreferredLangageCode";
 import React, { useRef, useState } from "react";
-import { LocaleType, translations } from "../../../../wordings";
 
 export const ProfileInformationScreen = () => {
 	const { format, formatDate } = useI18n();
@@ -41,7 +37,6 @@ export const ProfileInformationScreen = () => {
 	const weightBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const confirmSexBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const deleteAccountBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
-	const editionBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 
 	return !user ? null : (
 		<ScrollScreen contentContainerStyle={{ paddingVertical: 0 }}>
@@ -90,16 +85,6 @@ export const ProfileInformationScreen = () => {
 			<InfoListHeader>{format("profile_info.other")}</InfoListHeader>
 			<InfoListItem name={format("profile_info.country")} value={`${user.country}`} />
 			<InfoListItem
-				name={format("profile_info.language")}
-				hasDisclosure
-				value={
-					user.language
-						? format(advanceInfoI18nKey(languageKeys, user.language))
-						: format(advanceInfoI18nKey(languageKeys, getPreferredLangageCode(Object.keys(translations))))
-				}
-				action={() => editionBottomSheetRef.current?.present()}
-			/>
-			<InfoListItem
 				style={{ marginTop: 20 }}
 				name={format("profile_info.delete")}
 				emphasize={true}
@@ -145,21 +130,6 @@ export const ProfileInformationScreen = () => {
 					onClose={() => {
 						confirmSexBottomSheetRef.current?.close();
 					}}
-				/>
-			</CircularBottomSheet>
-			<CircularBottomSheet snapPoints={[550]} ref={editionBottomSheetRef}>
-				<AdvancedInfoEditionBottomSheet
-					config={{
-						title: format("profile_info.language"),
-						description: undefined,
-						options: [...Object.keys(translations)] as LocaleType[],
-						translationSet: languageKeys,
-						saveProcess: async (option: LocaleType) => {
-							await userService.updateUserInfo({ language: option });
-						},
-					}}
-					currentOption={user.language ?? getPreferredLangageCode(Object.keys(translations))}
-					onClose={() => editionBottomSheetRef.current?.close()}
 				/>
 			</CircularBottomSheet>
 		</ScrollScreen>

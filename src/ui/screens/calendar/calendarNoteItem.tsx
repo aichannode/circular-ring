@@ -102,7 +102,6 @@ export const CalendarNoteItem: React.FC<CalendarNoteItemProps> = observer(functi
 				{canDelete && (
 					<Pressable
 						onPress={() => {
-							console.log("delete", deleteNote);
 							deleteNote(note);
 						}}
 					>

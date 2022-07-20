@@ -3,6 +3,7 @@ import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
 import { useIs24h } from "@domain/user/hooks/useUser";
 import { createActiveMode, isInActiveMode, isInCalibrationMode, trimData, TrimOptions, updateMode } from "@ui/business";
+import { DailyTags } from "@ui/components/dailyTags";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
@@ -37,9 +38,6 @@ export const DailyHeartRateGraph: React.FC<Props> = observer(function HeartRateG
 		measure: {
 			hooks: { useDailyHRNight, useDailyHRTrend },
 		},
-		calendar: {
-			hooks: { useDailyTags },
-		},
 	} = useRepresentations();
 
 	const dailyHRNight = useDailyHRNight(selectedDay);
@@ -65,7 +63,7 @@ export const DailyHeartRateGraph: React.FC<Props> = observer(function HeartRateG
 		xAxisMin = Math.min(...dailyTrimOptions.includes.map(([start, end]) => start));
 		xAxisMax = Math.min(...dailyTrimOptions.includes.map(([start, end]) => end));
 	}
-	const tags = useDailyTags(selectedDay);
+
 	const updatedMode = updateMode(mode, parsedData.length === 0);
 	const averages: Averages = [];
 	if (isInActiveMode(updatedMode) && constant.reference !== -1) {
@@ -91,15 +89,8 @@ export const DailyHeartRateGraph: React.FC<Props> = observer(function HeartRateG
 		<View>
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
-				{(isInActiveMode(mode) || isInCalibrationMode(mode)) && (
-					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-						{tags.map(({ name, id }) => (
-							<View key={id} style={{ marginLeft: 8 }}>
-								<Tag>{name}</Tag>
-							</View>
-						))}
-					</View>
-				)}
+				<DailyTags selectedDay={selectedDay} />
+
 				{isLoading ? (
 					<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
 						<Spinner size={35} />

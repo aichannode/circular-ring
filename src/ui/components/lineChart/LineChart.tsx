@@ -1,6 +1,6 @@
 import { isDefined } from "@domain/common/business";
 import { Point, Points } from "@domain/measure/representation/api";
-import { createActiveMode, isInActiveMode, isInCalibrationMode, isInDisabledMode } from "@ui/business";
+import { createActiveMode, isInActiveMode, isInCalibrationMode } from "@ui/business";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import * as scale from "d3-scale";
@@ -124,20 +124,13 @@ export function LineChart({
 	const [minPosition, setMinPosition] = useState<Position | null>(null);
 
 	const maxDataLength = !isMultipleLines ? data.length : Math.max(...(daysItem ?? []).map(({ lines }) => lines.length));
-	if (__DEV__) {
-		// XXX: pre-conditions:
-		if (maxDataLength === 0 && !isInDisabledMode(mode)) {
-			throw new Error(
-				`Only 'disabled' mode can render LineChart without data. Found '${mode.type}' mode without data.`
-			);
-		}
-	}
 	const [xMin, xMax] = !isMultipleLines
 		? [Math.min(...data.map((point) => point.x)), Math.max(...data.map((point) => point.x))]
 		: [0, maxDataLength - 1];
 	const shouldDisplay =
-		(isInActiveMode(mode) || isInCalibrationMode(mode)) &&
-		(data.filter((line) => line.y > 0).length || daysItem?.[0].lines.length);
+		((isInActiveMode(mode) || isInCalibrationMode(mode)) &&
+			(data.filter((line) => line.y > 0).length || daysItem?.[0].lines.length)) ||
+		movingAverage?.length;
 	let linspace = isDefined(yMin) && isDefined(yMax) ? ((yMax - yMin) * 10) / 100 : 0;
 	if (yMin === yMax && isDefined(yMin) && isDefined(yMax)) {
 		linspace = Math.abs((yMax * 10) / 100);
@@ -195,15 +188,17 @@ export function LineChart({
 			granularity: 1,
 			valueFormatter: yValueFormatter,
 			axisLineColor: processColor("white"),
-			limitLines: averages?.map(({ value, color }) => {
-				return {
-					limit: value,
-					lineColor: processColor(color),
-					lineDashPhase: 2,
-					lineWidth: 2,
-					lineDashLengths: [30, 15],
-				};
-			}),
+			limitLines: averages
+				? averages?.map(({ value, color }) => {
+						return {
+							limit: value ?? 0,
+							lineColor: processColor(color),
+							lineDashPhase: 2,
+							lineWidth: 2,
+							lineDashLengths: [30, 15],
+						};
+				  })
+				: undefined,
 		},
 		right: {
 			enabled: false,

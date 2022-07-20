@@ -1,3 +1,4 @@
+import { useUserCalibrationRemainingDays } from "@domain/user/hooks/useUser";
 import { colors } from "@ui/styles/colors";
 import React from "react";
 import LinearGradient from "react-native-linear-gradient";
@@ -9,30 +10,34 @@ interface StreakBadgeProps {
 }
 
 export const StreakBadge = ({ leaderboardRank, streak }: StreakBadgeProps) => {
+	const remainingCalibDays = useUserCalibrationRemainingDays();
+
 	return (
-		<Gradient colors={[...colors.gradient.orange]} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0.5 }}>
-			<Division>
-				<LightText>Rank</LightText>
-			</Division>
-			<Division>
-				<LightText>Best Streak</LightText>
-			</Division>
-			<Division>
-				<BoldText>{leaderboardRank}</BoldText>
-			</Division>
-			<Division>
-				<StarContainer>
-					<Star resizeMode="contain" source={require("@assets/images/starGold.png")}></Star>
-					<BoldText>{streak} days</BoldText>
-				</StarContainer>
-			</Division>
+		<>
+			<Gradient colors={[...colors.gradient.orange]} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0.5 }}>
+				<Division>
+					<LightText>Rank</LightText>
+				</Division>
+				<Division>
+					<LightText>Best Streak</LightText>
+				</Division>
+				<Division>
+					<BoldText>{leaderboardRank}</BoldText>
+				</Division>
+				<Division>
+					<StarContainer>
+						{remainingCalibDays <= 0 && (
+							<Star resizeMode="contain" source={require("@assets/images/starGold.png")}></Star>
+						)}
+						<BoldText>{remainingCalibDays <= 0 ? `${streak} days` : "-"} </BoldText>
+					</StarContainer>
+				</Division>
+				<LittleVerticalBar />
+			</Gradient>
 			<Medal resizeMode="contain" source={require("@assets/images/medal.png")}></Medal>
-			<LittleVerticalBar />
-		</Gradient>
+		</>
 	);
 };
-
-// user.lifetime.best.streak
 
 const StarContainer = styled.View`
 	display: flex;
@@ -58,7 +63,7 @@ const Star = styled.Image`
 
 const Medal = styled.Image`
 	position: absolute;
-	top: -30px;
+	top: -5px;
 	width: 100%;
 `;
 

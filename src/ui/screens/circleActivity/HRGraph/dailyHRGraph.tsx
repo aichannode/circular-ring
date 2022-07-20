@@ -12,6 +12,7 @@ import {
 	TrimOptions,
 	updateMode,
 } from "@ui/business";
+import { DailyTags } from "@ui/components/dailyTags";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
@@ -46,9 +47,6 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 	const {
 		measure: {
 			hooks: { useDailyHR },
-		},
-		calendar: {
-			hooks: { useDailyTags },
 		},
 	} = useRepresentations();
 
@@ -85,7 +83,6 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 		parsedLines.findIndex((line) => line.y == yMin),
 		parsedLines.findIndex((line) => line.y == yMax),
 	];
-	const tags = useDailyTags(selectedDay);
 	const updatedMode = updateMode(mode, parsedLines.length === 0);
 	const averages: Averages = [];
 	if (isInActiveMode(updatedMode) && constant.reference !== -1) {
@@ -110,15 +107,8 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 	return (
 		<View>
 			<GraphContainer style={{ height: 400 }}>
-				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
-					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-						{tags.map(({ name, id }) => (
-							<View key={id} style={{ marginLeft: 8 }}>
-								<Tag>{name}</Tag>
-							</View>
-						))}
-					</View>
-				)}
+				<DailyTags selectedDay={selectedDay}></DailyTags>
+
 				{isLoading ? (
 					<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
 						<Spinner size={35} />
@@ -136,7 +126,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 								shouldDrawCircles={false}
 								graphColor={colors.red}
 								valueFormatter={"date"}
-								valueFormatterPattern={[is24h ? "h'h'" : "h a", is24h ? "h'h':mm" : "h:mm a"]}
+								valueFormatterPattern={[is24h ? "H'h" : "h a", is24h ? "H'h'mm" : "h:mm a"]}
 								yMin={yMin}
 								yMax={yMax}
 								yMinIndex={yMinIndex}

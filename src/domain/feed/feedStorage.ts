@@ -1,5 +1,5 @@
 import { Storage } from "@core/storage";
-import { NotificationsState, UserInputStates, UserInputState } from "./type";
+import { NotificationsState, UserInputState, UserInputStates } from "./type";
 
 enum StorageKeys {
 	NOTIFICATIONS = "@feed/notifications",
@@ -39,8 +39,6 @@ export class FeedStorage {
 	 */
 	async loadRecommendationsState() {
 		const data = await Storage.getAllIdsForKey(StorageKeys.RECOMMENDATIONS);
-		/* await Promise.all(data.map(id => Storage.removeWithId(StorageKeys.RECOMMENDATIONS, id)))
-		console.log("removed") */
 		const recos = await Promise.all(
 			// Aggregate all stored recommandations
 			data.map((id) => Storage.loadWithId<UserInputState>(StorageKeys.RECOMMENDATIONS, id))

@@ -5,7 +5,7 @@ import { ISODay } from "@domain/common/type";
 import { DataControlState, Points } from "@domain/measure/representation/api";
 import { TemperatureFormat } from "@domain/units";
 import { useIsUSCS, useUserSettings } from "@domain/user/hooks/useUser";
-import { createActiveMode, isInActiveMode, isInCalibrationMode, updateMode } from "@ui/business";
+import { createActiveMode, isInActiveMode, updateMode } from "@ui/business";
 import { BarChart } from "@ui/components/measure/barChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
 import { Spinner } from "@ui/components/spinner";
@@ -71,7 +71,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 	const averages: Averages = [];
 	if (isDefined(constant)) {
 		averages.push({
-			value: constant.average,
+			value: !isCelcius ? convertToF(constant.average) : constant.average,
 			color: colors.darkBlue,
 		});
 	}
@@ -86,7 +86,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 		const date = moment(lines[x].x).format("Y-MM-DD") as ISODay;
 		setTags(useDailyTags(date));
 	};
-	const yMax = lines.length > 0 ? Math.max(...lines.map((line) => line.y)) : 0;
+	const yMax = lines.length > 0 ? Math.max(...lines.map((line) => (line.y === -1000 ? 0 : Math.abs(line.y)))) : 0;
 
 	const toGetAverageValue = (value: number | undefined): string => {
 		if (!isDefined(value)) return "-";
@@ -102,7 +102,7 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 		<View>
 			{/** Wait for available data on week/month */}
 			<GraphContainer style={{ height: 400 }}>
-				{(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) && (
+				{isInActiveMode(updatedMode) && (
 					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
 						{tags.map(({ name, id }) => (
 							<View key={id} style={{ marginLeft: 8 }}>
@@ -126,9 +126,9 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 							valueFormatter={valueFormatter}
 							graphColor={colors.business.sleepPrimary}
 							onSelect={(x) => toUpdateTag(x)}
-							mode={updatedMode}
 							yMin={-yMax}
 							yMax={yMax}
+							mode={updatedMode}
 							mapMarker={(el) =>
 								`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
 									el.y > 0 ? "+" + el.y : el.y
@@ -138,7 +138,6 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 						/>
 						<View style={{ marginTop: 20 }}>
 							<GraphLegend
-								mode={updatedMode}
 								rows={[
 									{
 										label: format("activity.energy_score.7day"),
