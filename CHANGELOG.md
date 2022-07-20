@@ -1,3 +1,10 @@
+## [1.6.14](https://gitlab.com/circularing/mobile/app/compare/v1.6.13...v1.6.14) (2022-07-20)
+
+
+### Bug Fixes
+
+* sleep HRV graph keep only trend line ([34e8b5e](https://gitlab.com/circularing/mobile/app/commit/34e8b5edd9fc1f29118dd1017f4fd265aeca58d9))
+
 ## [1.6.13](https://gitlab.com/circularing/mobile/app/compare/v1.6.12...v1.6.13) (2022-07-19)
 
 
