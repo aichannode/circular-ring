@@ -680,7 +680,7 @@
 	"calories.burned": "verbrannte Kalorien",
 	"30day.average": "30-Tage-Durchschnitt",
 	"home.bottomsheet.ring.data.rate.title": "Wählen Sie Ihren Datenmodus",
-	"home.bottomsheet.ring.data.rate.description": "Wählen Sie den gewünschten Modus. ”Performance” erfasst die Daten häufiger, wirkt sich aber stärker auf die Akkulaufzeit aus. ”Eco” erfasst die Daten weniger häufig, bietet aber eine längere Akkulaufzeit. Diese Einstellung kann auch im Menü ”Mein Ring” geändert werden.",
+	"home.bottomsheet.ring.data.rate.description": "Wählen Sie den gewünschten Modus. ”Performance” erfasst die Daten häufiger, wirkt sich aber stärker auf die Akkulaufzeit aus. ”Eco” erfasst die Daten weniger häufig, bietet aber eine längere Akkulaufzeit. Diese Einstellung kann auch im Menü ”Mein Ring” geändert werden.\n\nMit dem Eco Modus haben Sie eine längere Akkulaufzeit, aber Sie haben keine Details zu Ihrer Schlafphase.",
 	"home.bottomsheet.ring.data.rate.hide": "Diese Meldung nicht mehr anzeigen",
 	"ring.data_mode": "Datenmodus",
 	"ring.data_mode.eco": "Eco",
