@@ -1,8 +1,6 @@
 import { useServices } from "@core/services";
 import { useWaitForRingRegistration } from "@domain/appState/appStateHooks";
-import { DeviceConnectionState, UpdateState } from "@domain/device/bleDeviceService";
 import { useDeviceStored } from "@domain/device/hooks";
-import { UserRing } from "@domain/ring/ring";
 import { useAuthenticatedUserEmail, useUser } from "@domain/user/hooks/useUser";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
@@ -14,7 +12,6 @@ import { ForgotPasswordScreen } from "@ui/screens/login/forgotPasswordScreen";
 import { LoginScreen } from "@ui/screens/login/loginScreen";
 import { ResetTokenScreen } from "@ui/screens/login/resetTokenScreen";
 import { LoginOrSignUpScreen } from "@ui/screens/loginOrRegister/loginOrSignUpScreen";
-import { RingFirmwareUpdate } from "@ui/screens/myRing/firmwareUpdate/ringFirmwareUpdate";
 import { OnboardingPersonalInfo1Screen } from "@ui/screens/onboarding/personalInfo/onboardingPersonalInfo1Screen";
 import { OnboardingPersonalInfo2Screen } from "@ui/screens/onboarding/personalInfo/onboardingPersonalInfo2Screen";
 import { OnboardingWearInfoScreen } from "@ui/screens/onboarding/personalInfo/onboardingWearInfoScreen";
@@ -40,22 +37,22 @@ export interface RootNavigatorProps {
 
 export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }) => {
 	const isAuthenticated = !!useAuthenticatedUserEmail();
-	const { appStateService, ringApi, bleDeviceService } = useServices();
+	const { appStateService } = useServices();
 	const user = useUser();
 	const hasUser = !!user;
 	const deviceStored = useDeviceStored(); // useObservable(useServices().bleDeviceService.favoriteDevice);
-	const userRings = useObservable(appStateService.userRings);
+	// const userRings = useObservable(appStateService.userRings);
 	const hasReachedHomeScreen = useObservable(appStateService.hasReachedHomeScreen);
-	const currentRing: UserRing = userRings.filter((ring) => ring.connected)[0];
-	const lastFirmwareVersion = useObservable(ringApi.firmwareVersion);
+	// const currentRing: UserRing = userRings.filter((ring) => ring.connected)[0];
+	// const lastFirmwareVersion = useObservable(ringApi.firmwareVersion);
 	const [useByPass, setByPass] = useState(false);
-	const [byPassForcedFirmwareUpdate, setByPassForcedFirmwareUpdate] = useState(false);
-	const updateState = useObservable(bleDeviceService.updateState);
-	const connectionState = useObservable(bleDeviceService.connectionState);
+	// const [byPassForcedFirmwareUpdate, setByPassForcedFirmwareUpdate] = useState(false);
+	// const updateState = useObservable(bleDeviceService.updateState);
+	// const connectionState = useObservable(bleDeviceService.connectionState);
 	const wait = useWaitForRingRegistration();
-	const {
-		cognitoAuthService: { payload },
-	} = useServices();
+	// const {
+	// 	cognitoAuthService: { payload },
+	// } = useServices();
 
 	useEffect(() => {
 		if (user?.language) {
@@ -106,23 +103,23 @@ export const RootNavigator: React.FC<RootNavigatorProps> = ({ onChangeLanguage }
 		);
 	}
 
-	const firmwareIsNotTheLast = currentRing && lastFirmwareVersion !== currentRing.firmware && lastFirmwareVersion;
-	const isNotUpdating = updateState.status !== UpdateState.IDLE.status;
+	// const firmwareIsNotTheLast = currentRing && lastFirmwareVersion !== currentRing.firmware && lastFirmwareVersion;
+	// const isNotUpdating = updateState.status !== UpdateState.IDLE.status;
 
-	if (
-		!wait &&
-		(isNotUpdating || firmwareIsNotTheLast) &&
-		!byPassForcedFirmwareUpdate &&
-		connectionState === DeviceConnectionState.CONNECTED &&
-		hasReachedHomeScreen
-	) {
-		return (
-			<RingFirmwareUpdate
-				showCross={payload.get()?.["cognito:groups"]?.some((groupName) => groupName === "admin")}
-				setByPassForcedFirmwareUpdate={setByPassForcedFirmwareUpdate}
-			></RingFirmwareUpdate>
-		);
-	}
+	// if (
+	// 	!wait &&
+	// 	(isNotUpdating || firmwareIsNotTheLast) &&
+	// 	!byPassForcedFirmwareUpdate &&
+	// 	connectionState === DeviceConnectionState.CONNECTED &&
+	// 	hasReachedHomeScreen
+	// ) {
+	// 	return (
+	// 		<RingFirmwareUpdate
+	// 			showCross={payload.get()?.["cognito:groups"]?.some((groupName) => groupName === "admin")}
+	// 			setByPassForcedFirmwareUpdate={setByPassForcedFirmwareUpdate}
+	// 		></RingFirmwareUpdate>
+	// 	);
+	// }
 
 	return (
 		<HomeDrawer.Navigator
