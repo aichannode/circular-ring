@@ -680,7 +680,7 @@
 	"calories.burned": "calorías quemadas",
 	"30day.average": "Media de 30 días",
 	"home.bottomsheet.ring.data.rate.title": "Elige tu modo de datos",
-	"home.bottomsheet.ring.data.rate.description": "Elige el modo que quieras. El modo Rendimiento realiza un seguimiento de las métricas con mayor frecuencia, pero afecta más a la duración de la batería, y el modo Eco realiza un seguimiento de las métricas con menor frecuencia, pero proporciona una mayor duración de la batería. Este ajuste también se puede editar en el menú ”mi anillo./n/nCon el modo eco, tendrás una mayor duración de la batería, pero no tendrás los detalles de tu fase de sueño.",
+	"home.bottomsheet.ring.data.rate.description": "Elige el modo que quieras. El modo Rendimiento realiza un seguimiento de las métricas con mayor frecuencia, pero afecta más a la duración de la batería, y el modo Eco realiza un seguimiento de las métricas con menor frecuencia, pero proporciona una mayor duración de la batería. Este ajuste también se puede editar en el menú ”mi anillo.\n\nCon el modo eco, tendrás una mayor duración de la batería, pero no tendrás los detalles de tu fase de sueño.",
 	"home.bottomsheet.ring.data.rate.hide": "No volver a mostrar este mensaje",
 	"ring.data_mode": "Modo de datos",
 	"ring.data_mode.eco": "Eco",

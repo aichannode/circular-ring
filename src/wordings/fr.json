@@ -679,7 +679,7 @@
 	"calories.burned": "calories brûlées",
 	"30day.average": "Moyenne 30 jours",
 	"home.bottomsheet.ring.data.rate.title" : "Choisissez votre mode de données",
-	"home.bottomsheet.ring.data.rate.description" : "Choisissez le mode qui vous convient. Performance suit les mesures plus souvent mais affecte davantage la durée de vie de la batterie et Eco suit les mesures moins souvent mais offre une durée de vie de la batterie plus longue. Ce paramètre est également modifiable dans le menu “ma bague”./n/nAvec le mode éco, vous aurez une plus grande autonomie, mais vous n'aurez pas les détails de vos phases de sommeil.",
+	"home.bottomsheet.ring.data.rate.description" : "Choisissez le mode qui vous convient. Performance suit les mesures plus souvent mais affecte davantage la durée de vie de la batterie et Eco suit les mesures moins souvent mais offre une durée de vie de la batterie plus longue. Ce paramètre est également modifiable dans le menu “ma bague”.\n\nAvec le mode éco, vous aurez une plus grande autonomie, mais vous n'aurez pas les détails de vos phases de sommeil.",
 	"home.bottomsheet.ring.data.rate.hide" : "Ne plus afficher ce message",
 	"ring.data_mode" : "Mode données",
 	"ring.data_mode.eco" : "Eco",

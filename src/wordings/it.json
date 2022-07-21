@@ -679,7 +679,7 @@
 	"calories.burned": "calorie bruciate",
 	"30day.average": "Media di 30 giorni",
 	"home.bottomsheet.ring.data.rate.title": "Scegli la tua modalità dati",
-	"home.bottomsheet.ring.data.rate.description": "Scegli la modalità che preferisci. Performance tiene traccia delle metriche più spesso, ma influisce maggiormente sulla durata della batteria, mentre Eco tiene traccia delle metriche meno spesso, ma garantisce una maggiore durata della batteria. Questa impostazione è modificabile anche nel menu ”Il mio anello”./n/nCon la modalità eco, la durata della batteria sarà maggiore, ma non sarà possibile conoscere i dettagli della fase di sonno.",
+	"home.bottomsheet.ring.data.rate.description": "Scegli la modalità che preferisci. Performance tiene traccia delle metriche più spesso, ma influisce maggiormente sulla durata della batteria, mentre Eco tiene traccia delle metriche meno spesso, ma garantisce una maggiore durata della batteria. Questa impostazione è modificabile anche nel menu ”Il mio anello”.\n\nCon la modalità eco, la durata della batteria sarà maggiore, ma non sarà possibile conoscere i dettagli della fase di sonno.",
 	"home.bottomsheet.ring.data.rate.hide": "Non mostrare più questo messaggio",
 	"ring.data_mode": "Modalità dati",
 	"ring.data_mode.eco": "Eco",
