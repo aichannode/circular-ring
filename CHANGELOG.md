@@ -1,3 +1,11 @@
+## [1.6.15](https://gitlab.com/circularing/mobile/app/compare/v1.6.14...v1.6.15) (2022-07-21)
+
+
+### Bug Fixes
+
+* quote missing cause crash on android ([2509b2e](https://gitlab.com/circularing/mobile/app/commit/2509b2e2ea7706a92d6612710e4108d0cd81272d))
+* remove force update firmware screen ([89aefc6](https://gitlab.com/circularing/mobile/app/commit/89aefc6be5210e6f053727d0f62af80d90e00337))
+
 ## [1.6.14](https://gitlab.com/circularing/mobile/app/compare/v1.6.13...v1.6.14) (2022-07-20)
 
 
