@@ -1,3 +1,10 @@
+## [1.6.17](https://gitlab.com/circularing/mobile/app/compare/v1.6.16...v1.6.17) (2022-07-22)
+
+
+### Bug Fixes
+
+* reset showDataRatePopup on logout ([f361e3d](https://gitlab.com/circularing/mobile/app/commit/f361e3d355d7f5ac143ef087cca9bdb759f43b82))
+
 ## [1.6.16](https://gitlab.com/circularing/mobile/app/compare/v1.6.15...v1.6.16) (2022-07-22)
 
 
