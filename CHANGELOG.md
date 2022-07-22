@@ -1,3 +1,10 @@
+## [1.6.18](https://gitlab.com/circularing/mobile/app/compare/v1.6.17...v1.6.18) (2022-07-22)
+
+
+### Bug Fixes
+
+* (CIR-1114) no data mode on sleep graph when awake == 0, no data on deep sleep and rem sleep contributor if it == 0 ([082c6ca](https://gitlab.com/circularing/mobile/app/commit/082c6ca0f6742be8d42c32d03e66b487c16e39e8))
+
 ## [1.6.17](https://gitlab.com/circularing/mobile/app/compare/v1.6.16...v1.6.17) (2022-07-22)
 
 
