@@ -29,7 +29,7 @@ export function DataModeBottomSheet({ onClose }: { onClose: () => void }) {
 		setLoading(true);
 		try {
 			await bleDeviceService.write(`${Channel.MODE}${options[0] === selectedOption ? "0" : "1"}`);
-			await appStateService.performanceMode.set(options[0] === selectedOption ? false : true);
+			await appStateService.performanceMode.set(options[0] !== selectedOption);
 		} catch (error) {
 			setErrorMessage(format("global.default_error"));
 		}
