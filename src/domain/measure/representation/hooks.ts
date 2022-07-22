@@ -751,7 +751,10 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 							}),
 						},
 						[MetricType.UserDailyPercREMStageScore]: {
-							value: toOptional<number>(data, MetricType.UserDailyPercREMStage),
+							value:
+								toOptional<number>(data, MetricType.UserDailyPercREMStage) === 0
+									? undefined
+									: toOptional<number>(data, MetricType.UserDailyPercREMStage),
 							thresholdLow: getOrElse(data, MetricType.UserDailyPercREMStageScoreGoalMin, 0.8),
 							thresholdHigh: getOrElse(data, MetricType.UserDailyPercREMStageScoreGoalMax, 0.9),
 							percent: toOptional<number>(data, MetricType.UserDailyPercREMStageScore),
@@ -762,7 +765,10 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 							}),
 						},
 						[MetricType.UserDailyPercDeepStage]: {
-							value: toOptional<number>(data, MetricType.UserDailyPercDeepStage),
+							value:
+								toOptional<number>(data, MetricType.UserDailyPercDeepStage) === 0
+									? undefined
+									: toOptional<number>(data, MetricType.UserDailyPercDeepStage),
 							thresholdLow: getOrElse(data, MetricType.UserDailyPercDeepStageScoreGoalMin, 0.8),
 							thresholdHigh: getOrElse(data, MetricType.UserDailyPercDeepStageScoreGoalMax, 0.9),
 							percent: toOptional<number>(data, MetricType.UserDailyPercDeepStageScore),
