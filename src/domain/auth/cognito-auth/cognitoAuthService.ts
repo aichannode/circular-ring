@@ -43,7 +43,7 @@ export class CognitoAuthService<
 	}
 
 	async init(): Promise<void> {
-		return new Promise((resolve) => {
+		return new Promise((resolve, errorHandler) => {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			this._userPool.storage.sync((err, result) => {
@@ -58,6 +58,7 @@ export class CognitoAuthService<
 								resolve();
 							} else {
 								this.logger.warn("Refresh user failed", error);
+								errorHandler(error);
 							}
 						});
 					} else {

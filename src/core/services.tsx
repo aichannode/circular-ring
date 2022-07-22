@@ -114,7 +114,11 @@ export function useServices(): Services {
 
 export async function initializeServices() {
 	apiService.init(cognitoAuthService);
-	await cognitoAuthService.init(); // must be initialized first
+	try {
+		await cognitoAuthService.init(); // must be initialized first
+	} catch (e) {
+		await userService.logout();
+	}
 	return Promise.all(
 		Object.values(services)
 			.filter((service) => service !== cognitoAuthService)
