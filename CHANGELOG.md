@@ -1,3 +1,10 @@
+## [1.6.16](https://gitlab.com/circularing/mobile/app/compare/v1.6.15...v1.6.16) (2022-07-22)
+
+
+### Bug Fixes
+
+* token refresh was getting the loading screen stuck if the token expired or is a bad one ([aa1be7b](https://gitlab.com/circularing/mobile/app/commit/aa1be7bb98e587647a40cbc5252fe53320cf206d))
+
 ## [1.6.15](https://gitlab.com/circularing/mobile/app/compare/v1.6.14...v1.6.15) (2022-07-21)
 
 
