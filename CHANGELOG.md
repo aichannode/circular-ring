@@ -1,3 +1,25 @@
+## [1.6.17](https://gitlab.com/circularing/mobile/app/compare/v1.6.16...v1.6.17) (2022-07-22)
+
+
+### Bug Fixes
+
+* reset showDataRatePopup on logout ([f361e3d](https://gitlab.com/circularing/mobile/app/commit/f361e3d355d7f5ac143ef087cca9bdb759f43b82))
+
+## [1.6.16](https://gitlab.com/circularing/mobile/app/compare/v1.6.15...v1.6.16) (2022-07-22)
+
+
+### Bug Fixes
+
+* token refresh was getting the loading screen stuck if the token expired or is a bad one ([aa1be7b](https://gitlab.com/circularing/mobile/app/commit/aa1be7bb98e587647a40cbc5252fe53320cf206d))
+
+## [1.6.15](https://gitlab.com/circularing/mobile/app/compare/v1.6.14...v1.6.15) (2022-07-21)
+
+
+### Bug Fixes
+
+* quote missing cause crash on android ([2509b2e](https://gitlab.com/circularing/mobile/app/commit/2509b2e2ea7706a92d6612710e4108d0cd81272d))
+* remove force update firmware screen ([89aefc6](https://gitlab.com/circularing/mobile/app/commit/89aefc6be5210e6f053727d0f62af80d90e00337))
+
 ## [1.6.14](https://gitlab.com/circularing/mobile/app/compare/v1.6.13...v1.6.14) (2022-07-20)
 
 

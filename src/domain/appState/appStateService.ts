@@ -71,6 +71,7 @@ export class AppStateService {
 		this.hasReachedHomeScreen.set(false);
 		this.showUpdateBanner.set({ display: false, firmwareVersion: "" });
 		this.performanceMode.set(false);
+		this.showDataRatePopup.set(true);
 	}
 
 	async init() {
