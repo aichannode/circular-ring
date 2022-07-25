@@ -369,7 +369,7 @@
 	"banner.app_update.title": "Mise à jour de l'application disponible",
 	"banner.app_update.description": "Consultez la dernière version dans votre magasin d'applications.",
 	"banner.firmware_update.title": "Mise à jour du firmware disponible",
-	"banner.firmware_update.description": "Cliquez ici pour télécharger et profiter des dernières fonctionnalités.",
+	"banner.firmware_update.description": "Cliquez-ici pour télécharger et profiter des dernières fonctionnalités.",
 	"banner.calibration.title": "Calibration",
 	"banner.calibration.message": "Continuez à porter votre bague pendant toute la période de calibration de {days} jours pour obtenir de meilleurs résultats !",
 	"banner.disturbances.title": "Chronotype",
@@ -679,11 +679,11 @@
 	"calories.burned": "calories brûlées",
 	"30day.average": "Moyenne 30 jours",
 	"home.bottomsheet.ring.data.rate.title" : "Choisissez votre mode de données",
-	"home.bottomsheet.ring.data.rate.description" : "Choisissez le mode qui vous convient. Performance suit les mesures plus souvent mais affecte davantage la durée de vie de la batterie et Eco suit les mesures moins souvent mais offre une durée de vie de la batterie plus longue. Ce paramètre est également modifiable dans le menu “ma bague”.\n\nAvec le mode éco, vous aurez une plus grande autonomie, mais vous n'aurez pas les détails de vos phases de sommeil.",
+	"home.bottomsheet.ring.data.rate.description" : "Performance suit les mesures plus souvent mais affecte davantage la durée de vie de la batterie et Eco suit les mesures moins souvent mais offre une durée de vie de la batterie plus longue. Ce paramètre est également modifiable dans le menu “ma bague”.\n\nAttention: Avec le mode éco, vous aurez une plus grande autonomie, mais vous n'aurez pas le détail de vos phases de sommeil.",
 	"home.bottomsheet.ring.data.rate.hide" : "Ne plus afficher ce message",
 	"ring.data_mode" : "Mode données",
 	"ring.data_mode.eco" : "Eco",
 	"ring.data_mode.performance" : "Performance",
 	"ring.data_mode.desc.part1" : "Les mesures cardiaques seront acquises tous les ",
-	"ring.data_mode.desc.part2" : " minutes en dehors des sessions de sport (un mode sport avec des mesures continues se déclenche automatiquement)"
+	"ring.data_mode.desc.part2" : " minutes en dehors des sessions de sport (un mode sport avec des mesures continues se déclenche automatiquement).\n\nRemarque : le mode éco permet d'augmenter l'autonomie de la batterie, mais vous n'aurez pas le détail de vos phases de sommeil."
 }

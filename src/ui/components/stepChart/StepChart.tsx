@@ -292,7 +292,7 @@ export function StepChart({
 				flexDirection: yAxisRight ? "row-reverse" : "row",
 			}}
 		>
-			<View style={{ marginBottom: 0, flexDirection: "row" }}>{yValues.length > 0 && yAxis}</View>
+			<View style={{ marginBottom: 0, flexDirection: "row" }}>{yValues.length > 0 && shouldDisplay && yAxis}</View>
 			<View
 				onTouchStart={(evt) => {
 					if (canDisplayTooltip) {
@@ -385,7 +385,7 @@ export function StepChart({
 						width: "100%",
 					}}
 				>
-					{!hideXAxis && xValues.length > 0 && xAxis}
+					{!hideXAxis && xValues.length > 0 && shouldDisplay && xAxis}
 				</View>
 			</View>
 		</View>

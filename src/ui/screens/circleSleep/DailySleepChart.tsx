@@ -1,7 +1,7 @@
 import { ISODay } from "@domain/common/type";
 import { DailySleepData } from "@domain/measure/representation/api";
 import { SleepStage } from "@domain/measure/type";
-import { createActiveMode } from "@ui/business";
+import { createActiveMode, updateMode } from "@ui/business";
 import { DailyTags } from "@ui/components/dailyTags";
 import { Mode } from "@ui/type";
 import produce from "immer";
@@ -42,14 +42,15 @@ export function DailySleepChart({ data, selectedDay, mode = createActiveMode() }
 			});
 		}
 	});
+	const updatedMode = updateMode(mode, awakeDuration === undefined || awakeDuration?.duration === 0);
 	return (
 		<View style={{ flex: 1, position: "relative" }}>
 			<DailyTags selectedDay={selectedDay} />
 
-			<Hypnogram data={correctedStages} mode={mode} />
+			<Hypnogram data={correctedStages} mode={updatedMode} />
 			<View style={{ marginTop: 30 }}>
 				<SleepLegend
-					mode={mode}
+					mode={updatedMode}
 					REMDuration={REMDuration}
 					awakeDuration={awakeDuration}
 					lightDuration={lightDuration}

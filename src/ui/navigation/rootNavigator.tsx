@@ -1,6 +1,7 @@
 import { useServices } from "@core/services";
 import { useWaitForRingRegistration } from "@domain/appState/appStateHooks";
 import { useDeviceStored } from "@domain/device/hooks";
+// import { UserRing } from "@domain/ring/ring";
 import { useAuthenticatedUserEmail, useUser } from "@domain/user/hooks/useUser";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
