@@ -680,11 +680,11 @@
 	"calories.burned": "verbrande calorieën",
 	"30day.average": "30 dagen gemiddelde",
 	"home.bottomsheet.ring.data.rate.title": "Pick your Data mode",
-	"home.bottomsheet.ring.data.rate.description": "Kies welke modus je wilt. Prestaties houdt vaker metingen bij maar heeft meer invloed op de levensduur van de batterij en eco zal minder vaak metingen bijhouden maar zorgt voor een langere levensduur van de batterij. Deze instelling kan ook worden aangepast in het menu ”mijn ring”.\n\nOpmerking: Met de eco modus hebt u een langere levensduur van de batterij, maar hebt u niet de details van uw slaapfase.",
+	"home.bottomsheet.ring.data.rate.description": "Kies welke modus je wilt. Prestaties houdt vaker metingen bij maar heeft meer invloed op de levensduur van de batterij en eco zal minder vaak metingen bijhouden maar zorgt voor een langere levensduur van de batterij. Deze instelling kan ook worden aangepast in het menu ”mijn ring”.\n\nOpmerking: In de eco-modus gaat de batterij langer mee, maar krijgt u geen details over uw slaapfases.",
 	"home.bottomomsheet.ring.data.rate.hide": "Laat dit bericht niet meer zien",
 	"ring.data_mode": "Gegevensmodus",
 	"ring.data_mode.eco": "Eco",
 	"ring.data_mode.performance": "Performance",
 	"ring.data_mode.desc.part1": "Hartmetriek zal worden verworven elke ",
-	"ring.data_mode.desc.part2": " minuten buiten sportsessies (een sportmodus met continue metingen triggert automatisch).\n\nOpmerking: De eco-modus zorgt voor een langere levensduur van de batterij, maar u beschikt niet over de details van uw slaapfase"
+	"ring.data_mode.desc.part2": " minuten buiten sportsessies (een sportmodus met continue metingen triggert automatisch).\n\nOpmerking: De eco-modus zorgt voor een langere levensduur van de batterij, maar u beschikt niet over de details van uw slaapfasen."
 }
