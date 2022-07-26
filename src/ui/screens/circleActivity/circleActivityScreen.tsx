@@ -79,6 +79,8 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	} = useRepresentations();
 	const { format } = useI18n();
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
+	const updatedSelectedDay =
+		moment(selectedDay).utcOffset() < 0 ? moment(selectedDay).subtract(1, "day").format("YYYY-MM-DD") : selectedDay;
 	const [dailyActivitiesData, setDailyActivity] = useState<Record<Activities, ActivityDetail> | undefined>(undefined);
 	const [isLoading, setLoading] = useState<boolean>(true);
 	const [activityIntensity, setData] = useState<DailyActivityIntensityData>({
@@ -92,8 +94,8 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 		},
 		sportSessionDates: [],
 	});
-	const energyScoreDetails = useDailyEnergyScoreDetails(selectedDay);
-	const dailyData = useDailyActivities(selectedDay);
+	const energyScoreDetails = useDailyEnergyScoreDetails(updatedSelectedDay);
+	const dailyData = useDailyActivities(updatedSelectedDay);
 	if (dailyData && !dailyActivitiesData) {
 		// FIXME This is a stupid fix due to a bad usage of the SAM design pattern.
 		services.userService.getGoals().then(({ goals }) => {
@@ -111,15 +113,15 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 		});
 	}
 
-	const energyScore = useDailyEnergyScore(selectedDay);
+	const energyScore = useDailyEnergyScore(updatedSelectedDay);
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const activityContributorGaugesConfig = getActivityGaugesConfig(format);
-	useDailyActivityIntensity({ localISODay: selectedDay, setData, setLoading });
+	useDailyActivityIntensity({ localISODay: updatedSelectedDay, setData, setLoading });
 
-	const coreSleepTiming = useCoreSleep(selectedDay);
+	const coreSleepTiming = useCoreSleep(updatedSelectedDay);
 
-	const hasCompleteCoreSleep = useHasCompleteCoreSleep(selectedDay);
+	const hasCompleteCoreSleep = useHasCompleteCoreSleep(updatedSelectedDay);
 	const nbRemainingDays = useUserCalibrationRemainingDays();
 	// XXX: https://circularing.atlassian.net/browse/CIR-93
 	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
@@ -131,7 +133,10 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	// XXX: https://circularing.atlassian.net/browse/CIR-874
 	const dailyTrimOptions: TrimOptions = {
 		includes: [
-			[moment(selectedDay).startOf("day").valueOf(), moment(selectedDay).startOf("day").add(1, "day").valueOf()],
+			[
+				moment(updatedSelectedDay).startOf("day").valueOf(),
+				moment(updatedSelectedDay).startOf("day").add(1, "day").valueOf(),
+			],
 		],
 		excludes: coreSleepTiming ? [[moment(coreSleepTiming[0]).valueOf(), moment(coreSleepTiming[1]).valueOf()]] : [],
 	};
@@ -139,23 +144,28 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const graphs = [
 		<ActivityIntensityGraph
 			key={0}
-			selectedDay={selectedDay}
+			selectedDay={updatedSelectedDay}
 			mode={screenModeWithoutDisabled}
 			dailyTrimOptions={dailyTrimOptions}
 			dataActivityIntensity={activityIntensity}
 		/>,
-		<StepsGraph key={1} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,
-		<CaloriesBurnedGraph key={2} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,
-		<CardioPointsGraph key={3} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,
+		<StepsGraph key={1} selectedDay={updatedSelectedDay} mode={screenModeWithoutDisabled} />,
+		<CaloriesBurnedGraph key={2} selectedDay={updatedSelectedDay} mode={screenModeWithoutDisabled} />,
+		<CardioPointsGraph key={3} selectedDay={updatedSelectedDay} mode={screenModeWithoutDisabled} />,
 		<EnergyScoreGraph
 			key={4}
-			selectedDay={selectedDay}
+			selectedDay={updatedSelectedDay}
 			// XXX: Energy score should not be displayed in calibration mode.
 			// https://circularing.atlassian.net/browse/CIR-904
 			mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenModeWithoutDisabled))}
 		/>,
-		<HRGraph key={5} selectedDay={selectedDay} mode={screenModeWithoutDisabled} dailyTrimOptions={dailyTrimOptions} />,
-		<RestingHeartRateGraphs key={6} selectedDay={selectedDay} mode={screenModeWithoutDisabled} />,
+		<HRGraph
+			key={5}
+			selectedDay={updatedSelectedDay}
+			mode={screenModeWithoutDisabled}
+			dailyTrimOptions={dailyTrimOptions}
+		/>,
+		<RestingHeartRateGraphs key={6} selectedDay={updatedSelectedDay} mode={screenModeWithoutDisabled} />,
 	];
 
 	return (

@@ -41,10 +41,13 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [selectedDay, setSelectedDay] = useState<ISODay>(getCurrentLocalISODay());
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
+	const updatedSelectedDay =
+		moment(selectedDay).utcOffset() < 0 ? moment(selectedDay).subtract(1, "day").format("YYYY-MM-DD") : selectedDay;
 	const { useDailySleepScoreContributors, useDailySleepQualityScore, useDailySleepStages, useHasCompleteCoreSleep } =
 		useRepresentations().measure.hooks;
-	const sleepScoreContributorsData = useDailySleepScoreContributors(selectedDay);
-	const qualityScore = useDailySleepQualityScore(selectedDay);
+	const sleepScoreContributorsData = useDailySleepScoreContributors(updatedSelectedDay);
+
+	const qualityScore = useDailySleepQualityScore(updatedSelectedDay);
 	const [dailySleep, setDailyData] = useState<DailySleepData | undefined>();
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const [activeItem, setActiveItem] = useState<number>(0);
@@ -52,12 +55,12 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 	const calendarBottomSheet = useRef<CircularBottomSheetHandle>(null);
 	const sleepGaugesConfig = getSleepGaugesConfig(format);
 
-	const hasCompleteCoreSleep = useHasCompleteCoreSleep(selectedDay);
+	const hasCompleteCoreSleep = useHasCompleteCoreSleep(updatedSelectedDay);
 	const nbRemainingDays = useUserCalibrationRemainingDays();
 	// XXX: https://circularing.atlassian.net/browse/CIR-93
 	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
 	const screenModeWithoutDisabled = getInitMode(nbRemainingDays, hasCompleteCoreSleep, { allowDisabled: false });
-	useDailySleepStages({ setData: setDailyData, localISODay: selectedDay, setLoading });
+	useDailySleepStages({ setData: setDailyData, localISODay: updatedSelectedDay, setLoading });
 
 	// XXX: https://circularing.atlassian.net/browse/CIR-790
 	const [] = dailySleep?.coreSleepTiming ?? [];
@@ -176,10 +179,10 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 						{dailySleep ? (
 							<GraphContainer>
 								{graphPeriod === TimeFrame.TODAY && (
-									<DailySleepChart data={dailySleep} selectedDay={selectedDay} mode={screenMode} />
+									<DailySleepChart data={dailySleep} selectedDay={updatedSelectedDay} mode={screenMode} />
 								)}
 								{graphPeriod === TimeFrame.LAST_7_DAYS && (
-									<Sleep7DChart selectedDay={selectedDay} mode={screenModeWithoutDisabled} />
+									<Sleep7DChart selectedDay={updatedSelectedDay} mode={screenModeWithoutDisabled} />
 								)}
 								{/* {graphPeriod === TimeFrame.ALL && (
 									<SleepAllChart selectedDay={selectedDay} mode={screenModeWithoutDisabled} />
@@ -192,7 +195,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 				)}
 				{activeItem === 1 && (
 					<SleepQualityScoreGraph
-						selectedDay={selectedDay}
+						selectedDay={updatedSelectedDay}
 						// XXX: Sleep quality score should not be displayed in calibration mode.
 						// https://circularing.atlassian.net/browse/CIR-904
 						mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenMode))}
@@ -200,7 +203,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 				)}
 				{activeItem === 2 && (
 					<HeartRateGraph
-						selectedDay={selectedDay}
+						selectedDay={updatedSelectedDay}
 						mode={screenMode}
 						screenModeWithoutDisabled={screenModeWithoutDisabled}
 						dailyTrimOptions={dailyTrimOptions}
@@ -208,7 +211,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 				)}
 				{activeItem === 3 && (
 					<HRVGraph
-						selectedDay={selectedDay}
+						selectedDay={updatedSelectedDay}
 						mode={screenMode}
 						screenModeWithoutDisabled={screenModeWithoutDisabled}
 						dailyTrimOptions={dailyTrimOptions}
@@ -216,7 +219,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 				)}
 				{activeItem === 4 && (
 					<BRGraph
-						selectedDay={selectedDay}
+						selectedDay={updatedSelectedDay}
 						mode={screenMode}
 						screenModeWithoutDisabled={screenModeWithoutDisabled}
 						dailyTrimOptions={dailyTrimOptions}
@@ -224,20 +227,20 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 				)}
 				{activeItem === 5 && (
 					<TemperatureVariationGraph
-						selectedDay={selectedDay}
+						selectedDay={updatedSelectedDay}
 						mode={updateMode(screenModeWithoutDisabled, isInCalibrationMode(screenMode))}
 					/>
 				)}
 
 				{activeItem === 6 && (
 					<Spo2Graph
-						selectedDay={selectedDay}
+						selectedDay={updatedSelectedDay}
 						mode={screenMode}
 						screenModeWithoutDisabled={screenModeWithoutDisabled}
 						dailyTrimOptions={dailyTrimOptions}
 					/>
 				)}
-				{activeItem === 7 && <HRSGraph selectedDay={selectedDay} mode={screenModeWithoutDisabled} />}
+				{activeItem === 7 && <HRSGraph selectedDay={updatedSelectedDay} mode={screenModeWithoutDisabled} />}
 
 				<ElementStack gap={10} style={{ display: "flex", paddingBottom: 5 }}>
 					<Row style={{ justifyContent: "center" }}>

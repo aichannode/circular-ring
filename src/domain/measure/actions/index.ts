@@ -239,8 +239,8 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			Promise.all([
 				measureApi.fetchMeasures<DailyHRNightTimeSeriesMetrics>(
 					dailyHRNightTimeSeriesMetrics,
-					moment(localISODay).startOf("day").subtract(1, "hours").toISOString(),
-					moment(localISODay).endOf("day").toISOString(),
+					moment(localISODay).startOf("day").subtract(1, "hour").toISOString(),
+					moment(localISODay).endOf("day").add(1, "day").toISOString(),
 					useForceRefresh
 				),
 				measureApi.fetchLastDailyMeasures<DailyHRNightConstantMetrics>(
