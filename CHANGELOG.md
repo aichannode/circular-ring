@@ -1,3 +1,10 @@
+## [1.6.19](https://gitlab.com/circularing/mobile/app/compare/v1.6.18...v1.6.19) (2022-07-26)
+
+
+### Bug Fixes
+
+* circle sleep timezone ([3ff3975](https://gitlab.com/circularing/mobile/app/commit/3ff3975b4ae2163484ddc4685360b21502cd5fa6))
+
 ## [1.6.18](https://gitlab.com/circularing/mobile/app/compare/v1.6.17...v1.6.18) (2022-07-22)
 
 
