@@ -206,7 +206,7 @@ export function useI18n(options?: FormatterOptions) {
 			if (date) {
 				const isUSCS = useIsUSCS();
 				// CIR-733 Stay in UTC to prevent date shift
-				return isUSCS ? dayjs.utc(date).format("MM/DD/YYYY") : dayjs(date).format("DD/MM/YYYY");
+				return isUSCS ? dayjs.utc(date).format("MM/DD/YYYY") : dayjs.utc(date).format("DD/MM/YYYY");
 			}
 		},
 		formatTemperature: (temperature: number, isCelsius: boolean) =>

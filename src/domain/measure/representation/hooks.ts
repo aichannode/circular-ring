@@ -50,7 +50,6 @@ import {
 	TemperatureVariation7D,
 } from "./api";
 import {
-	canDisplay,
 	getActivityControlState,
 	getOrElse,
 	getScoreControlStates,
@@ -75,7 +74,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 		const userCoreSleepEnd = model.dailySleepMetrics.get(localISODay)?.constant[MetricType.UserCoreSleepEnd];
 
 		// Spec: 00000
-		return !!userCoreSleepEnd && canDisplay(localISODay, (userCoreSleepEnd as number) * 1000);
+		return !!userCoreSleepEnd; //&& canDisplay(localISODay, (userCoreSleepEnd as number) * 1000);
 	}
 
 	function shouldByPassCache(field: Map<any, any>, key: ISODay | ISOMonth) {
