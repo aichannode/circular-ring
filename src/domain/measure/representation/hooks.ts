@@ -194,7 +194,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 								localMetrics && localMetrics[MetricType.UserDailyREMStageDuration] !== null
 									? getOrElse<number>(localMetrics, MetricType.UserDailyREMStageDuration, 0) / 60
 									: -1,
-							date,
+							date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
 						};
 					}) as unknown as Sleep7D["sleepStages"];
 
@@ -330,7 +330,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 								localMetrics && localMetrics[MetricType.UserDailyLowActivityIntensityDuration] !== null
 									? localMetrics[MetricType.UserDailyLowActivityIntensityDuration]
 									: -1,
-							date,
+							date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
 						};
 					}) as unknown as Activity7D["activityMetrics"];
 
@@ -867,7 +867,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 				const series = last7Days.map((date) => ({
 					value: model.dailyEnergyScore.get(date),
-					date,
+					date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
 				})) as Scores7D["series"];
 
 				// Spec 00026: IS_READY if has some historical data
@@ -1097,7 +1097,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 				const series = last7Days.map((date) => ({
 					value: model.dailyRestingHeartRate.get(date),
-					date,
+					date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
 				})) as RestingHeartRate7D["series"];
 
 				// Spec 00026: IS_READY if has some historical data
@@ -1145,7 +1145,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 				const series = last7Days.map((date) => ({
 					value: model.dailySleepScoreQuality.get(date),
-					date,
+					date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
 				})) as Scores7D["series"];
 
 				// Spec 00026: IS_READY if has some historical data
@@ -1189,7 +1189,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 				const series = last7Days.map((date) => ({
 					value: model.dailyCardioPoints.get(date),
-					date,
+					date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
 				})) as Cardio7D["series"];
 
 				const constants = model.last7DCardioPointConstants.get(localISODay);
@@ -1413,7 +1413,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 				const series = last7Days.map((date) => ({
 					value: model.dailyStepsMetrics.get(date),
-					date,
+					date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
 				})) as Cardio7D["series"];
 
 				const constants = model.last7DStepsConstants.get(localISODay);
@@ -1461,7 +1461,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 				const series = last7Days.map((date) => ({
 					value: model.dailyCalorieBurned.get(date),
-					date,
+					date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
 				})) as CalorieBurned7D["series"];
 
 				const constants = model.last7DCalorieBurnedConstants.get(localISODay);

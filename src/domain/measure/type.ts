@@ -25,6 +25,7 @@ export enum TimeFrame {
 	DAY = "DAY",
 	WEEK = "WEEK",
 	MONTH = "MONTH",
+	NIGHT = "NIGHT",
 }
 
 export type UserProperties = {

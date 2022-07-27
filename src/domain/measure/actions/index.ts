@@ -209,7 +209,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			Promise.all([
 				measureApi.fetchMeasures<DailyHRTimeSeriesMetrics>(
 					dailyHRTimeSeriesMetrics,
-					moment(localISODay).startOf("day").subtract(1, "hours").toISOString(),
+					moment(localISODay).startOf("day").subtract(12, "hours").toISOString(),
 					moment(localISODay).endOf("day").toISOString(),
 					useForceRefresh
 				),
@@ -239,7 +239,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			Promise.all([
 				measureApi.fetchMeasures<DailyHRNightTimeSeriesMetrics>(
 					dailyHRNightTimeSeriesMetrics,
-					moment(localISODay).startOf("day").subtract(1, "hour").toISOString(),
+					moment(localISODay).startOf("day").subtract(12, "hour").toISOString(),
 					moment(localISODay).endOf("day").add(1, "day").toISOString(),
 					useForceRefresh
 				),
@@ -293,7 +293,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			Promise.all([
 				measureApi.fetchMeasures<DailySpo2TimeSeriesMetrics>(
 					dailySpo2TimeSeriesMetrics,
-					moment(localISODay).startOf("day").subtract(1, "hours").toISOString(),
+					moment(localISODay).startOf("day").subtract(12, "hours").toISOString(),
 					moment(localISODay).endOf("day").toISOString(),
 					useForceRefresh
 				),
@@ -519,7 +519,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			Promise.all([
 				measureApi.fetchMeasures<DailyHRVTimeSeriesMetrics>(
 					dailyHRVTimeSeriesMetrics,
-					moment(localISODay).startOf("day").subtract(1, "hours").toISOString(),
+					moment(localISODay).startOf("day").subtract(12, "hours").toISOString(),
 					moment(localISODay).endOf("day").toISOString(),
 					useForceRefresh
 				),
@@ -548,7 +548,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			Promise.all([
 				measureApi.fetchMeasures<DailyBRTimeSeriesMetrics>(
 					dailyBRTimeSeriesMetrics,
-					moment(localISODay).startOf("day").subtract(1, "hours").toISOString(),
+					moment(localISODay).startOf("day").subtract(12, "hours").toISOString(),
 					moment(localISODay).endOf("day").toISOString(),
 					useForceRefresh
 				),
@@ -885,8 +885,8 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			Promise.all([
 				measureApi.fetchMeasures<DailyActivityIntensityMetrics>(
 					dailyActivityIntensityMetrics,
-					moment(localISODay).startOf("day").subtract(1, "hours").toISOString(),
-					moment(localISODay).endOf("day").toISOString(),
+					moment(localISODay).startOf("day").toISOString(true),
+					moment(localISODay).endOf("day").toISOString(true),
 					useForceRefresh
 				),
 				measureApi.fetchOneDayMeasures<DailyActivityIntensityDuration>(
