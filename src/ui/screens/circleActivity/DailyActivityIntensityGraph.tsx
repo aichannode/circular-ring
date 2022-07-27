@@ -9,7 +9,6 @@ import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { Mode } from "@ui/type";
-import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { useEffect, useRef } from "react";
 import { Platform, processColor, View } from "react-native";
@@ -24,12 +23,12 @@ type Props = {
 	dataActivityIntensity: DailyActivityIntensityData | undefined;
 };
 
-export const DailyActivityIntensityGraph: React.FC<Props> = observer(function DailyActivityIntensityGraph({
+export const DailyActivityIntensityGraph: React.FC<Props> = ({
 	selectedDay,
 	mode = createActiveMode(),
 	trimOptions,
 	dataActivityIntensity,
-}: Props) {
+}: Props) => {
 	const { format, formatHour } = useI18n();
 	const is24h = useIs24h();
 	const prevDataActivityIntensity = useRef(dataActivityIntensity);
@@ -185,4 +184,4 @@ export const DailyActivityIntensityGraph: React.FC<Props> = observer(function Da
 			</>
 		</>
 	);
-});
+};
