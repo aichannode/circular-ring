@@ -18,6 +18,12 @@ export function toUTCTimeSegment(
 				isoEnd: moment(localISODate).endOf("day").toISOString(),
 			};
 
+		case TimeFrame.NIGHT:
+			assertISODay(localISODate);
+			return {
+				isoStart: moment(localISODate).subtract(12, "hour").startOf("day").toISOString(), // ensure a large enough timeframe to capture data like core.sleep.begin
+				isoEnd: moment(localISODate).add(1, "day").endOf("day").toISOString(),
+			};
 		case TimeFrame.TODAY:
 		case TimeFrame.DAY:
 			assertISODay(localISODate);

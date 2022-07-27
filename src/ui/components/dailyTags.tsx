@@ -1,6 +1,7 @@
 import { useRepresentations } from "@core/representation";
 import { ISODay } from "@domain/common/type";
 import { Tag } from "@ui/components/tag";
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { View } from "react-native";
 
@@ -8,7 +9,7 @@ type Props = {
 	selectedDay: ISODay;
 };
 
-export const DailyTags = ({ selectedDay }: Props) => {
+export const DailyTags = observer(function dailyTags({ selectedDay }: Props) {
 	const {
 		calendar: {
 			hooks: { useDailyTags },
@@ -24,4 +25,4 @@ export const DailyTags = ({ selectedDay }: Props) => {
 			))}
 		</View>
 	);
-};
+});

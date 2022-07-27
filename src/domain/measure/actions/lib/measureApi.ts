@@ -2,6 +2,7 @@ import { ApiService } from "@core/api/apiService";
 import { getCurrentLocalISODay } from "@domain/common/business";
 import { ISODay, ISOMonth } from "@domain/common/type";
 import { toUTCTimeSegment } from "@domain/measure/common/business";
+import moment from "moment";
 import { DatedMetrics, Metrics, MetricType } from "../../metric";
 import { TimeFrame } from "../../type";
 import { sanitize } from "./business";
@@ -80,7 +81,9 @@ export class MeasureApi {
 		isoEnd: string,
 		useForceRefresh?: boolean
 	): Promise<Array<DatedMetrics<T>>> {
-		return await this.getMeasures(measures, { isoStart, isoEnd }, useForceRefresh);
+		const isoStartBis = moment(isoStart).utcOffset() < 0 ? moment(isoStart).add(1, "day").toISOString(true) : isoStart;
+		const isoEndBis = moment(isoEnd).utcOffset() < 0 ? moment(isoEnd).add(1, "day").toISOString(true) : isoEnd;
+		return await this.getMeasures(measures, { isoStart: isoStartBis, isoEnd: isoEndBis }, useForceRefresh);
 	}
 
 	public async fetchLastDailyMeasures<T extends MetricType>(
@@ -104,7 +107,7 @@ export class MeasureApi {
 		isoDay: ISODay,
 		useForceRefresh?: boolean
 	): Promise<Array<DatedMetrics<T>>> {
-		return await this.getMeasures(measures, toUTCTimeSegment(isoDay, TimeFrame.DAY), useForceRefresh);
+		return await this.getMeasures(measures, toUTCTimeSegment(isoDay, TimeFrame.NIGHT), useForceRefresh);
 	}
 
 	public async fetchLast7DaysMeasures<T extends MetricType>(

@@ -45,6 +45,10 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 		dailyHrv ? dailyHrv.constant : { average: 0, reference: 0 },
 	];
 	const parsedData = dailyTrimOptions ? trimData(lines, (line) => line.x, dailyTrimOptions) : lines;
+	const parsedTrendData =
+		dailyHrvTrend?.data ?? (dailyTrimOptions && dailyHrvTrend)
+			? trimData(dailyHrvTrend.data, (line) => line.x, dailyTrimOptions)
+			: dailyHrvTrend?.data;
 
 	parsedData.sort(function (a, b) {
 		return a.x - b.x;
@@ -114,7 +118,7 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 							yMinIndex={yMinIndex}
 							yMaxIndex={yMaxIndex}
 							mode={updatedMode}
-							movingAverage={dailyHrvTrend?.data}
+							movingAverage={parsedTrendData}
 							shouldShowMarker={true}
 							highlightPerTapEnabled={true}
 							labelFormatter={(x, y) => {

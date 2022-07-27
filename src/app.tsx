@@ -35,12 +35,12 @@ import CodePush from "react-native-code-push";
 
 // Setup Mobx for RN
 configure({
-	// enforceActions: "always",
+	enforceActions: "always",
 	computedRequiresReaction: true,
 	reactionRequiresObservable: true,
 	observableRequiresReaction: true,
 	useProxies: "never",
-	enforceActions: "never",
+	// enforceActions: "never",
 });
 
 LogBox.ignoreAllLogs(true);
@@ -61,9 +61,11 @@ const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: "
 
 // @refresh reset
 const App = () => {
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
-	const NativeCodePush = require("react-native").NativeModules.CodePush;
-	NativeCodePush.getConfiguration().then((tata: any) => console.log("CONFIG", tata));
+	useEffect(() => {
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const NativeCodePush = require("react-native").NativeModules.CodePush;
+		NativeCodePush.getConfiguration().then((tata: any) => console.log("CONFIG", tata));
+	}, []);
 	// For some reason it can't be done in the main script
 	const [locale, setLocale] = useState<LocaleType>(getPreferredLangageCode(Object.keys(translations)));
 	const [initialized, setInitialized] = useState(false);

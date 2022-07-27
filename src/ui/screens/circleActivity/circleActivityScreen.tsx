@@ -29,7 +29,7 @@ import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image, LayoutAnimation, Platform, View } from "react-native";
 import styled from "styled-components/native";
 import { ActivityDurationPieChart } from "./activityDurationPie";
@@ -94,24 +94,30 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 		},
 		sportSessionDates: [],
 	});
+	const [loadingGoals, setLoadingGoals] = useState(false);
 	const energyScoreDetails = useDailyEnergyScoreDetails(updatedSelectedDay);
 	const dailyData = useDailyActivities(updatedSelectedDay);
-	if (dailyData && !dailyActivitiesData) {
-		// FIXME This is a stupid fix due to a bad usage of the SAM design pattern.
-		services.userService.getGoals().then(({ goals }) => {
-			Object.entries(dailyData).forEach(([key, value]) => {
-				const parentKey = dailyMetricControlStateParent[key] ?? key;
-				if (parentKey !== key || !!goals[`${parentKey}.goal.min` as Goals]) {
-					(value as any).controlState = getActivityControlState({
-						value: parentKey === key ? value.value ?? 0 : (dailyData as any)[parentKey as MetricType].value,
-						thresholdLow: goals[`${parentKey}.goal.min` as Goals],
-						thresholdHigh: goals[`${parentKey}.goal.max` as Goals],
-					});
-				}
+
+	useEffect(() => {
+		if (dailyData && !dailyActivitiesData && !loadingGoals) {
+			// FIXME This is a stupid fix due to a bad usage of the SAM design pattern.
+			setLoadingGoals(true);
+			services.userService.getGoals().then(({ goals }) => {
+				Object.entries(dailyData).forEach(([key, value]) => {
+					const parentKey = dailyMetricControlStateParent[key] ?? key;
+					if (parentKey !== key || !!goals[`${parentKey}.goal.min` as Goals]) {
+						(value as any).controlState = getActivityControlState({
+							value: parentKey === key ? value.value ?? 0 : (dailyData as any)[parentKey as MetricType].value,
+							thresholdLow: goals[`${parentKey}.goal.min` as Goals],
+							thresholdHigh: goals[`${parentKey}.goal.max` as Goals],
+						});
+					}
+				});
+				setDailyActivity(dailyData);
+				setLoadingGoals(false);
 			});
-			setDailyActivity(dailyData);
-		});
-	}
+		}
+	}, [dailyData]);
 
 	const energyScore = useDailyEnergyScore(updatedSelectedDay);
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
@@ -133,10 +139,7 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	// XXX: https://circularing.atlassian.net/browse/CIR-874
 	const dailyTrimOptions: TrimOptions = {
 		includes: [
-			[
-				moment(updatedSelectedDay).startOf("day").valueOf(),
-				moment(updatedSelectedDay).startOf("day").add(1, "day").valueOf(),
-			],
+			[moment(selectedDay).startOf("day").valueOf(), moment(selectedDay).startOf("day").add(1, "day").valueOf()],
 		],
 		excludes: coreSleepTiming ? [[moment(coreSleepTiming[0]).valueOf(), moment(coreSleepTiming[1]).valueOf()]] : [],
 	};

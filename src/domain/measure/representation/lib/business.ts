@@ -24,7 +24,8 @@ export const createActivityPhasesGetter =
 	(data: RangeMetrics<DailyActivityIntensityMetrics, DailyActivityIntensityDuration>): DailyActivityIntensityData => {
 		const sportSessionDates: Array<[number | string, number | string]> = [];
 		const stages: Array<StageInfos<ActivityStage>> = data.timeSeries.reduce(function (result, block, i) {
-			const isSameDay = new Date(block.timestamp).getDate() === new Date(localISODay).getDate();
+			const isSameDay = true; //new Date(block.timestamp).getDate() === new Date(localISODay).getDate();
+			// console.log("isSameDay", new Date(localISODay).getDate(), new Date(block.timestamp).getDate());
 			if (isSameDay && hasMetric(MetricType.UserDataActivityIntensity)(block)) {
 				const intensityValue = Number(block.metrics[MetricType.UserDataActivityIntensity]);
 
@@ -53,10 +54,15 @@ export const createActivityPhasesGetter =
 			return result;
 		}, [] as Array<StageInfos<ActivityStage>>);
 
+		// console.log("localISODay", localISODay);
 		for (let i = 0; i < data.timeSeries.length; i++) {
 			const currentBlock = data.timeSeries[i];
 			const doesStartSession = hasMetric(MetricType.UserDailySportBegin)(currentBlock.metrics);
-			const isSameDay = new Date(currentBlock.timestamp).getDate() === new Date(localISODay).getDate();
+
+			const isSameDay = true || new Date(currentBlock.timestamp).getUTCDay() === new Date(localISODay).getUTCDay();
+			// console.log("new Date(currentBlock.timestamp).getUTCDay()", new Date(currentBlock.timestamp).getUTCDay()),
+			// 	"local",
+			// 	new Date(localISODay).getUTCDay();
 			if (isSameDay && doesStartSession) {
 				let startTime = getOrElse(
 					currentBlock.metrics,
@@ -77,6 +83,7 @@ export const createActivityPhasesGetter =
 					MetricType.UserDailySportEnd,
 					data.timeSeries[i + endIndex].timestamp
 				) as typeof sportSessionDates[number][1];
+				// console.log("typeof endTime === number", typeof endTime === "number", endTime);
 				if (typeof endTime === "number") {
 					endTime = endTime * 1000; // Convert to milliseconds
 				}
