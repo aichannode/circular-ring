@@ -68,6 +68,14 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 		includes: dailySleep?.coreSleepTiming
 			? [[moment(dailySleep.coreSleepTiming[0]).valueOf(), moment(dailySleep.coreSleepTiming[1]).valueOf()]]
 			: [],
+		excludes: dailySleep?.coreSleepTiming
+			? [
+					[
+						moment(dailySleep.coreSleepTiming[0]).subtract(1, "day").valueOf(),
+						moment(dailySleep.coreSleepTiming[0]).valueOf(),
+					],
+			  ]
+			: [],
 	};
 
 	return (

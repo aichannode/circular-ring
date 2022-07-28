@@ -125,9 +125,15 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 	const activityContributorGaugesConfig = getActivityGaugesConfig(format);
 	useDailyActivityIntensity({ localISODay: updatedSelectedDay, setData, setLoading });
 
-	const coreSleepTiming = useCoreSleep(updatedSelectedDay);
+	const coreSleepTimingDay1 = useCoreSleep(
+		moment().utcOffset() > 0 ? moment(selectedDay).add(1, "day").format("YYYY-MM-DD") : selectedDay
+	);
+	const coreSleepTimingDay0 = useCoreSleep(updatedSelectedDay);
 
 	const hasCompleteCoreSleep = useHasCompleteCoreSleep(updatedSelectedDay);
+	useHasCompleteCoreSleep(
+		moment().utcOffset() > 0 ? moment(selectedDay).add(1, "day").format("YYYY-MM-DD") : selectedDay
+	);
 	const nbRemainingDays = useUserCalibrationRemainingDays();
 	// XXX: https://circularing.atlassian.net/browse/CIR-93
 	const screenMode = getInitMode(nbRemainingDays, hasCompleteCoreSleep);
@@ -138,10 +144,13 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 
 	// XXX: https://circularing.atlassian.net/browse/CIR-874
 	const dailyTrimOptions: TrimOptions = {
-		includes: [
-			[moment(selectedDay).startOf("day").valueOf(), moment(selectedDay).startOf("day").add(1, "day").valueOf()],
-		],
-		excludes: coreSleepTiming ? [[moment(coreSleepTiming[0]).valueOf(), moment(coreSleepTiming[1]).valueOf()]] : [],
+		includes:
+			coreSleepTimingDay0 && coreSleepTimingDay1
+				? [[moment(coreSleepTimingDay0[1]).valueOf(), moment(coreSleepTimingDay1[0]).valueOf()]]
+				: [],
+		excludes: coreSleepTimingDay1
+			? [[moment(coreSleepTimingDay1[0]).valueOf(), moment(coreSleepTimingDay1[1]).valueOf()]]
+			: [],
 	};
 
 	const graphs = [

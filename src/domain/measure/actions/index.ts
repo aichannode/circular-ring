@@ -209,8 +209,8 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			Promise.all([
 				measureApi.fetchMeasures<DailyHRTimeSeriesMetrics>(
 					dailyHRTimeSeriesMetrics,
-					moment(localISODay).startOf("day").subtract(12, "hours").toISOString(),
-					moment(localISODay).endOf("day").toISOString(),
+					moment(localISODay).startOf("day").subtract(1, "day").toISOString(),
+					moment(localISODay).endOf("day").add(1, "day").toISOString(),
 					useForceRefresh
 				),
 				measureApi.fetchLastDailyMeasures<DailyHRConstantMetrics>(dailyHRConstantMetrics, localISODay, useForceRefresh),
@@ -293,7 +293,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			Promise.all([
 				measureApi.fetchMeasures<DailySpo2TimeSeriesMetrics>(
 					dailySpo2TimeSeriesMetrics,
-					moment(localISODay).startOf("day").subtract(12, "hours").toISOString(),
+					moment(localISODay).startOf("day").subtract(1, "day").toISOString(),
 					moment(localISODay).endOf("day").toISOString(),
 					useForceRefresh
 				),
@@ -548,7 +548,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 			Promise.all([
 				measureApi.fetchMeasures<DailyBRTimeSeriesMetrics>(
 					dailyBRTimeSeriesMetrics,
-					moment(localISODay).startOf("day").subtract(12, "hours").toISOString(),
+					moment(localISODay).startOf("day").subtract(1, "day").toISOString(),
 					moment(localISODay).endOf("day").toISOString(),
 					useForceRefresh
 				),
@@ -1121,7 +1121,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					sleepStagesMetrics,
 					// Grab data from the noon before the day to make sure to get the ensleepment.
 					// TODO: implement day/night worker
-					moment(localISODay).startOf("day").subtract(1, "hours").toISOString(),
+					moment(localISODay).startOf("day").subtract(1, "day").toISOString(),
 					moment(localISODay).endOf("day").toISOString(),
 					useForceRefresh
 				),
@@ -1151,11 +1151,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					moment(localISODay).endOf("day").toISOString(),
 					useForceRefresh
 				),
-				measureApi.fetchLastDailyMeasures<DailySleepStageDuration>(
-					dailySleepStageDuration,
-					localISODay,
-					useForceRefresh
-				),
+				measureApi.fetchOneDayMeasures<DailySleepStageDuration>(dailySleepStageDuration, localISODay, useForceRefresh),
 			]).then(function ([timeline, duration]) {
 				present([
 					{

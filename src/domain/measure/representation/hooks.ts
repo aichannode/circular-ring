@@ -902,7 +902,10 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				}
 
 				const series = last30Days.map((date) => {
-					return { value: model.dailySpo2.get(date), date: date };
+					return {
+						value: model.dailySpo2.get(date),
+						date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
+					};
 				}) as unknown as Spo230Days["series"];
 				const controlState = series.some((line) => line?.value !== -1)
 					? DataControlState.READY
@@ -974,7 +977,10 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				}
 
 				const series = last30Days.map((date) => {
-					return { value: model.dailyHrNight.get(date), date: date };
+					return {
+						value: model.dailyHrNight.get(date),
+						date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
+					};
 				}) as unknown as HrNight30Days["series"];
 
 				const controlState = series.some((line) => line?.value != -1)
@@ -1013,7 +1019,10 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				}
 
 				const series = last30Days.map((date) => {
-					return { value: model.dailyHr.get(date), date: date };
+					return {
+						value: model.dailyHr.get(date),
+						date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
+					};
 				}) as unknown as HrNight30Days["series"];
 				const controlState = series.some((lines) => lines?.value !== -1)
 					? DataControlState.READY
@@ -1050,7 +1059,10 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				}
 
 				const series = last30Days.map((date) => {
-					return { value: model.dailyHRV.get(date), date: date };
+					return {
+						value: model.dailyHRV.get(date),
+						date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
+					};
 				}) as unknown as HrNight30Days["series"];
 				const controlState = series.some((line) => line?.value !== -1)
 					? DataControlState.READY
@@ -1246,7 +1258,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 
 				const series = last7Days.map((date) => ({
 					value: model.dailyTemperatureVariation.get(date),
-					date,
+					date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
 				})) as TemperatureVariation7D["series"];
 
 				return {
@@ -1282,7 +1294,10 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				}
 
 				const series = last30Days.map((date) => {
-					return { value: model.dailyTemperatureVariation.get(date), date: date };
+					return {
+						value: model.dailyTemperatureVariation.get(date),
+						date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
+					};
 				}) as unknown as TemperatureVariation30Days["series"];
 				const controlState = series.some(Boolean) ? DataControlState.READY : DataControlState.NO_DATA;
 
@@ -1331,7 +1346,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 							Number(data[MetricType.UserDailyTotalSleepDuration]) || -1,
 							Number(data[MetricType.UserDailyRealSleepDuration]) || -1,
 						],
-						date,
+						date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
 					};
 				}) as HRS7D["series"];
 
