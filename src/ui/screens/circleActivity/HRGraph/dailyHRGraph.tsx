@@ -68,7 +68,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 	let xAxisMin, xAxisMax;
 	if (isDefined(dailyTrimOptions) && isDefined(dailyTrimOptions.includes)) {
 		xAxisMin = Math.min(...dailyTrimOptions.includes.map(([start, end]) => start));
-		//xAxisMax = Math.max(...dailyTrimOptions.includes.map(([start, end]) => end));
+		xAxisMax = Math.max(...dailyTrimOptions.includes.map(([start, end]) => end));
 	}
 
 	const [yMin, yMax] =
@@ -83,7 +83,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 		parsedLines.findIndex((line) => line.y == yMin),
 		parsedLines.findIndex((line) => line.y == yMax),
 	];
-	const updatedMode = updateMode(mode, parsedLines.length === 0);
+	const updatedMode = updateMode(mode, parsedLines.length < 10);
 	const averages: Averages = [];
 	if (isInActiveMode(updatedMode) && constant.reference !== -1) {
 		averages.push({

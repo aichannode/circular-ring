@@ -25,7 +25,7 @@ export function DailySleepChart({ data, selectedDay, mode = createActiveMode() }
 
 	// Spec 00033 The graph always needs to start in an “awake” phase and always needs to end in an “awake” phase.
 	const correctedStages = produce(data.stages, function (draft) {
-		if (draft.length) {
+		if (draft?.length) {
 			draft.unshift({
 				start: moment(draft[0].start)
 					.subtract(10 * 60 * 1000) // add 10 minutes of awake phase at the begining of the graph

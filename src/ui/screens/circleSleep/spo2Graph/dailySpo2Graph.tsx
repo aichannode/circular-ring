@@ -58,6 +58,11 @@ export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 		parsedLines.findIndex((line) => line.y == yMax),
 	];
 
+	let xAxisMin, xAxisMax;
+	if (isDefined(dailyTrimOptions) && isDefined(dailyTrimOptions.includes)) {
+		xAxisMin = Math.min(...dailyTrimOptions.includes.map(([start, end]) => start));
+		xAxisMax = Math.min(...dailyTrimOptions.includes.map(([start, end]) => end));
+	}
 	const averages: Averages = [];
 	if (
 		(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
@@ -112,6 +117,8 @@ export const DailySpo2Graph: React.FC<Props> = observer(function Spo2Graph({
 							mode={updatedMode}
 							shouldUpdateYmin={false}
 							highlightPerTapEnabled={true}
+							xAxisMin={xAxisMin}
+							xAxisMax={xAxisMax}
 							labelFormatter={(x, y) => {
 								return `${
 									is24h ? dayjs(new Date(x)).format("HH:mm") : dayjs(new Date(x)).format("hh:mm A")

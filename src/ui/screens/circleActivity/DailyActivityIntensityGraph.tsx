@@ -76,6 +76,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = ({
 					highlightAlpha: Platform.OS === "ios" ? 100 : 255,
 					highlightColor: processColor(colors.selected),
 				},
+				label: "",
 			},
 		],
 
@@ -173,7 +174,7 @@ export const DailyActivityIntensityGraph: React.FC<Props> = ({
 						/>
 					)}
 				</View>
-				<View style={{ marginTop: 20 }}>
+				<View style={{ marginTop: -10 }}>
 					<ActivityLegend
 						mode={updatedMode}
 						highDuration={dataActivityIntensity?.duration.highActivity}

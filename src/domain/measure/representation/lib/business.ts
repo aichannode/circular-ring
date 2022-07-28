@@ -54,15 +54,11 @@ export const createActivityPhasesGetter =
 			return result;
 		}, [] as Array<StageInfos<ActivityStage>>);
 
-		// console.log("localISODay", localISODay);
 		for (let i = 0; i < data.timeSeries.length; i++) {
 			const currentBlock = data.timeSeries[i];
 			const doesStartSession = hasMetric(MetricType.UserDailySportBegin)(currentBlock.metrics);
 
 			const isSameDay = true || new Date(currentBlock.timestamp).getUTCDay() === new Date(localISODay).getUTCDay();
-			// console.log("new Date(currentBlock.timestamp).getUTCDay()", new Date(currentBlock.timestamp).getUTCDay()),
-			// 	"local",
-			// 	new Date(localISODay).getUTCDay();
 			if (isSameDay && doesStartSession) {
 				let startTime = getOrElse(
 					currentBlock.metrics,
@@ -83,7 +79,6 @@ export const createActivityPhasesGetter =
 					MetricType.UserDailySportEnd,
 					data.timeSeries[i + endIndex].timestamp
 				) as typeof sportSessionDates[number][1];
-				// console.log("typeof endTime === number", typeof endTime === "number", endTime);
 				if (typeof endTime === "number") {
 					endTime = endTime * 1000; // Convert to milliseconds
 				}
@@ -135,21 +130,18 @@ export function trimSleepStages({
 		return [];
 	}
 	// Update the first stage to reflect the start of the sleep
-	return produce(stages, function (draft) {
+	const result = produce(stages, function (draft) {
 		// Retrieve the phase where the core sleep begins
 		const coreSleepStart = Date.parse(coreSleepTiming[0]);
 		draft.splice(
 			0,
 			draft.findIndex((stage) => Date.parse(stage.start) <= coreSleepStart && Date.parse(stage.end) > coreSleepStart)
 		);
-
-		// Start of sleep
 		const correctedStart = new Date(coreSleepStart - userTimeToFallAsleep).toISOString();
 
 		if (draft[0].start) {
 			draft[0].start = correctedStart;
 		}
-
 		// End of sleep. We need to take nap in account
 		const coreSleepEnd = Date.parse(coreSleepTiming[1]);
 		const didNap = napTimings.length;
@@ -167,6 +159,8 @@ export function trimSleepStages({
 			draft[endBlockIndex].end = didNap ? napTimings[napTimings.length - 1][1] : new Date(coreSleepEnd).toISOString();
 		}
 	});
+
+	return result;
 }
 
 /**
