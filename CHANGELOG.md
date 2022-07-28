@@ -1,3 +1,10 @@
+## [1.6.21](https://gitlab.com/circularing/mobile/app/compare/v1.6.20...v1.6.21) (2022-07-28)
+
+
+### Bug Fixes
+
+*  1131 firmware update banner ([8f50cf7](https://gitlab.com/circularing/mobile/app/commit/8f50cf769abfa0c417647eba03b278fa39aeefa0))
+
 ## [1.6.20](https://gitlab.com/circularing/mobile/app/compare/v1.6.19...v1.6.20) (2022-07-28)
 
 
