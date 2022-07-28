@@ -1,4 +1,5 @@
 import { useServices } from "@core/services";
+import { DeviceConnectionState } from "@domain/device/bleDeviceService";
 import { UserRing } from "@domain/ring/ring";
 import { Routes, useRoutesNavigation } from "@ui/navigation/routes";
 import { Banner } from "@ui/screens/home/components/Banner";
@@ -18,13 +19,14 @@ const playStoreUrl = "https://play.google.com/store/apps/details?id=com.circular
 
 export const UpdateBanner: React.FC<UpdateBannerProps> = () => {
 	const [isAppUpdated /*, setIsAppUpdated*/] = useState<boolean>(true);
-	const [isFirmwareUpdated, setIsFirmwareUpdated] = useState<boolean>(true);
-	const { appStateService, ringApi } = useServices();
+	const [isFirmwareUptodate, setIsFirmwareUpdated] = useState<boolean>(true);
+	const { appStateService, ringApi, bleDeviceService } = useServices();
 	// DEV TESTS const lastAppVersion = "0.1.0-alpha.7"; TODO Fetch the lastAppVersion with the backend
 	const lastFirmwareVersion = useObservable(ringApi.firmwareVersion);
 	const userRings = useObservable(appStateService.userRings);
 	const displayBanner = useObservable(appStateService.showUpdateBanner)?.display;
 	const currentRing: UserRing = userRings.filter((ring) => ring.connected)[0];
+	const connectionState = useObservable(bleDeviceService.connectionState);
 
 	const { navigate } = useRoutesNavigation();
 	useEffect(() => {
@@ -43,7 +45,7 @@ export const UpdateBanner: React.FC<UpdateBannerProps> = () => {
 		else Linking.canOpenURL(playStoreUrl).then(() => Linking.openURL(playStoreUrl));
 	};
 
-	if (!displayBanner || (isAppUpdated && isFirmwareUpdated)) return <View />;
+	if (!displayBanner || isFirmwareUptodate || connectionState !== DeviceConnectionState.CONNECTED) return <View />;
 
 	const img = !isAppUpdated ? require("@assets/images/updateApp.png") : require("@assets/images/updateFirmware.png");
 	const title: WordingKey = ("banner." + (!isAppUpdated ? "app" : "firmware") + "_update.title") as WordingKey;

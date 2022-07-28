@@ -12,7 +12,6 @@ import { getUTCTimestamp } from "@utils/date";
 import { observable, Observable } from "micro-observables";
 import { Signal } from "micro-signals";
 import { Platform } from "react-native";
-import BleManager from "react-native-ble-manager";
 import { BleError, Device, ScanMode, State, Subscription } from "react-native-ble-plx";
 import RNFetchBlob from "react-native-blob-util";
 import RNFS from "react-native-fs";
@@ -331,8 +330,6 @@ export class BleDeviceService {
 			}
 		}
 		await this.bluetoothService.enable();
-		await BleManager.start({ showAlert: false });
-
 		const DFUScanPromise = new Promise<Device>((resolve, reject) => {
 			this.updateState.set(UpdateState.SCANNING_DFU_RING);
 			if (this._scanning.get()) {
@@ -530,6 +527,7 @@ export class BleDeviceService {
 				const connect = await this.connect(device);
 				// FIXME Should be good to check that the ring is still in the user's inventory ? (by using registerRing)
 				await this.initializeDevice();
+				// this._connectionState.set(DeviceConnectionState.CONNECTED);
 				return connect;
 			}
 		} finally {
