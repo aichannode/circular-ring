@@ -179,7 +179,11 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 						{dailySleep ? (
 							<GraphContainer>
 								{graphPeriod === TimeFrame.TODAY && (
-									<DailySleepChart data={dailySleep} selectedDay={updatedSelectedDay} mode={screenMode} />
+									<DailySleepChart
+										data={dailySleep}
+										selectedDay={updatedSelectedDay}
+										mode={updateMode(screenMode, dailySleep?.consoType === 0)}
+									/>
 								)}
 								{graphPeriod === TimeFrame.LAST_7_DAYS && (
 									<Sleep7DChart selectedDay={updatedSelectedDay} mode={screenModeWithoutDisabled} />

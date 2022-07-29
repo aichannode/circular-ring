@@ -181,6 +181,7 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 					const sleepStages = last7Days.map((date) => {
 						const localMetrics = model.dailySleepMetrics.get(date)?.constant;
 						return {
+							consoType: localMetrics ? getOrElse<number>(localMetrics, MetricType.UserDailyConsotype, 1) : 0,
 							awake:
 								localMetrics && localMetrics[MetricType.UserDailyAwakeStageDuration] !== null
 									? getOrElse<number>(localMetrics, MetricType.UserDailyAwakeStageDuration, 0) / 60

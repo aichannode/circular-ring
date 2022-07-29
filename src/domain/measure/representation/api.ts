@@ -19,6 +19,7 @@ export type DailySleepData = {
 	coreSleepTiming?: [string, string];
 	napTimings: Array<[string, string]>;
 	timeToFallASleep?: number;
+	consoType: number;
 	sleepStagesDuration: Partial<{
 		[SleepStage.AWAKE]: { duration: number; percent: number };
 		[SleepStage.REM]: { duration: number; percent: number };
@@ -209,6 +210,7 @@ export interface SleepItem {
 }
 export type SleepItems = SleepItem[];
 export interface SleepStageData {
+	consoType?: number;
 	awake: number;
 	light: number;
 	deep: number;

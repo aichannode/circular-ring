@@ -458,6 +458,7 @@ export const dailySleepStageDuration = [
 	MetricType.UserDailyPercLightStage,
 	MetricType.UserDailyPercDeepStage,
 	MetricType.UserHRV,
+	MetricType.UserDailyConsotype,
 ] as const;
 export type DailySleepStageDuration = typeof dailySleepStageDuration[number];
 

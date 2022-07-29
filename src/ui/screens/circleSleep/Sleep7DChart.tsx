@@ -41,12 +41,27 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 	const { useDailyTags } = useRepresentations().calendar.hooks;
 	const [tags, setTags] = useState<CalendarTag[]>([]);
 	const days7DSleep = use7DaysSleep(selectedDay);
-	const lines = days7DSleep
-		? ([...days7DSleep.sleepStages]
+	// filter empty night
+	const correctedDays7DSleep = days7DSleep
+		? days7DSleep?.sleepStages?.map?.((lines) => {
+				if (lines.consoType === 0) {
+					return {
+						awake: -1,
+						deep: -1,
+						REM: -1,
+						light: -1,
+					};
+				}
+				return lines;
+		  })
+		: days7DSleep;
+	const lines = correctedDays7DSleep
+		? ([...correctedDays7DSleep]
 				.reverse()
 				.filter((line) => hasAttributesDefined(line, ["REM", "awake", "deep", "light"])) as SleepStageData[])
 		: [];
 	const valueFormatter = lines.map(({ date }) => moment(date).format("dd")[0].toUpperCase());
+
 	const [awakeData, deepData, REMData, lightData] = lines.reduce<[Points, Points, Points, Points]>(
 		([awakeData, deepData, REMData, lightData], { awake, deep, REM, light }, index) => [
 			[...awakeData, { x: index, y: (awake * 60) / 30 }],
@@ -56,6 +71,7 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 		],
 		[[], [], [], []]
 	) || [[], [], [], []];
+
 	const [yMin, yMax] = [
 		Math.min(
 			...[
