@@ -152,6 +152,7 @@ test("getSleepStages", function () {
 				end: "2021-12-21T17:12:00.000Z",
 			},
 		],
+		consoType: 1,
 		coreSleepTiming: ["2021-12-20T23:24:00.000Z", "2021-12-21T07:40:00.000Z"],
 		napTimings: [
 			["2021-12-21T13:28:00.000Z", "2021-12-21T13:48:00.000Z"],

@@ -20,7 +20,6 @@ type Props = {
 
 export function Hypnogram({ data, mode = createActiveMode() }: Props) {
 	const stepsData = toStepsData(data);
-	console.log("stepsData", stepsData);
 	const { format, formatHour } = useI18n();
 	const is24h = useIs24h();
 	function yColor(y: number) {

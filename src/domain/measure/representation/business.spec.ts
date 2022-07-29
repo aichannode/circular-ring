@@ -89,6 +89,7 @@ test("Specs: 00002. DailyHR hooks", () => {
 				[MetricType.UserDailyPercLightStage]: 59,
 				[MetricType.UserDailyPercDeepStage]: 526,
 				[MetricType.UserHRV]: 78,
+				[MetricType.UserDailyConsotype]: 1,
 			},
 			timeSeries: [],
 		})

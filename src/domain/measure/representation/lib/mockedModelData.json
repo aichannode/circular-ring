@@ -440,6 +440,7 @@
     "user.daily.rem.stage.duration":98,
     "user.daily.light.stage.duration":98,
     "user.daily.deep.stage.duration": 89,
-    "user.daily.total.sleep.duration":496
+    "user.daily.total.sleep.duration":496,
+    "user.daily.consotype.during.sleep": 1
   }
 }

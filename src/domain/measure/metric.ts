@@ -183,6 +183,7 @@ export enum MetricType {
 	UserDailyREMStageDuration = "user.daily.rem.stage.duration",
 	UserDailyPercREMStage = "user.daily.percrem.stage",
 	UserDailyPercLightStage = "user.daily.perclight.stage",
+	UserDailyConsotype = "user.daily.consotype.during.sleep",
 
 	/////////////////
 	// Daily activity duration

@@ -4,7 +4,6 @@ import { SleepStage } from "@domain/measure/type";
 import { createActiveMode, updateMode } from "@ui/business";
 import { DailyTags } from "@ui/components/dailyTags";
 import { Mode } from "@ui/type";
-import produce from "immer";
 import moment from "moment";
 import React from "react";
 import { View } from "react-native";
@@ -24,30 +23,36 @@ export function DailySleepChart({ data, selectedDay, mode = createActiveMode() }
 	const deepDuration = data.sleepStagesDuration[SleepStage.DEEP];
 
 	// Spec 00033 The graph always needs to start in an “awake” phase and always needs to end in an “awake” phase.
-	const correctedStages = produce(data.stages, function (draft) {
-		if (draft?.length) {
-			draft.unshift({
-				start: moment(draft[0].start)
-					.subtract(10 * 60 * 1000) // add 10 minutes of awake phase at the begining of the graph
-					.toISOString(),
-				end: draft[0].start,
-				level: 4,
-			});
-			draft.push({
-				start: draft[draft.length - 1].end,
-				end: moment(draft[draft.length - 1].end)
-					.add(5, "minutes")
-					.toISOString(),
-				level: 4,
-			});
+	const stages = [];
+	if (data?.stages?.[0]?.start) {
+		stages.push({
+			start: moment(data.stages[0].start)
+				.subtract(10, "minutes") // add 10 minutes of awake phase at the begining of the graph
+				.toISOString(),
+			end: data.stages[0].start,
+			level: 4,
+		});
+		for (const stage of data.stages) {
+			// filter so we have data trimmed on end coreSleep
+			if (data?.coreSleepTiming?.[1] && moment(data?.coreSleepTiming?.[1]).isAfter(stage.end)) {
+				stages.push(stage);
+			}
 		}
-	});
+		stages.push({
+			start: moment(data.stages[stages.length - 1].end).toISOString(),
+			end: moment(data.stages[stages.length - 1].end)
+				.add(10, "minutes") // add 10 minutes of awake phase at the end of the graph
+				.toISOString(),
+			level: 4,
+		});
+	}
+
 	const updatedMode = updateMode(mode, awakeDuration === undefined || awakeDuration?.duration === 0);
 	return (
 		<View style={{ flex: 1, position: "relative" }}>
 			<DailyTags selectedDay={selectedDay} />
 
-			<Hypnogram data={correctedStages} mode={updatedMode} />
+			<Hypnogram data={stages} mode={updatedMode} />
 			<View style={{ marginTop: 30 }}>
 				<SleepLegend
 					mode={updatedMode}

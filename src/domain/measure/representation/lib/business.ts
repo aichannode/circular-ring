@@ -238,6 +238,7 @@ export const createSleepStagesGetter =
 			timeToFallASleep: getOrElse<number>(data.constant, MetricType.UserDailyCoreTimeToFallAsleep, 0),
 			coreSleepTiming,
 			napTimings,
+			consoType: getOrElse<number>(data.constant, MetricType.UserDailyConsotype, 1),
 			sleepStagesDuration: {
 				[SleepStage.AWAKE]:
 					hasMetric(MetricType.UserDailyAwakeStageDuration)(data.constant) &&
