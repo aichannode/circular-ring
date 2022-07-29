@@ -57,7 +57,7 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 	];
 
 	const getTimestampFromValue = (line: Point) => line.x;
-	const parsedLines = dailyTrimOptions
+	let parsedLines = dailyTrimOptions
 		? trimData(lines, getTimestampFromValue, { includes: [] }).map((line) => ({
 				...line,
 				y: isInSomeIntervals(getTimestampFromValue(line), dailyTrimOptions.excludes ?? []) ? 0 : line.y,
@@ -103,6 +103,10 @@ export const DailyHRGraph: React.FC<Props> = observer(function HeartRateGraph({
 			setLoading(false);
 		}
 	}, [dailyHr]);
+
+	parsedLines = parsedLines.map((line) => {
+		return { x: line.x, y: line.y === 0 ? -1 : line.y };
+	});
 
 	return (
 		<View>

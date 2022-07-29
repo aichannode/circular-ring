@@ -130,7 +130,7 @@ export function LineChart({
 	const shouldDisplay =
 		((isInActiveMode(mode) || isInCalibrationMode(mode)) &&
 			(data.filter((line) => line.y > 0).length || daysItem?.[0].lines.length)) ||
-		movingAverage?.length;
+		(data.length === 0 && movingAverage?.length);
 	let linspace = isDefined(yMin) && isDefined(yMax) ? ((yMax - yMin) * 10) / 100 : 0;
 	if (yMin === yMax && isDefined(yMin) && isDefined(yMax)) {
 		linspace = Math.abs((yMax * 10) / 100);

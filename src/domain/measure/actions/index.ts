@@ -237,10 +237,9 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 		},
 		async pullDailyHRNightMetrics(localISODay: ISODay, useForceRefresh?: boolean) {
 			Promise.all([
-				measureApi.fetchMeasures<DailyHRNightTimeSeriesMetrics>(
+				measureApi.fetchDailyMeasures<DailyHRNightTimeSeriesMetrics>(
 					dailyHRNightTimeSeriesMetrics,
-					moment(localISODay).startOf("day").subtract(12, "hour").toISOString(),
-					moment(localISODay).endOf("day").add(1, "day").toISOString(),
+					localISODay,
 					useForceRefresh
 				),
 				measureApi.fetchLastDailyMeasures<DailyHRNightConstantMetrics>(

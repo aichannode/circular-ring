@@ -125,7 +125,10 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				}
 
 				const RHR30daysMetrics = last30Days.map((date) => {
-					return { value: model.dailyRestingHeartRate.get(date), date };
+					return {
+						value: model.dailyRestingHeartRate.get(date),
+						date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
+					};
 				});
 
 				return {
@@ -940,7 +943,10 @@ export function createRepresentation(apiService: ApiService, model: MeasureModel
 				}
 
 				const series = last30Days.map((date) => {
-					return { value: model.dailyBR.get(date), date: date };
+					return {
+						value: model.dailyBR.get(date),
+						date: moment(date).utcOffset() < 0 ? moment(date).add(1, "day").toISOString() : date,
+					};
 				}) as unknown as BR30Days["series"];
 				const controlState = series.some((line) => line?.value !== -1)
 					? DataControlState.READY
