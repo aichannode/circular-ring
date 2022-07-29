@@ -1,3 +1,10 @@
+## [1.6.22](https://gitlab.com/circularing/mobile/app/compare/v1.6.21...v1.6.22) (2022-07-29)
+
+
+### Bug Fixes
+
+* 24h setting doesn't apply on 3 graph ([f422f71](https://gitlab.com/circularing/mobile/app/commit/f422f71399a7a77c4de7c9e630cfe46ed7207af4))
+
 ## [1.6.21](https://gitlab.com/circularing/mobile/app/compare/v1.6.20...v1.6.21) (2022-07-28)
 
 
