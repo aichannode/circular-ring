@@ -1,3 +1,10 @@
+## [1.6.23](https://gitlab.com/circularing/mobile/app/compare/v1.6.22...v1.6.23) (2022-07-30)
+
+
+### Bug Fixes
+
+* upgrade version ([650ce5b](https://gitlab.com/circularing/mobile/app/commit/650ce5bc22c2a83c8d66e8294b5ad0da65fb49a7))
+
 ## [1.6.22](https://gitlab.com/circularing/mobile/app/compare/v1.6.21...v1.6.22) (2022-07-29)
 
 

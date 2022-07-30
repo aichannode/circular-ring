@@ -46,6 +46,7 @@ export const Sleep7DChart = observer(function Sleep7DDChart({ selectedDay, mode 
 		? days7DSleep?.sleepStages?.map?.((lines) => {
 				if (lines.consoType === 0) {
 					return {
+						...lines,
 						awake: -1,
 						deep: -1,
 						REM: -1,

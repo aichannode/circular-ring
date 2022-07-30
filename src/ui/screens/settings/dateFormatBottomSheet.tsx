@@ -36,9 +36,7 @@ export const DateFormatBottomSheet: React.FC<DateFormatBottomSheetProps> = ({ da
 			</View>
 			<BottomContainer>
 				<ButtonContainer>
-					<PrimaryButton style={{ width: 90 }} onPress={() => onSaved(dateFormat)}>
-						{format("global.save")}
-					</PrimaryButton>
+					<PrimaryButton onPress={() => onSaved(dateFormat)}>{format("global.save")}</PrimaryButton>
 				</ButtonContainer>
 			</BottomContainer>
 		</Container>
