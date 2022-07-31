@@ -26,7 +26,7 @@ export function HRVGraph({
 }: Props) {
 	const { format } = useI18n();
 	const [graphPeriod, setGraphPeriod] = useState(TimeFrame.TODAY);
-
+	console.log("dailyTrimOptions", dailyTrimOptions);
 	return (
 		<View>
 			<TitleText style={{ textAlign: "center", textTransform: "uppercase" }}>

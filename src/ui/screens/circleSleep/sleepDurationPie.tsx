@@ -1,4 +1,3 @@
-import { getLocalISODayFromUTCDate } from "@domain/common/business";
 import { StageInfos } from "@domain/measure/representation/lib/type";
 import { SleepStage } from "@domain/measure/type";
 import { createActiveMode, updateMode } from "@ui/business";
@@ -40,29 +39,36 @@ export function SleepDurationPieChart({
 			level: coreSleepTiming ? 1 : 4,
 		},
 	];
-
 	// Add naps
+	console.log("napTimings", napTimings);
+	console.log("coreSleepTiming", coreSleepTiming);
+	console.log("NAP FIRST ELEMENT", coreSleepTiming?.[1] ?? moment().startOf("day").toISOString());
 	if (napTimings.length) {
 		stages.push(
-			...napTimings.flatMap(([start, end], index) => [
-				{
-					start: index === 0 ? coreSleepTiming?.[1] ?? moment().startOf("day").toISOString() : napTimings[index - 1][1],
-					end: start,
-					level: 4,
-				},
-				{
-					start,
-					end,
-					level: 1,
-				},
-			])
+			...napTimings.flatMap(([start, end], index) => {
+				return [
+					{
+						start:
+							index === 0 ? coreSleepTiming?.[1] ?? moment().startOf("day").toISOString() : napTimings[index - 1][1],
+						end: start,
+						level: 4,
+					},
+					{
+						start,
+						end,
+						level: 1,
+					},
+				];
+			})
 		);
 	}
+	console.log("stages 1", stages);
 
 	// Complete the circle with awake state
-	const wasAsleepBeforeMidnight =
-		coreSleepTiming &&
-		getLocalISODayFromUTCDate(coreSleepTiming?.[0]) !== getLocalISODayFromUTCDate(coreSleepTiming?.[1]);
+	const midi = moment(coreSleepTiming?.[0]).startOf("day").add(12, "hour");
+	const endOfDay = moment(coreSleepTiming?.[0]).endOf("day");
+	const wasAsleepBeforeMidnight = coreSleepTiming && moment(coreSleepTiming?.[0]).local().isBetween(midi, endOfDay);
+	console.log("wasAsleepBeforeMidnight", wasAsleepBeforeMidnight);
 	stages.push({
 		start: stages[stages.length - 1]?.end,
 		end: wasAsleepBeforeMidnight
@@ -70,6 +76,7 @@ export function SleepDurationPieChart({
 			: moment(coreSleepTiming?.[1]).endOf("day").toISOString(),
 		level: 4,
 	});
+	console.log("stages", stages);
 	const updatedMode = updateMode(mode, stages.length === 0 || isNaN(duration));
 	return (
 		<Container>

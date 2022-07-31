@@ -50,7 +50,7 @@ export const DailyPieChartLabel: React.FC<Props> = ({ chartSize, labels, linedUp
 								polarOrigin={polarOrigin}
 								width={110}
 								height={20}
-								r={140}
+								r={150}
 								angleDeg={
 									getDifference(currentAngle, nextAngle) < 6 ? getAngleDeg(text, date) - 6 : getAngleDeg(text, date)
 								}

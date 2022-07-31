@@ -56,6 +56,8 @@ export const DailyPieChart: React.FC<Props> = ({
 	const startTime: string | undefined = displayedStages[0]?.start; //TODO convert to local time
 	const endTime: string | undefined = displayedStages[displayedStages.length - 1]?.end; //TODO convert to local time
 
+	console.log("displayedStages", displayedStages);
+
 	// The first slice starts yesterday. We need to use a different start angle
 	const didStartTheDayBefore = startTime !== undefined && isYesterday(startTime, endTime);
 

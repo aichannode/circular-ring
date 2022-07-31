@@ -39,12 +39,15 @@ export const DailyActivityIntensityGraph: React.FC<Props> = ({
 	}> = dataActivityIntensity?.stages.map((stage) => ({ value: stage.level, isoTime: stage.start })) ?? [];
 
 	const getTimestampFromValue = (x: { value: number; isoTime: string }) => moment(x.isoTime).valueOf();
+	console.log("graphData", graphData);
 	const parsedData = trimOptions
 		? trimData(graphData, getTimestampFromValue, { includes: trimOptions.includes }).map((x) => ({
 				...x,
 				value: isInSomeIntervals(getTimestampFromValue(x), trimOptions.excludes ?? []) ? 1 : x.value,
 		  }))
 		: graphData;
+
+	console.log("parsedData", parsedData);
 
 	const data = {
 		dataSets: [

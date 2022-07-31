@@ -138,13 +138,21 @@ export const CircleActivityScreen = observer(function CircleActivityScreen() {
 
 	const dailyTrimOptions: TrimOptions = {
 		includes: [
-			[
-				moment(updatedSelectedDay).startOf("day").valueOf(),
-				moment(updatedSelectedDay).startOf("day").add(1, "day").valueOf(),
-			],
+			[moment(selectedDay).startOf("day").valueOf(), moment(selectedDay).startOf("day").add(1, "day").valueOf()],
 		],
 		excludes: coreSleepTiming ? [[moment(coreSleepTiming[0]).valueOf(), moment(coreSleepTiming[1]).valueOf()]] : [],
 	};
+	console.log("dailyTrimOptions", {
+		includes: [
+			[
+				moment(selectedDay).startOf("day").format("DD HH:mm:ss"),
+				moment(selectedDay).startOf("day").add(1, "day").format("DD HH:mm:ss"),
+			],
+		],
+		excludes: coreSleepTiming
+			? [[moment(coreSleepTiming[0]).format("DD HH:mm:ss"), moment(coreSleepTiming[1]).format("DD HH:mm:ss")]]
+			: [],
+	});
 
 	const graphs = [
 		<ActivityIntensityGraph

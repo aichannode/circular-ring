@@ -1,4 +1,4 @@
-import { createSleepStagesGetter, getNaps } from "./business";
+import { createSleepStagesGetter } from "./business";
 import mockedData from "./mockedModelData.json";
 
 test("getSleepStages", function () {
@@ -180,9 +180,9 @@ test("getSleepStages", function () {
 });
 test.todo("getActivityPhases");
 
-test("getNaps", function () {
-	expect(getNaps(mockedData)).toEqual([
-		["2021-12-21T13:28:00.000Z", "2021-12-21T13:48:00.000Z"],
-		["2021-12-21T17:00:00.000Z", "2021-12-21T17:12:00.000Z"],
-	]);
-});
+// test("getNaps", function () {
+// 	expect(getNaps(mockedData)).toEqual([
+// 		["2021-12-21T13:28:00.000Z", "2021-12-21T13:48:00.000Z"],
+// 		["2021-12-21T17:00:00.000Z", "2021-12-21T17:12:00.000Z"],
+// 	]);
+// });

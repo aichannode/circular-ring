@@ -1120,7 +1120,7 @@ export function createActions(measureApi: MeasureApi, present: Present<Proposal>
 					sleepStagesMetrics,
 					// Grab data from the noon before the day to make sure to get the ensleepment.
 					// TODO: implement day/night worker
-					moment(localISODay).startOf("day").subtract(1, "day").toISOString(),
+					moment(localISODay).startOf("day").subtract(12, "hour").toISOString(),
 					moment(localISODay).endOf("day").toISOString(),
 					useForceRefresh
 				),
