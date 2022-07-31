@@ -1,3 +1,10 @@
+## [1.6.24](https://gitlab.com/circularing/mobile/app/compare/v1.6.23...v1.6.24) (2022-07-31)
+
+
+### Bug Fixes
+
+* graphs ([1bf6911](https://gitlab.com/circularing/mobile/app/commit/1bf6911fcf6d47a2f0353cf2ba9193c8addbc7ef))
+
 ## [1.6.23](https://gitlab.com/circularing/mobile/app/compare/v1.6.22...v1.6.23) (2022-07-30)
 
 
