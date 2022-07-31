@@ -24,6 +24,10 @@ export function DailySleepChart({ data, selectedDay, mode = createActiveMode() }
 
 	// Spec 00033 The graph always needs to start in an “awake” phase and always needs to end in an “awake” phase.
 	const stages = [];
+	if (data?.coreSleepTiming?.[1] && data?.coreSleepTiming?.[0]) {
+		data.coreSleepTiming[1];
+		data.coreSleepTiming[0];
+	}
 	if (data?.stages?.[0]?.start) {
 		stages.push({
 			start: moment(data.stages[0].start)

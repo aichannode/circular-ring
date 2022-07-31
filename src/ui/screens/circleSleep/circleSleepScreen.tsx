@@ -70,6 +70,9 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 			: [],
 	};
 
+	console.log("dailySleep?.consoType", dailySleep?.consoType);
+	console.log("screenMode", screenMode);
+
 	return (
 		<Container>
 			<View>
@@ -179,11 +182,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 						{dailySleep ? (
 							<GraphContainer>
 								{graphPeriod === TimeFrame.TODAY && (
-									<DailySleepChart
-										data={dailySleep}
-										selectedDay={updatedSelectedDay}
-										mode={updateMode(screenMode, dailySleep?.consoType === 0)}
-									/>
+									<DailySleepChart data={dailySleep} selectedDay={updatedSelectedDay} mode={screenMode} />
 								)}
 								{graphPeriod === TimeFrame.LAST_7_DAYS && (
 									<Sleep7DChart selectedDay={updatedSelectedDay} mode={screenModeWithoutDisabled} />

@@ -1,9 +1,8 @@
 import { useRepresentations } from "@core/representation";
 import { isDefined } from "@domain/common/business";
 import { ISODay } from "@domain/common/type";
-import { DataControlState } from "@domain/measure/representation/api";
 import { useIs24h } from "@domain/user/hooks/useUser";
-import { createActiveMode, isInActiveMode, isInCalibrationMode, trimData, TrimOptions, updateMode } from "@ui/business";
+import { createActiveMode, isInActiveMode, isInCalibrationMode, trimData, TrimOptions } from "@ui/business";
 import { DailyTags } from "@ui/components/dailyTags";
 import { LineChart } from "@ui/components/lineChart/LineChart";
 import { GraphContainer } from "@ui/components/measure/graphContainer";
@@ -63,8 +62,8 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 		parsedData.findIndex((line) => line.y == yMax),
 	];
 	const averages: Averages = [];
-	const updatedMode = updateMode(mode, dailyHrv?.controlState !== DataControlState.READY);
-	if (isInActiveMode(updatedMode) && isDefined(constant) && constant.reference !== -1) {
+	// mode = updateMode(mode, dailyHrv?.controlState !== DataControlState.READY);
+	if (isInActiveMode(mode) && isDefined(constant) && constant.reference !== -1) {
 		{
 			averages.push({
 				value: constant.reference,
@@ -73,11 +72,8 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 		}
 	}
 
-	if (
-		(isInActiveMode(updatedMode) || isInCalibrationMode(updatedMode)) &&
-		isDefined(constant) &&
-		constant.average !== -1
-	) {
+	console.log("parsedTrendData", parsedTrendData);
+	if ((isInActiveMode(mode) || isInCalibrationMode(mode)) && isDefined(constant) && constant.average !== -1) {
 		averages.push({
 			value: constant.average,
 			color: colors.darkBlue,
@@ -117,8 +113,8 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 							yMax={yMax}
 							yMinIndex={yMinIndex}
 							yMaxIndex={yMaxIndex}
-							mode={updatedMode}
-							movingAverage={parsedTrendData}
+							mode={mode}
+							movingAverage={isInActiveMode(mode) ? parsedTrendData : []}
 							shouldShowMarker={true}
 							highlightPerTapEnabled={true}
 							labelFormatter={(x, y) => {
@@ -129,7 +125,7 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 						/>
 						<View style={{ marginTop: 20 }}>
 							<GraphLegend
-								mode={updatedMode}
+								mode={mode}
 								rows={[
 									{
 										label: format("hr.average"),
@@ -168,8 +164,8 @@ export const DailyHRVGraph: React.FC<Props> = observer(function HRVGraph({
 												</View>
 											),
 										},
-										value: isInCalibrationMode(updatedMode)
-											? format("calibration.placeholder", { days: updatedMode.nbRemainingDays })
+										value: isInCalibrationMode(mode)
+											? format("calibration.placeholder", { days: mode.nbRemainingDays })
 											: parsedData.length == 0
 											? format("global.no_data")
 											: typeof constant.reference == "undefined" || constant.reference === 0

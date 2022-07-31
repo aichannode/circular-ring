@@ -2,6 +2,7 @@ import { getLogger } from "@core/logger/logger";
 import { hasMetric } from "@ui/utils/guard";
 import produce from "immer";
 import { action, reaction } from "mobx";
+import moment from "moment";
 import { useEffect } from "react";
 import { InteractionManager } from "react-native";
 import { MetricType, RangeMetrics } from "../../metric";
@@ -221,7 +222,7 @@ export const createSleepStagesGetter =
 		const totalMinutesSleepDuration = data.constant[MetricType.UserDailyTotalSleepDuration]
 			? Number(data.constant[MetricType.UserDailyTotalSleepDuration])
 			: -1;
-		const napTimings: Array<[string, string]> = getNaps(data);
+		const napTimings: Array<[string, string]> = coreSleepTiming ? getNaps(data, coreSleepTiming) : [];
 
 		return {
 			totalMinutesSleepDuration,
@@ -333,7 +334,10 @@ export function useDailyHeavyComputationData<M, T>(
 /**
  * Return the nap time frames
  */
-export const getNaps = (data: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>): Array<[string, string]> => {
+export const getNaps = (
+	data: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>,
+	coreSleepTiming: [string, string]
+): Array<[string, string]> => {
 	const napTimings: Array<[string, string]> = [];
 	for (let i = 0; i < data.timeSeries.length; i++) {
 		const currentBlock = data.timeSeries[i];
@@ -353,7 +357,13 @@ export const getNaps = (data: RangeMetrics<SleepStagesMetrics, DailySleepStageDu
 				getLogger("MEASURE REPRESENTATION").debug(`A nap started at ${startTime} has no end`);
 				break;
 			}
-			napTimings.push([startTime, endTime]);
+			if (
+				coreSleepTiming?.[1] &&
+				moment(startTime).isAfter(coreSleepTiming?.[1]) &&
+				coreSleepTiming?.[0] &&
+				moment(endTime).isBefore(moment(coreSleepTiming?.[0]).add(1, "day"))
+			)
+				napTimings.push([startTime, endTime]);
 			// Move the cursor forward to find the next session
 			i += endIndex > -1 ? endIndex : 0;
 		}
