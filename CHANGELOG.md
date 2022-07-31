@@ -1,3 +1,10 @@
+## [1.6.25](https://gitlab.com/circularing/mobile/app/compare/v1.6.24...v1.6.25) (2022-07-31)
+
+
+### Bug Fixes
+
+* sleep pie chart ([dcc2c85](https://gitlab.com/circularing/mobile/app/commit/dcc2c8531c5dfce4e82ebb9be9528b0c4c5695ea))
+
 ## [1.6.24](https://gitlab.com/circularing/mobile/app/compare/v1.6.23...v1.6.24) (2022-07-31)
 
 

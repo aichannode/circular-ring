@@ -50,8 +50,8 @@ export function DailySleepChart({ data, selectedDay, mode = createActiveMode() }
 			level: 4,
 		});
 	}
+	const updatedMode = updateMode(mode, data?.consoType === 0);
 
-	const updatedMode = updateMode(mode, awakeDuration === undefined || awakeDuration?.duration === 0);
 	return (
 		<View style={{ flex: 1, position: "relative" }}>
 			<DailyTags selectedDay={selectedDay} />
@@ -59,7 +59,7 @@ export function DailySleepChart({ data, selectedDay, mode = createActiveMode() }
 			<Hypnogram data={stages} mode={updatedMode} />
 			<View style={{ marginTop: 30 }}>
 				<SleepLegend
-					mode={updatedMode}
+					mode={mode}
 					REMDuration={REMDuration}
 					awakeDuration={awakeDuration}
 					lightDuration={lightDuration}

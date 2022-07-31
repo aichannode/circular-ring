@@ -338,6 +338,7 @@ export const getNaps = (
 	data: RangeMetrics<SleepStagesMetrics, DailySleepStageDuration>,
 	coreSleepTiming: [string, string]
 ): Array<[string, string]> => {
+	console.log("getNaps data", data);
 	const napTimings: Array<[string, string]> = [];
 	for (let i = 0; i < data.timeSeries.length; i++) {
 		const currentBlock = data.timeSeries[i];
@@ -353,17 +354,12 @@ export const getNaps = (
 							getOrElse<number>(data.timeSeries[i + endIndex].metrics, MetricType.UserNapSleepEnd, 0) * 1000
 					  ).toISOString()
 					: undefined;
+			console.log(`A nap started at ${startTime} has no end`);
 			if (!endTime) {
 				getLogger("MEASURE REPRESENTATION").debug(`A nap started at ${startTime} has no end`);
 				break;
 			}
-			if (
-				coreSleepTiming?.[1] &&
-				moment(startTime).isAfter(coreSleepTiming?.[1]) &&
-				coreSleepTiming?.[0] &&
-				moment(endTime).isBefore(moment(coreSleepTiming?.[0]).add(1, "day"))
-			)
-				napTimings.push([startTime, endTime]);
+			if (moment(startTime).isAfter(moment(coreSleepTiming?.[1]).startOf("day"))) napTimings.push([startTime, endTime]);
 			// Move the cursor forward to find the next session
 			i += endIndex > -1 ? endIndex : 0;
 		}
