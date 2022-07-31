@@ -32,24 +32,18 @@ export function SleepDurationPieChart({
 	isLoading = false,
 }: Props) {
 	// Draw the core sleep
-	const stages = [
-		{
-			start: coreSleepTiming?.[0] ?? moment().startOf("day").toISOString(),
-			end: coreSleepTiming?.[1] ?? moment().endOf("day").toISOString(),
-			level: coreSleepTiming ? 1 : 4,
-		},
-	];
-	// Add naps
-	console.log("napTimings", napTimings);
-	console.log("coreSleepTiming", coreSleepTiming);
-	console.log("NAP FIRST ELEMENT", coreSleepTiming?.[1] ?? moment().startOf("day").toISOString());
-	if (napTimings.length) {
+	const napBeforeCoreSleep = napTimings.filter(([start, end]) => moment(start).isBefore(coreSleepTiming?.[0]));
+	const napAfterCoreSleep = napTimings.filter(([start, end]) => moment(start).isAfter(coreSleepTiming?.[1]));
+	console.log({ napBeforeCoreSleep, napAfterCoreSleep });
+
+	const stages = [];
+	// naps BEFORE coresleep
+	if (napBeforeCoreSleep.length) {
 		stages.push(
-			...napTimings.flatMap(([start, end], index) => {
+			...napBeforeCoreSleep.flatMap(([start, end], index) => {
 				return [
 					{
-						start:
-							index === 0 ? coreSleepTiming?.[1] ?? moment().startOf("day").toISOString() : napTimings[index - 1][1],
+						start: index === 0 ? moment().startOf("day").toISOString() : napBeforeCoreSleep[index - 1][1],
 						end: start,
 						level: 4,
 					},
@@ -62,13 +56,49 @@ export function SleepDurationPieChart({
 			})
 		);
 	}
-	console.log("stages 1", stages);
 
-	// Complete the circle with awake state
+	// LINK BETWEEN PREV NAP AND CORE
+	if (napBeforeCoreSleep.length) {
+		stages.push({
+			start: napBeforeCoreSleep[napBeforeCoreSleep.length - 1][1],
+			end: coreSleepTiming?.[0] ?? moment().startOf("day").toISOString(),
+			level: 4,
+		});
+	}
+
+	// push CORE SLEEP
+	stages.push({
+		start: coreSleepTiming?.[0] ?? moment().startOf("day").toISOString(),
+		end: coreSleepTiming?.[1] ?? moment().endOf("day").toISOString(),
+		level: coreSleepTiming ? 1 : 4,
+	});
+	// Add naps
+
+	if (napAfterCoreSleep.length) {
+		stages.push(
+			...napAfterCoreSleep.flatMap(([start, end], index) => {
+				return [
+					{
+						start:
+							index === 0
+								? coreSleepTiming?.[1] ?? moment().startOf("day").toISOString()
+								: napAfterCoreSleep[index - 1][1],
+						end: start,
+						level: 4,
+					},
+					{
+						start,
+						end,
+						level: 1,
+					},
+				];
+			})
+		);
+	}
+
 	const midi = moment(coreSleepTiming?.[0]).startOf("day").add(12, "hour");
 	const endOfDay = moment(coreSleepTiming?.[0]).endOf("day");
 	const wasAsleepBeforeMidnight = coreSleepTiming && moment(coreSleepTiming?.[0]).local().isBetween(midi, endOfDay);
-	console.log("wasAsleepBeforeMidnight", wasAsleepBeforeMidnight);
 	stages.push({
 		start: stages[stages.length - 1]?.end,
 		end: wasAsleepBeforeMidnight
@@ -76,7 +106,6 @@ export function SleepDurationPieChart({
 			: moment(coreSleepTiming?.[1]).endOf("day").toISOString(),
 		level: 4,
 	});
-	console.log("stages", stages);
 	const updatedMode = updateMode(mode, stages.length === 0 || isNaN(duration));
 	return (
 		<Container>

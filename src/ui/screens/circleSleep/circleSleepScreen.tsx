@@ -49,6 +49,7 @@ export const CircleSleepScreen = observer(function CircleSleepScreen() {
 
 	const qualityScore = useDailySleepQualityScore(updatedSelectedDay);
 	const [dailySleep, setDailyData] = useState<DailySleepData | undefined>();
+	console.log("dailySleep", dailySleep);
 	const [focusedGauge, setFocusedGauge] = useState<number | null>(null);
 	const [activeItem, setActiveItem] = useState<number>(0);
 	const { format } = useI18n();

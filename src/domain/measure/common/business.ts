@@ -14,7 +14,7 @@ export function toUTCTimeSegment(
 		case TimeFrame.ONE_DAY:
 			assertISODay(localISODate);
 			return {
-				isoStart: moment(localISODate).startOf("day").toISOString(),
+				isoStart: moment(localISODate).startOf("day").subtract(1, "minute").toISOString(),
 				isoEnd: moment(localISODate).endOf("day").toISOString(),
 			};
 
