@@ -21,6 +21,7 @@ import { LocationEnabler } from "./locationEnabler";
 import { NamedDevice } from "./namedDevice";
 import { UserDevice } from "./userDevice";
 import * as Sentry from "@sentry/react-native";
+import BleManager from "react-native-ble-manager";
 
 const FB = RNFetchBlob.config({
 	fileCache: true,
@@ -242,6 +243,8 @@ export class BleDeviceService {
 			// return;
 		}
 		await this.bluetoothService.enable();
+		await BleManager.start({ showAlert: false });
+
 		if (Platform.OS === "android") {
 			this.checkSettings();
 			if (!this._locationEnabledAndroid.get()) {
