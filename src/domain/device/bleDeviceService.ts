@@ -243,7 +243,6 @@ export class BleDeviceService {
 			// return;
 		}
 		await this.bluetoothService.enable();
-		await BleManager.start({ showAlert: false });
 
 		if (Platform.OS === "android") {
 			this.checkSettings();
@@ -334,6 +333,7 @@ export class BleDeviceService {
 			}
 		}
 		await this.bluetoothService.enable();
+		await BleManager.start({ showAlert: false });
 		const DFUScanPromise = new Promise<Device>((resolve, reject) => {
 			this.updateState.set(UpdateState.SCANNING_DFU_RING);
 			if (this._scanning.get()) {
