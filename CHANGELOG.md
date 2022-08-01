@@ -1,3 +1,10 @@
+## [1.6.26](https://gitlab.com/circularing/mobile/app/compare/v1.6.25...v1.6.26) (2022-08-01)
+
+
+### Bug Fixes
+
+* revert ble fix ([86b0f36](https://gitlab.com/circularing/mobile/app/commit/86b0f361d1cc23d96ea5a81d76cae52c8ce65f7a))
+
 ## [1.6.25](https://gitlab.com/circularing/mobile/app/compare/v1.6.24...v1.6.25) (2022-07-31)
 
 
