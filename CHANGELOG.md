@@ -1,3 +1,10 @@
+## [1.6.28](https://gitlab.com/circularing/mobile/app/compare/v1.6.27...v1.6.28) (2022-08-01)
+
+
+### Bug Fixes
+
+* using blemanager ([91cb6a7](https://gitlab.com/circularing/mobile/app/commit/91cb6a7a2e0c2a193cd59a71b921edc7c125e27c))
+
 ## [1.6.27](https://gitlab.com/circularing/mobile/app/compare/v1.6.26...v1.6.27) (2022-08-01)
 
 
