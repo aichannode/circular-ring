@@ -1,3 +1,10 @@
+## [1.6.27](https://gitlab.com/circularing/mobile/app/compare/v1.6.26...v1.6.27) (2022-08-01)
+
+
+### Bug Fixes
+
+* add logs when updating ([60b7ae4](https://gitlab.com/circularing/mobile/app/commit/60b7ae483a2cab48bc659c4e4f6b71304f453dd7))
+
 ## [1.6.26](https://gitlab.com/circularing/mobile/app/compare/v1.6.25...v1.6.26) (2022-08-01)
 
 
