@@ -1,3 +1,10 @@
+## [1.6.29](https://gitlab.com/circularing/mobile/app/compare/v1.6.28...v1.6.29) (2022-08-01)
+
+
+### Bug Fixes
+
+* reset BLE manager on the correct side ([ebfb21c](https://gitlab.com/circularing/mobile/app/commit/ebfb21c72e52e6dbef2bd2dd79fb3866bb87fd49))
+
 ## [1.6.28](https://gitlab.com/circularing/mobile/app/compare/v1.6.27...v1.6.28) (2022-08-01)
 
 
