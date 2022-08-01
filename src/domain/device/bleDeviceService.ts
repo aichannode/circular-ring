@@ -20,6 +20,7 @@ import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 import { LocationEnabler } from "./locationEnabler";
 import { NamedDevice } from "./namedDevice";
 import { UserDevice } from "./userDevice";
+import * as Sentry from "@sentry/react-native";
 
 const FB = RNFetchBlob.config({
 	fileCache: true,
@@ -371,6 +372,8 @@ export class BleDeviceService {
 				this.autoConnectFavoriteDevice();
 			} catch (err) {
 				this.updateState.set(UpdateState.UPDATE_ERROR_SENDING_FIRMWARE_OVER_BLUETOOTH);
+				this.logger.error("Update error", err);
+				Sentry.captureException(err);
 			}
 		} catch (e) {
 			this.logger.warn("Device not found:", e, "retrying in 10 seconds ");
