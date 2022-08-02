@@ -48,7 +48,7 @@ export class RingManagementService {
 		private readonly appStateService: AppStateService
 	) {}
 
-	async init() {
+	/*	async init() {
 		this.deviceService.monitoring.subscribe((monitoring) => {
 			// on ring connection without Timeout The ring get DDOS
 			if (monitoring) {
@@ -63,7 +63,7 @@ export class RingManagementService {
 		});
 		// Sync ring data each 5 min
 		// setInterval(() => this.syncData(), 5 * 60 * 1000);
-	}
+	}*/
 
 	async reset() {
 		this._currentRingSyncState.set(SyncState.NONE);
