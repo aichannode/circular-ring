@@ -1,3 +1,10 @@
+## [1.6.31](https://gitlab.com/circularing/mobile/app/compare/v1.6.30...v1.6.31) (2022-08-02)
+
+
+### Bug Fixes
+
+* re-adding Esteban ghost ring fix ([fb99cef](https://gitlab.com/circularing/mobile/app/commit/fb99cef5351d4aa97ae138756ca0a92b3fc8f413))
+
 ## [1.6.30](https://gitlab.com/circularing/mobile/app/compare/v1.6.29...v1.6.30) (2022-08-02)
 
 
