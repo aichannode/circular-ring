@@ -111,6 +111,7 @@ export const HomeScreen: React.FC = () => {
 	const { loading, result: recommendations } = useRecommendations();
 	const remainingDays = useUserCalibrationRemainingDays();
 
+	console.log(process.env);
 	const data = [];
 	data.push(<SyncBanner onRetry={ringManagementService.syncData} />);
 	data.push(<NoRingBanner />);
@@ -171,6 +172,7 @@ export const HomeScreen: React.FC = () => {
 			)}
 		</View>
 	);
+
 	Object.keys(recommendations).map((date, key) => {
 		data.push(<RecommendationWrapper loading={loading} key={date} date={date} recommendations={recommendations} />);
 	});
