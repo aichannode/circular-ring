@@ -59,9 +59,12 @@ export interface UserDto extends UserDtoBase {
 	validated: boolean;
 	createdAt: string;
 	calibrationRemainingDays: number;
+	leaderboardEnabled: boolean;
 }
 
-export type UserPutDto = UserDtoBase;
+export interface UserPutDto extends UserDtoBase {
+	enableLeaderboard: boolean;
+}
 
 export interface UserSettingsDto {
 	dateFormat: DateFormatDto;

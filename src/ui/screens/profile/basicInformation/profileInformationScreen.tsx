@@ -13,6 +13,7 @@ import { DeleteAccountBottomSheet } from "@ui/screens/profile/basicInformation/d
 import { HeightBottomSheet } from "@ui/screens/profile/basicInformation/heightBottomSheet";
 import { WeightBottomSheet } from "@ui/screens/profile/basicInformation/weightBottomSheet";
 import React, { useRef, useState } from "react";
+import { ConfirmEnableLeaderboardBottomSheet } from "./confirmEnableLeaderboardBottomSheet";
 
 export const ProfileInformationScreen = () => {
 	const { format, formatDate } = useI18n();
@@ -32,10 +33,12 @@ export const ProfileInformationScreen = () => {
 	const displayedWeight = (weightUnit === WeightUnit.lbs ? Math.round(kgToLbs(weight)) : weight).toFixed(0);
 
 	const [newSex, setNewSex] = useState(user?.sex ?? Sex.Male);
+	const [enableLeaderboard, setEnableLeaderboard] = useState(user?.leaderboardEnabled ?? false);
 	const [isAccountDeleted, setAccountDeleted] = useState(false);
 	const heightBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const weightBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const confirmSexBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
+	const confirmEnableLeaderboardBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 	const deleteAccountBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 
 	return !user ? null : (
@@ -75,7 +78,16 @@ export const ProfileInformationScreen = () => {
 					confirmSexBottomSheetRef.current?.present();
 				}}
 			/>
-			{/*<InfoListItem name={format("profile_info.leaderboard")} />*/}
+			<InfoListItem
+				name={format("profile_info.leaderboard")}
+				switchOptions={[format("global.yes_shift"), format("global.no_shift")]}
+				switchValue={user.leaderboardEnabled === true ? format("global.yes_shift") : format("global.no_shift")}
+				onSwitchSelect={(value) => {
+					const enabled = value === format("global.yes_shift") ? true : false;
+					setEnableLeaderboard(enabled);
+					confirmEnableLeaderboardBottomSheetRef.current?.present();
+				}}
+			/>
 			<InfoListItem
 				name={format("profile_info.advanced_info")}
 				hasDisclosure={true}
@@ -123,12 +135,11 @@ export const ProfileInformationScreen = () => {
 					}}
 				/>
 			</CircularBottomSheet>
-
-			<CircularBottomSheet snapPoints={[480]} ref={confirmSexBottomSheetRef}>
-				<ConfirmSexBottomSheet
-					sex={newSex}
+			<CircularBottomSheet snapPoints={[480]} ref={confirmEnableLeaderboardBottomSheetRef}>
+				<ConfirmEnableLeaderboardBottomSheet
+					enableLeaderboard={enableLeaderboard}
 					onClose={() => {
-						confirmSexBottomSheetRef.current?.close();
+						confirmEnableLeaderboardBottomSheetRef.current?.close();
 					}}
 				/>
 			</CircularBottomSheet>

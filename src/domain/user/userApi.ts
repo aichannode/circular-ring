@@ -44,6 +44,7 @@ export class UserApi {
 			bornDate: new Date(userDto.bornDate),
 			createdAt: new Date(userDto.createdAt),
 			sex: userDto.sex === "male" ? Sex.Male : Sex.Female,
+			leaderboardEnabled: userDto.leaderboardEnabled,
 			stride: 80,
 		};
 	}
@@ -51,7 +52,7 @@ export class UserApi {
 	/** User Settings **/
 
 	async getUserSettings(): Promise<UserSettings> {
-		const result = await this.apiService.get<UserSettingsDto>("/user/setting", {useForceRefresh: true})
+		const result = await this.apiService.get<UserSettingsDto>("/user/setting", { useForceRefresh: true });
 		return userSettingsFromDto(result.data);
 	}
 

@@ -1,13 +1,17 @@
 import { useServices } from "@core/services";
+import { useUser } from "@domain/user/hooks/useUser";
+import { CircularBottomSheet, CircularBottomSheetHandle } from "@ui/components/bottomSheet/bottomSheet";
 import { Spinner } from "@ui/components/spinner";
 import { useI18n } from "@ui/i18n";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import emoji from "node-emoji";
-import React, { createRef, useEffect, useState } from "react";
+import React, { createRef, useEffect, useRef, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import styled from "styled-components/native";
+import { ConfirmEnableLeaderboardBottomSheet } from "../profile/basicInformation/confirmEnableLeaderboardBottomSheet";
+import LeaderboardPopUpContainer from "./leaderboardPopUpContainer";
 
 interface I_LeaderboardData {
 	rank: number;
@@ -195,10 +199,14 @@ const LeaderboardTile = ({ data, gradient, color }: { data: I_LeaderboardData; g
 
 export const LeaderboardScreen: React.FC = () => {
 	const scrollRef = createRef<ScrollView>();
+
 	const { format } = useI18n();
+	const user = useUser();
 	const { leaderboardService } = useServices();
 	const [data, setData] = useState<null | any>(null);
 	const [loading, setLoading] = useState(false);
+	const [enableLeaderboard, setEnableLeaderboard] = useState(user?.leaderboardEnabled ?? false);
+	const confirmEnableLeaderboardBottomSheetRef = useRef<CircularBottomSheetHandle>(null);
 
 	const ScrollToPosition = (position: number) => {
 		const y = position * 67;
@@ -237,8 +245,23 @@ export const LeaderboardScreen: React.FC = () => {
 		<>
 			<Container ref={scrollRef}>
 				<TitleContainer>
-					<Title>{format("header.leaderboard")}</Title>
-					<SubTitle>{`${moment().format("MMMM")} - ${format("leaderboard.updatedDaily")}`}</SubTitle>
+					{user?.leaderboardEnabled ? (
+						<View style={{ paddingHorizontal: 20 }}>
+							<Title>{format("header.leaderboard")}</Title>
+							<SubTitle>{`${moment().format("MMMM")} - ${format("leaderboard.updatedDaily")}`}</SubTitle>
+						</View>
+					) : (
+						<LeaderboardPopUpContainer
+							message={format("header.leaderboard.info.message")}
+							switchOptions={[format("global.yes_shift"), format("global.no_shift")]}
+							switchValue={user?.leaderboardEnabled ? format("global.yes_shift") : format("global.no_shift")}
+							onSwitchSelect={(value) => {
+								const enabled = value === format("global.yes_shift") ? true : false;
+								setEnableLeaderboard(enabled);
+								confirmEnableLeaderboardBottomSheetRef.current?.present();
+							}}
+						/>
+					)}
 				</TitleContainer>
 				<LeaderboardContainer>
 					{data.leaderboard.data.map((d: I_LeaderboardData, key: number) =>
@@ -250,7 +273,7 @@ export const LeaderboardScreen: React.FC = () => {
 					)}
 				</LeaderboardContainer>
 			</Container>
-			{data.targetUser && (
+			{data.targetUser && user?.leaderboardEnabled && (
 				<MyScore onPress={() => ScrollToPosition(data.targetUser.rank)}>
 					<>
 						<Separator></Separator>
@@ -258,6 +281,14 @@ export const LeaderboardScreen: React.FC = () => {
 					</>
 				</MyScore>
 			)}
+			<CircularBottomSheet snapPoints={[480]} ref={confirmEnableLeaderboardBottomSheetRef}>
+				<ConfirmEnableLeaderboardBottomSheet
+					enableLeaderboard={enableLeaderboard}
+					onClose={() => {
+						confirmEnableLeaderboardBottomSheetRef.current?.close();
+					}}
+				/>
+			</CircularBottomSheet>
 		</>
 	);
 };
@@ -288,7 +319,6 @@ const TitleContainer = styled.View`
 	height: 71px;
 	background-color: white;
 	width: 100%;
-	padding-horizontal: 20px;
 `;
 
 const Title = styled.Text`

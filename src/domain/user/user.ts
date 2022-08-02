@@ -44,4 +44,5 @@ export interface User {
 	calibrationRemainingDays: number;
 	leaderboardRank?: "SPECIALIST" | "EXPERT" | "ADVANCED" | "EXPERIENCED" | "NOVICE" | "ROOKIE" | "TOP100";
 	leaderboardPosition?: number;
+	leaderboardEnabled: boolean;
 }

@@ -286,6 +286,7 @@ export class UserService {
 			scorePublic: true,
 			tutorialCompleted: true,
 			stride: 0,
+			enableLeaderboard: false,
 		});
 		this._connectionStartTime.set(new Date().toISOString());
 	}
@@ -299,6 +300,7 @@ export class UserService {
 		sex?: Sex;
 		bornDate?: Date;
 		language?: LocaleType;
+		enableLeaderboard?: boolean;
 	}) {
 		const currentUser = this._user.get();
 		if (currentUser) {
@@ -316,6 +318,7 @@ export class UserService {
 				scorePublic: currentUser.scorePublic,
 				stride: 0, //currentUser.stride, => Server patch
 				tutorialCompleted: currentUser.tutorialCompleted,
+				enableLeaderboard: userInfo.enableLeaderboard ?? currentUser.leaderboardEnabled,
 			});
 		}
 	}
