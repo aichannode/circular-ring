@@ -1,3 +1,10 @@
+## [1.6.30](https://gitlab.com/circularing/mobile/app/compare/v1.6.29...v1.6.30) (2022-08-02)
+
+
+### Bug Fixes
+
+* CIR-6 added possibility to participate to the leaderboard ([46eb2c2](https://gitlab.com/circularing/mobile/app/commit/46eb2c2b2503f60025d40504bdd912c3652b8c88))
+
 ## [1.6.29](https://gitlab.com/circularing/mobile/app/compare/v1.6.28...v1.6.29) (2022-08-01)
 
 
