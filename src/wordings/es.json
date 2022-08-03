@@ -16,6 +16,8 @@
 	"setup.scan.disabled.message": "Asegúrate de que el Bluetooth está activado en tu teléfono para empezar a emparejarlo con un anillo circular y de que tienes el anillo cerca de tu teléfono.",
 	"setup.scan.disabled.enable": "Habilitar bluetooth",
 	"setup.scan.disabled.button": "Ir a la configuración",
+	"setup.scan.unsupported.title": "Bluetooth no compatible",
+	"setup.scan.unsupported.message": "Asegúrese de utilizar un teléfono móvil compatible con Bluetooth para comenzar a emparejar con un anillo circular y de tener su anillo cerca de su teléfono.",
 	"setup.scan.location_disabled.title": "Habilitar la localización",
 	"setup.scan.location_disabled.message": "Para poder utilizar la conexión bluetooth, Android necesita que su teléfono habilite la localización",
 	"setup.scan.location_disabled.enable": "Habilitar la ubicación",

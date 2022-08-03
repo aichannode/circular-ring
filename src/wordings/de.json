@@ -14,6 +14,8 @@
 	"url.help": "https://www.circular.xyz/help",
 	"setup.scan.disabled.title": "Bluetooth einschalten",
 	"setup.scan.disabled.message": "Vergewissern Sie sich, dass Bluetooth auf Ihrem Mobiltelefon aktiviert ist, um das Pairing mit einem Circular Ring zu beginnen, und dass sich der Ring in der Nähe Ihres Telefons befindet.",
+	"setup.scan.unsupported.title": "Bluetooth wird nicht unterstützt",
+	"setup.scan.unsupported.message": "Stellen Sie sicher, dass Sie ein Mobiltelefon verwenden, das Bluetooth unterstützt, um mit der Kopplung mit einem kreisförmigen Ring zu beginnen, und dass Sie Ihren Ring in der Nähe Ihres Telefons haben.",
 	"setup.scan.disabled.enable": "Bluetooth einschalten",
 	"setup.scan.location_disabled.title": "Standort freigeben",
 	"setup.scan.disabled.button": "Gehe zu den Einstellungen",

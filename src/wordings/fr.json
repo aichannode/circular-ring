@@ -16,6 +16,8 @@
 	"setup.scan.disabled.message": "Assurez-vous que le Bluetooth est activé sur votre téléphone pour commencer le jumelage avec votre bague Circular et que vous avez votre bague à proximité de votre téléphone.",
 	"setup.scan.disabled.enable": "Activer le bluetooth",
 	"setup.scan.disabled.button": "Aller aux paramètres",
+	"setup.scan.unsupported.title": "Bluetooth non pris en charge",
+	"setup.scan.unsupported.message": "Assurez-vous que vous utilisez un téléphone portable qui prend en charge Bluetooth pour commencer l'appairage avec une bague circulaire et que vous avez votre bague à proximité de votre téléphone.",
 	"setup.scan.location_disabled.title": "Activer la géolocalisation",
 	"setup.scan.location_disabled.message": "Pour pouvoir utiliser la connexion Bluetooth, Android a besoin que votre téléphone active la fonction de géolocalisation.",
 	"setup.scan.location_disabled.enable": "Activer la géolocation",

@@ -8,10 +8,12 @@ import { NamedUserRing } from "@domain/ring/ring";
 import { RingApi } from "@domain/ring/ringApi";
 import { deserializeBattery, RingBattery } from "@domain/ring/ringBattery";
 import { deserializeLiveData, RingLiveData } from "@domain/ring/ringLiveData";
+import * as Sentry from "@sentry/react-native";
 import { getUTCTimestamp } from "@utils/date";
 import { observable, Observable } from "micro-observables";
 import { Signal } from "micro-signals";
 import { Platform } from "react-native";
+import BleManager from "react-native-ble-manager";
 import { BleError, Device, ScanMode, State, Subscription } from "react-native-ble-plx";
 import RNFetchBlob from "react-native-blob-util";
 import RNFS from "react-native-fs";
@@ -20,8 +22,6 @@ import { FavoriteDeviceStorage } from "./favoriteDeviceStorage";
 import { LocationEnabler } from "./locationEnabler";
 import { NamedDevice } from "./namedDevice";
 import { UserDevice } from "./userDevice";
-import * as Sentry from "@sentry/react-native";
-import BleManager from "react-native-ble-manager";
 
 const FB = RNFetchBlob.config({
 	fileCache: true,
@@ -42,6 +42,7 @@ export enum DeviceSetupState {
 	LOCATION_DISABLED = "LOCATION_DISABLED",
 	READY_TO_SCAN = "READY_TO_SCAN",
 	SCANNING = "SCANNING",
+	UNSUPPORTED = "UNSUPPORTED",
 }
 export enum DeviceAutoConnectState {
 	DISABLED = "DISABLED",
@@ -173,12 +174,17 @@ export class BleDeviceService {
 				if (Platform.OS === "android" && !locationAndroid) {
 					return DeviceSetupState.LOCATION_DISABLED;
 				}
+				if (bleState === State.Unsupported) {
+					return DeviceSetupState.UNSUPPORTED;
+				}
+
 				if (connectionState === DeviceConnectionState.CONNECTING) {
 					return DeviceSetupState.CONNECTING;
 				}
 				if (scanning) {
 					return DeviceSetupState.SCANNING;
 				}
+
 				return DeviceSetupState.READY_TO_SCAN;
 			}
 		);

@@ -73,12 +73,15 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 				switch (setupState) {
 					case DeviceSetupState.DISABLED:
 					case DeviceSetupState.LOCATION_DISABLED:
+					case DeviceSetupState.UNSUPPORTED:
 						return (
 							<ResponsiveCenterView>
 								<Stack gap={50} align={"center"}>
 									<DisabledTitle>
 										{format(
-											setupState === DeviceSetupState.DISABLED
+											setupState === DeviceSetupState.UNSUPPORTED
+												? "setup.scan.unsupported.title"
+												: setupState === DeviceSetupState.DISABLED
 												? "setup.scan.disabled.title"
 												: "setup.scan.location_disabled.title"
 										)}
@@ -95,36 +98,39 @@ export const RingSetupScreen: React.FC<IRingSetupScreen> = (props) => {
 									</View>
 									<DisabledMessage>
 										{format(
-											setupState === DeviceSetupState.DISABLED
+											setupState === DeviceSetupState.UNSUPPORTED
+												? "setup.scan.unsupported.message"
+												: setupState === DeviceSetupState.DISABLED
 												? "setup.scan.disabled.message"
 												: "setup.scan.location_disabled.message"
 										)}
 									</DisabledMessage>
-									{Platform.OS === "android" ? (
-										<PrimaryButton
-											onPress={async () => {
-												bluetoothService.enable();
-												bleDeviceService.checkSettings();
-												if (setupState === DeviceSetupState.LOCATION_DISABLED) {
-													bleDeviceService.requestLocation();
-												}
-											}}
-										>
-											{format(
-												setupState === DeviceSetupState.DISABLED
-													? "setup.scan.disabled.enable"
-													: "setup.scan.location_disabled.enable"
-											)}
-										</PrimaryButton>
-									) : (
-										<PrimaryButton
-											onPress={() => {
-												Linking.openURL("app-settings:");
-											}}
-										>
-											{format("setup.scan.disabled.button")}
-										</PrimaryButton>
-									)}
+									{setupState !== DeviceSetupState.UNSUPPORTED &&
+										(Platform.OS === "android" ? (
+											<PrimaryButton
+												onPress={async () => {
+													bluetoothService.enable();
+													bleDeviceService.checkSettings();
+													if (setupState === DeviceSetupState.LOCATION_DISABLED) {
+														bleDeviceService.requestLocation();
+													}
+												}}
+											>
+												{format(
+													setupState === DeviceSetupState.DISABLED
+														? "setup.scan.disabled.enable"
+														: "setup.scan.location_disabled.enable"
+												)}
+											</PrimaryButton>
+										) : (
+											<PrimaryButton
+												onPress={() => {
+													Linking.openURL("app-settings:");
+												}}
+											>
+												{format("setup.scan.disabled.button")}
+											</PrimaryButton>
+										))}
 								</Stack>
 							</ResponsiveCenterView>
 						);

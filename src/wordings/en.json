@@ -16,6 +16,8 @@
 	"setup.scan.disabled.title": "Enable bluetooth",
 	"setup.scan.disabled.message": "Make sure that your Bluetooth is enabled on your phone to begin pairing with a Circular ring and that you have your ring close to your phone.",
 	"setup.scan.disabled.enable": "Enable bluetooth",
+	"setup.scan.unsupported.title": "Bluetooth unsupported",
+	"setup.scan.unsupported.message": "Make sure that you use a mobile phone that supports Bluetooth to begin pairing with a Circular ring and that you have your ring close to your phone.",
 	"setup.scan.disabled.button": "Go to settings",
 	"setup.scan.location_disabled.title": "Enable location",
 	"setup.scan.location_disabled.message": "To be able to use bluetooth connection, Android needs your phone to enable location",

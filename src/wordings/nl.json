@@ -16,6 +16,8 @@
 	"setup.scan.disabled.message": "Zorg ervoor dat Bluetooth is ingeschakeld op uw telefoon om een Circular ring te koppelen, alsook dat u de ring dicht bij uw telefoon houdt.",
 	"setup.scan.disabled.enable": "Bluetooth inschakelen",
 	"setup.scan.disabled.button": "Ga naar Instellingen",
+	"setup.scan.unsupported.title": "Bluetooth non supportato",
+	"setup.scan.unsupported.message": "Assicurati di utilizzare un telefono cellulare che supporti il Bluetooth per iniziare l'associazione con un anello circolare e di avere l'anello vicino al telefono.",
 	"setup.scan.location_disabled.title": "Locatie inschakelen",
 	"setup.scan.location_disabled.message": "Om Bluetooth verbinding te kunnen gebruiken, moet Android de locatie van uw telefoon inschakelen",
 	"setup.scan.location_disabled.enable": "Locatie inschakelen",
