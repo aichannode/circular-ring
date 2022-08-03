@@ -1,3 +1,10 @@
+## [1.7.2](https://gitlab.com/circularing/mobile/app/compare/v1.7.1...v1.7.2) (2022-08-03)
+
+
+### Bug Fixes
+
+* graph sleep HRS + temp variation ([9cb0aad](https://gitlab.com/circularing/mobile/app/commit/9cb0aad556624fd9ec623dbd8fa59cb860434200))
+
 ## [1.7.1](https://gitlab.com/circularing/mobile/app/compare/v1.7.0...v1.7.1) (2022-08-03)
 
 
