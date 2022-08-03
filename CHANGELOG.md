@@ -1,3 +1,10 @@
+# [1.7.0](https://gitlab.com/circularing/mobile/app/compare/v1.6.32...v1.7.0) (2022-08-03)
+
+
+### Features
+
+* show prompt for bluetooth-unsupported device ([c936804](https://gitlab.com/circularing/mobile/app/commit/c9368042a0b6bbf2a498984020a2a965131f30b3))
+
 ## [1.6.32](https://gitlab.com/circularing/mobile/app/compare/v1.6.31...v1.6.32) (2022-08-03)
 
 
