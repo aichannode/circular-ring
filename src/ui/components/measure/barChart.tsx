@@ -30,6 +30,7 @@ interface BarChartProps {
 	isTemperature?: boolean;
 	barWidth?: number;
 	labelCountForceX?: boolean;
+	showZeroValues?: boolean;
 }
 
 export function BarChart({
@@ -52,6 +53,7 @@ export function BarChart({
 	isTemperature = false,
 	barWidth = 0.07,
 	labelCountForceX = true,
+	showZeroValues = true,
 }: BarChartProps) {
 	const [selectedX, setSelectedX] = useState<number | undefined>(-1);
 	let linspace = isDefined(yMin) && isDefined(yMax) ? ((yMax - yMin) * 10) / 100 : 0;
@@ -67,9 +69,12 @@ export function BarChart({
 					?.map((el, index) => ({ ...el, _index: index }))
 					.filter((el) => (isTemperature ? el.y != -1000 : el.y != -1))
 					.map(({ x, y, _index, ...args }) => {
-						let marker = "";
-						marker = `${mapMarker({ x, y: y, ...args }, _index)}`;
-						return { x: mapXAxis({ x, y: y, ...args }, _index), y: isTemperature && y == 0 ? 0.005 : y, marker };
+						const marker = mapMarker({ x, y: y, ...args }, _index);
+						if (y > 0 || showZeroValues) {
+							return { x: mapXAxis({ x, y: y, ...args }, _index), y: isTemperature && y == 0 ? 0.005 : y, marker };
+						} else {
+							return { x: 0, y: 0, marker: undefined };
+						}
 					}),
 				label: "",
 				config: {

@@ -26,6 +26,7 @@ type Props = {
 	selectedDay: ISODay;
 	mode?: Mode;
 };
+export const DEFAULT_Y = 0.5;
 
 export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Spo2Graph({
 	selectedDay,
@@ -126,8 +127,8 @@ export const TemperatureVariation7DGraph: React.FC<Props> = observer(function Sp
 							valueFormatter={valueFormatter}
 							graphColor={colors.business.sleepPrimary}
 							onSelect={(x) => toUpdateTag(x)}
-							yMin={-yMax}
-							yMax={yMax}
+							yMin={yMax === 0 ? -DEFAULT_Y : -yMax}
+							yMax={yMax === 0 ? DEFAULT_Y : yMax}
 							mode={updatedMode}
 							mapMarker={(el) =>
 								`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${

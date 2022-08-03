@@ -172,6 +172,7 @@ export const HRSGraph: React.FC<Props> = observer(function HRSGraph({ selectedDa
 					mode={updatedMode}
 					yMin={0}
 					yMax={yMax}
+					showZeroValues={false}
 				/>
 				<View style={{ marginTop: 20 }}>
 					<Row justify="space-between" style={{ marginBottom: 7 }}>

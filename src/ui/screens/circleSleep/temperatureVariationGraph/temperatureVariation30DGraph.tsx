@@ -21,6 +21,7 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import DashedLine from "react-native-dashed-line";
+import { DEFAULT_Y } from "./temperatureVariation7DGraph";
 
 type Props = {
 	selectedDay: ISODay;
@@ -128,8 +129,8 @@ export const TemperatureVariation30DGraph: React.FC<Props> = observer(function S
 							graphColor={colors.business.sleepPrimary}
 							onSelect={(x) => toUpdateTag(x)}
 							mode={updatedMode}
-							yMin={-yMax}
-							yMax={yMax}
+							yMin={yMax === 0 ? -DEFAULT_Y : -yMax}
+							yMax={yMax === 0 ? DEFAULT_Y : yMax}
 							barWidth={0.4}
 							mapMarker={(el) =>
 								`${isUSCS ? dayjs(new Date(el.x)).format("MM/DD/YYYY") : dayjs(new Date(el.x)).format("DD/MM/YYYY")}\n${
