@@ -1,3 +1,10 @@
+## [1.6.32](https://gitlab.com/circularing/mobile/app/compare/v1.6.31...v1.6.32) (2022-08-03)
+
+
+### Bug Fixes
+
+* crash when the data has no sense on night ([dad3fab](https://gitlab.com/circularing/mobile/app/commit/dad3fabe30d8b4c6fd956a082ad0207d2972cdb3))
+
 ## [1.6.31](https://gitlab.com/circularing/mobile/app/compare/v1.6.30...v1.6.31) (2022-08-02)
 
 
