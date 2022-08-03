@@ -1,3 +1,10 @@
+## [1.7.1](https://gitlab.com/circularing/mobile/app/compare/v1.7.0...v1.7.1) (2022-08-03)
+
+
+### Bug Fixes
+
+* moved item position ([7a4affb](https://gitlab.com/circularing/mobile/app/commit/7a4affbe5f4785b16a31ebb16a0ad3364a7a0bd7))
+
 # [1.7.0](https://gitlab.com/circularing/mobile/app/compare/v1.6.32...v1.7.0) (2022-08-03)
 
 
