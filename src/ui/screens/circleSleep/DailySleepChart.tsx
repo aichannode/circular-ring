@@ -42,13 +42,15 @@ export function DailySleepChart({ data, selectedDay, mode = createActiveMode() }
 				stages.push(stage);
 			}
 		}
-		stages.push({
-			start: moment(data.stages[stages.length - 1].end).toISOString(),
-			end: moment(data.stages[stages.length - 1].end)
-				.add(10, "minutes") // add 10 minutes of awake phase at the end of the graph
-				.toISOString(),
-			level: 4,
-		});
+		if (data.stages[stages.length - 1]?.end && data.stages[stages.length - 1]?.start) {
+			stages.push({
+				start: moment(data.stages[stages.length - 1].end).toISOString(), // FIXME Does this should not be start instead ???
+				end: moment(data.stages[stages.length - 1].end)
+					.add(10, "minutes") // add 10 minutes of awake phase at the end of the graph
+					.toISOString(),
+				level: 4,
+			});
+		}
 	}
 	const updatedMode = updateMode(mode, data?.consoType === 0);
 

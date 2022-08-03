@@ -31,7 +31,6 @@ import { UserStorage } from "@domain/user/userStorage";
 import React, { createContext, useContext } from "react";
 import { Config } from "react-native-config";
 
-console.log("ENVIRONNEMENT =", Config.ENVIRONNEMENT);
 const fakeDeviceService = Config.ENVIRONNEMENT === "dev" ? new DevFakeDeviceService() : new EmptyFakeDeviceService();
 
 const appStateStorage = new AppStateStorage();
