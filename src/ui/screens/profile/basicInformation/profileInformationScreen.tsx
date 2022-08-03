@@ -78,6 +78,15 @@ export const ProfileInformationScreen = () => {
 					confirmSexBottomSheetRef.current?.present();
 				}}
 			/>
+
+			<InfoListItem
+				name={format("profile_info.advanced_info")}
+				hasDisclosure={true}
+				action={() => navigate(Routes.ProfileAdvancedInformation)}
+			/>
+
+			<InfoListHeader>{format("profile_info.other")}</InfoListHeader>
+			<InfoListItem name={format("profile_info.country")} value={`${user.country}`} />
 			<InfoListItem
 				name={format("profile_info.leaderboard")}
 				switchOptions={[format("global.yes_shift"), format("global.no_shift")]}
@@ -88,14 +97,6 @@ export const ProfileInformationScreen = () => {
 					confirmEnableLeaderboardBottomSheetRef.current?.present();
 				}}
 			/>
-			<InfoListItem
-				name={format("profile_info.advanced_info")}
-				hasDisclosure={true}
-				action={() => navigate(Routes.ProfileAdvancedInformation)}
-			/>
-
-			<InfoListHeader>{format("profile_info.other")}</InfoListHeader>
-			<InfoListItem name={format("profile_info.country")} value={`${user.country}`} />
 			<InfoListItem
 				style={{ marginTop: 20 }}
 				name={format("profile_info.delete")}
