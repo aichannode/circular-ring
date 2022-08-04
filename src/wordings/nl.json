@@ -692,5 +692,21 @@
 	"ring.data_mode.eco": "Eco",
 	"ring.data_mode.performance": "Performance",
 	"ring.data_mode.desc.part1": "Hartmetriek zal worden verworven elke ",
-	"ring.data_mode.desc.part2": " minuten buiten sportsessies (een sportmodus met continue metingen triggert automatisch).\n\nOpmerking: De eco-modus zorgt voor een langere levensduur van de batterij, maar u beschikt niet over de details van uw slaapfasen."
+	"ring.data_mode.desc.part2": " minuten buiten sportsessies (een sportmodus met continue metingen triggert automatisch).\n\nOpmerking: De eco-modus zorgt voor een langere levensduur van de batterij, maar u beschikt niet over de details van uw slaapfasen.",
+	"update_status_idle": "Inactief",
+	"update_status_start_update_flow": "Start updatestroom",
+	"update_status_downloading_firmware": "Firmware downloaden",
+	"update_status_setting_ring_dfu_mode": "Ring instellen in dfu-modus",
+	"update_status_idle_scanning_dfu_ring": "Scannen dfu ring",
+	"update_status_found_dfu_ring": "Gevonden dfu ring",
+	"update_status_sending_firmware_bluetooth": "Firmware verzenden via bluetooth",
+	"update_status_reconnecting": "Opnieuw verbinden",
+	"update_status_reconnected": "Opnieuw verbonden",
+	"update_status_update_success": "Succes met bijwerken",
+	"update_status_error_scanning": "Updatefout, scannen",
+	"update_status_error_downloading": "Updatefout, downloaden mislukt",
+	"update_status_error_sha1": "Updatefout, sha1 ongeldig",
+	"update_status_error_ring_disconnection": "Updatefout, ring verbroken",
+	"update_status_error_setting_ring_dfu_mode": "Updatefout, ring instellen in dfu-modus",
+	"update_status_error_sending_firmware_bluetooth": "Updatefout, firmware verzenden via bluetooth"
 }

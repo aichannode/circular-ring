@@ -691,5 +691,21 @@
 	"ring.data_mode.eco": "Eco",
 	"ring.data_mode.performance": "Performance",
 	"ring.data_mode.desc.part1": "Les mesures cardiaques seront acquises tous les ",
-	"ring.data_mode.desc.part2": " minutes en dehors des sessions de sport (un mode sport avec des mesures continues se déclenche automatiquement).\n\nRemarque : le mode éco permet d'augmenter l'autonomie de la batterie, mais vous n'aurez pas le détail de vos phases de sommeil."
+	"ring.data_mode.desc.part2": " minutes en dehors des sessions de sport (un mode sport avec des mesures continues se déclenche automatiquement).\n\nRemarque : le mode éco permet d'augmenter l'autonomie de la batterie, mais vous n'aurez pas le détail de vos phases de sommeil.",
+	"update_status_idle": "Inactif",
+	"update_status_start_update_flow": "Démarrer le flux de mise à jour",
+	"update_status_downloading_firmware": "Téléchargement du firmware",
+	"update_status_setting_ring_dfu_mode": "Réglage de l'anneau en mode dfu",
+	"update_status_idle_scanning_dfu_ring": "Scanner l'anneau dfu",
+	"update_status_found_dfu_ring": "Anneau dfu trouvé",
+	"update_status_sending_firmware_bluetooth": "Envoi du firmware par bluetooth",
+	"update_status_reconnecting": "Reconnexion",
+	"update_status_reconnected": "Reconnecté",
+	"update_status_update_success": "Succès de la mise à jour",
+	"update_status_error_scanning": "Erreur de mise à jour du scan",
+	"update_status_error_downloading": "Erreur de mise à jour, échec du téléchargement",
+	"update_status_error_sha1": "Erreur de mise à jour sha1 invalide",
+	"update_status_error_ring_disconnection": "Erreur de mise à jour, déconnexion de l'anneau",
+	"update_status_error_setting_ring_dfu_mode": "Erreur de mise à jour, réglage de l'anneau en mode dfu",
+	"update_status_error_sending_firmware_bluetooth": "Erreur de mise à jour, envoi de firmware par bluetooth"
 }

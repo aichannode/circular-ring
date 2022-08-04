@@ -53,36 +53,59 @@ export enum DeviceAutoConnectState {
 	UPDATE = "UPDATE",
 }
 
+export enum UpdateStatus {
+	IDLE = "update_status_idle",
+	START_UPDATE_FLOW = "update_status_start_update_flow",
+	DOWNLOADING_FIRMWARE = "update_status_downloading_firmware",
+	SETTING_RING_IN_DFU_MODE = "update_status_setting_ring_dfu_mode",
+	SCANNING_DFU_RING = "update_status_idle_scanning_dfu_ring",
+	FOUND_DFU_RING = "update_status_found_dfu_ring",
+	SENDING_FIRMWARE_OVER_BLUETOOTH = "update_status_sending_firmware_bluetooth",
+	RECONNECTING = "update_status_reconnecting",
+	RECONNECTED = "update_status_reconnected",
+	UPDATE_SUCCESS = "update_status_update_success",
+	UPDATE_ERROR_SCANNING = "update_status_error_scanning",
+	UPDATE_ERROR_DOWNLOAD_FAILED = "update_status_error_downloading",
+	UPDATE_ERROR_SHA1_INVALID = "update_status_error_sha1",
+	UPDATE_ERROR_RING_DISCONNECTION = "update_status_error_ring_disconnection",
+	UPDATE_ERROR_SETTING_RING_IN_DFU_MODE = "update_status_error_setting_ring_dfu_mode",
+	UPDATE_ERROR_SENDING_FIRMWARE_OVER_BLUETOOTH = "update_status_error_sending_firmware_bluetooth",
+}
+
 interface I_Disconnect {
 	dissociate: boolean;
 	ring?: NamedUserRing;
 }
 
 interface I_UpdateState {
-	status: string;
+	status: UpdateStatus;
 	progress: number;
 	error: boolean;
 }
 
 export const UpdateState = {
-	IDLE: { status: "IDLE", progress: 0, error: false },
-	START_UPDATE_FLOW: { status: "START UPDATE FLOW", progress: 1, error: false },
-	DOWNLOADING_FIRMWARE: { status: "DOWNLOADING FIRMWARE", progress: 2, error: false },
-	SETTING_RING_IN_DFU_MODE: { status: "SETTING RING IN DFU MODE", progress: 4, error: false },
-	SCANNING_DFU_RING: { status: "SCANNING DFU RING", progress: 6, error: false },
-	FOUND_DFU_RING: { status: "FOUND DFU RING", progress: 8, error: false },
-	SENDING_FIRMWARE_OVER_BLUETOOTH: { status: "SENDING FIRMWARE OVER BLUETOOTH", progress: 10, error: false },
-	RECONNECTING: { status: "RECONNECTING", progress: 15, error: false },
-	RECONNECTED: { status: "RECONNECTED", progress: 20, error: false },
-	UPDATE_SUCCESS: { status: "UPDATE SUCCESS", progress: 20, error: false },
-	UPDATE_ERROR_SCANNING: { status: "UPDATE ERROR SCANNING", progress: -1, error: true },
-	UPDATE_ERROR_DOWNLOAD_FAILED: { status: "UPDATE ERROR DOWNLOAD FAILED", progress: -1, error: true },
-	UPDATE_ERROR_SHA1_INVALID: { status: "UPDATE ERROR SHA1 INVALID", progress: -1, error: true },
-	UPDATE_ERROR_RING_DISCONNECTION: { status: "UPDATE ERROR RING DISCONNECTION", progress: -1, error: true },
-	UPDATE_ERROR_SETTING_RING_IN_DFU_MODE: { status: "UPDATE ERROR SETTING RING IN DFU MODE", progress: -1, error: true },
+	IDLE: { status: UpdateStatus.IDLE, progress: 0, error: false },
+	START_UPDATE_FLOW: { status: UpdateStatus.START_UPDATE_FLOW, progress: 1, error: false },
+	DOWNLOADING_FIRMWARE: { status: UpdateStatus.DOWNLOADING_FIRMWARE, progress: 2, error: false },
+	SETTING_RING_IN_DFU_MODE: { status: UpdateStatus.SETTING_RING_IN_DFU_MODE, progress: 4, error: false },
+	SCANNING_DFU_RING: { status: UpdateStatus.SCANNING_DFU_RING, progress: 6, error: false },
+	FOUND_DFU_RING: { status: UpdateStatus.FOUND_DFU_RING, progress: 8, error: false },
+	SENDING_FIRMWARE_OVER_BLUETOOTH: { status: UpdateStatus.SENDING_FIRMWARE_OVER_BLUETOOTH, progress: 10, error: false },
+	RECONNECTING: { status: UpdateStatus.RECONNECTING, progress: 15, error: false },
+	RECONNECTED: { status: UpdateStatus.RECONNECTED, progress: 20, error: false },
+	UPDATE_SUCCESS: { status: UpdateStatus.UPDATE_SUCCESS, progress: 20, error: false },
+	UPDATE_ERROR_SCANNING: { status: UpdateStatus.UPDATE_ERROR_SCANNING, progress: -1, error: true },
+	UPDATE_ERROR_DOWNLOAD_FAILED: { status: UpdateStatus.UPDATE_ERROR_DOWNLOAD_FAILED, progress: -1, error: true },
+	UPDATE_ERROR_SHA1_INVALID: { status: UpdateStatus.UPDATE_ERROR_SHA1_INVALID, progress: -1, error: true },
+	UPDATE_ERROR_RING_DISCONNECTION: { status: UpdateStatus.UPDATE_ERROR_RING_DISCONNECTION, progress: -1, error: true },
+	UPDATE_ERROR_SETTING_RING_IN_DFU_MODE: {
+		status: UpdateStatus.UPDATE_ERROR_SETTING_RING_IN_DFU_MODE,
+		progress: -1,
+		error: true,
+	},
 
 	UPDATE_ERROR_SENDING_FIRMWARE_OVER_BLUETOOTH: {
-		status: "UPDATE ERROR SENDING FIRMWARE OVER BLUETOOTH",
+		status: UpdateStatus.UPDATE_ERROR_SENDING_FIRMWARE_OVER_BLUETOOTH,
 		progress: -1,
 		error: true,
 	},

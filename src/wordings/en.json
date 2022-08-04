@@ -767,5 +767,21 @@
 	"ring.data_mode.eco": "Eco",
 	"ring.data_mode.performance": "Performance",
 	"ring.data_mode.desc.part1": "Heart metrics will be acquired every ",
-	"ring.data_mode.desc.part2": " minutes outside of sport sessions (a sport mode with continuous measurements automatically triggers).\n\nNote: The eco mode will allow more battery life but you will not have the details of your sleep stages."
+	"ring.data_mode.desc.part2": " minutes outside of sport sessions (a sport mode with continuous measurements automatically triggers).\n\nNote: The eco mode will allow more battery life but you will not have the details of your sleep stages.",
+	"update_status_idle": "Idle",
+	"update_status_start_update_flow": "Start update flow",
+	"update_status_downloading_firmware": "Downloading firmware",
+	"update_status_setting_ring_dfu_mode": "Setting ring in dfu mode",
+	"update_status_idle_scanning_dfu_ring": "Scanning dfu ring",
+	"update_status_found_dfu_ring": "Found dfu ring",
+	"update_status_sending_firmware_bluetooth": "Sending firmware over bluetooth",
+	"update_status_reconnecting": "Reconnecting",
+	"update_status_reconnected": "Reconnected",
+	"update_status_update_success": "Update success",
+	"update_status_error_scanning": "Update error scanning",
+	"update_status_error_downloading": "Update error download failed",
+	"update_status_error_sha1": "Update error sha1 invalid",
+	"update_status_error_ring_disconnection": "Update error ring disconnection",
+	"update_status_error_setting_ring_dfu_mode": "Update error setting ring in dfu mode",
+	"update_status_error_sending_firmware_bluetooth": "Update error sending firmware over bluetooth"
 }

@@ -692,5 +692,21 @@
 	"ring.data_mode.eco": "Eco",
 	"ring.data_mode.performance": "Rendimiento",
 	"ring.data_mode.desc.part1": "Las métricas del corazón se adquirirán cada ",
-	"ring.data_mode.desc.part2": "minutos fuera de las sesiones de deporte (un modo de deporte con mediciones continuas se activa automáticamente).\n\nNota: El modo eco permitirá una mayor duración de la batería pero no tendrá los detalles de sus etapas de sueño;"
+	"ring.data_mode.desc.part2": "minutos fuera de las sesiones de deporte (un modo de deporte con mediciones continuas se activa automáticamente).\n\nNota: El modo eco permitirá una mayor duración de la batería pero no tendrá los detalles de sus etapas de sueño;",
+	"update_status_idle": "Inactivo",
+	"update_status_start_update_flow": "Iniciar el flujo de actualización",
+	"update_status_downloading_firmware": "Descarga del firmware",
+	"update_status_setting_ring_dfu_mode": "Configuración del anillo en modo dfu",
+	"update_status_idle_scanning_dfu_ring": "Escaneando el anillo dfu",
+	"update_status_found_dfu_ring": "Encontrado el anillo dfu",
+	"update_status_sending_firmware_bluetooth": "Enviando el firmware por bluetooth",
+	"update_status_reconnecting": "Reconectando",
+	"update_status_reconnected": "Reconectado",
+	"update_status_update_success": "Actualización efectuada con éxito",
+	"update_status_error_scanning": "Error de actualización, escaneando",
+	"update_status_error_downloading": "Error de actualización, descarga no realizada",
+	"update_status_error_sha1": "Error de actualización, sha1 inválido",
+	"update_status_error_ring_disconnection": "Error de actualización, desconexión del anillo",
+	"update_status_error_setting_ring_dfu_mode": "Error de actualización, configuración del anillo en modo dfu",
+	"update_status_error_sending_firmware_bluetooth": "Error de actualización, envío de firmware por bluetooth"
 }

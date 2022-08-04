@@ -1,17 +1,15 @@
 import { useServices } from "@core/services";
-import { PrimaryText } from "@ui/components/text";
-import { useI18n } from "@ui/i18n";
-import React, { useEffect, useState } from "react";
-import { View } from "react-native";
-import styled from "styled-components/native";
-import { useObservable } from "micro-observables";
-import { PrimaryButton } from "@ui/components/buttons";
-import { DFUEmitter } from "react-native-nordic-dfu";
-import { ChunkedCircle, CircleGradient } from "@ui/components/shapes/chunkedCircle";
-import { SecondaryText } from "@ui/components/text";
 import { UpdateState } from "@domain/device/bleDeviceService";
 import { useNavigation } from "@react-navigation/core";
-import { Image } from "react-native";
+import { PrimaryButton } from "@ui/components/buttons";
+import { ChunkedCircle, CircleGradient } from "@ui/components/shapes/chunkedCircle";
+import { PrimaryText, SecondaryText } from "@ui/components/text";
+import { useI18n } from "@ui/i18n";
+import { useObservable } from "micro-observables";
+import React, { useEffect, useState } from "react";
+import { Image, View } from "react-native";
+import { DFUEmitter } from "react-native-nordic-dfu";
+import styled from "styled-components/native";
 
 export const UpdatingComponent: React.FC = () => {
 	const { format } = useI18n();
@@ -72,7 +70,7 @@ export const UpdatingComponent: React.FC = () => {
 							</Bold>
 						</CenterView>
 					</View>
-					<SecondaryText style={{ marginTop: 50 }}>{updateState.status}</SecondaryText>
+					<SecondaryText style={{ marginTop: 50 }}>{format(updateState.status)}</SecondaryText>
 				</>
 			)}
 		</UpdatingContainer>

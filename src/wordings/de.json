@@ -692,5 +692,21 @@
 	"ring.data_mode.eco": "Eco",
 	"ring.data_mode.performance": "Leistung",
 	"ring.data_mode.desc.part1": "Herzmetriken werden jeden Tag erfasst",
-	"ring.data_mode.desc.part2": " Minuten außerhalb von Sportsitzungen (ein Sportmodus mit kontinuierlichen Messungen wird automatisch ausgelöst).\n\nHinweis: Der Öko-Modus ermöglicht eine längere Akkulaufzeit, aber Sie erhalten keine Details zu Ihren Schlafphasen."
+	"ring.data_mode.desc.part2": " Minuten außerhalb von Sportsitzungen (ein Sportmodus mit kontinuierlichen Messungen wird automatisch ausgelöst).\n\nHinweis: Der Öko-Modus ermöglicht eine längere Akkulaufzeit, aber Sie erhalten keine Details zu Ihren Schlafphasen.",
+	"update_status_idle": "Leerlauf",
+	"update_status_start_update_flow": "Updatefluss starten",
+	"update_status_downloading_firmware": "Herunterladen der Firmware",
+	"update_status_setting_ring_dfu_mode": "Ring im dfu-Modus einstellen",
+	"update_status_idle_scanning_dfu_ring": "Dfu-Ring scannen",
+	"update_status_found_dfu_ring": "Dfu-Ring gefunden",
+	"update_status_sending_firmware_bluetooth": "Senden der Firmware über Bluetooth",
+	"update_status_reconnecting": "Verbindung wiederherstellen",
+	"update_status_reconnected": "Verbindung wiederhergestellt",
+	"update_status_update_success": "Update erfolgreich",
+	"update_status_error_scanning": "Update-Fehler beim Scannen",
+	"update_status_error_downloading": "Aktualisierungsfehler, Download fehlgeschlagen",
+	"update_status_error_sha1": "Aktualisierungsfehler, sha1 ungültig",
+	"update_status_error_ring_disconnection": "Aktualisierungsfehler, Ringunterbrechung",
+	"update_status_error_setting_ring_dfu_mode": "Aktualisierungsfehler, Ring in dfu-Modus setzen",
+	"update_status_error_sending_firmware_bluetooth": "Aktualisierungsfehler, Senden von Firmware über bluetooth"
 }
