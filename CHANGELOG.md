@@ -1,3 +1,10 @@
+## [1.7.3](https://gitlab.com/circularing/mobile/app/compare/v1.7.2...v1.7.3) (2022-08-04)
+
+
+### Bug Fixes
+
+* update status translation ([816ba16](https://gitlab.com/circularing/mobile/app/commit/816ba161dfd3d3aae66ea00b7b6dbadb1592ff64))
+
 ## [1.7.2](https://gitlab.com/circularing/mobile/app/compare/v1.7.1...v1.7.2) (2022-08-03)
 
 
