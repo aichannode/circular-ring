@@ -21,6 +21,7 @@ import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, Animated, Platform, RefreshControl, Text, View } from "react-native";
+import Config from "react-native-config";
 import fs from "react-native-fs";
 import Mailer, { Attachment } from "react-native-mail";
 import styled from "styled-components/native";
@@ -118,14 +119,18 @@ export const HomeScreen: React.FC = () => {
 	data.push(
 		<View style={{ paddingHorizontal: 6 }}>
 			<IfAdmin>
-				<PrimaryButton style={{ marginVertical: 8 }} onPress={() => sendLogsByEmail()}>
-					SEND LOGS BY EMAIL
-				</PrimaryButton>
-				<PrimaryButton style={{ marginVertical: 8 }} onPress={() => bleDeviceService.write("RWF1S15")}>
-					GENERATE RING DATA
-				</PrimaryButton>
-				<PrimaryButton onPress={feedService._DEBUG_resetAnswers}>RESET ANSWERS</PrimaryButton>
-				<PrimaryButton onPress={() => resetCache()}>CLEAR MEASURE AND CACHE</PrimaryButton>
+				{Config.ENVIRONNEMENT !== "prod" && (
+					<>
+						<PrimaryButton style={{ marginVertical: 8 }} onPress={() => sendLogsByEmail()}>
+							SEND LOGS BY EMAIL
+						</PrimaryButton>
+						<PrimaryButton style={{ marginVertical: 8 }} onPress={() => bleDeviceService.write("RWF1S15")}>
+							GENERATE RING DATA
+						</PrimaryButton>
+						<PrimaryButton onPress={feedService._DEBUG_resetAnswers}>RESET ANSWERS</PrimaryButton>
+						<PrimaryButton onPress={() => resetCache()}>CLEAR MEASURE AND CACHE</PrimaryButton>
+					</>
+				)}
 				<View style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}>
 					<PrimaryButton
 						onPress={() => {
@@ -153,16 +158,18 @@ export const HomeScreen: React.FC = () => {
 						calibDay + 1
 					</PrimaryButton>
 				</View>
-				<PrimaryButton
-					onPress={() => {
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						//@ts-ignore
-						dataRateBottomSheet?.current?.present();
-						appStateService.showDataRatePopup.set(true);
-					}}
-				>
-					SHOW DATA RATE POPUP
-				</PrimaryButton>
+				{Config.ENVIRONNEMENT !== "prod" && (
+					<PrimaryButton
+						onPress={() => {
+							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+							//@ts-ignore
+							dataRateBottomSheet?.current?.present();
+							appStateService.showDataRatePopup.set(true);
+						}}
+					>
+						SHOW DATA RATE POPUP
+					</PrimaryButton>
+				)}
 			</IfAdmin>
 			{notifications[0] && (
 				<Fade isVisible isAnimatedOnMount>

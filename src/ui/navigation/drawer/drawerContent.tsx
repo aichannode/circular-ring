@@ -1,5 +1,4 @@
 import { DrawerActions, useNavigation } from "@react-navigation/native";
-import { IfAdmin } from "@ui/containers/IfAdmin";
 import { useI18n } from "@ui/i18n";
 import { DrawerEntry } from "@ui/navigation/drawer/drawerEntry";
 import { Routes } from "@ui/navigation/routes";
@@ -40,10 +39,6 @@ export const DrawerContent = () => {
 				<DrawerEntry route={Routes.WebView} routeOptions={{ uri: format("url.store") }}>
 					{format("drawer.store")}
 				</DrawerEntry>
-				<IfAdmin>
-					<Separator />
-					<DrawerEntry route={Routes.Storybook}>{format("drawer.storybook")}</DrawerEntry>
-				</IfAdmin>
 			</ScrollView>
 		</Container>
 	);
