@@ -20,7 +20,7 @@ import { QuickAccess } from "@ui/screens/home/quickAccess/quickAccess";
 import { colors } from "@ui/styles/colors";
 import moment from "moment";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, Animated, Platform, RefreshControl, Text, View } from "react-native";
+import { Alert, Animated, AppState, Platform, RefreshControl, Text, View } from "react-native";
 import Config from "react-native-config";
 import fs from "react-native-fs";
 import Mailer, { Attachment } from "react-native-mail";
@@ -33,6 +33,7 @@ import { UpdateBanner } from "./updateBanner";
 const BANNER_TO_LOAD_ON_END = 2;
 
 export const HomeScreen: React.FC = () => {
+	const rnAppState = useRef(AppState.currentState);
 	const { userService, feedService, bluetoothService, bleDeviceService, appStateService, ringManagementService } =
 		useServices();
 	const [hideQuickaccess, setHideQuickaccess] = useState(true);
@@ -51,6 +52,17 @@ export const HomeScreen: React.FC = () => {
 	} = useRepresentations();
 	useFetchCircles();
 
+	const rnAppStateListener = (nextAppState: any) => {
+		if (rnAppState.current.match(/inactive|background/) && nextAppState === "active") {
+			// force sync ring when the app went from background to foreground
+			(async () => {
+				await ringManagementService.syncData();
+			})();
+		}
+
+		rnAppState.current = nextAppState;
+	};
+
 	useEffect(() => {
 		if (appStateService.showDataRatePopup.get()) {
 			dataRateBottomSheet?.current?.present();
@@ -64,6 +76,17 @@ export const HomeScreen: React.FC = () => {
 			bleDeviceService.requestLocation();
 		}
 		appStateService.hasReachedHomeScreen.set(true);
+
+		// force sync ring when the app started
+		(async () => {
+			await ringManagementService.syncData();
+		})();
+
+		AppState.addEventListener("change", rnAppStateListener);
+
+		return () => {
+			AppState.removeEventListener("change", rnAppStateListener);
+		};
 	}, []);
 
 	const sendLogsByEmail = async () => {
@@ -203,16 +226,20 @@ export const HomeScreen: React.FC = () => {
 
 	return (
 		<Container>
-			<CirclesBanner />
-			<Animated.View
-				style={{
-					zIndex: 10,
-					transform: [{ translateY: quickAccessAnim }],
-				}}
-			>
-				<QuickAccess />
-			</Animated.View>
 			<Animated.FlatList
+				ListHeaderComponent={
+					<>
+						<CirclesBanner />
+						<Animated.View
+							style={{
+								zIndex: 10,
+								transform: [{ translateY: quickAccessAnim }],
+							}}
+						>
+							<QuickAccess />
+						</Animated.View>
+					</>
+				}
 				refreshControl={
 					<RefreshControl enabled={syncState === SyncState.NONE} refreshing={false} onRefresh={() => forceRefresh()} />
 				}

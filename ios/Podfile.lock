@@ -401,7 +401,7 @@ PODS:
     - React-Core
   - RNLocalize (2.2.0):
     - React-Core
-  - RNReanimated (2.4.1):
+  - RNReanimated (2.9.1):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -409,7 +409,6 @@ PODS:
     - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
-    - React
     - React-callinvoker
     - React-Core
     - React-Core/DevSupport
@@ -744,7 +743,7 @@ SPEC CHECKSUMS:
   RNFS: fc610f78fdf8bfc89a9e5cc2f898519f4dba1002
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNLocalize: 6571ea792a7dcb6d217c98c14d9147e9417cef62
-  RNReanimated: f1b73ebfdd510dc56b8970bf19444cb0d5acd35a
+  RNReanimated: 68f77591cdd370eadcb046c376179cc564b17511
   RNScreens: aa12070b21c1d6011b3627a0b1d09b627232b070
   RNSentry: 0aa1567f66c20390f3834637fc4f73380dcd0774
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
