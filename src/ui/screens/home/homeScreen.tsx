@@ -246,8 +246,6 @@ export const HomeScreen: React.FC = () => {
 				data={data}
 				style={{
 					flex: 1,
-					marginTop: -60,
-					paddingTop: 60,
 					zIndex: 0,
 					flexGrow: 1,
 				}}
